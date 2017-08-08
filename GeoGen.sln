@@ -1,0 +1,52 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.16
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{C2A889D2-7219-4F33-9637-8DA9540C3E97}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core.Test", "GeoGen.Core.Test\GeoGen.Core.Test.csproj", "{7C5EBB31-102C-44C7-878F-591EFFA73E74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator", "GeoGen.Generator\GeoGen.Generator.csproj", "{CEFFA970-1BE5-42F8-AF83-A836CF449289}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer", "GeoGen.Analyzer\GeoGen.Analyzer.csproj", "{CF6DFF81-E56F-4FAE-B176-524976BD5780}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator.Test", "GeoGen.Generator.Test\GeoGen.Generator.Test.csproj", "{A3E183FA-655E-4267-869D-1C064A6F941F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer.Test", "GeoGen.Analyzer.Test\GeoGen.Analyzer.Test.csproj", "{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C2A889D2-7219-4F33-9637-8DA9540C3E97}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2A889D2-7219-4F33-9637-8DA9540C3E97}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2A889D2-7219-4F33-9637-8DA9540C3E97}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2A889D2-7219-4F33-9637-8DA9540C3E97}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C5EBB31-102C-44C7-878F-591EFFA73E74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C5EBB31-102C-44C7-878F-591EFFA73E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C5EBB31-102C-44C7-878F-591EFFA73E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C5EBB31-102C-44C7-878F-591EFFA73E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEFFA970-1BE5-42F8-AF83-A836CF449289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEFFA970-1BE5-42F8-AF83-A836CF449289}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEFFA970-1BE5-42F8-AF83-A836CF449289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEFFA970-1BE5-42F8-AF83-A836CF449289}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF6DFF81-E56F-4FAE-B176-524976BD5780}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF6DFF81-E56F-4FAE-B176-524976BD5780}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF6DFF81-E56F-4FAE-B176-524976BD5780}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF6DFF81-E56F-4FAE-B176-524976BD5780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3E183FA-655E-4267-869D-1C064A6F941F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3E183FA-655E-4267-869D-1C064A6F941F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3E183FA-655E-4267-869D-1C064A6F941F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3E183FA-655E-4267-869D-1C064A6F941F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
