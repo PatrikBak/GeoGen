@@ -1,4 +1,5 @@
-﻿using GeoGen.Core.Constructions.Parameters;
+﻿using System.Collections.Generic;
+using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Core.Constructions.Arguments
 {
@@ -10,5 +11,26 @@ namespace GeoGen.Core.Constructions.Arguments
     /// </summary>
     public class SetConstructionArgument : ConstructionArgument
     {
+        #region Public properties
+
+        /// <summary>
+        /// Gets the hash set containing the passed arguments. 
+        /// </summary>
+        public HashSet<ConstructionArgument> PassedArguments { get; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new set containing arguments passed to a construction.
+        /// </summary>
+        /// <param name="passedArguments">The passed arguments.</param>
+        public SetConstructionArgument(HashSet<ConstructionArgument> passedArguments)
+        {
+            PassedArguments = passedArguments;
+        }
+
+        #endregion
     }
 }
