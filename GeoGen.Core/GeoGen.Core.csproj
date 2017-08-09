@@ -39,10 +39,26 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Configurations\Configuration.cs" />
+    <Compile Include="Configurations\ConfigurationObject.cs" />
+    <Compile Include="Configurations\ConfigurationObjectType.cs" />
+    <Compile Include="Configurations\ConstructedConfigurationObject.cs" />
+    <Compile Include="Configurations\LooseConfigurationObject.cs" />
+    <Compile Include="Constructions\Arguments\SetConstructionArgument.cs" />
+    <Compile Include="Constructions\Arguments\ObjectConstructionArgument.cs" />
+    <Compile Include="Constructions\ComposedConstruction.cs" />
+    <Compile Include="Constructions\Construction.cs" />
+    <Compile Include="Constructions\Arguments\ConstructionArgument.cs" />
+    <Compile Include="Constructions\PredefinedConstructionType.cs" />
+    <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
+    <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
+    <Compile Include="Constructions\PredefinedConstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
