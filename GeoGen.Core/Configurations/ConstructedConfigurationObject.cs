@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 
@@ -34,10 +35,10 @@ namespace GeoGen.Core.Configurations
         /// <param name="construction"></param>
         /// <param name="passedArguments"></param>
         public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> passedArguments)
-            : base(construction.OutputType)
+            : base(construction?.OutputType ?? throw new ArgumentNullException(nameof(construction)))
         {
             Construction = construction;
-            PassedArguments = passedArguments;
+            PassedArguments = passedArguments ?? throw new ArgumentNullException(nameof(passedArguments));
         }
 
         #endregion

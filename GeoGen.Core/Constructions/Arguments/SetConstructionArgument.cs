@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Core.Constructions.Arguments
@@ -28,6 +29,13 @@ namespace GeoGen.Core.Constructions.Arguments
         /// <param name="passedArguments">The passed arguments.</param>
         public SetConstructionArgument(HashSet<ConstructionArgument> passedArguments)
         {
+            if (passedArguments == null)
+                throw new ArgumentNullException(nameof(passedArguments));
+
+            if (passedArguments.Count <= 1)
+                throw new ArgumentOutOfRangeException(nameof(passedArguments), passedArguments.Count,
+                    "Number of passed arguments must be at least two");
+
             PassedArguments = passedArguments;
         }
 

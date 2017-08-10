@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Parameters;
 
@@ -47,7 +48,7 @@ namespace GeoGen.Core.Constructions
         /// <param name="configurationOutput">The configuration output</param>
         public ComposedConstruction(ConstructedConfigurationObject configurationOutput)
         {
-            ConfigurationOutput = configurationOutput;
+            ConfigurationOutput = configurationOutput ?? throw new ArgumentNullException(nameof(configurationOutput));
         }
 
         #endregion

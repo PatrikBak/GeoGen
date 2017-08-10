@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using GeoGen.Core.Utilities;
 
 namespace GeoGen.Core.Configurations
 {
@@ -28,7 +30,7 @@ namespace GeoGen.Core.Configurations
         #endregion
 
         #region Constructor
-        
+
         /// <summary>
         /// Constructs a new configuration consisting of given configuration objects. 
         /// </summary>
@@ -36,9 +38,16 @@ namespace GeoGen.Core.Configurations
         /// <param name="constructedObjects">The hash set of constructed configuration objects.</param>
         public Configuration(HashSet<LooseConfigurationObject> looseObjects, HashSet<ConstructedConfigurationObject> constructedObjects)
         {
-            LooseObjects = looseObjects;
+            LooseObjects = looseObjects ?? throw new ArgumentNullException(nameof(looseObjects));
+
+            if (constructedObjects == null)
+                throw new ArgumentNullException(nameof(constructedObjects));
+
+            if (constructedObjects.Empty())
+                throw new ArgumentException("Loose objects can't be an empty set.", nameof(looseObjects));
+
             ConstructedObjects = constructedObjects;
-        } 
+        }
 
         #endregion
     }

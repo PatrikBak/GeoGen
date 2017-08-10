@@ -1,4 +1,5 @@
-﻿using GeoGen.Core.Configurations;
+﻿using System;
+using GeoGen.Core.Configurations;
 
 namespace GeoGen.Core.Constructions.Arguments
 {
@@ -24,7 +25,7 @@ namespace GeoGen.Core.Constructions.Arguments
         /// <param name="passedObject">The passed configuration object.</param>
         public ObjectConstructionArgument(ConfigurationObject passedObject)
         {
-            PassedObject = passedObject;
+            PassedObject = passedObject ?? throw new ArgumentNullException(nameof(passedObject));
         }
 
         #endregion

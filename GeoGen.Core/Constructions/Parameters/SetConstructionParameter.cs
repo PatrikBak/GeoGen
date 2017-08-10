@@ -1,4 +1,6 @@
-﻿namespace GeoGen.Core.Constructions.Parameters
+﻿using System;
+
+namespace GeoGen.Core.Constructions.Parameters
 {
     /// <summary>
     /// Represents a set of <see cref="ConstructionParameter"/>. It's given by the number of parameters, 
@@ -23,7 +25,7 @@
         public int NumberOfParameters { get; }
 
         #endregion
-        
+
         #region Constructor
 
         /// <summary>
@@ -34,10 +36,14 @@
         /// <param name="numberOfParameters">The number of wanted parameters in the set.</param>
         public SetConstructionParameter(ConstructionParameter typeOfParameters, int numberOfParameters)
         {
-            TypeOfParameters = typeOfParameters;
+            TypeOfParameters = typeOfParameters ?? throw new ArgumentNullException(nameof(numberOfParameters));
+
+            if (numberOfParameters <= 1)
+                throw new ArgumentOutOfRangeException(nameof(numberOfParameters), "Number of construction parameters must be at least two");
+
             NumberOfParameters = numberOfParameters;
-        } 
-        
+        }
+
         #endregion
     }
 }
