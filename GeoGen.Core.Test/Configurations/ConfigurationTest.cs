@@ -23,7 +23,8 @@ namespace GeoGen.Core.Test.Configurations
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var looseObjects = new HashSet<LooseConfigurationObject>();
+                var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
                 var configuration = new Configuration(looseObjects, null);
             });
         }

@@ -38,15 +38,14 @@ namespace GeoGen.Core.Configurations
         /// <param name="constructedObjects">The hash set of constructed configuration objects.</param>
         public Configuration(HashSet<LooseConfigurationObject> looseObjects, HashSet<ConstructedConfigurationObject> constructedObjects)
         {
-            LooseObjects = looseObjects ?? throw new ArgumentNullException(nameof(looseObjects));
+            if (looseObjects == null)
+                throw new ArgumentNullException(nameof(looseObjects));
 
-            if (constructedObjects == null)
-                throw new ArgumentNullException(nameof(constructedObjects));
-
-            if (constructedObjects.Empty())
+            if (looseObjects.Empty())
                 throw new ArgumentException("Loose objects can't be an empty set.", nameof(looseObjects));
 
-            ConstructedObjects = constructedObjects;
+            LooseObjects = looseObjects;
+            ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
         }
 
         #endregion

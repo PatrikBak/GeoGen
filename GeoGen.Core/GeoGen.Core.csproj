@@ -53,8 +53,13 @@
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
     <Compile Include="Constructions\PredefinedConstruction.cs" />
+    <Compile Include="Generator\GeneratorInput.cs" />
+    <Compile Include="Generator\GeneratorOutput.cs" />
+    <Compile Include="Generator\IGenerator.cs" />
+    <Compile Include="Generator\IGeneratorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
+    <Compile Include="Utilities\CollectionExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
