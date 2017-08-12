@@ -4,8 +4,17 @@ using System.Linq;
 
 namespace GeoGen.Core.Utilities
 {
+    /// <summary>
+    /// Extension methods for <see cref="IEnumerable{T}"/>
+    /// </summary>
     public static class EnumerableExtensions
     {
+        /// <summary>
+        /// Checks if the enumerable has no element.
+        /// </summary>
+        /// <typeparam name="T">The type.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>true, if the enumerable is empty; false otherwise</returns>
         public static bool Empty<T>(this IEnumerable<T> enumerable)
         {
             if (enumerable == null)

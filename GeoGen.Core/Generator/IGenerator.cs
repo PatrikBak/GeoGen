@@ -10,6 +10,7 @@ namespace GeoGen.Core.Generator
         /// <summary>
         /// Starts the generation proccess and lazily return the output.
         /// </summary>
+        /// <returns>The generator output enumerable.</returns>
         IEnumerable<GeneratorOutput> Generate();
     }
 }

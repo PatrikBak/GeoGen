@@ -4,6 +4,9 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
 using GeoGen.Core.Utilities;
+using GeoGen.Generator.Constructor;
+using GeoGen.Generator.Container;
+using GeoGen.Generator.Handler;
 using Moq;
 using NUnit.Framework;
 
@@ -25,8 +28,8 @@ namespace GeoGen.Generator.Test
             // adding a new layer
             var containterMock = new Mock<IConfigurationContainer>();
             containterMock.Setup(c => c.Configurations).Returns(configurations);
-            containterMock.Setup(c => c.AddNewLayer(It.IsAny<List<Configuration>>()))
-                .Callback<List<Configuration>>(c => configurations.SetItems(c));
+            containterMock.Setup(c => c.AddLayer(It.IsAny<IEnumerable<Configuration>>()))
+                .Callback<IEnumerable<Configuration>>(c => configurations.SetItems(c));
             var configurationContainer = containterMock.Object;
 
             // setup configuration handler mock that converts all generated configurations 
@@ -38,7 +41,7 @@ namespace GeoGen.Generator.Test
 
             // setup configuration constructor that generates new configuration by repeating
             // the provided one by the given number of times
-            var configurationConstructorMock = new Mock<IConfigurationConstructer>();
+            var configurationConstructorMock = new Mock<IConfigurationConstructor>();
             configurationConstructorMock.Setup(c => c.GenerateNewConfigurations(It.IsAny<Configuration>()))
                 .Returns<Configuration>(c => Enumerable.Repeat(c, constructorDuplicationCount).ToList());
             var congigurationConstructer = configurationConstructorMock.Object;
@@ -46,7 +49,7 @@ namespace GeoGen.Generator.Test
             // setup a generator context mock
             var generatorContextMock = new Mock<IGeneratorContext>();
             generatorContextMock.Setup(g => g.ConfigurationContainer).Returns(configurationContainer);
-            generatorContextMock.Setup(g => g.ConfigurationConstructer).Returns(congigurationConstructer);
+            generatorContextMock.Setup(g => g.ConfigurationConstructor).Returns(congigurationConstructer);
             generatorContextMock.Setup(g => g.ConfigurationsHandler).Returns(configurationHandler);
 
             return new Generator(generatorContextMock.Object, iterations);
