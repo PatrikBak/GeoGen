@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Constructions;
+using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Generator;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.Constructor;
@@ -22,28 +25,36 @@ namespace GeoGen.Generator.Test
             var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
             var constructedObjects = new HashSet<ConstructedConfigurationObject>();
             var configuration = new Configuration(looseObjects, constructedObjects);
-            var configurations = new List<Configuration> {configuration};
+
+            // mock constructed configuration object
+            var mock = new Mock<Construction>();
+            var constructon = mock.Object;
+            var constructedConfigurationObject = new ConstructedConfigurationObject(constructon,
+                new List<ConstructionArgument> {new ObjectConstructionArgument(looseObject)});
+
+            var configurations = new ObservableCollection<Configuration> {configuration};
 
             // setup container mock so it returns configurations and overrides them when we're
             // adding a new layer
             var containterMock = new Mock<IConfigurationContainer>();
-            containterMock.Setup(c => c.Configurations).Returns(configurations);
-            containterMock.Setup(c => c.AddLayer(It.IsAny<IEnumerable<Configuration>>()))
-                .Callback<IEnumerable<Configuration>>(c => configurations.SetItems(c));
+            containterMock.Setup(c => c.GetEnumerator()).Returns(() => configurations.GetEnumerator());
+            containterMock.Setup(c => c.AddLayer(It.IsAny<List<ConstructorOutput>>()))
+                .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
             var configurationContainer = containterMock.Object;
 
             // setup configuration handler mock that converts all generated configurations 
-            // except for one into the generator outut
+            // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput())
-                .Returns(() => configurationContainer.Configurations.Skip(1).Select(c => new GeneratorOutput(c)));
+                .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput(c)));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating
             // the provided one by the given number of times
             var configurationConstructorMock = new Mock<IConfigurationConstructor>();
-            configurationConstructorMock.Setup(c => c.GenerateNewConfigurations(It.IsAny<Configuration>()))
-                .Returns<Configuration>(c => Enumerable.Repeat(c, constructorDuplicationCount).ToList());
+            configurationConstructorMock.Setup(c => c.GenerateNewConfigurationObjects(It.IsAny<Configuration>()))
+                .Returns<Configuration>(c => Enumerable.Repeat(configuration, constructorDuplicationCount)
+                    .Select(cc => new ConstructorOutput(configuration, constructedConfigurationObject)));
             var congigurationConstructer = configurationConstructorMock.Object;
 
             // setup a generator context mock
@@ -72,7 +83,7 @@ namespace GeoGen.Generator.Test
 
         public void Generator_Constructor_Context_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => { new Generator(null, 42); });
+            Assert.Throws<ArgumentNullException>(() => new Generator(null, 42));
         }
 
         [TestCase(-42)]
@@ -81,7 +92,7 @@ namespace GeoGen.Generator.Test
         public void Generator_Number_Of_Iterations_Is_At_Least_One(int number)
         {
             var contextMock = new Mock<IGeneratorContext>();
-            Assert.Throws<ArgumentOutOfRangeException>(() => { new Generator(contextMock.Object, number); });
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(contextMock.Object, number));
         }
     }
 }

@@ -22,5 +22,10 @@ namespace GeoGen.Core.Utilities
 
             return !enumerable.Any();
         }
+
+        public static IEnumerable<T> SingleItemAsEnumerable<T>(this T item)
+        {
+            yield return item;
+        }
     }
 }

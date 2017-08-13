@@ -37,18 +37,22 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constructor\ArgumentsGenerator.cs" />
     <Compile Include="Constructor\ConfigurationConstructor.cs" />
+    <Compile Include="Constructor\ConstructionsContainer.cs" />
+    <Compile Include="Constructor\ConstructorOutput.cs" />
+    <Compile Include="Constructor\IArgumentsGenerator.cs" />
+    <Compile Include="Constructor\IConfigurationConstructor.cs" />
+    <Compile Include="Constructor\IConstructionsContainer.cs" />
     <Compile Include="Container\ConfigurationContainer.cs" />
     <Compile Include="Generator.cs" />
-    <Compile Include="Constructor\IConfigurationConstructor.cs" />
     <Compile Include="Container\IConfigurationContainer.cs" />
     <Compile Include="GeneratorContext.cs" />
-    <Compile Include="Handler\ConfigurationHandler.cs" />
+    <Compile Include="GeneratorFactory.cs" />
+    <Compile Include="Handler\ConfigurationsHandler.cs" />
     <Compile Include="Handler\IConfigurationsHandler.cs" />
     <Compile Include="IGeneratorContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Solver\ISolver.cs" />
-    <Compile Include="Solver\ConfigurationSolver.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">

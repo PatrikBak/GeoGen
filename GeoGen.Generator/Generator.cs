@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
+using GeoGen.Generator.Constructor;
 
 namespace GeoGen.Generator
 {
@@ -44,7 +45,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region Generation proccess
+        #region IGenerator methods
 
         /// <summary>
         /// Starts the generation proccess and lazily return the output.
@@ -63,17 +64,20 @@ namespace GeoGen.Generator
             }
         }
 
+        #endregion
+
+        #region Private methods
+
         /// <summary>
         /// Generates the output for the current iteration.
         /// </summary>
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
-            var newLayerConfigurations = _generatorContext
-                .ConfigurationContainer                        // pull configurations
-                .Configurations                                // paralelize (TODO: Check real perfomance)    
-                .AsParallel()                                  // create configurations and merge them
-                .SelectMany(CreateConfigurationsOnNewLayer)    // convert to list
+            var newLayerConfigurations = _generatorContext      // take the container
+                .ConfigurationContainer                         // paralelize (TODO: Check real perfomance)    
+                .AsParallel()                                   // create configurations and merge them
+                .SelectMany(CreateConfigurationsOnNewLayer)     // convert to list
                 .ToList();
 
             // make container aware of the new layer
@@ -90,10 +94,10 @@ namespace GeoGen.Generator
         /// Creates configurations on a new layer produces from a given configuration.
         /// </summary>
         /// <param name="configuration">The given configuration</param>
-        /// <returns></returns>
-        private IEnumerable<Configuration> CreateConfigurationsOnNewLayer(Configuration configuration)
+        /// <returns>New layer's configurations.</returns>
+        private IEnumerable<ConstructorOutput> CreateConfigurationsOnNewLayer(Configuration configuration)
         {
-            return _generatorContext.ConfigurationConstructor.GenerateNewConfigurations(configuration);
+            return _generatorContext.ConfigurationConstructor.GenerateNewConfigurationObjects(configuration);
         }
 
         #endregion

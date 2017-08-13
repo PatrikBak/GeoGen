@@ -10,10 +10,10 @@ namespace GeoGen.Generator.Constructor
     internal interface IConfigurationConstructor
     {
         /// <summary>
-        /// Constructs new configurations from a given one by performing the constructions.
+        /// Constructs new configuration objects from a given configutions by performing the constructions.
         /// </summary>
         /// <param name="configuration">The given configuration to be extended.</param>
         /// <returns></returns>
-        IEnumerable<Configuration> GenerateNewConfigurations(Configuration configuration);
+        IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(Configuration configuration);
     }
 }
