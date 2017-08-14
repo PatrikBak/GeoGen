@@ -3,7 +3,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 
-namespace GeoGen.Generator.Constructor
+namespace GeoGen.Generator.Constructor.Arguments
 {
     internal interface IArgumentsGenerator
     {

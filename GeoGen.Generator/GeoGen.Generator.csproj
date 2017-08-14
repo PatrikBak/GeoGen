@@ -37,13 +37,20 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constructor\ArgumentsGenerator.cs" />
+    <Compile Include="Constructor\Arguments\ArgumentsGeneratorInput.cs" />
+    <Compile Include="Constructor\Arguments\Container\ArgumentsContainer.cs" />
+    <Compile Include="Constructor\Arguments\ArgumentsGenerator.cs" />
+    <Compile Include="Constructor\Arguments\Container\ConstructionArgumentEqualityComparer.cs" />
     <Compile Include="Constructor\ConfigurationConstructor.cs" />
     <Compile Include="Constructor\ConstructionsContainer.cs" />
     <Compile Include="Constructor\ConstructorOutput.cs" />
-    <Compile Include="Constructor\IArgumentsGenerator.cs" />
+    <Compile Include="Constructor\Arguments\Container\IArgumentsContainer.cs" />
+    <Compile Include="Constructor\Arguments\IArgumentsGenerator.cs" />
     <Compile Include="Constructor\IConfigurationConstructor.cs" />
     <Compile Include="Constructor\IConstructionsContainer.cs" />
+    <Compile Include="Constructor\Arguments\SignatureMatching\ConstructionSignatureMatcher.cs" />
+    <Compile Include="Constructor\Arguments\SignatureMatching\IConfigurationObjectsIterator.cs" />
+    <Compile Include="Constructor\Arguments\SignatureMatching\IConstructionSignatureMatcher.cs" />
     <Compile Include="Container\ConfigurationContainer.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Container\IConfigurationContainer.cs" />

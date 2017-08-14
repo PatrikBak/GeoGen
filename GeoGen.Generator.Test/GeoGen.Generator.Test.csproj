@@ -50,7 +50,14 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructionSignatureMatcherTest.cs" />
+    <Compile Include="Constructor\Arguments\ArgumentsGeneratorTest.cs" />
+    <Compile Include="Constructor\Arguments\Container\ArgumentsContainerTest.cs" />
+    <Compile Include="Constructor\Arguments\Container\ConstructionArgumentEqualityComparerTest.cs" />
+    <Compile Include="Constructor\ConfigurationConstructorTest.cs" />
+    <Compile Include="GeneratorContextTest.cs" />
     <Compile Include="GeneratorTest.cs" />
+    <Compile Include="Play.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

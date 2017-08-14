@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Configurations;
+using GeoGen.Generator.Constructor.Arguments;
+using GeoGen.Generator.Container;
 
 namespace GeoGen.Generator.Constructor
 {
@@ -9,10 +12,12 @@ namespace GeoGen.Generator.Constructor
 
         private readonly IArgumentsGenerator _argumentsGenerator;
 
+        private readonly IConfigurationContainer _configurationContainer;
+
         public ConfigurationConstructor(IConstructionsContainer constructionsContainer, IArgumentsGenerator argumentsGenerator)
         {
-            _constructionsContainer = constructionsContainer;
-            _argumentsGenerator = argumentsGenerator;
+            _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(argumentsGenerator));
+            _argumentsGenerator = argumentsGenerator ?? throw new ArgumentNullException(nameof(argumentsGenerator));
         }
 
         public IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(Configuration configuration)
@@ -25,7 +30,7 @@ namespace GeoGen.Generator.Constructor
                 foreach (var arguments in _argumentsGenerator.GenerateArguments(configuration, construction))
                 {
                     // Create output. This looks nicer than passing a tuple of construction and arguments, IMHO.
-                    var constructedObject =  new ConstructedConfigurationObject(construction, arguments);
+                    var constructedObject = new ConstructedConfigurationObject(construction, arguments);
 
                     yield return new ConstructorOutput(configuration, constructedObject);
                 }
