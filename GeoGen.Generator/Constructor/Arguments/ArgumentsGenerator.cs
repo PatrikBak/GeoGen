@@ -17,6 +17,15 @@ namespace GeoGen.Generator.Constructor.Arguments
 
         private readonly IArgumentsContainer _argumentsContainer;
 
+        public ArgumentsGenerator(ISignaturesCombinator signaturesCombinator, IConfigurationObjectsIterator configurationObjectsIterator,
+            IConstructionSignatureMatcher constructionSignatureMatcher, IArgumentsContainer argumentsContainer)
+        {
+            _signaturesCombinator = signaturesCombinator;
+            _configurationObjectsIterator = configurationObjectsIterator;
+            _constructionSignatureMatcher = constructionSignatureMatcher;
+            _argumentsContainer = argumentsContainer;
+        }
+
         public IEnumerable<IReadOnlyList<ConstructionArgument>> GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
             if (!CanWePerformConstruction(configuration, construction))

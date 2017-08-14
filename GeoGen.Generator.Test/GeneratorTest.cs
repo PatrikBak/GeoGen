@@ -57,13 +57,7 @@ namespace GeoGen.Generator.Test
                     .Select(cc => new ConstructorOutput(configuration, constructedConfigurationObject)));
             var congigurationConstructer = configurationConstructorMock.Object;
 
-            // setup a generator context mock
-            var generatorContextMock = new Mock<IGeneratorContext>();
-            generatorContextMock.Setup(g => g.ConfigurationContainer).Returns(configurationContainer);
-            generatorContextMock.Setup(g => g.ConfigurationConstructor).Returns(congigurationConstructer);
-            generatorContextMock.Setup(g => g.ConfigurationsHandler).Returns(configurationHandler);
-
-            return new Generator(generatorContextMock.Object, iterations);
+            return new Generator(configurationContainer, congigurationConstructer, configurationHandler, iterations);
         }
 
         [TestCase(1, 1, 0)]
@@ -81,18 +75,43 @@ namespace GeoGen.Generator.Test
             Assert.AreEqual(expected, generator.Generate().Count());
         }
 
-        public void Generator_Constructor_Context_Cannot_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => new Generator(null, 42));
-        }
-
         [TestCase(-42)]
         [TestCase(-1)]
         [TestCase(0)]
         public void Generator_Number_Of_Iterations_Is_At_Least_One(int number)
         {
-            var contextMock = new Mock<IGeneratorContext>();
-            Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(contextMock.Object, number));
+            var constructor = new Mock<IConfigurationConstructor>().Object;
+            var container = new Mock<IConfigurationContainer>().Object;
+            var handler = new Mock<IConfigurationsHandler>().Object;
+
+            Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(container, constructor, handler, number));
+        }
+
+        [Test]
+        public void Generator_Container_Cannot_Be_Null()
+        {
+            var constructor = new Mock<IConfigurationConstructor>().Object;
+            var handler = new Mock<IConfigurationsHandler>().Object;
+
+            Assert.Throws<ArgumentNullException>(() => new Generator(null, constructor, handler, 1));
+        }
+
+        [Test]
+        public void Generator_Constructor_Cannot_Be_Null()
+        {
+            var container = new Mock<IConfigurationContainer>().Object;
+            var handler = new Mock<IConfigurationsHandler>().Object;
+
+            Assert.Throws<ArgumentNullException>(() => new Generator(container, null, handler, 1));
+        }
+
+        [Test]
+        public void Generator_Handler_Cannot_Be_Null()
+        {
+            var constructor = new Mock<IConfigurationConstructor>().Object;
+            var container = new Mock<IConfigurationContainer>().Object;
+
+            Assert.Throws<ArgumentNullException>(() => new Generator(container, constructor, null, 1));
         }
     }
 }

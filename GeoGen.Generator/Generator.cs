@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Generator;
 using GeoGen.Generator.Constructor;
+using GeoGen.Generator.Container;
+using GeoGen.Generator.Handler;
 using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator
@@ -15,9 +17,19 @@ namespace GeoGen.Generator
         #region Private fields
 
         /// <summary>
-        /// The context in which this generator lives.
+        /// The configuration container.
         /// </summary>
-        private readonly IGeneratorContext _generatorContext;
+        private readonly IConfigurationContainer _configurationContainer;
+
+        /// <summary>
+        /// The configuration handler.
+        /// </summary>
+        private readonly IConfigurationsHandler _configurationsHandler;
+
+        /// <summary>
+        /// The configuration constructer.
+        /// </summary>
+        private readonly IConfigurationConstructor _configurationConstructor;
 
         /// <summary>
         /// The maximal number of iterations that are supposed to be perfomed.
@@ -29,18 +41,22 @@ namespace GeoGen.Generator
         #region Constructor
 
         /// <summary>
-        /// Constructs a new generator with a given context and a given number of iterations.
+        /// Constructs a new generator with all it's needed dependencies and a given number of iterations.
         /// </summary>
-        /// <param name="generatorContext">The context.</param>
+        /// <param name="configurationContainer">The container</param>
+        /// <param name="configurationConstructor">The configuration constructor</param>
+        /// <param name="configurationsHandler">The configurations handler</param>
         /// <param name="maximalNumberOfIterations">The maximal number of iterations.</param>
-        internal Generator(IGeneratorContext generatorContext, int maximalNumberOfIterations)
+        internal Generator(IConfigurationContainer configurationContainer, IConfigurationConstructor configurationConstructor,
+            IConfigurationsHandler configurationsHandler, int maximalNumberOfIterations)
         {
-            _generatorContext = generatorContext ?? throw new ArgumentNullException(nameof(generatorContext));
-
             if (maximalNumberOfIterations <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximalNumberOfIterations), "Number of iterations must be at least one");
 
             _maximalNumberOfIterations = maximalNumberOfIterations;
+            _configurationContainer = configurationContainer ?? throw new ArgumentNullException(nameof(configurationConstructor));
+            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationConstructor));
+            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
         }
 
         #endregion
@@ -74,17 +90,16 @@ namespace GeoGen.Generator
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
-            var newLayerConfigurations = _generatorContext      // take the container
-                .ConfigurationContainer                         // paralelize (TODO: Check real perfomance)    
-                .AsParallel()                                   // create configurations and merge them
-                .SelectMany(CreateConfigurationsOnNewLayer)     // convert to list
+            var newLayerConfigurations = _configurationContainer // paralelize (TODO: Check real perfomance)    
+                .AsParallel() // create configurations and merge them
+                .SelectMany(CreateConfigurationsOnNewLayer) // convert to list
                 .ToList();
 
             // make container aware of the new layer
-            _generatorContext.ConfigurationContainer.AddLayer(newLayerConfigurations);
+            _configurationContainer.AddLayer(newLayerConfigurations);
 
             // let the handler handle the container and lazily return the output
-            foreach (var generatorOutput in _generatorContext.ConfigurationsHandler.GenerateFinalOutput())
+            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput())
             {
                 yield return generatorOutput;
             }
@@ -97,7 +112,7 @@ namespace GeoGen.Generator
         /// <returns>New layer's configurations.</returns>
         private IEnumerable<ConstructorOutput> CreateConfigurationsOnNewLayer(ConfigurationWrapper configuration)
         {
-            return _generatorContext.ConfigurationConstructor.GenerateNewConfigurationObjects(configuration);
+            return _configurationConstructor.GenerateNewConfigurationObjects(configuration);
         }
 
         #endregion
