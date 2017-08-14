@@ -61,6 +61,9 @@
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
     <Compile Include="Utilities\CollectionExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
+    <Compile Include="Utilities\HashCodeUtilities.cs" />
+    <Compile Include="Utilities\Variations\IVariationsProvider.cs" />
+    <Compile Include="Utilities\ListEqualityComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

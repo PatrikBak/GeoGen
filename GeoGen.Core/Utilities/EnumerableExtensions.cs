@@ -23,6 +23,12 @@ namespace GeoGen.Core.Utilities
             return !enumerable.Any();
         }
 
+        /// <summary>
+        /// Creates a single-element enumerable containing the given item.
+        /// </summary>
+        /// <typeparam name="T">The type.</typeparam>
+        /// <param name="item">The item</param>
+        /// <returns>The enumerable with count 1.</returns>
         public static IEnumerable<T> SingleItemAsEnumerable<T>(this T item)
         {
             yield return item;

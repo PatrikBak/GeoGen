@@ -59,6 +59,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\CollectionExtensionsTest.cs" />
     <Compile Include="Utilities\EnumerableExtensionsTest.cs" />
+    <Compile Include="Utilities\HashCodeUtilitiesTest.cs" />
+    <Compile Include="Utilities\ListEqualityComparerTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

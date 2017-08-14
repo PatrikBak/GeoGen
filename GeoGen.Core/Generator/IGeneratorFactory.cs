@@ -9,7 +9,7 @@
         /// Creates a generator from a given generator input.
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
-        /// <returns></returns>
+        /// <returns>The generator.</returns>
         IGenerator CreateGenerator(GeneratorInput generatorInput);
     }
 }
