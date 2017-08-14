@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 
@@ -6,6 +7,8 @@ namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 {
     internal interface IConstructionSignatureMatcher
     {
-        IReadOnlyList<ConstructionArgument> Match(IConfigurationObjectsIterator iterator, IReadOnlyList<ConstructionParameter> parameters);
+        void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerable<ConfigurationObject>> objectTypeToObjects);
+
+        IReadOnlyList<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters);
     }
 }

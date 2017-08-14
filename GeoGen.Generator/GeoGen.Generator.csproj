@@ -40,9 +40,6 @@
     <Compile Include="Constructor\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructor\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="Constructor\Arguments\Container\ConstructionArgumentEqualityComparer.cs" />
-    <Compile Include="Constructor\Arguments\ISignaturesCombinator.cs" />
-    <Compile Include="Constructor\Arguments\SignatureMatching\ConfigurationsObjectIterator.cs" />
-    <Compile Include="Constructor\Arguments\SignaturesCombinator.cs" />
     <Compile Include="Constructor\ConfigurationConstructor.cs" />
     <Compile Include="Constructor\Container\ConstructionsContainer.cs" />
     <Compile Include="Constructor\ConstructorOutput.cs" />
@@ -51,7 +48,6 @@
     <Compile Include="Constructor\IConfigurationConstructor.cs" />
     <Compile Include="Constructor\Container\IConstructionsContainer.cs" />
     <Compile Include="Constructor\Arguments\SignatureMatching\ConstructionSignatureMatcher.cs" />
-    <Compile Include="Constructor\Arguments\SignatureMatching\IConfigurationObjectsIterator.cs" />
     <Compile Include="Constructor\Arguments\SignatureMatching\IConstructionSignatureMatcher.cs" />
     <Compile Include="Container\ConfigurationContainer.cs" />
     <Compile Include="Generator.cs" />

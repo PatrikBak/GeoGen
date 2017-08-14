@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities.Combinator;
+using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.Constructor.Arguments.Container;
 using GeoGen.Generator.Constructor.Arguments.SignatureMatching;
 using GeoGen.Generator.Wrappers;
@@ -9,36 +12,46 @@ namespace GeoGen.Generator.Constructor.Arguments
 {
     internal class ArgumentsGenerator : IArgumentsGenerator
     {
-        private readonly ISignaturesCombinator _signaturesCombinator;
-
-        private readonly IConfigurationObjectsIterator _configurationObjectsIterator;
-
         private readonly IConstructionSignatureMatcher _constructionSignatureMatcher;
 
         private readonly IArgumentsContainer _argumentsContainer;
 
-        public ArgumentsGenerator(ISignaturesCombinator signaturesCombinator, IConfigurationObjectsIterator configurationObjectsIterator,
-            IConstructionSignatureMatcher constructionSignatureMatcher, IArgumentsContainer argumentsContainer)
+        private readonly IVariationsProvider<ConfigurationObject> _variationsProvider;
+
+        private readonly ICombinator<ConfigurationObjectType, IEnumerable<ConfigurationObject>> _combinator;
+
+        public ArgumentsGenerator(ICombinator<ConfigurationObjectType, IEnumerable<ConfigurationObject>> combinator,
+            IConstructionSignatureMatcher constructionSignatureMatcher, IVariationsProvider<ConfigurationObject> variationsProvider,
+            IArgumentsContainer argumentsContainer)
         {
-            _signaturesCombinator = signaturesCombinator;
-            _configurationObjectsIterator = configurationObjectsIterator;
             _constructionSignatureMatcher = constructionSignatureMatcher;
             _argumentsContainer = argumentsContainer;
+            _variationsProvider = variationsProvider;
+            _combinator = combinator;
         }
 
         public IEnumerable<IReadOnlyList<ConstructionArgument>> GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
+            // First we check if we can even perform the construction. Whether there are enough
+            // objects to do so
             if (!CanWePerformConstruction(configuration, construction))
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
-            var parameters = construction.Construction.ConstructionParameters;
+            var dictionaryForCombinator = configuration.ObjectTypeToObjects.ToDictionary
+            (
+                keyValue => keyValue.Key,
+                keyValue => _variationsProvider.GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
+            );
+
             _argumentsContainer.Clear();
 
-            foreach (var dictonaryForMatcher in _signaturesCombinator.Combine(configuration, construction))
+            foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))
             {
-                _configurationObjectsIterator.Initialize(dictonaryForMatcher);
+                _constructionSignatureMatcher.Initialize(dictonaryForMatcher);
 
-                var arguments = _constructionSignatureMatcher.Match(_configurationObjectsIterator, parameters);
+                var parameters = construction.Construction.ConstructionParameters;
+
+                var arguments = _constructionSignatureMatcher.Match(parameters);
 
                 _argumentsContainer.Add(arguments);
             }

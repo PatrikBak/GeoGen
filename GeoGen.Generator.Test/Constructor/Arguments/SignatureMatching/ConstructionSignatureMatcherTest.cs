@@ -5,7 +5,6 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Generator.Constructor.Arguments.SignatureMatching;
-using Moq;
 using NUnit.Framework;
 
 // ReSharper disable PossibleNullReferenceException
@@ -15,22 +14,40 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
     [TestFixture]
     public class ConstructionSignatureMatcherTest
     {
-        private static IConfigurationObjectsIterator Iterator()
+        private static LooseConfigurationObject NextObject(int id)
+        {
+            return new LooseConfigurationObject(ConfigurationObjectType.Point)
+            {
+                Id = id
+            };
+        }
+
+        private ConstructionSignatureMatcher TestMatcher()
         {
             var id = 1;
+            var matcher = new ConstructionSignatureMatcher();
 
-            var mock = new Mock<IConfigurationObjectsIterator>();
+            matcher.Initialize(new Dictionary<ConfigurationObjectType, IEnumerable<ConfigurationObject>>
+            {
+                {
+                    ConfigurationObjectType.Point, new List<ConfigurationObject>
+                    {
+                        NextObject(id++),
+                        NextObject(id++),
+                        NextObject(id++),
+                        NextObject(id++),
+                        NextObject(id)
+                    }
+                }
+            });
 
-            mock.Setup(s => s.Next(It.IsAny<ConfigurationObjectType>()))
-                .Returns<ConfigurationObjectType>(type => new LooseConfigurationObject(type) {Id = id++});
-
-            return mock.Object;
+            return matcher;
         }
 
         [Test]
         public void Test_Signature_Of_Ray()
         {
-            var matcher = new ConstructionSignatureMatcher();
+            var matcher = TestMatcher();
 
             var rayParams = new List<ConstructionParameter>
             {
@@ -38,7 +55,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
                 new ObjectConstructionParameter(ConfigurationObjectType.Point)
             };
 
-            var match = matcher.Match(Iterator(), rayParams);
+            var match = matcher.Match(rayParams);
 
             Assert.AreEqual(2, match.Count);
             Assert.AreEqual(1, (match[0] as ObjectConstructionArgument).PassedObject.Id);
@@ -48,7 +65,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
         [Test]
         public void Test_Signature_Of_Midpoint()
         {
-            var matcher = new ConstructionSignatureMatcher();
+            var matcher = TestMatcher();
 
             var midpointParams = new List<ConstructionParameter>
             {
@@ -58,7 +75,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
                 )
             };
 
-            var match = matcher.Match(Iterator(), midpointParams);
+            var match = matcher.Match(midpointParams);
 
             Assert.AreEqual(1, match.Count);
             var set = match[0] as SetConstructionArgument ?? throw new NullReferenceException();
@@ -73,7 +90,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
         [Test]
         public void Test_Signature_Of_Intersection()
         {
-            var matcher = new ConstructionSignatureMatcher();
+            var matcher = TestMatcher();
 
             var midpointParams = new List<ConstructionParameter>
             {
@@ -86,7 +103,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
                 )
             };
 
-            var match = matcher.Match(Iterator(), midpointParams);
+            var match = matcher.Match(midpointParams);
 
             Assert.AreEqual(1, match.Count);
             var sets = (match[0] as SetConstructionArgument).PassedArguments.ToList();
