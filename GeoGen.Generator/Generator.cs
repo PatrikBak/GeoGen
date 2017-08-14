@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
 using GeoGen.Generator.Constructor;
+using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator
 {
@@ -95,7 +95,7 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="configuration">The given configuration</param>
         /// <returns>New layer's configurations.</returns>
-        private IEnumerable<ConstructorOutput> CreateConfigurationsOnNewLayer(Configuration configuration)
+        private IEnumerable<ConstructorOutput> CreateConfigurationsOnNewLayer(ConfigurationWrapper configuration)
         {
             return _generatorContext.ConfigurationConstructor.GenerateNewConfigurationObjects(configuration);
         }

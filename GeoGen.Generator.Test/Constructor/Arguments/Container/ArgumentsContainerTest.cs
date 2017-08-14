@@ -22,10 +22,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
                 Id = _lastConfigurationObjectId++
             };
 
-            return new ObjectConstructionArgument(cObject)
-            {
-                Id = cObject.Id
-            };
+            return new ObjectConstructionArgument(cObject);
         }
 
         private static ArgumentsContainer TestArgumentsContainer()

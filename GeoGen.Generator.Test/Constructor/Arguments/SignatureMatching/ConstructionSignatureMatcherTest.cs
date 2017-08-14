@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 // ReSharper disable PossibleNullReferenceException
 
-namespace GeoGen.Generator.Test
+namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
 {
     [TestFixture]
     public class ConstructionSignatureMatcherTest

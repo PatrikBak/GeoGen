@@ -3,12 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
+using GeoGen.Generator.Wrappers;
 
-namespace GeoGen.Generator.Constructor
+namespace GeoGen.Generator.Constructor.Container
 {
     internal class ConstructionsContainer : IConstructionsContainer
     {
-        public IEnumerator<Construction> GetEnumerator()
+        public IEnumerator<ConstructionWrapper> GetEnumerator()
         {
             throw new NotImplementedException();
         }

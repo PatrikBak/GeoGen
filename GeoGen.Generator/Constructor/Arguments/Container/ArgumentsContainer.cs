@@ -27,6 +27,11 @@ namespace GeoGen.Generator.Constructor.Arguments.Container
             _internalSet.Add(arguments);
         }
 
+        public void Clear()
+        {
+            _internalSet.Clear();
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

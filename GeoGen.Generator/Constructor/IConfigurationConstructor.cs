@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Core.Configurations;
+using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator.Constructor
 {
@@ -14,6 +14,6 @@ namespace GeoGen.Generator.Constructor
         /// </summary>
         /// <param name="configuration">The given configuration to be extended.</param>
         /// <returns></returns>
-        IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(Configuration configuration);
+        IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(ConfigurationWrapper configuration);
     }
 }

@@ -4,7 +4,7 @@ using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 {
-    interface IConstructionSignatureMatcher
+    internal interface IConstructionSignatureMatcher
     {
         IReadOnlyList<ConstructionArgument> Match(IConfigurationObjectsIterator iterator, IReadOnlyList<ConstructionParameter> parameters);
     }

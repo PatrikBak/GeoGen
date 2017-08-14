@@ -6,7 +6,7 @@ using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 {
-    class ConstructionSignatureMatcher : IConstructionSignatureMatcher
+    internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {
         public IReadOnlyList<ConstructionArgument> Match(IConfigurationObjectsIterator iterator, IReadOnlyList<ConstructionParameter> parameters)
         {

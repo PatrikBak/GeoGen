@@ -2,8 +2,8 @@
 
 namespace GeoGen.Core.Utilities.Variations
 {
-    public interface IVariationsProvider
+    public interface IVariationsProvider<T>
     {
-        IEnumerable<int[]> GetVariations(int n, int k);
+        IEnumerable<IEnumerable<T>> GetVariations(List<T> list, int numberOfElement);
     }
 }

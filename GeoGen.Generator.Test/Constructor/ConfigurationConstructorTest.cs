@@ -6,6 +6,8 @@ using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.Constructor;
 using GeoGen.Generator.Constructor.Arguments;
+using GeoGen.Generator.Constructor.Container;
+using GeoGen.Generator.Wrappers;
 using Moq;
 using NUnit.Framework;
 
@@ -21,7 +23,7 @@ namespace GeoGen.Generator.Test.Constructor
         private static ConfigurationConstructor TestConstructor(int numberOfConstructions, int numberOfArguments)
         {
             var constructions = Enumerable.Range(1, numberOfConstructions)
-                .Select(i => new Mock<Construction>().Object)
+                .Select(i => new ConstructionWrapper {Construction = new Mock<Construction>().Object})
                 .ToList();
 
             var containerMock = new Mock<IConstructionsContainer>();
@@ -29,7 +31,7 @@ namespace GeoGen.Generator.Test.Constructor
             var container = containerMock.Object;
 
             var generatorMock = new Mock<IArgumentsGenerator>();
-            generatorMock.Setup(g => g.GenerateArguments(It.IsAny<Configuration>(), It.IsAny<Construction>()))
+            generatorMock.Setup(g => g.GenerateArguments(It.IsAny<ConfigurationWrapper>(), It.IsAny<ConstructionWrapper>()))
                 .Returns(() => Enumerable.Range(1, numberOfArguments).Select(i => new List<ConstructionArgument>()));
             var generator = generatorMock.Object;
 
@@ -61,9 +63,10 @@ namespace GeoGen.Generator.Test.Constructor
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var looseObjects = new HashSet<LooseConfigurationObject> { looseObject };
             var configuration = new Configuration(looseObjects, new HashSet<ConstructedConfigurationObject>());
+            var wrapper = new ConfigurationWrapper {Configuration = configuration};
 
             var testConstructor = TestConstructor(numberOfConstructions, argumentsPerConstruction);
-            var count = testConstructor.GenerateNewConfigurationObjects(configuration).Count();
+            var count = testConstructor.GenerateNewConfigurationObjects(wrapper).Count();
 
             Assert.AreEqual(expectedCount, count);
         }

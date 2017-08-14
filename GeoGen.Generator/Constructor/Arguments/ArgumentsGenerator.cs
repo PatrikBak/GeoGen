@@ -1,61 +1,54 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.Constructor.Arguments.Container;
-using GeoGen.Generator.Container;
+using GeoGen.Generator.Constructor.Arguments.SignatureMatching;
+using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator.Constructor.Arguments
 {
     internal class ArgumentsGenerator : IArgumentsGenerator
     {
-        private readonly IConstructionsContainer _constructionsContainer;
+        private readonly ISignaturesCombinator _signaturesCombinator;
 
-        private readonly IConfigurationContainer _configurationContainer;
+        private readonly IConfigurationObjectsIterator _configurationObjectsIterator;
+
+        private readonly IConstructionSignatureMatcher _constructionSignatureMatcher;
 
         private readonly IArgumentsContainer _argumentsContainer;
 
-        private readonly IVariationsProvider _variationsProvider;
-
-        public ArgumentsGenerator(IConstructionsContainer constructionsContainer, IConfigurationContainer configurationContainer, 
-            IArgumentsContainer argumentsContainer, IVariationsProvider variationsProvider)
+        public IEnumerable<IReadOnlyList<ConstructionArgument>> GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
-            _constructionsContainer = constructionsContainer;
-            _configurationContainer = configurationContainer;
-            _argumentsContainer = argumentsContainer;
-            _variationsProvider = variationsProvider;
-        }
-
-        public IEnumerable<IReadOnlyList<ConstructionArgument>> GenerateArguments(Configuration configuration, Construction construction)
-        {
-            var objectTypeToObjectsMap = _configurationContainer.GetObjectTypeToObjectsMap(configuration);
-            var objectTypeToCountsMap = _constructionsContainer.GetObjectTypeToCountsMap(construction);
-
-            if (!CanWePerformConstruction(objectTypeToCountsMap, objectTypeToObjectsMap))
+            if (!CanWePerformConstruction(configuration, construction))
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
-            
+            var parameters = construction.Construction.ConstructionParameters;
+            _argumentsContainer.Clear();
 
-            return null;
+            foreach (var dictonaryForMatcher in _signaturesCombinator.Combine(configuration, construction))
+            {
+                _configurationObjectsIterator.Initialize(dictonaryForMatcher);
+
+                var arguments = _constructionSignatureMatcher.Match(_configurationObjectsIterator, parameters);
+
+                _argumentsContainer.Add(arguments);
+            }
+
+            return _argumentsContainer;
         }
 
         /// <summary>
         /// Returns if we can perform the currently examined construction according to
         /// the given dictonaries.
         /// </summary>
-        /// <param name="objectTypeToCountsMap">The object type to needeed count dictionary.</param>
-        /// <param name="objectTypeToObjectsMap">The object type to all objects of given type dictionary.</param>
         /// <returns>true, if there is no object type (such as Point) from which we have fewer
         /// objects than we need to construction.</returns>
-        private static bool CanWePerformConstruction(IReadOnlyDictionary<ConfigurationObjectType, int> objectTypeToCountsMap, 
-            IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> objectTypeToObjectsMap)
+        private static bool CanWePerformConstruction(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
-            foreach (var pair in objectTypeToCountsMap)
+            foreach (var pair in construction.ObjectTypesToNeededCount)
             {
                 var numberOfElementsInArguments = pair.Value;
-                var realObjects = objectTypeToObjectsMap[pair.Key];
+                var realObjects = configuration.ObjectTypeToObjects[pair.Key];
                 var numberOfRealObjects = realObjects.Count;
 
                 // if there are more neeed arguments than available objects, 

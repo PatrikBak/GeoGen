@@ -17,7 +17,7 @@ namespace GeoGen.Generator.Handler
 
         public IEnumerable<GeneratorOutput> GenerateFinalOutput()
         {
-            return _configurationContainer.Select(c => new GeneratorOutput(c));
+            return _configurationContainer.Select(c => new GeneratorOutput(c.Configuration));
         }
     }
 }

@@ -1,14 +1,15 @@
 ﻿using GeoGen.Core.Configurations;
+using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator.Constructor
 {
     internal class ConstructorOutput
     {
-        public Configuration InitialConfiguration { get; }
+        public ConfigurationWrapper InitialConfiguration { get; }
 
         public ConstructedConfigurationObject ConstructedObject { get; }
 
-        public ConstructorOutput(Configuration initialConfiguration, ConstructedConfigurationObject constructedObject)
+        public ConstructorOutput(ConfigurationWrapper initialConfiguration, ConstructedConfigurationObject constructedObject)
         {
             InitialConfiguration = initialConfiguration;
             ConstructedObject = constructedObject;
