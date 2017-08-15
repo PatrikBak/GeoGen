@@ -2,6 +2,7 @@
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities.ArgumentsToString;
 using GeoGen.Generator.Constructor.Arguments.Container;
 using NUnit.Framework;
 
@@ -25,7 +26,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
         [Test]
         public void Test_Container_One_Set_Two_Elements()
         {
-            var container = new ArgumentsContainer();
+            var container = new ArgumentsContainer(new ArgumentToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -42,7 +43,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
         [Test]
         public void Test_Container_One_Element_And_Two_Elements_Set()
         {
-            var container = new ArgumentsContainer();
+            var container = new ArgumentsContainer(new ArgumentToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -62,7 +63,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
         [Test]
         public void Test_Container_Two_Elements_Sets_Of_Size_Two()
         {
-            var container = new ArgumentsContainer();
+            var container = new ArgumentsContainer(new ArgumentToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();

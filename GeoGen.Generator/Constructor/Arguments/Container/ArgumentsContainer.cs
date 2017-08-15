@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities.ArgumentsToString;
 
 namespace GeoGen.Generator.Constructor.Arguments.Container
 {
@@ -11,6 +12,15 @@ namespace GeoGen.Generator.Constructor.Arguments.Container
         private readonly List<IReadOnlyList<ConstructionArgument>> _distinctArguments = new List<IReadOnlyList<ConstructionArgument>>();
 
         private readonly HashSet<string> _argumentsStringHashes = new HashSet<string>();
+
+        private readonly IArgumentToStringProvider _argumentToStringProvider;
+
+        private static readonly Func<ConfigurationObject, string> ObjectToString = o => o.Id.ToString();
+
+        public ArgumentsContainer(IArgumentToStringProvider argumentToStringProvider)
+        {
+            _argumentToStringProvider = argumentToStringProvider;
+        }
 
         public IEnumerator<IReadOnlyList<ConstructionArgument>> GetEnumerator()
         {
@@ -24,30 +34,10 @@ namespace GeoGen.Generator.Constructor.Arguments.Container
 
         public void Add(IReadOnlyList<ConstructionArgument> arguments)
         {
-            if (_argumentsStringHashes.Add(CreateStringHash(arguments)))
+            if (_argumentsStringHashes.Add(_argumentToStringProvider.ConvertToString(arguments, ",", ObjectToString)))
             {
                 _distinctArguments.Add(arguments);
             }
-        }
-
-        private static string CreateStringHash(IReadOnlyList<ConstructionArgument> arguments)
-        {
-            return string.Join(", ", arguments.Select(ArgToString));
-        }
-
-        private static string ArgToString(ConstructionArgument argument)
-        {
-            if (argument is ObjectConstructionArgument objectArgument)
-            {
-                return objectArgument.PassedObject.Id.ToString();
-            }
-
-            var setArgument = argument as SetConstructionArgument ?? throw new NullReferenceException();
-
-            var individualArgs = setArgument.PassedArguments.Select(ArgToString).ToList();
-            individualArgs.Sort();
-
-            return $"{{{string.Join(",", individualArgs)}}}";
         }
 
         public void Clear()

@@ -9,11 +9,14 @@ namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 {
     internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {
-        private IReadOnlyDictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>> _objectTypeToObjects;
+        private IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> _objectTypeToObjects;
 
-        public void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>> objectTypeToObjects)
+        private Dictionary<ConfigurationObjectType, int> _currentIndices;
+
+        public void Initialize(IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> objectTypeToObjects)
         {
             _objectTypeToObjects = objectTypeToObjects;
+            _currentIndices = objectTypeToObjects.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
         }
 
         public IReadOnlyList<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters)
@@ -48,12 +51,7 @@ namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 
         private ConfigurationObject Next(ConfigurationObjectType type)
         {
-            var enumerator = _objectTypeToObjects[type];
-
-            if (!enumerator.MoveNext())
-                throw new Exception("Incorrect call");
-
-            return enumerator.Current;
+            return _objectTypeToObjects[type][_currentIndices[type]++];
         }
     }
 }

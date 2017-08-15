@@ -62,7 +62,6 @@
     <Compile Include="Utilities\EnumerableExtensionsTest.cs" />
     <Compile Include="Utilities\HashCodeUtilitiesTest.cs" />
     <Compile Include="Utilities\ListEqualityComparerTest.cs" />
-    <Compile Include="Utilities\Variations\SubsetsGeneratorTest.cs" />
     <Compile Include="Utilities\Variations\VariationsProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>

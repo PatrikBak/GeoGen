@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
@@ -20,12 +18,11 @@ namespace GeoGen.Generator.Constructor.Arguments
 
         private readonly IVariationsProvider<ConfigurationObject> _variationsProvider;
 
-        private readonly ICombinator<ConfigurationObjectType, IEnumerator<ConfigurationObject>> _combinator;
+        private readonly ICombinator<ConfigurationObjectType, List<ConfigurationObject>> _combinator;
 
-        public ArgumentsGenerator(ICombinator<ConfigurationObjectType, IEnumerator<ConfigurationObject>> combinator,
-                                  IConstructionSignatureMatcher constructionSignatureMatcher,
-                                  IVariationsProvider<ConfigurationObject> variationsProvider,
-                                  IArgumentsContainer argumentsContainer)
+        public ArgumentsGenerator(ICombinator<ConfigurationObjectType, List<ConfigurationObject>> combinator,
+            IConstructionSignatureMatcher constructionSignatureMatcher, IVariationsProvider<ConfigurationObject> variationsProvider,
+            IArgumentsContainer argumentsContainer)
         {
             _constructionSignatureMatcher = constructionSignatureMatcher;
             _argumentsContainer = argumentsContainer;
@@ -40,56 +37,32 @@ namespace GeoGen.Generator.Constructor.Arguments
             if (!CanWePerformConstruction(configuration, construction))
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
-            var s2 = new Stopwatch();
-            s2.Start();
-
             var dictionaryForCombinator = configuration.ObjectTypeToObjects.Where
             (
                 pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
-            ).
-            ToDictionary
+            ).ToDictionary
             (
                 keyValue => keyValue.Key,
-                keyValue => _variationsProvider.GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
-                                               .Select(variation => variation.GetEnumerator())
+                keyValue => _variationsProvider
+                                .GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
+                                .Select(variation => variation.ToList())
             );
-            s2.Stop();
-            Console.WriteLine($"Variations: {s2.ElapsedMilliseconds}");
 
             _argumentsContainer.Clear();
 
-            var stopWatch = new Stopwatch();
-            var matchingTime = 0L;
-            var calls = 0;
-            var s = new Stopwatch();
-            var m2 = 0L;
-
             foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))
             {
-                calls++;
-                stopWatch.Start();
                 _constructionSignatureMatcher.Initialize(dictonaryForMatcher);
 
                 var parameters = construction.Construction.ConstructionParameters;
+                {
+                    var arguments = _constructionSignatureMatcher.Match(parameters);
 
-                var arguments = _constructionSignatureMatcher.Match(parameters);
-                matchingTime += stopWatch.ElapsedMilliseconds;
-                stopWatch.Reset();
-
-                s.Start();
-                _argumentsContainer.Add(arguments);
-                m2 += s.ElapsedMilliseconds;
-                s.Reset();
+                    _argumentsContainer.Add(arguments);
+                }
             }
 
-            var hm =  _argumentsContainer.ToList();
-
-            Console.WriteLine($"Calls: {calls}");
-            Console.WriteLine($"Matching: {matchingTime}");
-            Console.WriteLine($"Container adding: {m2}");
-
-
-            return hm;
+            return _argumentsContainer;
         }
 
         /// <summary>
