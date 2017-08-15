@@ -37,9 +37,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constructor\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructor\Arguments\ArgumentsGenerator.cs" />
-    <Compile Include="Constructor\Arguments\Container\ConstructionArgumentEqualityComparer.cs" />
+    <Compile Include="Constructor\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructor\ConfigurationConstructor.cs" />
     <Compile Include="Constructor\Container\ConstructionsContainer.cs" />
     <Compile Include="Constructor\ConstructorOutput.cs" />

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
@@ -38,6 +40,9 @@ namespace GeoGen.Generator.Constructor.Arguments
             if (!CanWePerformConstruction(configuration, construction))
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
+            var s2 = new Stopwatch();
+            s2.Start();
+
             var dictionaryForCombinator = configuration.ObjectTypeToObjects.Where
             (
                 pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
@@ -48,21 +53,43 @@ namespace GeoGen.Generator.Constructor.Arguments
                 keyValue => _variationsProvider.GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
                                                .Select(variation => variation.GetEnumerator())
             );
+            s2.Stop();
+            Console.WriteLine($"Variations: {s2.ElapsedMilliseconds}");
 
             _argumentsContainer.Clear();
 
+            var stopWatch = new Stopwatch();
+            var matchingTime = 0L;
+            var calls = 0;
+            var s = new Stopwatch();
+            var m2 = 0L;
+
             foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))
             {
+                calls++;
+                stopWatch.Start();
                 _constructionSignatureMatcher.Initialize(dictonaryForMatcher);
 
                 var parameters = construction.Construction.ConstructionParameters;
 
                 var arguments = _constructionSignatureMatcher.Match(parameters);
+                matchingTime += stopWatch.ElapsedMilliseconds;
+                stopWatch.Reset();
 
+                s.Start();
                 _argumentsContainer.Add(arguments);
+                m2 += s.ElapsedMilliseconds;
+                s.Reset();
             }
 
-            return _argumentsContainer;
+            var hm =  _argumentsContainer.ToList();
+
+            Console.WriteLine($"Calls: {calls}");
+            Console.WriteLine($"Matching: {matchingTime}");
+            Console.WriteLine($"Container adding: {m2}");
+
+
+            return hm;
         }
 
         /// <summary>

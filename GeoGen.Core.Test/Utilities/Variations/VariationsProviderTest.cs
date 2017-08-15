@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Utilities.Variations;
 using NUnit.Framework;
@@ -78,15 +80,20 @@ namespace GeoGen.Core.Test.Utilities.Variations
         }
 
         [Test]
-        public void Test_Variantions_8_of_8()
+        public void Test_Variantions_4_of_10()
         {
             var provider = new VariationsProvider<int>(new SubsetsGenerator<int>());
-            var variations = provider.GetVariations(Enumerable.Range(1, 8).ToList(), 8).ToList();
 
-            var allHaveSize10 = variations.All(v => v.Count() == 8);
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            var variations = provider.GetVariations(Enumerable.Range(1, 10).ToList(), 4).ToList();
+            stopwatch.Stop();
+            Console.WriteLine(stopwatch.ElapsedMilliseconds);
 
-            Assert.AreEqual(40320, variations.Count);
-            Assert.IsTrue(allHaveSize10);
+            var allHaveSize4 = variations.All(v => v.Count() == 4);
+
+            Assert.AreEqual(5040, variations.Count);
+            Assert.IsTrue(allHaveSize4);
         }
     }
 }

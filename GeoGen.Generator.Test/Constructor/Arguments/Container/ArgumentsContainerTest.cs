@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities;
 using GeoGen.Generator.Constructor.Arguments.Container;
-using Moq;
 using NUnit.Framework;
 
 namespace GeoGen.Generator.Test.Constructor.Arguments.Container
@@ -25,31 +22,10 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
             return new ObjectConstructionArgument(cObject);
         }
 
-        private static ArgumentsContainer TestArgumentsContainer()
-        {
-            var mock = new Mock<IEqualityComparer<ConfigurationObject>>();
-
-            mock.Setup(comparer => comparer.GetHashCode(It.IsAny<ConfigurationObject>())).Returns(1);
-
-            mock.Setup(comparer => comparer.Equals(It.IsAny<ConfigurationObject>(), It.IsAny<ConfigurationObject>()))
-                .Returns<ConfigurationObject, ConfigurationObject>((o1, o2) => o1.Id == o2.Id);
-
-            var constructionArgumentEqualityComparer = new ConstructionArgumentEqualityComparer(mock.Object);
-            var listEqualityComparer = new ListEqualityComparer<ConstructionArgument>(constructionArgumentEqualityComparer);
-
-            return new ArgumentsContainer(listEqualityComparer);
-        }
-
-        [Test]
-        public void Test_ConstrucorIConfigurationObjectsComparer_Argument_Not_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => { new ArgumentsContainer(null); });
-        }
-
         [Test]
         public void Test_Container_One_Set_Two_Elements()
         {
-            var container = TestArgumentsContainer();
+            var container = new ArgumentsContainer();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -66,7 +42,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
         [Test]
         public void Test_Container_One_Element_And_Two_Elements_Set()
         {
-            var container = TestArgumentsContainer();
+            var container = new ArgumentsContainer();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -86,7 +62,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.Container
         [Test]
         public void Test_Container_Two_Elements_Sets_Of_Size_Two()
         {
-            var container = TestArgumentsContainer();
+            var container = new ArgumentsContainer();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
