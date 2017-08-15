@@ -28,9 +28,10 @@ namespace GeoGen.Generator.Constructor
                 // The arguments generator should take care that arguments are unique.
                 foreach (var arguments in _argumentsGenerator.GenerateArguments(configuration, construction))
                 {
-                    // Create output. This looks nicer than passing a tuple of construction and arguments, IMHO.
+                    // Create an output. This looks nicer than passing a tuple of construction and arguments, IMHO.
                     var constructedObject = new ConstructedConfigurationObject(construction.Construction, arguments);
 
+                    // Create and lazily return a wrapper object for the output
                     yield return new ConstructorOutput(configuration, constructedObject);
                 }
             }

@@ -7,7 +7,7 @@ namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
 {
     internal interface IConstructionSignatureMatcher
     {
-        void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerable<ConfigurationObject>> objectTypeToObjects);
+        void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>> objectTypeToObjects);
 
         IReadOnlyList<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters);
     }

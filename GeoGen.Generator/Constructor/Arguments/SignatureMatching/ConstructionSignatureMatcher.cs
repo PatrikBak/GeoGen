@@ -11,13 +11,9 @@ namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
     {
         private IReadOnlyDictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>> _objectTypeToObjects;
 
-        public void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerable<ConfigurationObject>> objectTypeToObjects)
+        public void Initialize(IReadOnlyDictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>> objectTypeToObjects)
         {
-            _objectTypeToObjects = objectTypeToObjects.ToDictionary
-            (
-                keyValue => keyValue.Key,
-                keyValue => keyValue.Value.GetEnumerator()
-            );
+            _objectTypeToObjects = objectTypeToObjects;
         }
 
         public IReadOnlyList<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters)

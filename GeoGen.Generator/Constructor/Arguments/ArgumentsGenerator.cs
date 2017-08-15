@@ -18,11 +18,12 @@ namespace GeoGen.Generator.Constructor.Arguments
 
         private readonly IVariationsProvider<ConfigurationObject> _variationsProvider;
 
-        private readonly ICombinator<ConfigurationObjectType, IEnumerable<ConfigurationObject>> _combinator;
+        private readonly ICombinator<ConfigurationObjectType, IEnumerator<ConfigurationObject>> _combinator;
 
-        public ArgumentsGenerator(ICombinator<ConfigurationObjectType, IEnumerable<ConfigurationObject>> combinator,
-            IConstructionSignatureMatcher constructionSignatureMatcher, IVariationsProvider<ConfigurationObject> variationsProvider,
-            IArgumentsContainer argumentsContainer)
+        public ArgumentsGenerator(ICombinator<ConfigurationObjectType, IEnumerator<ConfigurationObject>> combinator,
+                                  IConstructionSignatureMatcher constructionSignatureMatcher,
+                                  IVariationsProvider<ConfigurationObject> variationsProvider,
+                                  IArgumentsContainer argumentsContainer)
         {
             _constructionSignatureMatcher = constructionSignatureMatcher;
             _argumentsContainer = argumentsContainer;
@@ -37,10 +38,15 @@ namespace GeoGen.Generator.Constructor.Arguments
             if (!CanWePerformConstruction(configuration, construction))
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
-            var dictionaryForCombinator = configuration.ObjectTypeToObjects.ToDictionary
+            var dictionaryForCombinator = configuration.ObjectTypeToObjects.Where
+            (
+                pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
+            ).
+            ToDictionary
             (
                 keyValue => keyValue.Key,
                 keyValue => _variationsProvider.GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
+                                               .Select(variation => variation.GetEnumerator())
             );
 
             _argumentsContainer.Clear();
@@ -70,6 +76,10 @@ namespace GeoGen.Generator.Constructor.Arguments
             foreach (var pair in construction.ObjectTypesToNeededCount)
             {
                 var numberOfElementsInArguments = pair.Value;
+
+                if (!configuration.ObjectTypeToObjects.ContainsKey(pair.Key))
+                    return false;
+
                 var realObjects = configuration.ObjectTypeToObjects[pair.Key];
                 var numberOfRealObjects = realObjects.Count;
 

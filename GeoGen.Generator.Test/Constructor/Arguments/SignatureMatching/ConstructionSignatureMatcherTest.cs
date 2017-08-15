@@ -27,7 +27,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
             var id = 1;
             var matcher = new ConstructionSignatureMatcher();
 
-            matcher.Initialize(new Dictionary<ConfigurationObjectType, IEnumerable<ConfigurationObject>>
+            matcher.Initialize(new Dictionary<ConfigurationObjectType, IEnumerator<ConfigurationObject>>
             {
                 {
                     ConfigurationObjectType.Point, new List<ConfigurationObject>
@@ -37,7 +37,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
                         NextObject(id++),
                         NextObject(id++),
                         NextObject(id)
-                    }
+                    }.GetEnumerator()
                 }
             });
 
