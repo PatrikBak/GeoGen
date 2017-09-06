@@ -6,7 +6,7 @@ namespace GeoGen.Core.Constructions
 {
     /// <summary>
     /// Represents a construction that we use to add <see cref="ConstructedConfigurationObject"/> to a <see cref="Configuration"/>.
-    /// It's given by the signature, which is a list of <see cref="ConstructionParameter"/>, and the outut type 
+    /// It's given by the signature, which is a list of <see cref="ConstructionParameter"/>, and the output type 
     /// of <see cref="ConfigurationObjectType"/>.
     /// </summary>
     public abstract class Construction

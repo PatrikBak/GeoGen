@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Generator;
 using GeoGen.Generator.Constructor;
 using GeoGen.Generator.Container;
 

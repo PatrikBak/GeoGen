@@ -11,7 +11,7 @@ namespace GeoGen.Core.Utilities
         /// <summary>
         /// Sets new items to the collection.
         /// </summary>
-        /// <typeparam name="T">The type</typeparam>
+        /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collection.</param>
         /// <param name="newItems">The new items to be set.</param>
         public static void SetItems<T>(this ICollection<T> collection, IEnumerable<T> newItems)

@@ -5,15 +5,16 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Core.Configurations
 {
     /// <summary>
-    /// Represents a configuration of geometrical object. It consists of two sets of configuration objects, 
-    /// <see cref="LooseConfigurationObject"/> and <see cref="ConstructedConfigurationObject"/>. 
+    /// Represents a configuration of geometrical objects. It consists of a set of  
+    /// <see cref="LooseConfigurationObject"/> and a list of <see cref="ConstructedConfigurationObject"/>. 
+    /// The constructed objects are supposed to be ordered so that it's possible to construct them in that order.
     /// </summary>
     public class Configuration
     {
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the ID of this configuration. 
+        /// Gets or sets the ID of this configuration.
         /// </summary>
         public int Id { get; set; }
 
@@ -23,9 +24,10 @@ namespace GeoGen.Core.Configurations
         public HashSet<LooseConfigurationObject> LooseObjects { get; }
 
         /// <summary>
-        /// Gets the set of constructed configuration objects within this configuration.
+        /// Gets the list of constructed configuration objects within this configuration. 
+        /// There're supposed be ordered so that it's possible to construct them in that order.
         /// </summary>
-        public HashSet<ConstructedConfigurationObject> ConstructedObjects { get; }
+        public List<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         #endregion
 
@@ -35,8 +37,8 @@ namespace GeoGen.Core.Configurations
         /// Constructs a new configuration consisting of given configuration objects. 
         /// </summary>
         /// <param name="looseObjects">The hash set of loose configuration objects.</param>
-        /// <param name="constructedObjects">The hash set of constructed configuration objects.</param>
-        public Configuration(HashSet<LooseConfigurationObject> looseObjects, HashSet<ConstructedConfigurationObject> constructedObjects)
+        /// <param name="constructedObjects">The list constructed configuration objects.</param>
+        public Configuration(HashSet<LooseConfigurationObject> looseObjects, List<ConstructedConfigurationObject> constructedObjects)
         {
             if (looseObjects == null)
                 throw new ArgumentNullException(nameof(looseObjects));

@@ -62,7 +62,7 @@ namespace GeoGen.Generator.Test.Constructor
         {
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var looseObjects = new HashSet<LooseConfigurationObject> { looseObject };
-            var configuration = new Configuration(looseObjects, new HashSet<ConstructedConfigurationObject>());
+            var configuration = new Configuration(looseObjects, new List<ConstructedConfigurationObject>());
             var wrapper = new ConfigurationWrapper {Configuration = configuration};
 
             var testConstructor = TestConstructor(numberOfConstructions, argumentsPerConstruction);

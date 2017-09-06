@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Utilities.Variations;
 using NUnit.Framework;
@@ -12,7 +11,6 @@ namespace GeoGen.Core.Test.Utilities.Variations
     {
         private static IVariationsProvider<int> Provider()
         {
-            //return new VariationsProvider<int>(new SubsetsGenerator<int>());
             return new VariationsProvider<int>();
         }
 
@@ -110,7 +108,42 @@ namespace GeoGen.Core.Test.Utilities.Variations
 
             Assert.AreEqual(720, variations.Count);
             Assert.IsTrue(allHaveSize3);
+        }
 
+        [Test]
+        public void Test_List_Is_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => Provider().GetVariations(null, 42));
+        }
+
+        [Test]
+        public void Test_Is_Not_Empty()
+        {
+            Assert.Throws<ArgumentException>(() => Provider().GetVariations(new List<int>(), 42));
+        }
+
+        [TestCase(-42)]
+        [TestCase(-1)]
+        [TestCase(0)]
+        public void Test_Number_Of_Elements_Is_At_Least_One(int count)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => Provider().GetVariations(new List<int> {1, 2}, count));
+        }
+
+        [TestCase(3)]
+        [TestCase(4)]
+        [TestCase(42)]
+        public void Test_Number_Of_Elements_Is_At_Most_Count_Of_List(int count)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() => Provider().GetVariations(new List<int> { 1, 2 }, count));
+        }
+
+        [TestCase(1)]
+        [TestCase(2)]
+        [TestCase(3)]
+        public void Test_Number_Of_Elements_Is_Correct(int count)
+        {
+            Provider().GetVariations(new List<int> {1, 2, 3}, count);
         }
     }
 }

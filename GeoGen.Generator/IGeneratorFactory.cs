@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Core.Generator
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// An abstract factory for creating generators from a generator input.

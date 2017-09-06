@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents the generator service, the key inferface of the Generator module.

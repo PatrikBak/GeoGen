@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities.ArgumentsToString;
 
@@ -14,8 +12,6 @@ namespace GeoGen.Generator.Constructor.Arguments.Container
         private readonly HashSet<string> _argumentsStringHashes = new HashSet<string>();
 
         private readonly IArgumentToStringProvider _argumentToStringProvider;
-
-        private static readonly Func<ConfigurationObject, string> ObjectToString = o => o.Id.ToString();
 
         public ArgumentsContainer(IArgumentToStringProvider argumentToStringProvider)
         {
@@ -34,7 +30,7 @@ namespace GeoGen.Generator.Constructor.Arguments.Container
 
         public void Add(IReadOnlyList<ConstructionArgument> arguments)
         {
-            if (_argumentsStringHashes.Add(_argumentToStringProvider.ConvertToString(arguments, ",", ObjectToString)))
+            if (_argumentsStringHashes.Add(_argumentToStringProvider.ConvertToString(arguments)))
             {
                 _distinctArguments.Add(arguments);
             }

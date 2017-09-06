@@ -13,7 +13,7 @@ namespace GeoGen.Core.Test.Configurations
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
-                var constructedObjects = new HashSet<ConstructedConfigurationObject>();
+                var constructedObjects = new List<ConstructedConfigurationObject>();
                 var configuration = new Configuration(null, constructedObjects);
             });
         }
@@ -35,7 +35,7 @@ namespace GeoGen.Core.Test.Configurations
             Assert.Throws<ArgumentException>(() =>
             {
                 var looseObjects = new HashSet<LooseConfigurationObject>();
-                var constructedObjects = new HashSet<ConstructedConfigurationObject>();
+                var constructedObjects = new List<ConstructedConfigurationObject>();
                 var configuration = new Configuration(looseObjects, constructedObjects);
             });
         }

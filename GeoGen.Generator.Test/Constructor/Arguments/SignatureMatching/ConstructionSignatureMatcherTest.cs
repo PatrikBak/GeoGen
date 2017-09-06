@@ -79,9 +79,9 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
 
             Assert.AreEqual(1, match.Count);
             var set = match[0] as SetConstructionArgument ?? throw new NullReferenceException();
-            Assert.AreEqual(2, set.PassedArguments.Count);
+            Assert.AreEqual(2, set.PassableArguments.Count);
 
-            bool Contains(int id) => set.PassedArguments.Any(e => (e as ObjectConstructionArgument).PassedObject.Id == id);
+            bool Contains(int id) => set.PassableArguments.Any(e => (e as ObjectConstructionArgument).PassedObject.Id == id);
 
             Assert.IsTrue(Contains(1));
             Assert.IsTrue(Contains(2));
@@ -106,14 +106,14 @@ namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
             var match = matcher.Match(midpointParams);
 
             Assert.AreEqual(1, match.Count);
-            var sets = (match[0] as SetConstructionArgument).PassedArguments.ToList();
+            var sets = (match[0] as SetConstructionArgument).PassableArguments.ToList();
             Assert.AreEqual(2, sets.Count);
-            Assert.AreEqual(2, (sets[0] as SetConstructionArgument).PassedArguments.Count);
-            Assert.AreEqual(2, (sets[1] as SetConstructionArgument).PassedArguments.Count);
+            Assert.AreEqual(2, (sets[0] as SetConstructionArgument).PassableArguments.Count);
+            Assert.AreEqual(2, (sets[1] as SetConstructionArgument).PassableArguments.Count);
 
             int Id(int setId, int index)
             {
-                return ((sets[setId] as SetConstructionArgument).PassedArguments.ToList()[index] as ObjectConstructionArgument).PassedObject.Id;
+                return ((sets[setId] as SetConstructionArgument).PassableArguments.ToList()[index] as ObjectConstructionArgument).PassedObject.Id;
             }
 
             Assert.AreEqual(1, Math.Abs(Id(0, 0) - Id(0, 1)));

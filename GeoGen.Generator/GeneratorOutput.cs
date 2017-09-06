@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a generator output. 

@@ -2,7 +2,7 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents an input for generator.

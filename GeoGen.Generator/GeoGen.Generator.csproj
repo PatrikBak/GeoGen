@@ -51,8 +51,12 @@
     <Compile Include="Container\ConfigurationContainer.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="Container\IConfigurationContainer.cs" />
+    <Compile Include="GeneratorInput.cs" />
+    <Compile Include="GeneratorOutput.cs" />
     <Compile Include="Handler\ConfigurationsHandler.cs" />
     <Compile Include="Handler\IConfigurationsHandler.cs" />
+    <Compile Include="IGenerator.cs" />
+    <Compile Include="IGeneratorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Wrappers\ConfigurationWrapper.cs" />
     <Compile Include="Wrappers\ConstructionWrapper.cs" />

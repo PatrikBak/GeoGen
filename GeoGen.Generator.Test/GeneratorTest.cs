@@ -4,7 +4,6 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Generator;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.Constructor;
 using GeoGen.Generator.Container;
@@ -23,7 +22,7 @@ namespace GeoGen.Generator.Test
             // create configurations list containing a single dummy configuration
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
-            var constructedObjects = new HashSet<ConstructedConfigurationObject>();
+            var constructedObjects = new List<ConstructedConfigurationObject>();
             var configuration = new ConfigurationWrapper {Configuration = new Configuration(looseObjects, constructedObjects)};
 
             // mock constructed configuration object

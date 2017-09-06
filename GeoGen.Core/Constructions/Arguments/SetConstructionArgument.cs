@@ -7,7 +7,7 @@ namespace GeoGen.Core.Constructions.Arguments
     /// <summary>
     /// Represents a set of <see cref="ConstructionArgument"/> that is passable as a <see cref="ConstructionParameter"/>.
     /// The type of passed arguments might be a <see cref="ObjectConstructionArgument"/>, or another set of arguments.
-    /// It's size is not supposed to be, since it's either a <see cref="ObjectConstructionArgument"/>, or a set
+    /// It's size is not supposed to be 1, since it's either a <see cref="ObjectConstructionArgument"/>, or a set
     /// within a set (which doesn't make sense in our context). 
     /// </summary>
     public class SetConstructionArgument : ConstructionArgument
@@ -17,26 +17,26 @@ namespace GeoGen.Core.Constructions.Arguments
         /// <summary>
         /// Gets the hash set containing the passed arguments. 
         /// </summary>
-        public HashSet<ConstructionArgument> PassedArguments { get; }
+        public HashSet<ConstructionArgument> PassableArguments { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructs a new set containing arguments passed to a construction.
+        /// Constructs a new set containing arguments passable to a construction.
         /// </summary>
-        /// <param name="passedArguments">The passed arguments.</param>
-        public SetConstructionArgument(HashSet<ConstructionArgument> passedArguments)
+        /// <param name="passableArguments">The passable arguments.</param>
+        public SetConstructionArgument(HashSet<ConstructionArgument> passableArguments)
         {
-            if (passedArguments == null)
-                throw new ArgumentNullException(nameof(passedArguments));
+            if (passableArguments == null)
+                throw new ArgumentNullException(nameof(passableArguments));
 
-            if (passedArguments.Count <= 1)
-                throw new ArgumentOutOfRangeException(nameof(passedArguments), passedArguments.Count,
-                    "Number of passed arguments must be at least two");
+            if (passableArguments.Count <= 1)
+                throw new ArgumentOutOfRangeException(nameof(passableArguments), passableArguments.Count,
+                    "Number of passable arguments must be at least two");
 
-            PassedArguments = passedArguments;
+            PassableArguments = passableArguments;
         }
 
         #endregion

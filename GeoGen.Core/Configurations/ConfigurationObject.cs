@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Core.Configurations
 {
     /// <summary>
-    /// Represents a type of object that can be contained in a <see cref="Configuration"/>.
+    /// Represents an object that can be contained in a <see cref="Configuration"/>.
     /// </summary>
     public abstract class ConfigurationObject
     {

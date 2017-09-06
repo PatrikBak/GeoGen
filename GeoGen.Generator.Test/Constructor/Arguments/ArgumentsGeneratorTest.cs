@@ -29,7 +29,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments
             _currentId = 1;
         }
 
-        private static List<LooseConfigurationObject> Objets(int count, ConfigurationObjectType type)
+        private static List<LooseConfigurationObject> Objects(int count, ConfigurationObjectType type)
         {
             var result = Enumerable.Range(_currentId, count)
                                    .Select(i => new LooseConfigurationObject(type) {Id = i})
@@ -48,6 +48,11 @@ namespace GeoGen.Generator.Test.Constructor.Arguments
             var argumentsContainer = new ArgumentsContainer(new ArgumentToStringProvider());
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainer);
+        }
+
+        private static string TestString(IReadOnlyList<ConstructionArgument> arg)
+        {
+            return new ArgumentToStringProvider(", ").ConvertToString(arg);
         }
 
         private static ConstructionWrapper Midpoint()
@@ -202,13 +207,13 @@ namespace GeoGen.Generator.Test.Constructor.Arguments
 
         private static ConfigurationWrapper Configuration(int npoints, int nlines, int ncircles)
         {
-            var points = Objets(npoints, ConfigurationObjectType.Point);
-            var lines = Objets(nlines, ConfigurationObjectType.Line);
-            var circles = Objets(ncircles, ConfigurationObjectType.Circle);
+            var points = Objects(npoints, ConfigurationObjectType.Point);
+            var lines = Objects(nlines, ConfigurationObjectType.Line);
+            var circles = Objects(ncircles, ConfigurationObjectType.Circle);
 
             var objects = new HashSet<LooseConfigurationObject>(points.Union(lines).Union(circles));
 
-            var configuration = new Configuration(objects, new HashSet<ConstructedConfigurationObject>());
+            var configuration = new Configuration(objects, new List<ConstructedConfigurationObject>());
 
             var map = new Dictionary<ConfigurationObjectType, List<ConfigurationObject>>();
 
@@ -342,12 +347,8 @@ namespace GeoGen.Generator.Test.Constructor.Arguments
             Assert.IsTrue(contains);
         }
 
-        private string TestString(IReadOnlyList<ConstructionArgument> arg)
-        {
-            return new ArgumentToStringProvider().ConvertToString(arg, ", ", o => o.Id.ToString());
-        }
-
         [Test]
+        [Ignore("This is just a temporary speed test.")]
         public void Test_Intersection_Time_With_25_Points()
         {
             var construction = Intersection();
@@ -355,7 +356,7 @@ namespace GeoGen.Generator.Test.Constructor.Arguments
                 
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            TestGenerator().GenerateArguments(configuration, construction).ToList();
             stopwatch.Stop();
             
             Console.WriteLine(stopwatch.ElapsedMilliseconds);

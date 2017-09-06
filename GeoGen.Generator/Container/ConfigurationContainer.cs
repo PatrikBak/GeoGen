@@ -47,7 +47,7 @@ namespace GeoGen.Generator.Container
             var parentConfiguration = constructorOutput.InitialConfiguration.Configuration;
             var constructedObject = constructorOutput.ConstructedObject;
             var constructedObjects = parentConfiguration.ConstructedObjects.Union(constructedObject.SingleItemAsEnumerable());
-            var constructedObjectsSet = new HashSet<ConstructedConfigurationObject>(constructedObjects);
+            var constructedObjectsSet = new List<ConstructedConfigurationObject>(constructedObjects);
             var configuration = new Configuration(parentConfiguration.LooseObjects, constructedObjectsSet);
 
             return new ConfigurationWrapper {Configuration = configuration};

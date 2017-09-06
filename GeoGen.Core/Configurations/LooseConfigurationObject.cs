@@ -1,8 +1,8 @@
 ﻿namespace GeoGen.Core.Configurations
 {
     /// <summary>
-    /// Represents a <see cref="ConfigurationObject"/> that is meants to be a general independent object
-    /// that is passed as an argument to <see cref="Constructions.Construction"/> to create more complex objects, like
+    /// Represents a <see cref="ConfigurationObject"/> that is meant to be a general independent object
+    /// that is passed as an argument to <see cref="Constructions.Construction"/> to create more complex objects of type
     /// <see cref="ConstructedConfigurationObject"/>. It is defined by a <see cref="ConfigurationObjectType"/>.
     /// </summary>
     public class LooseConfigurationObject : ConfigurationObject

@@ -38,15 +38,15 @@ namespace GeoGen.Generator.Constructor.Arguments
                 return Enumerable.Empty<IReadOnlyList<ConstructionArgument>>();
 
             var dictionaryForCombinator = configuration.ObjectTypeToObjects.Where
-            (
-                pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
-            ).ToDictionary
-            (
-                keyValue => keyValue.Key,
-                keyValue => _variationsProvider
+                    (
+                        pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
+                    ).ToDictionary
+                    (
+                        keyValue => keyValue.Key,
+                        keyValue => _variationsProvider
                                 .GetVariations(keyValue.Value, construction.ObjectTypesToNeededCount[keyValue.Key])
                                 .Select(variation => variation.ToList())
-            );
+                    );
 
             _argumentsContainer.Clear();
 
@@ -55,11 +55,10 @@ namespace GeoGen.Generator.Constructor.Arguments
                 _constructionSignatureMatcher.Initialize(dictonaryForMatcher);
 
                 var parameters = construction.Construction.ConstructionParameters;
-                {
-                    var arguments = _constructionSignatureMatcher.Match(parameters);
 
-                    _argumentsContainer.Add(arguments);
-                }
+                var arguments = _constructionSignatureMatcher.Match(parameters);
+
+                _argumentsContainer.Add(arguments);
             }
 
             return _argumentsContainer;
