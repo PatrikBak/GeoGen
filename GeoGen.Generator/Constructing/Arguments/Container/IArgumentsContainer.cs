@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
 
-namespace GeoGen.Generator.Constructor.Arguments.Container
+namespace GeoGen.Generator.Constructing.Arguments.Container
 {
     internal interface IArgumentsContainer : IEnumerable<IReadOnlyList<ConstructionArgument>>
     {

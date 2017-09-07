@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities.ArgumentsToString;
 
-namespace GeoGen.Generator.Constructor.Arguments.Container
+namespace GeoGen.Generator.Constructing.Arguments.Container
 {
     internal class ArgumentsContainer : IArgumentsContainer
     {

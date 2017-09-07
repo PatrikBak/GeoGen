@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
 
-namespace GeoGen.Generator.Wrappers
+namespace GeoGen.Generator.Constructing
 {
     internal class ConstructionWrapper
     {
-        public Construction Construction { get; set; }
+        public Core.Constructions.Construction Construction { get; set; }
 
         public IReadOnlyDictionary<ConfigurationObjectType, int> ObjectTypesToNeededCount { get; set; }
     }

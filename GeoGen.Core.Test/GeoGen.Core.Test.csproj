@@ -54,8 +54,8 @@
     <Compile Include="Configurations\ConstructedConfigurationObjectTest.cs" />
     <Compile Include="Constructions\Arguments\ObjectConstructionArgumentTest.cs" />
     <Compile Include="Constructions\Arguments\SetConstructionArgumentTest.cs" />
-    <Compile Include="Constructions\Parameters\SetConstructionParameterTest.cs" />
     <Compile Include="Constructions\ComposedConstructionTest.cs" />
+    <Compile Include="Constructions\Parameters\SetConstructionParameterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
     <Compile Include="Utilities\CollectionExtensionsTest.cs" />

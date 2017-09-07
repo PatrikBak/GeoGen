@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Generator.Wrappers;
+using GeoGen.Generator.ConfigurationHandling;
 
-namespace GeoGen.Generator.Constructor
+namespace GeoGen.Generator.Constructing
 {
     /// <summary>
     /// Represents an interface that performs construction operations to obtian new configurations

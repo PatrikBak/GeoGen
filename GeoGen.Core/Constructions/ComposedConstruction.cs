@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Core.Utilities;
 
 namespace GeoGen.Core.Constructions
 {
@@ -15,40 +17,68 @@ namespace GeoGen.Core.Constructions
         #region Public properties
 
         /// <summary>
-        /// Gets the constructed configuration object that represents a configuration output. 
+        /// Gets the parental configuration of the construction.
         /// </summary>
-        public ConstructedConfigurationObject ConfigurationOutput { get; }
+        public Configuration ParentalConfiguration { get; }
 
         /// <summary>
-        /// Gets the construction that was performed to obtain the final configuration output. 
+        /// Gets the constructed configuration objects that represents a configuration output. 
         /// </summary>
-        public Construction OutputConstruction => ConfigurationOutput.Construction;
+        public List<ConstructedConfigurationObject> ConstructionOutput { get; }
 
         #endregion
 
         #region Construction properties
 
         /// <summary>
-        /// Gets the output type of this construction (such as Point, Line...).
-        /// </summary>
-        public override ConfigurationObjectType OutputType => OutputConstruction.OutputType;
-
-        /// <summary>
         /// Gets the construction signature, i.e. the unmodifiable list of construction parameters.
         /// </summary>
-        public override IReadOnlyList<ConstructionParameter> ConstructionParameters => OutputConstruction.ConstructionParameters;
+        public override IReadOnlyList<ConstructionParameter> ConstructionParameters { get; }
+
+        /// <summary>
+        /// Gets the construction output signature, i.e. the unmodifiable list of configuration object types.
+        /// </summary>
+        public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructs a new composed construction given by the constructed configuration object representing the output. 
+        /// Constructs a new composed construction from a given parental configuration, a set
+        /// of indices of objects that are supposed be the output of the construction signature, 
+        /// and a signature of the construction. It must be possible to pass the loose configuration
+        /// objects of the parental configuration to the signature. This may or may not be order-depedant.
+        /// (the incenter of a triangle is order-independant, unlike an excenter). 
         /// </summary>
-        /// <param name="configurationOutput">The configuration output</param>
-        public ComposedConstruction(ConstructedConfigurationObject configurationOutput)
+        public ComposedConstruction(Configuration parentalConfiguration, ISet<int> outputObjectsIndices,
+            IReadOnlyList<ConstructionParameter> constructionParameters)
         {
-            ConfigurationOutput = configurationOutput ?? throw new ArgumentNullException(nameof(configurationOutput));
+            ParentalConfiguration = parentalConfiguration ?? throw new ArgumentNullException(nameof(parentalConfiguration));
+
+            if (outputObjectsIndices == null)
+                throw new ArgumentNullException(nameof(outputObjectsIndices));
+
+            if (outputObjectsIndices.Empty())
+                throw new ArgumentException("Output object indices can't be empty.");
+
+            try
+            {
+                ConstructionOutput = outputObjectsIndices.Select(i => parentalConfiguration.ConstructedObjects[i]).ToList();
+            }
+            catch (ArgumentOutOfRangeException)
+            {
+                throw new ArgumentException("Incorrcect indices, can't retrieve constructed objects.");
+            }
+
+            OutputTypes = ConstructionOutput.Select(o => o.ObjectType).ToList();
+
+            ConstructionParameters = constructionParameters ?? throw new ArgumentNullException(nameof(constructionParameters));
+
+            if (constructionParameters.Empty())
+                throw new ArgumentException("Construction parameters can't be empty");
+
+            // TODO: Debug check of correctess or the signature
         }
 
         #endregion

@@ -3,10 +3,10 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities.ArgumentsToString;
-using GeoGen.Generator.Constructor.Arguments.Container;
+using GeoGen.Generator.Constructing.Arguments.Container;
 using NUnit.Framework;
 
-namespace GeoGen.Generator.Test.Constructor.Arguments.Container
+namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 {
     [TestFixture]
     public class ArgumentsContainerTest

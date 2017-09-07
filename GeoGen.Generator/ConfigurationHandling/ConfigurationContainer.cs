@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.Constructor;
-using GeoGen.Generator.Wrappers;
+using GeoGen.Generator.Constructing;
 
-namespace GeoGen.Generator.Container
+namespace GeoGen.Generator.ConfigurationHandling
 {
     internal class ConfigurationContainer : IConfigurationContainer
     {
@@ -45,7 +44,7 @@ namespace GeoGen.Generator.Container
         private static ConfigurationWrapper CreateConfiguration(ConstructorOutput constructorOutput)
         {
             var parentConfiguration = constructorOutput.InitialConfiguration.Configuration;
-            var constructedObject = constructorOutput.ConstructedObject;
+            var constructedObject = constructorOutput.ConstructedObjects[0];
             var constructedObjects = parentConfiguration.ConstructedObjects.Union(constructedObject.SingleItemAsEnumerable());
             var constructedObjectsSet = new List<ConstructedConfigurationObject>(constructedObjects);
             var configuration = new Configuration(parentConfiguration.LooseObjects, constructedObjectsSet);

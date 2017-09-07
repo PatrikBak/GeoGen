@@ -4,11 +4,11 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.Constructor.Arguments.Container;
-using GeoGen.Generator.Constructor.Arguments.SignatureMatching;
-using GeoGen.Generator.Wrappers;
+using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.Constructing.Arguments.Container;
+using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 
-namespace GeoGen.Generator.Constructor.Arguments
+namespace GeoGen.Generator.Constructing.Arguments
 {
     internal class ArgumentsGenerator : IArgumentsGenerator
     {

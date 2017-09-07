@@ -5,10 +5,9 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.Constructor;
-using GeoGen.Generator.Container;
+using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Handler;
-using GeoGen.Generator.Wrappers;
 using Moq;
 using NUnit.Framework;
 
@@ -27,9 +26,12 @@ namespace GeoGen.Generator.Test
 
             // mock constructed configuration object
             var mock = new Mock<Construction>();
+            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
+            mock.Setup(c => c.OutputTypes).Returns(outputTypes);
             var constructon = mock.Object;
-            var constructedConfigurationObject = new ConstructedConfigurationObject(constructon,
-                new List<ConstructionArgument> {new ObjectConstructionArgument(looseObject)});
+            var constructedConfigurationObject = new ConstructedConfigurationObject(
+                constructon,
+                new List<ConstructionArgument> {new ObjectConstructionArgument(looseObject)}, 0);
 
             var configurations = new List<ConfigurationWrapper> {configuration};
 
@@ -38,22 +40,25 @@ namespace GeoGen.Generator.Test
             var containterMock = new Mock<IConfigurationContainer>();
             containterMock.Setup(c => c.GetEnumerator()).Returns(() => configurations.GetEnumerator());
             containterMock.Setup(c => c.AddLayer(It.IsAny<List<ConstructorOutput>>()))
-                .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
+                    .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
             var configurationContainer = containterMock.Object;
 
             // setup configuration handler mock that converts all generated configurations 
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput())
-                .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput(c.Configuration)));
+                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput(c.Configuration)));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating
             // the provided one by the given number of times
             var configurationConstructorMock = new Mock<IConfigurationConstructor>();
             configurationConstructorMock.Setup(c => c.GenerateNewConfigurationObjects(It.IsAny<ConfigurationWrapper>()))
-                .Returns<ConfigurationWrapper>(c => Enumerable.Repeat(configuration, constructorDuplicationCount)
-                    .Select(cc => new ConstructorOutput(configuration, constructedConfigurationObject)));
+                    .Returns<ConfigurationWrapper>(
+                        c => Enumerable.Repeat(configuration, constructorDuplicationCount).Select(
+                            cc => new ConstructorOutput(
+                                configuration,
+                                new List<ConstructedConfigurationObject> {constructedConfigurationObject})));
             var congigurationConstructer = configurationConstructorMock.Object;
 
             return new Generator(configurationContainer, congigurationConstructer, configurationHandler, iterations);

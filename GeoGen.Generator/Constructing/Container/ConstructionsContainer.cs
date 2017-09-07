@@ -2,10 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Generator.Wrappers;
 
-namespace GeoGen.Generator.Constructor.Container
+namespace GeoGen.Generator.Constructing.Container
 {
     internal class ConstructionsContainer : IConstructionsContainer
     {
@@ -14,7 +12,7 @@ namespace GeoGen.Generator.Constructor.Container
             throw new NotImplementedException();
         }
 
-        public Dictionary<ConfigurationObjectType, int> GetObjectTypeToCountsMap(Construction construction)
+        public Dictionary<ConfigurationObjectType, int> GetObjectTypeToCountsMap(Core.Constructions.Construction construction)
         {
             throw new NotImplementedException();
         }

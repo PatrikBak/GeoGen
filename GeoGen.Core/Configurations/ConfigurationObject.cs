@@ -12,23 +12,14 @@
         /// </summary>
         public int Id { get; set; }
 
+        #endregion
+
+        #region Abstract properties
+
         /// <summary>
         /// Gets the actual geometrical type of this object (such as Point, Line...)
         /// </summary>
-        public ConfigurationObjectType ObjectType { get; }
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructs a new configuration object of a given type (such as Point, Line...)
-        /// </summary>
-        /// <param name="objectType">The configuration object type</param>
-        protected ConfigurationObject(ConfigurationObjectType objectType)
-        {
-            ObjectType = objectType;
-        }
+        public abstract ConfigurationObjectType ObjectType { get; }
 
         #endregion
     }

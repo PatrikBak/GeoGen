@@ -7,14 +7,24 @@
     /// </summary>
     public class LooseConfigurationObject : ConfigurationObject
     {
+        #region Configuration object properties
+
+        /// <summary>
+        /// Gets the actual geometrical type of this object (such as Point, Line...)
+        /// </summary>
+        public override ConfigurationObjectType ObjectType { get; }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
         /// Constructs a new loose configuration object of a given type (such as Point, Line...)
         /// </summary>
         /// <param name="objectType">The configuration object type</param>
-        public LooseConfigurationObject(ConfigurationObjectType objectType) : base(objectType)
+        public LooseConfigurationObject(ConfigurationObjectType objectType)
         {
+            ObjectType = objectType;
         }
 
         #endregion

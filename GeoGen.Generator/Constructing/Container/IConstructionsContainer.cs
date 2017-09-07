@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Generator.Wrappers;
 
-namespace GeoGen.Generator.Constructor.Container
+namespace GeoGen.Generator.Constructing.Container
 {
     internal interface IConstructionsContainer : IEnumerable<ConstructionWrapper>
     {

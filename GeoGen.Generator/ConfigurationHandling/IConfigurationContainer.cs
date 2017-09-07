@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.Constructor;
-using GeoGen.Generator.Wrappers;
+using GeoGen.Generator.Constructing;
 
-namespace GeoGen.Generator.Container
+namespace GeoGen.Generator.ConfigurationHandling
 {
     /// <summary>
     /// Represents a container for all generated configurations. It's meant to be the processor

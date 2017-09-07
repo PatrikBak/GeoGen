@@ -8,7 +8,7 @@
         #region Public abstract properties
 
         /// <summary>
-        /// Gets the type of tis predefined construction.
+        /// Gets the type of this predefined construction.
         /// </summary>
         public abstract PredefinedConstructionType ConstructionType { get; }
 

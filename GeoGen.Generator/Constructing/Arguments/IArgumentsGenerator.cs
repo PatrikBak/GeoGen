@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Generator.Wrappers;
+using GeoGen.Generator.ConfigurationHandling;
 
-namespace GeoGen.Generator.Constructor.Arguments
+namespace GeoGen.Generator.Constructing.Arguments
 {
     internal interface IArgumentsGenerator
     {

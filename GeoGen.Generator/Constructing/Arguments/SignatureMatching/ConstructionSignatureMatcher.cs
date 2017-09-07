@@ -5,7 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 
-namespace GeoGen.Generator.Constructor.Arguments.SignatureMatching
+namespace GeoGen.Generator.Constructing.Arguments.SignatureMatching
 {
     internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {

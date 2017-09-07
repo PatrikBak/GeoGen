@@ -4,12 +4,12 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Generator.Constructor.Arguments.SignatureMatching;
+using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using NUnit.Framework;
 
 // ReSharper disable PossibleNullReferenceException
 
-namespace GeoGen.Generator.Test.Constructor.Arguments.SignatureMatching
+namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
 {
     [TestFixture]
     public class ConstructionSignatureMatcherTest

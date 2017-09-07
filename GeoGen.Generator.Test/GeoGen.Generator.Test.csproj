@@ -50,10 +50,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Constructor\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
-    <Compile Include="Constructor\Arguments\ArgumentsGeneratorTest.cs" />
-    <Compile Include="Constructor\Arguments\Container\ArgumentsContainerTest.cs" />
-    <Compile Include="Constructor\ConfigurationConstructorTest.cs" />
+    <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
+    <Compile Include="Constructing\Arguments\Container\ArgumentsContainerTest.cs" />
+    <Compile Include="Constructing\ConfigurationConstructorTest.cs" />
     <Compile Include="GeneratorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

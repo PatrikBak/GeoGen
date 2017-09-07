@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Generator.Constructor;
-using GeoGen.Generator.Container;
+using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Handler;
-using GeoGen.Generator.Wrappers;
 
 namespace GeoGen.Generator
 {
@@ -60,7 +59,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IGenerator methods
+        #region IGenerator implementation
 
         /// <summary>
         /// Starts the generation proccess and lazily return the output.
@@ -79,10 +78,6 @@ namespace GeoGen.Generator
             }
         }
 
-        #endregion
-
-        #region Private methods
-
         /// <summary>
         /// Generates the output for the current iteration.
         /// </summary>
@@ -90,8 +85,8 @@ namespace GeoGen.Generator
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
             var newLayerConfigurations = _configurationContainer // paralelize (TODO: Check real perfomance, thread safety)    
-                .AsParallel() // create configurations and merge them
-                .SelectMany(CreateConfigurationsOnNewLayer) // convert to list
+                .AsParallel()                                    // create configurations and merge them
+                .SelectMany(CreateConfigurationsOnNewLayer)      // convert to list
                 .ToList();
 
             // make container aware of the new layer
