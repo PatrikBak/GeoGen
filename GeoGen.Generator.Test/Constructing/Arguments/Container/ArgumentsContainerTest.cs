@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
@@ -21,6 +22,12 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             };
 
             return new ObjectConstructionArgument(cObject);
+        }
+
+        [Test]
+        public void Arguments_To_String_Provider_Cannot_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsContainer(null));
         }
 
         [Test]

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Generator.ConfigurationHandling;
 using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Handler;
 
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="IGenerator"/> service.
+    /// A default implementation of <see cref="IGenerator"/> interface.
     /// </summary>
     internal class Generator : IGenerator
     {
@@ -85,28 +84,18 @@ namespace GeoGen.Generator
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
             var newLayerConfigurations = _configurationContainer // paralelize (TODO: Check real perfomance, thread safety)    
-                .AsParallel()                                    // create configurations and merge them
-                .SelectMany(CreateConfigurationsOnNewLayer)      // convert to list
-                .ToList();
+                    .AsParallel() // create configurations and merge them
+                    .SelectMany(c => _configurationConstructor.GenerateNewConfigurationObjects(c)) // convert to list
+                    .ToList();
 
             // make container aware of the new layer
             _configurationContainer.AddLayer(newLayerConfigurations);
 
             // let the handler handle the container and lazily return the output
-            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput())
+            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(_configurationContainer))
             {
                 yield return generatorOutput;
             }
-        }
-
-        /// <summary>
-        /// Creates configurations on a new layer produces from a given configuration.
-        /// </summary>
-        /// <param name="configuration">The given configuration</param>
-        /// <returns>New layer's configurations.</returns>
-        private IEnumerable<ConstructorOutput> CreateConfigurationsOnNewLayer(ConfigurationWrapper configuration)
-        {
-            return _configurationConstructor.GenerateNewConfigurationObjects(configuration);
         }
 
         #endregion

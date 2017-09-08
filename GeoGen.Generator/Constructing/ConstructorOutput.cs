@@ -4,16 +4,19 @@ using GeoGen.Generator.ConfigurationHandling;
 
 namespace GeoGen.Generator.Constructing
 {
+    /// <summary>
+    /// An internal class represeting the output from a constructor.
+    /// </summary>
     internal class ConstructorOutput
     {
-        public ConfigurationWrapper InitialConfiguration { get; }
+        /// <summary>
+        /// Gets or sets the initial configuration that was extended.
+        /// </summary>
+        public ConfigurationWrapper InitialConfiguration { get; set; }
 
+        /// <summary>
+        /// Gets or set the list of outputed constructed configuration objects.
+        /// </summary>
         public List<ConstructedConfigurationObject> ConstructedObjects { get; set; }
-
-        public ConstructorOutput(ConfigurationWrapper initialConfiguration, List<ConstructedConfigurationObject> constructedObjects)
-        {
-            InitialConfiguration = initialConfiguration;
-            ConstructedObjects = constructedObjects;
-        }
     }
 }

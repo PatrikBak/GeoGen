@@ -5,18 +5,22 @@ using GeoGen.Generator.Constructing;
 namespace GeoGen.Generator.ConfigurationHandling
 {
     /// <summary>
-    /// Represents a container for all generated configurations. It's meant to be the processor
-    /// of symetric configurations. It's supposed to be a part of a single <see cref="IGeneratorContext"/>.
-    /// It implements the <see cref="IEnumerable{T}"/> interface whose generic type is <see cref="ConfigurationWrapper"/>.
+    /// Represents a container for all generated configurations. It's meant to be handle processing
+    /// of symetric configurations. It implements the <see cref="IEnumerable{T}"/> interface whose generic 
+    /// type is <see cref="ConfigurationWrapper"/>.
     /// </summary>
     internal interface IConfigurationContainer : IEnumerable<ConfigurationWrapper>
     {
+        /// <summary>
+        /// Initializes the container with a given initial configuration.
+        /// </summary>
+        /// <param name="initialConfiguration">The initial configuration.</param>
         void Initialize(Configuration initialConfiguration);
 
         /// <summary>
-        /// Adds a new layer of configurations, i.e. the configurations generated in one iteration.
+        /// Processes a new layer of a constructor output. 
         /// </summary>
-        /// <param name="newLayerConfigurations">The enumerable of configurations.</param>
-        void AddLayer(List<ConstructorOutput> newLayerConfigurations);
+        /// <param name="newLayerOutput">The new layer output.</param>
+        void AddLayer(List<ConstructorOutput> newLayerOutput);
     }
 }

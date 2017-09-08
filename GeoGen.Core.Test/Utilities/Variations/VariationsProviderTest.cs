@@ -40,7 +40,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
         public void Test_Variantions_2_of_3()
         {
             var provider = Provider();
-            var variations = provider.GetVariations(new List<int> {1, 2, 3}, 2);
+            var variations = provider.GetVariations(new List<int> {1, 2, 3}, 2).ToList();
 
             var contains = variations.Any
             (
@@ -62,7 +62,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
         public void Test_Variantions_1_of_1()
         {
             var provider = Provider();
-            var variations = provider.GetVariations(new List<int> {1}, 1);
+            var variations = provider.GetVariations(new List<int> {1}, 1).ToList();
 
             var contains = variations.Any
             (

@@ -9,50 +9,86 @@ using GeoGen.Generator.Constructing.Container;
 
 namespace GeoGen.Generator.Constructing
 {
+    /// <summary>
+    /// A default implementation of <see cref="IConfigurationConstructor"/>.
+    /// </summary>
     internal class ConfigurationConstructor : IConfigurationConstructor
     {
+        #region Private fields
+
+        /// <summary>
+        /// The constructions container.
+        /// </summary>
         private readonly IConstructionsContainer _constructionsContainer;
 
+        /// <summary>
+        /// The arguments generator.
+        /// </summary>
         private readonly IArgumentsGenerator _argumentsGenerator;
 
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new configuration construction from a construction containerand an arguments generator.
+        /// </summary>
+        /// <param name="constructionsContainer">The construction container.</param>
+        /// <param name="argumentsGenerator">The arguments generator.</param>
         public ConfigurationConstructor(IConstructionsContainer constructionsContainer, IArgumentsGenerator argumentsGenerator)
         {
             _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(argumentsGenerator));
             _argumentsGenerator = argumentsGenerator ?? throw new ArgumentNullException(nameof(argumentsGenerator));
         }
 
-        public IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(ConfigurationWrapper configuration)
+        #endregion
+
+        #region IConfigurationConstructor methods
+
+        /// <summary>
+        /// Performs all possible constructions to a given configution wrapper.
+        /// </summary>
+        /// <param name="configurationWrapper">The given configuration wrapper.</param>
+        /// <returns>The enumerable of constructor output.</returns>
+        public IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(ConfigurationWrapper configurationWrapper)
         {
             // Iterate through all constructions
-            foreach (var construction in _constructionsContainer)
+            foreach (var constructionWrapper in _constructionsContainer)
             {
-                // Take the forbidden arguments for this construction form the configuration wrapper
-                var constructionId = construction.Construction.Id;
-                var forbiddenArguments = configuration.ConstructionIdToForbiddenArguments;
-
                 // A local helper function to check if given arguments should be proccessed further
                 bool ArgumentsAreNotForbidden(IReadOnlyList<ConstructionArgument> arguments)
                 {
+                    var constructionId = constructionWrapper.Construction.Id;
+                    var forbiddenArguments = configurationWrapper.ConstructionIdToForbiddenArguments;
+
                     return !forbiddenArguments.ContainsKey(constructionId) || forbiddenArguments[constructionId].Contains(arguments);
                 }
 
-                // Generate new output
-                var newOutput = _argumentsGenerator // Generate arguments
-                        .GenerateArguments(configuration, construction) // That are not forbidden
-                        .Where(ArgumentsAreNotForbidden) // Cast them to the construction output
+                // Create new output enumerale
+                var newOutput = _argumentsGenerator
+                        // Generate arguments
+                        .GenerateArguments(configurationWrapper, constructionWrapper)
+                        // That are not forbidden
+                        .Where(ArgumentsAreNotForbidden)
+                        // Cast them to the construction output
                         .Select
                         (
                             arguments =>
                             {
-                                var unwrapedConstruction = construction.Construction;
+                                // Unwrap construction
+                                var unwrapedConstruction = constructionWrapper.Construction;
 
-                                // Construct objects 
+                                // Construct objects  with all indices
                                 var constructedObjects = Enumerable.Range(0, unwrapedConstruction.OutputTypes.Count)
                                         .Select(i => new ConstructedConfigurationObject(unwrapedConstruction, arguments, i))
                                         .ToList();
 
                                 // Create and return an output for these objects
-                                return new ConstructorOutput(configuration, constructedObjects);
+                                return new ConstructorOutput
+                                {
+                                    InitialConfiguration = configurationWrapper,
+                                    ConstructedObjects = constructedObjects
+                                };
                             }
                         );
 
@@ -64,5 +100,7 @@ namespace GeoGen.Generator.Constructing
                 }
             }
         }
+
+        #endregion
     }
 }

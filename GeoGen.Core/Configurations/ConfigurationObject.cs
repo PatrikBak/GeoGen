@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets or sets the ID of this configuration object. 
         /// </summary>
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
         #endregion
 

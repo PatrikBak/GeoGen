@@ -16,9 +16,9 @@ namespace GeoGen.Generator.ConfigurationHandling
             _configurations.Clear();
         }
 
-        public void AddLayer(List<ConstructorOutput> newLayerConfigurations)
+        public void AddLayer(List<ConstructorOutput> newLayerOutput)
         {
-            _configurations.SetItems(newLayerConfigurations.Select(CreateConfiguration));
+            _configurations.SetItems(newLayerOutput.Select(CreateConfiguration));
         }
 
         //public Dictionary<ConfigurationObjectType, List<ConfigurationObject>> GetObjectTypeToObjectsMap(Configuration configuration)

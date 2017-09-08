@@ -54,6 +54,7 @@
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerTest.cs" />
     <Compile Include="Constructing\ConfigurationConstructorTest.cs" />
+    <Compile Include="Constructing\Constructing\ConstructionsContainerTest.cs" />
     <Compile Include="GeneratorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -16,7 +16,7 @@ namespace GeoGen.Core.Constructions
         /// <summary>
         /// Gets or sets the ID of this construction. 
         /// </summary>
-        public int Id { get; set; }
+        public virtual int Id { get; set; }
 
         #endregion
 
