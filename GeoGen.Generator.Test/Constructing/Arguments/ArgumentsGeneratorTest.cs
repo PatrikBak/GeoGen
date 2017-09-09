@@ -46,14 +46,14 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var signatureMatcher = new ConstructionSignatureMatcher();
-            var argumentsContainer = new ArgumentsContainer(new ArgumentToStringProvider());
+            var argumentsContainer = new ArgumentsContainer(new ArgumentsToStringProvider());
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainer);
         }
 
         private static string TestString(IReadOnlyList<ConstructionArgument> arg)
         {
-            return new ArgumentToStringProvider(", ").ConvertToString(arg);
+            return new ArgumentsToStringProvider(", ").ConvertToString(arg);
         }
 
         internal static ConstructionWrapper Midpoint()

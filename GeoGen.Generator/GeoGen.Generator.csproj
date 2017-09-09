@@ -37,9 +37,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationHandling\ConfigurationObjectsContainer\IConfigurationObjectContainer.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfgurationObjectToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGenerator.cs" />
-    <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentToStringProvider.cs" />
-    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentToStringProvider.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProvider.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructing\ConfigurationConstructor.cs" />
     <Compile Include="Constructing\Container\ConstructionsContainer.cs" />

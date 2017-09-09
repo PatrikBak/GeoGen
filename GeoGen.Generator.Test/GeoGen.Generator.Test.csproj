@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
@@ -71,6 +72,9 @@
       <Project>{CEFFA970-1BE5-42F8-AF83-A836CF449289}</Project>
       <Name>GeoGen.Generator</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ConfigurationHandling\ConfigurationObjectsContainer\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

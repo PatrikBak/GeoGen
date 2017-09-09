@@ -10,9 +10,9 @@ namespace GeoGen.Core.Test.Utilities.ArgumentsToString
     [TestFixture]
     public class ArgumentsToStringProviderTest
     {
-        public static ArgumentToStringProvider Provider()
+        public static ArgumentsToStringProvider Provider()
         {
-            return new ArgumentToStringProvider(", ");
+            return new ArgumentsToStringProvider(", ");
         }
 
         [Test]

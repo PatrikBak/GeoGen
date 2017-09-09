@@ -10,7 +10,7 @@ namespace GeoGen.Generator.Constructing
     internal class ConstructorOutput
     {
         /// <summary>
-        /// Gets or sets the initial configuration that was extended.
+        /// Gets or sets the initial wrapped configuration that was extended.
         /// </summary>
         public ConfigurationWrapper InitialConfiguration { get; set; }
 

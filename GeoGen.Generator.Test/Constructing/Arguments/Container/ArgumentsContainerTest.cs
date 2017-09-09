@@ -33,7 +33,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Test_Container_One_Set_Two_Elements()
         {
-            var container = new ArgumentsContainer(new ArgumentToStringProvider());
+            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -50,7 +50,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Test_Container_One_Element_And_Two_Elements_Set()
         {
-            var container = new ArgumentsContainer(new ArgumentToStringProvider());
+            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -70,7 +70,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Test_Container_Two_Elements_Sets_Of_Size_Two()
         {
-            var container = new ArgumentsContainer(new ArgumentToStringProvider());
+            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
 
             var a1 = NextArgument();
             var a2 = NextArgument();

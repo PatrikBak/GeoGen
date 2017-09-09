@@ -7,10 +7,10 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
     /// <summary>
-    /// An implementation of <see cref="IArgumentToStringProvider"/>. It uses Id of configuration objects
+    /// An implementation of <see cref="IArgumentsToStringProvider"/>. It uses Id of configuration objects
     /// so it's supposed to be set to the objects inside arguments before use.
     /// </summary>
-    public class ArgumentToStringProvider : IArgumentToStringProvider
+    public class ArgumentsToStringProvider : IArgumentsToStringProvider
     {
         /// <summary>
         /// The default arguments separator.
@@ -27,7 +27,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// This constructor is meant to be used in testing.
         /// </summary>
         /// <param name="separator">The separator.</param>
-        public ArgumentToStringProvider(string separator)
+        public ArgumentsToStringProvider(string separator)
         {
             _separator = separator;
         }
@@ -35,7 +35,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <summary>
         /// Construct an argument to string provider with the default separator.
         /// </summary>
-        public ArgumentToStringProvider()
+        public ArgumentsToStringProvider()
             : this(DefaultSeparator)
         {
         }

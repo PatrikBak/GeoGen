@@ -6,7 +6,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
     /// <summary>
     /// Represents a construction argument list to string converter.
     /// </summary>
-    public interface IArgumentToStringProvider
+    public interface IArgumentsToStringProvider
     {
         /// <summary>
         /// Converts a given list of construction arguments to string. 
