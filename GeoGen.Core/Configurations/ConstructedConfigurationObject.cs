@@ -62,8 +62,6 @@ namespace GeoGen.Core.Configurations
 
             Index = index;
             ObjectType = Construction.OutputTypes[index];
-
-            // TODO: Debug check if the arguments are passable to the construction signature.
         }
 
         #endregion

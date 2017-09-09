@@ -71,6 +71,10 @@
       <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
       <Name>GeoGen.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj">
+      <Project>{CEFFA970-1BE5-42F8-AF83-A836CF449289}</Project>
+      <Name>GeoGen.Generator</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

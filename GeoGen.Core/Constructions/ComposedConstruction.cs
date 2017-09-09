@@ -77,8 +77,6 @@ namespace GeoGen.Core.Constructions
 
             if (constructionParameters.Empty())
                 throw new ArgumentException("Construction parameters can't be empty");
-
-            // TODO: Debug check of correctess or the signature
         }
 
         #endregion

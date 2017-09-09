@@ -45,7 +45,7 @@ namespace GeoGen.Generator.Test
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IConfigurationContainer>()))
-                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput(c.Configuration)));
+                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput {GeneratedConfiguration = c.Configuration}));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating

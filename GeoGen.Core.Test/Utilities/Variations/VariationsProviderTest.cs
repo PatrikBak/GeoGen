@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities.Variations;
 using NUnit.Framework;
 

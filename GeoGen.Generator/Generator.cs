@@ -83,9 +83,12 @@ namespace GeoGen.Generator
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
-            var newLayerConfigurations = _configurationContainer // paralelize (TODO: Check real perfomance, thread safety)    
-                    .AsParallel() // create configurations and merge them
-                    .SelectMany(c => _configurationConstructor.GenerateNewConfigurationObjects(c)) // convert to list
+            var newLayerConfigurations = _configurationContainer
+                    // paralelize (TODO: Check real perfomance, thread safety)    
+                    .AsParallel()
+                    // create configurations and merge them
+                    .SelectMany(c => _configurationConstructor.GenerateNewConfigurationObjects(c))
+                    // convert to list
                     .ToList();
 
             // make container aware of the new layer

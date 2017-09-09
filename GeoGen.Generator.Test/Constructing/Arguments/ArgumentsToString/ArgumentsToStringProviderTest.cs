@@ -5,7 +5,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities.ArgumentsToString
+namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
 {
     [TestFixture]
     public class ArgumentsToStringProviderTest

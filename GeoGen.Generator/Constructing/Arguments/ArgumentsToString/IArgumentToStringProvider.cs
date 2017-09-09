@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
 
-namespace GeoGen.Core.Utilities.ArgumentsToString
+namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
     /// <summary>
     /// Represents a construction argument list to string converter.

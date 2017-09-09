@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities.ArgumentsToString;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.Constructing.Arguments.Container
 {

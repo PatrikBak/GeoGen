@@ -82,8 +82,6 @@ namespace GeoGen.Generator.Constructing.Arguments
             if (construction == null)
                 throw new ArgumentNullException(nameof(construction));
 
-            // TODO: Check if internal parts of these objects are not null
-
             // First we check if we can even perform the construction. Whether there are enough
             // objects to do so. If not, we return an empty enumerable.
             if (!CanWePerformConstruction(configuration, construction))

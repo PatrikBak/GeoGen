@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities.ArgumentsToString;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using NUnit.Framework;
 

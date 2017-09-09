@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities;
 
-namespace GeoGen.Core.Utilities.ArgumentsToString
+namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
     /// <summary>
     /// An implementation of <see cref="IArgumentToStringProvider"/>. It uses Id of configuration objects
@@ -41,18 +42,19 @@ namespace GeoGen.Core.Utilities.ArgumentsToString
 
         /// <summary>
         /// Converts a given list of construction arguments to string. 
+        /// Arguments must have objects with unique ids inside them
+        /// (this is verified in a debug mode).
         /// </summary>
         /// <param name="arguments">The arguments.</param>
         /// <returns>The string representation of the list.</returns>
         public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments)
         {
-            if(arguments == null)
+            if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
 
-            if(arguments.Empty())
+            if (arguments.Empty())
                 throw new ArgumentException("The arguments list can't be empty.");
 
-            // TODO: Debug method to check unique IDS
             return string.Join(_separator, arguments.Select(ArgumentToString));
         }
 

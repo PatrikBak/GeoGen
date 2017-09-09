@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerTest.cs" />

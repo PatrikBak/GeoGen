@@ -38,6 +38,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constructing\Arguments\ArgumentsGenerator.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentToStringProvider.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructing\ConfigurationConstructor.cs" />
     <Compile Include="Constructing\Container\ConstructionsContainer.cs" />

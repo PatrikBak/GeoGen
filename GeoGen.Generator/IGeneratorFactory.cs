@@ -6,7 +6,7 @@
     public interface IGeneratorFactory
     {
         /// <summary>
-        /// Creates a generator from a given generator input.
+        /// Creates a generator for a given generator input.
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
         /// <returns>The generator.</returns>

@@ -38,7 +38,6 @@ namespace GeoGen.Generator.Constructing.Arguments.SignatureMatching
         {
             _objectTypeToObjects = objectTypeToObjects ?? throw new ArgumentNullException(nameof(objectTypeToObjects));
             _currentIndices = objectTypeToObjects.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
-            // TODO: Debug check if nothing is null
         }
 
         /// <summary>
