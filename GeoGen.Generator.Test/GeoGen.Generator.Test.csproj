@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
+    <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactoryTest.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerTest.cs" />

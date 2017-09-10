@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationHandling;
 using GeoGen.Generator.Constructing.Arguments;
 using GeoGen.Generator.Constructing.Container;
@@ -52,53 +51,49 @@ namespace GeoGen.Generator.Constructing
         /// <returns>The enumerable of constructor output.</returns>
         public IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(ConfigurationWrapper configurationWrapper)
         {
-            // Iterate through all constructions
-            foreach (var constructionWrapper in _constructionsContainer)
-            {
-                // A local helper function to check if given arguments should be proccessed further
-                bool ArgumentsAreNotForbidden(IReadOnlyList<ConstructionArgument> arguments)
+            return _constructionsContainer.SelectMany
+            (
+                constructionWrapper =>
                 {
-                    var constructionId = constructionWrapper.Construction.Id;
+                    // Generate arguments
+                    var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
+
+                    // Pull forbidden arguments for the current constrution
                     var forbiddenArguments = configurationWrapper.ConstructionIdToForbiddenArguments;
 
-                    return !forbiddenArguments.ContainsKey(constructionId) || forbiddenArguments[constructionId].Contains(arguments);
-                }
+                    // Unwrap construction
+                    var unwrapedConstruction = constructionWrapper.Construction;
 
-                // Create new output enumerale
-                var newOutput = _argumentsGenerator
-                        // Generate arguments
-                        .GenerateArguments(configurationWrapper, constructionWrapper)
-                        // That are not forbidden
-                        .Where(ArgumentsAreNotForbidden)
-                        // Cast them to the construction output
-                        .Select
-                        (
-                            arguments =>
+                    // Pull the construction id.
+                    var constructionId = unwrapedConstruction.Id;
+
+                    // If there are any arguments to be excluded, exclude them.
+                    if (forbiddenArguments.ContainsKey(constructionId))
+                    {
+                        generatedArguments.RemoveElementsFrom(forbiddenArguments[constructionId]);
+                    }
+
+                    // Create new output enumerale
+                    var newOutput = generatedArguments.Select
+                    (
+                        arguments =>
+                        {
+                            // Construct objects  with all indices
+                            var constructedObjects = Enumerable.Range(0, unwrapedConstruction.OutputTypes.Count)
+                                    .Select(i => new ConstructedConfigurationObject(unwrapedConstruction, arguments, i))
+                                    .ToList();
+
+                            // Create and return an output for these objects
+                            return new ConstructorOutput
                             {
-                                // Unwrap construction
-                                var unwrapedConstruction = constructionWrapper.Construction;
+                                InitialConfiguration = configurationWrapper,
+                                ConstructedObjects = constructedObjects
+                            };
+                        }
+                    );
 
-                                // Construct objects  with all indices
-                                var constructedObjects = Enumerable.Range(0, unwrapedConstruction.OutputTypes.Count)
-                                        .Select(i => new ConstructedConfigurationObject(unwrapedConstruction, arguments, i))
-                                        .ToList();
-
-                                // Create and return an output for these objects
-                                return new ConstructorOutput
-                                {
-                                    InitialConfiguration = configurationWrapper,
-                                    ConstructedObjects = constructedObjects
-                                };
-                            }
-                        );
-
-                // Lazily iterate through the enumerable
-                // TODO: Compare lazy and non-lazy approach (currently it's enumerated instantly)
-                foreach (var constructorOutput in newOutput)
-                {
-                    yield return constructorOutput;
-                }
-            }
+                    return newOutput;
+                });
         }
 
         #endregion

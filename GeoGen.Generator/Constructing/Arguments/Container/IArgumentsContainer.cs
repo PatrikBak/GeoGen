@@ -17,15 +17,10 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         void Add(IReadOnlyList<ConstructionArgument> arguments);
 
         /// <summary>
-        /// Clears the container.
+        /// Removes all the elemenets contained in a given container
+        /// from this container. 
         /// </summary>
-        void Clear();
-
-        /// <summary>
-        /// Checks if the container contains given arguments.
-        /// </summary>
-        /// <param name="arguments">The arguments.</param>
-        /// <returns>true, if the container container the arguments, false otherwise.</returns>
-        bool Contains(IReadOnlyList<ConstructionArgument> arguments);
+        /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
+        void RemoveElementsFrom(IArgumentsContainer elementsToBeRemoved);
     }
 }

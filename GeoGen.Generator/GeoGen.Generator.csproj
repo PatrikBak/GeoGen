@@ -44,6 +44,8 @@
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainer.cs" />
+    <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactory.cs" />
+    <Compile Include="Constructing\Arguments\Container\IArgumentsContainerFactory.cs" />
     <Compile Include="Constructing\ConfigurationConstructor.cs" />
     <Compile Include="Constructing\Container\ConstructionsContainer.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />

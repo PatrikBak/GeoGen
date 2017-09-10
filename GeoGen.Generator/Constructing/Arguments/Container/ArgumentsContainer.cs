@@ -36,5 +36,24 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         }
 
         #endregion
+
+        #region IArguments container implementation
+
+        /// <summary>
+        /// Removes all the elemenets contained in a given container
+        /// from this container. 
+        /// </summary>
+        /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
+        public void RemoveElementsFrom(IArgumentsContainer elementsToBeRemoved)
+        {
+            var argumentsContainer = elementsToBeRemoved as ArgumentsContainer ?? throw new GeneratorException("Unhandled case");
+
+            foreach (var item in argumentsContainer.Items)
+            {
+                Items.Remove(item);
+            }
+        }
+
+        #endregion
     }
 }

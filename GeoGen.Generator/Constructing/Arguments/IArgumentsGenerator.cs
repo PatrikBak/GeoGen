@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Generator.ConfigurationHandling;
+﻿using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.Constructing.Arguments.Container;
 
 namespace GeoGen.Generator.Constructing.Arguments
 {
@@ -11,12 +10,12 @@ namespace GeoGen.Generator.Constructing.Arguments
     internal interface IArgumentsGenerator
     {
         /// <summary>
-        /// Generates all possible distinct arguments that can be passed to 
+        /// Generates a container of all possible distinct arguments that can be passed to 
         /// a given construction, using object from a given configuration.
         /// </summary>
         /// <param name="configuration">The wrapper cofiguration.</param>
         /// <param name="construction">The wrapped construction.</param>
-        /// <returns>The enumerable of generated construction arguments.</returns>
-        IEnumerable<IReadOnlyList<ConstructionArgument>> GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
+        /// <returns>The container of resulting arguments.</returns>
+        IArgumentsContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
     }
 }

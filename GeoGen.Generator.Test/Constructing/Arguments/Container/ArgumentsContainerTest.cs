@@ -94,5 +94,42 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 
             Assert.AreEqual(3, container.Count());
         }
+      
+        [Test]
+        public void Test_Remove_Elements_From()
+        {
+            var args = Enumerable.Range(0, 15).Select(i => new List<ConstructionArgument> {NextArgument()}).ToList();
+
+            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
+
+            foreach (var arguments in args)
+            {
+                container.Add(arguments);
+            }
+
+            var newContainer = new ArgumentsContainer(new ArgumentsToStringProvider());
+
+            var argumentsToRemove = args
+                    .Skip(5)
+                    .Take(4)
+                    .Select(
+                        arguments =>
+                        {
+                            var oldArgument = arguments[0] as ObjectConstructionArgument;
+                            var newArgument = new ObjectConstructionArgument(oldArgument?.PassedObject);
+
+                            return new List<ConstructionArgument> {newArgument};
+                        });
+
+            foreach (var arguments in argumentsToRemove)
+            {
+                newContainer.Add(arguments);
+            }
+
+            container.RemoveElementsFrom(newContainer);
+
+            Assert.AreEqual(4, newContainer.Count());
+            Assert.AreEqual(11, container.Count());
+        }
     }
 }

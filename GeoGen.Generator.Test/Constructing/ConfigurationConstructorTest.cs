@@ -30,7 +30,7 @@ namespace GeoGen.Generator.Test.Constructing
                             var mock = new Mock<Construction>();
                             var outputTypes = Enumerable.Repeat(ConfigurationObjectType.Point, outputCount).ToList();
                             mock.Setup(c => c.OutputTypes).Returns(outputTypes);
-                            mock.SetupGet(c => c.Id).Returns(i);
+                            mock.Setup(c => c.Id).Returns(i);
 
                             return mock.Object;
                         })
@@ -38,18 +38,39 @@ namespace GeoGen.Generator.Test.Constructing
                     .ToList();
         }
 
-        private static IEnumerable<LooseConfigurationObject> Objects(int count)
+        private static IEnumerable<ConfigurationObject> Objects(int count)
         {
             return Enumerable.Range(1, count)
                     .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
                     .ToList();
         }
 
-        private static IEnumerable<List<ConstructionArgument>> Arguments(int count)
+        private static IArgumentsContainer Arguments(IEnumerable<ConfigurationObject> objects)
         {
-            return Objects(count)
+            var argsList = objects
                     .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
+                    .Cast<IReadOnlyList<ConstructionArgument>>()
                     .ToList();
+
+            var mock = new Mock<IArgumentsContainer>();
+            mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
+
+            mock.Setup(s => s.RemoveElementsFrom(It.IsAny<IArgumentsContainer>()))
+                    .Callback<IArgumentsContainer>(
+                        c =>
+                        {
+                            int Id(IReadOnlyList<ConstructionArgument> arguments)
+                            {
+                                return ((ObjectConstructionArgument) arguments[0]).PassedObject.Id;
+                            }
+
+                            foreach (var argsToRemove in c)
+                            {
+                                argsList.RemoveAll(args => Id(args) == Id(argsToRemove));
+                            }
+                        });
+
+            return mock.Object;
         }
 
         private static IConstructionsContainer ConstructionsContainer(int count, int outputCount)
@@ -61,39 +82,43 @@ namespace GeoGen.Generator.Test.Constructing
             return mock.Object;
         }
 
-        private static IArgumentsGenerator ArgumentsGenerator(int numberOfArguments)
+        private static IArgumentsGenerator ArgumentsGenerator(List<ConfigurationObject> objects)
         {
             var generatorMock = new Mock<IArgumentsGenerator>();
             generatorMock.Setup(g => g.GenerateArguments(It.IsAny<ConfigurationWrapper>(), It.IsAny<ConstructionWrapper>()))
-                    .Returns(() => Arguments(numberOfArguments));
+                    .Returns(() => Arguments(objects));
 
             return generatorMock.Object;
         }
 
-        private static IArgumentsContainer Container(int forbidenIdStart, int forbidenIdEnd)
+        private static IArgumentsContainer Container(IEnumerable<ConfigurationObject> objects, int forbidenIdStart, int forbidenIdEnd)
         {
             var mock = new Mock<IArgumentsContainer>();
 
-            mock.Setup(c => c.Contains(It.IsAny<IReadOnlyList<ConstructionArgument>>()))
-                    .Returns<IReadOnlyList<ConstructionArgument>>(
-                        args =>
-                        {
-                            var id = ((ObjectConstructionArgument) args[0]).PassedObject.Id;
+            mock.Setup(c => c.GetEnumerator()).Returns(
+                () => objects.Where
+                        (
+                            o =>
+                            {
+                                var id = o.Id;
 
-                            return id < forbidenIdStart || id > forbidenIdEnd;
-                        });
+                                return id >= forbidenIdStart && id <= forbidenIdEnd;
+                            }
+                        )
+                        .Select(o => new List<ConstructionArgument> {new ObjectConstructionArgument(o)})
+                        .GetEnumerator());
 
             return mock.Object;
         }
 
-        private static ConfigurationWrapper ConfigurationWrapper(int forbiddenConstructionsStartId,
-            int forbiddenConstructionEndId, int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
+        private static ConfigurationWrapper ConfigurationWrapper(List<ConfigurationObject> objects,
+            int forbiddenConstructionsStartId, int forbiddenConstructionEndId, int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
         {
             var forbiddenArgs = new Dictionary<int, IArgumentsContainer>();
 
             for (var constructionId = forbiddenConstructionsStartId; constructionId <= forbiddenConstructionEndId; constructionId++)
             {
-                forbiddenArgs.Add(constructionId, Container(forbiddenArgumentsStartId, forbiddenArgumentsEndId));
+                forbiddenArgs.Add(constructionId, Container(objects, forbiddenArgumentsStartId, forbiddenArgumentsEndId));
             }
 
             return new ConfigurationWrapper {ConstructionIdToForbiddenArguments = forbiddenArgs};
@@ -103,9 +128,10 @@ namespace GeoGen.Generator.Test.Constructing
             int forbiddenConstructionsStartId, int forbiddenConstructionEndId, int constructionOutputCount,
             int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
         {
+            var objects = Objects(argumentsPerConstruction).ToList();
             var container = ConstructionsContainer(numberOfConstructions, constructionOutputCount);
-            var argumentsGenerator = ArgumentsGenerator(argumentsPerConstruction);
-            var wrapper = ConfigurationWrapper(forbiddenConstructionsStartId, forbiddenConstructionEndId, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
+            var argumentsGenerator = ArgumentsGenerator(objects);
+            var wrapper = ConfigurationWrapper(objects, forbiddenConstructionsStartId, forbiddenConstructionEndId, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
             var testConstructor = new ConfigurationConstructor(container, argumentsGenerator);
 
             return testConstructor.GenerateNewConfigurationObjects(wrapper).Sum(output => output.ConstructedObjects.Count);
@@ -134,7 +160,7 @@ namespace GeoGen.Generator.Test.Constructing
         public void Test_Without_Anything_Forbidden(int constructions, int arguments, int perConstruction, int expected)
         {
             var count = ExecuteConstructionProcces(constructions, arguments, 0, 0, perConstruction, 0, 0);
-            
+
             Assert.AreEqual(expected, count);
         }
 

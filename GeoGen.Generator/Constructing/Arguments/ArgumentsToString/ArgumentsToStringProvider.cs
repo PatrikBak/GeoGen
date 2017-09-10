@@ -12,6 +12,8 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
     /// </summary>
     public class ArgumentsToStringProvider : IArgumentsToStringProvider
     {
+        #region Private fields
+
         /// <summary>
         /// The default arguments separator.
         /// </summary>
@@ -21,6 +23,10 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// The arguments separator.
         /// </summary>
         private readonly string _separator;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Construct an argument to string provider with a given separator. 
@@ -39,6 +45,10 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             : this(DefaultSeparator)
         {
         }
+
+        #endregion
+
+        #region IArgumentsToStringProvider implementation
 
         /// <summary>
         /// Converts a given list of construction arguments to string. 
@@ -76,6 +86,8 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             individualArgs.Sort();
 
             return $"{{{string.Join(_separator, individualArgs)}}}";
-        }
+        } 
+
+        #endregion
     }
 }

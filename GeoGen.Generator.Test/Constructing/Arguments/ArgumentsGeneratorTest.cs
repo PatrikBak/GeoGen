@@ -46,9 +46,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var signatureMatcher = new ConstructionSignatureMatcher();
-            var argumentsContainer = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var argumentsContainerFactory = new ArgumentsContainerFactory(new ArgumentsToStringProvider());
 
-            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainer);
+            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
         }
 
         private static string TestString(IReadOnlyList<ConstructionArgument> arg)
