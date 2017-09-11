@@ -37,7 +37,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationHandling\ConfigurationObjectsContainer\IConfigurationObjectContainer.cs" />
+    <Compile Include="ConfigurationHandling\ObjectsContainer\ConfigurationObjectsContainer.cs" />
+    <Compile Include="ConfigurationHandling\ObjectsContainer\IConfigurationObjectsContainer.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ComplexConfigurationObjectToStringProviderBase.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProvider.cs" />
@@ -63,9 +64,9 @@
     <Compile Include="Constructing\Container\IConstructionsContainer.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcher.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\IConstructionSignatureMatcher.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationContainer.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationsContainer\ConfigurationContainer.cs" />
     <Compile Include="Generator.cs" />
-    <Compile Include="ConfigurationHandling\IConfigurationContainer.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationsContainer\IConfigurationContainer.cs" />
     <Compile Include="GeneratorException.cs" />
     <Compile Include="GeneratorInput.cs" />
     <Compile Include="GeneratorOutput.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="IGenerator.cs" />
     <Compile Include="IGeneratorFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationWrapper.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationsContainer\ConfigurationWrapper.cs" />
     <Compile Include="Constructing\ConstructionWrapper.cs" />
   </ItemGroup>
   <ItemGroup>

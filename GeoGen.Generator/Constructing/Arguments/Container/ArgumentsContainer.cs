@@ -12,12 +12,12 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
     /// </summary>
     internal class ArgumentsContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsContainer
     {
-        #region StringBasedContainer properties
+        #region Private fields
 
         /// <summary>
-        /// Gets the function that converts arguments to string.
+        /// The arguments to string provider.
         /// </summary>
-        public override Func<IReadOnlyList<ConstructionArgument>, string> ItemToString { get; }
+        private readonly IArgumentsToStringProvider _argumentsToStringProvider;
 
         #endregion
 
@@ -29,15 +29,21 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         /// <param name="argumentsToStringProvider">The argument to string provider.</param>
         public ArgumentsContainer(IArgumentsToStringProvider argumentsToStringProvider)
         {
-            if (argumentsToStringProvider == null)
-                throw new ArgumentNullException(nameof(argumentsToStringProvider));
-
-            ItemToString = argumentsToStringProvider.ConvertToString;
+            _argumentsToStringProvider = argumentsToStringProvider ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
         }
 
         #endregion
 
         #region IArguments container implementation
+
+        /// <summary>
+        /// Adds arguments to the container.
+        /// </summary>
+        /// <param name="arguments">The arguments.</param>
+        public void AddArguments(IReadOnlyList<ConstructionArgument> arguments)
+        {
+            Add(arguments);
+        }
 
         /// <summary>
         /// Removes all the elemenets contained in a given container
@@ -53,8 +59,25 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
 
             foreach (var item in argumentsContainer.Items)
             {
-                Items.Remove(item);
+                Items.Remove(item.Key);
             }
+        }
+
+        #endregion
+
+        #region StringBasedContainer methods
+
+        /// <summary>
+        /// Converts a given item to string.
+        /// </summary>
+        /// <param name="item">The given item.</param>
+        /// <returns>The string representation.</returns>
+        protected override string ItemToString(IReadOnlyList<ConstructionArgument> item)
+        {
+            if (item == null)
+                throw new ArgumentNullException(nameof(item));
+
+            return _argumentsToStringProvider.ConvertToString(item);
         }
 
         #endregion

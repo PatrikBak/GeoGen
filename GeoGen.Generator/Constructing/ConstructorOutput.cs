@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 
 namespace GeoGen.Generator.Constructing
 {

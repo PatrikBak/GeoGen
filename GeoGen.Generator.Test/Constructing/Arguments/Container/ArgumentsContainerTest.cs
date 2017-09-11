@@ -47,8 +47,8 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             var set1 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a2});
             var set2 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a2, a1});
 
-            container.Add(new List<ConstructionArgument> {set1});
-            container.Add(new List<ConstructionArgument> {set2});
+            container.AddArguments(new List<ConstructionArgument> {set1});
+            container.AddArguments(new List<ConstructionArgument> {set2});
 
             Assert.AreEqual(1, container.Count());
         }
@@ -65,10 +65,10 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             var set1 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a2});
             var set2 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a2, a1});
 
-            container.Add(new List<ConstructionArgument> {a3, set1});
-            container.Add(new List<ConstructionArgument> {a3, set2});
-            container.Add(new List<ConstructionArgument> {set1, a3});
-            container.Add(new List<ConstructionArgument> {set2, a3});
+            container.AddArguments(new List<ConstructionArgument> {a3, set1});
+            container.AddArguments(new List<ConstructionArgument> {a3, set2});
+            container.AddArguments(new List<ConstructionArgument> {set1, a3});
+            container.AddArguments(new List<ConstructionArgument> {set2, a3});
 
             Assert.AreEqual(2, container.Count());
         }
@@ -90,13 +90,13 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             var set5 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a2, a4});
             var set6 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a3, a4});
 
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set1, set6})});
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set2, set5})});
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set3, set4})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set1, set6})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set2, set5})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set3, set4})});
 
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set6, set1})});
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set5, set2})});
-            container.Add(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set4, set3})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set6, set1})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set5, set2})});
+            container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set4, set3})});
 
             Assert.AreEqual(3, container.Count());
         }
@@ -110,7 +110,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 
             foreach (var arguments in args)
             {
-                container.Add(arguments);
+                container.AddArguments(arguments);
             }
 
             var newContainer = new ArgumentsContainer(new ArgumentsToStringProvider());
@@ -129,7 +129,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 
             foreach (var arguments in argumentsToRemove)
             {
-                newContainer.Add(arguments);
+                newContainer.AddArguments(arguments);
             }
 
             container.RemoveElementsFrom(newContainer);

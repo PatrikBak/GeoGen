@@ -4,7 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 
@@ -114,7 +114,7 @@ namespace GeoGen.Generator.Constructing.Arguments
                 var arguments = _constructionSignatureMatcher.Match(parameters);
 
                 // Add arguments to the container
-                argumentsContainer.Add(arguments);
+                argumentsContainer.AddArguments(arguments);
             }
 
             return argumentsContainer;

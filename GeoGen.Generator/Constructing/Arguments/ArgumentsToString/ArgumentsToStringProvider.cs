@@ -18,32 +18,45 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <summary>
         /// The default arguments separator.
         /// </summary>
-        private const string DefaultSeparator = ",";
+        private const string DefaultArgumentsSeparator = ",";
+
+        /// <summary>
+        /// The default arguments separator.
+        /// </summary>
+        private const string DefaultIntersetSeparator = ";";
 
         /// <summary>
         /// The arguments separator.
         /// </summary>
-        private readonly string _separator;
+        private readonly string _argumentsSeparator;
+
+        /// <summary>
+        /// The interset separator.
+        /// </summary>
+        private readonly string _intersetSeparator;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Construct an argument to string provider with a given separator. 
-        /// This constructor is meant to be used in testing.
+        /// Construct an argument to string provider with a given arguments
+        /// separator and a given interset separator. This constructor is 
+        /// meant to be used in testing.
         /// </summary>
-        /// <param name="separator">The separator.</param>
-        public ArgumentsToStringProvider(string separator)
+        /// <param name="argumentsSeparator">The arguments separator.</param>
+        /// <param name="intersetSeparator">The interset separator.</param>
+        public ArgumentsToStringProvider(string argumentsSeparator, string intersetSeparator)
         {
-            _separator = separator;
+            _argumentsSeparator = argumentsSeparator;
+            _intersetSeparator = intersetSeparator;
         }
 
         /// <summary>
-        /// Construct an argument to string provider with the default separator.
+        /// Construct an argument to string provider with default separators.
         /// </summary>
         public ArgumentsToStringProvider()
-            : this(DefaultSeparator)
+            : this(DefaultArgumentsSeparator, DefaultIntersetSeparator)
         {
         }
 
@@ -81,7 +94,9 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             if (objectToString == null)
                 throw new ArgumentNullException(nameof(objectToString));
 
-            return string.Join(_separator, arguments.Select(args => ArgumentToString(args, objectToString)));
+            var argumentsStrings = arguments.Select(args => ArgumentToString(args, objectToString));
+
+            return $"({string.Join(_argumentsSeparator, argumentsStrings)})";
         }
 
         /// <summary>
@@ -105,7 +120,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 
             individualArgs.Sort();
 
-            return $"{{{string.Join(_separator, individualArgs)}}}";
+            return $"{{{string.Join(_intersetSeparator, individualArgs)}}}";
         }
 
         #endregion

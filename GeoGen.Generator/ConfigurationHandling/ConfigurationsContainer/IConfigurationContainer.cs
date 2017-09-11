@@ -2,7 +2,7 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.Constructing;
 
-namespace GeoGen.Generator.ConfigurationHandling
+namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
 {
     /// <summary>
     /// Represents a container for all generated configurations. It's meant to handle processing

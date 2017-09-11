@@ -8,7 +8,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Constructing.Arguments;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
@@ -58,7 +58,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
 
         private static string TestString(IReadOnlyList<ConstructionArgument> arg)
         {
-            return new ArgumentsToStringProvider(", ").ConvertToString(arg);
+            return new ArgumentsToStringProvider(", ", " ").ConvertToString(arg);
         }
 
         internal static ConstructionWrapper Midpoint()
@@ -383,9 +383,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.AreEqual(expected, result.Count);
         }
 
-        [TestCase("{4, 9}")]
-        [TestCase("{1, 2}")]
-        [TestCase("{8, 9}")]
+        [TestCase("({4 9})")]
+        [TestCase("({1 2})")]
+        [TestCase("({8 9})")]
         public void Test_Midpoint_Existence_Of_Arguments(string argument)
         {
             var construction = Midpoint();
@@ -397,9 +397,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.IsTrue(contains);
         }
 
-        [TestCase("13, {7, 8, 9}, 1, {14, 15}")]
-        [TestCase("15, {10, 12, 9}, 5, {14, 16}")]
-        [TestCase("18, {10, 11, 12}, 6, {16, 17}")]
+        [TestCase("(13, {7 8 9}, 1, {14 15})")]
+        [TestCase("(15, {10 12 9}, 5, {14 16})")]
+        [TestCase("(18, {10 11 12}, 6, {16 17})")]
         public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
         {
             // Points are [1-6], Lines are [7-12], Circles are [13-18]
@@ -416,7 +416,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         public void Test_Intersection_Time_With_25_Points()
         {
             long totalTime = 0;
-            const int count = 10;
+            const int count = 20;
 
             for (var i = 0; i < count; i++)
             {

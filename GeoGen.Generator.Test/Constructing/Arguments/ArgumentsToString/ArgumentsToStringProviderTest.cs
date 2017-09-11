@@ -12,7 +12,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
     {
         private static ArgumentsToStringProvider Provider()
         {
-            return new ArgumentsToStringProvider(", ");
+            return new ArgumentsToStringProvider(", ", " ");
         }
 
         [Test]
@@ -34,7 +34,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
             var argument = new ObjectConstructionArgument(looseObject);
             var result = Provider().ConvertToString(new List<ConstructionArgument> {argument});
 
-            Assert.AreEqual("1", result);
+            Assert.AreEqual("(1)", result);
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
 
             var result = Provider().ConvertToString(new List<ConstructionArgument> {argument1, argument2, argument3});
 
-            Assert.AreEqual("1, 2, 3", result);
+            Assert.AreEqual("(1, 2, 3)", result);
         }
 
         [Test]
@@ -70,7 +70,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
 
             var result = Provider().ConvertToString(finalList);
 
-            Assert.AreEqual("1, {{1, 2}, {2, 3}}, 3", result);
+            Assert.AreEqual("(1, {{1 2} {2 3}}, 3)", result);
         }
     }
 }

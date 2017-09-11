@@ -18,11 +18,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         #region Private fields
 
         /// <summary>
-        /// The arguments separator.
-        /// </summary>
-        private readonly string _separator;
-
-        /// <summary>
         /// The arguments to string provider
         /// </summary>
         private readonly IArgumentsToStringProvider _argumentsToStringProvider;
@@ -37,11 +32,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         #region Protected fields
 
         /// <summary>
-        /// The default separator. 
-        /// </summary>
-        protected const string DefaultSeparator = "-";
-
-        /// <summary>
         /// The cache dictionary mapping constructed configuration ids to their 
         /// string versions. 
         /// </summary>
@@ -49,23 +39,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 
         #endregion
 
-        #region Constructors
-
-        /// <summary>
-        /// Constructs a new complex configuration object to string provider with a given
-        /// arguments to string provider, a given loose object id resolver, and 
-        /// a given separator. This constructor is meant to be used in testing.
-        /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="looseConfigurationObjectIdResolver">The loose configuration object id resolver.</param>
-        /// <param name="separator">The separator.</param>
-        protected ComplexConfigurationObjectToStringProviderBase(IArgumentsToStringProvider argumentsToStringProvider,
-            ILooseConfigurationObjectIdResolver looseConfigurationObjectIdResolver, string separator)
-        {
-            _argumentsToStringProvider = argumentsToStringProvider ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
-            _looseConfigurationObjectIdResolver = looseConfigurationObjectIdResolver ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
-            _separator = separator;
-        }
+        #region Constructor
 
         /// <summary>
         /// Constructs a new complex configuration object to string provider with a given
@@ -75,30 +49,9 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// <param name="looseConfigurationObjectIdResolver">The loose configuration object id resolver.</param>
         protected ComplexConfigurationObjectToStringProviderBase(IArgumentsToStringProvider argumentsToStringProvider,
             ILooseConfigurationObjectIdResolver looseConfigurationObjectIdResolver)
-            : this(argumentsToStringProvider, looseConfigurationObjectIdResolver, DefaultSeparator)
         {
-        }
-
-        /// <summary>
-        /// Constructs a new complex configuration object to string provider with a given
-        /// arguments to string provider and the defaut loose object id resolver.
-        /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        protected ComplexConfigurationObjectToStringProviderBase(IArgumentsToStringProvider argumentsToStringProvider)
-            : this(argumentsToStringProvider, DefaultLooseConfigurationObjectIdResolver.Instance, DefaultSeparator)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new complx configuration object to string provider with a given
-        /// arguments to string provider and a given separator, and the defaut loose 
-        /// object id resolver.
-        /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="separator">The separator.</param>
-        protected ComplexConfigurationObjectToStringProviderBase(IArgumentsToStringProvider argumentsToStringProvider, string separator)
-            : this(argumentsToStringProvider, DefaultLooseConfigurationObjectIdResolver.Instance, separator)
-        {
+            _argumentsToStringProvider = argumentsToStringProvider ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
+            _looseConfigurationObjectIdResolver = looseConfigurationObjectIdResolver ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
         }
 
         #endregion
@@ -134,7 +87,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
             var argumentsString = _argumentsToStringProvider.ConvertToString(contructedObject.PassedArguments, this);
 
             // Construct the result
-            var result = $"{contructedObject.Construction.Id}{_separator}{contructedObject.Index}{_separator}{argumentsString}";
+            var result = $"{contructedObject.Construction.Id}{argumentsString}[{contructedObject.Index}]";
 
             // Let the abstract method to something with it before returning it
             HandleResult(configurationObject, result);

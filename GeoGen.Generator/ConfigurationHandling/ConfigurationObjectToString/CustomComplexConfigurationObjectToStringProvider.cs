@@ -16,20 +16,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
     /// </summary>
     internal class CustomComplexConfigurationObjectToStringProvider : ComplexConfigurationObjectToStringProviderBase
     {
-        #region Constructors
-
-        /// Constructs a new custom complex configuration object to string provider 
-        /// with a given arguments to string provider, a given loose configuration 
-        /// object id resolver, and a given separator. This constructor is meant 
-        /// to be used in testing.
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="looseConfigurationObjectIdResolver">The loose configuration object id resolver.</param>
-        /// <param name="separator">The separator.</param>
-        public CustomComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider,
-            ILooseConfigurationObjectIdResolver looseConfigurationObjectIdResolver, string separator)
-            : base(argumentsToStringProvider, looseConfigurationObjectIdResolver, separator)
-        {
-        }
+        #region Constructor
 
         /// Constructs a new custom complex configuration object to string provider 
         /// with a given arguments to string provider and a given loose configuration 
@@ -38,7 +25,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// <param name="looseConfigurationObjectIdResolver">The loose configuration object id resolver.</param>
         public CustomComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider,
             ILooseConfigurationObjectIdResolver looseConfigurationObjectIdResolver)
-            : this(argumentsToStringProvider, looseConfigurationObjectIdResolver, DefaultSeparator)
+            : base(argumentsToStringProvider, looseConfigurationObjectIdResolver)
         {
         }
 

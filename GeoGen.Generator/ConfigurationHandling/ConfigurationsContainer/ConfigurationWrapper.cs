@@ -2,7 +2,7 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.Constructing.Arguments.Container;
 
-namespace GeoGen.Generator.ConfigurationHandling
+namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
 {
     /// <summary>
     /// An internal wrapper class for a <see cref="Configuration"/>, containing some

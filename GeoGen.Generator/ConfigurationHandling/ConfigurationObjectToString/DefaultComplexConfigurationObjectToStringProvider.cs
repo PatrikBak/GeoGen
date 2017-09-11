@@ -17,20 +17,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
     /// </summary>
     internal class DefaultComplexConfigurationObjectToStringProvider : ComplexConfigurationObjectToStringProviderBase
     {
-        #region Constructors
-
-        /// <summary>
-        /// Constructs a default complex configuration object to string provider 
-        /// with a given arguments to string provider and a given separator. 
-        /// This constructor is meant to be used in testing.
-        /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="separator">The separator.</param>
-        public DefaultComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider, string separator)
-            : base(argumentsToStringProvider, DefaultLooseConfigurationObjectIdResolver.Instance, separator)
-        {
-        }
-
+        #region Constructor
 
         /// <summary>
         /// Constructs a default complex configuration object to string provider 
@@ -38,7 +25,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// </summary>
         /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
         public DefaultComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider)
-            : this(argumentsToStringProvider, DefaultSeparator)
+            : base(argumentsToStringProvider, DefaultLooseConfigurationObjectIdResolver.Instance)
         {
         }
 

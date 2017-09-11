@@ -16,12 +16,12 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
     {
         private static IArgumentsToStringProvider ArgumentsProvider()
         {
-            return new ArgumentsToStringProvider(", ");
+            return new ArgumentsToStringProvider(", ", "; ");
         }
 
         private static DefaultComplexConfigurationObjectToStringProvider Provider()
         {
-            return new DefaultComplexConfigurationObjectToStringProvider(ArgumentsProvider(), " - ");
+            return new DefaultComplexConfigurationObjectToStringProvider(ArgumentsProvider());
         }
 
         [Test]
@@ -57,7 +57,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 1);
 
-            Assert.AreEqual("42 - 1 - 0, 1, 2, 3", Provider().ConvertToString(constructedObject));
+            Assert.AreEqual("42(0, 1, 2, 3)[1]", Provider().ConvertToString(constructedObject));
         }
 
         [Test]
@@ -122,8 +122,9 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             var thirdObject = new ConstructedConfigurationObject(mock.Object, thirdArgs, 1);
             var stringVersion = provider.ConvertToString(thirdObject);
+            const string expected = "42(42(0, 1)[0], 42({1; 2; 42(0, 1)[0]})[1], {{0; 1}; {2; 42(0, 1)[0]}})[1]";
 
-            Assert.AreEqual("42 - 1 - 42 - 0 - 0, 1, 42 - 1 - {1, 2, 42 - 0 - 0, 1}, {{0, 1}, {2, 42 - 0 - 0, 1}}", stringVersion);
+            Assert.AreEqual(expected, stringVersion);
         }
 
         [Test]

@@ -14,7 +14,7 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         /// Adds arguments to the container.
         /// </summary>
         /// <param name="arguments">The arguments.</param>
-        void Add(IReadOnlyList<ConstructionArgument> arguments);
+        void AddArguments(IReadOnlyList<ConstructionArgument> arguments);
 
         /// <summary>
         /// Removes all the elemenets contained in a given container
