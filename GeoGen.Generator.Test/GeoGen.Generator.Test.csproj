@@ -50,14 +50,19 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactoryTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProviderTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProviderTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultConfigurationObjectIdToStringProviderTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\DefaultLooseConfigurationObjectIdResolverTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\DictionaryBasedLooseConfigurationObjectIdResolverTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactoryTest.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerTest.cs" />
     <Compile Include="Constructing\ConfigurationConstructorTest.cs" />
-    <Compile Include="Constructing\Constructing\ConstructionsContainerTest.cs" />
+    <Compile Include="Constructing\Container\ConstructionsContainerTest.cs" />
     <Compile Include="GeneratorTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

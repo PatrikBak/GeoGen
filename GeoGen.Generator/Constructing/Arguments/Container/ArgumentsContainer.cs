@@ -29,7 +29,7 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         /// <param name="argumentsToStringProvider">The argument to string provider.</param>
         public ArgumentsContainer(IArgumentsToStringProvider argumentsToStringProvider)
         {
-            if(argumentsToStringProvider == null)
+            if (argumentsToStringProvider == null)
                 throw new ArgumentNullException(nameof(argumentsToStringProvider));
 
             ItemToString = argumentsToStringProvider.ConvertToString;
@@ -46,6 +46,9 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
         public void RemoveElementsFrom(IArgumentsContainer elementsToBeRemoved)
         {
+            if (elementsToBeRemoved == null)
+                throw new ArgumentNullException(nameof(elementsToBeRemoved));
+
             var argumentsContainer = elementsToBeRemoved as ArgumentsContainer ?? throw new GeneratorException("Unhandled case");
 
             foreach (var item in argumentsContainer.Items)

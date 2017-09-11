@@ -38,8 +38,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationHandling\ConfigurationObjectsContainer\IConfigurationObjectContainer.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProvider.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfgurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ComplexConfigurationObjectToStringProviderBase.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultConfigurationObjectIdToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactory.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfigurationObjectToStringProviderFactory.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\DefaultLooseConfigurationObjectIdResolver.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\DictionaryBasedLooseConfigurationObjectIdResolver.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\ILooseConfigurationObjectIdResolver.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProvider.cs" />

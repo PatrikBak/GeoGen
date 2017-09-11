@@ -13,7 +13,7 @@ namespace GeoGen.Generator.ConfigurationHandling
         /// Handles the current state of a given configuration container.
         /// </summary>
         /// <param name="configurationContainer">The configuration container.</param>
-        /// <returns></returns>
+        /// <returns>The final generator output enumerable.</returns>
         IEnumerable<GeneratorOutput> GenerateFinalOutput(IConfigurationContainer configurationContainer);
     }
 }

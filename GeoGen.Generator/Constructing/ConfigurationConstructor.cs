@@ -51,6 +51,9 @@ namespace GeoGen.Generator.Constructing
         /// <returns>The enumerable of constructor output.</returns>
         public IEnumerable<ConstructorOutput> GenerateNewConfigurationObjects(ConfigurationWrapper configurationWrapper)
         {
+            if (configurationWrapper == null)
+                throw new ArgumentNullException(nameof(configurationWrapper));
+
             return _constructionsContainer.SelectMany
             (
                 constructionWrapper =>
@@ -65,7 +68,7 @@ namespace GeoGen.Generator.Constructing
                     var unwrapedConstruction = constructionWrapper.Construction;
 
                     // Pull the construction id.
-                    var constructionId = unwrapedConstruction.Id;
+                    var constructionId = unwrapedConstruction.Id ?? throw new GeneratorException();
 
                     // If there are any arguments to be excluded, exclude them.
                     if (forbiddenArguments.ContainsKey(constructionId))

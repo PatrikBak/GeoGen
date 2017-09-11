@@ -61,7 +61,7 @@ namespace GeoGen.Generator.Test.Constructing
                         {
                             int Id(IReadOnlyList<ConstructionArgument> arguments)
                             {
-                                return ((ObjectConstructionArgument) arguments[0]).PassedObject.Id;
+                                return ((ObjectConstructionArgument) arguments[0]).PassedObject.Id.Value;
                             }
 
                             foreach (var argsToRemove in c)
@@ -147,6 +147,17 @@ namespace GeoGen.Generator.Test.Constructing
         public void Test_Constructor_Arguments_Generator_Null()
         {
             Assert.Throws<ArgumentNullException>(() => { new ConfigurationConstructor(SimpleMock<IConstructionsContainer>(), null); });
+        }
+
+        [Test]
+        public void Test_Configuration_Wrapper_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(
+                () =>
+                {
+                    new ConfigurationConstructor(SimpleMock<IConstructionsContainer>(), SimpleMock<IArgumentsGenerator>())
+                            .GenerateNewConfigurationObjects(null);
+                });
         }
 
         [TestCase(1, 2, 3, 6)]

@@ -5,7 +5,7 @@ using GeoGen.Generator.Constructing;
 namespace GeoGen.Generator.ConfigurationHandling
 {
     /// <summary>
-    /// Represents a container for all generated configurations. It's meant to be handle processing
+    /// Represents a container for all generated configurations. It's meant to handle processing
     /// of symetric configurations. It implements the <see cref="IEnumerable{T}"/> interface whose generic 
     /// type is <see cref="ConfigurationWrapper"/>.
     /// </summary>

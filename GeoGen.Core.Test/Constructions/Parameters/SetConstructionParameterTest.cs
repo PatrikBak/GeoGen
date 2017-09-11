@@ -17,7 +17,6 @@ namespace GeoGen.Core.Test.Constructions.Parameters
             });
         }
 
-        [Test]
         [TestCase(-42)]
         [TestCase(-1)]
         [TestCase(0)]
@@ -32,7 +31,6 @@ namespace GeoGen.Core.Test.Constructions.Parameters
             });
         }
 
-        [Test]
         [TestCase(42)]
         [TestCase(2)]
         [TestCase(3)]

@@ -8,7 +8,7 @@ using GeoGen.Generator.Test.Constructing.Arguments;
 using Moq;
 using NUnit.Framework;
 
-namespace GeoGen.Generator.Test.Constructing.Constructing
+namespace GeoGen.Generator.Test.Constructing.Container
 {
     [TestFixture]
     public class ConstructionsContainerTest

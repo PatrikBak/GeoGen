@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
 
 namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
@@ -10,7 +11,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
     /// An implementation of <see cref="IArgumentsToStringProvider"/>. It uses Id of configuration objects
     /// so it's supposed to be set to the objects inside arguments before use.
     /// </summary>
-    public class ArgumentsToStringProvider : IArgumentsToStringProvider
+    internal class ArgumentsToStringProvider : IArgumentsToStringProvider
     {
         #region Private fields
 
@@ -59,34 +60,53 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <returns>The string representation of the list.</returns>
         public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments)
         {
+            return ConvertToString(arguments, DefaultConfigurationObjectIdToStringProvider.Instance);
+        }
+
+        /// <summary>
+        /// Converts a given list of construction arguments to string, using
+        /// a provided configuration object to string provider.
+        /// </summary>
+        /// <param name="arguments">The arguments.</param>
+        /// <param name="objectToString">The configuration object to string provider.</param>
+        /// <returns>The string representation of the list.</returns>
+        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IConfigurationObjectToStringProvider objectToString)
+        {
             if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
 
             if (arguments.Empty())
                 throw new ArgumentException("The arguments list can't be empty.");
 
-            return string.Join(_separator, arguments.Select(ArgumentToString));
+            if (objectToString == null)
+                throw new ArgumentNullException(nameof(objectToString));
+
+            return string.Join(_separator, arguments.Select(args => ArgumentToString(args, objectToString)));
         }
 
         /// <summary>
         /// Converts a given construction argument to string.
         /// </summary>
         /// <param name="constructionArgument">The given construction argument.</param>
+        /// <param name="objectToString">The configuration object to string converted.</param>
         /// <returns>The string representation of the argument.</returns>
-        private string ArgumentToString(ConstructionArgument constructionArgument)
+        private string ArgumentToString(ConstructionArgument constructionArgument, IConfigurationObjectToStringProvider objectToString)
         {
             if (constructionArgument is ObjectConstructionArgument objectArgument)
             {
-                return objectArgument.PassedObject.Id.ToString();
+                return objectToString.ConvertToString(objectArgument.PassedObject);
             }
 
             var setArgument = constructionArgument as SetConstructionArgument ?? throw new NullReferenceException();
 
-            var individualArgs = setArgument.PassableArguments.Select(ArgumentToString).ToList();
+            var individualArgs = setArgument.PassableArguments
+                    .Select(arg => ArgumentToString(arg, objectToString))
+                    .ToList();
+
             individualArgs.Sort();
 
             return $"{{{string.Join(_separator, individualArgs)}}}";
-        } 
+        }
 
         #endregion
     }

@@ -31,6 +31,12 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         }
 
         [Test]
+        public void Container_Cannot_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsContainer(new ArgumentsToStringProvider()).RemoveElementsFrom(null));
+        }
+
+        [Test]
         public void Test_Container_One_Set_Two_Elements()
         {
             var container = new ArgumentsContainer(new ArgumentsToStringProvider());

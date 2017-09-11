@@ -39,7 +39,7 @@ namespace GeoGen.Core.Utilities
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <returns></returns>
+        /// <returns>The hash set of the enumerable's items.</returns>
         public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable)
         {
             if (enumerable == null)

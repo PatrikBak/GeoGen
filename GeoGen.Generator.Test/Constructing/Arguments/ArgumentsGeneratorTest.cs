@@ -30,6 +30,11 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             _currentId = 1;
         }
 
+        private static T SimpleMock<T>() where T : class
+        {
+            return new Mock<T>().Object;
+        }
+
         private static List<LooseConfigurationObject> Objects(int count, ConfigurationObjectType type)
         {
             var result = Enumerable.Range(_currentId, count)
@@ -60,7 +65,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var mock = new Mock<Construction>();
             mock.Setup(s => s.Id).Returns(1);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> { ConfigurationObjectType.Point });
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
                 new List<ConstructionParameter>
@@ -110,7 +115,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var mock = new Mock<Construction>();
             mock.Setup(s => s.Id).Returns(3);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> { ConfigurationObjectType.Point });
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
                 new List<ConstructionParameter>
@@ -136,7 +141,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var mock = new Mock<Construction>();
             mock.Setup(s => s.Id).Returns(4);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> { ConfigurationObjectType.Point });
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
                 new List<ConstructionParameter>
@@ -161,7 +166,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var mock = new Mock<Construction>();
             mock.Setup(s => s.Id).Returns(5);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> { ConfigurationObjectType.Circle });
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Circle});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
                 new List<ConstructionParameter>
@@ -186,7 +191,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var mock = new Mock<Construction>();
             mock.Setup(s => s.Id).Returns(6);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> { ConfigurationObjectType.Point });
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
                 new List<ConstructionParameter>
@@ -236,6 +241,58 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
                 Configuration = configuration,
                 ObjectTypeToObjects = map
             };
+        }
+
+        [Test]
+        public void Test_Combinator_Not_Null()
+        {
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+            var factory = SimpleMock<IArgumentsContainerFactory>();
+
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(null, signatureMatcher, variationsProvider, factory));
+        }
+
+        [Test]
+        public void Test_Variations_Provider_Not_Null()
+        {
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+            var factory = SimpleMock<IArgumentsContainerFactory>();
+
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, null, factory));
+        }
+
+        [Test]
+        public void Test_Signature_Matcher_Not_Null()
+        {
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var factory = SimpleMock<IArgumentsContainerFactory>();
+
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, null, variationsProvider, factory));
+        }
+
+        [Test]
+        public void Test_Arguments_Factory_Not_Null()
+        {
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null));
+        }
+
+        [Test]
+        public void Test_Construction_Wrapper_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => TestGenerator().GenerateArguments(Configuration(1, 1, 1), null));
+        }
+
+        [Test]
+        public void Test_Configuration_Wrapper_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => TestGenerator().GenerateArguments(null, CrazyConstruction()));
         }
 
         [TestCase(1, 10, 11, 0)]
@@ -358,15 +415,23 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         [Ignore("This is just a temporary speed test.")]
         public void Test_Intersection_Time_With_25_Points()
         {
-            var construction = Intersection();
-            var configuration = Configuration(25, 0, 0);
+            long totalTime = 0;
+            const int count = 10;
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            TestGenerator().GenerateArguments(configuration, construction).ToList();
-            stopwatch.Stop();
+            for (var i = 0; i < count; i++)
+            {
+                var construction = Intersection();
+                var configuration = Configuration(25, 0, 0);
 
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+                var stopwatch = new Stopwatch();
+                stopwatch.Start();
+                TestGenerator().GenerateArguments(configuration, construction).ToList();
+                stopwatch.Stop();
+                totalTime += stopwatch.ElapsedMilliseconds;
+                stopwatch.Reset();
+            }
+
+            Console.WriteLine((double) totalTime / count);
         }
     }
 }

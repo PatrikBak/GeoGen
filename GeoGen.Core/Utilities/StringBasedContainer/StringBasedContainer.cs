@@ -56,7 +56,7 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
             /// assumed that the object is not null and is of the type Item.
             /// </summary>
             /// <param name="obj">The object.</param>
-            /// <returns></returns>
+            /// <returns>The hash code.</returns>
             public override bool Equals(object obj)
             {
                 return ((Item) obj)?.StringValue == StringValue;
@@ -66,7 +66,7 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
             /// Gets a hashcode of this item. It's calculated as the hashcode
             /// of it's string representation.
             /// </summary>
-            /// <returns></returns>
+            /// <returns>true, if they are equal, false otherwise</returns>
             public override int GetHashCode()
             {
                 return StringValue.GetHashCode();

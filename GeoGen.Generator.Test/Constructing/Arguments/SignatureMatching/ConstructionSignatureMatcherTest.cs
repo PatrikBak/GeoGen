@@ -36,6 +36,12 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
                         NextObject(id++),
                         NextObject(id)
                     }
+                },
+                {
+                    ConfigurationObjectType.Circle, new List<ConfigurationObject>
+                    {
+                        NextObject(id)
+                    }
                 }
             });
 
@@ -46,6 +52,20 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
         public void Object_Dictionary_Cannot_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => TestMatcher().Match(null));
+        }
+
+        [Test]
+        public void Test_Not_Enough_Objects_To_Match()
+        {
+            var matcher = TestMatcher();
+
+            var testParams = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Circle),
+                new ObjectConstructionParameter(ConfigurationObjectType.Line)
+            };
+
+            Assert.Throws<GeneratorException>(() => matcher.Match(testParams));
         }
 
         [Test]
@@ -117,7 +137,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
 
             int Id(int setId, int index)
             {
-                return ((ObjectConstructionArgument) ((SetConstructionArgument) sets[setId]).PassableArguments.ToList()[index]).PassedObject.Id;
+                return ((ObjectConstructionArgument) ((SetConstructionArgument) sets[setId]).PassableArguments.ToList()[index]).PassedObject.Id.Value;
             }
 
             Assert.AreEqual(1, Math.Abs(Id(0, 0) - Id(0, 1)));

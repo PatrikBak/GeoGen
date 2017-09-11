@@ -61,7 +61,7 @@ namespace GeoGen.Generator.Constructing.Container
         /// Gets the type to types count directionary from a given construction.
         /// </summary>
         /// <param name="construction">The construction.</param>
-        /// <returns></returns>
+        /// <returns>The configuration object type to count dictionary.</returns>
         private static IReadOnlyDictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount(Construction construction)
         {
             var allTypes = construction.ConstructionParameters.SelectMany(ObjectTypesOf);
