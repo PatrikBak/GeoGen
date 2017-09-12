@@ -164,7 +164,29 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
                     .ToList();
 
             var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 0) {Id = 42};
-            
+
+            Assert.Throws<GeneratorException>(() => provider.ConvertToString(constructedObject));
+        }
+
+        [Test]
+        public void Clear_Cache_Test()
+        {
+            var provider = Provider();
+
+            var mock = new Mock<Construction>();
+            mock.Setup(s => s.Id).Returns(42);
+            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
+
+            var args = Enumerable.Range(0, 4)
+                    .Select(i => new ObjectConstructionArgument(new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i}))
+                    .ToList();
+
+            var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 0);
+            var asString = provider.ConvertToString(constructedObject);
+            provider.CacheObject(1, asString);
+            provider.ClearCache();
+            constructedObject.Id = 1;
+
             Assert.Throws<GeneratorException>(() => provider.ConvertToString(constructedObject));
         }
     }

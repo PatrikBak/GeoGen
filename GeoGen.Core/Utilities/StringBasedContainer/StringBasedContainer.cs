@@ -37,16 +37,21 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
         /// Adds a given item to the container.
         /// </summary>
         /// <param name="item">The item.</param>
-        protected void Add(T item)
+        /// <returns>true, if the container's content has changed, false otherwise </returns>
+        protected bool Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException(nameof(item));
 
             var stringVersion = ItemToString(item);
 
-            if (!Items.ContainsKey(stringVersion))
+            lock (this)
             {
+                if (Items.ContainsKey(stringVersion))
+                    return false;
+
                 Items.Add(stringVersion, item);
+                return true;
             }
         }
 

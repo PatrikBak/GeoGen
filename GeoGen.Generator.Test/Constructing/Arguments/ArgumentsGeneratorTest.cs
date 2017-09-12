@@ -50,7 +50,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
-            var signatureMatcher = new ConstructionSignatureMatcher();
+            var signatureMatcher = new ConstructionSignatureMatcherFactory();
             var argumentsContainerFactory = new ArgumentsContainerFactory(new ArgumentsToStringProvider());
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
@@ -247,7 +247,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         public void Test_Combinator_Not_Null()
         {
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
             var factory = SimpleMock<IArgumentsContainerFactory>();
 
             Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(null, signatureMatcher, variationsProvider, factory));
@@ -257,7 +257,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         public void Test_Variations_Provider_Not_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
             var factory = SimpleMock<IArgumentsContainerFactory>();
 
             Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, null, factory));
@@ -278,7 +278,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcher>();
+            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
 
             Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null));
         }

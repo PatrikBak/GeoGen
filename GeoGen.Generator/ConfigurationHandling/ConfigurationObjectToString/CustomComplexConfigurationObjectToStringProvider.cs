@@ -55,7 +55,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         protected override void HandleResult(ConfigurationObject configurationObject, string result)
         {
             // We want to do the manual caching here.
-            Cache.Add(configurationObject.Id ?? throw new GeneratorException(), result);
+            Cache.TryAdd(configurationObject.Id ?? throw new GeneratorException(), result);
         }
 
         #endregion

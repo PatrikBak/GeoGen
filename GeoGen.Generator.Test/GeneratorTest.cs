@@ -37,7 +37,7 @@ namespace GeoGen.Generator.Test
             // setup container mock so it returns configurations and overrides them when we're
             // adding a new layer
             var containterMock = new Mock<IConfigurationContainer>();
-            containterMock.Setup(c => c.GetEnumerator()).Returns(() => configurations.GetEnumerator());
+            containterMock.Setup(c => c.CurrentLayer).Returns(() => configurations);
             containterMock.Setup(c => c.AddLayer(It.IsAny<List<ConstructorOutput>>()))
                     .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
             var configurationContainer = containterMock.Object;
@@ -45,7 +45,7 @@ namespace GeoGen.Generator.Test
             // setup configuration handler mock that converts all generated configurations 
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
-            configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IConfigurationContainer>()))
+            configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IEnumerable<ConfigurationWrapper>>()))
                     .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput {GeneratedConfiguration = c.Configuration}));
             var configurationHandler = configurationHandlerMock.Object;
 

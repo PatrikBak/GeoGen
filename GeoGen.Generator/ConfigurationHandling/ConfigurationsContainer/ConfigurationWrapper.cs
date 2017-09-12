@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.Constructing.Arguments.Container;
 
@@ -20,7 +21,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
         /// Gets or sets the pre-calculated dictionary mapping object types to actual
         /// objects of this types contained in the configuration.
         /// </summary>
-        public IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> ObjectTypeToObjects { get; set; }
+        public Dictionary<ConfigurationObjectType, List<ConfigurationObject>> ObjectTypeToObjects { get; set; }
 
         /// <summary>
         /// Gets or sets the dictionary mapping construction ids to <see cref="IArgumentsContainer"/>

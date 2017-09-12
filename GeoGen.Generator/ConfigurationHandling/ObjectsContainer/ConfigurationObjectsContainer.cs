@@ -12,12 +12,16 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
     /// </summary>
     internal class ConfigurationObjectsContainer : StringBasedContainer<ConfigurationObject>, IConfigurationObjectsContainer
     {
-        #region Private fields
+        #region IConfigurationObjectsContainer propertis
 
         /// <summary>
-        /// The configuration object to string provider.s
+        /// Gets the default complex configuration object to string provider that is used by the container.
         /// </summary>
-        private readonly DefaultComplexConfigurationObjectToStringProvider _objectToStringProvider;
+        public DefaultComplexConfigurationObjectToStringProvider ConfigurationObjectToStringProvider { get; }
+
+        #endregion
+
+        #region Private fields
 
         /// <summary>
         /// The dictionary mapping ids of objects to actual objects.
@@ -35,7 +39,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
         /// <param name="objectToStringProvider">The object to string provider.</param>
         public ConfigurationObjectsContainer(DefaultComplexConfigurationObjectToStringProvider objectToStringProvider)
         {
-            _objectToStringProvider = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
+            ConfigurationObjectToStringProvider = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
         }
 
         #endregion
@@ -49,10 +53,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
         /// <returns>The string representation.</returns>
         protected override string ItemToString(ConfigurationObject item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            return _objectToStringProvider.ConvertToString(item);
+            return ConfigurationObjectToStringProvider.ConvertToString(item);
         }
 
         #endregion
@@ -78,18 +79,21 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
 
             var stringRepresentation = ItemToString(constructedConfigurationObject);
 
-            if (Items.ContainsKey(stringRepresentation))
+            lock (this)
             {
-                return (ConstructedConfigurationObject) Items[stringRepresentation];
+                if (Items.ContainsKey(stringRepresentation))
+                {
+                    return (ConstructedConfigurationObject) Items[stringRepresentation];
+                }
+
+                var newId = Items.Count + 1;
+                constructedConfigurationObject.Id = newId;
+                Items.Add(stringRepresentation, constructedConfigurationObject);
+                _idToObjectDictionary.Add(newId, constructedConfigurationObject);
+                ConfigurationObjectToStringProvider.CacheObject(newId, stringRepresentation);
+
+                return constructedConfigurationObject;
             }
-
-            var newId = Items.Count + 1;
-            constructedConfigurationObject.Id = newId;
-            Items.Add(stringRepresentation, constructedConfigurationObject);
-            _idToObjectDictionary.Add(newId, constructedConfigurationObject);
-            _objectToStringProvider.CacheObject(newId, stringRepresentation);
-
-            return constructedConfigurationObject;
         }
 
         /// <summary>
@@ -103,6 +107,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
 
             Items.Clear();
             _idToObjectDictionary.Clear();
+            ConfigurationObjectToStringProvider.ClearCache();
 
             var counter = 1;
 
@@ -113,7 +118,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
 
                 var id = counter++;
                 looseConfigurationObject.Id = id;
-                Items.Add(_objectToStringProvider.ConvertToString(looseConfigurationObject), looseConfigurationObject);
+                Items.Add(ConfigurationObjectToStringProvider.ConvertToString(looseConfigurationObject), looseConfigurationObject);
                 _idToObjectDictionary.Add(id, looseConfigurationObject);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
@@ -35,7 +36,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// The cache dictionary mapping constructed configuration ids to their 
         /// string versions. 
         /// </summary>
-        protected readonly Dictionary<int, string> Cache = new Dictionary<int, string>();
+        protected readonly ConcurrentDictionary<int, string> Cache = new ConcurrentDictionary<int, string>();
 
         #endregion
 

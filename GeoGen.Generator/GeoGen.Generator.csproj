@@ -37,6 +37,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationHandling\ConfigurationToString\ConfigurationToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationToString\IConfigurationToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ObjectsContainer\ConfigurationObjectsContainer.cs" />
     <Compile Include="ConfigurationHandling\ObjectsContainer\IConfigurationObjectsContainer.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProvider.cs" />
@@ -49,12 +51,15 @@
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfigurationObjectToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\DictionaryBasedLooseConfigurationObjectIdResolver.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\LooseObjectIdResolving\ILooseConfigurationObjectIdResolver.cs" />
+    <Compile Include="ConfigurationHandling\SymetricConfigurationsHandler\ISymetricConfigurationsHandler.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactory.cs" />
     <Compile Include="Constructing\Arguments\Container\IArgumentsContainerFactory.cs" />
+    <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherFactory.cs" />
+    <Compile Include="Constructing\Arguments\SignatureMatching\IConstructionSignatureMatcherFactory.cs" />
     <Compile Include="Constructing\ConfigurationConstructor.cs" />
     <Compile Include="Constructing\Container\ConstructionsContainer.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />

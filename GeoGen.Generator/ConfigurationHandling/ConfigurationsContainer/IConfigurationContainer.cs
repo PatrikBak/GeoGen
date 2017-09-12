@@ -6,10 +6,9 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
 {
     /// <summary>
     /// Represents a container for all generated configurations. It's meant to handle processing
-    /// of symetric configurations. It implements the <see cref="IEnumerable{T}"/> interface whose generic 
-    /// type is <see cref="ConfigurationWrapper"/>.
+    /// of symetric configurations. 
     /// </summary>
-    internal interface IConfigurationContainer : IEnumerable<ConfigurationWrapper>
+    internal interface IConfigurationContainer
     {
         /// <summary>
         /// Initializes the container with a given initial configuration.
@@ -18,9 +17,14 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
         void Initialize(Configuration initialConfiguration);
 
         /// <summary>
-        /// Processes a new layer of a constructor output. 
+        /// Processes a new layer of a constructor output.
         /// </summary>
         /// <param name="newLayerOutput">The new layer output.</param>
         void AddLayer(List<ConstructorOutput> newLayerOutput);
+
+        /// <summary>
+        /// Gets the current layer of unprocessed configurations
+        /// </summary>
+        List<ConfigurationWrapper> CurrentLayer { get; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
 
 namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
 {
@@ -11,6 +12,11 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
     /// </summary>
     internal interface IConfigurationObjectsContainer : IEnumerable<ConfigurationObject>
     {
+        /// <summary>
+        /// Gets the default complex configuration object to string provider that is used by the container.
+        /// </summary>
+        DefaultComplexConfigurationObjectToStringProvider ConfigurationObjectToStringProvider { get; }
+
         /// <summary>
         /// Adds a given object to a container. The object must
         /// not have set the id, it's going to be set in the container.

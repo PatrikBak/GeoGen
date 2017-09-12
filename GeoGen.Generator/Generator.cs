@@ -85,6 +85,8 @@ namespace GeoGen.Generator
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
             var newLayerConfigurations = _configurationContainer
+                    // get the current layer
+                    .CurrentLayer
                     // paralelize (TODO: Check real perfomance, thread safety)    
                     .AsParallel()
                     // create configurations and merge them
@@ -95,8 +97,11 @@ namespace GeoGen.Generator
             // make container aware of the new layer
             _configurationContainer.AddLayer(newLayerConfigurations);
 
+            // get the current (new) layer
+            var currentLayer = _configurationContainer.CurrentLayer;
+
             // let the handler handle the container and lazily return the output
-            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(_configurationContainer))
+            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(currentLayer))
             {
                 yield return generatorOutput;
             }

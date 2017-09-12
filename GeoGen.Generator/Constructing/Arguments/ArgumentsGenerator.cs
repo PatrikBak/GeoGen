@@ -18,9 +18,9 @@ namespace GeoGen.Generator.Constructing.Arguments
         #region Private fields
 
         /// <summary>
-        /// The construction signature matcher.
+        /// The construction signature matcher factory.
         /// </summary>
-        private readonly IConstructionSignatureMatcher _constructionSignatureMatcher;
+        private readonly IConstructionSignatureMatcherFactory _constructionSignatureMatcherFactory;
 
         /// <summary>
         /// The arguments container factory.
@@ -44,22 +44,23 @@ namespace GeoGen.Generator.Constructing.Arguments
         /// <summary>
         /// Construct a new arguments generator. The generator uses combinator and 
         /// variations provider to create all possible sets of objects to be passed
-        /// as arguments. These arguments are created by construction signature matcher
+        /// as arguments. These arguments are created by construction signature matcher factory
         /// and then kept in an arguments container so that they we provide only
         /// distinct set of arguments.
         /// </summary>
         /// <param name="combinator">The combinator.</param>
-        /// <param name="constructionSignatureMatcher">The construction signature matcher.</param>
+        /// <param name="constructionSignatureMatcherFactory">The construction signature matcher factory.</param>
         /// <param name="variationsProvider">The variations provider.</param>
         /// <param name="argumentsContainerFactory">The arguments container factory.</param>
         public ArgumentsGenerator(ICombinator<ConfigurationObjectType, List<ConfigurationObject>> combinator,
-            IConstructionSignatureMatcher constructionSignatureMatcher, IVariationsProvider<ConfigurationObject> variationsProvider,
+            IConstructionSignatureMatcherFactory constructionSignatureMatcherFactory,
+            IVariationsProvider<ConfigurationObject> variationsProvider,
             IArgumentsContainerFactory argumentsContainerFactory)
         {
-            _constructionSignatureMatcher = constructionSignatureMatcher ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _constructionSignatureMatcherFactory = constructionSignatureMatcherFactory ?? throw new ArgumentNullException(nameof(constructionSignatureMatcherFactory));
             _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _combinator = combinator ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(variationsProvider));
+            _combinator = combinator ?? throw new ArgumentNullException(nameof(combinator));
         }
 
         #endregion
@@ -101,17 +102,18 @@ namespace GeoGen.Generator.Constructing.Arguments
                     );
 
             var argumentsContainer = _argumentsContainerFactory.CreateContainer();
+            var signatureMatcher = _constructionSignatureMatcherFactory.CreateMatcher();
 
             foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))
             {
                 // Initialize the signature matcher with a new object dictionary
-                _constructionSignatureMatcher.Initialize(dictonaryForMatcher);
+                signatureMatcher.Initialize(dictonaryForMatcher);
 
                 // Take the parameters from the construction
                 var parameters = construction.Construction.ConstructionParameters;
 
                 // Let the matcher match the parameters to obtain arguments
-                var arguments = _constructionSignatureMatcher.Match(parameters);
+                var arguments = signatureMatcher.Match(parameters);
 
                 // Add arguments to the container
                 argumentsContainer.AddArguments(arguments);
@@ -136,7 +138,7 @@ namespace GeoGen.Generator.Constructing.Arguments
                     return false;
 
                 var realObjects = configuration.ObjectTypeToObjects[pair.Key];
-                var numberOfRealObjects = realObjects.Count;
+                var numberOfRealObjects = realObjects.Count();
 
                 // if there are more neeed arguments than available objects, 
                 // then we can't perform the construction

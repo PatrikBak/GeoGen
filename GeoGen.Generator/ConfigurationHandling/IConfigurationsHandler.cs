@@ -11,10 +11,11 @@ namespace GeoGen.Generator.ConfigurationHandling
     internal interface IConfigurationsHandler
     {
         /// <summary>
-        /// Handles the current state of a given configuration container.
+        /// Handles generated configuration. It is supposed to call the analyzer
+        /// service and handle it's output.
         /// </summary>
-        /// <param name="configurationContainer">The configuration container.</param>
+        /// <param name="configurations">The configurations enumerable.</param>
         /// <returns>The final generator output enumerable.</returns>
-        IEnumerable<GeneratorOutput> GenerateFinalOutput(IConfigurationContainer configurationContainer);
+        IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurations);
     }
 }

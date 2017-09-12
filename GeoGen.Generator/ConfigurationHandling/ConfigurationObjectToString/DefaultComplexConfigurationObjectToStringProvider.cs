@@ -83,12 +83,20 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         {
             try
             {
-                Cache.Add(configurationObjectId, stringVersion);
+                Cache.TryAdd(configurationObjectId, stringVersion);
             }
             catch (ArgumentException)
             {
                 throw new GeneratorException("The object with this id has been already cached.");
             }
+        }
+
+        /// <summary>
+        /// Clears the cache of the provider.
+        /// </summary>
+        public void ClearCache()
+        {
+            Cache.Clear();
         }
 
         #endregion

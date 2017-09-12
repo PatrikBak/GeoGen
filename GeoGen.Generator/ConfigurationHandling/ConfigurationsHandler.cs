@@ -6,7 +6,7 @@ namespace GeoGen.Generator.ConfigurationHandling
 {
     internal class ConfigurationsHandler : IConfigurationsHandler
     {
-        public IEnumerable<GeneratorOutput> GenerateFinalOutput(IConfigurationContainer configurationContainer)
+        public IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurationContainer)
         {
             throw new NotImplementedException();
         }

@@ -50,6 +50,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationHandling\ConfigurationsContainer\ConfigurationsContainerTest.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationToString\ConfigurationToStringProviderTest.cs" />
     <Compile Include="ConfigurationHandling\ObjectsContainer\ConfigurationObjectsContainerTest.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactoryTest.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProviderTest.cs" />
