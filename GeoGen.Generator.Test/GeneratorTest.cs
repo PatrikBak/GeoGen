@@ -10,6 +10,7 @@ using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test
 {
@@ -22,15 +23,22 @@ namespace GeoGen.Generator.Test
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
             var constructedObjects = new List<ConstructedConfigurationObject>();
-            var configuration = new ConfigurationWrapper {Configuration = new Configuration(looseObjects, constructedObjects)};
+            var configuration = new ConfigurationWrapper
+            {
+                Configuration = new Configuration(looseObjects, constructedObjects)
+            };
 
             // mock constructed configuration object
             var mock = new Mock<Construction>();
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
+            var outputTypes = new List<ConfigurationObjectType>
+            {
+                ConfigurationObjectType.Point,
+                ConfigurationObjectType.Circle
+            };
             mock.Setup(c => c.OutputTypes).Returns(outputTypes);
             var constructon = mock.Object;
-            var constructedConfigurationObject = new ConstructedConfigurationObject(
-                constructon, new List<ConstructionArgument> {new ObjectConstructionArgument(looseObject)}, 0);
+            var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObject)};
+            var constructedConfigurationObject = new ConstructedConfigurationObject(constructon, args, 0);
 
             var configurations = new List<ConfigurationWrapper> {configuration};
 
@@ -46,23 +54,31 @@ namespace GeoGen.Generator.Test
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IEnumerable<ConfigurationWrapper>>()))
-                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput {GeneratedConfiguration = c.Configuration}));
+                    .Returns(
+                        () => configurations.Skip(1).Select(
+                            c => new GeneratorOutput
+                            {
+                                GeneratedConfiguration = c.Configuration
+                            }));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating
             // the provided one by the given number of times
-            var configurationConstructorMock = new Mock<IConfigurationConstructor>();
+            var configurationConstructorMock = new Mock<IObjectsConstructor>();
 
             configurationConstructorMock.Setup(c => c.GenerateNewConfigurationObjects(It.IsAny<ConfigurationWrapper>()))
                     .Returns<ConfigurationWrapper>
                     (
                         c => Enumerable.Repeat(configuration, constructorDuplicationCount)
-                                .Select(
+                                .Select
+                                (
                                     cc => new ConstructorOutput
                                     {
                                         InitialConfiguration = configuration,
                                         ConstructedObjects = new List<ConstructedConfigurationObject> {constructedConfigurationObject}
-                                    }));
+                                    }
+                                )
+                    );
 
             var congigurationConstructer = configurationConstructorMock.Object;
 
@@ -89,9 +105,9 @@ namespace GeoGen.Generator.Test
         [TestCase(0)]
         public void Generator_Number_Of_Iterations_Is_At_Least_One(int number)
         {
-            var constructor = new Mock<IConfigurationConstructor>().Object;
-            var container = new Mock<IConfigurationContainer>().Object;
-            var handler = new Mock<IConfigurationsHandler>().Object;
+            var constructor = SimpleMock<IObjectsConstructor>();
+            var container = SimpleMock<IConfigurationContainer>();
+            var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(container, constructor, handler, number));
         }
@@ -99,8 +115,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Generator_Container_Cannot_Be_Null()
         {
-            var constructor = new Mock<IConfigurationConstructor>().Object;
-            var handler = new Mock<IConfigurationsHandler>().Object;
+            var constructor = SimpleMock<IObjectsConstructor>();
+            var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(null, constructor, handler, 1));
         }
@@ -108,8 +124,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Generator_Constructor_Cannot_Be_Null()
         {
-            var container = new Mock<IConfigurationContainer>().Object;
-            var handler = new Mock<IConfigurationsHandler>().Object;
+            var container = SimpleMock<IConfigurationContainer>();
+            var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, null, handler, 1));
         }
@@ -117,8 +133,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Generator_Handler_Cannot_Be_Null()
         {
-            var constructor = new Mock<IConfigurationConstructor>().Object;
-            var container = new Mock<IConfigurationContainer>().Object;
+            var constructor = SimpleMock<IObjectsConstructor>();
+            var container = SimpleMock<IConfigurationContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, constructor, null, 1));
         }

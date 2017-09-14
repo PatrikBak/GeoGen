@@ -31,68 +31,62 @@ namespace GeoGen.Core.Test.Constructions
         [Test]
         public void Constructor_Test_Parental_Configuration_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(null, new HashSet<int> {0}, new List<ConstructionParameter>());
-                });
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ComposedConstruction(null, new HashSet<int> {0}, new List<ConstructionParameter>())
+            );
         }
 
         [Test]
         public void Constructor_Test_Output_Object_Indices_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(Configuration(), null, new List<ConstructionParameter>());
-                });
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ComposedConstruction(Configuration(), null, new List<ConstructionParameter>())
+            );
         }
 
         [Test]
         public void Constructor_Test_Output_Object_Indices_Cannot_Be_Empty()
         {
-            Assert.Throws<ArgumentException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(Configuration(), new HashSet<int>(), new List<ConstructionParameter>());
-                });
+            Assert.Throws<ArgumentException>
+            (
+                () => new ComposedConstruction(Configuration(), new HashSet<int>(), new List<ConstructionParameter>())
+            );
         }
 
         [Test]
         public void Constructor_Test_Output_Object_Indices_Must_Correspond_To_Existing_Objects()
         {
-            Assert.Throws<ArgumentException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(Configuration(), new HashSet<int> {1, 2}, new List<ConstructionParameter>());
-                });
+            Assert.Throws<ArgumentException>
+            (
+                () => new ComposedConstruction(Configuration(), new HashSet<int> {1, 2}, new List<ConstructionParameter>())
+            );
         }
 
         [Test]
         public void Constructor_Test_Output_Object_Indices_Correspond_Are_Correct()
         {
             var parameters = new List<ConstructionParameter> {new ObjectConstructionParameter(ConfigurationObjectType.Point)};
-            var result = new ComposedConstruction(Configuration(), new HashSet<int> {0, 1}, parameters);
+            new ComposedConstruction(Configuration(), new HashSet<int> {0, 1}, parameters);
         }
 
         [Test]
         public void Constructor_Test_Construction_Parameters_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(Configuration(), new HashSet<int> {0}, null);
-                });
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ComposedConstruction(Configuration(), new HashSet<int> {0}, null)
+            );
         }
 
         [Test]
         public void Constructor_Test_Construction_Parameters_Cannot_Be_Empty()
         {
-            Assert.Throws<ArgumentException>(
-                () =>
-                {
-                    var result = new ComposedConstruction(Configuration(), new HashSet<int> {0}, new List<ConstructionParameter>());
-                });
+            Assert.Throws<ArgumentException>
+            (
+                () => new ComposedConstruction(Configuration(), new HashSet<int> {0}, new List<ConstructionParameter>())
+            );
         }
     }
 }

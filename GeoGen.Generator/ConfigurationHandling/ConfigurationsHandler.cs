@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 
 namespace GeoGen.Generator.ConfigurationHandling
 {
-    internal class ConfigurationsHandler : IConfigurationsHandler
+    class ConfigurationsHandler : IConfigurationsHandler
     {
-        public IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurationContainer)
+        public IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurations)
         {
-            throw new NotImplementedException();
+            return configurations.Select(configurationWrapper => new GeneratorOutput {GeneratedConfiguration = configurationWrapper.Configuration});
         }
     }
 }

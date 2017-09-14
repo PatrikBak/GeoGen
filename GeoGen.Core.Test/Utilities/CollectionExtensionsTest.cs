@@ -9,7 +9,7 @@ namespace GeoGen.Core.Test.Utilities
     public class CollectionExtensionsTest
     {
         [Test]
-        public void SetItemsTest_Items_Not_null()
+        public void Set_Items_Test_Items_Not_null()
         {
             Assert.Throws<ArgumentNullException>(() =>
             {
@@ -19,7 +19,7 @@ namespace GeoGen.Core.Test.Utilities
         }
 
         [Test]
-        public void SetItemsTest_Items_When_Items_Are_Empty()
+        public void Set_Items_Test_Items_When_Items_Are_Empty()
         {
             var list = new List<int> {1, 2};
             list.SetItems(new List<int>());
@@ -27,7 +27,7 @@ namespace GeoGen.Core.Test.Utilities
         }
 
         [Test]
-        public void SetItems_Items_Are_Not_Empty()
+        public void Set_Items_Items_Are_Not_Empty()
         {
             var list = new List<int> {1, 2};
             list.SetItems(new List<int> {1, 3});

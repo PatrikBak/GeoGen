@@ -1,25 +1,20 @@
 ﻿using System;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString
 {
     [TestFixture]
     public class ConfigurationObjectToStringProviderFactoryTest
     {
-        private static IArgumentsToStringProvider Provider()
-        {
-            var mock = new Mock<IArgumentsToStringProvider>();
-
-            return mock.Object;
-        }
-
         private static ConfigurationObjectToStringProviderFactory Factory()
         {
-            return new ConfigurationObjectToStringProviderFactory(Provider());
+            var provider = SimpleMock<IArgumentsToStringProvider>();
+
+            return new ConfigurationObjectToStringProviderFactory(provider);
         }
 
         [Test]
@@ -29,32 +24,21 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         }
 
         [Test]
-        public void Default_Provider_Is_Returned()
-        {
-            var defaultProvider = Factory().CreateDefaultProvider();
-
-            Assert.NotNull(defaultProvider);
-        }
-
-        [Test]
-        public void Loose_Objects_Resolver_Is_Not_Null()
+        public void Objects_Resolver_Is_Not_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Factory().CreateCustomProvider(null));
-        }
-
-        [Test]
-        public void Loose_Objects_Resolver_Is_Not_Default()
-        {
-            Assert.Throws<GeneratorException>(() => Factory().CreateCustomProvider(new DefaultLooseConfigurationObjectIdResolver()));
+            Assert.Throws<ArgumentNullException>(() => Factory().CreateDefaltProvider(null));
         }
 
         [Test]
         public void Custom_Provider_Is_Returned()
         {
-            var resolver = new Mock<ILooseConfigurationObjectIdResolver>().Object;
-            var provider = Factory().CreateCustomProvider(resolver);
+            var resolver = SimpleMock<IObjectIdResolver>();
+            var provider1 = Factory().CreateCustomProvider(resolver);
+            var provider2 = Factory().CreateDefaltProvider(resolver);
 
-            Assert.NotNull(provider);
+            Assert.NotNull(provider1);
+            Assert.NotNull(provider2);
         }
     }
 }

@@ -13,32 +13,38 @@ namespace GeoGen.Core.Test.Configurations
         [Test]
         public void Constructor_Test_Construction_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var constructedObject = new ConstructedConfigurationObject(null, new List<ConstructionArgument>(), 0);
-            });
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConstructedConfigurationObject(null, new List<ConstructionArgument>(), 0)
+            );
         }
 
         [Test]
         public void Constructor_Test_Passed_Argument_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var mock = new Mock<Construction>();
-                var constructon = mock.Object;
-                var constructedObject = new ConstructedConfigurationObject(constructon, null, 0);
-            });
+            Assert.Throws<ArgumentNullException>
+            (
+                () =>
+                {
+                    var mock = new Mock<Construction>();
+                    var constructon = mock.Object;
+                    new ConstructedConfigurationObject(constructon, null, 0);
+                }
+            );
         }
 
         [Test]
         public void Constructor_Test_Pased_Arguments_Cannot_Be_Empty()
         {
-            Assert.Throws<ArgumentException>(() =>
-            {
-                var mock = new Mock<Construction>();
-                var constructon = mock.Object;
-                var constructedObject = new ConstructedConfigurationObject(constructon, new List<ConstructionArgument>(), 0);
-            });
+            Assert.Throws<ArgumentException>
+            (
+                () =>
+                {
+                    var mock = new Mock<Construction>();
+                    var constructon = mock.Object;
+                    new ConstructedConfigurationObject(constructon, new List<ConstructionArgument>(), 0);
+                }
+            );
         }
 
         [TestCase(-42)]
@@ -46,16 +52,19 @@ namespace GeoGen.Core.Test.Configurations
         [TestCase(-1)]
         public void Constructor_Test_Index_Cannot_Be_Less_Than_Zero(int index)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                var mock = new Mock<Construction>();
-                var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
-                mock.Setup(construction => construction.OutputTypes).Returns(outputTypes);
-                var objectsMock = new Mock<ConfigurationObject>();
-                var arguments = new List<ConstructionArgument> {new ObjectConstructionArgument(objectsMock.Object)};
-                var constructon = mock.Object;
-                var constructedObject = new ConstructedConfigurationObject(constructon, arguments, index);
-            });
+            Assert.Throws<ArgumentOutOfRangeException>
+            (
+                () =>
+                {
+                    var mock = new Mock<Construction>();
+                    var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
+                    mock.Setup(construction => construction.OutputTypes).Returns(outputTypes);
+                    var objectsMock = new Mock<ConfigurationObject>();
+                    var arguments = new List<ConstructionArgument> {new ObjectConstructionArgument(objectsMock.Object)};
+                    var constructon = mock.Object;
+                    new ConstructedConfigurationObject(constructon, arguments, index);
+                }
+            );
         }
 
         [TestCase(2)]
@@ -63,16 +72,19 @@ namespace GeoGen.Core.Test.Configurations
         [TestCase(42)]
         public void Constructor_Test_Index_Cannot_Be_More_Than_Number_Of_Construction_Outputs(int index)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                var mock = new Mock<Construction>();
-                var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
-                mock.Setup(construction => construction.OutputTypes).Returns(outputTypes);
-                var objectsMock = new Mock<ConfigurationObject>();
-                var arguments = new List<ConstructionArgument> { new ObjectConstructionArgument(objectsMock.Object) };
-                var constructon = mock.Object;
-                var constructedObject = new ConstructedConfigurationObject(constructon, arguments, index);
-            });
+            Assert.Throws<ArgumentOutOfRangeException>
+            (
+                () =>
+                {
+                    var mock = new Mock<Construction>();
+                    var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
+                    mock.Setup(construction => construction.OutputTypes).Returns(outputTypes);
+                    var objectsMock = new Mock<ConfigurationObject>();
+                    var arguments = new List<ConstructionArgument> {new ObjectConstructionArgument(objectsMock.Object)};
+                    var constructon = mock.Object;
+                    new ConstructedConfigurationObject(constructon, arguments, index);
+                }
+            );
         }
 
         [TestCase(0)]
@@ -83,9 +95,9 @@ namespace GeoGen.Core.Test.Configurations
             var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Circle};
             mock.Setup(construction => construction.OutputTypes).Returns(outputTypes);
             var objectsMock = new Mock<ConfigurationObject>();
-            var arguments = new List<ConstructionArgument> { new ObjectConstructionArgument(objectsMock.Object) };
+            var arguments = new List<ConstructionArgument> {new ObjectConstructionArgument(objectsMock.Object)};
             var constructon = mock.Object;
-            var constructedObject = new ConstructedConfigurationObject(constructon, arguments, index);
+            new ConstructedConfigurationObject(constructon, arguments, index);
         }
     }
 }

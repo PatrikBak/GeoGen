@@ -1,16 +1,16 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using NUnit.Framework;
 
-namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving
+namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving
 {
     [TestFixture]
-    public class DefaultLooseConfigurationObjectIdResolverTest
+    public class DefaultConfigurationObjectIdResolverTest
     {
-        private static DefaultLooseConfigurationObjectIdResolver Resolver()
+        private static DefaultObjectIdResolver Resolver()
         {
-            return new DefaultLooseConfigurationObjectIdResolver();
+            return new DefaultObjectIdResolver();
         }
 
         [Test]

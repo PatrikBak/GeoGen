@@ -79,21 +79,18 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
 
             var stringRepresentation = ItemToString(constructedConfigurationObject);
 
-            lock (this)
+            if (Items.ContainsKey(stringRepresentation))
             {
-                if (Items.ContainsKey(stringRepresentation))
-                {
-                    return (ConstructedConfigurationObject) Items[stringRepresentation];
-                }
-
-                var newId = Items.Count + 1;
-                constructedConfigurationObject.Id = newId;
-                Items.Add(stringRepresentation, constructedConfigurationObject);
-                _idToObjectDictionary.Add(newId, constructedConfigurationObject);
-                ConfigurationObjectToStringProvider.CacheObject(newId, stringRepresentation);
-
-                return constructedConfigurationObject;
+                return (ConstructedConfigurationObject) Items[stringRepresentation];
             }
+
+            var newId = Items.Count + 1;
+            constructedConfigurationObject.Id = newId;
+            Items.Add(stringRepresentation, constructedConfigurationObject);
+            _idToObjectDictionary.Add(newId, constructedConfigurationObject);
+            ConfigurationObjectToStringProvider.CacheObject(newId, stringRepresentation);
+
+            return constructedConfigurationObject;
         }
 
         /// <summary>

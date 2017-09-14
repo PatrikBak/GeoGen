@@ -7,7 +7,7 @@ namespace GeoGen.Generator.Constructing
     /// Represents a service that performs the construction operations to obtian new configurations
     /// from a given one. 
     /// </summary>
-    internal interface IConfigurationConstructor
+    internal interface IObjectsConstructor
     {
         /// <summary>
         /// Performs all possible constructions to a given configution wrapper.

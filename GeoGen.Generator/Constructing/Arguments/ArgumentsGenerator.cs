@@ -89,7 +89,7 @@ namespace GeoGen.Generator.Constructing.Arguments
                 return _argumentsContainerFactory.CreateContainer();
             }
 
-            var dictionaryForCombinator = configuration.ObjectTypeToObjects.Where
+            var dictionaryForCombinator = configuration.ConfigurationObjectsMap.Where
                     (
                         pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key)
                     )
@@ -134,11 +134,11 @@ namespace GeoGen.Generator.Constructing.Arguments
             {
                 var numberOfElementsInArguments = pair.Value;
 
-                if (!configuration.ObjectTypeToObjects.ContainsKey(pair.Key))
+                if (!configuration.ConfigurationObjectsMap.ContainsKey(pair.Key))
                     return false;
 
-                var realObjects = configuration.ObjectTypeToObjects[pair.Key];
-                var numberOfRealObjects = realObjects.Count();
+                var realObjects = configuration.ConfigurationObjectsMap[pair.Key];
+                var numberOfRealObjects = realObjects.Count;
 
                 // if there are more neeed arguments than available objects, 
                 // then we can't perform the construction

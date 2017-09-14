@@ -4,9 +4,9 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.StringBasedContainer;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationToString;
 using GeoGen.Generator.ConfigurationHandling.ObjectsContainer;
-using GeoGen.Generator.ConfigurationHandling.SymetricConfigurationsHandler;
 using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Constructing.Arguments.Container;
 
@@ -27,7 +27,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
         /// <summary>
         /// The symetric configurations handler
         /// </summary>
-        private readonly ISymetricConfigurationsHandler _symetricConfigurationsHandler;
+        private readonly IConfigurationConstructor _configurationConstructor;
 
         /// <summary>
         /// The configuration to string provider
@@ -59,16 +59,19 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
         /// and a configuration objects container.
         /// </summary>
         /// <param name="argumentsContainerFactory">The arguments container factory.</param>
-        /// <param name="symetricConfigurationsHandler">The symetrc configurations handler.</param>
+        /// <param name="configurationConstructor">The symetrc configurations handler.</param>
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
-        public ConfigurationContainer(IArgumentsContainerFactory argumentsContainerFactory,
-            ISymetricConfigurationsHandler symetricConfigurationsHandler,
+        public ConfigurationContainer
+        (
+            IArgumentsContainerFactory argumentsContainerFactory,
+            IConfigurationConstructor configurationConstructor,
             IConfigurationToStringProvider configurationToStringProvider,
-            IConfigurationObjectsContainer configurationObjectsContainer)
+            IConfigurationObjectsContainer configurationObjectsContainer
+        )
         {
             _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _symetricConfigurationsHandler = symetricConfigurationsHandler ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
             _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
             _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
         }
@@ -104,7 +107,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
             Add(initialConfiguration);
 
             // Create type lookup
-            var objectTypeLookup = CreateTypeDictionary(initialConfiguration);
+            var objectsMap = new ConfigurationObjectsMap(initialConfiguration);
 
             // Create forbidden arguments dictionary
             var forbiddenArguments = CreateForbiddenArguments(initialConfiguration);
@@ -113,8 +116,8 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
             var configurationWrapper = new ConfigurationWrapper
             {
                 Configuration = initialConfiguration,
-                ObjectTypeToObjects = objectTypeLookup,
-                ConstructionIdToForbiddenArguments = forbiddenArguments
+                ConfigurationObjectsMap = objectsMap,
+                ForbiddenArguments = forbiddenArguments
             };
 
             // Set the current layer items
@@ -132,8 +135,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
 
             // take the output
             var newLayer = newLayerOutput
-                    // paralelize
-                    .AsParallel()
                     // get new configurations
                     .Select
                     (
@@ -147,11 +148,8 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
                             // Re-assign the output
                             output.ConstructedObjects = newObjects;
 
-                            // Pull the parent configuration
-                            var configuration = output.InitialConfiguration;
-
-                            // Get the symetry class representant
-                            configuration = _symetricConfigurationsHandler.CreateSymetryClassRepresentant(configuration, newObjects);
+                            // Create a new configuration wrapper
+                            var configuration = _configurationConstructor.ConstructWrapper(output);
 
                             // Add the representant to the container
                             var result = Add(configuration.Configuration);
@@ -213,31 +211,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
                 }
 
                 result[id].AddArguments(constructedObject.PassedArguments);
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Creates an object type to objects dictionary from a given 
-        /// configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>The dictionary mapping object types to all objects of that type.</returns>
-        private static Dictionary<ConfigurationObjectType, List<ConfigurationObject>> CreateTypeDictionary(Configuration configuration)
-        {
-            var result = new Dictionary<ConfigurationObjectType, List<ConfigurationObject>>();
-
-            var objects = configuration.LooseObjects.Cast<ConfigurationObject>().Union(configuration.ConstructedObjects);
-
-            foreach (var configurationObject in objects)
-            {
-                var type = configurationObject.ObjectType;
-
-                if (!result.ContainsKey(type))
-                    result.Add(type, new List<ConfigurationObject>());
-
-                result[type].Add(configurationObject);
             }
 
             return result;

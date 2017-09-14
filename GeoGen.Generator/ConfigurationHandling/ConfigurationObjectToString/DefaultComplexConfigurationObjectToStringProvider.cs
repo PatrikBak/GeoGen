@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
     /// An implementation of <see cref="ComplexConfigurationObjectToStringProviderBase"/> that
-    /// uses <see cref="DefaultLooseConfigurationObjectIdResolver"/>. This class is meant to be used 
+    /// uses <see cref="DefaultObjectIdResolver"/>. This class is meant to be used 
     /// in a class that cares care of creating unique <see cref="ConfigurationObject"/>s.
     /// These object don't have their id set at first, but we assume that all their underlying
     /// objects have and that they also have their string versions cached. This caching must be
@@ -21,11 +22,14 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 
         /// <summary>
         /// Constructs a default complex configuration object to string provider 
-        /// with a given arguments to string provider.
+        /// with a given arguments to string provider and a given default
+        /// configuration object id resolver.
         /// </summary>
         /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        public DefaultComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider)
-            : base(argumentsToStringProvider, DefaultLooseConfigurationObjectIdResolver.Instance)
+        /// <param name="resolver">The resolver.</param>
+        public DefaultComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider,
+                                                                 DefaultObjectIdResolver resolver)
+            : base(argumentsToStringProvider, resolver)
         {
         }
 

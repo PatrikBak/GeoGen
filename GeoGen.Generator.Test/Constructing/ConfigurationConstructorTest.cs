@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing;
@@ -11,40 +10,14 @@ using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Container;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.Constructions;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.Constructing
 {
     public class ConfigurationConstructorTest
     {
-        private static T SimpleMock<T>() where T : class
-        {
-            return new Mock<T>().Object;
-        }
-
-        private static List<ConstructionWrapper> ConstructionWrappers(int numberOfConstruction, int outputCount)
-        {
-            return Enumerable.Range(1, numberOfConstruction)
-                    .Select(
-                        i =>
-                        {
-                            var mock = new Mock<Construction>();
-                            var outputTypes = Enumerable.Repeat(ConfigurationObjectType.Point, outputCount).ToList();
-                            mock.Setup(c => c.OutputTypes).Returns(outputTypes);
-                            mock.Setup(c => c.Id).Returns(i);
-
-                            return mock.Object;
-                        })
-                    .Select(c => new ConstructionWrapper {Construction = c})
-                    .ToList();
-        }
-
-        private static IEnumerable<ConfigurationObject> Objects(int count)
-        {
-            return Enumerable.Range(1, count)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
-                    .ToList();
-        }
-
         private static IArgumentsContainer Arguments(IEnumerable<ConfigurationObject> objects)
         {
             var argsList = objects
@@ -56,19 +29,23 @@ namespace GeoGen.Generator.Test.Constructing
             mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
 
             mock.Setup(s => s.RemoveElementsFrom(It.IsAny<IArgumentsContainer>()))
-                    .Callback<IArgumentsContainer>(
+                    .Callback<IArgumentsContainer>
+                    (
                         c =>
                         {
                             int Id(IReadOnlyList<ConstructionArgument> arguments)
                             {
-                                return ((ObjectConstructionArgument) arguments[0]).PassedObject.Id.Value;
+                                var argument = (ObjectConstructionArgument) arguments[0];
+
+                                return argument.PassedObject.Id ?? throw new Exception();
                             }
 
                             foreach (var argsToRemove in c)
                             {
                                 argsList.RemoveAll(args => Id(args) == Id(argsToRemove));
                             }
-                        });
+                        }
+                    );
 
             return mock.Object;
         }
@@ -82,7 +59,7 @@ namespace GeoGen.Generator.Test.Constructing
             return mock.Object;
         }
 
-        private static IArgumentsGenerator ArgumentsGenerator(List<ConfigurationObject> objects)
+        private static IArgumentsGenerator ArgumentsGenerator(List<LooseConfigurationObject> objects)
         {
             var generatorMock = new Mock<IArgumentsGenerator>();
             generatorMock.Setup(g => g.GenerateArguments(It.IsAny<ConfigurationWrapper>(), It.IsAny<ConstructionWrapper>()))
@@ -91,7 +68,8 @@ namespace GeoGen.Generator.Test.Constructing
             return generatorMock.Object;
         }
 
-        private static IArgumentsContainer Container(IEnumerable<ConfigurationObject> objects, int forbidenIdStart, int forbidenIdEnd)
+        private static IArgumentsContainer Container(IEnumerable<ConfigurationObject> objects,
+            int forbidenIdStart, int forbidenIdEnd)
         {
             var mock = new Mock<IArgumentsContainer>();
 
@@ -111,53 +89,63 @@ namespace GeoGen.Generator.Test.Constructing
             return mock.Object;
         }
 
-        private static ConfigurationWrapper ConfigurationWrapper(List<ConfigurationObject> objects,
-            int forbiddenConstructionsStartId, int forbiddenConstructionEndId, int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
+        private static ConfigurationWrapper ConfigurationWrapper(List<LooseConfigurationObject> objects,
+            int forbiddenConstructionsStartId, int forbiddenConstructionEndId,
+            int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
         {
             var forbiddenArgs = new Dictionary<int, IArgumentsContainer>();
 
-            for (var constructionId = forbiddenConstructionsStartId; constructionId <= forbiddenConstructionEndId; constructionId++)
+            for (var constructionId = forbiddenConstructionsStartId;
+                constructionId <= forbiddenConstructionEndId;
+                constructionId++)
             {
-                forbiddenArgs.Add(constructionId, Container(objects, forbiddenArgumentsStartId, forbiddenArgumentsEndId));
+                var container = Container(objects, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
+                forbiddenArgs.Add(constructionId, container);
             }
 
-            return new ConfigurationWrapper {ConstructionIdToForbiddenArguments = forbiddenArgs};
+            return new ConfigurationWrapper {ForbiddenArguments = forbiddenArgs};
         }
 
         private static int ExecuteConstructionProcces(int numberOfConstructions, int argumentsPerConstruction,
             int forbiddenConstructionsStartId, int forbiddenConstructionEndId, int constructionOutputCount,
             int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
         {
-            var objects = Objects(argumentsPerConstruction).ToList();
+            var objects = Objects(argumentsPerConstruction, ConfigurationObjectType.Point).ToList();
             var container = ConstructionsContainer(numberOfConstructions, constructionOutputCount);
             var argumentsGenerator = ArgumentsGenerator(objects);
             var wrapper = ConfigurationWrapper(objects, forbiddenConstructionsStartId, forbiddenConstructionEndId, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
-            var testConstructor = new ConfigurationConstructor(container, argumentsGenerator);
+            var testConstructor = new ObjectsConstructor(container, argumentsGenerator);
 
-            return testConstructor.GenerateNewConfigurationObjects(wrapper).Sum(output => output.ConstructedObjects.Count);
+            return testConstructor.GenerateNewConfigurationObjects(wrapper)
+                    .Sum(output => output.ConstructedObjects.Count);
         }
 
         [Test]
         public void Test_Constructor_Constructions_Container_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => { new ConfigurationConstructor(null, SimpleMock<IArgumentsGenerator>()); });
+            var generator = SimpleMock<IArgumentsGenerator>();
+
+            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(null, generator));
         }
 
         [Test]
         public void Test_Constructor_Arguments_Generator_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => { new ConfigurationConstructor(SimpleMock<IConstructionsContainer>(), null); });
+            var container = SimpleMock<IConstructionsContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(container, null));
         }
 
         [Test]
         public void Test_Configuration_Wrapper_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(
-                () =>
-                {
-                    new ConfigurationConstructor(SimpleMock<IConstructionsContainer>(), SimpleMock<IArgumentsGenerator>())
-                            .GenerateNewConfigurationObjects(null);
-                });
+            var container = SimpleMock<IConstructionsContainer>();
+            var generator = SimpleMock<IArgumentsGenerator>();
+
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ObjectsConstructor(container, generator).GenerateNewConfigurationObjects(null)
+            );
         }
 
         [TestCase(1, 2, 3, 6)]

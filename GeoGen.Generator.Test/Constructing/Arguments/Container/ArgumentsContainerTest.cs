@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using NUnit.Framework;
@@ -24,6 +25,14 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             return new ObjectConstructionArgument(cObject);
         }
 
+        private static ArgumentsContainer Container()
+        {
+            var objectProvider = new DefaultConfigurationObjectToStringProvider();
+            var argumentsProvider = new ArgumentsToStringProvider(objectProvider);
+
+            return new ArgumentsContainer(argumentsProvider);
+        }
+
         [Test]
         public void Arguments_To_String_Provider_Cannot_Be_Null()
         {
@@ -33,13 +42,13 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Container_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsContainer(new ArgumentsToStringProvider()).RemoveElementsFrom(null));
+            Assert.Throws<ArgumentNullException>(() => Container().RemoveElementsFrom(null));
         }
 
         [Test]
         public void Test_Container_One_Set_Two_Elements()
         {
-            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var container = Container();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -56,7 +65,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Test_Container_One_Element_And_Two_Elements_Set()
         {
-            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var container = Container();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -76,7 +85,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
         [Test]
         public void Test_Container_Two_Elements_Sets_Of_Size_Two()
         {
-            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var container = Container();
 
             var a1 = NextArgument();
             var a2 = NextArgument();
@@ -100,20 +109,20 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 
             Assert.AreEqual(3, container.Count());
         }
-      
+
         [Test]
         public void Test_Remove_Elements_From()
         {
             var args = Enumerable.Range(0, 15).Select(i => new List<ConstructionArgument> {NextArgument()}).ToList();
 
-            var container = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var container = Container();
 
             foreach (var arguments in args)
             {
                 container.AddArguments(arguments);
             }
 
-            var newContainer = new ArgumentsContainer(new ArgumentsToStringProvider());
+            var newContainer = Container();
 
             var argumentsToRemove = args
                     .Skip(5)

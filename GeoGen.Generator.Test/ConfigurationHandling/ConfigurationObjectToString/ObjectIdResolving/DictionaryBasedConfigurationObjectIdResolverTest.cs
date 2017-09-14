@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
+using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
 
-namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving
+namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving
 {
     [TestFixture]
-    public class DictionaryBasedLooseConfigurationObjectIdResolverTest
+    public class DictionaryBasedConfigurationObjectIdResolverTest
     {
-        private static DictionaryBasedLooseConfigurationObjectIdResolver Resolver()
+        private static DictionaryObjectIdResolver Resolver()
         {
-            var dictionary = Enumerable.Range(0, 42)
-                    .ToDictionary(i => i, i => i * i);
+            var dictionary = Enumerable.Range(0, 42).ToDictionary(i => i, i => i * i);
 
-            return new DictionaryBasedLooseConfigurationObjectIdResolver(dictionary);
+            return new DictionaryObjectIdResolver(dictionary);
         }
 
         [Test]
         public void Test_Dictionary_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new DictionaryBasedLooseConfigurationObjectIdResolver(null));
+            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(null));
         }
 
         [Test]
@@ -47,15 +47,14 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         [Test]
         public void Test_Objects_Id_Is_Fine()
         {
-            var objs = Enumerable.Range(0, 42)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i});
+            var objs = ConfigurationObjects.Objects(42, ConfigurationObjectType.Point, 0);
 
             var resolver = Resolver();
 
             foreach (var looseConfigurationObject in objs)
             {
                 var id = resolver.ResolveId(looseConfigurationObject);
-                var realId = looseConfigurationObject.Id.Value;
+                var realId = looseConfigurationObject.Id ?? throw new Exception();
                 Assert.AreEqual(realId * realId, id);
             }
         }

@@ -59,6 +59,7 @@
     <Compile Include="Utilities\Combinator\Combinator.cs" />
     <Compile Include="Utilities\Combinator\ICombinator.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
+    <Compile Include="Utilities\ConfigurationObjectsMap.cs" />
     <Compile Include="Utilities\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Utilities\Variations\VariationsProvider.cs" />
     <Compile Include="Utilities\Variations\IVariationsProvider.cs" />

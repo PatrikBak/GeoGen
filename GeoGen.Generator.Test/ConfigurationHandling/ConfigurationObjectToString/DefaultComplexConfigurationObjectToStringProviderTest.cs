@@ -2,32 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString
 {
     [TestFixture]
     public class DefaultComplexConfigurationObjectToStringProviderTest
     {
-        private static IArgumentsToStringProvider ArgumentsProvider()
-        {
-            return new ArgumentsToStringProvider(", ", "; ");
-        }
-
         private static DefaultComplexConfigurationObjectToStringProvider Provider()
         {
-            return new DefaultComplexConfigurationObjectToStringProvider(ArgumentsProvider());
+            var objectToStringProvider = new DefaultConfigurationObjectToStringProvider();
+            var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider, ", ", "; ");
+            var defaultResolver = new DefaultObjectIdResolver();
+
+            return new DefaultComplexConfigurationObjectToStringProvider(argumentsProvider, defaultResolver);
         }
 
         [Test]
         public void Arguments_Provider_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new DefaultComplexConfigurationObjectToStringProvider(null));
+            var resolver = SimpleMock<DefaultObjectIdResolver>();
+
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new DefaultComplexConfigurationObjectToStringProvider(null, resolver)
+            );
+        }
+
+        [Test]
+        public void Default_Resolver_Cant_Be_Null()
+        {
+            var provider = SimpleMock<IArgumentsToStringProvider>();
+
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new DefaultComplexConfigurationObjectToStringProvider(provider, null)
+            );
         }
 
         [Test]
@@ -47,15 +63,12 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         [Test]
         public void Constructed_Object_To_String_Test()
         {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(42);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Point});
-
-            var args = Enumerable.Range(0, 4)
-                    .Select(i => new ObjectConstructionArgument(new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i}))
+            var args = Objects(4, ConfigurationObjectType.Point, 0)
+                    .Select(o => new ObjectConstructionArgument(o))
+                    .Cast<ConstructionArgument>()
                     .ToList();
 
-            var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 1);
+            var constructedObject = ConstructedObject(42, 1, args);
 
             Assert.AreEqual("42(0, 1, 2, 3)[1]", Provider().ConvertToString(constructedObject));
         }
@@ -65,13 +78,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         {
             var provider = Provider();
 
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(42);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point, ConfigurationObjectType.Point});
-
-            var looseObjects = Enumerable.Range(0, 3)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
-                    .ToList();
+            var looseObjects = Objects(3, ConfigurationObjectType.Point, 0);
 
             var firstArgs = new List<ConstructionArgument>
             {
@@ -79,48 +86,57 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
                 new ObjectConstructionArgument(looseObjects[1])
             };
 
-            var firstObject = new ConstructedConfigurationObject(mock.Object, firstArgs, 0);
-            provider.CacheObject(3, provider.ConvertToString(firstObject));
+            var firstObject = ConstructedObject(42, 0, firstArgs);
+            var firstObjectString = provider.ConvertToString(firstObject);
+            provider.CacheObject(3, firstObjectString);
             firstObject.Id = 3;
 
             var secondArgs = new List<ConstructionArgument>
             {
-                new SetConstructionArgument(
+                new SetConstructionArgument
+                (
                     new HashSet<ConstructionArgument>
                     {
                         new ObjectConstructionArgument(looseObjects[1]),
                         new ObjectConstructionArgument(looseObjects[2]),
                         new ObjectConstructionArgument(firstObject)
-                    })
+                    }
+                )
             };
 
-            var secondObject = new ConstructedConfigurationObject(mock.Object, secondArgs, 1);
-            provider.CacheObject(4, provider.ConvertToString(secondObject));
+            var secondObject = ConstructedObject(42, 1, secondArgs);
+            var secondObjectString = provider.ConvertToString(secondObject);
+            provider.CacheObject(4, secondObjectString);
             secondObject.Id = 4;
 
             var thirdArgs = new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(firstObject),
                 new ObjectConstructionArgument(secondObject),
-                new SetConstructionArgument(
+                new SetConstructionArgument
+                (
                     new HashSet<ConstructionArgument>
                     {
-                        new SetConstructionArgument(
+                        new SetConstructionArgument
+                        (
                             new HashSet<ConstructionArgument>
                             {
                                 new ObjectConstructionArgument(firstObject),
                                 new ObjectConstructionArgument(looseObjects[2])
-                            }),
-                        new SetConstructionArgument(
+                            }
+                        ),
+                        new SetConstructionArgument
+                        (
                             new HashSet<ConstructionArgument>
                             {
                                 new ObjectConstructionArgument(looseObjects[0]),
                                 new ObjectConstructionArgument(looseObjects[1])
-                            })
+                            }
+                        )
                     })
             };
 
-            var thirdObject = new ConstructedConfigurationObject(mock.Object, thirdArgs, 1);
+            var thirdObject = ConstructedObject(42, 1, thirdArgs);
             var stringVersion = provider.ConvertToString(thirdObject);
             const string expected = "42(42(0, 1)[0], 42({1; 2; 42(0, 1)[0]})[1], {{0; 1}; {2; 42(0, 1)[0]}})[1]";
 
@@ -132,20 +148,17 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         {
             var provider = Provider();
 
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(42);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-
-            var args = Enumerable.Range(0, 4)
-                    .Select(i => new ObjectConstructionArgument(new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i}))
+            var args = Objects(4, ConfigurationObjectType.Point, 0)
+                    .Select(o => new ObjectConstructionArgument(o))
+                    .Cast<ConstructionArgument>()
                     .ToList();
 
-            var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 0);
-            var asString = provider.ConvertToString(constructedObject);
+            var constructedObject = ConstructedObject(42, 1, args);
+            provider.ConvertToString(constructedObject);
             constructedObject.Id = 42;
 
             var args2 = new List<ConstructionArgument> {new ObjectConstructionArgument(constructedObject)};
-            var constructedObject2 = new ConstructedConfigurationObject(mock.Object, args2, 0);
+            var constructedObject2 = ConstructedObject(42, 0, args2, 7);
 
             Assert.Throws<GeneratorException>(() => provider.ConvertToString(constructedObject2));
         }
@@ -155,15 +168,12 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         {
             var provider = Provider();
 
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(42);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-
-            var args = Enumerable.Range(0, 4)
-                    .Select(i => new ObjectConstructionArgument(new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i}))
+            var args = Objects(4, ConfigurationObjectType.Point, 0)
+                    .Select(o => new ObjectConstructionArgument(o))
+                    .Cast<ConstructionArgument>()
                     .ToList();
 
-            var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 0) {Id = 42};
+            var constructedObject = ConstructedObject(42, 1, args, 42);
 
             Assert.Throws<GeneratorException>(() => provider.ConvertToString(constructedObject));
         }
@@ -173,15 +183,12 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         {
             var provider = Provider();
 
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(42);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-
-            var args = Enumerable.Range(0, 4)
-                    .Select(i => new ObjectConstructionArgument(new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i}))
+            var args = Objects(4, ConfigurationObjectType.Point, 0)
+                    .Select(o => new ObjectConstructionArgument(o))
+                    .Cast<ConstructionArgument>()
                     .ToList();
 
-            var constructedObject = new ConstructedConfigurationObject(mock.Object, args, 0);
+            var constructedObject = ConstructedObject(42, 1, args);
             var asString = provider.ConvertToString(constructedObject);
             provider.CacheObject(1, asString);
             provider.ClearCache();

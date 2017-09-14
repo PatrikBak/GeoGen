@@ -53,7 +53,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
 
             var allHaveSize2 = variations.All(v => v.Count() == 2);
 
-            Assert.AreEqual(6, variations.Count());
+            Assert.AreEqual(6, variations.Count);
             Assert.IsTrue(allHaveSize2);
             Assert.IsFalse(contains);
         }
@@ -75,7 +75,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
 
             var allHaveSize1 = variations.All(v => v.Count() == 1);
 
-            Assert.AreEqual(1, variations.Count());
+            Assert.AreEqual(1, variations.Count);
             Assert.IsTrue(allHaveSize1);
             Assert.IsTrue(contains);
         }

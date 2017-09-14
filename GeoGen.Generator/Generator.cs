@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationHandling;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing;
@@ -27,7 +30,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The configuration constructer.
         /// </summary>
-        private readonly IConfigurationConstructor _configurationConstructor;
+        private readonly IObjectsConstructor _objectsConstructor;
 
         /// <summary>
         /// The maximal number of iterations that are supposed to be perfomed.
@@ -42,20 +45,22 @@ namespace GeoGen.Generator
         /// Constructs a new generator with all it's needed dependencies and a given number of iterations.
         /// </summary>
         /// <param name="configurationContainer">The container</param>
-        /// <param name="configurationConstructor">The configuration constructor</param>
+        /// <param name="objectsConstructor">The configuration constructor</param>
         /// <param name="configurationsHandler">The configurations handler</param>
         /// <param name="maximalNumberOfIterations">The maximal number of iterations.</param>
-        internal Generator(IConfigurationContainer configurationContainer, IConfigurationConstructor configurationConstructor,
-            IConfigurationsHandler configurationsHandler, int maximalNumberOfIterations)
+        internal Generator(IConfigurationContainer configurationContainer, IObjectsConstructor objectsConstructor,
+                           IConfigurationsHandler configurationsHandler, int maximalNumberOfIterations)
         {
             if (maximalNumberOfIterations <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximalNumberOfIterations), "Number of iterations must be at least one");
 
             _maximalNumberOfIterations = maximalNumberOfIterations;
-            _configurationContainer = configurationContainer ?? throw new ArgumentNullException(nameof(configurationConstructor));
-            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationConstructor));
-            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
+            _configurationContainer = configurationContainer ?? throw new ArgumentNullException(nameof(objectsConstructor));
+            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(objectsConstructor));
+            _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
         }
+
+        private static readonly Object obj = new Object();
 
         #endregion
 
@@ -84,18 +89,59 @@ namespace GeoGen.Generator
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
-            var newLayerConfigurations = _configurationContainer
-                    // get the current layer
-                    .CurrentLayer
-                    // paralelize (TODO: Check real perfomance, thread safety)    
-                    .AsParallel()
-                    // create configurations and merge them
-                    .SelectMany(c => _configurationConstructor.GenerateNewConfigurationObjects(c))
-                    // convert to list
-                    .ToList();
+            //var newLayerConfigurations = _configurationContainer
+            //        // get the current layer
+            //        .CurrentLayer
+            //        // create configurations and merge them
+            //        .Select(c => _objectsConstructor.GenerateNewConfigurationObjects(c))
+            //        .ToList();
+            // convert to list
+
+            var bag = new ConcurrentBag<IEnumerable<ConstructorOutput>>();
+
+            //Console.WriteLine(newLayerConfigurations.Count());
+
+            //foreach (var output in newLayerConfigurations)
+            {
+                //bag.Add(output);
+            }
+
+            Console.WriteLine(bag.Count);
+                    
+
+            
+            //Foreach
+            //(
+            //    _configurationContainer.CurrentLayer, arg =>
+            //    {
+            //        lock (obj)
+            //        {
+            //            bag.Add(_objectsConstructor.GenerateNewConfigurationObjects((ConfigurationWrapper) arg));
+            //        }
+            //    }
+            //);
+
+            //var a = bag.SelectMany(s => s).ToList();
+            var p = 0;
+            var i = new List<ConstructorOutput>();
+
+            Parallel.ForEach(
+                _configurationContainer.CurrentLayer, j =>
+                {
+                    lock (obj)
+                    {
+                        p++;
+                        foreach (var constructorOutput in _objectsConstructor.GenerateNewConfigurationObjects((ConfigurationWrapper) j))
+                        {
+                            i.Add(constructorOutput);
+                        }
+                    }
+                });
+            
+            Console.WriteLine(p);
 
             // make container aware of the new layer
-            _configurationContainer.AddLayer(newLayerConfigurations);
+            _configurationContainer.AddLayer(i);
 
             // get the current (new) layer
             var currentLayer = _configurationContainer.CurrentLayer;
@@ -104,6 +150,22 @@ namespace GeoGen.Generator
             foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(currentLayer))
             {
                 yield return generatorOutput;
+            }
+        }
+
+        private void ForEach(List<ConfigurationWrapper> configurationContainerCurrentLayer, Action<object> action)
+        {
+            foreach (var configurationWrapper in configurationContainerCurrentLayer)
+            {
+                action(configurationWrapper);
+            }
+        }
+
+        private void Foreach(List<ConfigurationWrapper> configurationContainerCurrentLayer, Action<object> action)
+        {
+            foreach (var configurationWrapper in configurationContainerCurrentLayer)
+            {
+                action(configurationWrapper);
             }
         }
 

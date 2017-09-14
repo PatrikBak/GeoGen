@@ -1,15 +1,14 @@
 ﻿using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
     /// An implementation of <see cref="ComplexConfigurationObjectToStringProviderBase"/> that
-    /// uses custom <see cref="ILooseConfigurationObjectIdResolver"/> (distint from 
-    /// <see cref="DefaultLooseConfigurationObjectIdResolver"/>.) This class is meant to be 
+    /// uses custom <see cref="IObjectIdResolver"/>  This class is meant to be 
     /// used during the symetric configurations detection, together with 
-    /// <see cref="DictionaryBasedLooseConfigurationObjectIdResolver"/>. It expectes 
+    /// <see cref="DictionaryObjectIdResolver"/>. It expectes 
     /// that all objects have their ids already set. It automatically caches the evaluated 
     /// results (unlike <see cref="DefaultComplexConfigurationObjectToStringProvider"/>), 
     /// since it already has the ids available.
@@ -22,10 +21,10 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// with a given arguments to string provider and a given loose configuration 
         /// object id resolver.
         /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="looseConfigurationObjectIdResolver">The loose configuration object id resolver.</param>
+        /// <param name="objectIdResolver">The configuration object id resolver.</param>
         public CustomComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider,
-            ILooseConfigurationObjectIdResolver looseConfigurationObjectIdResolver)
-            : base(argumentsToStringProvider, looseConfigurationObjectIdResolver)
+            IObjectIdResolver objectIdResolver)
+            : base(argumentsToStringProvider, objectIdResolver)
         {
         }
 

@@ -3,296 +3,104 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
-using GeoGen.Generator.Constructing;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
 using GeoGen.Generator.Constructing.Arguments;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
-using Moq;
+using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Configurations;
+using static GeoGen.Generator.Test.TestHelpers.Constructions;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.Constructing.Arguments
 {
     [TestFixture]
     public class ArgumentsGeneratorTest
     {
-        private static int _currentId = 1;
-
-        [SetUp]
-        public void ResetId()
-        {
-            _currentId = 1;
-        }
-
-        private static T SimpleMock<T>() where T : class
-        {
-            return new Mock<T>().Object;
-        }
-
-        private static List<LooseConfigurationObject> Objects(int count, ConfigurationObjectType type)
-        {
-            var result = Enumerable.Range(_currentId, count)
-                    .Select(i => new LooseConfigurationObject(type) {Id = i})
-                    .ToList();
-
-            _currentId += count;
-
-            return result;
-        }
-
-        private static ArgumentsGenerator TestGenerator()
+        private static ArgumentsGenerator ArgumentsGenerator()
         {
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var signatureMatcher = new ConstructionSignatureMatcherFactory();
-            var argumentsContainerFactory = new ArgumentsContainerFactory(new ArgumentsToStringProvider());
+            var objectToStringProvider = new DefaultConfigurationObjectToStringProvider();
+            var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider);
+            var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsProvider);
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
         }
 
-        private static string TestString(IReadOnlyList<ConstructionArgument> arg)
-        {
-            return new ArgumentsToStringProvider(", ", " ").ConvertToString(arg);
-        }
-
-        internal static ConstructionWrapper Midpoint()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(1);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Point, 2}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        internal static ConstructionWrapper Intersection()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(2);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2)
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Point, 4}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        internal static ConstructionWrapper Projection()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(3);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Point, 3}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        internal static ConstructionWrapper CircleCenter()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(4);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Circle),
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Circle, 1}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        internal static ConstructionWrapper CircumCircle()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(5);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Circle});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Point, 3}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        internal static ConstructionWrapper CrazyConstruction()
-        {
-            var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(6);
-            mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
-            mock.Setup(s => s.ConstructionParameters).Returns
-            (
-                new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Circle),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Line), 3),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Circle), 2)
-                }
-            );
-
-            var dictonary = new Dictionary<ConfigurationObjectType, int>
-            {
-                {ConfigurationObjectType.Point, 1},
-                {ConfigurationObjectType.Line, 3},
-                {ConfigurationObjectType.Circle, 3}
-            };
-
-            return new ConstructionWrapper
-            {
-                Construction = mock.Object,
-                ObjectTypesToNeededCount = dictonary
-            };
-        }
-
-        private static ConfigurationWrapper Configuration(int npoints, int nlines, int ncircles)
-        {
-            var points = Objects(npoints, ConfigurationObjectType.Point);
-            var lines = Objects(nlines, ConfigurationObjectType.Line);
-            var circles = Objects(ncircles, ConfigurationObjectType.Circle);
-
-            var objects = new HashSet<LooseConfigurationObject>(points.Union(lines).Union(circles));
-
-            var configuration = new Configuration(objects, new List<ConstructedConfigurationObject>());
-
-            var map = new Dictionary<ConfigurationObjectType, List<ConfigurationObject>>();
-
-            if (npoints != 0)
-                map.Add(ConfigurationObjectType.Point, points.Cast<ConfigurationObject>().ToList());
-            if (nlines != 0)
-                map.Add(ConfigurationObjectType.Line, lines.Cast<ConfigurationObject>().ToList());
-            if (ncircles != 0)
-                map.Add(ConfigurationObjectType.Circle, circles.Cast<ConfigurationObject>().ToList());
-
-            return new ConfigurationWrapper
-            {
-                Configuration = configuration,
-                ObjectTypeToObjects = map
-            };
-        }
-
         [Test]
-        public void Test_Combinator_Not_Null()
+        public void Constructor_Test_Combinator_Not_Null()
         {
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
-            var factory = SimpleMock<IArgumentsContainerFactory>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(null, signatureMatcher, variationsProvider, factory));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ArgumentsGenerator(null, matcherFactory, variationsProvider, argumentsFactory)
+            );
         }
 
         [Test]
-        public void Test_Variations_Provider_Not_Null()
+        public void Constructor_Test_Variations_Provider_Not_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
-            var factory = SimpleMock<IArgumentsContainerFactory>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, null, factory));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ArgumentsGenerator(combinator, matcherFactory, null, argumentsFactory)
+            );
         }
 
         [Test]
-        public void Test_Signature_Matcher_Not_Null()
+        public void Constructor_Test_Signature_Matcher_Factory_Not_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var factory = SimpleMock<IArgumentsContainerFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, null, variationsProvider, factory));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ArgumentsGenerator(combinator, null, variationsProvider, argumentsFactory)
+            );
         }
 
         [Test]
-        public void Test_Arguments_Factory_Not_Null()
+        public void Test_Arguments_Container_Factory_Not_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var signatureMatcher = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
 
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ArgumentsGenerator(combinator, matcherFactory, variationsProvider, null)
+            );
         }
 
         [Test]
-        public void Test_Construction_Wrapper_Not_Null()
+        public void Test_Construction_Wrapper_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => TestGenerator().GenerateArguments(Configuration(1, 1, 1), null));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => ArgumentsGenerator().GenerateArguments(Configuration(1, 1, 1), null)
+            );
         }
 
         [Test]
-        public void Test_Configuration_Wrapper_Not_Null()
+        public void Test_Configuration_Wrapper_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => TestGenerator().GenerateArguments(null, CrazyConstruction()));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => ArgumentsGenerator().GenerateArguments(null, CrazyConstruction())
+            );
         }
 
         [TestCase(1, 10, 11, 0)]
@@ -304,7 +112,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = Midpoint();
             var configuration = Configuration(point, lines, circles);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -318,11 +126,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = Intersection();
             var configuration = Configuration(point, lines, circles);
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
-            stopwatch.Stop();
-            Console.WriteLine(stopwatch.ElapsedMilliseconds);
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -336,7 +140,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = Projection();
             var configuration = Configuration(point, lines, circles);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -350,7 +154,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = CircleCenter();
             var configuration = Configuration(point, lines, circles);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -365,7 +169,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = CircumCircle();
             var configuration = Configuration(point, lines, circles);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -379,7 +183,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = CrazyConstruction();
             var configuration = Configuration(point, lines, circles);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).ToList();
+            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
         }
 
@@ -391,7 +195,11 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = Midpoint();
             var configuration = Configuration(10, 4, 4);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).Select(TestString).ToList();
+            var result = ArgumentsGenerator()
+                .GenerateArguments(configuration, construction)
+                .Select(ToStringHelper.ArgsToString)
+                .ToList();
+
             var contains = result.Any(s => s.Equals(argument));
 
             Assert.IsTrue(contains);
@@ -406,7 +214,11 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var construction = CrazyConstruction();
             var configuration = Configuration(6, 6, 6);
 
-            var result = TestGenerator().GenerateArguments(configuration, construction).Select(TestString).ToList();
+            var result = ArgumentsGenerator()
+                    .GenerateArguments(configuration, construction)
+                    .Select(ToStringHelper.ArgsToString)
+                    .ToList();
+
             var contains = result.Any(s => s.Equals(argument));
             Assert.IsTrue(contains);
         }
@@ -425,7 +237,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
 
                 var stopwatch = new Stopwatch();
                 stopwatch.Start();
-                TestGenerator().GenerateArguments(configuration, construction).ToList();
+                var unused = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
                 stopwatch.Stop();
                 totalTime += stopwatch.ElapsedMilliseconds;
                 stopwatch.Reset();

@@ -47,5 +47,50 @@ namespace GeoGen.Core.Utilities
 
             return new HashSet<T>(enumerable);
         }
+
+        public static T Min<T>(this IEnumerable<T> enumerable, IComparer<T> comparer)
+        {
+            if (enumerable == null)
+                throw new ArgumentNullException(nameof(enumerable));
+
+            if (comparer == null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            var y = default(T);
+
+            if (y == null)
+            {
+                foreach (var x in enumerable)
+                {
+                    if (x != null && (y == null || comparer.Compare(x, y) < 0))
+                    {
+                        y = x;
+                    }
+                }
+
+                return y;
+            }
+
+            var flag = false;
+
+            foreach (var x in enumerable)
+            {
+                if (flag)
+                {
+                    if (comparer.Compare(x, y) < 0)
+                        y = x;
+                }
+                else
+                {
+                    y = x;
+                    flag = true;
+                }
+            }
+
+            if (flag)
+                return y;
+
+            throw new InvalidOperationException("No elements.");
+        }
     }
 }

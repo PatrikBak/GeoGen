@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using GeoGen.Core.Utilities.Combinator;
+using NUnit.Framework;
 
 namespace GeoGen.Core.Test.Utilities.Combinator
 {
@@ -76,7 +76,7 @@ namespace GeoGen.Core.Test.Utilities.Combinator
             var testSample = new Dictionary<int, IEnumerable<int>>
             {
                 {1, new List<int> {1}},
-                {2, new List<int> {1, 2}},
+                {2, new List<int> {1, 2}}
             };
 
             var result = Combinator().Combine(testSample).ToList();
@@ -94,7 +94,7 @@ namespace GeoGen.Core.Test.Utilities.Combinator
             var testSample = new Dictionary<int, IEnumerable<int>>
             {
                 {1, new List<int> {1, 2}},
-                {2, new List<int>()},
+                {2, new List<int>()}
             };
 
             var result = Combinator().Combine(testSample).ToList();

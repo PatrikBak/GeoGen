@@ -8,7 +8,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
     /// Represents a container for all generated configurations. It's meant to handle processing
     /// of symetric configurations. 
     /// </summary>
-    internal interface IConfigurationContainer
+    internal interface IConfigurationContainer : IEnumerable<Configuration>
     {
         /// <summary>
         /// Initializes the container with a given initial configuration.

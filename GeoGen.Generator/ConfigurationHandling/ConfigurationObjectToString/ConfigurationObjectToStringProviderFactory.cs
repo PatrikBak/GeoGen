@@ -1,5 +1,5 @@
 ﻿using System;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
@@ -36,29 +36,31 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 
         /// <summary>
         /// Creates an instance of <see cref="CustomComplexConfigurationObjectToStringProvider"/>
-        /// with a given loose configuration object id resolver. The resolver cannot be default.
+        /// with a given configuration object id resolver. The resolver cannot be default.
         /// </summary>
-        /// <param name="resolver">The loose configuration object id resolver</param>
+        /// <param name="resolver">The configuration object id resolver.</param>
         /// <returns>The custom complex configuration objct to string provider.</returns>
-        public CustomComplexConfigurationObjectToStringProvider CreateCustomProvider(ILooseConfigurationObjectIdResolver resolver)
+        public CustomComplexConfigurationObjectToStringProvider CreateCustomProvider(IObjectIdResolver resolver)
         {
             if (resolver == null)
                 throw new ArgumentNullException(nameof(resolver));
-
-            if (resolver is DefaultLooseConfigurationObjectIdResolver)
-                throw new GeneratorException("This implementation is not supposed to used a default resolver");
 
             return new CustomComplexConfigurationObjectToStringProvider(_argumentsToStringProvider, resolver);
         }
 
         /// <summary>
-        /// Creates an instance of <see cref="DefaultComplexConfigurationObjectToStringProvider"/>.
+        /// Creates an instance of <see cref="DefaultComplexConfigurationObjectToStringProvider"/>
+        /// with a given configuration object id resolver.
         /// </summary>
-        /// <returns>The default complex configuration object to string provider.</returns>
-        public DefaultComplexConfigurationObjectToStringProvider CreateDefaultProvider()
+        /// <param name="resolver">The configuration object id resolver.</param>
+        /// <returns>The default configuration objct to string provider.</returns>
+        public DefaultConfigurationObjectToStringProvider CreateDefaltProvider(IObjectIdResolver resolver)
         {
-            return new DefaultComplexConfigurationObjectToStringProvider(_argumentsToStringProvider);
-        } 
+            if (resolver == null)
+                throw new ArgumentNullException(nameof(resolver));
+
+            return new DefaultConfigurationObjectToStringProvider(resolver);
+        }
 
         #endregion
     }

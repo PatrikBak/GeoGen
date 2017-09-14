@@ -1,25 +1,27 @@
-﻿using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.LooseObjectIdResolving;
+﻿using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
     /// An abstract factory for creating implementations of 
-    /// <see cref="ComplexConfigurationObjectToStringProviderBase"/>.
+    /// <see cref="IConfigurationObjectToStringProvider"/>.
     /// </summary>
     internal interface IConfigurationObjectToStringProviderFactory
     {
         /// <summary>
         /// Creates an instance of <see cref="CustomComplexConfigurationObjectToStringProvider"/>
-        /// with a given loose configuration object id resolver. The resolver cannot be default.
+        /// with a given configuration object id resolver. The resolver cannot be default.
         /// </summary>
-        /// <param name="resolver">The loose configuration object id resolver</param>
+        /// <param name="resolver">The configuration object id resolver.</param>
         /// <returns>The custom complex configuration objct to string provider.</returns>
-        CustomComplexConfigurationObjectToStringProvider CreateCustomProvider(ILooseConfigurationObjectIdResolver resolver);
+        CustomComplexConfigurationObjectToStringProvider CreateCustomProvider(IObjectIdResolver resolver);
 
         /// <summary>
-        /// Creates an instance of <see cref="DefaultComplexConfigurationObjectToStringProvider"/>.
+        /// Creates an instance of <see cref="DefaultComplexConfigurationObjectToStringProvider"/>
+        /// with a given configuration object id resolver.
         /// </summary>
-        /// <returns>The default complex configuration object to string provider.</returns>
-        DefaultComplexConfigurationObjectToStringProvider CreateDefaultProvider();
+        /// <param name="resolver">The configuration object id resolver.</param>
+        /// <returns>The default configuration objct to string provider.</returns>
+        DefaultConfigurationObjectToStringProvider CreateDefaltProvider(IObjectIdResolver resolver);
     }
 }

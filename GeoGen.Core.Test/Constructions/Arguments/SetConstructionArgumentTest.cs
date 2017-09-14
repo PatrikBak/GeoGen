@@ -12,31 +12,34 @@ namespace GeoGen.Core.Test.Constructions.Arguments
         [Test]
         public void SetConstructionArgument_Passed_Arguments_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var setConstructionArgument = new SetConstructionArgument(null);
-            });
+            Assert.Throws<ArgumentNullException>(() => new SetConstructionArgument(null));
         }
 
         [Test]
         public void SetConstructionArgument_Passed_Arguments_Size_Cannot_Be_Zero()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                var emptySet = new HashSet<ConstructionArgument>();
-                var objectConstructionArgument = new SetConstructionArgument(emptySet);
-            });
+            Assert.Throws<ArgumentOutOfRangeException>
+            (
+                () =>
+                {
+                    var emptySet = new HashSet<ConstructionArgument>();
+                    new SetConstructionArgument(emptySet);
+                }
+            );
         }
 
         [Test]
         public void SetConstructionArgument_Passed_Arguments_Size_Cannot_Be_One()
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                var mock = new Mock<ConstructionArgument>();
-                var set = new HashSet<ConstructionArgument> {mock.Object};
-                var objectConstructionArgument = new SetConstructionArgument(set);
-            });
+            Assert.Throws<ArgumentOutOfRangeException>
+            (
+                () =>
+                {
+                    var mock = new Mock<ConstructionArgument>();
+                    var set = new HashSet<ConstructionArgument> {mock.Object};
+                    new SetConstructionArgument(set);
+                }
+            );
         }
     }
 }

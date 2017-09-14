@@ -1,0 +1,16 @@
+﻿using System;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+
+namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
+{
+    internal class ArgumentsToStringProviderFactory : IArgumentsToStringProviderFactory
+    {
+        public IArgumentsToStringProvider CreateProvider(DefaultConfigurationObjectToStringProvider provider)
+        {
+            if (provider == null)
+                throw new ArgumentNullException(nameof(provider));
+
+            return new ArgumentsToStringProvider(provider);
+        }
+    }
+}

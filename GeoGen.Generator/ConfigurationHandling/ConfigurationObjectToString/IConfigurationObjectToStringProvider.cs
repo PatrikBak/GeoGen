@@ -10,12 +10,10 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
     internal interface IConfigurationObjectToStringProvider
     {
         /// <summary>
-        /// Converts a given configuration object to string. If it's a constructed
-        /// object, then all it's underlying object should be converted to string
-        /// and cached using the cache mathod.
+        /// Converts a given configuration object to string. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The string representation of the list.</returns>
+        /// <returns>The string representation of the object..</returns>
         string ConvertToString(ConfigurationObject configurationObject);
     }
 }

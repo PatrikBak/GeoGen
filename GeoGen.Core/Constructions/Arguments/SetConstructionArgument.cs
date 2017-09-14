@@ -17,7 +17,7 @@ namespace GeoGen.Core.Constructions.Arguments
         /// <summary>
         /// Gets the hash set containing the passed arguments. 
         /// </summary>
-        public HashSet<ConstructionArgument> PassableArguments { get; }
+        public HashSet<ConstructionArgument> PassedArguments { get; }
 
         #endregion
 
@@ -26,17 +26,17 @@ namespace GeoGen.Core.Constructions.Arguments
         /// <summary>
         /// Constructs a new set containing arguments passable to a construction.
         /// </summary>
-        /// <param name="passableArguments">The passable arguments.</param>
-        public SetConstructionArgument(HashSet<ConstructionArgument> passableArguments)
+        /// <param name="passedArguments">The passable arguments.</param>
+        public SetConstructionArgument(HashSet<ConstructionArgument> passedArguments)
         {
-            if (passableArguments == null)
-                throw new ArgumentNullException(nameof(passableArguments));
+            if (passedArguments == null)
+                throw new ArgumentNullException(nameof(passedArguments));
 
-            if (passableArguments.Count <= 1)
-                throw new ArgumentOutOfRangeException(nameof(passableArguments), passableArguments.Count,
+            if (passedArguments.Count <= 1)
+                throw new ArgumentOutOfRangeException(nameof(passedArguments), passedArguments.Count,
                     "Number of passable arguments must be at least two");
 
-            PassableArguments = passableArguments;
+            PassedArguments = passedArguments;
         }
 
         #endregion

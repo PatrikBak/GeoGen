@@ -4,9 +4,8 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Generator.Constructing.Container;
-using GeoGen.Generator.Test.Constructing.Arguments;
-using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Constructions;
 
 namespace GeoGen.Generator.Test.Constructing.Container
 {
@@ -16,18 +15,6 @@ namespace GeoGen.Generator.Test.Constructing.Container
         private static ConstructionsContainer Container()
         {
             return new ConstructionsContainer();
-        }
-
-        private static List<Construction> ConstructionsWithId(int[] ids)
-        {
-            return ids.Select(
-                i =>
-                {
-                    var mock = new Mock<Construction>();
-                    mock.Setup(c => c.Id).Returns(i);
-
-                    return mock.Object;
-                }).ToList();
         }
 
         [Test]
@@ -57,12 +44,12 @@ namespace GeoGen.Generator.Test.Constructing.Container
         {
             return new List<Construction>
             {
-                ArgumentsGeneratorTest.Midpoint().Construction,
-                ArgumentsGeneratorTest.Intersection().Construction,
-                ArgumentsGeneratorTest.Projection().Construction,
-                ArgumentsGeneratorTest.CircleCenter().Construction,
-                ArgumentsGeneratorTest.CircumCircle().Construction,
-                ArgumentsGeneratorTest.CrazyConstruction().Construction,
+                Midpoint().Construction,
+                Intersection().Construction,
+                Projection().Construction,
+                CircleCenter().Construction,
+                CircumCircle().Construction,
+                CrazyConstruction().Construction
             };
         }
 

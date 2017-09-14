@@ -9,9 +9,9 @@ using GeoGen.Generator.Constructing.Container;
 namespace GeoGen.Generator.Constructing
 {
     /// <summary>
-    /// A default implementation of <see cref="IConfigurationConstructor"/>.
+    /// A default implementation of <see cref="IObjectsConstructor"/>.
     /// </summary>
-    internal class ConfigurationConstructor : IConfigurationConstructor
+    internal class ObjectsConstructor : IObjectsConstructor
     {
         #region Private fields
 
@@ -34,7 +34,7 @@ namespace GeoGen.Generator.Constructing
         /// </summary>
         /// <param name="constructionsContainer">The construction container.</param>
         /// <param name="argumentsGenerator">The arguments generator.</param>
-        public ConfigurationConstructor(IConstructionsContainer constructionsContainer, IArgumentsGenerator argumentsGenerator)
+        public ObjectsConstructor(IConstructionsContainer constructionsContainer, IArgumentsGenerator argumentsGenerator)
         {
             _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(argumentsGenerator));
             _argumentsGenerator = argumentsGenerator ?? throw new ArgumentNullException(nameof(argumentsGenerator));
@@ -42,7 +42,7 @@ namespace GeoGen.Generator.Constructing
 
         #endregion
 
-        #region IConfigurationConstructor methods
+        #region IObjectsConstructor methods
 
         /// <summary>
         /// Performs all possible constructions to a given configution wrapper.
@@ -62,7 +62,7 @@ namespace GeoGen.Generator.Constructing
                     var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
 
                     // Pull forbidden arguments for the current constrution
-                    var forbiddenArguments = configurationWrapper.ConstructionIdToForbiddenArguments;
+                    var forbiddenArguments = configurationWrapper.ForbiddenArguments;
 
                     // Unwrap construction
                     var unwrapedConstruction = constructionWrapper.Construction;
