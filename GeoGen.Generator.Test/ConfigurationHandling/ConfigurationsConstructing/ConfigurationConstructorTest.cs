@@ -27,21 +27,31 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
     {
         private static ConfigurationObjectsContainer _container;
 
-        private static ConfigurationConstructor Handler()
+        private static ConfigurationObjectsContainer Container(IEnumerable<LooseConfigurationObject> objects)
         {
-            var provider = new DefaultConfigurationObjectToStringProvider();
+            var resolver = new DefaultObjectIdResolver();
+            var provider = new DefaultObjectToStringProvider();
+            var argsToString = new ArgumentsToStringProvider(provider);
+            var defaultFullObjectToStringProvider = new DefaultFullObjectToStringProvider(argsToString, resolver);
+            _container = new ConfigurationObjectsContainer(defaultFullObjectToStringProvider);
+            _container.Initialize(objects);
+
+            return _container;
+        }
+
+        private static ConfigurationConstructor Handler(IEnumerable<LooseConfigurationObject> objects)
+        {
+            var provider = new DefaultObjectToStringProvider();
             var argsToString = new ArgumentsToStringProvider(provider);
             var variations = new VariationsProvider<int>();
             var configurationToString = new ConfigurationToStringProvider();
-            var objectToStringFactory = new ConfigurationObjectToStringProviderFactory(argsToString);
-            var finder = new LeastConfigurationFinder(variations, configurationToString, objectToStringFactory);
+            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
+            var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variations);
+            dictionaryObjectIdResolversContainer.Initialize(objects);
+            var finder = new LeastConfigurationFinder(configurationToString, objectToStringFactory, dictionaryObjectIdResolversContainer);
             var factory = new ArgumentsContainerFactory(argsToString);
-            var resolver = new DefaultObjectIdResolver();
-            var complexObjToString = new DefaultComplexConfigurationObjectToStringProvider(argsToString, resolver);
-            var container = new ConfigurationObjectsContainer(complexObjToString);
-            var fixer = new IdsFixer(container);
+            var fixer = new IdsFixerFactory(_container);
 
-            _container = container;
 
             return new ConfigurationConstructor(finder, fixer, factory);
         }
@@ -49,14 +59,15 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
         [Test]
         public void Output_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Handler().ConstructWrapper(null));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => Handler(Objects(1, ConfigurationObjectType.Point)).ConstructWrapper(null)
+            );
         }
 
         [Test]
         public void Triangle_With_One_Midpoint_Symetry()
         {
-            var handler = Handler();
-
             var looseObjects = new List<LooseConfigurationObject>
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
@@ -64,7 +75,8 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                 new LooseConfigurationObject(ConfigurationObjectType.Point)
             };
 
-            _container.Initialize(looseObjects);
+            _container = Container(looseObjects);
+            var handler = Handler(looseObjects);
 
             List<ConstructionArgument> Args(ConfigurationObject o1, ConfigurationObject o2)
             {
@@ -119,7 +131,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                 var result = handler.ConstructWrapper(testCase);
                 var asString = ConfigurationAsString(result.Configuration);
 
-                Assert.AreEqual("1|2|3|42({1;2})[0]", asString);
+                Assert.AreEqual("42({1;2})", asString);
 
                 var dictionary1 = result.ForbiddenArguments;
                 Assert.AreEqual(1, dictionary1.Count);
@@ -134,16 +146,15 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
         [Test]
         public void Triangle_With_Two_Midpoints_Symetry()
         {
-            var handler = Handler();
-
             var looseObjects = new List<LooseConfigurationObject>
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point)
             };
-
-            _container.Initialize(looseObjects);
+            _container = Container(looseObjects);
+            ;
+            var handler = Handler(looseObjects);
 
             List<ConstructionArgument> Args(ConfigurationObject o1, ConfigurationObject o2)
             {
@@ -205,7 +216,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                 var result = handler.ConstructWrapper(testCase);
                 var asString = ConfigurationAsString(result.Configuration);
 
-                Assert.AreEqual("1|2|3|42({1;2})[0]|42({1;3})[0]", asString);
+                Assert.AreEqual("42({1;2})|42({1;3})", asString);
 
                 var dictionary1 = result.ForbiddenArguments;
                 Assert.AreEqual(1, dictionary1.Count);
@@ -220,8 +231,6 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
         [Test]
         public void Forbidden_Args_Correction_Test()
         {
-            var handler = Handler();
-
             var looseObjects = new List<LooseConfigurationObject>
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
@@ -232,8 +241,9 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                 new LooseConfigurationObject(ConfigurationObjectType.Line),
                 new LooseConfigurationObject(ConfigurationObjectType.Line)
             };
-
-            _container.Initialize(looseObjects);
+            _container = Container(looseObjects);
+            ;
+            var handler = Handler(looseObjects);
 
             var looseSet = new HashSet<LooseConfigurationObject>(looseObjects);
             var configuration = new Configuration(looseSet, new List<ConstructedConfigurationObject>());
@@ -250,7 +260,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
             var objAsList = new List<ConstructedConfigurationObject> {obj};
             var objectsMap = new ConfigurationObjectsMap(looseObjects);
 
-            var objectProvider = new DefaultConfigurationObjectToStringProvider();
+            var objectProvider = new DefaultObjectToStringProvider();
             var argsProvider = new ArgumentsToStringProvider(objectProvider);
             var forbidden = new ArgumentsContainer(argsProvider);
             var forbiddenArgs1 = new List<ConstructionArgument>
@@ -286,15 +296,15 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
             var result = handler.ConstructWrapper(output);
             var asString = ConfigurationAsString(result.Configuration);
 
-            Assert.AreEqual("1|2|3|4|42(1,2,3)[0]|5|6|7", asString);
+            Assert.AreEqual("42(1,2,3)", asString);
 
             var dictionary1 = result.ForbiddenArguments;
             Assert.AreEqual(1, dictionary1.Count);
 
-            var container = dictionary1[42];
-            Assert.AreEqual(3, container.Count());
+            var argumentsContainer = dictionary1[42];
+            Assert.AreEqual(3, argumentsContainer.Count());
 
-            var strings = container.Select(ArgsToString).ToList();
+            var strings = argumentsContainer.Select(ArgsToString).ToList();
 
             Assert.IsTrue(strings.Contains("(2, 1, 3)"));
             Assert.IsTrue(strings.Contains("(1, 3, 2)"));
@@ -304,21 +314,21 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
             Assert.AreEqual(4, dictionary2[ConfigurationObjectType.Point].Count);
             Assert.AreEqual(2, dictionary2[ConfigurationObjectType.Line].Count);
             Assert.AreEqual(2, dictionary2[ConfigurationObjectType.Circle].Count);
+
+            Assert.IsFalse(dictionary2[ConfigurationObjectType.Point].Contains(obj));
         }
 
         [Test]
         public void Complex_Triangle_Configuration_Test()
         {
-            var handler = Handler();
-
             var looseObjects = new List<LooseConfigurationObject>
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point)
             };
-
-            _container.Initialize(looseObjects);
+            _container = Container(looseObjects);
+            var handler = Handler(looseObjects);
 
             var looseSet = new HashSet<LooseConfigurationObject>(looseObjects);
             var configuration = new Configuration(looseSet, new List<ConstructedConfigurationObject>());

@@ -10,35 +10,36 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
     [TestFixture]
     public class ConfigurationObjectToStringProviderFactoryTest
     {
-        private static ConfigurationObjectToStringProviderFactory Factory()
+        private static CustomFullObjectToStringProviderFactory Factory()
         {
             var provider = SimpleMock<IArgumentsToStringProvider>();
 
-            return new ConfigurationObjectToStringProviderFactory(provider);
+            return new CustomFullObjectToStringProviderFactory(provider);
         }
 
         [Test]
         public void Arguments_To_String_Provider_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectToStringProviderFactory(null));
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null));
         }
 
         [Test]
         public void Objects_Resolver_Is_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Factory().CreateCustomProvider(null));
-            Assert.Throws<ArgumentNullException>(() => Factory().CreateDefaltProvider(null));
+            Assert.Throws<ArgumentNullException>(() => Factory().GetCustomProvider(null));
         }
 
         [Test]
         public void Custom_Provider_Is_Returned()
         {
-            var resolver = SimpleMock<IObjectIdResolver>();
-            var provider1 = Factory().CreateCustomProvider(resolver);
-            var provider2 = Factory().CreateDefaltProvider(resolver);
+            var resolver = new DictionaryObjectIdResolver();
+            var factory = Factory();
+            var provider1 = factory.GetCustomProvider(resolver);
+            var provider2 = factory.GetCustomProvider(resolver);
 
             Assert.NotNull(provider1);
             Assert.NotNull(provider2);
+            Assert.AreSame(provider1, provider2);
         }
     }
 }

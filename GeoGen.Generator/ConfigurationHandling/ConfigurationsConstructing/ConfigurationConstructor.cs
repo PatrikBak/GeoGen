@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing.IdsFixing;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing.LeastConfigurationFinding;
@@ -16,24 +18,31 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing
     {
         private readonly ILeastConfigurationFinder _leastConfigurationFinder;
 
-        private readonly IIdsFixer _idsFixer;
+        private readonly IIdsFixerFactory _idsFixerFactory;
 
         private readonly IArgumentsContainerFactory _argumentsContainerFactory;
 
         public ConfigurationConstructor
         (
             ILeastConfigurationFinder leastConfigurationFinder,
-            IIdsFixer idsFixer,
+            IIdsFixerFactory idsFixerFactory,
             IArgumentsContainerFactory argumentsContainerFactory
         )
         {
             _leastConfigurationFinder = leastConfigurationFinder ?? throw new ArgumentNullException(nameof(leastConfigurationFinder));
-            _idsFixer = idsFixer ?? throw new ArgumentNullException(nameof(idsFixer));
+            _idsFixerFactory = idsFixerFactory ?? throw new ArgumentNullException(nameof(idsFixerFactory));
             _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
         }
 
+        public static Stopwatch s_balast = new Stopwatch();
+        public static Stopwatch s_leastResolver = new Stopwatch();
+        public static Stopwatch s_cloningConfig = new Stopwatch();
+        public static Stopwatch s_arguments = new Stopwatch();
+        public static Stopwatch s_typeMap = new Stopwatch();
+
         public ConfigurationWrapper ConstructWrapper(ConstructorOutput constructorOutput)
         {
+            s_balast.Start();
             if (constructorOutput == null)
                 throw new ArgumentNullException(nameof(constructorOutput));
 
@@ -49,15 +58,21 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing
                     .ToList();
 
             var currentConfiguration = new Configuration(looseObjects, allConstructedObjects);
-
+            s_balast.Stop();
+            s_leastResolver.Start();
             var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(currentConfiguration);
 
-            currentConfiguration = CloneConfiguration(currentConfiguration, leastResolver);
-
-            var forbiddenArguments = CreateNewArguments(leastResolver, configuration.ForbiddenArguments, newObjects);
-
-            var typeToObjectsMap = configuration.ConfigurationObjectsMap.CloneWithNewObjects(newObjects);
-
+            var idsFixer = _idsFixerFactory.CreateFixer(leastResolver);
+            s_leastResolver.Stop();
+            s_cloningConfig.Start();
+            currentConfiguration = CloneConfiguration(currentConfiguration, idsFixer);
+            s_cloningConfig.Stop();
+            s_arguments.Start();
+            var forbiddenArguments = CreateNewArguments(idsFixer, configuration.ForbiddenArguments, newObjects);
+            s_arguments.Stop();
+            s_typeMap.Start();
+            var typeToObjectsMap = new ConfigurationObjectsMap(currentConfiguration);
+            s_typeMap.Stop();
             return new ConfigurationWrapper
             {
                 Configuration = currentConfiguration,
@@ -66,14 +81,14 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing
             };
         }
 
-        private Configuration CloneConfiguration(Configuration configuration, DictionaryObjectIdResolver resolver)
+        private static Configuration CloneConfiguration(Configuration configuration, IIdsFixer idsFixer)
         {
             // Loose objects are going to be still the same
             var looseObjects = configuration.LooseObjects;
 
             // We let the fixer fix the constructed objects
             var constructedObjects = configuration.ConstructedObjects
-                    .Select(obj => _idsFixer.FixObject(obj, resolver))
+                    .Select(idsFixer.FixObject)
                     .Cast<ConstructedConfigurationObject>()
                     .ToList();
 
@@ -83,7 +98,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing
 
         private Dictionary<int, IArgumentsContainer> CreateNewArguments
         (
-            DictionaryObjectIdResolver resolver,
+            IIdsFixer idsFixer,
             Dictionary<int, IArgumentsContainer> forbiddenArguments,
             IEnumerable<ConstructedConfigurationObject> newObjects
         )
@@ -92,7 +107,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing
 
             List<ConstructionArgument> FixArguments(IEnumerable<ConstructionArgument> arguments)
             {
-                return arguments.Select(arg => _idsFixer.FixArgument(arg, resolver)).ToList();
+                return arguments.Select(idsFixer.FixArgument).ToList();
             }
 
             foreach (var pair in forbiddenArguments)

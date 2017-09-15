@@ -10,6 +10,11 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.Obj
     /// </summary>
     internal class DictionaryObjectIdResolver : IObjectIdResolver
     {
+        /// <summary>
+        /// The id of the resolver.
+        /// </summary>
+        public int Id { get; }
+
         #region Private fields
 
         /// <summary>
@@ -22,11 +27,14 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.Obj
         #region Constructor
 
         /// <summary>
-        /// Constructs a new dictionary based resolver with a given ids dictionary.
+        /// Constructs a new dictionary based resolver with a given ids dictionary
+        /// and with a given id.
         /// </summary>
         /// <param name="realIdToResolvedId">The dictionary mapping real ids to resolved ids.</param>
-        public DictionaryObjectIdResolver(Dictionary<int, int> realIdToResolvedId)
+        /// <param name="id">The id.</param>
+        public DictionaryObjectIdResolver(Dictionary<int, int> realIdToResolvedId, int id)
         {
+            Id = id;
             _realIdToResolvedId = realIdToResolvedId ?? throw new ArgumentNullException(nameof(realIdToResolvedId));
         }
 
@@ -34,7 +42,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.Obj
         /// Constructs a new dictionary based resolver with an empty dictionary.
         /// </summary>
         public DictionaryObjectIdResolver()
-            : this(new Dictionary<int, int>())
+            : this(new Dictionary<int, int>(), 0)
         {
         }
 

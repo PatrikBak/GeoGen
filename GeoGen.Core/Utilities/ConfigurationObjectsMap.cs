@@ -6,7 +6,9 @@ namespace GeoGen.Core.Utilities
 {
     public class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, List<ConfigurationObject>>
     {
-        private List<ConfigurationObject> _allObjects = new List<ConfigurationObject>();
+        private readonly List<ConfigurationObject> _allObjects = new List<ConfigurationObject>();
+
+        public IEnumerable<ConfigurationObject> Objects => _allObjects;
 
         public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> configurationObjects)
         {

@@ -17,10 +17,10 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ObjectsContainer
     {
         private static ConfigurationObjectsContainer Container()
         {
-            var defaultToString = new DefaultConfigurationObjectToStringProvider();
+            var defaultToString = new DefaultObjectToStringProvider();
             var argsProvider = new ArgumentsToStringProvider(defaultToString);
             var defaultResolver = new DefaultObjectIdResolver();
-            var provider = new DefaultComplexConfigurationObjectToStringProvider(argsProvider, defaultResolver);
+            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
             return new ConfigurationObjectsContainer(provider);
         }

@@ -14,14 +14,14 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
     {
         private static ArgumentsToStringProvider Provider()
         {
-            var provider = new DefaultConfigurationObjectToStringProvider();
+            var provider = new DefaultObjectToStringProvider();
 
             return new ArgumentsToStringProvider(provider, ", ", " ");
         }
 
-        private static IConfigurationObjectToStringProvider ObjectProvider()
+        private static IObjectToStringProvider ObjectProvider()
         {
-            var mock = new Mock<IConfigurationObjectToStringProvider>();
+            var mock = new Mock<IObjectToStringProvider>();
             mock.Setup(s => s.ConvertToString(It.IsAny<ConfigurationObject>()))
                     .Returns<ConfigurationObject>(o => (o.Id + 1).ToString());
 

@@ -6,8 +6,8 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing.IdsF
 {
     internal interface IIdsFixer
     {
-        ConstructionArgument FixArgument(ConstructionArgument argument, DictionaryObjectIdResolver resolver);
+        ConstructionArgument FixArgument(ConstructionArgument argument);
 
-        ConfigurationObject FixObject(ConfigurationObject configurationObject, DictionaryObjectIdResolver resolver);
+        ConfigurationObject FixObject(ConfigurationObject configurationObject);
     }
 }

@@ -7,13 +7,13 @@ using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
-    /// An abstract implementation of <see cref="IConfigurationObjectToStringProvider"/> that
+    /// An abstract implementation of <see cref="IObjectToStringProvider"/> that
     /// uses custom <see cref="IObjectIdResolver"/>. It converts an object to a string
     /// using only ids of loose objects. This is useful for determining symetric configurations.
-    /// It has two implementations, <see cref="DefaultComplexConfigurationObjectToStringProvider"/>
-    /// and <see cref="CustomComplexConfigurationObjectToStringProvider"/>.
+    /// It has two implementations, <see cref="DefaultFullObjectToStringProvider"/>
+    /// and <see cref="CustomFullObjectToStringProvider"/>.
     /// </summary>
-    internal abstract class ComplexConfigurationObjectToStringProviderBase : IConfigurationObjectToStringProvider
+    internal abstract class FullObjectToStringProviderBase : IObjectToStringProvider
     {
         #region Private fields
 
@@ -23,7 +23,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         private readonly IArgumentsToStringProvider _argumentsToStringProvider;
 
         /// <summary>
-        /// The object id resolver.
+        /// The configuration object id resolver.
         /// </summary>
         private readonly IObjectIdResolver _objectIdResolver;
 
@@ -32,7 +32,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         #region Protected fields
 
         /// <summary>
-        /// The cache dictionary mapping constructed configuration ids to their 
+        /// The cache dictionary mapping constructed object's ids to their 
         /// string versions. 
         /// </summary>
         protected readonly ConcurrentDictionary<int, string> Cache = new ConcurrentDictionary<int, string>();
@@ -45,18 +45,26 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// Constructs a new complex configuration object to string provider with a given
         /// arguments to string provider and a given loose object id resolver.
         /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="objectIdResolver">The configuration object id resolver.</param>
-        protected ComplexConfigurationObjectToStringProviderBase(IArgumentsToStringProvider argumentsToStringProvider,
-            IObjectIdResolver objectIdResolver)
+        /// <param name="provider">The arguments to string provider.</param>
+        /// <param name="resolver">The configuration object id resolver.</param>
+        protected FullObjectToStringProviderBase(IArgumentsToStringProvider provider, IObjectIdResolver resolver)
         {
-            _argumentsToStringProvider = argumentsToStringProvider ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
-            _objectIdResolver = objectIdResolver ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
+            _argumentsToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _objectIdResolver = resolver ?? throw new ArgumentNullException(nameof(provider));
         }
 
         #endregion
 
-        #region IConfigurationObjectToStringProvider implementation
+        #region IObjectToStringProvider properties
+
+        /// <summary>
+        /// Gets the id of the provider.
+        /// </summary>
+        public int Id => _objectIdResolver.Id;
+
+        #endregion
+
+        #region IObjectToStringProvider methods
 
         /// <summary>
         /// Converts a given configuration object to string. 
@@ -68,7 +76,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
-            // We let the resolved to resolve the loose objects ids
+            // We let the resolvedrto resolve the loose objects ids
             if (configurationObject is LooseConfigurationObject looseConfigurationObject)
                 return $"{_objectIdResolver.ResolveId(looseConfigurationObject)}";
 
@@ -86,10 +94,14 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
             // because we're passing this object as an object to string provider. 
             var argumentsString = _argumentsToStringProvider.ConvertToString(contructedObject.PassedArguments, this);
 
-            // Construct the result
-            var result = $"{contructedObject.Construction.Id}{argumentsString}[{contructedObject.Index}]";
+            // Construct the beginning of the result
+            var result = $"{contructedObject.Construction.Id}{argumentsString}";
 
-            // Let the abstract method to something with it before returning it
+            // If the object doesn't have a default index (which is 0), then we can to include it
+            if (contructedObject.Index != 0)
+                result += $"[{contructedObject.Index}]";
+
+            // Let the abstract method to do something with the result before returning it
             HandleResult(configurationObject, result);
 
             // And finally return the result
@@ -101,7 +113,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         #region Protected abstract methods
 
         /// <summary>
-        /// Resolve if a given object has it's to string value already cached.
+        /// Resolves if a given object has it's string value already cached.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The cached value, if exists, otherwise an empty string.</returns>

@@ -20,16 +20,31 @@ namespace GeoGen.Core.Utilities.Variations
         /// <returns>Lazy enumerable of all possible variations.</returns>
         public IEnumerable<IEnumerable<T>> GetVariations(List<T> list, int numberOfElement)
         {
-            if (list == null)
-                throw new ArgumentNullException(nameof(list));
+            if (numberOfElement == 3 && list.Count == 3)
+            {
+                return new List<IEnumerable<T>>
+                {
+                    new[] {list[0], list[1], list[2]},
+                    new[] {list[0], list[2], list[1]},
+                    new[] {list[1], list[0], list[2]},
+                    new[] {list[1], list[2], list[0]},
+                    new[] {list[2], list[0], list[1]},
+                    new[] {list[2], list[1], list[0]}
+                };
+            }
+            else
+            {
+                if (list == null)
+                    throw new ArgumentNullException(nameof(list));
 
-            if (list.Empty())
-                throw new ArgumentException("The list of elements can't be empty");
+                if (list.Empty())
+                    throw new ArgumentException("The list of elements can't be empty");
 
-            if (numberOfElement < 1 || numberOfElement > list.Count)
-                throw new ArgumentOutOfRangeException(nameof(numberOfElement), "The number of elements should be in the interval [1, list.Count].");
+                if (numberOfElement < 1 || numberOfElement > list.Count)
+                    throw new ArgumentOutOfRangeException(nameof(numberOfElement), "The number of elements should be in the interval [1, list.Count].");
 
-            return GetVariations(0, list.ToArray(), new T[numberOfElement], numberOfElement);
+                return GetVariations(0, list.ToArray(), new T[numberOfElement], numberOfElement);
+            }
         }
 
         /// <summary>

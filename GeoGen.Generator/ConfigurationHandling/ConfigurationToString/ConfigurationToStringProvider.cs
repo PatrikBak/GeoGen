@@ -57,7 +57,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationToString
         /// <param name="configuration">The configuration.</param>
         /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the configuration.</returns>
-        public string ConvertToString(Configuration configuration, IConfigurationObjectToStringProvider objectToString)
+        public string ConvertToString(Configuration configuration, IObjectToStringProvider objectToString)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
@@ -66,8 +66,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationToString
                 throw new ArgumentNullException(nameof(objectToString));
 
             var objectStrings = configuration.ConstructedObjects
-                    .Cast<ConfigurationObject>()
-                    .Union(configuration.LooseObjects)
                     .Select(objectToString.ConvertToString)
                     .ToList();
 

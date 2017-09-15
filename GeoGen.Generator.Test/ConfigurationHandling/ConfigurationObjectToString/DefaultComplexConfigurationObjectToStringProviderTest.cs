@@ -15,13 +15,13 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
     [TestFixture]
     public class DefaultComplexConfigurationObjectToStringProviderTest
     {
-        private static DefaultComplexConfigurationObjectToStringProvider Provider()
+        private static DefaultFullObjectToStringProvider Provider()
         {
-            var objectToStringProvider = new DefaultConfigurationObjectToStringProvider();
+            var objectToStringProvider = new DefaultObjectToStringProvider();
             var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider, ", ", "; ");
             var defaultResolver = new DefaultObjectIdResolver();
 
-            return new DefaultComplexConfigurationObjectToStringProvider(argumentsProvider, defaultResolver);
+            return new DefaultFullObjectToStringProvider(argumentsProvider, defaultResolver);
         }
 
         [Test]
@@ -31,7 +31,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new DefaultComplexConfigurationObjectToStringProvider(null, resolver)
+                () => new DefaultFullObjectToStringProvider(null, resolver)
             );
         }
 
@@ -42,7 +42,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new DefaultComplexConfigurationObjectToStringProvider(provider, null)
+                () => new DefaultFullObjectToStringProvider(provider, null)
             );
         }
 
@@ -138,7 +138,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             var thirdObject = ConstructedObject(42, 1, thirdArgs);
             var stringVersion = provider.ConvertToString(thirdObject);
-            const string expected = "42(42(0, 1)[0], 42({1; 2; 42(0, 1)[0]})[1], {{0; 1}; {2; 42(0, 1)[0]}})[1]";
+            const string expected = "42(42(0, 1), 42({1; 2; 42(0, 1)})[1], {{0; 1}; {2; 42(0, 1)}})[1]";
 
             Assert.AreEqual(expected, stringVersion);
         }

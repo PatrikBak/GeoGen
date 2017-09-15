@@ -14,7 +14,7 @@ namespace GeoGen.Generator.Test.TestHelpers
     {
         public static string ArgsToString(IReadOnlyList<ConstructionArgument> arg)
         {
-            var provider = new DefaultConfigurationObjectToStringProvider();
+            var provider = new DefaultObjectToStringProvider();
 
             return new ArgumentsToStringProvider(provider, ", ", " ").ConvertToString(arg);
         }
@@ -22,15 +22,15 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static string ConfigurationAsString(Configuration configuration, bool full = true)
         {
             var provider = new ConfigurationToStringProvider();
-            var def = new DefaultConfigurationObjectToStringProvider();
+            var def = new DefaultObjectToStringProvider();
             var argsToString = new ArgumentsToStringProvider(def);
             var resolver = new DefaultObjectIdResolver();
-            var objectToString = new CustomComplexConfigurationObjectToStringProvider(argsToString, resolver);
+            var objectToString = new CustomFullObjectToStringProvider(argsToString, resolver);
 
             if (full)
                 return provider.ConvertToString(configuration, objectToString);
 
-            return provider.ConvertToString(configuration, new DefaultConfigurationObjectToStringProvider());
+            return provider.ConvertToString(configuration, new DefaultObjectToStringProvider());
         }
 
         public static string ObjectAsString(ConfigurationObject configurationObject)
@@ -40,7 +40,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             var obj = configurationObject as ConstructedConfigurationObject;
 
-            var def = new DefaultConfigurationObjectToStringProvider();
+            var def = new DefaultObjectToStringProvider();
             var argsToString = new ArgumentsToStringProvider(def);
 
             return $"{obj.Construction.Id}{argsToString.ConvertToString(obj.PassedArguments)}[{obj.Index}]";

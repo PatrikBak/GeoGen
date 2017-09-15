@@ -3,17 +3,20 @@
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
-    /// Represents a cofiguration object to string converter. It is supposed to cache 
-    /// string versions of already pocessed objects. Therefore it won't convert an object
-    /// until it's all internal objects have already been converted and cached.
+    /// Represents a configuration object to string converter.
     /// </summary>
-    internal interface IConfigurationObjectToStringProvider
+    internal interface IObjectToStringProvider
     {
+        /// <summary>
+        /// Gets the id of the provider.
+        /// </summary>
+        int Id { get; }
+
         /// <summary>
         /// Converts a given configuration object to string. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The string representation of the object..</returns>
+        /// <returns>The string representation of the object.</returns>
         string ConvertToString(ConfigurationObject configurationObject);
     }
 }

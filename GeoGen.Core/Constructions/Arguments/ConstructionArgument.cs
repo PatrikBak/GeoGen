@@ -5,5 +5,6 @@
     /// </summary>
     public abstract class ConstructionArgument
     {
+        public int? Id { get; set; }
     }
 }

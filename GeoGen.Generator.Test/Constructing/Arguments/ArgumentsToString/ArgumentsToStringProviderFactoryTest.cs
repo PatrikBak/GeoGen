@@ -22,7 +22,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
         [Test]
         public void Resulting_Provider_Is_Correct()
         {
-            var provider = new DefaultConfigurationObjectToStringProvider();
+            var provider = new DefaultObjectToStringProvider();
             var obj = Factory().CreateProvider(provider);
 
             Assert.NotNull(obj);

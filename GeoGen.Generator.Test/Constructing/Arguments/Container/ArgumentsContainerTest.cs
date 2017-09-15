@@ -27,7 +27,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
 
         private static ArgumentsContainer Container()
         {
-            var objectProvider = new DefaultConfigurationObjectToStringProvider();
+            var objectProvider = new DefaultObjectToStringProvider();
             var argumentsProvider = new ArgumentsToStringProvider(objectProvider);
 
             return new ArgumentsContainer(argumentsProvider);

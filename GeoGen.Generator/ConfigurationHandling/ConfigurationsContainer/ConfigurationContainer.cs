@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
@@ -106,7 +107,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
             // Let the base method add the initial configuration
             Add(initialConfiguration);
 
-            // Create type lookup
+            // Create type object map
             var objectsMap = new ConfigurationObjectsMap(initialConfiguration);
 
             // Create forbidden arguments dictionary
@@ -124,6 +125,10 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
             CurrentLayer.SetItems(configurationWrapper.SingleItemAsEnumerable());
         }
 
+        public static Stopwatch s_newObjects = new Stopwatch();
+        public static Stopwatch s_constructingWrapper = new Stopwatch();
+        public static Stopwatch s_AddingConfiguration = new Stopwatch();
+
         /// <summary>
         /// Processes a new layer of a constructor output.
         /// </summary>
@@ -140,19 +145,27 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer
                     (
                         output =>
                         {
+                            s_newObjects.Start();
                             // Add objects to container and get identified versions
                             var newObjects = output.ConstructedObjects
                                     .Select(o => _configurationObjectsContainer.Add(o))
                                     .ToList();
+                            s_newObjects.Stop();
 
                             // Re-assign the output
                             output.ConstructedObjects = newObjects;
 
+
+                            s_constructingWrapper.Start();
                             // Create a new configuration wrapper
                             var configuration = _configurationConstructor.ConstructWrapper(output);
+                            s_constructingWrapper.Stop();
 
+                            s_AddingConfiguration.Start();
                             // Add the representant to the container
                             var result = Add(configuration.Configuration);
+                            //Console.WriteLine(result);
+                            s_AddingConfiguration.Stop();
 
                             // return the anonymous type wrapping the change result and the object
                             return new {Change = result, Object = configuration};

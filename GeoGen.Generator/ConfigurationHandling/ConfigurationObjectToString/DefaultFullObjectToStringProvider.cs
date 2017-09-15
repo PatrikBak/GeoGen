@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
@@ -8,7 +7,7 @@ using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
 {
     /// <summary>
-    /// An implementation of <see cref="ComplexConfigurationObjectToStringProviderBase"/> that
+    /// An implementation of <see cref="FullObjectToStringProviderBase"/> that
     /// uses <see cref="DefaultObjectIdResolver"/>. This class is meant to be used 
     /// in a class that cares care of creating unique <see cref="ConfigurationObject"/>s.
     /// These object don't have their id set at first, but we assume that all their underlying
@@ -16,7 +15,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
     /// done manually using the method CacheObject, since the id is not known during the 
     /// to string conversion process.
     /// </summary>
-    internal class DefaultComplexConfigurationObjectToStringProvider : ComplexConfigurationObjectToStringProviderBase
+    internal class DefaultFullObjectToStringProvider : FullObjectToStringProviderBase
     {
         #region Constructor
 
@@ -25,11 +24,10 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         /// with a given arguments to string provider and a given default
         /// configuration object id resolver.
         /// </summary>
-        /// <param name="argumentsToStringProvider">The arguments to string provider.</param>
-        /// <param name="resolver">The resolver.</param>
-        public DefaultComplexConfigurationObjectToStringProvider(IArgumentsToStringProvider argumentsToStringProvider,
-                                                                 DefaultObjectIdResolver resolver)
-            : base(argumentsToStringProvider, resolver)
+        /// <param name="provider">The arguments to string provider.</param>
+        /// <param name="resolver">The default object id resolver.</param>
+        public DefaultFullObjectToStringProvider(IArgumentsToStringProvider provider, DefaultObjectIdResolver resolver)
+            : base(provider, resolver)
         {
         }
 
@@ -38,13 +36,13 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
         #region Abstract methods from base implementation
 
         /// <summary>
-        /// Resolve if a given object has it's to string value already cached.
+        /// Resolves if a given object has it's string value already cached.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The cached value, if exists, otherwise an empty string.</returns>
         protected override string ResolveCachedValue(ConfigurationObject configurationObject)
         {
-            // If the objects doesn't have an idea, we can't have it cached
+            // If the objects doesn't have an id, we can't have it cached
             if (!configurationObject.Id.HasValue)
             {
                 return string.Empty;
@@ -93,14 +91,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString
             {
                 throw new GeneratorException("The object with this id has been already cached.");
             }
-        }
-
-        /// <summary>
-        /// Clears the cache of the provider.
-        /// </summary>
-        public void ClearCache()
-        {
-            Cache.Clear();
         }
 
         #endregion

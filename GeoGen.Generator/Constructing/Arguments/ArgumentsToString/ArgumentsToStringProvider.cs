@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.Constructing.Arguments.Container;
 
 namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
@@ -22,24 +23,16 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         private const string DefaultArgumentsSeparator = ",";
 
         /// <summary>
-        /// The default arguments separator.
-        /// </summary>
-        private const string DefaultIntersetSeparator = ";";
-
-        /// <summary>
         /// The arguments separator.
         /// </summary>
         private readonly string _argumentsSeparator;
 
         /// <summary>
-        /// The interset separator.
-        /// </summary>
-        private readonly string _intersetSeparator;
-
-        /// <summary>
         /// The default configuration object to string provider.
         /// </summary>
-        private readonly DefaultConfigurationObjectToStringProvider _configurationObjectToString;
+        private readonly DefaultObjectToStringProvider _objectToString;
+
+        private readonly IArgumentToStringProviderFactory _argumentToStringFactory;
 
         #endregion
 
@@ -51,24 +44,27 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// configuration object to string provider. This constructor is 
         /// meant to be used in testing.
         /// </summary>
-        /// <param name="configurationObjectToString">The configuration object to string.</param>
+        /// <param name="objectToString">The configuration object to string.</param>
         /// <param name="argumentsSeparator">The arguments separator.</param>
-        /// <param name="intersetSeparator">The interset separator.</param>
-        public ArgumentsToStringProvider(DefaultConfigurationObjectToStringProvider configurationObjectToString,
-            string argumentsSeparator, string intersetSeparator)
+        /// TODO: FIX DOC
+        public ArgumentsToStringProvider
+        (
+            IArgumentToStringProviderFactory argumentToStringFactory,
+            DefaultObjectToStringProvider objectToString,
+            string argumentsSeparator
+        )
         {
-            _configurationObjectToString = configurationObjectToString;
+            _objectToString = objectToString;
             _argumentsSeparator = argumentsSeparator;
-            _intersetSeparator = intersetSeparator;
+            _argumentToStringFactory = argumentToStringFactory;
         }
 
-        /// <summary>
-        /// Construct an argument to string provider with default separators
-        /// and a given default configuration object to string provider.
-        /// </summary>
-        /// <param name="configurationObjectToString">The configuration object to string.</param>
-        public ArgumentsToStringProvider(DefaultConfigurationObjectToStringProvider configurationObjectToString)
-            : this(configurationObjectToString, DefaultArgumentsSeparator, DefaultIntersetSeparator)
+        public ArgumentsToStringProvider
+        (
+            IArgumentToStringProviderFactory argumentToStringFactory,
+            DefaultObjectToStringProvider objectToString
+        )
+            : this(argumentToStringFactory, objectToString, DefaultArgumentsSeparator)
         {
         }
 
@@ -85,7 +81,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <returns>The string representation of the list.</returns>
         public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments)
         {
-            return ConvertToString(arguments, _configurationObjectToString);
+            return ConvertToString(arguments, _objectToString);
         }
 
         /// <summary>
@@ -95,8 +91,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <param name="arguments">The arguments.</param>
         /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the list.</returns>
-        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments,
-            IConfigurationObjectToStringProvider objectToString)
+        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IObjectToStringProvider objectToString)
         {
             if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -107,34 +102,14 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             if (objectToString == null)
                 throw new ArgumentNullException(nameof(objectToString));
 
-            var argumentsStrings = arguments.Select(args => ArgumentToString(args, objectToString));
+            // Ask factory for the right container
+            var argumentContainer = _argumentToStringFactory.GetProvider(objectToString);
 
+            // Create arguments string enumerable
+            var argumentsStrings = arguments.Select(arg => argumentContainer.ConvertArgument(arg));
+
+            // Join arguments
             return $"({string.Join(_argumentsSeparator, argumentsStrings)})";
-        }
-
-        /// <summary>
-        /// Converts a given construction argument to string.
-        /// </summary>
-        /// <param name="constructionArgument">The given construction argument.</param>
-        /// <param name="objectToString">The configuration object to string converted.</param>
-        /// <returns>The string representation of the argument.</returns>
-        private string ArgumentToString(ConstructionArgument constructionArgument,
-            IConfigurationObjectToStringProvider objectToString)
-        {
-            if (constructionArgument is ObjectConstructionArgument objectArgument)
-            {
-                return objectToString.ConvertToString(objectArgument.PassedObject);
-            }
-
-            var setArgument = constructionArgument as SetConstructionArgument ?? throw new NullReferenceException();
-
-            var individualArgs = setArgument.PassedArguments
-                    .Select(arg => ArgumentToString(arg, objectToString))
-                    .ToList();
-
-            individualArgs.Sort();
-
-            return $"{{{string.Join(_intersetSeparator, individualArgs)}}}";
         }
 
         #endregion

@@ -45,14 +45,11 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
 
             var stringVersion = ItemToString(item);
 
-            lock (this)
-            {
-                if (Items.ContainsKey(stringVersion))
-                    return false;
+            if (Items.ContainsKey(stringVersion))
+                return false;
 
-                Items.Add(stringVersion, item);
-                return true;
-            }
+            Items.Add(stringVersion, item);
+            return true;
         }
 
         #endregion

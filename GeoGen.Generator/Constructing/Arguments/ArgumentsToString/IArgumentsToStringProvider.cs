@@ -25,6 +25,6 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// <param name="arguments">The arguments.</param>
         /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the list.</returns>
-        string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IConfigurationObjectToStringProvider objectToString);
+        string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IObjectToStringProvider objectToString);
     }
 }

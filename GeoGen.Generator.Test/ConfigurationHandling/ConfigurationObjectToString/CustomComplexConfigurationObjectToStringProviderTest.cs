@@ -25,13 +25,13 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
             return mock.Object;
         }
 
-        private static CustomComplexConfigurationObjectToStringProvider Provider(IObjectIdResolver resolver = null)
+        private static CustomFullObjectToStringProvider Provider(IObjectIdResolver resolver = null)
         {
-            var objectToStringProvider = new DefaultConfigurationObjectToStringProvider();
+            var objectToStringProvider = new DefaultObjectToStringProvider();
             var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider, ", ", "; ");
             resolver = resolver ?? Resolver();
 
-            return new CustomComplexConfigurationObjectToStringProvider(argumentsProvider, resolver);
+            return new CustomFullObjectToStringProvider(argumentsProvider, resolver);
         }
 
         [Test]
@@ -41,7 +41,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new CustomComplexConfigurationObjectToStringProvider(null, resolver)
+                () => new CustomFullObjectToStringProvider(null, resolver)
             );
         }
 
@@ -52,7 +52,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new CustomComplexConfigurationObjectToStringProvider(provider, null)
+                () => new CustomFullObjectToStringProvider(provider, null)
             );
         }
 
@@ -155,7 +155,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
 
             var thirdObject = ConstructedObject(42, 1, thirdArgs, 44);
             var stringVersion = provider.ConvertToString(thirdObject);
-            const string expected = "42(42(10, 11)[0], 42({11; 12; 42(10, 11)[0]})[1], {{10; 11}; {12; 42(10, 11)[0]}})[1]";
+            const string expected = "42(42(10, 11), 42({11; 12; 42(10, 11)})[1], {{10; 11}; {12; 42(10, 11)}})[1]";
 
             Assert.AreEqual(expected, stringVersion);
         }

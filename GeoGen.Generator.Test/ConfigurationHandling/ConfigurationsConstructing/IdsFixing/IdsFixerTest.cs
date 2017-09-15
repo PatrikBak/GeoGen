@@ -8,9 +8,9 @@ using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectI
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsConstructing.IdsFixing;
 using GeoGen.Generator.ConfigurationHandling.ObjectsContainer;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing.IdsFixing
 {
@@ -21,16 +21,16 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
 
         private static IdsFixer Fixer()
         {
-            var defaultToString = new DefaultConfigurationObjectToStringProvider();
+            var defaultToString = new DefaultObjectToStringProvider();
             var argsProvider = new ArgumentsToStringProvider(defaultToString);
             var defaultResolver = new DefaultObjectIdResolver();
-            var provider = new DefaultComplexConfigurationObjectToStringProvider(argsProvider, defaultResolver);
+            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
             _container = new ConfigurationObjectsContainer(provider);
             var objects = Objects(42, ConfigurationObjectType.Point, includeIds: false).ToList();
             _container.Initialize(objects);
 
-            return new IdsFixer(_container);
+            return new IdsFixer(_container, Resolver());
         }
 
         private static DictionaryObjectIdResolver Resolver()
@@ -39,32 +39,33 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                     .Range(0, 42)
                     .ToDictionary(i => i, i => i + 1);
 
-            return new DictionaryObjectIdResolver(dictionary);
+            return new DictionaryObjectIdResolver(dictionary, 0);
         }
 
         [Test]
         public void Container_Is_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null));
-        }
-
-        [Test]
-        public void Argument_Is_Not_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Fixer().FixArgument(null, Resolver()));
-        }
-
-        [Test]
-        public void Object_Is_Not_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Fixer().FixObject(null, Resolver()));
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null, Resolver()));
         }
 
         [Test]
         public void Resolver_Is_Not_Null()
         {
-            var argument = Utilities.SimpleMock<ConstructionArgument>();
-            Assert.Throws<ArgumentNullException>(() => Fixer().FixArgument(argument, null));
+            var container = SimpleMock<IConfigurationObjectsContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(container, null));
+        }
+
+        [Test]
+        public void Argument_Is_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => Fixer().FixArgument(null));
+        }
+
+        [Test]
+        public void Object_Is_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => Fixer().FixObject(null));
         }
 
         [Test]
@@ -73,7 +74,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
             var fixer = Fixer();
 
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 7};
-            var fixedObj = fixer.FixObject(obj, Resolver());
+            var fixedObj = fixer.FixObject(obj);
 
             Assert.AreEqual(8, fixedObj.Id);
             Assert.AreSame(_container[8], fixedObj);
@@ -86,7 +87,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
 
             var obj = _container[7];
             var arg = new ObjectConstructionArgument(obj);
-            var fixedArg = fixer.FixArgument(arg, Resolver());
+            var fixedArg = fixer.FixArgument(arg);
 
             Assert.IsInstanceOf<ObjectConstructionArgument>(fixedArg);
 
@@ -124,7 +125,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
                 }
             );
 
-            var fixedArg = fixer.FixArgument(arg, Resolver());
+            var fixedArg = fixer.FixArgument(arg);
             Assert.IsInstanceOf<SetConstructionArgument>(fixedArg);
 
             var passedArgs = ((SetConstructionArgument) fixedArg).PassedArguments;
@@ -160,7 +161,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
 
             var constructedObject = ConstructedObject(42, 0, args);
             _container.Add(constructedObject);
-            var fixedObject = fixer.FixObject(constructedObject, Resolver());
+            var fixedObject = fixer.FixObject(constructedObject);
             var casted = (ConstructedConfigurationObject) fixedObject;
 
             Assert.AreEqual(44, fixedObject.Id ?? throw new Exception());
@@ -228,9 +229,9 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsConstructing
             var obj3 = ConstructedObject(42, 1, args3);
             _container.Add(obj3);
 
-            var fixedObj3 = (ConstructedConfigurationObject) fixer.FixObject(obj3, Resolver());
-            var fixedObj2 = (ConstructedConfigurationObject) fixer.FixObject(obj2, Resolver());
-            var fixedObj1 = (ConstructedConfigurationObject) fixer.FixObject(obj1, Resolver());
+            var fixedObj3 = (ConstructedConfigurationObject) fixer.FixObject(obj3);
+            var fixedObj2 = (ConstructedConfigurationObject) fixer.FixObject(obj2);
+            var fixedObj1 = (ConstructedConfigurationObject) fixer.FixObject(obj1);
 
             ConfigurationObject Object(int index, ConstructedConfigurationObject constructedObj)
             {

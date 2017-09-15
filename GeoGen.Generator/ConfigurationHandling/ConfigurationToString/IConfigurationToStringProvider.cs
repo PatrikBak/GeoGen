@@ -17,6 +17,6 @@ namespace GeoGen.Generator.ConfigurationHandling.ConfigurationToString
         /// <param name="configuration">The configuration.</param>
         /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the configuration.</returns>
-        string ConvertToString(Configuration configuration, IConfigurationObjectToStringProvider objectToString);
+        string ConvertToString(Configuration configuration, IObjectToStringProvider objectToString);
     }
 }

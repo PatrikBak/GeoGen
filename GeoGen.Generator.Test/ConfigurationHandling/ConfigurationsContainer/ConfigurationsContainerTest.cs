@@ -25,12 +25,12 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationsContainer
     {
         private static ConfigurationContainer Container()
         {
-            var provider = new DefaultConfigurationObjectToStringProvider();
+            var provider = new DefaultObjectToStringProvider();
             var argumentsProvider = new ArgumentsToStringProvider(provider);
             var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsProvider);
             var configurationToStringProvider = new ConfigurationToStringProvider();
             var defaultResolver = new DefaultObjectIdResolver();
-            var resolver = new DefaultComplexConfigurationObjectToStringProvider(argumentsProvider, defaultResolver);
+            var resolver = new DefaultFullObjectToStringProvider(argumentsProvider, defaultResolver);
             var configuationObjectContainer = new ConfigurationObjectsContainer(resolver);
 
             var mock = new Mock<IConfigurationConstructor>();

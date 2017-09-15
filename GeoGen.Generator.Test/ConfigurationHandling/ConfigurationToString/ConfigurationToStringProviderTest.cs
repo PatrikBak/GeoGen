@@ -14,9 +14,9 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationToString
     [TestFixture]
     public class ConfigurationToStringProviderTest
     {
-        private static IConfigurationObjectToStringProvider DefaultObjectProvider()
+        private static IObjectToStringProvider DefaultObjectProvider()
         {
-            return new DefaultConfigurationObjectToStringProvider();
+            return new DefaultObjectToStringProvider();
         }
 
         private static ConfigurationToStringProvider ConfigurationProvider()
@@ -47,7 +47,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationToString
             var configuration = new Configuration(looseObjects, new List<ConstructedConfigurationObject>());
             var asString = ConfigurationProvider().ConvertToString(configuration, DefaultObjectProvider());
 
-            Assert.AreEqual("1 | 2", asString);
+            Assert.AreEqual("", asString);
         }
 
         [Test]
@@ -64,7 +64,7 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationToString
             var configuration = new Configuration(looseObjects, new List<ConstructedConfigurationObject> {obj1, obj2});
             var asString = ConfigurationProvider().ConvertToString(configuration, DefaultObjectProvider());
 
-            Assert.AreEqual("1 | 14 | 2 | 7", asString);
+            Assert.AreEqual("14 | 7", asString);
         }
     }
 }

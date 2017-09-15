@@ -15,7 +15,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
         /// <summary>
         /// Gets the default complex configuration object to string provider that is used by the container.
         /// </summary>
-        DefaultComplexConfigurationObjectToStringProvider ConfigurationObjectToStringProvider { get; }
+        DefaultFullObjectToStringProvider ConfigurationObjectToStringProvider { get; }
 
         /// <summary>
         /// Adds a given object to a container. The object must

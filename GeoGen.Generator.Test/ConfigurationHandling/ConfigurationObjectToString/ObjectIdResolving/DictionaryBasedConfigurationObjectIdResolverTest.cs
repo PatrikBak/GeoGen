@@ -15,13 +15,13 @@ namespace GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToStrin
         {
             var dictionary = Enumerable.Range(0, 42).ToDictionary(i => i, i => i * i);
 
-            return new DictionaryObjectIdResolver(dictionary);
+            return new DictionaryObjectIdResolver(dictionary, 0);
         }
 
         [Test]
         public void Test_Dictionary_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(null));
+            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(null, 0));
         }
 
         [Test]

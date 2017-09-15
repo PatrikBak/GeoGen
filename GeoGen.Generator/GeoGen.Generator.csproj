@@ -35,21 +35,26 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Deployment" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\DictionaryObjectIdResolversContainer.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\IDictionaryObjectIdResolversContainer.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationsConstructing\IdsFixing\IdsFixerFactory.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationsConstructing\IdsFixing\IIDsFixerFactory.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationsHandler.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationToString\ConfigurationToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationToString\IConfigurationToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ObjectsContainer\ConfigurationObjectsContainer.cs" />
     <Compile Include="ConfigurationHandling\ObjectsContainer\IConfigurationObjectsContainer.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProvider.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ComplexConfigurationObjectToStringProviderBase.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProvider.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultConfigurationObjectToStringProvider.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactory.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfigurationObjectToStringProviderFactory.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultFullObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\FullObjectToStringProviderBase.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomFullObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomFullObjectToStringProviderFactory.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ICustomFullObjectToStringProviderFactory.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\DefaultObjectIdResolver.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IConfigurationObjectToStringProvider.cs" />
+    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\IObjectToStringProvider.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\DictionaryObjectIdResolver.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\IObjectIdResolver.cs" />
     <Compile Include="ConfigurationHandling\ConfigurationsConstructing\IdsFixing\IdsFixer.cs" />
@@ -61,8 +66,12 @@
     <Compile Include="Constructing\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderFactory.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentToStringProvider.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentContainer.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentToStringProviderFactory.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentsToStringProviderFactory.cs" />
+    <Compile Include="Constructing\Arguments\ArgumentsToString\IArgumentToStringProvider.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainer.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactory.cs" />
     <Compile Include="Constructing\Arguments\Container\IArgumentsContainerFactory.cs" />

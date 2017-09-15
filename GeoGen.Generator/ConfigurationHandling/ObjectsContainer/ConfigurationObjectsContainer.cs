@@ -17,7 +17,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
         /// <summary>
         /// Gets the default complex configuration object to string provider that is used by the container.
         /// </summary>
-        public DefaultComplexConfigurationObjectToStringProvider ConfigurationObjectToStringProvider { get; }
+        public DefaultFullObjectToStringProvider ConfigurationObjectToStringProvider { get; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
         /// object to string provider.
         /// </summary>
         /// <param name="objectToStringProvider">The object to string provider.</param>
-        public ConfigurationObjectsContainer(DefaultComplexConfigurationObjectToStringProvider objectToStringProvider)
+        public ConfigurationObjectsContainer(DefaultFullObjectToStringProvider objectToStringProvider)
         {
             ConfigurationObjectToStringProvider = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
         }
@@ -87,6 +87,7 @@ namespace GeoGen.Generator.ConfigurationHandling.ObjectsContainer
             var newId = Items.Count + 1;
             constructedConfigurationObject.Id = newId;
             Items.Add(stringRepresentation, constructedConfigurationObject);
+
             _idToObjectDictionary.Add(newId, constructedConfigurationObject);
             ConfigurationObjectToStringProvider.CacheObject(newId, stringRepresentation);
 

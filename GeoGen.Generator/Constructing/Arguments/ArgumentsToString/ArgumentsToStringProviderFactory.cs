@@ -5,7 +5,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {
     internal class ArgumentsToStringProviderFactory : IArgumentsToStringProviderFactory
     {
-        public IArgumentsToStringProvider CreateProvider(DefaultConfigurationObjectToStringProvider provider)
+        public IArgumentsToStringProvider CreateProvider(DefaultObjectToStringProvider provider)
         {
             if (provider == null)
                 throw new ArgumentNullException(nameof(provider));

@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationHandling;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConfigurationHandling.ConfigurationToString;
 using GeoGen.Generator.Constructing;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator
 {
@@ -60,8 +66,6 @@ namespace GeoGen.Generator
             _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
         }
 
-        private static readonly Object obj = new Object();
-
         #endregion
 
         #region IGenerator implementation
@@ -89,59 +93,39 @@ namespace GeoGen.Generator
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
-            //var newLayerConfigurations = _configurationContainer
-            //        // get the current layer
-            //        .CurrentLayer
-            //        // create configurations and merge them
-            //        .Select(c => _objectsConstructor.GenerateNewConfigurationObjects(c))
-            //        .ToList();
-            // convert to list
+            var newLayerConfigurations = _configurationContainer
+                    // get the current layer
+                    .CurrentLayer
+                    // create configurations and merge them
+                    .SelectMany(d => _objectsConstructor.GenerateNewConfigurationObjects(d))
+                    // convert to list
+                    .ToList();
 
-            var bag = new ConcurrentBag<IEnumerable<ConstructorOutput>>();
+            //var newLayerConfigurations = new List<ConstructorOutput>();
+            var s = new Stopwatch();
+            s.Start();
 
-            //Console.WriteLine(newLayerConfigurations.Count());
-
-            //foreach (var output in newLayerConfigurations)
-            {
-                //bag.Add(output);
-            }
-
-            Console.WriteLine(bag.Count);
-                    
-
-            
-            //Foreach
-            //(
-            //    _configurationContainer.CurrentLayer, arg =>
+            //Parallel.ForEach(
+            //    _configurationContainer.CurrentLayer, wrapper =>
             //    {
-            //        lock (obj)
+            //        var output = _objectsConstructor.GenerateNewConfigurationObjects(wrapper).ToList();
+
+            //        lock (this)
             //        {
-            //            bag.Add(_objectsConstructor.GenerateNewConfigurationObjects((ConfigurationWrapper) arg));
+            //            newLayerConfigurations.AddRange(output);
             //        }
-            //    }
-            //);
+            //    });
 
-            //var a = bag.SelectMany(s => s).ToList();
-            var p = 0;
-            var i = new List<ConstructorOutput>();
+            s.Stop();
+            //Console.WriteLine($"Generation: {s.ElapsedMilliseconds}");
 
-            Parallel.ForEach(
-                _configurationContainer.CurrentLayer, j =>
-                {
-                    lock (obj)
-                    {
-                        p++;
-                        foreach (var constructorOutput in _objectsConstructor.GenerateNewConfigurationObjects((ConfigurationWrapper) j))
-                        {
-                            i.Add(constructorOutput);
-                        }
-                    }
-                });
-            
-            Console.WriteLine(p);
+            s.Restart();
 
             // make container aware of the new layer
-            _configurationContainer.AddLayer(i);
+            _configurationContainer.AddLayer(newLayerConfigurations);
+
+            s.Stop();
+            //Console.WriteLine($"New layer: {s.ElapsedMilliseconds}");
 
             // get the current (new) layer
             var currentLayer = _configurationContainer.CurrentLayer;
@@ -150,22 +134,6 @@ namespace GeoGen.Generator
             foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(currentLayer))
             {
                 yield return generatorOutput;
-            }
-        }
-
-        private void ForEach(List<ConfigurationWrapper> configurationContainerCurrentLayer, Action<object> action)
-        {
-            foreach (var configurationWrapper in configurationContainerCurrentLayer)
-            {
-                action(configurationWrapper);
-            }
-        }
-
-        private void Foreach(List<ConfigurationWrapper> configurationContainerCurrentLayer, Action<object> action)
-        {
-            foreach (var configurationWrapper in configurationContainerCurrentLayer)
-            {
-                action(configurationWrapper);
             }
         }
 

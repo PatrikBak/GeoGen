@@ -26,7 +26,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var signatureMatcher = new ConstructionSignatureMatcherFactory();
-            var objectToStringProvider = new DefaultConfigurationObjectToStringProvider();
+            var objectToStringProvider = new DefaultObjectToStringProvider();
             var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider);
             var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsProvider);
 
