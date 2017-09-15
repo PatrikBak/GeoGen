@@ -5,7 +5,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.Constructing.Arguments;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;

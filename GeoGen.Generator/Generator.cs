@@ -6,11 +6,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.ConfigurationHandling;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationToString;
+using GeoGen.Generator.ConfigurationsHandling;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 

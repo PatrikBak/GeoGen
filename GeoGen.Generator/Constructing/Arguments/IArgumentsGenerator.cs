@@ -1,4 +1,4 @@
-﻿using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
+﻿using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing.Arguments.Container;
 
 namespace GeoGen.Generator.Constructing.Arguments

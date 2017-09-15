@@ -53,18 +53,18 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationHandling\ConfigurationsContainer\ConfigurationsContainerTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationToString\ConfigurationToStringProviderTest.cs" />
-    <Compile Include="ConfigurationHandling\ObjectsContainer\ConfigurationObjectsContainerTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactoryTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProviderTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProviderTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\DefaultConfigurationObjectIdToStringProviderTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\DefaultConfigurationObjectIdResolverTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationObjectToString\ObjectIdResolving\DictionaryBasedConfigurationObjectIdResolverTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationsConstructing\IdsFixing\IdsFixerTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationsConstructing\LeastConfigurationFinding\LeastConfigurationFinderTest.cs" />
-    <Compile Include="ConfigurationHandling\ConfigurationsConstructing\ConfigurationConstructorTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationsContainer\ConfigurationsContainerTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationToString\ConfigurationToStringProviderTest.cs" />
+    <Compile Include="ConfigurationsHandling\ObjectsContainer\ConfigurationObjectsContainerTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\ConfigurationObjectToStringProviderFactoryTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\CustomComplexConfigurationObjectToStringProviderTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\DefaultComplexConfigurationObjectToStringProviderTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\DefaultConfigurationObjectIdToStringProviderTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\ConfigurationObjectIdResolving\DefaultConfigurationObjectIdResolverTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\ConfigurationObjectIdResolving\DictionaryBasedConfigurationObjectIdResolverTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\IdsFixing\IdsFixerTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\LeastConfigurationFinding\LeastConfigurationFinderTest.cs" />
+    <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\ConfigurationConstructorTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderFactoryTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsToStringProviderTest.cs" />
     <Compile Include="Constructing\Arguments\Container\ArgumentsContainerFactoryTest.cs" />

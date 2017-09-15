@@ -2,7 +2,7 @@
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 

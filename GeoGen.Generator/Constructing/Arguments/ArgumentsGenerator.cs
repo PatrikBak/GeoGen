@@ -4,7 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 

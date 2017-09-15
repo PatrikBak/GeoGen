@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 
 namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {

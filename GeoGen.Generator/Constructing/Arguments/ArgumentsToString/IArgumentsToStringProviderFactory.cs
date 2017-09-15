@@ -1,4 +1,4 @@
-﻿using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+﻿using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 
 namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
 {

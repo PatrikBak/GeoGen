@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using Moq;
 using NUnit.Framework;

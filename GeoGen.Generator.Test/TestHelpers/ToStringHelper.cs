@@ -2,11 +2,10 @@
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Test.ConfigurationHandling.ConfigurationObjectToString.ObjectIdResolving;
 
 namespace GeoGen.Generator.Test.TestHelpers
 {

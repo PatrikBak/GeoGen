@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 
 namespace GeoGen.Generator.Constructing
 {
