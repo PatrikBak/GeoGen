@@ -7,34 +7,37 @@ using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 namespace GeoGen.Generator.Constructing.Arguments.Container
 {
     /// <summary>
-    /// An implementation of <see cref="IArgumentsContainer"/> that uses <see cref="IArgumentsToStringProvider"/>.
-    /// It inherits from <see cref="StringBasedContainer{T}"/>.
+    /// An implementation of <see cref="IArgumentsListContainer"/> that 
+    /// uses <see cref="IArgumentsListToStringProvider"/> with 
+    /// default object to string provider. Since we elimate 
+    /// equal points on go, we don't need to use the full object as
+    /// string representation (that uses only loose object's ids)
     /// </summary>
-    internal class ArgumentsContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsContainer
+    internal class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
     {
         #region Private fields
 
         /// <summary>
-        /// The arguments to string provider.
+        /// The arguments list to string provider.
         /// </summary>
-        private readonly IArgumentsToStringProvider _argumentsToStringProvider;
+        private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructs a new arguments container that uses a given argument to string provider.
+        /// Constructs a new arguments container that uses a given arguments list to string provider.
         /// </summary>
-        /// <param name="argumentsToStringProvider">The argument to string provider.</param>
-        public ArgumentsContainer(IArgumentsToStringProvider argumentsToStringProvider)
+        /// <param name="argumentsListToStringProvider">The arguments list to string provider.</param>
+        public ArgumentsListContainer(IArgumentsListToStringProvider argumentsListToStringProvider)
         {
-            _argumentsToStringProvider = argumentsToStringProvider ?? throw new ArgumentNullException(nameof(argumentsToStringProvider));
+            _argumentsListToStringProvider = argumentsListToStringProvider ?? throw new ArgumentNullException(nameof(argumentsListToStringProvider));
         }
 
         #endregion
 
-        #region IArguments container implementation
+        #region IArguments container methods
 
         /// <summary>
         /// Adds arguments to the container.
@@ -46,16 +49,16 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         }
 
         /// <summary>
-        /// Removes all the elemenets contained in a given container
+        /// Removes all the elements contained in a given container
         /// from this container. 
         /// </summary>
         /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
-        public void RemoveElementsFrom(IArgumentsContainer elementsToBeRemoved)
+        public void RemoveElementsFrom(IArgumentsListContainer elementsToBeRemoved)
         {
             if (elementsToBeRemoved == null)
                 throw new ArgumentNullException(nameof(elementsToBeRemoved));
 
-            var argumentsContainer = elementsToBeRemoved as ArgumentsContainer ?? throw new GeneratorException("Unhandled case");
+            var argumentsContainer = elementsToBeRemoved as ArgumentsListContainer ?? throw new GeneratorException("Unhandled case");
 
             foreach (var item in argumentsContainer.Items)
             {
@@ -74,10 +77,7 @@ namespace GeoGen.Generator.Constructing.Arguments.Container
         /// <returns>The string representation.</returns>
         protected override string ItemToString(IReadOnlyList<ConstructionArgument> item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            return _argumentsToStringProvider.ConvertToString(item);
+            return _argumentsListToStringProvider.ConvertToString(item);
         }
 
         #endregion

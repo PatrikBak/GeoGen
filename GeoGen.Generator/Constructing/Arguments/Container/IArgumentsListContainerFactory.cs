@@ -1,14 +1,14 @@
 ﻿namespace GeoGen.Generator.Constructing.Arguments.Container
 {
     /// <summary>
-    /// An abstract factory for creating <see cref="IArgumentsContainer"/>.
+    /// An abstract factory for creating <see cref="IArgumentsListContainer"/>s.
     /// </summary>
-    internal interface IArgumentsContainerFactory
+    internal interface IArgumentsListContainerFactory
     {
         /// <summary>
         /// Creates an empty arguments container.
         /// </summary>
         /// <returns>The arguments container.</returns>
-        IArgumentsContainer CreateContainer();
+        IArgumentsListContainer CreateContainer();
     }
 }

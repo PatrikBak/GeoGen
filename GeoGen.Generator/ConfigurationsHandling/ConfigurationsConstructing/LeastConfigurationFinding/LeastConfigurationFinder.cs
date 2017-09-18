@@ -29,6 +29,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Lea
 
         public static Stopwatch s_toString = new Stopwatch();
         public static Stopwatch s_iterating = new Stopwatch();
+        public static bool finding;
 
         public DictionaryObjectIdResolver FindLeastConfiguration(Configuration configuration)
         {
@@ -40,12 +41,17 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Lea
 
             foreach (var resolver in _dictionaryObjectIdResolversContainer)
             {
+                s_iterating.Start();
                 var customProvider = _customFullObjectToStringFactory.GetCustomProvider(resolver);
+                s_iterating.Stop();
 
+                finding = true;
                 s_toString.Start();
                 var stringVersion = _configurationToStringProvider.ConvertToString(configuration, customProvider);
                 s_toString.Stop();
+                finding = false;
 
+                s_iterating.Start();
                 var lessThanLeast = string.Compare(stringVersion, leastString, StringComparison.Ordinal) < 0;
 
                 if (leastString == null || lessThanLeast)
@@ -53,6 +59,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Lea
                     leastString = stringVersion;
                     result = resolver;
                 }
+                s_iterating.Stop();
             }
 
             return result;

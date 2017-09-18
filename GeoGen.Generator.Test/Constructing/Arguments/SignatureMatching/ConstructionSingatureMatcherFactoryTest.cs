@@ -1,5 +1,8 @@
-﻿using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
+﻿using System;
+using GeoGen.Generator.Constructing.Arguments.Container;
+using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
 {
@@ -8,11 +11,19 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
     {
         private static ConstructionSignatureMatcherFactory Factory()
         {
-            return new ConstructionSignatureMatcherFactory();
+            var container = SimpleMock<IArgumentContainer>();
+
+            return new ConstructionSignatureMatcherFactory(container);
         }
 
         [Test]
-        public void Resulting_Matcher_Is_Correct()
+        public void Test_Container_Cant_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ConstructionSignatureMatcher(null));
+        }
+
+        [Test]
+        public void Test_Resulting_Matcher_Is_Correct()
         {
             var obj = Factory().CreateMatcher();
 

@@ -5,27 +5,62 @@ using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing
 {
-    class IdsFixerFactory : IIdsFixerFactory
+    /// <summary>
+    /// A default implementation of <see cref="IIdsFixerFactory"/>.
+    /// </summary>
+    internal class IdsFixerFactory : IIdsFixerFactory
     {
+        #region Private fields
+
+        /// <summary>
+        /// The configuration objects container.
+        /// </summary>
         private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
 
+        /// <summary>
+        /// The cache mapping dictionary object id resolvers' ids 
+        /// to ids fixers associated with them
+        /// </summary>
         private readonly Dictionary<int, IIdsFixer> _cache;
 
-        public IdsFixerFactory(IConfigurationObjectsContainer configurationObjectsContainer)
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new ids fixer factory that is using a given
+        /// configuration objects container.
+        /// </summary>
+        /// <param name="objectsContainer">The configuration objects container.</param>
+        public IdsFixerFactory(IConfigurationObjectsContainer objectsContainer)
         {
-            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(configurationObjectsContainer));
+            _configurationObjectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _cache = new Dictionary<int, IIdsFixer>();
         }
 
+        #endregion
+
+        #region IIdsFixerFactory methods
+
+        /// <summary>
+        /// Creates an ids fixer corresponding to a given
+        /// dictionary object id resolver.
+        /// </summary>
+        /// <param name="resolver">The dictionry object id resolver.</param>
+        /// <returns>The ids fixer.</returns>
         public IIdsFixer CreateFixer(DictionaryObjectIdResolver resolver)
         {
-            if (_cache.ContainsKey(resolver.Id))
-                return _cache[resolver.Id];
+            var id = resolver.Id;
+
+            if (_cache.ContainsKey(id))
+                return _cache[id];
 
             var newFixer = new IdsFixer(_configurationObjectsContainer, resolver);
-            _cache.Add(resolver.Id, newFixer);
+            _cache.Add(id, newFixer);
 
             return newFixer;
         }
+
+        #endregion
     }
 }

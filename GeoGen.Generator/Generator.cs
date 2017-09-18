@@ -90,39 +90,18 @@ namespace GeoGen.Generator
         /// <returns>The output.</returns>
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
+            // TODO: Parallel ForEach with ConcurrentBag seems faster
             var newLayerConfigurations = _configurationContainer
                     // get the current layer
                     .CurrentLayer
+                    //.AsParallel() // 37 seconds 
                     // create configurations and merge them
                     .SelectMany(d => _objectsConstructor.GenerateNewConfigurationObjects(d))
                     // convert to list
                     .ToList();
-
-            //var newLayerConfigurations = new List<ConstructorOutput>();
-            var s = new Stopwatch();
-            s.Start();
-
-            //Parallel.ForEach(
-            //    _configurationContainer.CurrentLayer, wrapper =>
-            //    {
-            //        var output = _objectsConstructor.GenerateNewConfigurationObjects(wrapper).ToList();
-
-            //        lock (this)
-            //        {
-            //            newLayerConfigurations.AddRange(output);
-            //        }
-            //    });
-
-            s.Stop();
-            //Console.WriteLine($"Generation: {s.ElapsedMilliseconds}");
-
-            s.Restart();
-
+            
             // make container aware of the new layer
             _configurationContainer.AddLayer(newLayerConfigurations);
-
-            s.Stop();
-            //Console.WriteLine($"New layer: {s.ElapsedMilliseconds}");
 
             // get the current (new) layer
             var currentLayer = _configurationContainer.CurrentLayer;

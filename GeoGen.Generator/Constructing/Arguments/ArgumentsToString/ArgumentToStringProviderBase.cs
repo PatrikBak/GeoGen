@@ -11,7 +11,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
     /// that uses a given <see cref="IObjectToStringProvider"/> and
     /// cashes results.
     /// </summary>
-    internal class ArgumentToStringProvider : IArgumentToStringProvider
+    internal abstract class ArgumentToStringProviderBase : IArgumentToStringProvider
     {
         #region Private fields
 
@@ -30,10 +30,14 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// </summary>
         private readonly IObjectToStringProvider _objectToString;
 
+        #endregion
+
+        #region Protected fields
+
         /// <summary>
         /// The cache dictionary mapping argument's ids to their string versions.
         /// </summary>
-        private readonly Dictionary<int, string> _cache = new Dictionary<int, string>();
+        protected readonly Dictionary<int, string> Cache = new Dictionary<int, string>();
 
         #endregion
 
@@ -46,7 +50,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// </summary>
         /// <param name="objectToString">The object to string provider.</param>
         /// <param name="intersetSeparator">The interset separator.</param>
-        public ArgumentToStringProvider(IObjectToStringProvider objectToString, string intersetSeparator)
+        protected ArgumentToStringProviderBase(IObjectToStringProvider objectToString, string intersetSeparator)
         {
             _objectToString = objectToString ?? throw new ArgumentNullException(nameof(objectToString));
             _intersetSeparator = intersetSeparator ?? throw new ArgumentNullException(nameof(intersetSeparator));
@@ -57,7 +61,7 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
         /// object to string provider.
         /// </summary>
         /// <param name="objectToString">The object to string provider.</param>
-        public ArgumentToStringProvider(IObjectToStringProvider objectToString)
+        protected ArgumentToStringProviderBase(IObjectToStringProvider objectToString)
             : this(objectToString, DefaultIntersetSeparator)
         {
         }
@@ -76,33 +80,30 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             if (argument == null)
                 throw new ArgumentNullException(nameof(argument));
 
-            var hasId = argument.Id.HasValue;
+            // Let the abstract method resolve the cached value
+            var result = ResolveCachedValue(argument);
 
-            // If the argument has an id, we first check if it's not cached
-            if (hasId)
-            {
-                var id = argument.Id.Value;
+            // If there is any non-empty cached value, return it immediately
+            if (result != string.Empty)
+                return result;
 
-                if (_cache.ContainsKey(id))
-                    return _cache[id];
-            }
-
-            string result;
-
+            // If we have an object argument
             if (argument is ObjectConstructionArgument objectArgument)
             {
                 // We let the object to string provider convert the passed object first
                 result = _objectToString.ConvertToString(objectArgument.PassedObject);
 
-                // If we have an id, we can cache
-                if (hasId)
-                    _cache.Add(argument.Id.Value, result);
+                // Let the abstract method handle the cached result
+                HandleResult(argument, result);
 
+                // And return it
                 return result;
             }
 
+            // Otherwise we must have the set argument
             var setArgument = argument as SetConstructionArgument ?? throw new GeneratorException("Unhandled case.");
 
+            // We recursively convert individual arguments
             var individualArgs = setArgument.PassedArguments
                     .Select(ConvertArgument)
                     .ToList();
@@ -110,28 +111,33 @@ namespace GeoGen.Generator.Constructing.Arguments.ArgumentsToString
             // We assure that the set is unique when we sort the representations of particular arguments
             individualArgs.Sort();
 
+            // Compose the result
             result = $"{{{string.Join(_intersetSeparator, individualArgs)}}}";
 
-            if (hasId)
-                _cache.Add(argument.Id.Value, result);
+            // Let the abstract method handle the cached result
+            HandleResult(argument, result);
 
+            // Return the result
             return result;
         }
 
-        /// <summary>
-        /// Caches a given string representation associated with the argument
-        /// with an given id. We call this after converting an argument that
-        /// didn't have an id while it was being converted.
-        /// </summary>
-        /// <param name="argumentId">The argument id.</param>
-        /// <param name="stringRepresentation">The string representation.</param>
-        public void Cache(int argumentId, string stringRepresentation)
-        {
-            if (_cache.ContainsKey(argumentId))
-                throw new GeneratorException("The argument with this id has already been cached.");
+        #endregion
 
-            _cache.Add(argumentId, stringRepresentation);
-        }
+        #region Protected abstract methods
+
+        /// <summary>
+        /// Resolves if a given argument has it's string value already cached.
+        /// </summary>
+        /// <param name="constructionArgument">The construction argument.</param>
+        /// <returns>The cached value, if exists, otherwise an empty string.</returns>
+        protected abstract string ResolveCachedValue(ConstructionArgument constructionArgument);
+
+        /// <summary>
+        /// Handles the resulting string value after constructing it, before returning it.
+        /// </summary>
+        /// <param name="constructionArgument">The .</param>
+        /// <param name="result">The object's string value.</param>
+        protected abstract void HandleResult(ConstructionArgument constructionArgument, string result);
 
         #endregion
     }

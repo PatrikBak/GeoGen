@@ -20,13 +20,16 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
     {
         private LeastConfigurationFinder Finder(IEnumerable<LooseConfigurationObject> objects)
         {
-            var provider = new DefaultObjectToStringProvider();
-            var argsToString = new ArgumentsToStringProvider(provider);
+            var resolver = new DefaultObjectIdResolver();
+            var defaultToString = new DefaultObjectToStringProvider(resolver);
+            var def = new DefaultArgumentToStringProvider(defaultToString);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsProvider = new ArgumentsListToStringProvider(factory, def);
+            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsProvider);
+            var variationsProvider = new VariationsProvider<LooseConfigurationObject>();
             var configurationToString = new ConfigurationToStringProvider();
-            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
-            var variationsProvider = new VariationsProvider<int>();
             var container = new DictionaryObjectIdResolversContainer(variationsProvider);
-            container.Initialize(objects);
+            container.Initialize(objects.ToList());
 
             return new LeastConfigurationFinder(configurationToString, objectToStringFactory, container);
         }

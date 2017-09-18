@@ -7,8 +7,9 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
 {
@@ -17,8 +18,11 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
     {
         private static ConfigurationObjectsContainer Container()
         {
-            var defaultToString = new DefaultObjectToStringProvider();
-            var argsProvider = new ArgumentsToStringProvider(defaultToString);
+            var resolver = new DefaultObjectIdResolver();
+            var defaultToString = new DefaultObjectToStringProvider(resolver);
+            var def = new DefaultArgumentToStringProvider(defaultToString);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsProvider = new ArgumentsListToStringProvider(factory, def);
             var defaultResolver = new DefaultObjectIdResolver();
             var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
@@ -128,7 +132,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Initialize(looseObjects);
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
-            var constructedObject = ConfigurationObjects.ConstructedObject(42, 0, args, 7);
+            var constructedObject = ConstructedObject(42, 0, args, 7);
 
             Assert.Throws<GeneratorException>(() => container.Add(constructedObject));
         }
@@ -147,7 +151,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Initialize(looseObjects);
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
-            var constructedObject = ConfigurationObjects.ConstructedObject(42, 0, args);
+            SetIds(args);
+            var constructedObject = ConstructedObject(42, 0, args);
 
             var result = container.Add(constructedObject);
 
@@ -170,8 +175,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Initialize(looseObjects);
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
-            var constructedObject1 = ConfigurationObjects.ConstructedObject(42, 1, args);
-            var constructedObject2 = ConfigurationObjects.ConstructedObject(42, 1, args);
+            SetIds(args);
+            var constructedObject1 = ConstructedObject(42, 1, args);
+            var constructedObject2 = ConstructedObject(42, 1, args);
 
             container.Add(constructedObject1);
             var result = container.Add(constructedObject2);
@@ -207,8 +213,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
+            SetIds(args1);
 
-            var obj1 = ConfigurationObjects.ConstructedObject(42, 0, args1);
+            var obj1 = ConstructedObject(42, 0, args1);
             obj1 = container.Add(obj1);
             Assert.AreEqual(4, obj1.Id ?? throw new Exception());
 
@@ -224,12 +231,13 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
+            SetIds(args2);
 
-            var obj2 = ConfigurationObjects.ConstructedObject(42, 0, args2);
+            var obj2 = ConstructedObject(42, 0, args2);
             obj2 = container.Add(obj2);
             Assert.AreEqual(5, obj2.Id ?? throw new Exception());
 
-            var obj1Copy = ConfigurationObjects.ConstructedObject(42, 0, args1, 4);
+            var obj1Copy = ConstructedObject(42, 0, args1, 4);
 
             var args3 = new List<ConstructionArgument>
             {
@@ -243,8 +251,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
+            SetIds(args3);
 
-            var obj3 = ConfigurationObjects.ConstructedObject(42, 0, args3);
+            var obj3 = ConstructedObject(42, 0, args3);
             var result = container.Add(obj3);
             obj3 = result;
             Assert.AreEqual(obj2, result);
@@ -255,8 +264,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                 new ObjectConstructionArgument(obj2),
                 new ObjectConstructionArgument(obj3)
             };
+            SetIds(args4);
 
-            var obj4 = ConfigurationObjects.ConstructedObject(42, 1, args4);
+            var obj4 = ConstructedObject(42, 1, args4);
             container.Add(obj4);
             Assert.AreEqual(6, obj4.Id ?? throw new Exception());
             Assert.AreEqual(6, container.Count());

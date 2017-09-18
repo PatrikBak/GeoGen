@@ -7,52 +7,61 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Test.TestHelpers;
+using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToString
 {
     [TestFixture]
-    public class DefaultComplexConfigurationObjectToStringProviderTest
+    public class DefaultFullObjectToStringProviderTest
     {
+        private static DefaultObjectIdResolver _defaultResolver;
+
         private static DefaultFullObjectToStringProvider Provider()
         {
-            var objectToStringProvider = new DefaultObjectToStringProvider();
-            var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider, ", ", "; ");
-            var defaultResolver = new DefaultObjectIdResolver();
+            _defaultResolver = new DefaultObjectIdResolver();
+            var defaultProvider = new DefaultObjectToStringProvider(_defaultResolver);
+            var defaultArgument = new DefaultArgumentToStringProvider(defaultProvider);
 
-            return new DefaultFullObjectToStringProvider(argumentsProvider, defaultResolver);
+            CustomArgumentToStringProvider provider = null;
+
+            var mock = new Mock<ICustomArgumentToStringProviderFactory>();
+            mock.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
+                    .Returns<IObjectToStringProvider>
+                    (
+                        stringProvider => provider ?? (provider = new CustomArgumentToStringProvider(stringProvider))
+                    );
+
+            var argumentsProvider = new ArgumentsListToStringProvider(mock.Object, defaultArgument, ", ");
+
+            return new DefaultFullObjectToStringProvider(argumentsProvider, _defaultResolver);
         }
 
         [Test]
-        public void Arguments_Provider_Cant_Be_Null()
+        public void Test_Arguments_Provider_Cant_Be_Null()
         {
-            var resolver = Utilities.SimpleMock<DefaultObjectIdResolver>();
+            var resolver = SimpleMock<DefaultObjectIdResolver>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new DefaultFullObjectToStringProvider(null, resolver)
-            );
+            Assert.Throws<ArgumentNullException>(() => new DefaultFullObjectToStringProvider(null, resolver));
         }
 
         [Test]
-        public void Default_Resolver_Cant_Be_Null()
+        public void Test_Default_Resolver_Cant_Be_Null()
         {
-            var provider = Utilities.SimpleMock<IArgumentsToStringProvider>();
+            var provider = SimpleMock<IArgumentsListToStringProvider>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new DefaultFullObjectToStringProvider(provider, null)
-            );
+            Assert.Throws<ArgumentNullException>(() => new DefaultFullObjectToStringProvider(provider, null));
         }
 
         [Test]
-        public void Object_Cant_Be_Null()
+        public void Test_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Provider().ConvertToString(null));
         }
 
         [Test]
-        public void Loose_Objects_To_String_Test()
+        public void Test_Loose_Objects_To_String()
         {
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 42};
 
@@ -60,7 +69,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Constructed_Object_To_String_Test()
+        public void Test_Constructed_Object_To_String()
         {
             var args = ConfigurationObjects.Objects(4, ConfigurationObjectType.Point, 0)
                     .Select(o => new ObjectConstructionArgument(o))
@@ -73,7 +82,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Complex_Nested_Constructed_Object_To_String_Test()
+        public void Test_Complex_Nested_Constructed_Object_To_String()
         {
             var provider = Provider();
 
@@ -143,7 +152,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Forgotten_Cache_Object_Call()
+        public void Test_Forgotten_Cache_Object_Call()
         {
             var provider = Provider();
 
@@ -163,7 +172,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Calling_To_String_On_Object_With_Id_And_Never_Cached()
+        public void Test_Calling_To_String_On_Object_With_Id_And_Never_Cached()
         {
             var provider = Provider();
 
@@ -178,22 +187,11 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Clear_Cache_Test()
+        public void Test_Resolver_Is_Returned()
         {
-            var provider = Provider();
+            var resolver = Provider().Resolver;
 
-            var args = ConfigurationObjects.Objects(4, ConfigurationObjectType.Point, 0)
-                    .Select(o => new ObjectConstructionArgument(o))
-                    .Cast<ConstructionArgument>()
-                    .ToList();
-
-            var constructedObject = ConfigurationObjects.ConstructedObject(42, 1, args);
-            var asString = provider.ConvertToString(constructedObject);
-            provider.CacheObject(1, asString);
-            provider.ClearCache();
-            constructedObject.Id = 1;
-
-            Assert.Throws<GeneratorException>(() => provider.ConvertToString(constructedObject));
+            Assert.AreEqual(_defaultResolver, resolver);
         }
     }
 }

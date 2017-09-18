@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
@@ -23,10 +24,12 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
         public ConfigurationObjectsMap ConfigurationObjectsMap { get; set; }
 
         /// <summary>
-        /// Gets or sets the dictionary map mapping construction ids to <see cref="IArgumentsContainer"/>
+        /// Gets or sets the dictionary map mapping construction ids to <see cref="IArgumentsListContainer"/>
         /// that holds arguments that are not allowed to be used for the construction when the 
         /// configuration is being extended.
         /// </summary>
-        public Dictionary<int, IArgumentsContainer> ForbiddenArguments { get; set; }
+        public Dictionary<int, IArgumentsListContainer> ForbiddenArguments { get; set; }
+
+        public Dictionary<IObjectToStringProvider, SortedDictionary<string, ConstructedConfigurationObject>> Sorted { get; set; }
     }
 }

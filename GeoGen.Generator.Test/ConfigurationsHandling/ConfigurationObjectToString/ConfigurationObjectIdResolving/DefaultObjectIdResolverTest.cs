@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving
 {
     [TestFixture]
-    public class DefaultConfigurationObjectIdResolverTest
+    public class DefaultObjectIdResolverTest
     {
         private static DefaultObjectIdResolver Resolver()
         {
@@ -14,13 +14,13 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Configuration_Object_Cant_Be_Null()
+        public void Test_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Resolver().ResolveId(null));
         }
 
         [Test]
-        public void Configuration_Object_Id_Must_Be_Set()
+        public void Test_Objects_Id_Must_Be_Set()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
@@ -28,12 +28,20 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         }
 
         [Test]
-        public void Configuration_Object_Id_Is_Fine()
+        public void Test_Objects_Id_Is_Fine()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 42};
             var id = Resolver().ResolveId(obj);
 
             Assert.AreEqual(42, id);
+        }
+
+        [Test]
+        public void Test_Id_Is_set()
+        {
+            var id = Resolver().Id;
+
+            Assert.AreEqual(DefaultObjectIdResolver.DefaultId, id);
         }
     }
 }

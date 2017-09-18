@@ -25,7 +25,7 @@ namespace GeoGen.Generator.Constructing.Arguments
         /// <summary>
         /// The arguments container factory.
         /// </summary>
-        private readonly IArgumentsContainerFactory _argumentsContainerFactory;
+        private readonly IArgumentsListContainerFactory _argumentsListContainerFactory;
 
         /// <summary>
         /// The variations of configuration objects provider.
@@ -51,14 +51,14 @@ namespace GeoGen.Generator.Constructing.Arguments
         /// <param name="combinator">The combinator.</param>
         /// <param name="constructionSignatureMatcherFactory">The construction signature matcher factory.</param>
         /// <param name="variationsProvider">The variations provider.</param>
-        /// <param name="argumentsContainerFactory">The arguments container factory.</param>
+        /// <param name="argumentsListContainerFactory">The arguments container factory.</param>
         public ArgumentsGenerator(ICombinator<ConfigurationObjectType, List<ConfigurationObject>> combinator,
             IConstructionSignatureMatcherFactory constructionSignatureMatcherFactory,
             IVariationsProvider<ConfigurationObject> variationsProvider,
-            IArgumentsContainerFactory argumentsContainerFactory)
+            IArgumentsListContainerFactory argumentsListContainerFactory)
         {
             _constructionSignatureMatcherFactory = constructionSignatureMatcherFactory ?? throw new ArgumentNullException(nameof(constructionSignatureMatcherFactory));
-            _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
             _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(variationsProvider));
             _combinator = combinator ?? throw new ArgumentNullException(nameof(combinator));
         }
@@ -74,7 +74,7 @@ namespace GeoGen.Generator.Constructing.Arguments
         /// <param name="configuration">The wrapper cofiguration.</param>
         /// <param name="construction">The wrapped construction.</param>
         /// <returns>The container of resulting arguments.</returns>
-        public IArgumentsContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
+        public IArgumentsListContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
@@ -86,7 +86,7 @@ namespace GeoGen.Generator.Constructing.Arguments
             // objects to do so. If not, we return an empty enumerable.
             if (!CanWePerformConstruction(configuration, construction))
             {
-                return _argumentsContainerFactory.CreateContainer();
+                return _argumentsListContainerFactory.CreateContainer();
             }
 
             var dictionaryForCombinator = configuration.ConfigurationObjectsMap.Where
@@ -101,7 +101,7 @@ namespace GeoGen.Generator.Constructing.Arguments
                                 .Select(variation => variation.ToList())
                     );
 
-            var argumentsContainer = _argumentsContainerFactory.CreateContainer();
+            var argumentsContainer = _argumentsListContainerFactory.CreateContainer();
             var signatureMatcher = _constructionSignatureMatcherFactory.CreateMatcher();
 
             foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))

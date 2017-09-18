@@ -18,18 +18,18 @@ namespace GeoGen.Generator.Test.Constructing
 {
     public class ConfigurationConstructorTest
     {
-        private static IArgumentsContainer Arguments(IEnumerable<ConfigurationObject> objects)
+        private static IArgumentsListContainer Arguments(IEnumerable<ConfigurationObject> objects)
         {
             var argsList = objects
                     .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
                     .Cast<IReadOnlyList<ConstructionArgument>>()
                     .ToList();
 
-            var mock = new Mock<IArgumentsContainer>();
+            var mock = new Mock<IArgumentsListContainer>();
             mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
 
-            mock.Setup(s => s.RemoveElementsFrom(It.IsAny<IArgumentsContainer>()))
-                    .Callback<IArgumentsContainer>
+            mock.Setup(s => s.RemoveElementsFrom(It.IsAny<IArgumentsListContainer>()))
+                    .Callback<IArgumentsListContainer>
                     (
                         c =>
                         {
@@ -68,10 +68,10 @@ namespace GeoGen.Generator.Test.Constructing
             return generatorMock.Object;
         }
 
-        private static IArgumentsContainer Container(IEnumerable<ConfigurationObject> objects,
+        private static IArgumentsListContainer Container(IEnumerable<ConfigurationObject> objects,
             int forbidenIdStart, int forbidenIdEnd)
         {
-            var mock = new Mock<IArgumentsContainer>();
+            var mock = new Mock<IArgumentsListContainer>();
 
             mock.Setup(c => c.GetEnumerator()).Returns(
                 () => objects.Where
@@ -93,7 +93,7 @@ namespace GeoGen.Generator.Test.Constructing
             int forbiddenConstructionsStartId, int forbiddenConstructionEndId,
             int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
         {
-            var forbiddenArgs = new Dictionary<int, IArgumentsContainer>();
+            var forbiddenArgs = new Dictionary<int, IArgumentsListContainer>();
 
             for (var constructionId = forbiddenConstructionsStartId;
                 constructionId <= forbiddenConstructionEndId;

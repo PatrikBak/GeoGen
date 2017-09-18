@@ -6,15 +6,10 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.Co
 {
     /// <summary>
     /// An implementation of <see cref="IObjectIdResolver"/> that uses a dictionary
-    /// mapping actual ids to resolved ids.
+    /// mapping actual ids to the ids to be resolved.
     /// </summary>
     internal class DictionaryObjectIdResolver : IObjectIdResolver
     {
-        /// <summary>
-        /// The id of the resolver.
-        /// </summary>
-        public int Id { get; }
-
         #region Private fields
 
         /// <summary>
@@ -27,31 +22,36 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.Co
         #region Constructor
 
         /// <summary>
-        /// Constructs a new dictionary based resolver with a given ids dictionary
-        /// and with a given id.
+        /// Constructs a new dictionary object id resolver with 
+        /// a given ids dictionary and a given id. The id cannot be 
+        /// the same as the id of the <see cref="DefaultObjectIdResolver"/>.
         /// </summary>
-        /// <param name="realIdToResolvedId">The dictionary mapping real ids to resolved ids.</param>
         /// <param name="id">The id.</param>
-        public DictionaryObjectIdResolver(Dictionary<int, int> realIdToResolvedId, int id)
+        /// <param name="realIdToResolvedId">The dictionary mapping real ids to resolved ids.</param>
+        public DictionaryObjectIdResolver(int id, Dictionary<int, int> realIdToResolvedId)
         {
+            if (id == DefaultObjectIdResolver.DefaultId)
+                throw new ArgumentException("The id cannot be the same as the default object id resolver's id");
+
             Id = id;
             _realIdToResolvedId = realIdToResolvedId ?? throw new ArgumentNullException(nameof(realIdToResolvedId));
         }
 
+        #endregion
+
+        #region IObjectIdResolver properties
+
         /// <summary>
-        /// Constructs a new dictionary based resolver with an empty dictionary.
+        /// The id of the resolver.
         /// </summary>
-        public DictionaryObjectIdResolver()
-            : this(new Dictionary<int, int>(), 0)
-        {
-        }
+        public int Id { get; }
 
         #endregion
 
-        #region IObjectIdResolver implementation
+        #region IObjectIdResolver methods
 
         /// <summary>
-        /// Resolve the id of a given configuration object.
+        /// Resolves the id of a given configuration object.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The id.</returns>
@@ -60,7 +60,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.Co
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
-            var id = configurationObject.Id ?? throw new GeneratorException("Configuration object without id");
+            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set.");
 
             return _realIdToResolvedId[id];
         }

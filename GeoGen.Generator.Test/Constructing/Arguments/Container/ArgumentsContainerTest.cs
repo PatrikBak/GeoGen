@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using NUnit.Framework;
@@ -25,18 +26,21 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Container
             return new ObjectConstructionArgument(cObject);
         }
 
-        private static ArgumentsContainer Container()
+        private static ArgumentsListContainer Container()
         {
-            var objectProvider = new DefaultObjectToStringProvider();
-            var argumentsProvider = new ArgumentsToStringProvider(objectProvider);
+            var idResolver = new DefaultObjectIdResolver();
+            var objectProvider = new DefaultObjectToStringProvider(idResolver);
+            var argumentProvider = new DefaultArgumentToStringProvider(objectProvider);
+            var argumentFactory = new CustomArgumentToStringProviderFactory();
+            var argumentsProvider = new ArgumentsListToStringProvider(argumentFactory, argumentProvider);
 
-            return new ArgumentsContainer(argumentsProvider);
+            return new ArgumentsListContainer(argumentsProvider);
         }
 
         [Test]
         public void Arguments_To_String_Provider_Cannot_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new ArgumentsContainer(null));
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsListContainer(null));
         }
 
         [Test]

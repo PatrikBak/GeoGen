@@ -17,16 +17,25 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
     /// </summary>
     internal class DefaultFullObjectToStringProvider : FullObjectToStringProviderBase
     {
+        #region Public static properties
+
+        /// <summary>
+        /// The default id.
+        /// </summary>
+        public static readonly int DefaultId = DefaultObjectIdResolver.DefaultId;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
-        /// Constructs a default complex configuration object to string provider 
-        /// with a given arguments to string provider and a given default
+        /// Constructs a default full configuration object to string provider 
+        /// with a given arguments list to string provider and a given default
         /// configuration object id resolver.
         /// </summary>
-        /// <param name="provider">The arguments to string provider.</param>
+        /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The default object id resolver.</param>
-        public DefaultFullObjectToStringProvider(IArgumentsToStringProvider provider, DefaultObjectIdResolver resolver)
+        public DefaultFullObjectToStringProvider(IArgumentsListToStringProvider provider, DefaultObjectIdResolver resolver)
             : base(provider, resolver)
         {
         }

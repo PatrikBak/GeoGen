@@ -4,8 +4,10 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using GeoGen.Generator.Test.TestHelpers;
+using Moq;
 using NUnit.Framework;
 
 namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
@@ -15,8 +17,12 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
     {
         private static ConstructionSignatureMatcher Matcher()
         {
-            var matcher = new ConstructionSignatureMatcher();
+            var mock = new Mock<IArgumentContainer>();
+            mock.Setup(s => s.AddArgument(It.IsAny<ConstructionArgument>()))
+                    .Returns<ConstructionArgument>(arg => arg);
+            var container = mock.Object;
 
+            var matcher = new ConstructionSignatureMatcher(container);
             matcher.Initialize(Configurations.Configuration(5, 0, 1).ConfigurationObjectsMap);
 
             return matcher;
@@ -95,7 +101,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
         public void Test_Signature_Of_Intersection()
         {
             var matcher = Matcher();
-            
+
             var midpointParams = new List<ConstructionParameter>
             {
                 new SetConstructionParameter

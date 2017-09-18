@@ -23,7 +23,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
         /// <summary>
         /// The arguments container factory
         /// </summary>
-        private readonly IArgumentsContainerFactory _argumentsContainerFactory;
+        private readonly IArgumentsListContainerFactory _argumentsListContainerFactory;
 
         /// <summary>
         /// The symetric configurations handler
@@ -59,22 +59,22 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
         /// handler, a configuration to string provider,
         /// and a configuration objects container.
         /// </summary>
-        /// <param name="argumentsContainerFactory">The arguments container factory.</param>
+        /// <param name="argumentsListContainerFactory">The arguments container factory.</param>
         /// <param name="configurationConstructor">The symetrc configurations handler.</param>
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
         public ConfigurationContainer
         (
-            IArgumentsContainerFactory argumentsContainerFactory,
+            IArgumentsListContainerFactory argumentsListContainerFactory,
             IConfigurationConstructor configurationConstructor,
             IConfigurationToStringProvider configurationToStringProvider,
             IConfigurationObjectsContainer configurationObjectsContainer
         )
         {
-            _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
-            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
+            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
+            _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
+            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
         }
 
         #endregion
@@ -209,9 +209,9 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The dictionary.</returns>
-        private Dictionary<int, IArgumentsContainer> CreateForbiddenArguments(Configuration configuration)
+        private Dictionary<int, IArgumentsListContainer> CreateForbiddenArguments(Configuration configuration)
         {
-            var result = new Dictionary<int, IArgumentsContainer>();
+            var result = new Dictionary<int, IArgumentsListContainer>();
 
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
@@ -219,7 +219,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
 
                 if (!result.ContainsKey(id))
                 {
-                    var container = _argumentsContainerFactory.CreateContainer();
+                    var container = _argumentsListContainerFactory.CreateContainer();
                     result.Add(id, container);
                 }
 

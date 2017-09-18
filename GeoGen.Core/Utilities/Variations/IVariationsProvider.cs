@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GeoGen.Core.Configurations;
 
 namespace GeoGen.Core.Utilities.Variations
 {
@@ -17,6 +18,6 @@ namespace GeoGen.Core.Utilities.Variations
         /// <param name="list">The list whose elements are used in variations.</param>
         /// <param name="numberOfElement">The number of elements in each variation.</param>
         /// <returns>Lazy enumerable of all possible variations.</returns>
-        IEnumerable<IEnumerable<T>> GetVariations(List<T> list, int numberOfElement);
+        IEnumerable<IEnumerable<T>> GetVariations(IReadOnlyList<T> list, int numberOfElement);
     }
 }

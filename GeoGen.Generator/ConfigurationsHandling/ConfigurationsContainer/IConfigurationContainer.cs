@@ -5,10 +5,9 @@ using GeoGen.Generator.Constructing;
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
 {
     /// <summary>
-    /// Represents a container for all generated configurations. It's meant to handle processing
-    /// of symetric configurations. 
+    /// Represents a container for all generated configurations. 
     /// </summary>
-    internal interface IConfigurationContainer : IEnumerable<Configuration>
+    internal interface IConfigurationContainer
     {
         /// <summary>
         /// Initializes the container with a given initial configuration.

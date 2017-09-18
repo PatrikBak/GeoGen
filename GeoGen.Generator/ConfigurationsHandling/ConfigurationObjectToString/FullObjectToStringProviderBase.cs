@@ -13,19 +13,14 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
     /// It has two implementations, <see cref="DefaultFullObjectToStringProvider"/>
     /// and <see cref="CustomFullObjectToStringProvider"/>.
     /// </summary>
-    internal abstract class FullObjectToStringProviderBase : IObjectToStringProvider
+    internal abstract class FullObjectToStringProviderBase : ObjectToStringProviderBase
     {
         #region Private fields
 
         /// <summary>
-        /// The arguments to string provider
+        /// The arguments list to string provider
         /// </summary>
-        private readonly IArgumentsToStringProvider _argumentsToStringProvider;
-
-        /// <summary>
-        /// The configuration object id resolver.
-        /// </summary>
-        private readonly IObjectIdResolver _objectIdResolver;
+        private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
 
         #endregion
 
@@ -43,42 +38,33 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 
         /// <summary>
         /// Constructs a new complex configuration object to string provider with a given
-        /// arguments to string provider and a given loose object id resolver.
+        /// arguments list to string provider and a given object id resolver.
         /// </summary>
-        /// <param name="provider">The arguments to string provider.</param>
+        /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
-        protected FullObjectToStringProviderBase(IArgumentsToStringProvider provider, IObjectIdResolver resolver)
+        protected FullObjectToStringProviderBase(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
+            : base(resolver)
         {
-            _argumentsToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _objectIdResolver = resolver ?? throw new ArgumentNullException(nameof(provider));
+            _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         #endregion
 
-        #region IObjectToStringProvider properties
-
-        /// <summary>
-        /// Gets the id of the provider.
-        /// </summary>
-        public int Id => _objectIdResolver.Id;
-
-        #endregion
-
-        #region IObjectToStringProvider methods
+        #region ObjectToStringProviderBase methods
 
         /// <summary>
         /// Converts a given configuration object to string. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The string representation of the list.</returns>
-        public string ConvertToString(ConfigurationObject configurationObject)
+        public override string ConvertToString(ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
             // We let the resolvedrto resolve the loose objects ids
             if (configurationObject is LooseConfigurationObject looseConfigurationObject)
-                return $"{_objectIdResolver.ResolveId(looseConfigurationObject)}";
+                return $"{Resolver.ResolveId(looseConfigurationObject)}";
 
             // Call the abstract method to resolve the value from cache.
             var cachedString = ResolveCachedValue(configurationObject);
@@ -92,7 +78,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 
             // We find arguments string. This might cause recursive calls of this very function,
             // because we're passing this object as an object to string provider. 
-            var argumentsString = _argumentsToStringProvider.ConvertToString(contructedObject.PassedArguments, this);
+            var argumentsString = _argumentsListToStringProvider.ConvertToString(contructedObject.PassedArguments, this);
 
             // Construct the beginning of the result
             var result = $"{contructedObject.Construction.Id}{argumentsString}";

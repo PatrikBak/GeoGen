@@ -1,4 +1,7 @@
-﻿using GeoGen.Core.Configurations;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
@@ -22,7 +25,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// id resolver.
         /// <param name="provider">The arguments to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
-        public CustomFullObjectToStringProvider(IArgumentsToStringProvider provider, IObjectIdResolver resolver)
+        public CustomFullObjectToStringProvider(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
             : base(provider, resolver)
         {
         }

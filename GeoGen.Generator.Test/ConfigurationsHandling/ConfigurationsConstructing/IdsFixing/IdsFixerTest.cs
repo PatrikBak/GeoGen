@@ -10,6 +10,8 @@ using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing
 {
@@ -20,9 +22,11 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
         private static IdsFixer Fixer()
         {
-            var defaultToString = new DefaultObjectToStringProvider();
-            var argsProvider = new ArgumentsToStringProvider(defaultToString);
             var defaultResolver = new DefaultObjectIdResolver();
+            var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
+            var defaultArgument = new DefaultArgumentToStringProvider(defaultToString);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsProvider = new ArgumentsListToStringProvider(factory, defaultArgument);
             var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
             _container = new ConfigurationObjectsContainer(provider);
@@ -38,7 +42,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     .Range(0, 42)
                     .ToDictionary(i => i, i => i + 1);
 
-            return new DictionaryObjectIdResolver(dictionary, 0);
+            return new DictionaryObjectIdResolver(1, dictionary);
         }
 
         [Test]
@@ -50,7 +54,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         [Test]
         public void Resolver_Is_Not_Null()
         {
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new IdsFixer(container, null));
         }
@@ -65,6 +69,15 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         public void Object_Is_Not_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Fixer().FixObject(null));
+        }
+
+        [Test]
+        public void Object_Must_Have_Id()
+        {
+            var fixer = Fixer();
+            var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
+
+            Assert.Throws<GeneratorException>(() => fixer.FixObject(obj));
         }
 
         [Test]
@@ -157,6 +170,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     }
                 )
             };
+            SetIds(args);
 
             var constructedObject = ConfigurationObjects.ConstructedObject(42, 0, args);
             _container.Add(constructedObject);

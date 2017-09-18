@@ -16,6 +16,6 @@ namespace GeoGen.Generator.Constructing.Arguments
         /// <param name="configuration">The wrapper cofiguration.</param>
         /// <param name="construction">The wrapped construction.</param>
         /// <returns>The container of resulting arguments.</returns>
-        IArgumentsContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
+        IArgumentsListContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
     }
 }

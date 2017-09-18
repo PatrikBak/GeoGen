@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core.Configurations;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 {
@@ -8,9 +9,9 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
     internal interface IObjectToStringProvider
     {
         /// <summary>
-        /// Gets the id of the provider.
+        /// Gets the object to string resolver that is used by this provider.
         /// </summary>
-        int Id { get; }
+        IObjectIdResolver Resolver { get; }
 
         /// <summary>
         /// Converts a given configuration object to string. 

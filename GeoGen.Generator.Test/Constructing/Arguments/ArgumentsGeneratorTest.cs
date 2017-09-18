@@ -6,11 +6,13 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.Constructing.Arguments;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using GeoGen.Generator.Test.TestHelpers;
+using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Configurations;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
@@ -25,10 +27,14 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
-            var signatureMatcher = new ConstructionSignatureMatcherFactory();
-            var objectToStringProvider = new DefaultObjectToStringProvider();
-            var argumentsProvider = new ArgumentsToStringProvider(objectToStringProvider);
-            var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsProvider);
+            var resolver = new DefaultObjectIdResolver();
+            var provider = new DefaultObjectToStringProvider(resolver);
+            var defaultArgumentProvider = new DefaultArgumentToStringProvider(provider);
+            var argumentContainer = new ArgumentContainer(defaultArgumentProvider);
+            var signatureMatcher = new ConstructionSignatureMatcherFactory(argumentContainer);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsProvider = new ArgumentsListToStringProvider(factory, defaultArgumentProvider, ", ");
+            var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
         }
@@ -38,7 +44,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
             var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
-            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -51,7 +57,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
-            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -64,7 +70,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var argumentsFactory = SimpleMock<IArgumentsContainerFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -196,9 +202,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var configuration = Configuration(10, 4, 4);
 
             var result = ArgumentsGenerator()
-                .GenerateArguments(configuration, construction)
-                .Select(ToStringHelper.ArgsToString)
-                .ToList();
+                    .GenerateArguments(configuration, construction)
+                    .Select(ToStringHelper.ArgsToString)
+                    .ToList();
 
             var contains = result.Any(s => s.Equals(argument));
 
@@ -221,29 +227,6 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
 
             var contains = result.Any(s => s.Equals(argument));
             Assert.IsTrue(contains);
-        }
-
-        [Test]
-        [Ignore("This is just a temporary speed test.")]
-        public void Test_Intersection_Time_With_25_Points()
-        {
-            long totalTime = 0;
-            const int count = 20;
-
-            for (var i = 0; i < count; i++)
-            {
-                var construction = Intersection();
-                var configuration = Configuration(25, 0, 0);
-
-                var stopwatch = new Stopwatch();
-                stopwatch.Start();
-                var unused = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-                stopwatch.Stop();
-                totalTime += stopwatch.ElapsedMilliseconds;
-                stopwatch.Reset();
-            }
-
-            Console.WriteLine((double) totalTime / count);
         }
     }
 }

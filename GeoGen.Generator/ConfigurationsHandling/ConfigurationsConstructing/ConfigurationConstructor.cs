@@ -19,18 +19,18 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing
 
         private readonly IIdsFixerFactory _idsFixerFactory;
 
-        private readonly IArgumentsContainerFactory _argumentsContainerFactory;
+        private readonly IArgumentsListContainerFactory _argumentsListContainerFactory;
 
         public ConfigurationConstructor
         (
             ILeastConfigurationFinder leastConfigurationFinder,
             IIdsFixerFactory idsFixerFactory,
-            IArgumentsContainerFactory argumentsContainerFactory
+            IArgumentsListContainerFactory argumentsListContainerFactory
         )
         {
             _leastConfigurationFinder = leastConfigurationFinder ?? throw new ArgumentNullException(nameof(leastConfigurationFinder));
             _idsFixerFactory = idsFixerFactory ?? throw new ArgumentNullException(nameof(idsFixerFactory));
-            _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
+            _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
         }
 
         public static Stopwatch s_balast = new Stopwatch();
@@ -95,14 +95,14 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing
             return new Configuration(looseObjects, constructedObjects);
         }
 
-        private Dictionary<int, IArgumentsContainer> CreateNewArguments
+        private Dictionary<int, IArgumentsListContainer> CreateNewArguments
         (
             IIdsFixer idsFixer,
-            Dictionary<int, IArgumentsContainer> forbiddenArguments,
+            Dictionary<int, IArgumentsListContainer> forbiddenArguments,
             IEnumerable<ConstructedConfigurationObject> newObjects
         )
         {
-            var result = new Dictionary<int, IArgumentsContainer>();
+            var result = new Dictionary<int, IArgumentsListContainer>();
 
             List<ConstructionArgument> FixArguments(IEnumerable<ConstructionArgument> arguments)
             {
@@ -112,7 +112,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing
             foreach (var pair in forbiddenArguments)
             {
                 var id = pair.Key;
-                var newContainer = _argumentsContainerFactory.CreateContainer();
+                var newContainer = _argumentsListContainerFactory.CreateContainer();
 
                 foreach (var arguments in pair.Value)
                 {
@@ -129,7 +129,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing
 
                 if (!result.ContainsKey(id))
                 {
-                    var newContainer = _argumentsContainerFactory.CreateContainer();
+                    var newContainer = _argumentsListContainerFactory.CreateContainer();
                     result.Add(id, newContainer);
                 }
 

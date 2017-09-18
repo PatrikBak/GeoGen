@@ -9,19 +9,19 @@ using NUnit.Framework;
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving
 {
     [TestFixture]
-    public class DictionaryBasedConfigurationObjectIdResolverTest
+    public class DictionaryObjectIdResolverTest
     {
         private static DictionaryObjectIdResolver Resolver()
         {
             var dictionary = Enumerable.Range(0, 42).ToDictionary(i => i, i => i * i);
 
-            return new DictionaryObjectIdResolver(dictionary, 0);
+            return new DictionaryObjectIdResolver(1, dictionary);
         }
 
         [Test]
         public void Test_Dictionary_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(null, 0));
+            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(1, null));
         }
 
         [Test]
@@ -34,6 +34,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         public void Test_Object_Must_Have_Id()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
+
             Assert.Throws<GeneratorException>(() => Resolver().ResolveId(obj));
         }
 
@@ -41,6 +42,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         public void Test_Objects_Id_Isnt_Present_In_Dictionary()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 42};
+
             Assert.Throws<KeyNotFoundException>(() => Resolver().ResolveId(obj));
         }
 
@@ -57,6 +59,23 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
                 var realId = looseConfigurationObject.Id ?? throw new Exception();
                 Assert.AreEqual(realId * realId, id);
             }
+        }
+
+        [Test]
+        public void Test_Id_Is_Set()
+        {
+            var id = Resolver().Id;
+
+            Assert.AreEqual(1, id);
+        }
+
+        [Test]
+        public void Test_Id_Cant_Be_Default()
+        {
+            var id = DefaultObjectIdResolver.DefaultId;
+            var dictionary = new Dictionary<int, int>();
+
+            Assert.Throws<ArgumentException>(() => new DictionaryObjectIdResolver(id, dictionary));
         }
     }
 }

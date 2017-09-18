@@ -44,7 +44,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
 
         #endregion
 
-        #region StringBasedContainer abstract methods implementation
+        #region StringBasedContainer abstract methods
 
         /// <summary>
         /// Converts a given item to string.
@@ -105,7 +105,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
 
             Items.Clear();
             _idToObjectDictionary.Clear();
-            ConfigurationObjectToStringProvider.ClearCache();
+            // TODO: Is this important? ConfigurationObjectToStringProvider.ClearCache();
 
             var counter = 1;
 

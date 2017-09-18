@@ -13,9 +13,11 @@ using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
 using GeoGen.Generator.Constructing;
 using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
 {
@@ -24,13 +26,15 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
     {
         private static ConfigurationContainer Container()
         {
-            var provider = new DefaultObjectToStringProvider();
-            var argumentsProvider = new ArgumentsToStringProvider(provider);
-            var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsProvider);
-            var configurationToStringProvider = new ConfigurationToStringProvider();
             var defaultResolver = new DefaultObjectIdResolver();
-            var resolver = new DefaultFullObjectToStringProvider(argumentsProvider, defaultResolver);
-            var configuationObjectContainer = new ConfigurationObjectsContainer(resolver);
+            var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
+            var defaultArgument = new DefaultArgumentToStringProvider(defaultToString);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsProvider = new ArgumentsListToStringProvider(factory, defaultArgument);
+            var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
+            var configurationToStringProvider = new ConfigurationToStringProvider();
+            var defaultFullProvider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
+            var configuationObjectContainer = new ConfigurationObjectsContainer(defaultFullProvider);
 
             var mock = new Mock<IConfigurationConstructor>();
             mock.Setup(s => s.ConstructWrapper(It.IsAny<ConstructorOutput>()))
@@ -54,53 +58,53 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                         }
                     );
 
-            var symetryHandler = mock.Object;
+            var constructor = mock.Object;
 
-            return new ConfigurationContainer(argumentsContainerFactory, symetryHandler, configurationToStringProvider, configuationObjectContainer);
+            return new ConfigurationContainer(argumentsContainerFactory, constructor, configurationToStringProvider, configuationObjectContainer);
         }
 
         [Test]
-        public void Test_Argumnts_Container_Factory_Not_Null()
+        public void Test_Argumnts_Container_Factory_Cant_Be_Null()
         {
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(null, handler, provider, container));
         }
 
         [Test]
-        public void Test_Symetric_Configuration_Handler_Not_Null()
+        public void Test_Symetric_Configuration_Handler_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsContainerFactory>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, null, provider, container));
         }
 
         [Test]
-        public void Test_Configuration_To_String_Provider_Not_Null()
+        public void Test_Configuration_To_String_Provider_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsContainerFactory>();
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, handler, null, container));
         }
 
         [Test]
-        public void Test_Objects_Container_Not_Null()
+        public void Test_Objects_Container_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsContainerFactory>();
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
 
             Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, handler, provider, null));
         }
 
         [Test]
-        public void Test_Initial_Configuration_Not_Null()
+        public void Test_Initial_Configuration_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
         }
@@ -130,7 +134,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                 )
             };
 
-            var obj1 = ConfigurationObjects.ConstructedObject(42, 0, args1);
+            var obj1 = ConstructedObject(42, 0, args1);
 
             var args2 = new List<ConstructionArgument>
             {
@@ -145,7 +149,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                 )
             };
 
-            var obj2 = ConfigurationObjects.ConstructedObject(42, 1, args2);
+            var obj2 = ConstructedObject(42, 1, args2);
 
             var configuration = new Configuration
             (
@@ -236,7 +240,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                             )
                         };
 
-                        var obj = ConfigurationObjects.ConstructedObject(42, 0, args);
+                        SetIds(args);
+
+                        var obj = ConstructedObject(42, 0, args);
 
                         var output = new ConstructorOutput
                         {
@@ -249,13 +255,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                 }
             }
 
-            Console.WriteLine($"Objects: {layer.Count}");
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
             container.AddLayer(layer);
-            stopwatch.Stop();
-            Console.WriteLine($"Adding time {stopwatch.ElapsedMilliseconds}");
-
             Assert.AreEqual(21, container.CurrentLayer.Count);
         }
     }

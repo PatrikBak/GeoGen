@@ -5,7 +5,9 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
+using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
+using GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
 
@@ -16,7 +18,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationToString
     {
         private static IObjectToStringProvider DefaultObjectProvider()
         {
-            return new DefaultObjectToStringProvider();
+            var resolver = new DefaultObjectIdResolver();
+
+            return new DefaultObjectToStringProvider(resolver);
         }
 
         private static ConfigurationToStringProvider ConfigurationProvider()

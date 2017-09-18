@@ -4,7 +4,7 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 
 namespace GeoGen.Generator.ConfigurationsHandling
 {
-    class ConfigurationsHandler : IConfigurationsHandler
+    internal class ConfigurationsHandler : IConfigurationsHandler
     {
         public IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurations)
         {

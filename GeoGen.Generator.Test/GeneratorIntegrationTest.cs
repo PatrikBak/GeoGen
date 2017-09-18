@@ -27,9 +27,11 @@ using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using GeoGen.Generator.Constructing.Container;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.CustomFullObjectToStringProvider;
 using static GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.ConfigurationConstructor;
 using static GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.LeastConfigurationFinding.LeastConfigurationFinder;
 using static GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer.ConfigurationContainer;
+using static GeoGen.Generator.ConfigurationsHandling.ConfigurationToString.ConfigurationToStringProvider;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
 using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
@@ -47,26 +49,29 @@ namespace GeoGen.Generator.Test
             constructionsContainer.Initialize(input.Constructions);
             var configurationsHandler = new ConfigurationsHandler();
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
-            var constructionSignatureMatcherFactory = new ConstructionSignatureMatcherFactory();
             var variationsProvider1 = new VariationsProvider<ConfigurationObject>();
-            var defaultConfigurationObjectToStringProvider = new DefaultObjectToStringProvider();
-            var argumentsToStringProvider = new ArgumentsToStringProvider(defaultConfigurationObjectToStringProvider);
-            var argumentsContainerFactory = new ArgumentsContainerFactory(argumentsToStringProvider);
+            var defaultObjectIdResolver = new DefaultObjectIdResolver();
+            var defaultConfigurationObjectToStringProvider = new DefaultObjectToStringProvider(defaultObjectIdResolver);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var def = new DefaultArgumentToStringProvider(defaultConfigurationObjectToStringProvider);
+            var argumentContainer = new ArgumentContainer(def);
+            var constructionSignatureMatcherFactory = new ConstructionSignatureMatcherFactory(argumentContainer);
+            var argumentsToStringProvider = new ArgumentsListToStringProvider(factory, def);
+            var argumentsContainerFactory = new ArgumentsListContainerFactory(argumentsToStringProvider);
             var argumentsGenerator = new ArgumentsGenerator(combinator, constructionSignatureMatcherFactory, variationsProvider1, argumentsContainerFactory);
             var objectsConstructor = new ObjectsConstructor(constructionsContainer, argumentsGenerator);
-            var variationsProvider2 = new VariationsProvider<int>();
+            var variationsProvider2 = new VariationsProvider<LooseConfigurationObject>();
             var configurationToStringProvider = new ConfigurationToStringProvider();
             var configurationObjectToStringProviderFactory = new CustomFullObjectToStringProviderFactory(argumentsToStringProvider);
             var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variationsProvider2);
             var leastConfigurationFinder = new LeastConfigurationFinder(configurationToStringProvider, configurationObjectToStringProviderFactory, dictionaryObjectIdResolversContainer);
-            var defaultObjectIdResolver = new DefaultObjectIdResolver();
             var defaultComplexConfigurationObjectToStringProvider = new DefaultFullObjectToStringProvider(argumentsToStringProvider, defaultObjectIdResolver);
             container = new ConfigurationObjectsContainer(defaultComplexConfigurationObjectToStringProvider);
             var idsFixer = new IdsFixerFactory(container);
             var configurationConstructor = new ConfigurationConstructor(leastConfigurationFinder, idsFixer, argumentsContainerFactory);
             var configurationContainer = new ConfigurationContainer(argumentsContainerFactory, configurationConstructor, configurationToStringProvider, container);
             configurationContainer.Initialize(input.InitialConfiguration);
-            dictionaryObjectIdResolversContainer.Initialize(input.InitialConfiguration.LooseObjects);
+            dictionaryObjectIdResolversContainer.Initialize(input.InitialConfiguration.LooseObjects.ToList());
             return new Generator(configurationContainer, objectsConstructor, configurationsHandler, input.MaximalNumberOfIterations);
         }
 
@@ -98,7 +103,7 @@ namespace GeoGen.Generator.Test
                     //Console.WriteLine(asString);
                     count++;
                 }
-                stopwatch.Stop();
+                stopwatch.Reset();
 
                 Console.WriteLine($"Iterations: {input.MaximalNumberOfIterations}");
                 Console.WriteLine($"Configurations: {count}");
@@ -109,51 +114,22 @@ namespace GeoGen.Generator.Test
                 Console.WriteLine($"Wrapper: {s_constructingWrapper.ElapsedMilliseconds}");
                 Console.WriteLine($"Construction: {s_AddingConfiguration.ElapsedMilliseconds}");
                 Console.WriteLine("--------");
-
                 Console.WriteLine($"Balast: {s_balast.ElapsedMilliseconds}");
-                Console.WriteLine($"Fixing arguments: {s_arguments.ElapsedMilliseconds}");
                 Console.WriteLine($"Least resolver: {s_leastResolver.ElapsedMilliseconds}");
-                Console.WriteLine($"Objects map: {s_typeMap.ElapsedMilliseconds}");
                 Console.WriteLine($"Cloning config: {s_cloningConfig.ElapsedMilliseconds}");
+                Console.WriteLine($"Fixing arguments: {s_arguments.ElapsedMilliseconds}");
+                Console.WriteLine($"Objects map: {s_typeMap.ElapsedMilliseconds}");
                 Console.WriteLine("--------");
 
                 Console.WriteLine($"Iterating: {s_iterating.ElapsedMilliseconds}");
                 Console.WriteLine($"Converting to string: {s_toString.ElapsedMilliseconds}");
+
+                Console.WriteLine($"Converting: {s_converting.ElapsedMilliseconds}");
+                Console.WriteLine($"Sorting: {s_sorting.ElapsedMilliseconds}");
+                Console.WriteLine($"Joining: {s_joining.ElapsedMilliseconds}");
+
                 Console.WriteLine("--------");
-
-                Console.WriteLine($"Cache used: {CustomFullObjectToStringProvider.i}");
-            }
-        }
-
-        class Hm
-        {
-            public List<int> list;
-
-            public Hm()
-            {
-                list = Enumerable.Range(0, 100).ToList();
-            }
-        }
-
-        [Test]
-        public void Test()
-        {
-            var numbers = Enumerable.Range(0, 100).ToList();
-
-            var hm = new Hm();
-            var bag = new ConcurrentBag<List<int>>();
-
-            Parallel.ForEach(
-                numbers, i => { bag.Add(hm.list.Select(j => j * j).ToList()); });
-
-            Assert.AreEqual(numbers.Count, bag.Count);
-
-            foreach (var ints in bag)
-            {
-                for (int i = 0; i < 100; i++)
-                {
-                    Assert.AreEqual(ints[i], i * i);
-                }
+                Console.WriteLine(ConfigurationToStringProvider.i);
             }
         }
     }

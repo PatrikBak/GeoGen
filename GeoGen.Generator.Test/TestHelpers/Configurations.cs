@@ -26,7 +26,7 @@ namespace GeoGen.Generator.Test.TestHelpers
             {
                 Configuration = configuration,
                 ConfigurationObjectsMap = map,
-                ForbiddenArguments = new Dictionary<int, IArgumentsContainer>()
+                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>()
             };
         }
     }

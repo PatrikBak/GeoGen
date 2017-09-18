@@ -17,6 +17,7 @@ using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.Constructing.Arguments.Container;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
 using ConfigurationConstructor = GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.ConfigurationConstructor;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructing
@@ -29,8 +30,10 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         private static ConfigurationObjectsContainer Container(IEnumerable<LooseConfigurationObject> objects)
         {
             var resolver = new DefaultObjectIdResolver();
-            var provider = new DefaultObjectToStringProvider();
-            var argsToString = new ArgumentsToStringProvider(provider);
+            var provider = new DefaultObjectToStringProvider(resolver);
+            var def = new DefaultArgumentToStringProvider(provider);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var argsToString = new ArgumentsListToStringProvider(factory, def);
             var defaultFullObjectToStringProvider = new DefaultFullObjectToStringProvider(argsToString, resolver);
             _container = new ConfigurationObjectsContainer(defaultFullObjectToStringProvider);
             _container.Initialize(objects);
@@ -40,19 +43,21 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
         private static ConfigurationConstructor Handler(IEnumerable<LooseConfigurationObject> objects)
         {
-            var provider = new DefaultObjectToStringProvider();
-            var argsToString = new ArgumentsToStringProvider(provider);
-            var variations = new VariationsProvider<int>();
+            var resolver = new DefaultObjectIdResolver();
+            var provider = new DefaultObjectToStringProvider(resolver);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var def = new DefaultArgumentToStringProvider(provider);
+            var argsToString = new ArgumentsListToStringProvider(factory, def);
+            var variations = new VariationsProvider<LooseConfigurationObject>();
             var configurationToString = new ConfigurationToStringProvider();
             var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
             var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variations);
-            dictionaryObjectIdResolversContainer.Initialize(objects);
+            dictionaryObjectIdResolversContainer.Initialize(objects.ToList());
             var finder = new LeastConfigurationFinder(configurationToString, objectToStringFactory, dictionaryObjectIdResolversContainer);
-            var factory = new ArgumentsContainerFactory(argsToString);
+            var argsContainerFactory = new ArgumentsListContainerFactory(argsToString);
             var fixer = new IdsFixerFactory(_container);
 
-
-            return new ConfigurationConstructor(finder, fixer, factory);
+            return new ConfigurationConstructor(finder, fixer, argsContainerFactory);
         }
 
         [Test]
@@ -113,7 +118,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ForbiddenArguments = new Dictionary<int, IArgumentsContainer>(),
+                                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                                 ConfigurationObjectsMap = objectsMap
                             };
 
@@ -128,7 +133,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             foreach (var testCase in testCases)
             {
                 var result = handler.ConstructWrapper(testCase);
-                var asString = ToStringHelper.ConfigurationAsString(result.Configuration);
+                var asString = ConfigurationAsString(result.Configuration);
 
                 Assert.AreEqual("42({1;2})", asString);
 
@@ -198,7 +203,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ForbiddenArguments = new Dictionary<int, IArgumentsContainer>(),
+                                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                                 ConfigurationObjectsMap = objectsMap
                             };
 
@@ -213,7 +218,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             foreach (var testCase in testCases)
             {
                 var result = handler.ConstructWrapper(testCase);
-                var asString = ToStringHelper.ConfigurationAsString(result.Configuration);
+                var asString = ConfigurationAsString(result.Configuration);
 
                 Assert.AreEqual("42({1;2})|42({1;3})", asString);
 
@@ -259,9 +264,12 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var objAsList = new List<ConstructedConfigurationObject> {obj};
             var objectsMap = new ConfigurationObjectsMap(looseObjects);
 
-            var objectProvider = new DefaultObjectToStringProvider();
-            var argsProvider = new ArgumentsToStringProvider(objectProvider);
-            var forbidden = new ArgumentsContainer(argsProvider);
+            var resolver = new DefaultObjectIdResolver();
+            var provider = new DefaultObjectToStringProvider(resolver);
+            var factory = new CustomArgumentToStringProviderFactory();
+            var def = new DefaultArgumentToStringProvider(provider);
+            var argsProvider = new ArgumentsListToStringProvider(factory, def);
+            var forbidden = new ArgumentsListContainer(argsProvider);
             var forbiddenArgs1 = new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(looseObjects[1]),
@@ -277,7 +285,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             forbidden.AddArguments(forbiddenArgs1);
             forbidden.AddArguments(forbiddenArgs2);
 
-            var forbidenArgs = new Dictionary<int, IArgumentsContainer> {{42, forbidden}};
+            var forbidenArgs = new Dictionary<int, IArgumentsListContainer> {{42, forbidden}};
 
             var wrapper = new ConfigurationWrapper
             {
@@ -293,7 +301,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             };
 
             var result = handler.ConstructWrapper(output);
-            var asString = ToStringHelper.ConfigurationAsString(result.Configuration);
+            var asString = ConfigurationAsString(result.Configuration);
 
             Assert.AreEqual("42(1,2,3)", asString);
 
@@ -303,7 +311,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var argumentsContainer = dictionary1[42];
             Assert.AreEqual(3, argumentsContainer.Count());
 
-            var strings = argumentsContainer.Select(ToStringHelper.ArgsToString).ToList();
+            var strings = argumentsContainer.Select(ArgsToString).ToList();
 
             Assert.IsTrue(strings.Contains("(2, 1, 3)"));
             Assert.IsTrue(strings.Contains("(1, 3, 2)"));
@@ -393,7 +401,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var wrapper = new ConfigurationWrapper
             {
                 Configuration = configuration,
-                ForbiddenArguments = new Dictionary<int, IArgumentsContainer>(),
+                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                 ConfigurationObjectsMap = objectsMap
             };
 
@@ -404,12 +412,12 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             };
 
             var result = handler.ConstructWrapper(output);
-            var asString1 = ToStringHelper.ConfigurationAsString(result.Configuration);
+            var asString1 = ConfigurationAsString(result.Configuration);
 
             looseObjects[0].Id = 3;
             looseObjects[2].Id = 1;
 
-            var asString2 = ToStringHelper.ConfigurationAsString(result.Configuration);
+            var asString2 = ConfigurationAsString(result.Configuration);
 
             Assert.AreEqual(asString1, asString2);
             Console.WriteLine(asString1);
