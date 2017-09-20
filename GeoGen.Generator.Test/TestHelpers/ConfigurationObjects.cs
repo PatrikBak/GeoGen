@@ -8,7 +8,7 @@ namespace GeoGen.Generator.Test.TestHelpers
     internal static class ConfigurationObjects
     {
         public static List<LooseConfigurationObject> Objects(int count, ConfigurationObjectType type,
-            int startId = 1, bool includeIds = true)
+                                                             int startId = 1, bool includeIds = true)
         {
             var result = Enumerable.Range(startId, count)
                     .Select(
@@ -26,8 +26,7 @@ namespace GeoGen.Generator.Test.TestHelpers
             return result;
         }
 
-        public static ConstructedConfigurationObject ConstructedObject(int constructionId, int index,
-            List<ConstructionArgument> args, int? objectId = null)
+        public static ConstructedConfigurationObject ConstructedObject(int constructionId, int index, List<ConstructionArgument> args, int? objectId = null)
         {
             var construction = Constructions.ConstructionWithId(constructionId);
 
@@ -37,6 +36,11 @@ namespace GeoGen.Generator.Test.TestHelpers
                 result.Id = objectId.Value;
 
             return result;
+        }
+
+        public static Configuration AsConfiguration(IEnumerable<LooseConfigurationObject> objects)
+        {
+            return new Configuration(new HashSet<LooseConfigurationObject>(objects), new List<ConstructedConfigurationObject>());
         }
     }
 }

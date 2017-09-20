@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 {
@@ -18,6 +18,11 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
 
         /// <summary>
+        /// The custom argument to string provider factory.
+        /// </summary>
+        private readonly ICustomArgumentToStringProviderFactory _factory;
+
+        /// <summary>
         /// The dictionary mapping ids of dictionary object id resolvers
         /// to particular custom full object to string providers.
         /// </summary>
@@ -29,12 +34,19 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 
         /// <summary>
         /// Constructs a new custom full object to string provider factory
-        /// with a given arguments list to string provider.
+        /// with a given arguments list to string provider and a given
+        /// custom argument to string provider factory.
         /// </summary>
         /// <param name="provider">The arguments list to string provider.</param>
-        public CustomFullObjectToStringProviderFactory(IArgumentsListToStringProvider provider)
+        /// <param name="factory">The custom argument to string provider factory.</param>
+        public CustomFullObjectToStringProviderFactory
+        (
+            IArgumentsListToStringProvider provider,
+            ICustomArgumentToStringProviderFactory factory
+        )
         {
             _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _cache = new Dictionary<int, CustomFullObjectToStringProvider>();
         }
 
@@ -58,7 +70,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
             if (_cache.ContainsKey(id))
                 return _cache[id];
 
-            var newResolver = new CustomFullObjectToStringProvider(_argumentsListToStringProvider, resolver);
+            var newResolver = new CustomFullObjectToStringProvider(_factory, _argumentsListToStringProvider, resolver);
             _cache.Add(id, newResolver);
 
             return newResolver;

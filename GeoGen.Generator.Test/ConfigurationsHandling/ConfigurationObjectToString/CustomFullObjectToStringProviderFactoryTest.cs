@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
@@ -14,14 +15,25 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         private static CustomFullObjectToStringProviderFactory Factory()
         {
             var provider = SimpleMock<IArgumentsListToStringProvider>();
+            var mock = new Mock<ICustomArgumentToStringProviderFactory>();
+            mock.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
+                    .Returns<IObjectToStringProvider>(p => new CustomArgumentToStringProvider(p));
 
-            return new CustomFullObjectToStringProviderFactory(provider);
+            return new CustomFullObjectToStringProviderFactory(provider, mock.Object);
         }
 
         [Test]
         public void Test_Arguments_To_String_Provider_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null));
+            var factory = SimpleMock<ICustomArgumentToStringProviderFactory>();
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null, factory));
+        }
+
+        [Test]
+        public void Test_Factory_Cant_Be_Null()
+        {
+            var provider = SimpleMock<IArgumentsListToStringProvider>();
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(provider, null));
         }
 
         [Test]

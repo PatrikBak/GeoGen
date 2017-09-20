@@ -2,7 +2,7 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
-using GeoGen.Generator.Constructing.Arguments.Container;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
 {

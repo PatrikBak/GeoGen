@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 {
@@ -20,13 +20,21 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
     {
         #region Constructor
 
-        /// Constructs a new custom complex configuration object to string provider 
-        /// with a given arguments to string provider and a given configuration object
-        /// id resolver.
-        /// <param name="provider">The arguments to string provider.</param>
+        /// <summary>
+        /// Constructs a new custom full object to string provider with a given
+        /// custom argument to string provider factory, a given arguments 
+        /// list to string provider and a given object id resolver.
+        /// </summary>
+        /// <param name="factory">The custom argument to string provider factory.</param>
+        /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
-        public CustomFullObjectToStringProvider(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
-            : base(provider, resolver)
+        public CustomFullObjectToStringProvider
+        (
+            ICustomArgumentToStringProviderFactory factory,
+            IArgumentsListToStringProvider provider,
+            IObjectIdResolver resolver
+        )
+            : base(factory, provider, resolver)
         {
         }
 
@@ -42,7 +50,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         protected override string ResolveCachedValue(ConfigurationObject configurationObject)
         {
             // We must have an id
-            var id = configurationObject.Id ?? throw new GeneratorException("Value must be set");
+            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
 
             // Then we might or might have cached this object.
             return Cache.ContainsKey(id) ? Cache[id] : string.Empty;
@@ -55,8 +63,11 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// <param name="result">The object's string value.</param>
         protected override void HandleResult(ConfigurationObject configurationObject, string result)
         {
-            // We can do manual caching here
-            Cache.TryAdd(configurationObject.Id ?? throw new GeneratorException(), result);
+            // We must have an id
+            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
+
+            // Then we can cach the object
+            Cache.TryAdd(id, result);
         }
 
         #endregion

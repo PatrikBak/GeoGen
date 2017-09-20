@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.Test.Constructing.Arguments.Containers;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
@@ -20,20 +24,23 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
     {
         private static IConfigurationObjectsContainer _container;
 
+        private static IArgumentContainer _argumentContainer;
+
         private static IdsFixer Fixer()
         {
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
             var defaultArgument = new DefaultArgumentToStringProvider(defaultToString);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(factory, defaultArgument);
-            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
+            var argsProvider = new ArgumentsListToStringProvider(defaultArgument);
+            var provider = new DefaultFullObjectToStringProvider(factory, argsProvider, defaultResolver);
+            _argumentContainer = new ArgumentContainer(defaultArgument);
 
-            _container = new ConfigurationObjectsContainer(provider);
-            var objects = ConfigurationObjects.Objects(42, ConfigurationObjectType.Point, includeIds: false).ToList();
-            _container.Initialize(objects);
+            _container = new ConfigurationObjectsContainer(provider, _argumentContainer);
+            var objects = Objects(42, ConfigurationObjectType.Point, includeIds: false).ToList();
+            _container.Initialize(AsConfiguration(objects));
 
-            return new IdsFixer(_container, Resolver());
+            return new IdsFixer(_argumentContainer, _container, Resolver());
         }
 
         private static DictionaryObjectIdResolver Resolver()
@@ -46,27 +53,32 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         }
 
         [Test]
-        public void Container_Is_Not_Null()
+        public void Test_Objects_Container_Is_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null, Resolver()));
+            var argContainer = SimpleMock<IArgumentContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(argContainer, null, Resolver()));
         }
 
         [Test]
-        public void Resolver_Is_Not_Null()
+        public void Test_Resolver_Is_Not_Null()
         {
-            var container = SimpleMock<IConfigurationObjectsContainer>();
+            var argContainer = SimpleMock<IArgumentContainer>();
+            var objectsContainer = SimpleMock<IConfigurationObjectsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(container, null));
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(argContainer, objectsContainer, null));
         }
 
         [Test]
-        public void Argument_Is_Not_Null()
+        public void Test_Argument_Is_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Fixer().FixArgument(null));
+            var objectsContainer = SimpleMock<IConfigurationObjectsContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null, objectsContainer, Resolver()));
         }
 
         [Test]
-        public void Object_Is_Not_Null()
+        public void Test_Object_Is_Not_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Fixer().FixObject(null));
         }
@@ -98,7 +110,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var fixer = Fixer();
 
             var obj = _container[7];
-            var arg = new ObjectConstructionArgument(obj);
+            var arg = new ObjectConstructionArgument(obj) {Id = 4};
             var fixedArg = fixer.FixArgument(arg);
 
             Assert.IsInstanceOf<ObjectConstructionArgument>(fixedArg);
@@ -136,6 +148,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     )
                 }
             );
+            _argumentContainer.AddArgument(arg);
 
             var fixedArg = fixer.FixArgument(arg);
             Assert.IsInstanceOf<SetConstructionArgument>(fixedArg);
@@ -170,9 +183,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     }
                 )
             };
-            SetIds(args);
+            AddToContainerRecursive(_argumentContainer, args);
 
-            var constructedObject = ConfigurationObjects.ConstructedObject(42, 0, args);
+            var constructedObject = ConstructedObject(42, 0, args);
             _container.Add(constructedObject);
             var fixedObject = fixer.FixObject(constructedObject);
             var casted = (ConstructedConfigurationObject) fixedObject;
@@ -223,7 +236,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(_container[1]),
                 new ObjectConstructionArgument(_container[3])
             };
-            var obj1 = ConfigurationObjects.ConstructedObject(42, 1, args1);
+            AddToContainerRecursive(_argumentContainer, args1);
+            var obj1 = ConstructedObject(42, 1, args1);
             _container.Add(obj1);
 
             var args2 = new List<ConstructionArgument>
@@ -231,7 +245,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(_container[1]),
                 new ObjectConstructionArgument(obj1)
             };
-            var obj2 = ConfigurationObjects.ConstructedObject(42, 1, args2);
+            AddToContainerRecursive(_argumentContainer, args2);
+            var obj2 = ConstructedObject(42, 1, args2);
             _container.Add(obj2);
 
             var args3 = new List<ConstructionArgument>
@@ -239,7 +254,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(obj2),
                 new ObjectConstructionArgument(obj1)
             };
-            var obj3 = ConfigurationObjects.ConstructedObject(42, 1, args3);
+            AddToContainerRecursive(_argumentContainer, args3);
+            var obj3 = ConstructedObject(42, 1, args3);
             _container.Add(obj3);
 
             var fixedObj3 = (ConstructedConfigurationObject) fixer.FixObject(obj3);

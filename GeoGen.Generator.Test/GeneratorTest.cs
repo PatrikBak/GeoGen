@@ -7,7 +7,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
-using GeoGen.Generator.Constructing;
+using GeoGen.Generator.ConstructingObjects;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
@@ -66,7 +66,7 @@ namespace GeoGen.Generator.Test
             // the provided one by the given number of times
             var configurationConstructorMock = new Mock<IObjectsConstructor>();
 
-            configurationConstructorMock.Setup(c => c.GenerateNewConfigurationObjects(It.IsAny<ConfigurationWrapper>()))
+            configurationConstructorMock.Setup(c => c.GenerateOutput(It.IsAny<ConfigurationWrapper>()))
                     .Returns<ConfigurationWrapper>
                     (
                         c => Enumerable.Repeat(configuration, constructorDuplicationCount)

@@ -7,10 +7,10 @@ using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
+using GeoGen.Generator.ConstructingObjects.Arguments;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
@@ -32,15 +32,14 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var defaultArgumentProvider = new DefaultArgumentToStringProvider(provider);
             var argumentContainer = new ArgumentContainer(defaultArgumentProvider);
             var signatureMatcher = new ConstructionSignatureMatcherFactory(argumentContainer);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(factory, defaultArgumentProvider, ", ");
+            var argsProvider = new ArgumentsListToStringProvider(defaultArgumentProvider, ", ");
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
         }
 
         [Test]
-        public void Constructor_Test_Combinator_Not_Null()
+        public void Test_Combinator_Cant_Be_Null()
         {
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
             var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
@@ -53,7 +52,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         }
 
         [Test]
-        public void Constructor_Test_Variations_Provider_Not_Null()
+        public void Test_Variations_Provider_Cant_Be_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
@@ -66,7 +65,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         }
 
         [Test]
-        public void Constructor_Test_Signature_Matcher_Factory_Not_Null()
+        public void Test_Signature_Matcher_Cant_Be_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
@@ -79,7 +78,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
         }
 
         [Test]
-        public void Test_Arguments_Container_Factory_Not_Null()
+        public void Test_Arguments_Container_Cant_Be_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
@@ -193,9 +192,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.AreEqual(expected, result.Count);
         }
 
-        [TestCase("({4 9})")]
-        [TestCase("({1 2})")]
-        [TestCase("({8 9})")]
+        [TestCase("({4; 9})")]
+        [TestCase("({1; 2})")]
+        [TestCase("({8; 9})")]
         public void Test_Midpoint_Existence_Of_Arguments(string argument)
         {
             var construction = Midpoint();
@@ -211,9 +210,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.IsTrue(contains);
         }
 
-        [TestCase("(13, {7 8 9}, 1, {14 15})")]
-        [TestCase("(15, {10 12 9}, 5, {14 16})")]
-        [TestCase("(18, {10 11 12}, 6, {16 17})")]
+        [TestCase("(13, {7; 8; 9}, 1, {14; 15})")]
+        [TestCase("(15, {10; 12; 9}, 5, {14; 16})")]
+        [TestCase("(18, {10; 11; 12}, 6, {16; 17})")]
         public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
         {
             // Points are [1-6], Lines are [7-12], Circles are [13-18]

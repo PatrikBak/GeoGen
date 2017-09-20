@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 {
@@ -29,14 +29,20 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         #region Constructor
 
         /// <summary>
-        /// Constructs a default full configuration object to string provider 
-        /// with a given arguments list to string provider and a given default
-        /// configuration object id resolver.
+        /// Constructs a new default full object to string provider with a given
+        /// custom argument to string provider factory, a given arguments 
+        /// list to string provider and a given default object id resolver.
         /// </summary>
+        /// <param name="factory">The custom argument to string provider factory.</param>
         /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The default object id resolver.</param>
-        public DefaultFullObjectToStringProvider(IArgumentsListToStringProvider provider, DefaultObjectIdResolver resolver)
-            : base(provider, resolver)
+        public DefaultFullObjectToStringProvider
+        (
+            ICustomArgumentToStringProviderFactory factory,
+            IArgumentsListToStringProvider provider,
+            DefaultObjectIdResolver resolver
+        )
+            : base(factory, provider, resolver)
         {
         }
 
@@ -92,14 +98,10 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// <param name="stringVersion">The string version.</param>
         public void CacheObject(int configurationObjectId, string stringVersion)
         {
-            try
-            {
-                Cache.TryAdd(configurationObjectId, stringVersion);
-            }
-            catch (ArgumentException)
-            {
+            if (Cache.ContainsKey(configurationObjectId))
                 throw new GeneratorException("The object with this id has been already cached.");
-            }
+
+            Cache.TryAdd(configurationObjectId, stringVersion);
         }
 
         #endregion

@@ -1,6 +1,6 @@
 ﻿using System;
-using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 

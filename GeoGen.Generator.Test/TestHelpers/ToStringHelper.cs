@@ -5,7 +5,9 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using Moq;
 
 namespace GeoGen.Generator.Test.TestHelpers
@@ -16,13 +18,10 @@ namespace GeoGen.Generator.Test.TestHelpers
         {
             var resolver = new DefaultObjectIdResolver();
             var def = new DefaultObjectToStringProvider(resolver);
-            var argument = new CustomArgumentToStringProvider(def);
+            var argument = new CustomArgumentToStringProvider(def, "; ");
             var defaultArgument = new DefaultArgumentToStringProvider(def);
-            var mock = new Mock<ICustomArgumentToStringProviderFactory>();
-            mock.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
-                    .Returns<IObjectToStringProvider>(p => new CustomArgumentToStringProvider(p, " "));
 
-            return new ArgumentsListToStringProvider(mock.Object, defaultArgument, ", ").ConvertToString(arg, def);
+            return new ArgumentsListToStringProvider(defaultArgument, ", ").ConvertToString(arg, argument);
         }
 
         private static int _argumentId;
@@ -59,8 +58,8 @@ namespace GeoGen.Generator.Test.TestHelpers
             var def = new DefaultObjectToStringProvider(resolver);
             var argument = new DefaultArgumentToStringProvider(def);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsToString = new ArgumentsListToStringProvider(factory, argument);
-            var objectToString = new CustomFullObjectToStringProvider(argsToString, resolver);
+            var argsToString = new ArgumentsListToStringProvider(argument);
+            var objectToString = new CustomFullObjectToStringProvider(factory, argsToString, resolver);
 
             if (full)
                 return provider.ConvertToString(configuration, objectToString);
@@ -79,9 +78,37 @@ namespace GeoGen.Generator.Test.TestHelpers
             var def = new DefaultObjectToStringProvider(resolver);
             var argument = new DefaultArgumentToStringProvider(def);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsToString = new ArgumentsListToStringProvider(factory, argument);
+            var argsToString = new ArgumentsListToStringProvider(argument);
 
             return $"{obj.Construction.Id}{argsToString.ConvertToString(obj.PassedArguments)}[{obj.Index}]";
+        }
+
+
+        public static void AddToContainerRecursive(IArgumentContainer container, List<ConstructionArgument> args)
+        {
+            void Add(ConstructionArgument arg)
+            {
+                if (arg is ObjectConstructionArgument)
+                {
+                    var result = container.AddArgument(arg);
+                    arg.Id = result.Id;
+                    return;
+                }
+
+                var setArg = arg as SetConstructionArgument ?? throw new Exception();
+                foreach (var argument in setArg.PassedArguments)
+                {
+                    Add(argument);
+                }
+
+                var result2 = container.AddArgument(setArg);
+                setArg.Id = result2.Id;
+            }
+
+            foreach (var argument in args)
+            {
+                Add(argument);
+            }
         }
     }
 }

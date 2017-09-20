@@ -6,6 +6,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing
 {
@@ -15,6 +16,11 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
     internal class IdsFixer : IIdsFixer
     {
         #region Private fields
+
+        /// <summary>
+        /// The argument container
+        /// </summary>
+        private IArgumentContainer _argumentContainer;
 
         /// <summary>
         /// The configuration objects container.
@@ -36,13 +42,21 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
         #region Constructor
 
         /// <summary>
-        /// Constructs a new ids fixer that uses a given configuration objects
-        /// container and a given dictionary object id resolver.
+        /// Constructs a new ids fixer that uses a given argument container,
+        ///  a given configuration objects container and a given dictionary 
+        /// object id resolver.
         /// </summary>
+        /// <param name="argumentContainer">The argument container.</param>
         /// <param name="objectsContainer">The configuration objects container.</param>
         /// <param name="resolver">The dictionary object id resolver.</param>
-        public IdsFixer(IConfigurationObjectsContainer objectsContainer, DictionaryObjectIdResolver resolver)
+        public IdsFixer
+        (
+            IArgumentContainer argumentContainer,
+            IConfigurationObjectsContainer objectsContainer,
+            DictionaryObjectIdResolver resolver
+        )
         {
+            _argumentContainer = argumentContainer ?? throw new ArgumentNullException(nameof(argumentContainer));
             _objectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _cache = new Dictionary<int, ConstructedConfigurationObject>();
@@ -69,8 +83,11 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
                 // We'll convert the passed object
                 var fixedObject = FixObject(objectArgument.PassedObject);
 
-                // Copy and return the argument
-                return new ObjectConstructionArgument(fixedObject);
+                // Construct the result
+                var objResult = new ObjectConstructionArgument(fixedObject);
+
+                // Let the container resolve it
+                return _argumentContainer.AddArgument(objResult);
             }
 
             // Otherwise we must have the set construction argument
@@ -81,8 +98,11 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
                     .Select(FixArgument)
                     .ToSet();
 
-            // And copy and return the argument
-            return new SetConstructionArgument(interiorArguments);
+            // Cosntruct the result
+            var setResult = new SetConstructionArgument(interiorArguments);
+
+            // Let the container resolve it
+            return _argumentContainer.AddArgument(setResult);
         }
 
         /// <summary>

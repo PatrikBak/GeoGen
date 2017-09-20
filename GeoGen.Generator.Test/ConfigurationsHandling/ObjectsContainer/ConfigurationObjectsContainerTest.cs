@@ -3,36 +3,60 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
 {
     [TestFixture]
     public class ConfigurationObjectsContainerTest
     {
+        private static ArgumentContainer _container;
+
         private static ConfigurationObjectsContainer Container()
         {
             var resolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(resolver);
             var def = new DefaultArgumentToStringProvider(defaultToString);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(factory, def);
+            var argsProvider = new ArgumentsListToStringProvider(def);
+            var container = new ArgumentContainer(def);
+            _container = container;
             var defaultResolver = new DefaultObjectIdResolver();
-            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
+            var provider = new DefaultFullObjectToStringProvider(factory, argsProvider, defaultResolver);
 
-            return new ConfigurationObjectsContainer(provider);
+            return new ConfigurationObjectsContainer(provider, container);
         }
 
         [Test]
-        public void Provider_Cant_Be_Null()
+        public void Test_Provider_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(null));
+            var factory = SimpleMock<IArgumentContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(null, factory));
+        }
+
+        [Test]
+        public void Test_Factory_Cant_Be_Null()
+        {
+            var factory = new Mock<ICustomArgumentToStringProviderFactory>();
+            factory.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
+                    .Returns<IObjectToStringProvider>(s => new CustomArgumentToStringProvider(s));
+
+            var argsProvider = SimpleMock<IArgumentsListToStringProvider>();
+            var idResolver = new DefaultObjectIdResolver();
+            var provider = new DefaultFullObjectToStringProvider(factory.Object, argsProvider, idResolver);
+
+            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(provider, null));
         }
 
         [Test]
@@ -42,7 +66,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
         }
 
         [Test]
-        public void Initialization_Loose_Objects_Cant_Contain_Null()
+        public void Initialization_Configuration_Cant_Contain_Null_Object()
         {
             var looseObjects = new List<LooseConfigurationObject>
             {
@@ -51,7 +75,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                 null
             };
 
-            Assert.Throws<ArgumentException>(() => Container().Initialize(looseObjects));
+            var configuration = AsConfiguration(looseObjects);
+
+            Assert.Throws<ArgumentException>(() => Container().Initialize(configuration));
         }
 
         [Test]
@@ -65,7 +91,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             Assert.AreEqual(3, container.Count());
             Assert.AreEqual(ConfigurationObjectType.Line, container[2].ObjectType);
@@ -82,9 +108,9 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
             looseObjects.RemoveRange(0, 2);
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             Assert.AreEqual(1, container.Count());
             Assert.AreEqual(ConfigurationObjectType.Circle, container[1].ObjectType);
@@ -101,7 +127,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             Assert.Throws<KeyNotFoundException>
             (
@@ -129,7 +155,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
             var constructedObject = ConstructedObject(42, 0, args, 7);
@@ -148,7 +174,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
             SetIds(args);
@@ -172,7 +198,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
             SetIds(args);
@@ -199,7 +225,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             };
 
             var container = Container();
-            container.Initialize(looseObjects);
+            container.Initialize(AsConfiguration(looseObjects));
 
             var args1 = new List<ConstructionArgument>
             {
@@ -270,6 +296,255 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Add(obj4);
             Assert.AreEqual(6, obj4.Id ?? throw new Exception());
             Assert.AreEqual(6, container.Count());
+        }
+
+        [Test]
+        public void Test_Initialization_With_Constructed_Objects()
+        {
+            var container = Container();
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2])
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1);
+
+            var args2 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(obj1),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(obj1),
+                        new ObjectConstructionArgument(looseObjects[0])
+                    }
+                )
+            };
+
+            var obj2 = ConstructedObject(42, 0, args2);
+
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj1, obj2};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            container.Initialize(configuration);
+            Assert.AreEqual(5, container.Count());
+            Assert.AreEqual(4, obj1.Id ?? throw new Exception());
+            Assert.AreEqual(5, obj2.Id ?? throw new Exception());
+            Assert.AreEqual(6, _container.Count());
+        }
+
+        [Test]
+        public void Test_Incorrect_Initialization_With_Unconstructable_Objects()
+        {
+            var container = Container();
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2])
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1);
+
+            var args2 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(obj1),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(obj1),
+                        new ObjectConstructionArgument(looseObjects[0])
+                    }
+                )
+            };
+
+            var obj2 = ConstructedObject(42, 0, args2);
+
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj2, obj1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            Assert.Throws<InitializationException>(() => container.Initialize(configuration));
+        }
+
+        [Test]
+        public void Test_Incorrect_Initialization_With_Duplicate_Object()
+        {
+            var container = Container();
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2])
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1);
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj1, obj1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            Assert.Throws<InitializationException>(() => container.Initialize(configuration));
+        }
+
+        [Test]
+        public void Test_Incorrect_Initialization_With_Not_Added_Loose_Object()
+        {
+            var container = Container();
+            var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]),
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObject)
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1);
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj1, obj1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            Assert.Throws<InitializationException>(() => container.Initialize(configuration));
+        }
+
+        [Test]
+        public void Test_Ids_Are_Ignored_During_Inicialization()
+        {
+            var container = Container();
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]) {Id = 4},
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2]) {Id = 1}
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1, 3);
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            container.Initialize(configuration);
+            Assert.AreEqual(4, obj1.Id);
+            Assert.AreEqual(1, args1[0].Id);
+        }
+
+        [Test]
+        public void Test_Not_Initialiazed_Container_Usage()
+        {
+            Assert.Throws<GeneratorException>(() => Container().FirstOrDefault());
+        }
+
+        [Test]
+        public void Test_Incorrect_Reinitialization()
+        {
+            var container = Container();
+
+            var looseObjects = new List<LooseConfigurationObject>
+            {
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
+            };
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(looseObjects[0]) {Id = 4},
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2]) {Id = 1}
+                    }
+                )
+            };
+
+            var obj1 = ConstructedObject(42, 0, args1, 3);
+            var constructedObjects = new List<ConstructedConfigurationObject> {obj1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructedObjects);
+
+            container.Initialize(configuration);
+
+            try
+            {
+                container.Initialize(null);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            Assert.Throws<GeneratorException>(() => Container().FirstOrDefault());
+            Assert.AreEqual(0, _container.Count());
         }
     }
 }

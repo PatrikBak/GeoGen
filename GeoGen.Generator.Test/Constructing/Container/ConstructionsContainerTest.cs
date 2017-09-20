@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
-using GeoGen.Generator.Constructing.Container;
+using GeoGen.Generator.ConstructingObjects.Container;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
 
@@ -15,29 +15,6 @@ namespace GeoGen.Generator.Test.Constructing.Container
         private static ConstructionsContainer Container()
         {
             return new ConstructionsContainer();
-        }
-
-        [Test]
-        public void Constructions_Not_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
-        }
-
-        [Test]
-        public void Constructions_Dont_Have_Distint_Ids()
-        {
-            int[][] constructionIds =
-            {
-                new[] {1, 1, 2, 3, 4},
-                new[] {1, 1, 6},
-                new[] {7, 4, 3, 2, 1, 2}
-            };
-
-            foreach (var ids in constructionIds)
-            {
-                var constructions = ConstructionsWithId(ids);
-                Assert.Throws<ArgumentException>(() => Container().Initialize(constructions));
-            }
         }
 
         private static IEnumerable<Construction> CorrectConstructions()
@@ -54,7 +31,30 @@ namespace GeoGen.Generator.Test.Constructing.Container
         }
 
         [Test]
-        public void Wrappers_Constructions_Are_Set_Correctly()
+        public void Test_Constructions_Cant_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
+        }
+
+        [Test]
+        public void Test_Constructions_Cant_Have_Distint_Ids()
+        {
+            int[][] constructionIds =
+            {
+                new[] {1, 1, 2, 3, 4},
+                new[] {1, 1, 6},
+                new[] {7, 4, 3, 2, 1, 2}
+            };
+
+            foreach (var ids in constructionIds)
+            {
+                var constructions = ConstructionsWithId(ids);
+                Assert.Throws<ArgumentException>(() => Container().Initialize(constructions));
+            }
+        }
+
+        [Test]
+        public void Test_Wrappers_Constructions_Are_Set_Correctly()
         {
             var container = Container();
             container.Initialize(CorrectConstructions());
@@ -64,7 +64,7 @@ namespace GeoGen.Generator.Test.Constructing.Container
         }
 
         [Test]
-        public void Wrappers_Dictionaries_Are_Set_Correctly()
+        public void Test_Wrappers_Dictionaries_Are_Set_Correctly()
         {
             var result = new List<List<int>>
             {

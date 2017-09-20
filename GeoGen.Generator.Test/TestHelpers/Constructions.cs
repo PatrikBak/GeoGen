@@ -3,7 +3,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Generator.Constructing;
+using GeoGen.Generator.ConstructingObjects;
 using Moq;
 
 namespace GeoGen.Generator.Test.TestHelpers

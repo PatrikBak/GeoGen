@@ -8,8 +8,8 @@ using GeoGen.Core.Utilities.StringBasedContainer;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
-using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Constructing.Arguments.Container;
+using GeoGen.Generator.ConstructingObjects;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
 {
@@ -90,19 +90,8 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer
             if (initialConfiguration == null)
                 throw new ArgumentNullException(nameof(initialConfiguration));
 
-            // Initialize container with the loose objects
-            _configurationObjectsContainer.Initialize(initialConfiguration.LooseObjects);
-
-            // Add all constructed objects. 
-            foreach (var constructedObject in initialConfiguration.ConstructedObjects)
-            {
-                // Resulting object should be the same as this one
-                var result = _configurationObjectsContainer.Add(constructedObject);
-
-                // If it's not, we have corruped data
-                if (result != constructedObject)
-                    throw new GeneratorException("Constructed objects contain two equal objects.");
-            }
+            // Initialize container with this configuration
+            _configurationObjectsContainer.Initialize(initialConfiguration);
 
             // Let the base method add the initial configuration
             Add(initialConfiguration);

@@ -9,7 +9,7 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.LeastConfigurationFinding;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
 
@@ -24,8 +24,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var defaultToString = new DefaultObjectToStringProvider(resolver);
             var def = new DefaultArgumentToStringProvider(defaultToString);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(factory, def);
-            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsProvider);
+            var argsProvider = new ArgumentsListToStringProvider(def);
+            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsProvider, factory);
             var variationsProvider = new VariationsProvider<LooseConfigurationObject>();
             var configurationToString = new ConfigurationToStringProvider();
             var container = new DictionaryObjectIdResolversContainer(variationsProvider);
@@ -98,6 +98,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(objects[1]),
                 new ObjectConstructionArgument(objects[2])
             };
+            ToStringHelper.SetIds(args);
             var obj = ConfigurationObjects.ConstructedObject(42, 0, args, 5);
             var objAsList = new List<ConstructedConfigurationObject> {obj};
 

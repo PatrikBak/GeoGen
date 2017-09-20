@@ -19,12 +19,12 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.LeastCo
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
-using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Constructing.Arguments;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
-using GeoGen.Generator.Constructing.Container;
+using GeoGen.Generator.ConstructingObjects;
+using GeoGen.Generator.ConstructingObjects.Arguments;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
+using GeoGen.Generator.ConstructingObjects.Container;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.CustomFullObjectToStringProvider;
@@ -51,23 +51,23 @@ namespace GeoGen.Generator.Test
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider1 = new VariationsProvider<ConfigurationObject>();
             var defaultObjectIdResolver = new DefaultObjectIdResolver();
-            var defaultConfigurationObjectToStringProvider = new DefaultObjectToStringProvider(defaultObjectIdResolver);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var def = new DefaultArgumentToStringProvider(defaultConfigurationObjectToStringProvider);
-            var argumentContainer = new ArgumentContainer(def);
+            var defaultObjectToStringProvider = new DefaultObjectToStringProvider(defaultObjectIdResolver);
+            var customArgumentToStringProviderFactory = new CustomArgumentToStringProviderFactory();
+            var defaultArgumentToStringProvider = new DefaultArgumentToStringProvider(defaultObjectToStringProvider);
+            var argumentContainer = new ArgumentContainer(defaultArgumentToStringProvider);
             var constructionSignatureMatcherFactory = new ConstructionSignatureMatcherFactory(argumentContainer);
-            var argumentsToStringProvider = new ArgumentsListToStringProvider(factory, def);
+            var argumentsToStringProvider = new ArgumentsListToStringProvider(defaultArgumentToStringProvider);
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argumentsToStringProvider);
             var argumentsGenerator = new ArgumentsGenerator(combinator, constructionSignatureMatcherFactory, variationsProvider1, argumentsContainerFactory);
             var objectsConstructor = new ObjectsConstructor(constructionsContainer, argumentsGenerator);
             var variationsProvider2 = new VariationsProvider<LooseConfigurationObject>();
             var configurationToStringProvider = new ConfigurationToStringProvider();
-            var configurationObjectToStringProviderFactory = new CustomFullObjectToStringProviderFactory(argumentsToStringProvider);
+            var configurationObjectToStringProviderFactory = new CustomFullObjectToStringProviderFactory(argumentsToStringProvider, customArgumentToStringProviderFactory);
             var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variationsProvider2);
             var leastConfigurationFinder = new LeastConfigurationFinder(configurationToStringProvider, configurationObjectToStringProviderFactory, dictionaryObjectIdResolversContainer);
-            var defaultComplexConfigurationObjectToStringProvider = new DefaultFullObjectToStringProvider(argumentsToStringProvider, defaultObjectIdResolver);
-            container = new ConfigurationObjectsContainer(defaultComplexConfigurationObjectToStringProvider);
-            var idsFixer = new IdsFixerFactory(container);
+            var defaultComplexConfigurationObjectToStringProvider = new DefaultFullObjectToStringProvider(customArgumentToStringProviderFactory, argumentsToStringProvider, defaultObjectIdResolver);
+            container = new ConfigurationObjectsContainer(defaultComplexConfigurationObjectToStringProvider, argumentContainer);
+            var idsFixer = new IdsFixerFactory(container, argumentContainer);
             var configurationConstructor = new ConfigurationConstructor(leastConfigurationFinder, idsFixer, argumentsContainerFactory);
             var configurationContainer = new ConfigurationContainer(argumentsContainerFactory, configurationConstructor, configurationToStringProvider, container);
             configurationContainer.Initialize(input.InitialConfiguration);
@@ -78,8 +78,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Triangle_And_Midpoint_Test()
         {
-            int it = 7;
-            int max = 7;
+            int it = 6;
+            int max = 6;
             for (int i = it; i <= max; i++)
             {
                 var points = Objects(3, ConfigurationObjectType.Point, includeIds: false);
@@ -103,7 +103,7 @@ namespace GeoGen.Generator.Test
                     //Console.WriteLine(asString);
                     count++;
                 }
-                stopwatch.Reset();
+                stopwatch.Stop();
 
                 Console.WriteLine($"Iterations: {input.MaximalNumberOfIterations}");
                 Console.WriteLine($"Configurations: {count}");

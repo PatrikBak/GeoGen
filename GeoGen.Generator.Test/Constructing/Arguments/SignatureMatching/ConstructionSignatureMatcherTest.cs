@@ -4,8 +4,8 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
@@ -29,13 +29,19 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
         }
 
         [Test]
-        public void Object_Dictionary_Cannot_Be_Null()
+        public void Test_Argument_Container_Cant_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => new ConstructionSignatureMatcher(null));
+        }
+
+        [Test]
+        public void Test_Object_Dictionary_Cannot_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Matcher().Initialize(null));
         }
 
         [Test]
-        public void Parameters_Cant_Be_Null()
+        public void Test_Parameters_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Matcher().Match(null));
         }

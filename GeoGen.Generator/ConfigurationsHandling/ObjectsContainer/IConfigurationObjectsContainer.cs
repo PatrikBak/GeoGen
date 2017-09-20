@@ -18,21 +18,21 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
         DefaultFullObjectToStringProvider ConfigurationObjectToStringProvider { get; }
 
         /// <summary>
-        /// Adds a given object to a container. The object must
-        /// not have set the id, it's going to be set in the container.
-        /// If an equal version of the object is present in the container, 
-        /// it will return instance of this internal object. Otherwise
-        /// it will return this object with set id.
+        /// Adds a given object to a container. The current id of the
+        /// object will be gnored.If an equal version of the object 
+        /// is present in the container, it will return instance of 
+        /// this internal object. Otherwise it will return this 
+        /// object with set id.
         /// </summary>
         /// <param name="constructedConfigurationObject">The configuration object.</param>
         /// <returns>The identified version of the configuration object.</returns>
         ConstructedConfigurationObject Add(ConstructedConfigurationObject constructedConfigurationObject);
 
         /// <summary>
-        /// Initializes the container with loose configuration objects.
+        /// Initializes the container with a given configuratin.
         /// </summary>
-        /// <param name="looseConfigurationObjects">The loose configuration objects enumerable.</param>
-        void Initialize(IEnumerable<LooseConfigurationObject> looseConfigurationObjects);
+        /// <param name="configuration">The configuration.</param>
+        void Initialize(Configuration configuration);
 
         /// <summary>
         /// Gets the object with a given id. Throws an exception, if not present.

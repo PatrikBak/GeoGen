@@ -12,11 +12,11 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.LeastCo
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
-using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
-using GeoGen.Generator.Constructing.Arguments.Container;
-using GeoGen.Generator.Test.TestHelpers;
+using GeoGen.Generator.ConstructingObjects;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
 using ConfigurationConstructor = GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.ConfigurationConstructor;
 
@@ -27,16 +27,21 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
     {
         private static ConfigurationObjectsContainer _container;
 
+        private static IArgumentContainer container;
+
+        private static DefaultArgumentToStringProvider def;
+
         private static ConfigurationObjectsContainer Container(IEnumerable<LooseConfigurationObject> objects)
         {
             var resolver = new DefaultObjectIdResolver();
             var provider = new DefaultObjectToStringProvider(resolver);
-            var def = new DefaultArgumentToStringProvider(provider);
+            def = new DefaultArgumentToStringProvider(provider);
             var factory = new CustomArgumentToStringProviderFactory();
-            var argsToString = new ArgumentsListToStringProvider(factory, def);
-            var defaultFullObjectToStringProvider = new DefaultFullObjectToStringProvider(argsToString, resolver);
-            _container = new ConfigurationObjectsContainer(defaultFullObjectToStringProvider);
-            _container.Initialize(objects);
+            var argsToString = new ArgumentsListToStringProvider(def);
+            var defaultFullObjectToStringProvider = new DefaultFullObjectToStringProvider(factory, argsToString, resolver);
+            container = new ArgumentContainer(def);
+            _container = new ConfigurationObjectsContainer(defaultFullObjectToStringProvider, container);
+            _container.Initialize(AsConfiguration(objects));
 
             return _container;
         }
@@ -46,16 +51,16 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var resolver = new DefaultObjectIdResolver();
             var provider = new DefaultObjectToStringProvider(resolver);
             var factory = new CustomArgumentToStringProviderFactory();
-            var def = new DefaultArgumentToStringProvider(provider);
-            var argsToString = new ArgumentsListToStringProvider(factory, def);
+            def = new DefaultArgumentToStringProvider(provider);
+            var argsToString = new ArgumentsListToStringProvider(def);
             var variations = new VariationsProvider<LooseConfigurationObject>();
             var configurationToString = new ConfigurationToStringProvider();
-            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
+            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString, factory);
             var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variations);
             dictionaryObjectIdResolversContainer.Initialize(objects.ToList());
             var finder = new LeastConfigurationFinder(configurationToString, objectToStringFactory, dictionaryObjectIdResolversContainer);
             var argsContainerFactory = new ArgumentsListContainerFactory(argsToString);
-            var fixer = new IdsFixerFactory(_container);
+            var fixer = new IdsFixerFactory(_container, container);
 
             return new ConfigurationConstructor(finder, fixer, argsContainerFactory);
         }
@@ -65,7 +70,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => Handler(ConfigurationObjects.Objects(1, ConfigurationObjectType.Point)).ConstructWrapper(null)
+                () => Handler(Objects(1, ConfigurationObjectType.Point)).ConstructWrapper(null)
             );
         }
 
@@ -84,7 +89,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
             List<ConstructionArgument> Args(ConfigurationObject o1, ConfigurationObject o2)
             {
-                return new List<ConstructionArgument>
+                var result = new List<ConstructionArgument>
                 {
                     new SetConstructionArgument
                     (
@@ -95,6 +100,10 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                         }
                     )
                 };
+
+                AddToContainerRecursive(container, result);
+
+                return result;
             }
 
             var looseSet = new HashSet<LooseConfigurationObject>(looseObjects);
@@ -110,7 +119,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     (
                         list =>
                         {
-                            var obj = ConfigurationObjects.ConstructedObject(42, 0, list);
+                            var obj = ConstructedObject(42, 0, list);
                             obj = _container.Add(obj);
                             var objAsList = new List<ConstructedConfigurationObject> {obj};
                             var objectsMap = new ConfigurationObjectsMap(looseObjects);
@@ -162,7 +171,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
             List<ConstructionArgument> Args(ConfigurationObject o1, ConfigurationObject o2)
             {
-                return new List<ConstructionArgument>
+                var result = new List<ConstructionArgument>
                 {
                     new SetConstructionArgument
                     (
@@ -173,6 +182,10 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                         }
                     )
                 };
+
+                AddToContainerRecursive(container, result);
+
+                return result;
             }
 
             var looseSet = new HashSet<LooseConfigurationObject>(looseObjects);
@@ -184,7 +197,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                         Args(looseObjects[0], looseObjects[2]),
                         Args(looseObjects[1], looseObjects[2])
                     }
-                    .Select(arg => _container.Add(ConfigurationObjects.ConstructedObject(42, 0, arg)))
+                    .Select(arg => _container.Add(ConstructedObject(42, 0, arg)))
                     .ToList();
 
 
@@ -239,11 +252,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
-                new LooseConfigurationObject(ConfigurationObjectType.Point),
-                new LooseConfigurationObject(ConfigurationObjectType.Circle),
-                new LooseConfigurationObject(ConfigurationObjectType.Circle),
-                new LooseConfigurationObject(ConfigurationObjectType.Line),
-                new LooseConfigurationObject(ConfigurationObjectType.Line)
+                new LooseConfigurationObject(ConfigurationObjectType.Point)
             };
             _container = Container(looseObjects);
             ;
@@ -258,17 +267,14 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(looseObjects[1]),
                 new ObjectConstructionArgument(looseObjects[0])
             };
+            AddToContainerRecursive(container, list);
 
-            var obj = ConfigurationObjects.ConstructedObject(42, 0, list);
+            var obj = ConstructedObject(42, 0, list);
             obj = _container.Add(obj);
             var objAsList = new List<ConstructedConfigurationObject> {obj};
             var objectsMap = new ConfigurationObjectsMap(looseObjects);
 
-            var resolver = new DefaultObjectIdResolver();
-            var provider = new DefaultObjectToStringProvider(resolver);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var def = new DefaultArgumentToStringProvider(provider);
-            var argsProvider = new ArgumentsListToStringProvider(factory, def);
+            var argsProvider = new ArgumentsListToStringProvider(def);
             var forbidden = new ArgumentsListContainer(argsProvider);
             var forbiddenArgs1 = new List<ConstructionArgument>
             {
@@ -282,6 +288,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[1])
             };
+            AddToContainerRecursive(container, forbiddenArgs1.Union(forbiddenArgs2).ToList());
             forbidden.AddArguments(forbiddenArgs1);
             forbidden.AddArguments(forbiddenArgs2);
 
@@ -342,7 +349,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
             ConstructedConfigurationObject Obj(List<ConstructionArgument> args)
             {
-                return ConfigurationObjects.ConstructedObject(42, 0, args);
+                return ConstructedObject(42, 0, args);
             }
 
             var list1 = new List<ConstructionArgument>
@@ -351,6 +358,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[2])
             };
+            AddToContainerRecursive(container, list1);
 
             var obj1 = Obj(list1);
             obj1 = _container.Add(obj1);
@@ -361,6 +369,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(looseObjects[2]),
                 new ObjectConstructionArgument(looseObjects[0])
             };
+            AddToContainerRecursive(container, list2);
 
             var obj2 = Obj(list2);
             obj2 = _container.Add(obj2);
@@ -376,6 +385,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     }
                 )
             };
+            AddToContainerRecursive(container, list3);
 
             var obj3 = Obj(list3);
             obj3 = _container.Add(obj3);
@@ -391,6 +401,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     }
                 )
             };
+            AddToContainerRecursive(container, list4);
 
             var obj4 = Obj(list4);
             obj4 = _container.Add(obj4);

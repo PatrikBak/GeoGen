@@ -1,7 +1,6 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 {

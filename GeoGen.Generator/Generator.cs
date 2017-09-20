@@ -8,8 +8,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
-using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
+using GeoGen.Generator.ConstructingObjects;
 
 namespace GeoGen.Generator
 {
@@ -96,7 +95,7 @@ namespace GeoGen.Generator
                     .CurrentLayer
                     //.AsParallel() // 37 seconds 
                     // create configurations and merge them
-                    .SelectMany(d => _objectsConstructor.GenerateNewConfigurationObjects(d))
+                    .SelectMany(d => _objectsConstructor.GenerateOutput(d))
                     // convert to list
                     .ToList();
             

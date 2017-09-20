@@ -56,7 +56,7 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
 
         #region IEnumerable methods
 
-        public IEnumerator<T> GetEnumerator()
+        public virtual IEnumerator<T> GetEnumerator()
         {
             return Items.Values.GetEnumerator();
         }

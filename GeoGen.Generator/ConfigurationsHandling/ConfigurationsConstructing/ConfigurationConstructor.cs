@@ -8,8 +8,8 @@ using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.LeastConfigurationFinding;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
-using GeoGen.Generator.Constructing;
-using GeoGen.Generator.Constructing.Arguments.Container;
+using GeoGen.Generator.ConstructingObjects;
+using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 
 namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing
 {
