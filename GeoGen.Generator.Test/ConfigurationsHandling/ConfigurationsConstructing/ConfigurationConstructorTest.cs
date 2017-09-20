@@ -244,10 +244,13 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             {
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
-                new LooseConfigurationObject(ConfigurationObjectType.Point)
+                new LooseConfigurationObject(ConfigurationObjectType.Point),
+                new LooseConfigurationObject(ConfigurationObjectType.Line),
+                new LooseConfigurationObject(ConfigurationObjectType.Line),
+                new LooseConfigurationObject(ConfigurationObjectType.Circle),
+                new LooseConfigurationObject(ConfigurationObjectType.Circle),
             };
             _container = Container(looseObjects);
-            ;
             var handler = Handler(looseObjects);
 
             var looseSet = new HashSet<LooseConfigurationObject>(looseObjects);
@@ -310,8 +313,8 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
 
             var strings = argumentsContainer.Select(ArgsToString).ToList();
 
-            Assert.IsTrue(strings.Contains("(2, 1, 3)"));
-            Assert.IsTrue(strings.Contains("(1, 3, 2)"));
+            Assert.IsTrue(strings.Contains("(2,1,3)"));
+            Assert.IsTrue(strings.Contains("(1,3,2)"));
 
             var dictionary2 = result.ConfigurationObjectsMap;
             Assert.AreEqual(3, dictionary2.Count);

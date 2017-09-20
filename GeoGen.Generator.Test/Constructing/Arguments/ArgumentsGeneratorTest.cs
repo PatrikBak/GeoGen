@@ -191,9 +191,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.AreEqual(expected, result.Count);
         }
 
-        [TestCase("({4; 9})")]
-        [TestCase("({1; 2})")]
-        [TestCase("({8; 9})")]
+        [TestCase("({4;9})")]
+        [TestCase("({1;2})")]
+        [TestCase("({8;9})")]
         public void Test_Midpoint_Existence_Of_Arguments(string argument)
         {
             var construction = Midpoint();
@@ -209,9 +209,9 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             Assert.IsTrue(contains);
         }
 
-        [TestCase("(13, {7; 8; 9}, 1, {14; 15})")]
-        [TestCase("(15, {10; 12; 9}, 5, {14; 16})")]
-        [TestCase("(18, {10; 11; 12}, 6, {16; 17})")]
+        [TestCase("(13,{7;8;9},1,{14;15})")]
+        [TestCase("(15,{10;12;9},5,{14;16})")]
+        [TestCase("(18,{10;11;12},6,{16;17})")]
         public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
         {
             // Points are [1-6], Lines are [7-12], Circles are [13-18]

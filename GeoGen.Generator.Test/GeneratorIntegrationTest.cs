@@ -76,8 +76,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Triangle_And_Midpoint_Test()
         {
-            int it = 6;
-            int max = 6;
+            int it = 7;
+            int max = 7;
             for (int i = it; i <= max; i++)
             {
                 var points = Objects(3, ConfigurationObjectType.Point, includeIds: false);

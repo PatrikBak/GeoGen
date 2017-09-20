@@ -18,10 +18,12 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
     {
         private static ConstructionSignatureMatcher Matcher()
         {
-            return new ConstructionSignatureMatcher();
-        }
+            var matcher = new ConstructionSignatureMatcher();
 
-  
+            matcher.Initialize(Configurations.Configuration(5, 0, 1).ConfigurationObjectsMap);
+
+            return matcher;
+        }
 
         [Test]
         public void Test_Object_Dictionary_Cannot_Be_Null()

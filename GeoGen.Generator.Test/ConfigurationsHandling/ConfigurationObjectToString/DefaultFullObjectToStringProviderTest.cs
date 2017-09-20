@@ -72,7 +72,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
 
             var constructedObject = ConstructedObject(42, 1, args);
 
-            Assert.AreEqual("42(0, 1, 2, 3)[1]", Provider().ConvertToString(constructedObject));
+            Assert.AreEqual("42(0,1,2,3)[1]", Provider().ConvertToString(constructedObject));
         }
 
         [Test]
@@ -140,7 +140,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
 
             var thirdObject = ConstructedObject(42, 1, thirdArgs);
             var stringVersion = provider.ConvertToString(thirdObject);
-            const string expected = "42(42(0, 1), 42({1; 2; 42(0, 1)})[1], {{0; 1}; {2; 42(0, 1)}})[1]";
+            const string expected = "42(42(0,1),42({1;2;42(0,1)})[1],{{0;1};{2;42(0,1)}})[1]";
 
             Assert.AreEqual(expected, stringVersion);
         }
