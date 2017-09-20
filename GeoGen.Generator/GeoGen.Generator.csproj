@@ -65,16 +65,8 @@
     <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\ConfigurationConstructor.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\ArgumentsListToStringProvider.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\ArgumentToStringProviderBase.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\CustomArgumentToStringProviderFactory.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\CustomArgumentToStringProvider.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\DefaultArgumentToStringProvider.cs" />
     <Compile Include="ConfigurationsHandling\ConfigurationObjectToString\ObjectToStringProviderBase.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Containers\ArgumentContainer.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Containers\IArgumentContainer.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\ICustomArgumentToStringProviderFactory.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\IArgumentsListToStringProvider.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsToString\IArgumentToStringProvider.cs" />
     <Compile Include="ConstructingObjects\Arguments\Containers\ArgumentsListContainer.cs" />
     <Compile Include="ConstructingObjects\Arguments\Containers\ArgumentsListContainerFactory.cs" />
     <Compile Include="ConstructingObjects\Arguments\Containers\IArgumentsListContainerFactory.cs" />

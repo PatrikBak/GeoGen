@@ -15,26 +15,16 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationObjectToStri
         private static CustomFullObjectToStringProviderFactory Factory()
         {
             var provider = SimpleMock<IArgumentsListToStringProvider>();
-            var mock = new Mock<ICustomArgumentToStringProviderFactory>();
-            mock.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
-                    .Returns<IObjectToStringProvider>(p => new CustomArgumentToStringProvider(p));
 
-            return new CustomFullObjectToStringProviderFactory(provider, mock.Object);
+            return new CustomFullObjectToStringProviderFactory(provider);
         }
 
         [Test]
         public void Test_Arguments_To_String_Provider_Cant_Be_Null()
         {
-            var factory = SimpleMock<ICustomArgumentToStringProviderFactory>();
-            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null, factory));
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null));
         }
-
-        [Test]
-        public void Test_Factory_Cant_Be_Null()
-        {
-            var provider = SimpleMock<IArgumentsListToStringProvider>();
-            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(provider, null));
-        }
+        
 
         [Test]
         public void Test_Objects_Resolver_Is_Not_Null()

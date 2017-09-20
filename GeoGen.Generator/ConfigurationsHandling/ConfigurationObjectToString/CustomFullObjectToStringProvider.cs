@@ -30,11 +30,10 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// <param name="resolver">The configuration object id resolver.</param>
         public CustomFullObjectToStringProvider
         (
-            ICustomArgumentToStringProviderFactory factory,
             IArgumentsListToStringProvider provider,
             IObjectIdResolver resolver
         )
-            : base(factory, provider, resolver)
+            : base(provider, resolver)
         {
         }
 

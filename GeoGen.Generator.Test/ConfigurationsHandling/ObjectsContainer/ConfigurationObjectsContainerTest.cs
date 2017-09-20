@@ -7,6 +7,7 @@ using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using Moq;
@@ -20,46 +21,26 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
     [TestFixture]
     public class ConfigurationObjectsContainerTest
     {
-        private static ArgumentContainer _container;
 
         private static ConfigurationObjectsContainer Container()
         {
             var resolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(resolver);
-            var def = new DefaultArgumentToStringProvider(defaultToString);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(def);
-            var container = new ArgumentContainer(def);
-            _container = container;
+            var argsProvider = new ArgumentsListToStringProvider(defaultToString);
             var defaultResolver = new DefaultObjectIdResolver();
-            var provider = new DefaultFullObjectToStringProvider(factory, argsProvider, defaultResolver);
+            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
-            return new ConfigurationObjectsContainer(provider, container);
+            return new ConfigurationObjectsContainer(provider);
         }
 
         [Test]
         public void Test_Provider_Cant_Be_Null()
         {
-            var factory = SimpleMock<IArgumentContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(null, factory));
+            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(null));
         }
 
-        [Test]
-        public void Test_Factory_Cant_Be_Null()
-        {
-            var factory = new Mock<ICustomArgumentToStringProviderFactory>();
-            factory.Setup(s => s.GetProvider(It.IsAny<IObjectToStringProvider>()))
-                    .Returns<IObjectToStringProvider>(s => new CustomArgumentToStringProvider(s));
-
-            var argsProvider = SimpleMock<IArgumentsListToStringProvider>();
-            var idResolver = new DefaultObjectIdResolver();
-            var provider = new DefaultFullObjectToStringProvider(factory.Object, argsProvider, idResolver);
-
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationObjectsContainer(provider, null));
-        }
-
-        [Test]
+    [Test]
         public void Initialization_Loose_Objects_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
@@ -177,7 +158,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Initialize(AsConfiguration(looseObjects));
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
-            SetIds(args);
             var constructedObject = ConstructedObject(42, 0, args);
 
             var result = container.Add(constructedObject);
@@ -201,7 +181,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             container.Initialize(AsConfiguration(looseObjects));
 
             var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
-            SetIds(args);
             var constructedObject1 = ConstructedObject(42, 1, args);
             var constructedObject2 = ConstructedObject(42, 1, args);
 
@@ -239,7 +218,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
-            SetIds(args1);
 
             var obj1 = ConstructedObject(42, 0, args1);
             obj1 = container.Add(obj1);
@@ -257,7 +235,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
-            SetIds(args2);
 
             var obj2 = ConstructedObject(42, 0, args2);
             obj2 = container.Add(obj2);
@@ -277,7 +254,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                     }
                 )
             };
-            SetIds(args3);
 
             var obj3 = ConstructedObject(42, 0, args3);
             var result = container.Add(obj3);
@@ -290,7 +266,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
                 new ObjectConstructionArgument(obj2),
                 new ObjectConstructionArgument(obj3)
             };
-            SetIds(args4);
 
             var obj4 = ConstructedObject(42, 1, args4);
             container.Add(obj4);
@@ -347,7 +322,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             Assert.AreEqual(5, container.Count());
             Assert.AreEqual(4, obj1.Id ?? throw new Exception());
             Assert.AreEqual(5, obj2.Id ?? throw new Exception());
-            Assert.AreEqual(6, _container.Count());
         }
 
         [Test]
@@ -477,13 +451,13 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
 
             var args1 = new List<ConstructionArgument>
             {
-                new ObjectConstructionArgument(looseObjects[0]) {Id = 4},
+                new ObjectConstructionArgument(looseObjects[0]) ,
                 new SetConstructionArgument
                 (
                     new HashSet<ConstructionArgument>
                     {
                         new ObjectConstructionArgument(looseObjects[1]),
-                        new ObjectConstructionArgument(looseObjects[2]) {Id = 1}
+                        new ObjectConstructionArgument(looseObjects[2]) 
                     }
                 )
             };
@@ -494,7 +468,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
 
             container.Initialize(configuration);
             Assert.AreEqual(4, obj1.Id);
-            Assert.AreEqual(1, args1[0].Id);
         }
 
         [Test]
@@ -517,13 +490,13 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
 
             var args1 = new List<ConstructionArgument>
             {
-                new ObjectConstructionArgument(looseObjects[0]) {Id = 4},
+                new ObjectConstructionArgument(looseObjects[0]) ,
                 new SetConstructionArgument
                 (
                     new HashSet<ConstructionArgument>
                     {
                         new ObjectConstructionArgument(looseObjects[1]),
-                        new ObjectConstructionArgument(looseObjects[2]) {Id = 1}
+                        new ObjectConstructionArgument(looseObjects[2])
                     }
                 )
             };
@@ -544,7 +517,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ObjectsContainer
             }
 
             Assert.Throws<GeneratorException>(() => Container().FirstOrDefault());
-            Assert.AreEqual(0, _container.Count());
         }
     }
 }

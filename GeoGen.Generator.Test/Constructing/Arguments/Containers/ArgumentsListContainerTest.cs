@@ -5,6 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using NUnit.Framework;
@@ -30,8 +31,7 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.Containers
         {
             var idResolver = new DefaultObjectIdResolver();
             var objectProvider = new DefaultObjectToStringProvider(idResolver);
-            var argumentProvider = new DefaultArgumentToStringProvider(objectProvider);
-            var argumentsProvider = new ArgumentsListToStringProvider(argumentProvider);
+            var argumentsProvider = new ArgumentsListToStringProvider(objectProvider);
 
             return new ArgumentsListContainer(argumentsProvider);
         }

@@ -4,9 +4,9 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 
-namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
+namespace GeoGen.Generator.Constructing.Arguments.SignatureMatching
 {
     /// <summary>
     /// A default implementation of the <see cref="IConstructionSignatureMatcher"/> interface.
@@ -25,25 +25,6 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
         /// in a construction argument.
         /// </summary>
         private Dictionary<ConfigurationObjectType, int> _currentIndices;
-
-        /// <summary>
-        /// The argument container
-        /// </summary>
-        private IArgumentContainer _argumentContainer;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructs a new construction signature matcher that uses
-        /// a given argument container.
-        /// </summary>
-        /// <param name="argumentContainer">The argument container.</param>
-        public ConstructionSignatureMatcher(IArgumentContainer argumentContainer)
-        {
-            _argumentContainer = argumentContainer ?? throw new ArgumentNullException(nameof(argumentContainer));
-        }
 
         #endregion
 
@@ -71,10 +52,6 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
             return parameters.Select(CreateArgument).ToList();
         }
 
-        #endregion
-
-        #region Private methods
-
         /// <summary>
         /// Creates a next argument for a given parameter. 
         /// </summary>
@@ -84,43 +61,25 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
         {
             if (parameter is ObjectConstructionParameter objectParameter)
             {
-                // Get the next object
                 var nextObject = Next(objectParameter.ExpectedType);
 
-                // Construct an argument
-                var argument = new ObjectConstructionArgument(nextObject);
-
-                // Let container resolver the argument
-                argument = (ObjectConstructionArgument) _argumentContainer.AddArgument(argument);
-
-                // Return the argument
-                return argument;
+                return new ObjectConstructionArgument(nextObject);
             }
 
-            // Otherwise we have the set parameter
             var setParameter = parameter as SetConstructionParameter ?? throw new GeneratorException("Unhandled case.");
 
-            // Create an empty set of arguments
             var argumentsSet = new HashSet<ConstructionArgument>();
 
-            // Add them neded count of arguments recursively created from parameters
             for (var i = 0; i < setParameter.NumberOfParameters; i++)
             {
-                // Create a new argument with this method
+                // recursively call this function
                 var newArgument = CreateArgument(setParameter.TypeOfParameters);
 
-                // Update the resulting set
+                // update the resulting set
                 argumentsSet.Add(newArgument);
             }
 
-            // Create the result
-            var setArgument = new SetConstructionArgument(argumentsSet);
-
-            // Let container resolve the result
-            setArgument = (SetConstructionArgument) _argumentContainer.AddArgument(setArgument);
-
-            // Return the result
-            return setArgument;
+            return new SetConstructionArgument(argumentsSet);
         }
 
         /// <summary>

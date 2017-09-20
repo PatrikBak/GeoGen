@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using GeoGen.Generator.Test.TestHelpers;
@@ -17,22 +18,10 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.SignatureMatching
     {
         private static ConstructionSignatureMatcher Matcher()
         {
-            var mock = new Mock<IArgumentContainer>();
-            mock.Setup(s => s.AddArgument(It.IsAny<ConstructionArgument>()))
-                    .Returns<ConstructionArgument>(arg => arg);
-            var container = mock.Object;
-
-            var matcher = new ConstructionSignatureMatcher(container);
-            matcher.Initialize(Configurations.Configuration(5, 0, 1).ConfigurationObjectsMap);
-
-            return matcher;
+            return new ConstructionSignatureMatcher();
         }
 
-        [Test]
-        public void Test_Argument_Container_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => new ConstructionSignatureMatcher(null));
-        }
+  
 
         [Test]
         public void Test_Object_Dictionary_Cannot_Be_Null()

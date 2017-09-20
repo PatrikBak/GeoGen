@@ -10,6 +10,7 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationToString;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
@@ -28,14 +29,11 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
         {
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
-            var defaultArgument = new DefaultArgumentToStringProvider(defaultToString);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var container = new ArgumentContainer(defaultArgument);
-            var argsProvider = new ArgumentsListToStringProvider(defaultArgument);
+            var argsProvider = new ArgumentsListToStringProvider(defaultToString);
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
             var configurationToStringProvider = new ConfigurationToStringProvider();
-            var defaultFullProvider = new DefaultFullObjectToStringProvider(factory, argsProvider, defaultResolver);
-            var configuationObjectContainer = new ConfigurationObjectsContainer(defaultFullProvider, container);
+            var defaultFullProvider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
+            var configuationObjectContainer = new ConfigurationObjectsContainer(defaultFullProvider);
 
             var mock = new Mock<IConfigurationConstructor>();
             mock.Setup(s => s.ConstructWrapper(It.IsAny<ConstructorOutput>()))
@@ -240,7 +238,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsContainer
                                 }
                             )
                         };
-                        SetIds(args);
 
                         var obj = ConstructedObject(42, 0, args);
 

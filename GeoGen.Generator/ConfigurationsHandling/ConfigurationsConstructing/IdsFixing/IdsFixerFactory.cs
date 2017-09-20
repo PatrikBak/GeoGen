@@ -19,11 +19,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
         private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
 
         /// <summary>
-        /// The argument container;
-        /// </summary>
-        private readonly IArgumentContainer _argumentContainer;
-
-        /// <summary>
         /// The cache mapping dictionary object id resolvers' ids 
         /// to ids fixers associated with them
         /// </summary>
@@ -40,9 +35,8 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
         /// </summary>
         /// <param name="objectsContainer">The configuration objects container.</param>
         /// <param name="argumentContainer">The argument container</param>
-        public IdsFixerFactory(IConfigurationObjectsContainer objectsContainer, IArgumentContainer argumentContainer)
+        public IdsFixerFactory(IConfigurationObjectsContainer objectsContainer)
         {
-            _argumentContainer = argumentContainer ?? throw new ArgumentNullException(nameof(argumentContainer));
             _configurationObjectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _cache = new Dictionary<int, IIdsFixer>();
         }
@@ -64,7 +58,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
             if (_cache.ContainsKey(id))
                 return _cache[id];
 
-            var newFixer = new IdsFixer(_argumentContainer,_configurationObjectsContainer, resolver);
+            var newFixer = new IdsFixer(_configurationObjectsContainer, resolver);
             _cache.Add(id, newFixer);
 
             return newFixer;

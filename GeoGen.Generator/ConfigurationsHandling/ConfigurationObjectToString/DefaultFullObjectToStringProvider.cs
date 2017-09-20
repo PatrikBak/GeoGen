@@ -17,15 +17,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
     /// </summary>
     internal class DefaultFullObjectToStringProvider : FullObjectToStringProviderBase
     {
-        #region Public static properties
-
-        /// <summary>
-        /// The default id.
-        /// </summary>
-        public static readonly int DefaultId = DefaultObjectIdResolver.DefaultId;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
@@ -38,11 +29,10 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// <param name="resolver">The default object id resolver.</param>
         public DefaultFullObjectToStringProvider
         (
-            ICustomArgumentToStringProviderFactory factory,
             IArgumentsListToStringProvider provider,
             DefaultObjectIdResolver resolver
         )
-            : base(factory, provider, resolver)
+            : base(provider, resolver)
         {
         }
 

@@ -8,6 +8,7 @@ using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.IdsFixing;
 using GeoGen.Generator.ConfigurationsHandling.ObjectsContainer;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 using GeoGen.Generator.Test.Constructing.Arguments.Containers;
@@ -24,23 +25,19 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
     {
         private static IConfigurationObjectsContainer _container;
 
-        private static IArgumentContainer _argumentContainer;
 
         private static IdsFixer Fixer()
         {
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
-            var defaultArgument = new DefaultArgumentToStringProvider(defaultToString);
-            var factory = new CustomArgumentToStringProviderFactory();
-            var argsProvider = new ArgumentsListToStringProvider(defaultArgument);
-            var provider = new DefaultFullObjectToStringProvider(factory, argsProvider, defaultResolver);
-            _argumentContainer = new ArgumentContainer(defaultArgument);
+            var argsProvider = new ArgumentsListToStringProvider(defaultToString);
+            var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
-            _container = new ConfigurationObjectsContainer(provider, _argumentContainer);
+            _container = new ConfigurationObjectsContainer(provider);
             var objects = Objects(42, ConfigurationObjectType.Point, includeIds: false).ToList();
             _container.Initialize(AsConfiguration(objects));
 
-            return new IdsFixer(_argumentContainer, _container, Resolver());
+            return new IdsFixer(_container, Resolver());
         }
 
         private static DictionaryObjectIdResolver Resolver()
@@ -55,27 +52,18 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
         [Test]
         public void Test_Objects_Container_Is_Not_Null()
         {
-            var argContainer = SimpleMock<IArgumentContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(argContainer, null, Resolver()));
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null, Resolver()));
         }
 
         [Test]
         public void Test_Resolver_Is_Not_Null()
         {
-            var argContainer = SimpleMock<IArgumentContainer>();
             var objectsContainer = SimpleMock<IConfigurationObjectsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(argContainer, objectsContainer, null));
+            Assert.Throws<ArgumentNullException>(() => new IdsFixer(objectsContainer, null));
         }
 
-        [Test]
-        public void Test_Argument_Is_Not_Null()
-        {
-            var objectsContainer = SimpleMock<IConfigurationObjectsContainer>();
-
-            Assert.Throws<ArgumentNullException>(() => new IdsFixer(null, objectsContainer, Resolver()));
-        }
 
         [Test]
         public void Test_Object_Is_Not_Null()
@@ -110,7 +98,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
             var fixer = Fixer();
 
             var obj = _container[7];
-            var arg = new ObjectConstructionArgument(obj) {Id = 4};
+            var arg = new ObjectConstructionArgument(obj);
             var fixedArg = fixer.FixArgument(arg);
 
             Assert.IsInstanceOf<ObjectConstructionArgument>(fixedArg);
@@ -148,7 +136,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     )
                 }
             );
-            _argumentContainer.AddArgument(arg);
 
             var fixedArg = fixer.FixArgument(arg);
             Assert.IsInstanceOf<SetConstructionArgument>(fixedArg);
@@ -183,7 +170,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                     }
                 )
             };
-            AddToContainerRecursive(_argumentContainer, args);
 
             var constructedObject = ConstructedObject(42, 0, args);
             _container.Add(constructedObject);
@@ -236,7 +222,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(_container[1]),
                 new ObjectConstructionArgument(_container[3])
             };
-            AddToContainerRecursive(_argumentContainer, args1);
             var obj1 = ConstructedObject(42, 1, args1);
             _container.Add(obj1);
 
@@ -245,7 +230,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(_container[1]),
                 new ObjectConstructionArgument(obj1)
             };
-            AddToContainerRecursive(_argumentContainer, args2);
             var obj2 = ConstructedObject(42, 1, args2);
             _container.Add(obj2);
 
@@ -254,7 +238,6 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling.ConfigurationsConstructin
                 new ObjectConstructionArgument(obj2),
                 new ObjectConstructionArgument(obj1)
             };
-            AddToContainerRecursive(_argumentContainer, args3);
             var obj3 = ConstructedObject(42, 1, args3);
             _container.Add(obj3);
 

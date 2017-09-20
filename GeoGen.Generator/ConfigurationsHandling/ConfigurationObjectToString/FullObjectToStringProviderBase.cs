@@ -22,11 +22,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// </summary>
         private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
 
-        /// <summary>
-        /// The argument to string provider associated with this provider..
-        /// </summary>
-        private readonly IArgumentToStringProvider _argumentToStringProvider;
-
         #endregion
 
         #region Protected fields
@@ -51,14 +46,12 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
         /// <param name="resolver">The configuration object id resolver.</param>
         protected FullObjectToStringProviderBase
         (
-            ICustomArgumentToStringProviderFactory factory,
             IArgumentsListToStringProvider provider,
             IObjectIdResolver resolver
         )
             : base(resolver)
         {
             _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _argumentToStringProvider = factory?.GetProvider(this) ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion
@@ -94,7 +87,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString
 
             // We find arguments string. This might cause recursive calls of this very function,
             // because we're passing this object as an object to string provider. 
-            var argumentsString = _argumentsListToStringProvider.ConvertToString(passedArgs, _argumentToStringProvider);
+            var argumentsString = _argumentsListToStringProvider.ConvertToString(passedArgs, this);
 
             // Construct the beginning of the result
             var result = $"{contructedObject.Construction.Id}{argumentsString}";

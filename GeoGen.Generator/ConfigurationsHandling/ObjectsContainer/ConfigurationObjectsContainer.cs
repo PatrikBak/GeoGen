@@ -41,11 +41,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
         private readonly Dictionary<int, ConfigurationObject> _idToObjectDictionary = new Dictionary<int, ConfigurationObject>();
 
         /// <summary>
-        /// The argument container.
-        /// </summary>
-        private readonly IArgumentContainer _container;
-
-        /// <summary>
         /// Indicates if the container has been initialized.
         /// </summary>
         private bool _initialized;
@@ -60,10 +55,9 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
         /// </summary>
         /// <param name="provider">The object to string provider.</param>
         /// <param name="container">The container.</param>
-        public ConfigurationObjectsContainer(DefaultFullObjectToStringProvider provider, IArgumentContainer container)
+        public ConfigurationObjectsContainer(DefaultFullObjectToStringProvider provider)
         {
             ConfigurationObjectToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
         #endregion
@@ -206,47 +200,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
                 configurationObject.Id = null;
             }
 
-            // Local function to enumerate all construction arguments
-            IEnumerable<ConstructionArgument> Args(ConstructionArgument argument)
-            {
-                // If we have just an object argument, we'll yield that
-                if (argument is ObjectConstructionArgument objectArgument)
-                {
-                    // Null the id to object argument on go
-                    objectArgument.Id = null;
-
-                    // And yield it
-                    yield return argument;
-
-                    // And break the method
-                    yield break;
-                }
-
-                // Otherwise we must have a set argument
-                var setArg = argument as SetConstructionArgument ?? throw new GeneratorException("Unhandled case");
-
-                // We iterate over all passed arguments to it
-                foreach (var passedArgument in setArg.PassedArguments)
-                {
-                    // And then through all recurvisely gotten args from the passed argumet
-                    foreach (var arg in Args(passedArgument))
-                    {
-                        // And yield each
-                        yield return arg;
-                    }
-                }
-            }
-
-            // Create enumeration for all args
-            var args = configuration.ConstructedObjects
-                    .SelectMany(obj => obj.PassedArguments)
-                    .SelectMany(Args);
-
-            // Null id to all of them
-            foreach (var constructionArgument in args)
-            {
-                constructionArgument.Id = null;
-            }
+            // TODO: Null ids of interior objcets
         }
 
         private void InitializeConstructedObject(ConstructedConfigurationObject constructedObject, bool passedAsArgument)
@@ -268,13 +222,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
             if (constructedObject.Id.HasValue)
                 throw new InitializationException("Duplicate objects");
 
-            // Otherwise the object is new and needs to be initialized. 
-            // First we need to initialize its arguments
-            foreach (var argument in constructedObject.PassedArguments)
-            {
-                InitializeArgument(argument);
-            }
-
             // Now we can freely add the object to the container
             var result = Add(constructedObject);
 
@@ -285,70 +232,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ObjectsContainer
             // Otherwise we're fine. The id of the object is set.
         }
 
-        private void InitializeArgument(ConstructionArgument argument)
-        {
-            // Local function for adding the argument to the container
-            void AddToContainer()
-            {
-                // And finally add the argument to the container
-                var result = _container.AddArgument(argument);
-
-                // The result may or may not be the same. We identify the argument by id
-                argument.Id = result.Id;
-            }
-
-            // If the argument has id, then it's been already initialized, so we're fine
-            if (argument.Id.HasValue)
-                return;
-
-            // If we have an object argument
-            if (argument is ObjectConstructionArgument objectArgument)
-            {
-                // Pull passed object
-                var passedObject = objectArgument.PassedObject;
-
-                // If the passed object is loose
-                if (passedObject is LooseConfigurationObject)
-                {
-                    // If the id of the isn't set, the we have a problem
-                    if (!passedObject.Id.HasValue)
-                        UnconstructableException();
-
-                    // Otherwise we've run into a correct object. 
-                    // We can add it
-                    AddToContainer();
-
-                    // And terminate
-                    return;
-                }
-
-                // Otherwise we have constructed object
-                var constructedObj = passedObject as ConstructedConfigurationObject ?? throw new GeneratorException("Unhandled case");
-
-                // We let the method initialize it
-                InitializeConstructedObject(constructedObj, true);
-
-                // Finally add the argument to the container
-                AddToContainer();
-
-                // And terminate
-                return;
-            }
-
-            // Otherwise we have a set argument
-            var setArgument = argument as SetConstructionArgument ?? throw new ArgumentNullException(nameof(argument));
-
-            // We recursively initialize the passed arguments
-            foreach (var passedArgument in setArgument.PassedArguments)
-            {
-                InitializeArgument(passedArgument);
-            }
-
-            // Finally add the argument to the container
-            AddToContainer();
-        }
-
-        private void UnconstructableException() => throw new InitializationException("Configuration is not constructable");
+       private void UnconstructableException() => throw new InitializationException("Configuration is not constructable");
 
         #endregion
 

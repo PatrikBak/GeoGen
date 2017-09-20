@@ -18,11 +18,6 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
         #region Private fields
 
         /// <summary>
-        /// The argument container
-        /// </summary>
-        private IArgumentContainer _argumentContainer;
-
-        /// <summary>
         /// The configuration objects container.
         /// </summary>
         private readonly IConfigurationObjectsContainer _objectsContainer;
@@ -51,12 +46,10 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
         /// <param name="resolver">The dictionary object id resolver.</param>
         public IdsFixer
         (
-            IArgumentContainer argumentContainer,
             IConfigurationObjectsContainer objectsContainer,
             DictionaryObjectIdResolver resolver
         )
         {
-            _argumentContainer = argumentContainer ?? throw new ArgumentNullException(nameof(argumentContainer));
             _objectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _cache = new Dictionary<int, ConstructedConfigurationObject>();
@@ -86,8 +79,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
                 // Construct the result
                 var objResult = new ObjectConstructionArgument(fixedObject);
 
-                // Let the container resolve it
-                return _argumentContainer.AddArgument(objResult);
+                return objResult;
             }
 
             // Otherwise we must have the set construction argument
@@ -101,8 +93,7 @@ namespace GeoGen.Generator.ConfigurationsHandling.ConfigurationsConstructing.Ids
             // Cosntruct the result
             var setResult = new SetConstructionArgument(interiorArguments);
 
-            // Let the container resolve it
-            return _argumentContainer.AddArgument(setResult);
+            return setResult;
         }
 
         /// <summary>

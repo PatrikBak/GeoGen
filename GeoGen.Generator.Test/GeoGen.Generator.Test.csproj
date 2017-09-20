@@ -68,10 +68,6 @@
     <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\LeastConfigurationFinding\LeastConfigurationFinderTest.cs" />
     <Compile Include="ConfigurationsHandling\ConfigurationsConstructing\ConfigurationConstructorTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsToString\ArgumentsListToStringProviderTest.cs" />
-    <Compile Include="Constructing\Arguments\ArgumentsToString\CustomArgumentToStringProviderFactoryTest.cs" />
-    <Compile Include="Constructing\Arguments\ArgumentsToString\CustomArgumentToStringProviderTest.cs" />
-    <Compile Include="Constructing\Arguments\ArgumentsToString\DefaultArgumentToStringProviderTest.cs" />
-    <Compile Include="Constructing\Arguments\Containers\ArgumentContainerTest.cs" />
     <Compile Include="Constructing\Arguments\Containers\ArgumentsListContainerFactoryTest.cs" />
     <Compile Include="Constructing\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="Constructing\Arguments\ArgumentsGeneratorTest.cs" />

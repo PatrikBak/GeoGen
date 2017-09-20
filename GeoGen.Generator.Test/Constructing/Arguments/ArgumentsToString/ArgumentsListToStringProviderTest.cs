@@ -5,6 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using Moq;
 using NUnit.Framework;
@@ -17,27 +18,26 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
     {
         private static ArgumentsListToStringProvider Provider()
         {
-            return new ArgumentsListToStringProvider(DefaultArgumentProvider(), ", ");
+            return new ArgumentsListToStringProvider(DefaultArgumentProvider());
         }
 
-        private static DefaultArgumentToStringProvider DefaultArgumentProvider()
+        private static DefaultObjectToStringProvider DefaultArgumentProvider()
         {
             var resolver = new DefaultObjectIdResolver();
             var objectProvider = new DefaultObjectToStringProvider(resolver);
-            var argumentProvider = new DefaultArgumentToStringProvider(objectProvider, "; ");
 
-            return argumentProvider;
+            return objectProvider;
         }
 
-        private static IArgumentToStringProvider ArgumentProvider()
+        private static IObjectToStringProvider ArgumentProvider()
         {
             var mock = new Mock<IObjectToStringProvider>();
             mock.Setup(s => s.ConvertToString(It.IsAny<ConfigurationObject>()))
                     .Returns<ConfigurationObject>(o => (o.Id + 1).ToString());
 
-            return new CustomArgumentToStringProvider(mock.Object, "; ");
+            return mock.Object;
         }
-
+        
         [Test]
         public void Test_Default_Provider_Cant_Be_Null()
         {
@@ -74,7 +74,6 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
             var args = new List<ConstructionArgument> {argument};
 
             var result1 = Provider().ConvertToString(args);
-            argument.Id = 1;
             var result2 = Provider().ConvertToString(args, ArgumentProvider());
 
             Assert.AreEqual("(1)", result1);
@@ -94,7 +93,6 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
             var args = new List<ConstructionArgument> {argument1, argument2, argument3};
 
             var result1 = Provider().ConvertToString(args);
-            SetIds(args);
             var result2 = Provider().ConvertToString(args, ArgumentProvider());
 
             Assert.AreEqual("(1, 2, 3)", result1);
@@ -118,7 +116,6 @@ namespace GeoGen.Generator.Test.Constructing.Arguments.ArgumentsToString
             var finalList = new List<ConstructionArgument> {argument1, finalSet, argument3};
 
             var result1 = Provider().ConvertToString(finalList);
-            SetIds(finalList);
             var result2 = Provider().ConvertToString(finalList, ArgumentProvider());
 
             Assert.AreEqual("(1, {{1; 2}; {2; 3}}, 3)", result1);

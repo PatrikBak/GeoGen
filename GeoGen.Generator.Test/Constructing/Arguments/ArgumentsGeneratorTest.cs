@@ -7,6 +7,7 @@ using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString;
 using GeoGen.Generator.ConfigurationsHandling.ConfigurationObjectToString.ConfigurationObjectIdResolving;
+using GeoGen.Generator.Constructing.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
@@ -29,10 +30,8 @@ namespace GeoGen.Generator.Test.Constructing.Arguments
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var resolver = new DefaultObjectIdResolver();
             var provider = new DefaultObjectToStringProvider(resolver);
-            var defaultArgumentProvider = new DefaultArgumentToStringProvider(provider);
-            var argumentContainer = new ArgumentContainer(defaultArgumentProvider);
-            var signatureMatcher = new ConstructionSignatureMatcherFactory(argumentContainer);
-            var argsProvider = new ArgumentsListToStringProvider(defaultArgumentProvider, ", ");
+            var signatureMatcher = new ConstructionSignatureMatcherFactory();
+            var argsProvider = new ArgumentsListToStringProvider(provider);
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
             return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
