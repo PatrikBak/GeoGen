@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Core.Configurations;
 
 namespace GeoGen.Core.Utilities.Variations
 {

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
 {
@@ -13,7 +13,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
     {
         private static CustomFullObjectToStringProviderFactory Factory()
         {
-            var provider = Utilities.SimpleMock<IArgumentsListToStringProvider>();
+            var provider = SimpleMock<IArgumentsListToStringProvider>();
 
             return new CustomFullObjectToStringProviderFactory(provider);
         }
@@ -23,10 +23,10 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         {
             Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null));
         }
-        
+
 
         [Test]
-        public void Test_Objects_Resolver_Is_Not_Null()
+        public void Test_Passed_Objects_Resolver_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Factory().GetCustomProvider(null));
         }

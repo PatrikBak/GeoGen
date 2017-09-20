@@ -12,11 +12,16 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         }
 
         [Test]
-        public void Test_Resulting_Matcher_Is_Correct()
+        public void Test_Resulting_Matcher_Returns_Distinct_Objects()
         {
-            var obj = Factory().CreateMatcher();
+            var factory = Factory();
 
-            Assert.NotNull(obj);
+            var matcher1 = factory.CreateMatcher();
+            var matcher2 = factory.CreateMatcher();
+
+            Assert.NotNull(matcher1);
+            Assert.NotNull(matcher2);
+            Assert.AreNotSame(matcher1, matcher2);
         }
     }
 }

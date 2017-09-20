@@ -19,34 +19,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
         /// </summary>
         private const string DefaultSeparator = "|";
 
-        /// <summary>
-        /// The separator.
-        /// </summary>
-        private readonly string _separator;
-
         #endregion
 
         #region Constructors
-
-        /// <summary>
-        /// Constructs a new configuration to string provider with
-        /// a given separator. This is meant to be used during 
-        /// unit testing.
-        /// </summary>
-        /// <param name="separator">The separator.</param>
-        public ConfigurationToStringProvider(string separator)
-        {
-            _separator = separator;
-        }
-
-        /// <summary>
-        /// Constructs a new configuration to string provider 
-        /// with a default separator.
-        /// </summary>
-        public ConfigurationToStringProvider()
-            : this(DefaultSeparator)
-        {
-        }
 
         #endregion
 
@@ -81,7 +56,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
             if (LeastConfigurationFinder.finding) s_sorting.Stop();
 
             if (LeastConfigurationFinder.finding) s_joining.Start();
-            var t =  string.Join(_separator, objectStrings);
+            var t =  string.Join(DefaultSeparator, objectStrings);
             if (LeastConfigurationFinder.finding) s_joining.Stop();
 
             return t;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
+﻿namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
 {
     /// <summary>
     /// A default implementation of <see cref="IConstructionSignatureMatcherFactory"/>.

@@ -9,13 +9,13 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
     [TestFixture]
     public class DefaultObjectToStringProviderTest
     {
-        private static DefaultObjectIdResolver _resolver;
+        private static DefaultObjectIdResolver _defaultResolver;
 
         private static DefaultObjectToStringProvider Provider()
         {
-            _resolver = new DefaultObjectIdResolver();
+            _defaultResolver = new DefaultObjectIdResolver();
 
-            return new DefaultObjectToStringProvider(_resolver);
+            return new DefaultObjectToStringProvider(_defaultResolver);
         }
 
         [Test]
@@ -25,13 +25,13 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         }
 
         [Test]
-        public void Test_Object_Cant_Be_Null()
+        public void Test_Passed_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Provider().ConvertToString(null));
         }
 
         [Test]
-        public void Test_Object_Must_Have_Set_Id()
+        public void Test_Passed_Object_Must_Have_Id()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
@@ -52,7 +52,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         {
             var provider = Provider().Resolver;
 
-            Assert.AreSame(provider, _resolver);
+            Assert.AreSame(provider, _defaultResolver);
         }
     }
 }

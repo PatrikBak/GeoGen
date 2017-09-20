@@ -10,6 +10,8 @@ using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingObjects
 {
@@ -66,8 +68,10 @@ namespace GeoGen.Generator.Test.ConstructingObjects
             return mock.Object;
         }
 
-        private static IArgumentsListContainer Container(IEnumerable<ConfigurationObject> objects,
-            int forbidenIdStart, int forbidenIdEnd)
+        private static IArgumentsListContainer Container
+        (
+            IEnumerable<ConfigurationObject> objects, int forbidenIdStart, int forbidenIdEnd
+        )
         {
             var mock = new Mock<IArgumentsListContainer>();
 
@@ -87,9 +91,11 @@ namespace GeoGen.Generator.Test.ConstructingObjects
             return mock.Object;
         }
 
-        private static ConfigurationWrapper ConfigurationWrapper(List<LooseConfigurationObject> objects,
-            int forbiddenConstructionsStartId, int forbiddenConstructionEndId,
-            int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
+        private static ConfigurationWrapper ConfigurationWrapper
+        (
+            List<LooseConfigurationObject> objects, int forbiddenConstructionsStartId,
+            int forbiddenConstructionEndId, int forbiddenArgumentsStartId, int forbiddenArgumentsEndId
+        )
         {
             var forbiddenArgs = new Dictionary<int, IArgumentsListContainer>();
 
@@ -104,11 +110,14 @@ namespace GeoGen.Generator.Test.ConstructingObjects
             return new ConfigurationWrapper {ForbiddenArguments = forbiddenArgs};
         }
 
-        private static int ExecuteConstructionProcces(int numberOfConstructions, int argumentsPerConstruction,
-            int forbiddenConstructionsStartId, int forbiddenConstructionEndId, int constructionOutputCount,
-            int forbiddenArgumentsStartId, int forbiddenArgumentsEndId)
+        private static int ExecuteConstructionProcces
+        (
+            int numberOfConstructions, int argumentsPerConstruction, int forbiddenConstructionsStartId,
+            int forbiddenConstructionEndId, int constructionOutputCount, int forbiddenArgumentsStartId,
+            int forbiddenArgumentsEndId
+        )
         {
-            var objects = ConfigurationObjects.Objects(argumentsPerConstruction, ConfigurationObjectType.Point).ToList();
+            var objects = Objects(argumentsPerConstruction, ConfigurationObjectType.Point).ToList();
             var container = ConstructionsContainer(numberOfConstructions, constructionOutputCount);
             var argumentsGenerator = ArgumentsGenerator(objects);
             var wrapper = ConfigurationWrapper(objects, forbiddenConstructionsStartId, forbiddenConstructionEndId, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
@@ -121,7 +130,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [Test]
         public void Test_Constructor_Constructions_Container_Cant_Be_Null()
         {
-            var generator = Utilities.SimpleMock<IArgumentsGenerator>();
+            var generator = SimpleMock<IArgumentsGenerator>();
 
             Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(null, generator));
         }
@@ -129,7 +138,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [Test]
         public void Test_Constructor_Arguments_Generator_Cant_Be_Null()
         {
-            var container = Utilities.SimpleMock<IConstructionsContainer>();
+            var container = SimpleMock<IConstructionsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(container, null));
         }
@@ -137,8 +146,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [Test]
         public void Test_Configuration_Wrapper_Not_Cant_Be_Null()
         {
-            var container = Utilities.SimpleMock<IConstructionsContainer>();
-            var generator = Utilities.SimpleMock<IArgumentsGenerator>();
+            var container = SimpleMock<IConstructionsContainer>();
+            var generator = SimpleMock<IArgumentsGenerator>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -164,8 +173,10 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [TestCase(10, 20, 1, 1, 190)]
         [TestCase(10, 20, 1, 3, 170)]
         [TestCase(10, 20, 2, 20, 10)]
-        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_One_Output_Per_Construction(
-            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected)
+        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_One_Output_Per_Construction
+        (
+            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected
+        )
         {
             var count = ExecuteConstructionProcces(constructions, arguments, 1, constructions, 1, forbiddenStart, forbiddenEnd);
 
@@ -175,8 +186,10 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [TestCase(10, 20, 1, 1, 380)]
         [TestCase(10, 20, 1, 3, 340)]
         [TestCase(10, 20, 2, 20, 20)]
-        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_Two_Outputs_Per_Construction(
-            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected)
+        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_Two_Outputs_Per_Construction
+        (
+            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected
+        )
         {
             var count = ExecuteConstructionProcces(constructions, arguments, 1, constructions, 2, forbiddenStart, forbiddenEnd);
 
@@ -189,8 +202,10 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [TestCase(42, 666, 1, 27884)]
         [TestCase(666, 42, 2, 55768)]
         [TestCase(666, 666, 1, 443468)]
-        public void Test_With_Arguments_Forbidden_For_Few_Constructions(int constructions, int arguments,
-            int perConstruction, int expected)
+        public void Test_With_Arguments_Forbidden_For_Few_Constructions
+        (
+            int constructions, int arguments, int perConstruction, int expected
+        )
         {
             var count = ExecuteConstructionProcces(constructions, arguments, 10, 20, perConstruction, 10, 17);
 

@@ -36,7 +36,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
         /// <param name="intersetSeparator">The interset separator.</param>
         public ArgumentsListToStringProvider(DefaultObjectToStringProvider configurationObjectToString)
         {
-            _configurationObjectToString = configurationObjectToString;
+            _configurationObjectToString = configurationObjectToString ?? throw new ArgumentNullException(nameof(configurationObjectToString));
         }
 
         #endregion

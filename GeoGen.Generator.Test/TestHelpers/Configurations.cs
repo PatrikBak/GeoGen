@@ -29,5 +29,10 @@ namespace GeoGen.Generator.Test.TestHelpers
                 ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>()
             };
         }
+
+        public static Configuration AsConfiguration(IEnumerable<LooseConfigurationObject> objects)
+        {
+            return new Configuration(new HashSet<LooseConfigurationObject>(objects), new List<ConstructedConfigurationObject>());
+        }
     }
 }

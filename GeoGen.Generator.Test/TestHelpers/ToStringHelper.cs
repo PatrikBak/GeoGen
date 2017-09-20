@@ -6,7 +6,6 @@ using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
-using Moq;
 
 namespace GeoGen.Generator.Test.TestHelpers
 {
@@ -14,41 +13,21 @@ namespace GeoGen.Generator.Test.TestHelpers
     {
         public static string ArgsToString(IReadOnlyList<ConstructionArgument> arg)
         {
-            var resolver = new DefaultObjectIdResolver();
-            var def = new DefaultObjectToStringProvider(resolver);
+            var defaultResolver = new DefaultObjectIdResolver();
+            var defaultProvider = new DefaultObjectToStringProvider(defaultResolver);
 
-            return new ArgumentsListToStringProvider(def).ConvertToString(arg);
+            return new ArgumentsListToStringProvider(defaultProvider).ConvertToString(arg);
         }
 
-        public static string ConfigurationAsString(Configuration configuration, bool full = true)
+        public static string ConfigurationAsString(Configuration configuration)
         {
-            var provider = new ConfigurationToStringProvider();
-            var resolver = new DefaultObjectIdResolver();
-            var def = new DefaultObjectToStringProvider(resolver);
-            var argsToString = new ArgumentsListToStringProvider(def);
-            var objectToString = new CustomFullObjectToStringProvider(argsToString, resolver);
+            var configurationProvider = new ConfigurationToStringProvider();
+            var defaultResolver = new DefaultObjectIdResolver();
+            var defaultProvider = new DefaultObjectToStringProvider(defaultResolver);
+            var argsProvider = new ArgumentsListToStringProvider(defaultProvider);
+            var fullProvider = new CustomFullObjectToStringProvider(argsProvider, defaultResolver);
 
-            if (full)
-                return provider.ConvertToString(configuration, objectToString);
-
-            return provider.ConvertToString(configuration, def);
+            return configurationProvider.ConvertToString(configuration, fullProvider);
         }
-
-        public static string ObjectAsString(ConfigurationObject configurationObject)
-        {
-            if (configurationObject is LooseConfigurationObject)
-                return configurationObject.Id.Value.ToString();
-
-            var obj = configurationObject as ConstructedConfigurationObject;
-
-            var resolver = new DefaultObjectIdResolver();
-            var def = new DefaultObjectToStringProvider(resolver);
-            var argsToString = new ArgumentsListToStringProvider(def);
-
-            return $"{obj.Construction.Id}{argsToString.ConvertToString(obj.PassedArguments)}[{obj.Index}]";
-        }
-
-
-        
     }
 }

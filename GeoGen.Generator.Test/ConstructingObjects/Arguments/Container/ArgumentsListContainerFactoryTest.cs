@@ -1,8 +1,8 @@
 ﻿using System;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
 {
@@ -10,18 +10,23 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
     public class ArgumentsListContainerFactoryTest
     {
         [Test]
-        public void Arguments_To_String_Cannot_Be_Null()
+        public void Test_Arguments_To_String_Cannot_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new ArgumentsListContainerFactory(null));
         }
 
         [Test]
-        public void Factory_Returns_Someting()
+        public void Test_Factory_Returns_Distint_Objects()
         {
-            var provider = Utilities.SimpleMock<IArgumentsListToStringProvider>();
-            var obj = new ArgumentsListContainerFactory(provider).CreateContainer();
+            var provider = SimpleMock<IArgumentsListToStringProvider>();
+            var factory = new ArgumentsListContainerFactory(provider);
 
-            Assert.NotNull(obj);
+            var obj1 = factory.CreateContainer();
+            var obj2 = factory.CreateContainer();
+
+            Assert.NotNull(obj1);
+            Assert.NotNull(obj2);
+            Assert.AreNotSame(obj1, obj2);
         }
     }
 }

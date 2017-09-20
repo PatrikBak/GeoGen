@@ -14,13 +14,14 @@ using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations
 {
     [TestFixture]
     public class ConfigurationsContainerTest
     {
-        private static ConfigurationContainer Container()
+        private static ConfiguratonsContainer Container()
         {
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
@@ -38,7 +39,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                         {
                             var initialConfiguration = output.InitialConfiguration.Configuration;
                             var newObjects = output.ConstructedObjects;
-                            
+
                             var newConfiguration = new Configuration
                             (
                                 initialConfiguration.LooseObjects,
@@ -54,51 +55,51 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var constructor = mock.Object;
 
-            return new ConfigurationContainer(argumentsContainerFactory, constructor, configurationToStringProvider, configuationObjectContainer);
+            return new ConfiguratonsContainer(argumentsContainerFactory, constructor, configurationToStringProvider, configuationObjectContainer);
         }
 
         [Test]
-        public void Test_Argumnts_Container_Factory_Cant_Be_Null()
+        public void Test_Arguments_Container_Factory_Cant_Be_Null()
         {
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(null, handler, provider, container));
+            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(null, handler, provider, container));
         }
 
         [Test]
-        public void Test_Symetric_Configuration_Handler_Cant_Be_Null()
+        public void Test_COnfiguration_Contructor_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, null, provider, container));
+            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, null, provider, container));
         }
 
         [Test]
         public void Test_Configuration_To_String_Provider_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var container = Utilities.SimpleMock<IConfigurationObjectsContainer>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, handler, null, container));
+            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, handler, null, container));
         }
 
         [Test]
         public void Test_Objects_Container_Cant_Be_Null()
         {
-            var factory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
-            var handler = Utilities.SimpleMock<IConfigurationConstructor>();
-            var provider = Utilities.SimpleMock<IConfigurationToStringProvider>();
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfigurationContainer(factory, handler, provider, null));
+            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, handler, provider, null));
         }
 
         [Test]
-        public void Test_Initial_Configuration_Cant_Be_Null()
+        public void Test_Passed_Initial_Configuration_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
         }
@@ -127,7 +128,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                     }
                 )
             };
-
             var obj1 = ConfigurationObjects.ConstructedObject(42, 0, args1);
 
             var args2 = new List<ConstructionArgument>
@@ -142,7 +142,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                     }
                 )
             };
-
             var obj2 = ConfigurationObjects.ConstructedObject(42, 1, args2);
 
             var configuration = new Configuration
@@ -152,7 +151,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             );
 
             Assert.AreEqual(0, container.CurrentLayer.Count);
-
             container.Initialize(configuration);
 
             var currentLayer = container.CurrentLayer;
@@ -173,7 +171,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         }
 
         [Test]
-        public void Test_New_Layer_Is_Not_Null()
+        public void Test_Passed_New_Layer_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().AddLayer(null));
         }
@@ -210,7 +208,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var count = objects.Count;
 
-            for (var i = 0; i < 15; i++)
+            for (var iteration = 0; iteration < 15; iteration++)
             {
                 for (var a = 0; a < count; a++)
                 {

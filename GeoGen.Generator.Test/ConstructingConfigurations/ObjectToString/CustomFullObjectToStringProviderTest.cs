@@ -9,13 +9,26 @@ using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
 {
     [TestFixture]
     public class CustomFullObjectToStringProviderTest
     {
-        private static IObjectIdResolver _resolver;
+        private static IObjectIdResolver _objectIdResolver;
+
+        private static CustomFullObjectToStringProvider Provider(IObjectIdResolver resolver = null)
+        {
+            resolver = resolver ?? Resolver();
+            _objectIdResolver = resolver;
+
+            var defaultResolver = new DefaultObjectIdResolver();
+            var defaultProvider = new DefaultObjectToStringProvider(defaultResolver);
+            var argumentsProvider = new ArgumentsListToStringProvider(defaultProvider);
+
+            return new CustomFullObjectToStringProvider(argumentsProvider, resolver);
+        }
 
         private static IObjectIdResolver Resolver()
         {
@@ -27,51 +40,30 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
             return mock.Object;
         }
 
-        private static CustomFullObjectToStringProvider Provider(IObjectIdResolver resolver = null)
-        {
-            resolver = resolver ?? Resolver();
-            _resolver = resolver;
-
-            var defaultResolver = new DefaultObjectIdResolver();
-            var defaultProvider = new DefaultObjectToStringProvider(defaultResolver);
-
-
-            var argumentsProvider = new ArgumentsListToStringProvider(defaultProvider);
-
-            return new CustomFullObjectToStringProvider(argumentsProvider, resolver);
-        }
-
-
         [Test]
         public void Test_Arguments_Provider_Cant_Be_Null()
         {
-            var resolver = Utilities.SimpleMock<IObjectIdResolver>();
+            var resolver = SimpleMock<IObjectIdResolver>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new CustomFullObjectToStringProvider(null, resolver)
-            );
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProvider(null, resolver));
         }
 
         [Test]
-        public void Test_Arguments_Resolver_Cant_Be_Null()
+        public void Test_Object_Id_Resolver_Cant_Be_Null()
         {
-            var provider = Utilities.SimpleMock<IArgumentsListToStringProvider>();
+            var provider = SimpleMock<IArgumentsListToStringProvider>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new CustomFullObjectToStringProvider(provider, null)
-            );
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProvider(provider, null));
         }
 
         [Test]
-        public void Test_Object_Cant_Be_Null()
+        public void Test_Passed_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Provider().ConvertToString(null));
         }
 
         [Test]
-        public void Test_Loose_Objects_To_String()
+        public void Test_Loose_Object_To_String()
         {
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 42};
 
@@ -95,7 +87,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         public void Test_Constructed_Object_To_String()
         {
             var args = ConfigurationObjects.Objects(4, ConfigurationObjectType.Point, 0)
-                    .Select(o => new ObjectConstructionArgument(o) )
+                    .Select(o => new ObjectConstructionArgument(o))
                     .Cast<ConstructionArgument>()
                     .ToList();
 
@@ -113,10 +105,9 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
 
             var firstArgs = new List<ConstructionArgument>
             {
-                new ObjectConstructionArgument(looseObjects[0]) ,
+                new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[1])
             };
-
             var firstObject = ConfigurationObjects.ConstructedObject(42, 0, firstArgs, 42);
 
             var secondArgs = new List<ConstructionArgument>
@@ -125,18 +116,17 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
                 (
                     new HashSet<ConstructionArgument>
                     {
-                        new ObjectConstructionArgument(looseObjects[1]) ,
-                        new ObjectConstructionArgument(looseObjects[2]) ,
-                        new ObjectConstructionArgument(firstObject) 
+                        new ObjectConstructionArgument(looseObjects[1]),
+                        new ObjectConstructionArgument(looseObjects[2]),
+                        new ObjectConstructionArgument(firstObject)
                     }
-                ) 
+                )
             };
-
             var secondObject = ConfigurationObjects.ConstructedObject(42, 1, secondArgs, 43);
 
             var thirdArgs = new List<ConstructionArgument>
             {
-                new ObjectConstructionArgument(firstObject) ,
+                new ObjectConstructionArgument(firstObject),
                 new ObjectConstructionArgument(secondObject),
                 new SetConstructionArgument
                 (
@@ -146,22 +136,22 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
                         (
                             new HashSet<ConstructionArgument>
                             {
-                                new ObjectConstructionArgument(firstObject) ,
-                                new ObjectConstructionArgument(looseObjects[2]) 
+                                new ObjectConstructionArgument(firstObject),
+                                new ObjectConstructionArgument(looseObjects[2])
                             }
-                        ) ,
+                        ),
                         new SetConstructionArgument
                         (
                             new HashSet<ConstructionArgument>
                             {
-                                new ObjectConstructionArgument(looseObjects[0]) ,
-                                new ObjectConstructionArgument(looseObjects[1]) 
+                                new ObjectConstructionArgument(looseObjects[0]),
+                                new ObjectConstructionArgument(looseObjects[1])
                             }
-                        ) 
-                    }) 
+                        )
+                    })
             };
-
             var thirdObject = ConfigurationObjects.ConstructedObject(42, 1, thirdArgs, 44);
+
             var stringVersion = provider.ConvertToString(thirdObject);
             const string expected = "42(42(10,11),42({11;12;42(10,11)})[1],{{10;11};{12;42(10,11)}})[1]";
 
@@ -195,8 +185,8 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
 
             var newArgs = new List<ConstructionArgument>
             {
-                new ObjectConstructionArgument(constructedObject) ,
-                new ObjectConstructionArgument(constructedObject) 
+                new ObjectConstructionArgument(constructedObject),
+                new ObjectConstructionArgument(constructedObject)
             };
 
             var newObject = ConfigurationObjects.ConstructedObject(42, 0, newArgs, 43);
@@ -211,7 +201,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         {
             var resolver = Provider().Resolver;
 
-            Assert.AreEqual(_resolver, resolver);
+            Assert.AreEqual(_objectIdResolver, resolver);
         }
     }
 }

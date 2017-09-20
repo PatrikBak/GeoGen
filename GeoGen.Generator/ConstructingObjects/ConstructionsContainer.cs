@@ -11,8 +11,6 @@ namespace GeoGen.Generator.ConstructingObjects
 {
     /// <summary>
     /// A default implementation of <see cref="IConstructionsContainer"/>.
-    /// 
-    /// TODO: Initialization
     /// </summary>
     internal class ConstructionsContainer : IConstructionsContainer
     {
@@ -22,6 +20,11 @@ namespace GeoGen.Generator.ConstructingObjects
         /// The constructions list
         /// </summary>
         private readonly List<ConstructionWrapper> _constructions = new List<ConstructionWrapper>();
+
+        /// <summary>
+        /// Indicates if the container has been initialized.
+        /// </summary>
+        private bool _initialized;
 
         #endregion
 
@@ -35,28 +38,16 @@ namespace GeoGen.Generator.ConstructingObjects
         /// <param name="constructions"></param>
         public void Initialize(IEnumerable<Construction> constructions)
         {
-            if (constructions == null)
-                throw new ArgumentNullException(nameof(constructions));
-
-            // Enumerate
-            var constructionsList = constructions.ToList();
-
-            // Check distint ids
-            if (constructionsList.Select(c => c.Id).ToSet().Count != constructionsList.Count)
-                throw new ArgumentException("Passed constructions don't have unique ids.");
-
-            // Set new items to the container
-            _constructions.SetItems
-            (
-                constructionsList.Select
-                (
-                    construction => new ConstructionWrapper
-                    {
-                        Construction = construction,
-                        ObjectTypesToNeededCount = DetermineObjectTypesToCount(construction)
-                    }
-                )
-            );
+            try
+            {
+                DoInitialization(constructions);
+                _initialized = true;
+            }
+            catch (Exception)
+            {
+                _initialized = false;
+                throw;
+            }
         }
 
         /// <summary>
@@ -106,10 +97,39 @@ namespace GeoGen.Generator.ConstructingObjects
 
         #endregion
 
+        private void DoInitialization(IEnumerable<Construction> constructions)
+        {
+            if (constructions == null)
+                throw new ArgumentNullException(nameof(constructions));
+
+            // Enumerate
+            var constructionsList = constructions.ToList();
+
+            // Check distint ids
+            if (constructionsList.Select(c => c.Id).ToSet().Count != constructionsList.Count)
+                throw new ArgumentException("Passed constructions don't have unique ids.");
+
+            // Set new items to the container
+            _constructions.SetItems
+            (
+                constructionsList.Select
+                (
+                    construction => new ConstructionWrapper
+                    {
+                        Construction = construction,
+                        ObjectTypesToNeededCount = DetermineObjectTypesToCount(construction)
+                    }
+                )
+            );
+        }
+
         #region IEnumerable methods
 
         public IEnumerator<ConstructionWrapper> GetEnumerator()
         {
+            if (!_initialized)
+                throw new GeneratorException("The container hasn't been initialized.");
+
             return _constructions.GetEnumerator();
         }
 

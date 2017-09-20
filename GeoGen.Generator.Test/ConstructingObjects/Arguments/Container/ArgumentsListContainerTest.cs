@@ -8,24 +8,13 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolvi
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 
 namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
 {
     [TestFixture]
     public class ArgumentsListContainerTest
     {
-        private static int _lastConfigurationObjectId;
-
-        private static ObjectConstructionArgument NextArgument()
-        {
-            var cObject = new LooseConfigurationObject(ConfigurationObjectType.Point)
-            {
-                Id = _lastConfigurationObjectId++
-            };
-
-            return new ObjectConstructionArgument(cObject);
-        }
-
         private static ArgumentsListContainer Container()
         {
             var idResolver = new DefaultObjectIdResolver();
@@ -36,24 +25,28 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
         }
 
         [Test]
-        public void Test_Arguments_To_String_Provider_Cannot_Be_Null()
+        public void Test_Arguments_To_String_Provider_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new ArgumentsListContainer(null));
         }
 
         [Test]
-        public void Test_Container_Cannot_Be_Null()
+        public void Test_Container_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().RemoveElementsFrom(null));
         }
 
         [Test]
-        public void Test_Container_One_Set_Two_Elements()
+        public void Test_Container_One_Set_With_Two_Elements()
         {
             var container = Container();
 
-            var a1 = NextArgument();
-            var a2 = NextArgument();
+            var args = Objects(2, ConfigurationObjectType.Point)
+                    .Select(obj => new ObjectConstructionArgument(obj))
+                    .ToList();
+
+            var a1 = args[0];
+            var a2 = args[1];
 
             var set1 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a2});
             var set2 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a2, a1});
@@ -69,9 +62,13 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
         {
             var container = Container();
 
-            var a1 = NextArgument();
-            var a2 = NextArgument();
-            var a3 = NextArgument();
+            var args = Objects(3, ConfigurationObjectType.Point)
+                    .Select(obj => new ObjectConstructionArgument(obj))
+                    .ToList();
+
+            var a1 = args[0];
+            var a2 = args[1];
+            var a3 = args[2];
 
             var set1 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a2});
             var set2 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a2, a1});
@@ -89,10 +86,14 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
         {
             var container = Container();
 
-            var a1 = NextArgument();
-            var a2 = NextArgument();
-            var a3 = NextArgument();
-            var a4 = NextArgument();
+            var args = Objects(4, ConfigurationObjectType.Point)
+                    .Select(obj => new ObjectConstructionArgument(obj))
+                    .ToList();
+
+            var a1 = args[0];
+            var a2 = args[1];
+            var a3 = args[2];
+            var a4 = args[3];
 
             var set1 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a2});
             var set2 = new SetConstructionArgument(new HashSet<ConstructionArgument> {a1, a3});
@@ -113,9 +114,11 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
         }
 
         [Test]
-        public void Test_Remove_Elements_From()
+        public void Test_Remove_Elements_From_The_Given_Containr()
         {
-            var args = Enumerable.Range(0, 15).Select(i => new List<ConstructionArgument> {NextArgument()}).ToList();
+            var args = Objects(15, ConfigurationObjectType.Point)
+                    .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
+                    .ToList();
 
             var container = Container();
 

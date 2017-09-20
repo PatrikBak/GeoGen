@@ -26,7 +26,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.ArgumentsListToStr
             return objectProvider;
         }
 
-        private static IObjectToStringProvider ArgumentProvider()
+        private static IObjectToStringProvider CustomObjectProvider()
         {
             var mock = new Mock<IObjectToStringProvider>();
             mock.Setup(s => s.ConvertToString(It.IsAny<ConfigurationObject>()))
@@ -34,28 +34,27 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.ArgumentsListToStr
 
             return mock.Object;
         }
-        
+
         [Test]
         public void Test_Default_Provider_Cant_Be_Null()
         {
-            // TODO: FiX
-            //Assert.Throws<ArgumentNullException>(() => new ArgumentsListToStringProvider(null));
+            Assert.Throws<ArgumentNullException>(() => new ArgumentsListToStringProvider(null));
         }
 
         [Test]
-        public void Test_List_Cant_Be_Null()
+        public void Test_Passed_List_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Provider().ConvertToString(null));
         }
 
         [Test]
-        public void Test_List_Cant_Be_Empty()
+        public void Test_Passed_List_Cant_Be_Empty()
         {
             Assert.Throws<ArgumentException>(() => Provider().ConvertToString(new List<ConstructionArgument>()));
         }
 
         [Test]
-        public void Test_Object_To_String_Provider_Cant_Be_Null()
+        public void Test_Passed_Object_To_String_Provider_Cant_Be_Null()
         {
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1};
             var argument = new ObjectConstructionArgument(looseObject);
@@ -65,21 +64,21 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.ArgumentsListToStr
         }
 
         [Test]
-        public void Test_One_Object()
+        public void Test_One_Simple_Argument()
         {
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1};
             var argument = new ObjectConstructionArgument(looseObject);
             var args = new List<ConstructionArgument> {argument};
 
             var result1 = Provider().ConvertToString(args);
-            var result2 = Provider().ConvertToString(args, ArgumentProvider());
+            var result2 = Provider().ConvertToString(args, CustomObjectProvider());
 
             Assert.AreEqual("(1)", result1);
             Assert.AreEqual("(2)", result2);
         }
 
         [Test]
-        public void Test_More_Objects()
+        public void Test_More_Simple_Arguments()
         {
             var looseObject1 = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1};
             var looseObject2 = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 2};
@@ -91,7 +90,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.ArgumentsListToStr
             var args = new List<ConstructionArgument> {argument1, argument2, argument3};
 
             var result1 = Provider().ConvertToString(args);
-            var result2 = Provider().ConvertToString(args, ArgumentProvider());
+            var result2 = Provider().ConvertToString(args, CustomObjectProvider());
 
             Assert.AreEqual("(1,2,3)", result1);
             Assert.AreEqual("(2,3,4)", result2);
@@ -114,7 +113,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.ArgumentsListToStr
             var finalList = new List<ConstructionArgument> {argument1, finalSet, argument3};
 
             var result1 = Provider().ConvertToString(finalList);
-            var result2 = Provider().ConvertToString(finalList, ArgumentProvider());
+            var result2 = Provider().ConvertToString(finalList, CustomObjectProvider());
 
             Assert.AreEqual("(1,{{1;2};{2;3}},3)", result1);
             Assert.AreEqual("(2,{{2;3};{3;4}},4)", result2);

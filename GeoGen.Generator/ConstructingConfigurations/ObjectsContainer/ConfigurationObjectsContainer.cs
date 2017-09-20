@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities.StringBasedContainer;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 
@@ -75,6 +76,24 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
         #region IConfigurationObjectsContainer methods
 
         /// <summary>
+        /// Initializes the container with a given configuratin.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        public void Initialize(Configuration configuration)
+        {
+            try
+            {
+                DoInitialization(configuration);
+                _initialized = true;
+            }
+            catch (Exception)
+            {
+                _initialized = false;
+                throw;
+            }
+        }
+
+        /// <summary>
         /// Adds a given object to a container. The current id of the
         /// object will be gnored.If an equal version of the object 
         /// is present in the container, it will return instance of 
@@ -115,24 +134,6 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             return constructedConfigurationObject;
         }
 
-        /// <summary>
-        /// Initializes the container with a given configuratin.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        public void Initialize(Configuration configuration)
-        {
-            try
-            {
-                DoInitialization(configuration);
-                _initialized = true;
-            }
-            catch (Exception)
-            {
-                _initialized = false;
-                throw;
-            }
-        }
-
         #endregion
 
         #region Private methods
@@ -151,6 +152,10 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             // Clear the id dictionary
             _idToObjectDictionary.Clear();
 
+            // Clear cache of the object to string provider
+            ConfigurationObjectToStringProvider.ClearCache();
+
+            // Initialize counter
             var counter = 1;
 
             // Add loose objects to the container
@@ -165,18 +170,20 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
                 // Get the string version of the object
                 var stringVersion = ConfigurationObjectToStringProvider.ConvertToString(looseConfigurationObject);
 
-                // Add the version to the container and to the id dictionary
+                // Add the version to the container
                 Items.Add(stringVersion, looseConfigurationObject);
+
+                // Add the object to the id dictionary
                 _idToObjectDictionary.Add(id, looseConfigurationObject);
             }
 
             // Pull constructed objects
             var constructedObjects = configuration.ConstructedObjects;
 
-            // Add objects to the container
+            // Initialize all of them
             foreach (var constructedObject in constructedObjects)
             {
-                InitializeConstructedObject(constructedObject, false);
+                InitializeConstructedObject(constructedObject);
             }
         }
 
@@ -196,21 +203,73 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
                 configurationObject.Id = null;
             }
 
-            // TODO: Null ids of interior objcets
+            void NullIdsOfIteriorObjects(ConstructionArgument argument)
+            {
+                if (argument is ObjectConstructionArgument objectArgument)
+                {
+                    var passedObject = objectArgument.PassedObject;
+
+                    passedObject.Id = null;
+
+                    if (passedObject is LooseConfigurationObject)
+                        return;
+
+                    var args = ((ConstructedConfigurationObject) passedObject).PassedArguments;
+
+                    foreach (var constructionArgument in args)
+                    {
+                        NullIdsOfIteriorObjects(constructionArgument);
+                    }
+
+                    return;
+                }
+
+                var setArgument = (SetConstructionArgument) argument ?? throw new GeneratorException("Unhandled case");
+
+                foreach (var passedArgument in setArgument.PassedArguments)
+                {
+                    NullIdsOfIteriorObjects(passedArgument);
+                }
+            }
+
+            var allArguments = configuration.ConstructedObjects.SelectMany(obj => obj.PassedArguments);
+
+            foreach (var argument in allArguments)
+            {
+                NullIdsOfIteriorObjects(argument);
+            }
         }
 
-        private void InitializeConstructedObject(ConstructedConfigurationObject constructedObject, bool passedAsArgument)
+        private void InitializeConstructedObject(ConstructedConfigurationObject constructedObject)
         {
-            // If the object is passed as argument
-            if (passedAsArgument)
+            void ValidateInterior(ConstructionArgument argument)
             {
-                // Then it must be already in the container, so
-                // it must have set the id. If it doesn't, we have a problem
-                if (!constructedObject.Id.HasValue)
-                    UnconstructableException();
+                if (argument is ObjectConstructionArgument objArgument)
+                {
+                    var passedObject = objArgument.PassedObject;
 
-                // Otherwise this object has already been initialized so we're fine
-                return;
+                    if (!passedObject.Id.HasValue)
+                        ThrowUnconstructableObjectException();
+
+                    if (passedObject is LooseConfigurationObject)
+                        return;
+
+                    var args = ((ConstructedConfigurationObject) passedObject).PassedArguments;
+
+                    foreach (var interiorArgument in args)
+                    {
+                        ValidateInterior(interiorArgument);
+                    }
+
+                    return;
+                }
+
+                var setArgument = (SetConstructionArgument) argument ?? throw new GeneratorException("Unhandled case");
+
+                foreach (var passedArgument in setArgument.PassedArguments)
+                {
+                    ValidateInterior(passedArgument);
+                }
             }
 
             // If the object has value, then we have duplicate objects, since it's impossible
@@ -218,17 +277,23 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             if (constructedObject.Id.HasValue)
                 throw new InitializationException("Duplicate objects");
 
+            foreach (var passedArgument in constructedObject.PassedArguments)
+            {
+                ValidateInterior(passedArgument);
+            }
+
             // Now we can freely add the object to the container
             var result = Add(constructedObject);
 
             // If we already have this object in the container, we have a problem
             if (result != constructedObject)
                 throw new InitializationException("Duplicate objects");
-
-            // Otherwise we're fine. The id of the object is set.
         }
 
-       private void UnconstructableException() => throw new InitializationException("Configuration is not constructable");
+        private static void ThrowUnconstructableObjectException()
+        {
+            throw new InitializationException("Configuration is not constructable");
+        }
 
         #endregion
 

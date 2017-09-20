@@ -7,7 +7,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
     /// <summary>
     /// Represents a container for all generated configurations. 
     /// </summary>
-    internal interface IConfigurationContainer
+    internal interface IConfigurationsContainer
     {
         /// <summary>
         /// Initializes the container with a given initial configuration.

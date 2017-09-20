@@ -13,9 +13,9 @@ using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 namespace GeoGen.Generator.ConstructingConfigurations
 {
     /// <summary>
-    /// A default implementation of <see cref="IConfigurationContainer"/>.
+    /// A default implementation of <see cref="IConfigurationsContainer"/>.
     /// </summary>
-    internal class ConfigurationContainer : StringBasedContainer<Configuration>, IConfigurationContainer
+    internal class ConfiguratonsContainer : StringBasedContainer<Configuration>, IConfigurationsContainer
     {
         #region Private fields
 
@@ -62,7 +62,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// <param name="configurationConstructor">The symetrc configurations handler.</param>
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
-        public ConfigurationContainer
+        public ConfiguratonsContainer
         (
             IArgumentsListContainerFactory argumentsListContainerFactory,
             IConfigurationConstructor configurationConstructor,

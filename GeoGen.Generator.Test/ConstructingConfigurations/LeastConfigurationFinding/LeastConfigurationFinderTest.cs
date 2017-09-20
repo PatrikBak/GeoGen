@@ -12,71 +12,69 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolvi
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.LeastConfigurationFinding
 {
     [TestFixture]
     public class LeastConfigurationFinderTest
     {
-        private LeastConfigurationFinder Finder(IEnumerable<LooseConfigurationObject> objects)
+        private static LeastConfigurationFinder Finder(IEnumerable<LooseConfigurationObject> objects)
         {
             var resolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(resolver);
-            var argsProvider = new ArgumentsListToStringProvider(defaultToString);
-            var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsProvider);
+            var argsListToString = new ArgumentsListToStringProvider(defaultToString);
+            var fullObjectToStringFactory = new CustomFullObjectToStringProviderFactory(argsListToString);
             var variationsProvider = new VariationsProvider<LooseConfigurationObject>();
             var configurationToString = new ConfigurationToStringProvider();
-            var container = new DictionaryObjectIdResolversContainer(variationsProvider);
-            container.Initialize(objects.ToList());
+            var dicionaryResolversContainer = new DictionaryObjectIdResolversContainer(variationsProvider);
+            dicionaryResolversContainer.Initialize(objects.ToList());
 
-            return new LeastConfigurationFinder(configurationToString, objectToStringFactory, container);
+            return new LeastConfigurationFinder(configurationToString, fullObjectToStringFactory, dicionaryResolversContainer);
         }
 
-        private string AsString(DictionaryObjectIdResolver resolver, IEnumerable<ConfigurationObject> objects)
+        private static string AsString(DictionaryObjectIdResolver resolver, IEnumerable<ConfigurationObject> objects)
         {
             return string.Join(" ", objects.Select(obj => resolver.ResolveId(obj).ToString()));
         }
 
         [Test]
-        public void Container_Not_Null()
+        public void Test_Container_Cant_Be_Null()
         {
-            var toString = Utilities.SimpleMock<IConfigurationToStringProvider>();
-            var factory = Utilities.SimpleMock<ICustomFullObjectToStringProviderFactory>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var factory = SimpleMock<ICustomFullObjectToStringProviderFactory>();
 
-            Assert.Throws<ArgumentNullException>(() => new LeastConfigurationFinder(toString, factory, null));
+            Assert.Throws<ArgumentNullException>(() => new LeastConfigurationFinder(provider, factory, null));
         }
 
         [Test]
-        public void Configuration_To_String_Provider_Not_Null()
+        public void Test_Configuration_To_String_Provider_Cant_Be_Null()
         {
-            var container = Utilities.SimpleMock<IDictionaryObjectIdResolversContainer>();
-            var factory = Utilities.SimpleMock<ICustomFullObjectToStringProviderFactory>();
+            var container = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var factory = SimpleMock<ICustomFullObjectToStringProviderFactory>();
 
             Assert.Throws<ArgumentNullException>(() => new LeastConfigurationFinder(null, factory, container));
         }
 
         [Test]
-        public void Factory_Not_Null()
+        public void Test_Factory_Cant_Be_Null()
         {
-            var container = Utilities.SimpleMock<IDictionaryObjectIdResolversContainer>();
-            var toString = Utilities.SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
 
-            Assert.Throws<ArgumentNullException>(() => new LeastConfigurationFinder(toString, null, container));
+            Assert.Throws<ArgumentNullException>(() => new LeastConfigurationFinder(provider, null, container));
         }
 
         [Test]
-        public void Configuration_Not_Null()
+        public void Test_Passed_Configuration_Cant_Be_Null()
         {
             var points = ConfigurationObjects.Objects(1, ConfigurationObjectType.Point);
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => Finder(points).FindLeastConfiguration(null)
-            );
+            Assert.Throws<ArgumentNullException>(() => Finder(points).FindLeastConfiguration(null));
         }
 
         [Test]
-        public void Only_Loose_Points_Test()
+        public void Test_Configuation_With_Only_Loose_Points()
         {
             var objects = ConfigurationObjects.Objects(3, ConfigurationObjectType.Point, 0);
             var configuration = new Configuration(objects.ToSet(), new List<ConstructedConfigurationObject>());
@@ -88,7 +86,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.LeastConfigurationFin
         }
 
         [Test]
-        public void One_Midpoint_Test()
+        public void Test_One_Midpoint_Configuration()
         {
             var objects = ConfigurationObjects.Objects(3, ConfigurationObjectType.Point, 0);
             var args = new List<ConstructionArgument>

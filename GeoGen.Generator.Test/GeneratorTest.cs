@@ -16,7 +16,7 @@ namespace GeoGen.Generator.Test
     [TestFixture]
     public class GeneratorTest
     {
-        private static Generator CreateTestGenerator(int constructorDuplicationCount, int iterations)
+        private static Generator Generator(int constructorDuplicationCount, int iterations)
         {
             // create configurations list containing a single dummy configuration
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
@@ -43,7 +43,7 @@ namespace GeoGen.Generator.Test
 
             // setup container mock so it returns configurations and overrides them when we're
             // adding a new layer
-            var containterMock = new Mock<IConfigurationContainer>();
+            var containterMock = new Mock<IConfigurationsContainer>();
             containterMock.Setup(c => c.CurrentLayer).Returns(() => configurations);
             containterMock.Setup(c => c.AddLayer(It.IsAny<List<ConstructorOutput>>()))
                     .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
@@ -93,26 +93,26 @@ namespace GeoGen.Generator.Test
         [TestCase(2, 3, 11)]
         [TestCase(3, 2, 10)]
         [TestCase(10, 5, 111105)]
-        public void GenerationTest_When_We_Generate_One_From_Each(int duplication, int iterations, int expected)
+        public void Test_When_We_Generate_One_From_Each(int duplication, int iterations, int expected)
         {
-            var generator = CreateTestGenerator(duplication, iterations);
+            var generator = Generator(duplication, iterations);
             Assert.AreEqual(expected, generator.Generate().Count());
         }
 
         [TestCase(-42)]
         [TestCase(-1)]
         [TestCase(0)]
-        public void Generator_Number_Of_Iterations_Is_At_Least_One(int number)
+        public void Test_Number_Of_Iterations_Is_At_Least_One(int number)
         {
             var constructor = SimpleMock<IObjectsConstructor>();
-            var container = SimpleMock<IConfigurationContainer>();
+            var container = SimpleMock<IConfigurationsContainer>();
             var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(container, constructor, handler, number));
         }
 
         [Test]
-        public void Generator_Container_Cannot_Be_Null()
+        public void Test_Generator_Container_Cannot_Be_Null()
         {
             var constructor = SimpleMock<IObjectsConstructor>();
             var handler = SimpleMock<IConfigurationsHandler>();
@@ -121,19 +121,19 @@ namespace GeoGen.Generator.Test
         }
 
         [Test]
-        public void Generator_Constructor_Cannot_Be_Null()
+        public void Test_Generator_Constructor_Cannot_Be_Null()
         {
-            var container = SimpleMock<IConfigurationContainer>();
+            var container = SimpleMock<IConfigurationsContainer>();
             var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, null, handler, 1));
         }
 
         [Test]
-        public void Generator_Handler_Cannot_Be_Null()
+        public void Test_Generator_Handler_Cannot_Be_Null()
         {
             var constructor = SimpleMock<IObjectsConstructor>();
-            var container = SimpleMock<IConfigurationContainer>();
+            var container = SimpleMock<IConfigurationsContainer>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, constructor, null, 1));
         }

@@ -10,8 +10,11 @@ using GeoGen.Generator.ConstructingObjects.Arguments;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Configurations;
+using static GeoGen.Generator.Test.TestHelpers.Constructions;
+using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
+using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
 {
@@ -34,9 +37,9 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [Test]
         public void Test_Combinator_Cant_Be_Null()
         {
-            var variationsProvider = Utilities.SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var matcherFactory = Utilities.SimpleMock<IConstructionSignatureMatcherFactory>();
-            var argumentsFactory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -47,9 +50,9 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [Test]
         public void Test_Variations_Provider_Cant_Be_Null()
         {
-            var combinator = Utilities.SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var matcherFactory = Utilities.SimpleMock<IConstructionSignatureMatcherFactory>();
-            var argumentsFactory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -60,9 +63,9 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [Test]
         public void Test_Signature_Matcher_Cant_Be_Null()
         {
-            var combinator = Utilities.SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var variationsProvider = Utilities.SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var argumentsFactory = Utilities.SimpleMock<IArgumentsListContainerFactory>();
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -73,9 +76,9 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [Test]
         public void Test_Arguments_Container_Cant_Be_Null()
         {
-            var combinator = Utilities.SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var variationsProvider = Utilities.SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var matcherFactory = Utilities.SimpleMock<IConstructionSignatureMatcherFactory>();
+            var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
+            var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
+            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
@@ -84,20 +87,20 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         }
 
         [Test]
-        public void Test_Construction_Wrapper_Cant_Be_Null()
+        public void Test_Passed_Construction_Wrapper_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => ArgumentsGenerator().GenerateArguments(Configurations.Configuration(1, 1, 1), null)
+                () => ArgumentsGenerator().GenerateArguments(Configuration(1, 1, 1), null)
             );
         }
 
         [Test]
-        public void Test_Configuration_Wrapper_Cant_Be_Null()
+        public void Test_Passed_Configuration_Wrapper_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => ArgumentsGenerator().GenerateArguments(null, Constructions.CrazyConstruction())
+                () => ArgumentsGenerator().GenerateArguments(null, CrazyConstruction())
             );
         }
 
@@ -107,8 +110,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(20, 0, 0, 190)]
         public void Test_Midpoint(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.Midpoint();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = Midpoint();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -121,8 +124,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(15, 10, 11, 4095)]
         public void Test_Intersection(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.Intersection();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = Intersection();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -135,8 +138,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(15, 10, 11, 1365)]
         public void Test_Projection(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.Projection();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = Projection();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -149,8 +152,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(17, 10, 0, 0)]
         public void Test_CircleCenter(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.CircleCenter();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = CircleCenter();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -164,8 +167,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(11, 10, 11, 165)]
         public void Test_Circum_Circle(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.CircumCircle();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = CircumCircle();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -178,8 +181,8 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase(6, 6, 6, 7200)]
         public void Test_CrazyConstruction(int point, int lines, int circles, int expected)
         {
-            var construction = Constructions.CrazyConstruction();
-            var configuration = Configurations.Configuration(point, lines, circles);
+            var construction = CrazyConstruction();
+            var configuration = Configuration(point, lines, circles);
 
             var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
             Assert.AreEqual(expected, result.Count);
@@ -190,12 +193,12 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         [TestCase("({8;9})")]
         public void Test_Midpoint_Existence_Of_Arguments(string argument)
         {
-            var construction = Constructions.Midpoint();
-            var configuration = Configurations.Configuration(10, 4, 4);
+            var construction = Midpoint();
+            var configuration = Configuration(10, 4, 4);
 
             var result = ArgumentsGenerator()
                     .GenerateArguments(configuration, construction)
-                    .Select(ToStringHelper.ArgsToString)
+                    .Select(ArgsToString)
                     .ToList();
 
             var contains = result.Any(s => s.Equals(argument));
@@ -209,12 +212,12 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
         {
             // Points are [1-6], Lines are [7-12], Circles are [13-18]
-            var construction = Constructions.CrazyConstruction();
-            var configuration = Configurations.Configuration(6, 6, 6);
+            var construction = CrazyConstruction();
+            var configuration = Configuration(6, 6, 6);
 
             var result = ArgumentsGenerator()
                     .GenerateArguments(configuration, construction)
-                    .Select(ToStringHelper.ArgsToString)
+                    .Select(ArgsToString)
                     .ToList();
 
             var contains = result.Any(s => s.Equals(argument));

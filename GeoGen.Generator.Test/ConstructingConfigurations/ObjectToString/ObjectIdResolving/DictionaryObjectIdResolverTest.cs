@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.ObjectIdResolving
 {
@@ -19,19 +19,19 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Dictionary_Cant_Be_Null()
+        public void Test_Passed_Dictionary_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolver(1, null));
         }
 
         [Test]
-        public void Test_Object_Cant_Be_Null()
+        public void Test_Passed_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Resolver().ResolveId(null));
         }
 
         [Test]
-        public void Test_Object_Must_Have_Id()
+        public void Test_Passed_Object_Must_Have_Id()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
@@ -49,7 +49,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         [Test]
         public void Test_Objects_Id_Is_Fine()
         {
-            var objs = ConfigurationObjects.Objects(42, ConfigurationObjectType.Point, 0);
+            var objs = Objects(42, ConfigurationObjectType.Point, 0);
 
             var resolver = Resolver();
 
@@ -62,7 +62,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Id_Is_Set()
+        public void Test_Id_Of_Resolver_Is_Set()
         {
             var id = Resolver().Id;
 
@@ -70,7 +70,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Id_Cant_Be_Default()
+        public void Test_Id_Of_Resolver_Cant_Be_Default()
         {
             var id = DefaultObjectIdResolver.DefaultId;
             var dictionary = new Dictionary<int, int>();

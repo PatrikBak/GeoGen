@@ -93,6 +93,14 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
             Cache.TryAdd(configurationObjectId, stringVersion);
         }
 
+        /// <summary>
+        /// Clears the cache of the provider.
+        /// </summary>
+        public void ClearCache()
+        {
+            Cache.Clear();
+        }
+
         #endregion
     }
 }

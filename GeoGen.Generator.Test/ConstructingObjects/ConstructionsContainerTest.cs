@@ -4,8 +4,8 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Generator.ConstructingObjects;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Constructions;
 
 namespace GeoGen.Generator.Test.ConstructingObjects
 {
@@ -19,15 +19,15 @@ namespace GeoGen.Generator.Test.ConstructingObjects
 
         private static IEnumerable<Construction> CorrectConstructions()
         {
-            return new List<Construction>
+            return new List<ConstructionWrapper>
             {
-                Constructions.Midpoint().Construction,
-                Constructions.Intersection().Construction,
-                Constructions.Projection().Construction,
-                Constructions.CircleCenter().Construction,
-                Constructions.CircumCircle().Construction,
-                Constructions.CrazyConstruction().Construction
-            };
+                Midpoint(),
+                Intersection(),
+                Projection(),
+                CircleCenter(),
+                CircumCircle(),
+                CrazyConstruction()
+            }.Select(wrapper => wrapper.Construction);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
 
             foreach (var ids in constructionIds)
             {
-                var constructions = Constructions.ConstructionsWithId(ids);
+                var constructions = ConstructionsWithId(ids);
                 Assert.Throws<ArgumentException>(() => Container().Initialize(constructions));
             }
         }
@@ -90,10 +90,52 @@ namespace GeoGen.Generator.Test.ConstructingObjects
 
             for (var i = 0; i < dictionaries.Count; i++)
             {
-                Assert.AreEqual(Value(ConfigurationObjectType.Point,i), result[i][0]);
+                Assert.AreEqual(Value(ConfigurationObjectType.Point, i), result[i][0]);
                 Assert.AreEqual(Value(ConfigurationObjectType.Line, i), result[i][1]);
                 Assert.AreEqual(Value(ConfigurationObjectType.Circle, i), result[i][2]);
             }
+        }
+
+        [Test]
+        public void Test_Iterating_Over_Not_Initialized_Container()
+        {
+            var container = Container();
+
+            Assert.Throws<GeneratorException>(() => container.FirstOrDefault());
+        }
+
+        [Test]
+        public void Test_Iterating_Over_Incorrectly_Reinitialized_Container()
+        {
+            var container = Container();
+
+            container.Initialize(CorrectConstructions());
+
+            try
+            {
+                container.Initialize(null);
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
+
+            Assert.Throws<GeneratorException>(() => container.FirstOrDefault());
+        }
+
+        [Test]
+        public void Test_Correct_Reinitialization()
+        {
+            var container = Container();
+            var constructions = CorrectConstructions().ToList();
+            container.Initialize(constructions);
+
+            Assert.AreEqual(6, container.Count());
+            constructions.RemoveRange(1, 2);
+            Assert.AreEqual(6, container.Count());
+
+            container.Initialize(constructions);
+            Assert.AreEqual(4, container.Count());
         }
     }
 }

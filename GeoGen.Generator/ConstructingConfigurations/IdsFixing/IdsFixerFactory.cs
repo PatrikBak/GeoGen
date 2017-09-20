@@ -52,6 +52,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         /// <returns>The ids fixer.</returns>
         public IIdsFixer CreateFixer(DictionaryObjectIdResolver resolver)
         {
+            if (resolver == null)
+                throw new ArgumentNullException(nameof(resolver));
+
             var id = resolver.Id;
 
             if (_cache.ContainsKey(id))

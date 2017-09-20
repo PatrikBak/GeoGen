@@ -5,8 +5,8 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
-using GeoGen.Generator.Test.TestHelpers;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.Configurations;
 
 namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
 {
@@ -17,7 +17,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         {
             var matcher = new ConstructionSignatureMatcher();
 
-            matcher.Initialize(Configurations.Configuration(5, 0, 1).ConfigurationObjectsMap);
+            matcher.Initialize(Configuration(5, 0, 1).ConfigurationObjectsMap);
 
             return matcher;
         }
@@ -85,7 +85,10 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
             var set = (SetConstructionArgument) match[0];
             Assert.AreEqual(2, set.PassedArguments.Count);
 
-            bool Contains(int id) => set.PassedArguments.Any(e => ((ObjectConstructionArgument) e).PassedObject.Id == id);
+            bool Contains(int id)
+            {
+                return set.PassedArguments.Any(e => ((ObjectConstructionArgument) e).PassedObject.Id == id);
+            }
 
             Assert.IsTrue(Contains(1));
             Assert.IsTrue(Contains(2));

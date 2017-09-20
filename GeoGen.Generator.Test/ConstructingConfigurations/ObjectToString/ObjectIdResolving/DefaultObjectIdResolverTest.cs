@@ -14,13 +14,13 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Object_Cant_Be_Null()
+        public void Test_Passed_Object_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Resolver().ResolveId(null));
         }
 
         [Test]
-        public void Test_Objects_Id_Must_Be_Set()
+        public void Test_Passed_Object_Must_Have_Id()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
@@ -28,7 +28,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Objects_Id_Is_Fine()
+        public void Test_Passed_Correct_Object_With_Id()
         {
             var obj = new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 42};
             var id = Resolver().ResolveId(obj);
@@ -37,7 +37,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Id_Is_set()
+        public void Test_Id_Of_Resolver_Is_Set_To_Default()
         {
             var id = Resolver().Id;
 

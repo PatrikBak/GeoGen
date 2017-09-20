@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects;
 
@@ -21,7 +16,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The configuration container.
         /// </summary>
-        private readonly IConfigurationContainer _configurationContainer;
+        private readonly IConfigurationsContainer _configurationsContainer;
 
         /// <summary>
         /// The configuration handler.
@@ -45,18 +40,18 @@ namespace GeoGen.Generator
         /// <summary>
         /// Constructs a new generator with all it's needed dependencies and a given number of iterations.
         /// </summary>
-        /// <param name="configurationContainer">The container</param>
+        /// <param name="configurationsContainer">The container</param>
         /// <param name="objectsConstructor">The configuration constructor</param>
         /// <param name="configurationsHandler">The configurations handler</param>
         /// <param name="maximalNumberOfIterations">The maximal number of iterations.</param>
-        internal Generator(IConfigurationContainer configurationContainer, IObjectsConstructor objectsConstructor,
+        internal Generator(IConfigurationsContainer configurationsContainer, IObjectsConstructor objectsConstructor,
                            IConfigurationsHandler configurationsHandler, int maximalNumberOfIterations)
         {
             if (maximalNumberOfIterations <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximalNumberOfIterations), "Number of iterations must be at least one");
 
             _maximalNumberOfIterations = maximalNumberOfIterations;
-            _configurationContainer = configurationContainer ?? throw new ArgumentNullException(nameof(objectsConstructor));
+            _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(objectsConstructor));
             _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(objectsConstructor));
             _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
         }
@@ -89,7 +84,7 @@ namespace GeoGen.Generator
         private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
         {
             // TODO: Parallel ForEach with ConcurrentBag seems faster
-            var newLayerConfigurations = _configurationContainer
+            var newLayerConfigurations = _configurationsContainer
                     // get the current layer
                     .CurrentLayer
                     //.AsParallel() // 37 seconds 
@@ -99,10 +94,10 @@ namespace GeoGen.Generator
                     .ToList();
             
             // make container aware of the new layer
-            _configurationContainer.AddLayer(newLayerConfigurations);
+            _configurationsContainer.AddLayer(newLayerConfigurations);
 
             // get the current (new) layer
-            var currentLayer = _configurationContainer.CurrentLayer;
+            var currentLayer = _configurationsContainer.CurrentLayer;
 
             // let the handler handle the container and lazily return the output
             foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(currentLayer))

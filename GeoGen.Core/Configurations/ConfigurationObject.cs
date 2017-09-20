@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Core.Configurations
+﻿namespace GeoGen.Core.Configurations
 {
     /// <summary>
     /// Represents an object that can be contained in a <see cref="Configuration"/>.

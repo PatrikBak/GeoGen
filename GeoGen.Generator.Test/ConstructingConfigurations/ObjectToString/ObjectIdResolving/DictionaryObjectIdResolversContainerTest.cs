@@ -20,7 +20,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Variation_Provider_Cant_Be_Null()
+        public void Test_Variations_Provider_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolversContainer(null));
         }
@@ -32,7 +32,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
         }
 
         [Test]
-        public void Test_Loose_Object_List_Cant_Be_Null()
+        public void Test_Loose_Objects_List_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
         }
@@ -69,7 +69,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1},
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 2},
                 new LooseConfigurationObject(ConfigurationObjectType.Point),
-                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3},
+                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3}
             };
 
             Assert.Throws<GeneratorException>(() => Container().Initialize(objects));
