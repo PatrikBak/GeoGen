@@ -1,6 +1,4 @@
 ﻿using System;
-using GeoGen.Generator.Constructing.Arguments.SignatureMatching;
-using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
 
 namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
 {

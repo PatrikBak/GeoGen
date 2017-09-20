@@ -1,5 +1,5 @@
-﻿using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
-using GeoGen.Generator.ConstructingObjects.Arguments.Containers;
+﻿using GeoGen.Generator.ConstructingConfigurations;
+using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 
 namespace GeoGen.Generator.ConstructingObjects.Arguments
 {

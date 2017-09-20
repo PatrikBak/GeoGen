@@ -4,9 +4,8 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 
-namespace GeoGen.Generator.Constructing.Arguments.SignatureMatching
+namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
 {
     /// <summary>
     /// A default implementation of the <see cref="IConstructionSignatureMatcher"/> interface.

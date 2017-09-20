@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects.Arguments;
-using GeoGen.Generator.ConstructingObjects.Container;
 
 namespace GeoGen.Generator.ConstructingObjects
 {

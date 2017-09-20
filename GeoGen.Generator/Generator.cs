@@ -6,8 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.ConfigurationsHandling;
-using GeoGen.Generator.ConfigurationsHandling.ConfigurationsContainer;
+using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects;
 
 namespace GeoGen.Generator
