@@ -3,8 +3,8 @@
 namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
 {
     /// <summary>
-    /// Represents a factory for creating and caching <see cref="IIdsFixer"/>s
-    /// corresponding to <see cref="DictionaryObjectIdResolver"/>s.
+    /// Represents a factory for creating <see cref="IIdsFixer"/> 
+    /// implementations that use a given <see cref="DictionaryObjectIdResolver"/>.
     /// </summary>
     internal interface IIdsFixerFactory
     {
@@ -12,7 +12,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         /// Creates an ids fixer corresponding to a given
         /// dictionary object id resolver.
         /// </summary>
-        /// <param name="resolver">The dictionry object id resolver.</param>
+        /// <param name="resolver">The dictionary object id resolver.</param>
         /// <returns>The ids fixer.</returns>
         IIdsFixer CreateFixer(DictionaryObjectIdResolver resolver);
     }

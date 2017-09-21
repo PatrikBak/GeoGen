@@ -7,6 +7,7 @@ using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.StringBasedContainer;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
+using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 
@@ -39,6 +40,11 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// </summary>
         private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        private readonly DefaultFullObjectToStringProvider _objectToStringProvider;
+
         #endregion
 
         #region IConfigurationContainer properties
@@ -62,18 +68,21 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// <param name="configurationConstructor">The symetrc configurations handler.</param>
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
+        /// <param name="objectToStringProvider"></param>
         public ConfiguratonsContainer
         (
             IArgumentsListContainerFactory argumentsListContainerFactory,
             IConfigurationConstructor configurationConstructor,
             IConfigurationToStringProvider configurationToStringProvider,
-            IConfigurationObjectsContainer configurationObjectsContainer
+            IConfigurationObjectsContainer configurationObjectsContainer,
+            DefaultFullObjectToStringProvider objectToStringProvider
         )
         {
             _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
-            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
-            _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
-            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
+            _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
+            _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(configurationToStringProvider));
+            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(configurationObjectsContainer));
+            _objectToStringProvider = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
         }
 
         #endregion
@@ -179,9 +188,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// <returns>The string representation.</returns>
         protected override string ItemToString(Configuration item)
         {
-            var objectToStringProvider = _configurationObjectsContainer.ConfigurationObjectToStringProvider;
-
-            return _configurationToStringProvider.ConvertToString(item, objectToStringProvider);
+            return _configurationToStringProvider.ConvertToString(item, _objectToStringProvider);
         }
 
         #endregion

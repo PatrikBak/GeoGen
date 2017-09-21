@@ -10,7 +10,9 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolvi
 namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
 {
     /// <summary>
-    /// A default implementation of <see cref="IIdsFixer"/>.
+    /// A default implementation of <see cref="IIdsFixer"/>. It uses 
+    /// <see cref="DictionaryObjectIdResolver"/> and caches resolved
+    /// results. This class is not thread-safe.
     /// </summary>
     internal class IdsFixer : IIdsFixer
     {
@@ -36,18 +38,13 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         #region Constructor
 
         /// <summary>
-        /// Constructs a new ids fixer that uses a given argument container,
-        ///  a given configuration objects container and a given dictionary 
-        /// object id resolver.
+        /// Constructs a new ids fixer that uses a given objects container
+        /// (to register and cache new objects) and is associated with a
+        /// given dictionary object id resolver.
         /// </summary>
-        /// <param name="argumentContainer">The argument container.</param>
         /// <param name="objectsContainer">The configuration objects container.</param>
         /// <param name="resolver">The dictionary object id resolver.</param>
-        public IdsFixer
-        (
-            IConfigurationObjectsContainer objectsContainer,
-            DictionaryObjectIdResolver resolver
-        )
+        public IdsFixer(IConfigurationObjectsContainer objectsContainer, DictionaryObjectIdResolver resolver)
         {
             _objectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
@@ -60,7 +57,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
 
         /// <summary>
         /// Replaces a given construction argument with a new one that
-        /// has correct ids of its interior objects.
+        /// has correct ids of its interior objects. 
         /// </summary>
         /// <param name="argument">The construction argument.</param>
         /// <returns>The fixed configuration argument.</returns>
@@ -75,28 +72,24 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
                 // We'll convert the passed object
                 var fixedObject = FixObject(objectArgument.PassedObject);
 
-                // Construct the result
-                var objResult = new ObjectConstructionArgument(fixedObject);
-
-                return objResult;
+                // Construct and return the result
+                return new ObjectConstructionArgument(fixedObject);
             }
 
             // Otherwise we must have the set construction argument
-            var setArgument = argument as SetConstructionArgument ?? throw new GeneratorException("Unhandled case.");
+            var setArgument = (SetConstructionArgument) argument;
 
             // We convert the interior arguments
             var interiorArguments = setArgument.PassedArguments
                     .Select(FixArgument)
                     .ToSet();
 
-            // Cosntruct the result
-            var setResult = new SetConstructionArgument(interiorArguments);
-
-            return setResult;
+            // Construct and return the result
+            return new SetConstructionArgument(interiorArguments);
         }
 
         /// <summary>
-        /// Replaces a given configuraton object with a new one that 
+        /// Replaces a given configuration object with a new one that 
         /// has correct ids of its interior objects.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
@@ -106,7 +99,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
-            // If the object is loose, we'll return the asociated object from the container
+            // If the object is loose, we'll return the associated object from the container
             if (configurationObject is LooseConfigurationObject looseObject)
             {
                 // Get the id of resolved object
@@ -119,14 +112,14 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
             // Pull the actual id of the object
             var id = configurationObject.Id ?? throw new GeneratorException("Id must be set.");
 
-            // If we have the cached resul, return it
+            // If we have the cached result, we'll return it
             if (_cache.ContainsKey(id))
                 return _cache[id];
 
             // Since the object is not loose, it's constructed.
-            var constructedObject = configurationObject as ConstructedConfigurationObject ?? throw new GeneratorException("Unhandled case");
+            var constructedObject = (ConstructedConfigurationObject) configurationObject;
 
-            // We cast arguments
+            // First we fix arguments
             var newArguments = constructedObject.PassedArguments
                     .Select(FixArgument)
                     .ToList();
@@ -135,7 +128,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
             var index = constructedObject.Index;
             var construction = constructedObject.Construction;
 
-            // Create a fixed object with the snew arguments.
+            // Create a fixed object with the new arguments and pulled information
             var fixedObject = new ConstructedConfigurationObject(construction, newArguments, index);
 
             // Let the container register the object.

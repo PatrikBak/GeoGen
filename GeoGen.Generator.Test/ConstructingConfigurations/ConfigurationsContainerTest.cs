@@ -55,7 +55,19 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var constructor = mock.Object;
 
-            return new ConfiguratonsContainer(argumentsContainerFactory, constructor, configurationToStringProvider, configuationObjectContainer);
+            return new ConfiguratonsContainer
+            (
+                argumentsContainerFactory, constructor, configurationToStringProvider,
+                configuationObjectContainer, defaultFullProvider
+            );
+        }
+
+        private static DefaultFullObjectToStringProvider MockFullResolver()
+        {
+            var defaultIdResolver = new DefaultObjectIdResolver();
+            var argsProvider = SimpleMock<IArgumentsListToStringProvider>();
+
+            return new DefaultFullObjectToStringProvider(argsProvider, defaultIdResolver);
         }
 
         [Test]
@@ -64,8 +76,12 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var handler = SimpleMock<IConfigurationConstructor>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
+            var fullResolver = MockFullResolver();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(null, handler, provider, container));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConfiguratonsContainer(null, handler, provider, container, fullResolver)
+            );
         }
 
         [Test]
@@ -74,8 +90,12 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var factory = SimpleMock<IArgumentsListContainerFactory>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
+            var fullResolver = MockFullResolver();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, null, provider, container));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConfiguratonsContainer(factory, null, provider, container, fullResolver)
+            );
         }
 
         [Test]
@@ -84,8 +104,12 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var factory = SimpleMock<IArgumentsListContainerFactory>();
             var handler = SimpleMock<IConfigurationConstructor>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
+            var fullResolver = MockFullResolver();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, handler, null, container));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConfiguratonsContainer(factory, handler, null, container, fullResolver)
+            );
         }
 
         [Test]
@@ -94,8 +118,26 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var factory = SimpleMock<IArgumentsListContainerFactory>();
             var handler = SimpleMock<IConfigurationConstructor>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
+            var fullResolver = MockFullResolver();
 
-            Assert.Throws<ArgumentNullException>(() => new ConfiguratonsContainer(factory, handler, provider, null));
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConfiguratonsContainer(factory, handler, provider, null, fullResolver)
+            );
+        }
+
+        [Test]
+        public void Test_Default_Full_Resolver_Cant_Be_Null()
+        {
+            var factory = SimpleMock<IArgumentsListContainerFactory>();
+            var handler = SimpleMock<IConfigurationConstructor>();
+            var provider = SimpleMock<IConfigurationToStringProvider>();
+            var container = SimpleMock<IConfigurationObjectsContainer>();
+
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new ConfiguratonsContainer(factory, handler, provider, container, null)
+            );
         }
 
         [Test]

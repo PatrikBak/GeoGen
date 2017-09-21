@@ -1,18 +1,18 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 
 namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
 {
     /// <summary>
     /// A default implementation of <see cref="IConfigurationToStringProvider"/>.
+    /// It simply converts each object to string and join these strings using the default
+    /// separator. This class is thread-safe.
     /// </summary>
     internal class ConfigurationToStringProvider : IConfigurationToStringProvider
     {
-        #region Private fields
+        #region Private constants
 
         /// <summary>
         /// The default separator.
@@ -20,12 +20,6 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
         private const string DefaultSeparator = "|";
 
         #endregion
-
-        #region Constructors
-
-        #endregion
-
-        public static int i = 0;
 
         #region IConfigurationToStringProvider implementation
 
@@ -38,33 +32,21 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
         /// <returns>The string representation of the configuration.</returns>
         public string ConvertToString(Configuration configuration, IObjectToStringProvider objectToString)
         {
-            i++;
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
 
             if (objectToString == null)
                 throw new ArgumentNullException(nameof(objectToString));
 
-            if(LeastConfigurationFinder.finding) s_converting.Start();
             var objectStrings = configuration.ConstructedObjects
                     .Select(objectToString.ConvertToString)
                     .ToList();
-            if (LeastConfigurationFinder.finding) s_converting.Stop();
 
-            if (LeastConfigurationFinder.finding) s_sorting.Start();
+            // TODO: This can be replaced with iterating over some SortedDictionary
             objectStrings.Sort();
-            if (LeastConfigurationFinder.finding) s_sorting.Stop();
 
-            if (LeastConfigurationFinder.finding) s_joining.Start();
-            var t =  string.Join(DefaultSeparator, objectStrings);
-            if (LeastConfigurationFinder.finding) s_joining.Stop();
-
-            return t;
+            return string.Join(DefaultSeparator, objectStrings);
         }
-
-        public static Stopwatch s_sorting = new Stopwatch();
-        public static Stopwatch s_joining = new Stopwatch();
-        public static Stopwatch s_converting = new Stopwatch();
 
         #endregion
     }

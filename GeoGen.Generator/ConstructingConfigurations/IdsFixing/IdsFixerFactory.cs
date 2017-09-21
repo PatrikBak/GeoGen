@@ -7,6 +7,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
 {
     /// <summary>
     /// A default implementation of <see cref="IIdsFixerFactory"/>.
+    /// It creates <see cref="IdsFixerFactory"/> objects and caches them in
+    /// a dictionary. The keys of the dictionary are ids of 
+    /// <see cref="DictionaryObjectIdResolver"/>. This class is not thread-safe.
     /// </summary>
     internal class IdsFixerFactory : IIdsFixerFactory
     {
@@ -15,11 +18,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         /// <summary>
         /// The configuration objects container.
         /// </summary>
-        private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
+        private readonly IConfigurationObjectsContainer _objectsContainer;
 
         /// <summary>
         /// The cache mapping dictionary object id resolvers' ids 
-        /// to ids fixers associated with them
+        /// to ids fixers associated with them.
         /// </summary>
         private readonly Dictionary<int, IIdsFixer> _cache;
 
@@ -28,15 +31,13 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         #region Constructor
 
         /// <summary>
-        /// Constructs a new ids fixer factory that is using a given
-        /// configuration objects container and a given argument
-        /// container.
+        /// Constructs a new ids fixer factory that uses a given
+        /// configuration objects container for creating <see cref="IdsFixer"/>s.
         /// </summary>
         /// <param name="objectsContainer">The configuration objects container.</param>
-        /// <param name="argumentContainer">The argument container</param>
         public IdsFixerFactory(IConfigurationObjectsContainer objectsContainer)
         {
-            _configurationObjectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
+            _objectsContainer = objectsContainer ?? throw new ArgumentNullException(nameof(objectsContainer));
             _cache = new Dictionary<int, IIdsFixer>();
         }
 
@@ -48,7 +49,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         /// Creates an ids fixer corresponding to a given
         /// dictionary object id resolver.
         /// </summary>
-        /// <param name="resolver">The dictionry object id resolver.</param>
+        /// <param name="resolver">The dictionary object id resolver.</param>
         /// <returns>The ids fixer.</returns>
         public IIdsFixer CreateFixer(DictionaryObjectIdResolver resolver)
         {
@@ -60,7 +61,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
             if (_cache.ContainsKey(id))
                 return _cache[id];
 
-            var newFixer = new IdsFixer(_configurationObjectsContainer, resolver);
+            var newFixer = new IdsFixer(_objectsContainer, resolver);
             _cache.Add(id, newFixer);
 
             return newFixer;

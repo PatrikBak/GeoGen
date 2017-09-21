@@ -14,8 +14,6 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
     /// </summary>
     internal class ConfigurationObjectsContainer : StringBasedContainer<ConfigurationObject>, IConfigurationObjectsContainer
     {
-        #region IConfigurationObjectsContainer propertis
-
         /// <summary>
         /// Gets the object with a given id. Throws an exception, if not present.
         /// </summary>
@@ -26,9 +24,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
         /// <summary>
         /// Gets the default complex configuration object to string provider that is used by the container.
         /// </summary>
-        public DefaultFullObjectToStringProvider ConfigurationObjectToStringProvider { get; }
-
-        #endregion
+        private readonly DefaultFullObjectToStringProvider _objectToStringProvider;
 
         #region Private fields
 
@@ -54,7 +50,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
         /// <param name="container">The container.</param>
         public ConfigurationObjectsContainer(DefaultFullObjectToStringProvider provider)
         {
-            ConfigurationObjectToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _objectToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         #endregion
@@ -68,7 +64,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
         /// <returns>The string representation.</returns>
         protected override string ItemToString(ConfigurationObject item)
         {
-            return ConfigurationObjectToStringProvider.ConvertToString(item);
+            return _objectToStringProvider.ConvertToString(item);
         }
 
         #endregion
@@ -128,7 +124,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             _idToObjectDictionary.Add(newId, constructedConfigurationObject);
 
             // Cache the gotten string version to the provider
-            ConfigurationObjectToStringProvider.CacheObject(newId, stringRepresentation);
+            _objectToStringProvider.CacheObject(newId, stringRepresentation);
 
             // Return the object
             return constructedConfigurationObject;
@@ -153,7 +149,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             _idToObjectDictionary.Clear();
 
             // Clear cache of the object to string provider
-            ConfigurationObjectToStringProvider.ClearCache();
+            _objectToStringProvider.ClearCache();
 
             // Initialize counter
             var counter = 1;
@@ -168,7 +164,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
                 looseConfigurationObject.Id = id;
 
                 // Get the string version of the object
-                var stringVersion = ConfigurationObjectToStringProvider.ConvertToString(looseConfigurationObject);
+                var stringVersion = _objectToStringProvider.ConvertToString(looseConfigurationObject);
 
                 // Add the version to the container
                 Items.Add(stringVersion, looseConfigurationObject);

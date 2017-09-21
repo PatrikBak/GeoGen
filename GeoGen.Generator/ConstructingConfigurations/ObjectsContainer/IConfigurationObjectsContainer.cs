@@ -6,17 +6,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
 {
     /// <summary>
     /// Represents a container for <see cref="ConfigurationObject"/>. It implements
-    /// the <see cref="IEnumerable{T}"/> interface, whete T is <see cref="ConfigurationObject"/>.
-    /// It takes care of assigning ids to configuration object - in fact, it is not
-    /// supposed to happen elsewhere. 
+    /// the <see cref="IEnumerable{T}"/> interface, where T is <see cref="ConfigurationObject"/>.
+    /// It's should be   
     /// </summary>
     internal interface IConfigurationObjectsContainer : IEnumerable<ConfigurationObject>
     {
-        /// <summary>
-        /// Gets the default complex configuration object to string provider that is used by the container.
-        /// </summary>
-        DefaultFullObjectToStringProvider ConfigurationObjectToStringProvider { get; }
-
         /// <summary>
         /// Adds a given object to a container. The current id of the
         /// object will be gnored.If an equal version of the object 

@@ -56,7 +56,7 @@ namespace GeoGen.Generator.Test
             container = new ConfigurationObjectsContainer(defaultComplexConfigurationObjectToStringProvider);
             var idsFixer = new IdsFixerFactory(container);
             var configurationConstructor = new ConfigurationConstructor(leastConfigurationFinder, idsFixer, argumentsContainerFactory);
-            var configurationContainer = new ConfiguratonsContainer(argumentsContainerFactory, configurationConstructor, configurationToStringProvider, container);
+            var configurationContainer = new ConfiguratonsContainer(argumentsContainerFactory, configurationConstructor, configurationToStringProvider, container, defaultComplexConfigurationObjectToStringProvider);
             configurationContainer.Initialize(input.InitialConfiguration);
             dictionaryObjectIdResolversContainer.Initialize(input.InitialConfiguration.LooseObjects.ToList());
             return new Generator(configurationContainer, objectsConstructor, configurationsHandler, input.MaximalNumberOfIterations);
@@ -65,8 +65,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Triangle_And_Midpoint_Test()
         {
-            int it = 7;
-            int max = 7;
+            int it = 5;
+            int max = 5;
             for (int i = it; i <= max; i++)
             {
                 var points = Objects(3, ConfigurationObjectType.Point, includeIds: false);
@@ -108,15 +108,14 @@ namespace GeoGen.Generator.Test
                 Console.WriteLine($"Objects map: {s_typeMap.ElapsedMilliseconds}");
                 Console.WriteLine("--------");
 
-                Console.WriteLine($"Iterating: {s_iterating.ElapsedMilliseconds}");
-                Console.WriteLine($"Converting to string: {s_toString.ElapsedMilliseconds}");
+                //Console.WriteLine($"Iterating: {s_iterating.ElapsedMilliseconds}");
+                //Console.WriteLine($"Converting to string: {s_toString.ElapsedMilliseconds}");
 
-                Console.WriteLine($"Converting: {s_converting.ElapsedMilliseconds}");
-                Console.WriteLine($"Sorting: {s_sorting.ElapsedMilliseconds}");
-                Console.WriteLine($"Joining: {s_joining.ElapsedMilliseconds}");
+                //Console.WriteLine($"Converting: {s_converting.ElapsedMilliseconds}");
+                //Console.WriteLine($"Sorting: {s_sorting.ElapsedMilliseconds}");
+                //Console.WriteLine($"Joining: {s_joining.ElapsedMilliseconds}");
 
                 Console.WriteLine("--------");
-                Console.WriteLine(ConfigurationToStringProvider.i);
             }
         }
     }
