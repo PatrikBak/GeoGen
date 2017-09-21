@@ -8,7 +8,7 @@ namespace GeoGen.Core.Test.Constructions.Arguments
     public class ObjectConstructionArgumentTest
     {
         [Test]
-        public void ObjectConstruction_Passed_Configuration_Object_Not_Null()
+        public void Test__Passed_Configuration_Object_Not_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new ObjectConstructionArgument(null));
         }

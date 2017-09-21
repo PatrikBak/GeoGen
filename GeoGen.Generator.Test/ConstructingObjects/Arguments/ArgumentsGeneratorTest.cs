@@ -27,7 +27,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
             var variationsProvider = new VariationsProvider<ConfigurationObject>();
             var resolver = new DefaultObjectIdResolver();
             var provider = new DefaultObjectToStringProvider(resolver);
-            var signatureMatcher = new ConstructionSignatureMatcherFactory();
+            var signatureMatcher = new ConstructionSignatureMatcher();
             var argsProvider = new ArgumentsListToStringProvider(provider);
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
@@ -38,12 +38,12 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         public void Test_Combinator_Cant_Be_Null()
         {
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var matcher = SimpleMock<IConstructionSignatureMatcher>();
             var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ArgumentsGenerator(null, matcherFactory, variationsProvider, argumentsFactory)
+                () => new ArgumentsGenerator(null, matcher, variationsProvider, argumentsFactory)
             );
         }
 
@@ -51,12 +51,12 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         public void Test_Variations_Provider_Cant_Be_Null()
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
-            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var matcher = SimpleMock<IConstructionSignatureMatcher>();
             var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ArgumentsGenerator(combinator, matcherFactory, null, argumentsFactory)
+                () => new ArgumentsGenerator(combinator, matcher, null, argumentsFactory)
             );
         }
 
@@ -78,11 +78,11 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
         {
             var combinator = SimpleMock<ICombinator<ConfigurationObjectType, List<ConfigurationObject>>>();
             var variationsProvider = SimpleMock<IVariationsProvider<ConfigurationObject>>();
-            var matcherFactory = SimpleMock<IConstructionSignatureMatcherFactory>();
+            var matcher = SimpleMock<IConstructionSignatureMatcher>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ArgumentsGenerator(combinator, matcherFactory, variationsProvider, null)
+                () => new ArgumentsGenerator(combinator, matcher, variationsProvider, null)
             );
         }
 

@@ -18,6 +18,6 @@ namespace GeoGen.Core.Utilities.Combinator
         /// </summary>
         /// <param name="possibilities">The possibilities dictionary.</param>
         /// <returns>The lazy enumerable of resulting combinations.</returns>
-        IEnumerable<IReadOnlyDictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities);
+        IEnumerable<Dictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities);
     }
 }

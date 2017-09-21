@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
 
 namespace GeoGen.Core.Utilities
 {
@@ -47,84 +46,6 @@ namespace GeoGen.Core.Utilities
                 throw new ArgumentNullException(nameof(enumerable));
 
             return new HashSet<T>(enumerable);
-        }
-
-        public static T Min<T>(this IEnumerable<T> enumerable, IComparer<T> comparer)
-        {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
-
-            var y = default(T);
-
-            if (y == null)
-            {
-                foreach (var x in enumerable)
-                {
-                    if (x != null && (y == null || comparer.Compare(x, y) < 0))
-                    {
-                        y = x;
-                    }
-                }
-
-                return y;
-            }
-
-            var flag = false;
-
-            foreach (var x in enumerable)
-            {
-                if (flag)
-                {
-                    if (comparer.Compare(x, y) < 0)
-                        y = x;
-                }
-                else
-                {
-                    y = x;
-                    flag = true;
-                }
-            }
-
-            if (flag)
-                return y;
-
-            throw new InvalidOperationException("No elements.");
-        }
-
-        public static bool ScrambledEquals<T>(this IEnumerable<T> list1, IEnumerable<T> list2)
-        {
-            var cnt = new Dictionary<T, int>();
-            foreach (T s in list1)
-            {
-                if (cnt.ContainsKey(s))
-                {
-                    cnt[s]++;
-                }
-                else
-                {
-                    cnt.Add(s, 1);
-                }
-            }
-            foreach (T s in list2)
-            {
-                if (cnt.ContainsKey(s))
-                {
-                    cnt[s]--;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-            return cnt.Values.All(c => c == 0);
-        }
-
-        public static ConfigurationObjectsMap ToObjectsMap(this IEnumerable<ConfigurationObject> objects)
-        {
-            return new ConfigurationObjectsMap(objects);
         }
     }
 }

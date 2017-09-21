@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 
@@ -6,17 +7,28 @@ namespace GeoGen.Core.Utilities
 {
     public class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, List<ConfigurationObject>>
     {
-        private readonly List<ConfigurationObject> _allObjects = new List<ConfigurationObject>();
-
-        public IEnumerable<ConfigurationObject> Objects => _allObjects;
-
-        public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> configurationObjects)
+        public ConfigurationObjectsMap()
         {
-            AddAll(configurationObjects);
+        }
+
+        public ConfigurationObjectsMap(IDictionary<ConfigurationObjectType, List<ConfigurationObject>> objects)
+            : base(objects)
+        {
+        }
+
+        public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> objects)
+        {
+            if (objects == null)
+                throw new ArgumentNullException(nameof(objects));
+
+            AddAll(objects);
         }
 
         public ConfigurationObjectsMap(Configuration configuraton)
         {
+            if (configuraton == null)
+                throw new ArgumentNullException(nameof(configuraton));
+
             var objects = configuraton.LooseObjects
                     .Cast<ConfigurationObject>()
                     .Union(configuraton.ConstructedObjects);
@@ -24,28 +36,36 @@ namespace GeoGen.Core.Utilities
             AddAll(objects);
         }
 
-        public ConfigurationObjectsMap CloneWithNewObjects(List<ConstructedConfigurationObject> newObjects)
+        public void AddAll(IEnumerable<ConfigurationObject> objects,
+                           Func<ConfigurationObject, ConfigurationObject> selector = null)
         {
-            var result = new ConfigurationObjectsMap(Enumerable.Empty<ConfigurationObject>());
+            if (objects == null)
+                throw new ArgumentNullException(nameof(objects));
 
-            result.AddAll(_allObjects);
-            result.AddAll(newObjects);
-
-            return result;
-        }
-
-        private void AddAll(IEnumerable<ConfigurationObject> objects)
-        {
             foreach (var configurationObject in objects)
             {
-                var type = configurationObject.ObjectType;
+                var newObject = selector == null ? configurationObject : selector(configurationObject);
+                var type = newObject?.ObjectType ?? throw new ArgumentException("Null object");
+
+                List<ConfigurationObject> list;
 
                 if (!ContainsKey(type))
-                    Add(type, new List<ConfigurationObject>());
+                {
+                    list = new List<ConfigurationObject>();
+                    Add(type, list);
+                }
 
-                this[type].Add(configurationObject);
-                _allObjects.Add(configurationObject);
+                list = this[type];
+                list.Add(newObject);
             }
+        }
+
+        public void AddAll(ConfigurationObjectsMap map, Func<ConfigurationObject, ConfigurationObject> selector = null)
+        {
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            AddAll(map.SelectMany(o => o.Value), selector);
         }
     }
 }

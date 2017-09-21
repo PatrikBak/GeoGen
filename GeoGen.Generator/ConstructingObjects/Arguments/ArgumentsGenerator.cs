@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.Combinator;
 using GeoGen.Core.Utilities.Variations;
 using GeoGen.Generator.ConstructingConfigurations;
@@ -20,7 +21,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
         /// <summary>
         /// The construction signature matcher factory.
         /// </summary>
-        private readonly IConstructionSignatureMatcherFactory _constructionSignatureMatcherFactory;
+        private readonly IConstructionSignatureMatcher _constructionSignatureMatcherFactory;
 
         /// <summary>
         /// The arguments container factory.
@@ -33,7 +34,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
         private readonly IVariationsProvider<ConfigurationObject> _variationsProvider;
 
         /// <summary>
-        /// The combinator of lists of configuration object of distint types.
+        /// The combinator of lists of configuration object of distinct types.
         /// </summary>
         private readonly ICombinator<ConfigurationObjectType, List<ConfigurationObject>> _combinator;
 
@@ -53,9 +54,9 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
         /// <param name="variationsProvider">The variations provider.</param>
         /// <param name="argumentsListContainerFactory">The arguments container factory.</param>
         public ArgumentsGenerator(ICombinator<ConfigurationObjectType, List<ConfigurationObject>> combinator,
-            IConstructionSignatureMatcherFactory constructionSignatureMatcherFactory,
-            IVariationsProvider<ConfigurationObject> variationsProvider,
-            IArgumentsListContainerFactory argumentsListContainerFactory)
+                                  IConstructionSignatureMatcher constructionSignatureMatcherFactory,
+                                  IVariationsProvider<ConfigurationObject> variationsProvider,
+                                  IArgumentsListContainerFactory argumentsListContainerFactory)
         {
             _constructionSignatureMatcherFactory = constructionSignatureMatcherFactory ?? throw new ArgumentNullException(nameof(constructionSignatureMatcherFactory));
             _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
@@ -102,18 +103,17 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
                     );
 
             var argumentsContainer = _argumentsListContainerFactory.CreateContainer();
-            var signatureMatcher = _constructionSignatureMatcherFactory.CreateMatcher();
 
             foreach (var dictonaryForMatcher in _combinator.Combine(dictionaryForCombinator))
             {
-                // Initialize the signature matcher with a new object dictionary
-                signatureMatcher.Initialize(dictonaryForMatcher);
+                // Create map
+                var map = new ConfigurationObjectsMap(dictonaryForMatcher);
 
                 // Take the parameters from the construction
                 var parameters = construction.Construction.ConstructionParameters;
 
                 // Let the matcher match the parameters to obtain arguments
-                var arguments = signatureMatcher.Match(parameters);
+                var arguments = _constructionSignatureMatcherFactory.Match(parameters, map);
 
                 // Add arguments to the container
                 argumentsContainer.AddArguments(arguments);

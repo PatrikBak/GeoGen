@@ -29,7 +29,7 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Parental_Configuration_Cannot_Be_Null()
+        public void CTest_Parental_Configuration_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
@@ -38,7 +38,7 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Output_Object_Indices_Cannot_Be_Null()
+        public void Test_Output_Object_Indices_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
@@ -47,7 +47,7 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Output_Object_Indices_Cannot_Be_Empty()
+        public void Test_Output_Object_Indices_Cant_Be_Empty()
         {
             Assert.Throws<ArgumentException>
             (
@@ -56,7 +56,7 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Output_Object_Indices_Must_Correspond_To_Existing_Objects()
+        public void Test_Output_Object_Indices_Must_Correspond_To_Existing_Objects()
         {
             Assert.Throws<ArgumentException>
             (
@@ -65,14 +65,14 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Output_Object_Indices_Correspond_Are_Correct()
+        public void Test_Output_Object_Indices_Are_Correct()
         {
             var parameters = new List<ConstructionParameter> {new ObjectConstructionParameter(ConfigurationObjectType.Point)};
             new ComposedConstruction(Configuration(), new HashSet<int> {0, 1}, parameters);
         }
 
         [Test]
-        public void Constructor_Test_Construction_Parameters_Cannot_Be_Null()
+        public void Test_Construction_Parameters_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
@@ -81,7 +81,7 @@ namespace GeoGen.Core.Test.Constructions
         }
 
         [Test]
-        public void Constructor_Test_Construction_Parameters_Cannot_Be_Empty()
+        public void Constructor_Test_Construction_Parameters_Cant_Be_Empty()
         {
             Assert.Throws<ArgumentException>
             (

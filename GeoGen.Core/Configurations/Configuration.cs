@@ -25,7 +25,7 @@ namespace GeoGen.Core.Configurations
 
         /// <summary>
         /// Gets the list of constructed configuration objects within this configuration. 
-        /// There're supposed be ordered so that it's possible to construct them in that order.
+        /// They're supposed be ordered so that it's possible to construct them in that order.
         /// </summary>
         public List<ConstructedConfigurationObject> ConstructedObjects { get; }
 

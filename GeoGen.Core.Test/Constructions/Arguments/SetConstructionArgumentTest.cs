@@ -10,13 +10,13 @@ namespace GeoGen.Core.Test.Constructions.Arguments
     public class SetConstructionArgumentTest
     {
         [Test]
-        public void SetConstructionArgument_Passed_Arguments_Not_Null()
+        public void Test_Passed_Arguments_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => new SetConstructionArgument(null));
         }
 
         [Test]
-        public void SetConstructionArgument_Passed_Arguments_Size_Cannot_Be_Zero()
+        public void Test_Passed_Arguments_Size_Cant_Be_Zero()
         {
             Assert.Throws<ArgumentOutOfRangeException>
             (
@@ -29,7 +29,7 @@ namespace GeoGen.Core.Test.Constructions.Arguments
         }
 
         [Test]
-        public void SetConstructionArgument_Passed_Arguments_Size_Cannot_Be_One()
+        public void Test_Passed_Arguments_Size_Cant_Be_One()
         {
             Assert.Throws<ArgumentOutOfRangeException>
             (

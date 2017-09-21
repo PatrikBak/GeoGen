@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Core.Utilities;
 
 namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
 {
@@ -12,90 +13,63 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
     /// </summary>
     internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {
-        #region Private fields
-
-        /// <summary>
-        /// The available objects dictionary.
-        /// </summary>
-        private IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> _objectTypeToObjects;
-
-        /// <summary>
-        /// The internal dictionary mapping an object type to the index of an object that can be used
-        /// in a construction argument.
-        /// </summary>
-        private Dictionary<ConfigurationObjectType, int> _currentIndices;
-
-        #endregion
-
         #region IConstructionSignatureMatcher implementation
 
-        /// <summary>
-        /// Initializes the signature matcher with objects represented as a map between objects types
-        /// and all objects of that type.
-        /// </summary>
-        /// <param name="objectTypeToObjects">The objects dictionary.</param>
-        public void Initialize(IReadOnlyDictionary<ConfigurationObjectType, List<ConfigurationObject>> objectTypeToObjects)
+        public List<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectsMap map)
         {
-            _objectTypeToObjects = objectTypeToObjects ?? throw new ArgumentNullException(nameof(objectTypeToObjects));
-            _currentIndices = objectTypeToObjects.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters));
+
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            if (parameters.Empty())
+                throw new ArgumentException("Parameters can't be empty");
+
+            var indices = map.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
+
+            ConfigurationObject Next(ConfigurationObjectType type)
+            {
+                try
+                {
+                    return map[type][indices[type]++];
+                }
+                catch (Exception)
+                {
+                    throw new GeneratorException("Cannot do the matching, there not too few objects.");
+                }
+            }
+
+            return parameters.Select(parameter => CreateArgument(parameter, Next)).ToList();
         }
 
-        /// <summary>
-        /// Constructs construction arguments that match the given construction parameters. It must be
-        /// possible to perform the construction, otherwise a <see cref="GeneratorException"/> is thrown.
-        /// </summary>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>The created arguments.</returns>
-        public IReadOnlyList<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters)
-        {
-            return parameters.Select(CreateArgument).ToList();
-        }
-
-        /// <summary>
-        /// Creates a next argument for a given parameter. 
-        /// </summary>
-        /// <param name="parameter">The given parameter.</param>
-        /// <returns>The next argument.</returns>
-        private ConstructionArgument CreateArgument(ConstructionParameter parameter)
+        private static ConstructionArgument CreateArgument
+        (
+            ConstructionParameter parameter,
+            Func<ConfigurationObjectType, ConfigurationObject> nextObjectOfType
+        )
         {
             if (parameter is ObjectConstructionParameter objectParameter)
             {
-                var nextObject = Next(objectParameter.ExpectedType);
+                var nextObject = nextObjectOfType(objectParameter.ExpectedType);
 
                 return new ObjectConstructionArgument(nextObject);
             }
 
-            var setParameter = parameter as SetConstructionParameter ?? throw new GeneratorException("Unhandled case.");
+            var setParameter = (SetConstructionParameter) parameter ?? throw new GeneratorException("Unhandled case.");
 
             var argumentsSet = new HashSet<ConstructionArgument>();
 
             for (var i = 0; i < setParameter.NumberOfParameters; i++)
             {
                 // recursively call this function
-                var newArgument = CreateArgument(setParameter.TypeOfParameters);
+                var newArgument = CreateArgument(setParameter.TypeOfParameters, nextObjectOfType);
 
                 // update the resulting set
                 argumentsSet.Add(newArgument);
             }
 
             return new SetConstructionArgument(argumentsSet);
-        }
-
-        /// <summary>
-        /// Gets the next object of the type that is supposed to be used in a construction argument.
-        /// </summary>
-        /// <param name="type">The type.</param>
-        /// <returns>The next available object.</returns>
-        private ConfigurationObject Next(ConfigurationObjectType type)
-        {
-            try
-            {
-                return _objectTypeToObjects[type][_currentIndices[type]++];
-            }
-            catch (Exception)
-            {
-                throw new GeneratorException("Cannot do the matching, there not too few objects.");
-            }
         }
 
         #endregion

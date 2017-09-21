@@ -18,7 +18,9 @@ namespace GeoGen.Core.Test.Utilities.Variations
         public void Test_Variantions_2_of_4()
         {
             var provider = Provider();
-            var variations = provider.GetVariations(new List<int> {1, 2, 3, 4}, 2);
+            var variations = provider.GetVariations(new List<int> {1, 2, 3, 4}, 2)
+                    .Select(variaton => variaton.ToList())
+                    .ToList();
 
             var contains = variations.Any
             (
@@ -31,7 +33,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
 
             var allHaveSize2 = variations.All(v => v.Count() == 2);
 
-            Assert.AreEqual(12, variations.Count());
+            Assert.AreEqual(12, variations.Count);
             Assert.IsTrue(allHaveSize2);
             Assert.IsTrue(contains);
         }
@@ -117,7 +119,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
         }
 
         [Test]
-        public void Test_Is_Not_Empty()
+        public void Test_List_Is_Not_Empty()
         {
             Assert.Throws<ArgumentException>(() => Provider().GetVariations(new List<int>(), 42));
         }
@@ -135,7 +137,7 @@ namespace GeoGen.Core.Test.Utilities.Variations
         [TestCase(42)]
         public void Test_Number_Of_Elements_Is_At_Most_Count_Of_List(int count)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => Provider().GetVariations(new List<int> { 1, 2 }, count));
+            Assert.Throws<ArgumentOutOfRangeException>(() => Provider().GetVariations(new List<int> {1, 2}, count));
         }
 
         [TestCase(1)]

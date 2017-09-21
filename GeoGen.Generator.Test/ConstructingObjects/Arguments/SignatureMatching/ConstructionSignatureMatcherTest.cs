@@ -15,29 +15,43 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
     {
         private static ConstructionSignatureMatcher Matcher()
         {
-            var matcher = new ConstructionSignatureMatcher();
-
-            matcher.Initialize(Configuration(5, 0, 1).ConfigurationObjectsMap);
-
-            return matcher;
+            return new ConstructionSignatureMatcher();
         }
 
         [Test]
-        public void Test_Object_Dictionary_Cannot_Be_Null()
+        public void Test_Object_Map_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Matcher().Initialize(null));
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new ObjectConstructionParameter(ConfigurationObjectType.Line)
+            };
+
+            Assert.Throws<ArgumentNullException>(() => Matcher().Match(parameters, null));
         }
 
         [Test]
         public void Test_Parameters_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Matcher().Match(null));
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+
+            Assert.Throws<ArgumentNullException>(() => Matcher().Match(null, objects));
+        }
+
+        [Test]
+        public void Test_Parameters_Cant_Be_Empty()
+        {
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var parameters = new List<ConstructionParameter>();
+
+            Assert.Throws<ArgumentException>(() => Matcher().Match(parameters, objects));
         }
 
         [Test]
         public void Test_Not_Enough_Objects_To_Match()
         {
             var matcher = Matcher();
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
 
             var testParams = new List<ConstructionParameter>
             {
@@ -45,13 +59,14 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
                 new ObjectConstructionParameter(ConfigurationObjectType.Line)
             };
 
-            Assert.Throws<GeneratorException>(() => matcher.Match(testParams));
+            Assert.Throws<GeneratorException>(() => matcher.Match(testParams, objects));
         }
 
         [Test]
         public void Test_Signature_Of_Ray()
         {
             var matcher = Matcher();
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
 
             var rayParams = new List<ConstructionParameter>
             {
@@ -59,7 +74,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
                 new ObjectConstructionParameter(ConfigurationObjectType.Point)
             };
 
-            var match = matcher.Match(rayParams);
+            var match = matcher.Match(rayParams, objects);
 
             Assert.AreEqual(2, match.Count);
             Assert.AreEqual(1, ((ObjectConstructionArgument) match[0]).PassedObject.Id);
@@ -70,6 +85,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Signature_Of_Midpoint()
         {
             var matcher = Matcher();
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
 
             var midpointParams = new List<ConstructionParameter>
             {
@@ -79,7 +95,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
                 )
             };
 
-            var match = matcher.Match(midpointParams);
+            var match = matcher.Match(midpointParams, objects);
 
             Assert.AreEqual(1, match.Count);
             var set = (SetConstructionArgument) match[0];
@@ -98,6 +114,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Signature_Of_Intersection()
         {
             var matcher = Matcher();
+            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
 
             var midpointParams = new List<ConstructionParameter>
             {
@@ -110,7 +127,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
                 )
             };
 
-            var match = matcher.Match(midpointParams);
+            var match = matcher.Match(midpointParams, objects);
 
             Assert.AreEqual(1, match.Count);
             var sets = ((SetConstructionArgument) match[0]).PassedArguments.ToList();

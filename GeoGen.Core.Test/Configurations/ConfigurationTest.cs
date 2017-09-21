@@ -9,7 +9,7 @@ namespace GeoGen.Core.Test.Configurations
     public class ConfigurationTest
     {
         [Test]
-        public void Loose_Objects_Cannot_Be_Null()
+        public void Test_Loose_Objects_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
@@ -21,7 +21,7 @@ namespace GeoGen.Core.Test.Configurations
         }
 
         [Test]
-        public void Constructed_Objects_Cannot_Be_Empty()
+        public void Test_Constructed_Objects_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>
             (
@@ -35,7 +35,7 @@ namespace GeoGen.Core.Test.Configurations
         }
 
         [Test]
-        public void Loose_Objects_Cannot_Be_Empty()
+        public void Test_Loose_Objects_Cant_Be_Empty()
         {
             Assert.Throws<ArgumentException>
             (

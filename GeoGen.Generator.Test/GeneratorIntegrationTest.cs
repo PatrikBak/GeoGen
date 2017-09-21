@@ -42,7 +42,7 @@ namespace GeoGen.Generator.Test
             var variationsProvider1 = new VariationsProvider<ConfigurationObject>();
             var defaultObjectIdResolver = new DefaultObjectIdResolver();
             var defaultObjectToStringProvider = new DefaultObjectToStringProvider(defaultObjectIdResolver);
-            var constructionSignatureMatcherFactory = new ConstructionSignatureMatcherFactory();
+            var constructionSignatureMatcherFactory = new ConstructionSignatureMatcher();
             var argumentsToStringProvider = new ArgumentsListToStringProvider(defaultObjectToStringProvider);
             var argumentsContainerFactory = new ArgumentsListContainerFactory(argumentsToStringProvider);
             var argumentsGenerator = new ArgumentsGenerator(combinator, constructionSignatureMatcherFactory, variationsProvider1, argumentsContainerFactory);
@@ -65,8 +65,8 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Triangle_And_Midpoint_Test()
         {
-            int it = 5;
-            int max = 5;
+            int it = 7;
+            int max = 7;
             for (int i = it; i <= max; i++)
             {
                 var points = Objects(3, ConfigurationObjectType.Point, includeIds: false);

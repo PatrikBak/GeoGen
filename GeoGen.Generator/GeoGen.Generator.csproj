@@ -70,8 +70,6 @@
     <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainer.cs" />
     <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainerFactory.cs" />
     <Compile Include="ConstructingObjects\Arguments\Container\IArgumentsListContainerFactory.cs" />
-    <Compile Include="ConstructingObjects\Arguments\SignatureMatching\ConstructionSignatureMatcherFactory.cs" />
-    <Compile Include="ConstructingObjects\Arguments\SignatureMatching\IConstructionSignatureMatcherFactory.cs" />
     <Compile Include="ConstructingObjects\ObjectsConstructor.cs" />
     <Compile Include="ConstructingObjects\ConstructionsContainer.cs" />
     <Compile Include="ConstructingObjects\ConstructorOutput.cs" />

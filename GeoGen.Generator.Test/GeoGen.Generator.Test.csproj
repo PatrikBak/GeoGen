@@ -72,7 +72,6 @@
     <Compile Include="ConstructingObjects\Arguments\SignatureMatching\ConstructionSignatureMatcherTest.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsGeneratorTest.cs" />
     <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainerTest.cs" />
-    <Compile Include="ConstructingObjects\Arguments\SignatureMatching\ConstructionSingatureMatcherFactoryTest.cs" />
     <Compile Include="ConstructingObjects\ObjectsConstructorTest.cs" />
     <Compile Include="ConstructingObjects\ConstructionsContainerTest.cs" />
     <Compile Include="GeneratorIntegrationTest.cs" />

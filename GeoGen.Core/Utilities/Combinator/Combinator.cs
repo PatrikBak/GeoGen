@@ -20,7 +20,7 @@ namespace GeoGen.Core.Utilities.Combinator
         /// </summary>
         /// <param name="possibilities">The possibilities dictionary.</param>
         /// <returns>The lazy enumerable of resulting combinations.</returns>
-        public IEnumerable<IReadOnlyDictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities)
+        public IEnumerable<Dictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities)
         {
             if (possibilities == null)
                 throw new ArgumentNullException(nameof(possibilities));

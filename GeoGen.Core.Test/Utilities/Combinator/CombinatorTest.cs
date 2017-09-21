@@ -119,13 +119,13 @@ namespace GeoGen.Core.Test.Utilities.Combinator
         }
 
         [Test]
-        public void Test_Possibilites_Shouldnt_Be_Empty()
+        public void Test_Possibilites_Cant_Be_Empty()
         {
             Assert.Throws<ArgumentException>(() => Combinator().Combine(new Dictionary<int, IEnumerable<int>>()));
         }
 
         [Test]
-        public void Test_Possibilities_Shouldnt_Be_Null()
+        public void Test_Possibilities_Cant_Be_Null()
         {
             Assert.Throws<ArgumentNullException>(() => Combinator().Combine(null));
         }

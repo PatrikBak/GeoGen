@@ -69,7 +69,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
             var forbiddenArguments = CreateNewArguments(idsFixer, configuration.ForbiddenArguments, newObjects);
             s_arguments.Stop();
             s_typeMap.Start();
-            var typeToObjectsMap = new ConfigurationObjectsMap(currentConfiguration);
+            var typeToObjectsMap = CreateObjectsMap(configuration, newObjects, idsFixer);
             s_typeMap.Stop();
             return new ConfigurationWrapper
             {
@@ -77,6 +77,25 @@ namespace GeoGen.Generator.ConstructingConfigurations
                 ForbiddenArguments = forbiddenArguments,
                 ConfigurationObjectsMap = typeToObjectsMap
             };
+        }
+
+        private static ConfigurationObjectsMap CreateObjectsMap
+        (
+            ConfigurationWrapper configuration,
+            IEnumerable<ConstructedConfigurationObject> newObjects,
+            IIdsFixer idsFixer
+        )
+        {
+            // Create a new map
+            var objectsMap = new ConfigurationObjectsMap();
+
+            // Add the old map (with the fixer selector)
+            objectsMap.AddAll(configuration.ConfigurationObjectsMap, idsFixer.FixObject);
+
+            // Add new objects (with the fixer selector)
+            objectsMap.AddAll(newObjects, idsFixer.FixObject);
+
+            return objectsMap;
         }
 
         private static Configuration CloneConfiguration(Configuration configuration, IIdsFixer idsFixer)
@@ -124,7 +143,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
 
             foreach (var constructedObject in newObjects)
             {
-                var id = constructedObject.Construction.Id ?? throw new GeneratorException("Contruction must have an id.");
+                var id = constructedObject.Construction.Id ?? throw new GeneratorException("Construction must have an id.");
 
                 if (!result.ContainsKey(id))
                 {
