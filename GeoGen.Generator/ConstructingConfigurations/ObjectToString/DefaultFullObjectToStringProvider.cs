@@ -9,7 +9,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// An implementation of <see cref="FullObjectToStringProviderBase"/> that
     /// uses <see cref="DefaultObjectIdResolver"/>. This class is meant to be used 
     /// in a class that cares care of creating unique <see cref="ConfigurationObject"/>s.
-    /// These object don't have their id set at first, but we assume that all their underlying
+    /// These objects don't have their id set at first, but we assume that all their underlying
     /// objects have and that they also have their string versions cached. This caching must be
     /// done manually using the method CacheObject, since the id is not known during the 
     /// to string conversion process.
@@ -20,17 +20,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         /// <summary>
         /// Constructs a new default full object to string provider with a given
-        /// custom argument to string provider factory, a given arguments 
-        /// list to string provider and a given default object id resolver.
+        /// arguments list to string provider and a given default object id resolver.
         /// </summary>
-        /// <param name="factory">The custom argument to string provider factory.</param>
         /// <param name="provider">The arguments list to string provider.</param>
-        /// <param name="resolver">The default object id resolver.</param>
-        public DefaultFullObjectToStringProvider
-        (
-            IArgumentsListToStringProvider provider,
-            DefaultObjectIdResolver resolver
-        )
+        /// <param name="resolver">The configuration object id resolver.</param>
+        public DefaultFullObjectToStringProvider(IArgumentsListToStringProvider provider, DefaultObjectIdResolver resolver)
             : base(provider, resolver)
         {
         }
@@ -71,7 +65,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// <param name="result">The object's string value.</param>
         protected override void HandleResult(ConfigurationObject configurationObject, string result)
         {
-            // We can't do anyting useful here (we can't cache cause we don't have an id -
+            // We can't do anything useful here (we can't cache cause we don't have an id -
             // if we had we would have returned the cached version).
         }
 

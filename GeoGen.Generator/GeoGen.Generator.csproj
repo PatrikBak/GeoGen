@@ -79,7 +79,7 @@
     <Compile Include="ConstructingObjects\IConstructionsContainer.cs" />
     <Compile Include="ConstructingObjects\Arguments\SignatureMatching\ConstructionSignatureMatcher.cs" />
     <Compile Include="ConstructingObjects\Arguments\SignatureMatching\IConstructionSignatureMatcher.cs" />
-    <Compile Include="ConstructingConfigurations\ConfiguratonsContainer.cs" />
+    <Compile Include="ConstructingConfigurations\ConfigurationsContainer.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="ConstructingConfigurations\IConfigurationsContainer.cs" />
     <Compile Include="GeneratorException.cs" />

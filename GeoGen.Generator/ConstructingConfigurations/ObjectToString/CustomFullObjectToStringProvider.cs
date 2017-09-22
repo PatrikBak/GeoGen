@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core.Configurations;
+using GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 
@@ -6,11 +7,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// An implementation of <see cref="FullObjectToStringProviderBase"/> that
-    /// uses custom <see cref="IObjectIdResolver"/>  This class is meant to be 
-    /// used during the symetric configurations detection, together with 
-    /// <see cref="DictionaryObjectIdResolver"/>. It expects 
-    /// that all objects have their ids already set. It automatically caches the evaluated 
-    /// results (unlike <see cref="DefaultFullObjectToStringProvider"/>), 
+    /// uses a custom <see cref="IObjectIdResolver"/>. This class is meant to be 
+    /// used during the symmetric configurations detection, together with 
+    /// <see cref="DictionaryObjectIdResolver"/> (<see cref="LeastConfigurationFinder"/>. 
+    /// It expects that all objects have their ids already set. It automatically 
+    /// caches the evaluated results (unlike <see cref="DefaultFullObjectToStringProvider"/>), 
     /// since it already has the ids available.
     /// </summary>
     internal class CustomFullObjectToStringProvider : FullObjectToStringProviderBase
@@ -19,17 +20,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         /// <summary>
         /// Constructs a new custom full object to string provider with a given
-        /// custom argument to string provider factory, a given arguments 
-        /// list to string provider and a given object id resolver.
+        /// arguments list to string provider and a given object id resolver.
         /// </summary>
-        /// <param name="factory">The custom argument to string provider factory.</param>
         /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
-        public CustomFullObjectToStringProvider
-        (
-            IArgumentsListToStringProvider provider,
-            IObjectIdResolver resolver
-        )
+        public CustomFullObjectToStringProvider(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
             : base(provider, resolver)
         {
         }
@@ -39,7 +34,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         #region Abstract methods from base implementation
 
         /// <summary>
-        /// Resolve sif a given object has it's string value already cached.
+        /// Resolves if a given object has it's string value already cached.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The cached value, if exists, otherwise an empty string.</returns>
@@ -62,7 +57,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
             // We must have an id
             var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
 
-            // Then we can cach the object
+            // Then we can cache the object
             Cache.TryAdd(id, result);
         }
 

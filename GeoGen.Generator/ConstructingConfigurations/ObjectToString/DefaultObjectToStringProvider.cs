@@ -6,7 +6,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// A default implementation of <see cref="IObjectToStringProvider"/>
-    /// that uses <see cref="DefaultObjectIdResolver"/>.
+    /// that uses a <see cref="DefaultObjectIdResolver"/>.
     /// </summary>
     internal class DefaultObjectToStringProvider : ObjectToStringProviderBase
     {

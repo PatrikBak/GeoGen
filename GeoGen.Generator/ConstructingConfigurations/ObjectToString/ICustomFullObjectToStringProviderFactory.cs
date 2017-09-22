@@ -3,13 +3,14 @@
 namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
-    /// An abstract factory for creating implementations of <see cref="CustomFullObjectToStringProvider"/>.
+    /// An abstract factory for creating <see cref="CustomFullObjectToStringProvider"/>
+    /// objects.
     /// </summary>
     internal interface ICustomFullObjectToStringProviderFactory
     {
         /// <summary>
         /// Creates an instance of <see cref="CustomFullObjectToStringProvider"/>
-        /// with a given dictionary object id resolver.
+        /// that uses a given dictionary object id resolver as its id resolver.
         /// </summary>
         /// <param name="resolver">The dictionary object id resolver.</param>
         /// <returns>The custom full object to string provider.</returns>

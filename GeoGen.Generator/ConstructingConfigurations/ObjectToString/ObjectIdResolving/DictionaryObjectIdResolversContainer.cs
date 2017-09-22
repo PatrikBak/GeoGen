@@ -10,6 +10,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
 {
     /// <summary>
     /// A default implementation of <see cref="IDictionaryObjectIdResolversContainer"/>.
+    /// This class is not thread-safe.
     /// </summary>
     internal class DictionaryObjectIdResolversContainer : IDictionaryObjectIdResolversContainer
     {
@@ -35,8 +36,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         #region Constructor
 
         /// <summary>
-        /// Constructs a new dictionary objct id resolvers container with 
-        /// a given variations provider.
+        /// Constructs a new dictionary object id resolvers container
+        /// that uses a given variations provider of loose configuration
+        /// objects.
         /// </summary>
         /// <param name="variationsProvider">The variations provider.</param>
         public DictionaryObjectIdResolversContainer(IVariationsProvider<LooseConfigurationObject> variationsProvider)
@@ -74,7 +76,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         /// <summary>
         /// Executes the initialization process.
         /// </summary>
-        /// <param name="objects">The looose configurations objects.</param>
+        /// <param name="objects">The loose configurations objects.</param>
         private void DoInitialization(IReadOnlyList<LooseConfigurationObject> objects)
         {
             if (objects == null)
@@ -107,6 +109,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
                         }
                     );
 
+            // Set the resolvers (which will enumerate the enumerable)
             _resolvers.SetItems(newResolvers);
         }
 
@@ -117,7 +120,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         public IEnumerator<DictionaryObjectIdResolver> GetEnumerator()
         {
             if (!_initialized)
-                throw new GeneratorException("The container hasn't been initialied.");
+                throw new GeneratorException("The container hasn't been initialized.");
 
             return _resolvers.GetEnumerator();
         }

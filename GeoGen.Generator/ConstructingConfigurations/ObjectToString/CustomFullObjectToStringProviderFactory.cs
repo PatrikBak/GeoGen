@@ -7,6 +7,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// A default implementation of <see cref="ICustomFullObjectToStringProviderFactory"/>.
+    /// It caches given results, since there are supposed be com
     /// </summary>
     internal class CustomFullObjectToStringProviderFactory : ICustomFullObjectToStringProviderFactory
     {

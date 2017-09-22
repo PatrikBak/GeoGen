@@ -16,7 +16,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
     /// <summary>
     /// A default implementation of <see cref="IConfigurationsContainer"/>.
     /// </summary>
-    internal class ConfiguratonsContainer : StringBasedContainer<Configuration>, IConfigurationsContainer
+    internal class ConfigurationsContainer : StringBasedContainer<Configuration>, IConfigurationsContainer
     {
         #region Private fields
 
@@ -69,7 +69,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
         /// <param name="objectToStringProvider"></param>
-        public ConfiguratonsContainer
+        public ConfigurationsContainer
         (
             IArgumentsListContainerFactory argumentsListContainerFactory,
             IConfigurationConstructor configurationConstructor,
@@ -143,10 +143,13 @@ namespace GeoGen.Generator.ConstructingConfigurations
                         output =>
                         {
                             s_newObjects.Start();
+                            
                             // Add objects to container and get identified versions
                             var newObjects = output.ConstructedObjects
                                     .Select(o => _configurationObjectsContainer.Add(o))
                                     .ToList();
+
+
                             s_newObjects.Stop();
 
                             // Re-assign the output

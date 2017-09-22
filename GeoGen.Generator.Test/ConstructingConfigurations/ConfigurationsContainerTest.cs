@@ -21,7 +21,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
     [TestFixture]
     public class ConfigurationsContainerTest
     {
-        private static ConfiguratonsContainer Container()
+        private static ConfigurationsContainer Container()
         {
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
@@ -55,7 +55,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var constructor = mock.Object;
 
-            return new ConfiguratonsContainer
+            return new ConfigurationsContainer
             (
                 argumentsContainerFactory, constructor, configurationToStringProvider,
                 configuationObjectContainer, defaultFullProvider
@@ -80,7 +80,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfiguratonsContainer(null, handler, provider, container, fullResolver)
+                () => new ConfigurationsContainer(null, handler, provider, container, fullResolver)
             );
         }
 
@@ -94,7 +94,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfiguratonsContainer(factory, null, provider, container, fullResolver)
+                () => new ConfigurationsContainer(factory, null, provider, container, fullResolver)
             );
         }
 
@@ -108,7 +108,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfiguratonsContainer(factory, handler, null, container, fullResolver)
+                () => new ConfigurationsContainer(factory, handler, null, container, fullResolver)
             );
         }
 
@@ -122,7 +122,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfiguratonsContainer(factory, handler, provider, null, fullResolver)
+                () => new ConfigurationsContainer(factory, handler, provider, null, fullResolver)
             );
         }
 
@@ -136,7 +136,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfiguratonsContainer(factory, handler, provider, container, null)
+                () => new ConfigurationsContainer(factory, handler, provider, container, null)
             );
         }
 

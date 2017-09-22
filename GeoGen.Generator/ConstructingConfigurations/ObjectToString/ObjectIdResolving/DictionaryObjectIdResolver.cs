@@ -13,38 +13,38 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         #region Private fields
 
         /// <summary>
-        /// The real id to the resolved id dictionary
+        /// The real ids to the resolved ids dictionary
         /// </summary>
-        private readonly Dictionary<int, int> _realIdToResolvedId;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Constructs a new dictionary object id resolver with 
-        /// a given ids dictionary and a given id. The id cannot be 
-        /// the same as the id of the <see cref="DefaultObjectIdResolver"/>.
-        /// </summary>
-        /// <param name="id">The id.</param>
-        /// <param name="realIdToResolvedId">The dictionary mapping real ids to resolved ids.</param>
-        public DictionaryObjectIdResolver(int id, Dictionary<int, int> realIdToResolvedId)
-        {
-            if (id == DefaultObjectIdResolver.DefaultId)
-                throw new ArgumentException("The id cannot be the same as the default object id resolver's id");
-
-            Id = id;
-            _realIdToResolvedId = realIdToResolvedId ?? throw new ArgumentNullException(nameof(realIdToResolvedId));
-        }
+        private readonly Dictionary<int, int> _realIdsToResolvedIds;
 
         #endregion
 
         #region IObjectIdResolver properties
 
         /// <summary>
-        /// The id of the resolver.
+        /// Gets the id of the resolver.
         /// </summary>
         public int Id { get; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new dictionary object id with a given id and 
+        /// a given ids dictionary. The id can't be the same as the id 
+        /// of the <see cref="DefaultObjectIdResolver"/>.
+        /// </summary>
+        /// <param name="id">The id.</param>
+        /// <param name="realIdsToResolvedIds">The dictionary mapping real ids to resolved ids.</param>
+        public DictionaryObjectIdResolver(int id, Dictionary<int, int> realIdsToResolvedIds)
+        {
+            if (id == DefaultObjectIdResolver.DefaultId)
+                throw new ArgumentException("The id can't be the same as the default object id resolver's id");
+
+            Id = id;
+            _realIdsToResolvedIds = realIdsToResolvedIds ?? throw new ArgumentNullException(nameof(realIdsToResolvedIds));
+        }
 
         #endregion
 
@@ -62,7 +62,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
 
             var id = configurationObject.Id ?? throw new GeneratorException("Id must be set.");
 
-            return _realIdToResolvedId[id];
+            return _realIdsToResolvedIds[id];
         }
 
         #endregion

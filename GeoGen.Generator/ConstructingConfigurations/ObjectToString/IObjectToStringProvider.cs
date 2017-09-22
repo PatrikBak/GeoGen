@@ -4,7 +4,8 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolvi
 namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
-    /// Represents a configuration object to string converter.
+    /// Represents a configuration object to string converter. It is 
+    /// dependent on a <see cref="IObjectIdResolver"/>.
     /// </summary>
     internal interface IObjectToStringProvider
     {

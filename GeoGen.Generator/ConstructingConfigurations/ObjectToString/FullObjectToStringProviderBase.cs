@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using GeoGen.Core.Configurations;
+using GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 
@@ -9,9 +10,10 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// <summary>
     /// An abstract implementation of <see cref="IObjectToStringProvider"/> that
     /// uses custom <see cref="IObjectIdResolver"/>. It converts an object to a string
-    /// using only ids of loose objects. This is useful for determining symetric configurations.
-    /// It has two implementations, <see cref="DefaultFullObjectToStringProvider"/>
-    /// and <see cref="CustomFullObjectToStringProvider"/>.
+    /// using only ids of loose objects. This is useful for determining comparing
+    /// configurations objects (<see cref="DefaultFullObjectToStringProvider"/>, or
+    /// for determining symmetric configurations (<see cref="CustomFullObjectToStringProvider"/>
+    /// and <see cref="LeastConfigurationFinder"/>). This class is not thread-safe.
     /// </summary>
     internal abstract class FullObjectToStringProviderBase : ObjectToStringProviderBase
     {
@@ -38,17 +40,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         /// <summary>
         /// Constructs a new full object to string provider with a given
-        /// custom argument to string provider factory, a given arguments 
-        /// list to string provider and a given object id resolver.
+        /// arguments list to string provider and a given object id resolver.
         /// </summary>
-        /// <param name="factory">The custom argument to string provider factory.</param>
         /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
-        protected FullObjectToStringProviderBase
-        (
-            IArgumentsListToStringProvider provider,
-            IObjectIdResolver resolver
-        )
+        protected FullObjectToStringProviderBase(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
             : base(resolver)
         {
             _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
@@ -62,13 +58,13 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// Converts a given configuration object to string. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The string representation of the list.</returns>
+        /// <returns>The string representation of the object.</returns>
         public override string ConvertToString(ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
-            // We let the resolvedrto resolve the loose objects ids
+            // We let the resolver to resolve the loose objects id
             if (configurationObject is LooseConfigurationObject looseConfigurationObject)
                 return $"{Resolver.ResolveId(looseConfigurationObject)}";
 
@@ -80,12 +76,12 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
                 return cachedString;
 
             // The object must be a constructed configuration object
-            var contructedObject = configurationObject as ConstructedConfigurationObject ?? throw new GeneratorException("Unhandled case");
+            var contructedObject = (ConstructedConfigurationObject) configurationObject;
 
             // Pull the passed arguments
             var passedArgs = contructedObject.PassedArguments;
 
-            // We find arguments string. This might cause recursive calls of this very function,
+            // We find arguments string. This might cause recursive calls of this function,
             // because we're passing this object as an object to string provider. 
             var argumentsString = _argumentsListToStringProvider.ConvertToString(passedArgs, this);
 
