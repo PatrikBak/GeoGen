@@ -5,7 +5,7 @@ using GeoGen.Core.Constructions.Parameters;
 namespace GeoGen.Core.Constructions.Arguments
 {
     /// <summary>
-    /// Represents a set of <see cref="ConstructionArgument"/> that is passable as a <see cref="ConstructionParameter"/>.
+    /// Represents a set of <see cref="ConstructionArgument"/> that can be passed to a construction.
     /// The type of passed arguments might be a <see cref="ObjectConstructionArgument"/>, or another set of arguments.
     /// It's size is not supposed to be 1, since it's either a <see cref="ObjectConstructionArgument"/>, or a set
     /// within a set (which doesn't make sense in our context). 
@@ -33,8 +33,12 @@ namespace GeoGen.Core.Constructions.Arguments
                 throw new ArgumentNullException(nameof(passedArguments));
 
             if (passedArguments.Count <= 1)
-                throw new ArgumentOutOfRangeException(nameof(passedArguments), passedArguments.Count,
-                    "Number of passable arguments must be at least two");
+            {
+                throw new ArgumentOutOfRangeException
+                (
+                    nameof(passedArguments), passedArguments.Count, "Number of passable arguments must be at least two."
+                );
+            }
 
             PassedArguments = passedArguments;
         }

@@ -5,7 +5,8 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.Combinator;
-using GeoGen.Core.Utilities.Variations;
+using GeoGen.Core.Utilities.VariationsProviding;
+using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
@@ -18,11 +19,9 @@ using GeoGen.Generator.ConstructingObjects.Arguments;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
+using GeoGen.Generator.Test.TestHelpers;
+using Moq;
 using NUnit.Framework;
-using static GeoGen.Generator.ConstructingConfigurations.ConfigurationConstructor;
-using static GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding.LeastConfigurationFinder;
-using static GeoGen.Generator.ConstructingConfigurations.ConfigurationsContainer;
-using static GeoGen.Generator.ConstructingConfigurations.ConfigurationToString.ConfigurationToStringProvider;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
 
@@ -37,7 +36,9 @@ namespace GeoGen.Generator.Test
         {
             var constructionsContainer = new ConstructionsContainer();
             constructionsContainer.Initialize(input.Constructions);
-            var configurationsHandler = new ConfigurationsHandler();
+            var handler = new Mock<IConfigurationsHandler>();
+            handler.Setup(s => s.GenerateFinalOutput(It.IsAny<IEnumerable<ConfigurationWrapper>>()))
+                    .Returns<IEnumerable<ConfigurationWrapper>>(s => s.Select(i => new GeneratorOutput()));
             var combinator = new Combinator<ConfigurationObjectType, List<ConfigurationObject>>();
             var variationsProvider1 = new VariationsProvider<ConfigurationObject>();
             var defaultObjectIdResolver = new DefaultObjectIdResolver();
@@ -56,17 +57,17 @@ namespace GeoGen.Generator.Test
             container = new ConfigurationObjectsContainer(defaultComplexConfigurationObjectToStringProvider);
             var idsFixer = new IdsFixerFactory(container);
             var configurationConstructor = new ConfigurationConstructor(leastConfigurationFinder, idsFixer, argumentsContainerFactory);
-            var configurationContainer = new ConfigurationsContainer(argumentsContainerFactory, configurationConstructor, configurationToStringProvider, container, defaultComplexConfigurationObjectToStringProvider);
+            var configurationContainer = new ConfigurationsContainer(configurationConstructor, configurationToStringProvider, container, defaultComplexConfigurationObjectToStringProvider);
             configurationContainer.Initialize(input.InitialConfiguration);
             dictionaryObjectIdResolversContainer.Initialize(input.InitialConfiguration.LooseObjects.ToList());
-            return new Generator(configurationContainer, objectsConstructor, configurationsHandler, input.MaximalNumberOfIterations);
+            return new Generator(configurationContainer, objectsConstructor, handler.Object, input.MaximalNumberOfIterations);
         }
 
         [Test]
         public void Triangle_And_Midpoint_Test()
         {
-            int it = 7;
-            int max = 7;
+            int it = 5;
+            int max = 5;
             for (int i = it; i <= max; i++)
             {
                 var points = Objects(3, ConfigurationObjectType.Point, includeIds: false);
@@ -96,19 +97,8 @@ namespace GeoGen.Generator.Test
                 Console.WriteLine($"Configurations: {count}");
                 Console.WriteLine($"Container: {container.Count()}");
                 Console.WriteLine($"Time: {stopwatch.ElapsedMilliseconds}\n");
-
-                Console.WriteLine($"New objects: {s_newObjects.ElapsedMilliseconds}");
-                Console.WriteLine($"Wrapper: {s_constructingWrapper.ElapsedMilliseconds}");
-                Console.WriteLine($"Construction: {s_AddingConfiguration.ElapsedMilliseconds}");
-                Console.WriteLine("--------");
-                Console.WriteLine($"Balast: {s_balast.ElapsedMilliseconds}");
-                Console.WriteLine($"Least resolver: {s_leastResolver.ElapsedMilliseconds}");
-                Console.WriteLine($"Cloning config: {s_cloningConfig.ElapsedMilliseconds}");
-                Console.WriteLine($"Fixing arguments: {s_arguments.ElapsedMilliseconds}");
-                Console.WriteLine($"Objects map: {s_typeMap.ElapsedMilliseconds}");
-                Console.WriteLine("--------");
-
-                //Console.WriteLine($"Iterating: {s_iterating.ElapsedMilliseconds}");
+                
+      //Console.WriteLine($"Iterating: {s_iterating.ElapsedMilliseconds}");
                 //Console.WriteLine($"Converting to string: {s_toString.ElapsedMilliseconds}");
 
                 //Console.WriteLine($"Converting: {s_converting.ElapsedMilliseconds}");

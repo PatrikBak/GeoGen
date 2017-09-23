@@ -8,10 +8,12 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
 {
     /// <summary>
     /// An implementation of <see cref="IArgumentsListContainer"/> that 
-    /// uses <see cref="IArgumentsListToStringProvider"/> with 
-    /// default object to string provider. Since we elimate 
+    /// uses <see cref="StringBasedContainer{T}"/>, where T is the list of 
+    /// <see cref="ConstructionArgument"/>, together with 
+    /// <see cref="IArgumentsListToStringProvider"/>. and the default 
+    /// configuration object to string provider. Since we eliminate 
     /// equal points on go, we don't need to use the full object as
-    /// string representation (that uses only loose object's ids)
+    /// string representation (that uses only loose object's ids).
     /// </summary>
     internal class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
     {
@@ -27,7 +29,8 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
         #region Constructor
 
         /// <summary>
-        /// Constructs a new arguments container that uses a given arguments list to string provider.
+        /// Constructs a new arguments container that uses a given 
+        /// arguments list to string provider for comparing arguments.
         /// </summary>
         /// <param name="argumentsListToStringProvider">The arguments list to string provider.</param>
         public ArgumentsListContainer(IArgumentsListToStringProvider argumentsListToStringProvider)
@@ -40,11 +43,12 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
         #region IArguments container methods
 
         /// <summary>
-        /// Adds arguments to the container.
+        /// Adds an argument list to the container.
         /// </summary>
         /// <param name="arguments">The arguments.</param>
         public void AddArguments(IReadOnlyList<ConstructionArgument> arguments)
         {
+            // Call the base add method and ignore it's result
             Add(arguments);
         }
 
@@ -58,10 +62,13 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
             if (elementsToBeRemoved == null)
                 throw new ArgumentNullException(nameof(elementsToBeRemoved));
 
-            var argumentsContainer = elementsToBeRemoved as ArgumentsListContainer ?? throw new GeneratorException("Unhandled case");
+            // We assume the other container is also an instance of this class.
+            var argumentsContainer = (ArgumentsListContainer) elementsToBeRemoved;
 
+            // And so we can access to the protected items dictionary of the base class
             foreach (var item in argumentsContainer.Items)
             {
+                // And remove all its items from this items dictionary
                 Items.Remove(item.Key);
             }
         }

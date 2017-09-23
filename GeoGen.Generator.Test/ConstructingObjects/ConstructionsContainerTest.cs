@@ -49,7 +49,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
             foreach (var ids in constructionIds)
             {
                 var constructions = ConstructionsWithId(ids);
-                Assert.Throws<ArgumentException>(() => Container().Initialize(constructions));
+                Assert.Throws<InitializationException>(() => Container().Initialize(constructions));
             }
         }
 

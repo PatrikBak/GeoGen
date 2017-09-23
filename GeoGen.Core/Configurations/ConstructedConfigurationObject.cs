@@ -7,15 +7,16 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Core.Configurations
 {
     /// <summary>
-    /// Represent a constructed <see cref="ConfigurationObject"/>. It's defined by a <see cref="Constructions.Construction"/>
-    /// and the list of <see cref="ConstructionArgument"/>s that have been passed to the construction.
+    /// Represent a constructed <see cref="ConfigurationObject"/>. It's defined by a <see cref="Construction"/>,
+    /// the list of <see cref="ConstructionArgument"/>s that have been passed to the construction, and an index
+    /// (the construction could have more output objects).
     /// </summary>
     public class ConstructedConfigurationObject : ConfigurationObject
     {
         #region Public properties
 
         /// <summary>
-        /// The construction that created this object.
+        /// Gets the construction that created this object.
         /// </summary>
         public Construction Construction { get; }
 
@@ -25,7 +26,7 @@ namespace GeoGen.Core.Configurations
         public int Index { get; }
 
         /// <summary>
-        /// The arguments that have been passed to the construction. 
+        /// Gets the arguments that have been passed to the construction. 
         /// </summary>
         public IReadOnlyList<ConstructionArgument> PassedArguments { get; }
 
@@ -43,16 +44,17 @@ namespace GeoGen.Core.Configurations
         #region Constructor
 
         /// <summary>
-        /// Constructs a new constructed configuration object from a given construction, arguments passed to it
-        /// and a given type. There's no validaton that passed arguments match the actual construction signature. 
+        /// Constructs a new constructed configuration object. This object is defined by 
+        /// a construction, a list of passed arguments and an index that corresponds 
+        /// to the object type in the output type list of the construction. 
         /// </summary>
         /// <param name="construction">The construction.</param>
-        /// <param name="passedArguments">The passed arguments.</param>
-        /// <param name="index">The index of the output type.</param>
-        public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> passedArguments, int index)
+        /// <param name="arguments">The passed arguments.</param>
+        /// <param name="index">The index.</param>
+        public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> arguments, int index)
         {
             Construction = construction ?? throw new ArgumentNullException(nameof(construction));
-            PassedArguments = passedArguments ?? throw new ArgumentNullException(nameof(passedArguments));
+            PassedArguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
 
             if (PassedArguments.Empty())
                 throw new ArgumentException("Passed arguments can't be empty.");

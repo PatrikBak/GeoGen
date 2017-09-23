@@ -6,13 +6,12 @@ namespace GeoGen.Generator.ConstructingObjects
 {
     /// <summary>
     /// An internal wrapper class for a <see cref="Configuration"/>, containing some
-    /// additional information regarding the construction. During the generation 
-    /// process, these instances are preferred.
+    /// additional data regarding the construction.
     /// </summary>
     internal class ConstructionWrapper
     {
         /// <summary>
-        /// Gets or sets the construction that this class wrapps.
+        /// Gets or sets the construction that is wrapped by this object.
         /// </summary>
         public Construction Construction { get; set; }
 

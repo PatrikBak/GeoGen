@@ -29,13 +29,16 @@ namespace GeoGen.Generator.ConstructingObjects
         #region Constructor
 
         /// <summary>
-        /// Constructs a new configuration construction from a construction containerand an arguments generator.
+        /// Constructs a new objects constructor that takes configurations
+        /// from a given configurations container and uses a given arguments
+        /// generator to generate arguments for the constructed configuration
+        /// objects.
         /// </summary>
-        /// <param name="constructionsContainer">The construction container.</param>
+        /// <param name="constructionsContainer">The constructions container.</param>
         /// <param name="argumentsGenerator">The arguments generator.</param>
         public ObjectsConstructor(IConstructionsContainer constructionsContainer, IArgumentsGenerator argumentsGenerator)
         {
-            _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(argumentsGenerator));
+            _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(constructionsContainer));
             _argumentsGenerator = argumentsGenerator ?? throw new ArgumentNullException(nameof(argumentsGenerator));
         }
 
@@ -44,15 +47,16 @@ namespace GeoGen.Generator.ConstructingObjects
         #region IObjectsConstructor methods
 
         /// <summary>
-        /// Performs all possible constructions to a given configution wrapper.
+        /// Performs all possible constructions to a given configuration wrapper.
         /// </summary>
-        /// <param name="configurationWrapper">The given configuration wrapper.</param>
-        /// <returns>The enumerable of constructor output.</returns>
+        /// <param name="configurationWrapper">The configuration wrapper.</param>
+        /// <returns>The enumerable of constructor outputs.</returns>
         public IEnumerable<ConstructorOutput> GenerateOutput(ConfigurationWrapper configurationWrapper)
         {
             if (configurationWrapper == null)
                 throw new ArgumentNullException(nameof(configurationWrapper));
 
+            // For each construction create many outputs
             return _constructionsContainer.SelectMany
             (
                 constructionWrapper =>
@@ -60,14 +64,14 @@ namespace GeoGen.Generator.ConstructingObjects
                     // Generate arguments
                     var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
 
-                    // Pull forbidden arguments for the current constrution
+                    // Pull forbidden arguments for the current construction
                     var forbiddenArguments = configurationWrapper.ForbiddenArguments;
 
                     // Unwrap construction
                     var unwrapedConstruction = constructionWrapper.Construction;
 
                     // Pull the construction id.
-                    var constructionId = unwrapedConstruction.Id ?? throw new GeneratorException();
+                    var constructionId = unwrapedConstruction.Id ?? throw new GeneratorException("Id must be set.");
 
                     // If there are any arguments to be excluded, exclude them.
                     if (forbiddenArguments.ContainsKey(constructionId))
@@ -75,7 +79,7 @@ namespace GeoGen.Generator.ConstructingObjects
                         generatedArguments.RemoveElementsFrom(forbiddenArguments[constructionId]);
                     }
 
-                    // Create new output enumerale
+                    // Create new output enumerable
                     var newOutput = generatedArguments.Select
                     (
                         arguments =>
@@ -94,6 +98,7 @@ namespace GeoGen.Generator.ConstructingObjects
                         }
                     );
 
+                    // Return it
                     return newOutput;
                 });
         }

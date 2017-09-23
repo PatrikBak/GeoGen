@@ -15,7 +15,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// for determining symmetric configurations (<see cref="CustomFullObjectToStringProvider"/>
     /// and <see cref="LeastConfigurationFinder"/>). This class is not thread-safe.
     /// </summary>
-    internal abstract class FullObjectToStringProviderBase : ObjectToStringProviderBase
+    internal abstract class FullObjectToStringProviderBase : IObjectToStringProvider
     {
         #region Private fields
 
@@ -36,6 +36,15 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         #endregion
 
+        #region IObjectToStringProvider properties
+
+        /// <summary>
+        /// Gets the object to string resolver that is used by this provider.
+        /// </summary>
+        public IObjectIdResolver Resolver { get; }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -45,9 +54,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// <param name="provider">The arguments list to string provider.</param>
         /// <param name="resolver">The configuration object id resolver.</param>
         protected FullObjectToStringProviderBase(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
-            : base(resolver)
         {
             _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            Resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         }
 
         #endregion
@@ -59,7 +68,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The string representation of the object.</returns>
-        public override string ConvertToString(ConfigurationObject configurationObject)
+        public string ConvertToString(ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));

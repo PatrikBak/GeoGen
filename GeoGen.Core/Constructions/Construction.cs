@@ -5,9 +5,10 @@ using GeoGen.Core.Constructions.Parameters;
 namespace GeoGen.Core.Constructions
 {
     /// <summary>
-    /// Represents a construction that we use to add <see cref="ConstructedConfigurationObject"/> to a <see cref="Configuration"/>.
-    /// It's given by the input signature, which is a list of <see cref="ConstructionParameter"/>, and the output signature,
-    /// which is a list of <see cref="ConfigurationObjectType"/>. 
+    /// An abstract representation of a construction that we use to add 
+    /// <see cref="ConstructedConfigurationObject"/> to a <see cref="Configuration"/>. 
+    /// It's given by the input signature, which is a list of <see cref="ConstructionParameter"/>, 
+    /// and the output signature, which is a list of <see cref="ConfigurationObjectType"/>. 
     /// </summary>
     public abstract class Construction
     {

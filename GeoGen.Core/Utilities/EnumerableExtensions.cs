@@ -24,7 +24,7 @@ namespace GeoGen.Core.Utilities
         }
 
         /// <summary>
-        /// Creates a single-element enumerable containing the given item.
+        /// Creates a single-element enumerable containing a given item.
         /// </summary>
         /// <typeparam name="T">The type.</typeparam>
         /// <param name="item">The item</param>

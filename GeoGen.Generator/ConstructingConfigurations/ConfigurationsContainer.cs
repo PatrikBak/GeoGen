@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
@@ -9,7 +8,6 @@ using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingObjects;
-using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 
 namespace GeoGen.Generator.ConstructingConfigurations
 {
@@ -21,27 +19,22 @@ namespace GeoGen.Generator.ConstructingConfigurations
         #region Private fields
 
         /// <summary>
-        /// The arguments container factory
-        /// </summary>
-        private readonly IArgumentsListContainerFactory _argumentsListContainerFactory;
-
-        /// <summary>
-        /// The symetric configurations handler
+        /// The configuration constructor.
         /// </summary>
         private readonly IConfigurationConstructor _configurationConstructor;
 
         /// <summary>
-        /// The configuration to string provider
+        /// The configuration to string provider.
         /// </summary>
         private readonly IConfigurationToStringProvider _configurationToStringProvider;
 
         /// <summary>
-        /// The configurations container
+        /// The configurations container.
         /// </summary>
         private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
 
         /// <summary>
-        /// 
+        /// The default full object to string provider.
         /// </summary>
         private readonly DefaultFullObjectToStringProvider _objectToStringProvider;
 
@@ -59,26 +52,27 @@ namespace GeoGen.Generator.ConstructingConfigurations
         #region Constructor
 
         /// <summary>
-        /// Constructs a new configuration container with a given
-        /// arguments container facory, a symetric configurations 
-        /// handler, a configuration to string provider,
-        /// and a configuration objects container.
+        /// Constructs a new configuration container. This container needs to use 
+        /// <see cref="IConfigurationConstructor"/>, for constructing 
+        /// <see cref="ConfigurationWrapper"/>s from the initial configuration and the
+        /// constructor output. Then it uses a <see cref="ConfigurationObjectsContainer"/>,
+        /// for adding new objects from the output. Since it's string bases, it also needs a
+        /// <see cref="IConfigurationToStringProvider"/>, which needs an implementation
+        /// of <see cref="IObjectToStringProvider"/> to be passed. This container uses the
+        /// <see cref="DefaultFullObjectToStringProvider"/>.
         /// </summary>
-        /// <param name="argumentsListContainerFactory">The arguments container factory.</param>
-        /// <param name="configurationConstructor">The symetrc configurations handler.</param>
+        /// <param name="configurationConstructor">The configuration constructor.</param>
         /// <param name="configurationToStringProvider">The configuration to string provider.</param>
         /// <param name="configurationObjectsContainer">The configuration objects container.</param>
-        /// <param name="objectToStringProvider"></param>
+        /// <param name="objectToStringProvider">The default full object to string provider.</param>
         public ConfigurationsContainer
         (
-            IArgumentsListContainerFactory argumentsListContainerFactory,
             IConfigurationConstructor configurationConstructor,
             IConfigurationToStringProvider configurationToStringProvider,
             IConfigurationObjectsContainer configurationObjectsContainer,
             DefaultFullObjectToStringProvider objectToStringProvider
         )
         {
-            _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
             _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
             _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(configurationToStringProvider));
             _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(configurationObjectsContainer));
@@ -98,33 +92,21 @@ namespace GeoGen.Generator.ConstructingConfigurations
             if (initialConfiguration == null)
                 throw new ArgumentNullException(nameof(initialConfiguration));
 
-            // Initialize container with this configuration
+            // Clear the current state of the container
+            Items.Clear();
+
+            // Initialize the objects container with this configuration
             _configurationObjectsContainer.Initialize(initialConfiguration);
 
-            // Let the base method add the initial configuration
+            // Add the initial configuration to the container
             Add(initialConfiguration);
 
-            // Create type object map
-            var objectsMap = new ConfigurationObjectsMap(initialConfiguration);
-
-            // Create forbidden arguments dictionary
-            var forbiddenArguments = CreateForbiddenArguments(initialConfiguration);
-
-            // Create wrapper
-            var configurationWrapper = new ConfigurationWrapper
-            {
-                Configuration = initialConfiguration,
-                ConfigurationObjectsMap = objectsMap,
-                ForbiddenArguments = forbiddenArguments
-            };
+            // Let the constructor construct wrapper for the initial configuration.
+            var configurationWrapper = _configurationConstructor.ConstructWrapper(initialConfiguration);
 
             // Set the current layer items
             CurrentLayer.SetItems(configurationWrapper.SingleItemAsEnumerable());
         }
-
-        public static Stopwatch s_newObjects = new Stopwatch();
-        public static Stopwatch s_constructingWrapper = new Stopwatch();
-        public static Stopwatch s_AddingConfiguration = new Stopwatch();
 
         /// <summary>
         /// Processes a new layer of a constructor output.
@@ -137,35 +119,24 @@ namespace GeoGen.Generator.ConstructingConfigurations
 
             // take the output
             var newLayer = newLayerOutput
-                    // get new configurations
+                    // get new configuration for each
                     .Select
                     (
                         output =>
                         {
-                            s_newObjects.Start();
-                            
-                            // Add objects to container and get identified versions
+                            // Add objects to the container and get their identified versions
                             var newObjects = output.ConstructedObjects
                                     .Select(o => _configurationObjectsContainer.Add(o))
                                     .ToList();
 
-
-                            s_newObjects.Stop();
-
                             // Re-assign the output
                             output.ConstructedObjects = newObjects;
 
-
-                            s_constructingWrapper.Start();
-                            // Create a new configuration wrapper
+                            // Let the constructor create a new wrapper
                             var configuration = _configurationConstructor.ConstructWrapper(output);
-                            s_constructingWrapper.Stop();
 
-                            s_AddingConfiguration.Start();
                             // Add the representant to the container
                             var result = Add(configuration.Configuration);
-                            //Console.WriteLine(result);
-                            s_AddingConfiguration.Stop();
 
                             // return the anonymous type wrapping the change result and the object
                             return new {Change = result, Object = configuration};
@@ -192,39 +163,6 @@ namespace GeoGen.Generator.ConstructingConfigurations
         protected override string ItemToString(Configuration item)
         {
             return _configurationToStringProvider.ConvertToString(item, _objectToStringProvider);
-        }
-
-        #endregion
-
-        #region Private helper methods
-
-        /// <summary>
-        /// Creates a dictionary mapping a construction id to an arguments container
-        /// that contains all forbidden arguments for this construction. This is 
-        /// supposed to be used for an initial configuration. At that stage we can
-        /// only forbid all constructed objects that are already contained within
-        /// the configuration.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>The dictionary.</returns>
-        private Dictionary<int, IArgumentsListContainer> CreateForbiddenArguments(Configuration configuration)
-        {
-            var result = new Dictionary<int, IArgumentsListContainer>();
-
-            foreach (var constructedObject in configuration.ConstructedObjects)
-            {
-                var id = constructedObject.Construction.Id ?? throw new GeneratorException("Construction id must be set");
-
-                if (!result.ContainsKey(id))
-                {
-                    var container = _argumentsListContainerFactory.CreateContainer();
-                    result.Add(id, container);
-                }
-
-                result[id].AddArguments(constructedObject.PassedArguments);
-            }
-
-            return result;
         }
 
         #endregion

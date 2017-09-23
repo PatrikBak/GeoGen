@@ -10,7 +10,7 @@ namespace GeoGen.Core.Constructions
     /// <summary>
     /// Represents a composed <see cref="Construction"/> that is defined as an output of some configuration. 
     /// This is supposed to represent a complex constructions that user can define by themselves, for instance
-    /// the construction that takes 3 points and returns the ortocenter of the triangle formed by those points.
+    /// the construction that takes 3 points and outputs the orthocenter of the triangle formed by those points.
     /// </summary>
     public class ComposedConstruction : Construction
     {
@@ -48,11 +48,15 @@ namespace GeoGen.Core.Constructions
         /// Constructs a new composed construction from a given parental configuration, a set
         /// of indices of objects that are supposed be the output of the construction signature, 
         /// and a signature of the construction. It must be possible to pass the loose configuration
-        /// objects of the parental configuration to the signature. This may or may not be order-depedant.
-        /// (the incenter of a triangle is order-independant, unlike an excenter). 
+        /// objects of the parental configuration to the signature. This may or may not be order-Dependant.
+        /// (the incenter of a triangle is order-independent, unlike an excenter). 
         /// </summary>
-        public ComposedConstruction(Configuration parentalConfiguration, ISet<int> outputObjectsIndices,
-            IReadOnlyList<ConstructionParameter> constructionParameters)
+        public ComposedConstruction
+        (
+            Configuration parentalConfiguration,
+            ISet<int> outputObjectsIndices,
+            IReadOnlyList<ConstructionParameter> constructionParameters
+        )
         {
             ParentalConfiguration = parentalConfiguration ?? throw new ArgumentNullException(nameof(parentalConfiguration));
 
@@ -68,7 +72,7 @@ namespace GeoGen.Core.Constructions
             }
             catch (ArgumentOutOfRangeException)
             {
-                throw new ArgumentException("Incorrcect indices, can't retrieve constructed objects.");
+                throw new ArgumentException("Incorrect indices, can't retrieve constructed objects.");
             }
 
             OutputTypes = ConstructionOutput.Select(o => o.ObjectType).ToList();

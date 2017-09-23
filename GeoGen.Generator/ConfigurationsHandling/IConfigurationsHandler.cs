@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Generator.ConstructingConfigurations;
 
-namespace GeoGen.Generator
+namespace GeoGen.Generator.ConfigurationsHandling
 {
     /// <summary>
     /// Represents a handler of configurations provided by configuration constructor. 

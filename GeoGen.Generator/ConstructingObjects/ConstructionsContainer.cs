@@ -33,9 +33,10 @@ namespace GeoGen.Generator.ConstructingObjects
         /// <summary>
         /// Initializes the container with a given enumerable of constructions.
         /// It performs the check whether the constructions have distinct ids (which is needed
-        /// during the generation process).
+        /// during the generation process). If it doesn't, then the <see cref="InitializationException"/>
+        /// will be thrown.
         /// </summary>
-        /// <param name="constructions"></param>
+        /// <param name="constructions">The constructions enumerable.</param>
         public void Initialize(IEnumerable<Construction> constructions)
         {
             try
@@ -50,66 +51,32 @@ namespace GeoGen.Generator.ConstructingObjects
             }
         }
 
-        /// <summary>
-        /// Gets the type to types count directionary from a given construction.
-        /// </summary>
-        /// <param name="construction">The construction.</param>
-        /// <returns>The configuration object type to count dictionary.</returns>
-        private static IReadOnlyDictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount(Construction construction)
-        {
-            var allTypes = construction.ConstructionParameters.SelectMany(ObjectTypesOf);
-
-            var result = new Dictionary<ConfigurationObjectType, int>();
-
-            foreach (var type in allTypes)
-            {
-                if (result.ContainsKey(type))
-                {
-                    result[type]++;
-                }
-                else
-                {
-                    result.Add(type, 1);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// A recursive method to determine the list of types contained within a single
-        /// construction parameter.
-        /// </summary>
-        /// <param name="constructionParameter">The construction parameter.</param>
-        /// <returns>The types contained within it.</returns>
-        private static List<ConfigurationObjectType> ObjectTypesOf(ConstructionParameter constructionParameter)
-        {
-            if (constructionParameter is ObjectConstructionParameter objectConstructionParameter)
-                return new List<ConfigurationObjectType> {objectConstructionParameter.ExpectedType};
-
-            var setParameter = constructionParameter as SetConstructionParameter ?? throw new NullReferenceException();
-            var innerTypes = ObjectTypesOf(setParameter.TypeOfParameters);
-
-            return Enumerable.Range(0, setParameter.NumberOfParameters)
-                    .SelectMany(i => innerTypes)
-                    .ToList();
-        }
-
         #endregion
 
+        #region Private methods
+
+        /// <summary>
+        /// Executes the actual initialization process.
+        /// </summary>
+        /// <param name="constructions">The constructions enumerable.</param>
         private void DoInitialization(IEnumerable<Construction> constructions)
         {
             if (constructions == null)
                 throw new ArgumentNullException(nameof(constructions));
 
-            // Enumerate
+            // Enumerate the constructions
             var constructionsList = constructions.ToList();
 
-            // Check distint ids
-            if (constructionsList.Select(c => c.Id).ToSet().Count != constructionsList.Count)
-                throw new ArgumentException("Passed constructions don't have unique ids.");
+            // Cast ids to a set
+            var idsSet = constructionsList
+                    .Select(c => c.Id ?? throw new InitializationException("Construction id must be set"))
+                    .ToSet();
 
-            // Set new items to the container
+            // Check distinct ids
+            if (idsSet.Count != constructionsList.Count)
+                throw new InitializationException("Passed constructions don't have unique ids.");
+
+            // Set new items to the container casted to the construction wrapper
             _constructions.SetItems
             (
                 constructionsList.Select
@@ -122,6 +89,64 @@ namespace GeoGen.Generator.ConstructingObjects
                 )
             );
         }
+
+        /// <summary>
+        /// Gets the type to types count dictionary from a given construction.
+        /// </summary>
+        /// <param name="construction">The construction.</param>
+        /// <returns>The configuration object type to count dictionary.</returns>
+        private static Dictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount(Construction construction)
+        {
+            // Get the list containing all needed types (with possibly duplicate items)
+            var allTypes = construction.ConstructionParameters.SelectMany(ObjectTypesOf);
+
+            // Initialize the resulting dictionary
+            var result = new Dictionary<ConfigurationObjectType, int>();
+
+            // Iterate over the gotten types
+            foreach (var type in allTypes)
+            {
+                // If the result already contains a given type, increase it's needed count
+                if (result.ContainsKey(type))
+                {
+                    result[type]++;
+                }
+                // Otherwise initialize the needed type with the count 1 
+                else
+                {
+                    result.Add(type, 1);
+                }
+            }
+
+            // Finally return the result
+            return result;
+        }
+
+        /// <summary>
+        /// A recursive method to determine the list of types contained within a single
+        /// construction parameter.
+        /// </summary>
+        /// <param name="constructionParameter">The construction parameter.</param>
+        /// <returns>The types contained within it.</returns>
+        private static List<ConfigurationObjectType> ObjectTypesOf(ConstructionParameter constructionParameter)
+        {
+            // If we have an object parameter, we'll return a list containing only the expected type
+            if (constructionParameter is ObjectConstructionParameter objectParameter)
+                return new List<ConfigurationObjectType> {objectParameter.ExpectedType};
+
+            // Otherwise we have a set parameter
+            var setParameter = (SetConstructionParameter) constructionParameter;
+
+            // We'll recursively find the inner types of the parameter. 
+            var innerTypes = ObjectTypesOf(setParameter.TypeOfParameters);
+
+            // And each of them repeat the needed number of times
+            return Enumerable.Range(0, setParameter.NumberOfParameters)
+                    .SelectMany(i => innerTypes)
+                    .ToList();
+        }
+
+        #endregion
 
         #region IEnumerable methods
 

@@ -5,6 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
+using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects;
 using Moq;
@@ -53,12 +54,7 @@ namespace GeoGen.Generator.Test
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IEnumerable<ConfigurationWrapper>>()))
-                    .Returns(
-                        () => configurations.Skip(1).Select(
-                            c => new GeneratorOutput
-                            {
-                                GeneratedConfiguration = c.Configuration
-                            }));
+                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput()));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating

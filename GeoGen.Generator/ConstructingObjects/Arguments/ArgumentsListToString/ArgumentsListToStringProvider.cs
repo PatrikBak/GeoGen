@@ -8,12 +8,28 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
 {
     /// <summary>
-    /// An implementation of <see cref="IArgumentsToStringProvider"/>. It defaulty 
-    /// uses Id of configuration objects so it's supposed to be set to the objects 
-    /// inside arguments before use.
+    /// A default implementation of <see cref="IArgumentsListToStringProvider"/>.
+    /// It creates a unique representation of arguments lists by sorting the 
+    /// string representations of the sets arguments. Since we don't expect
+    /// to have long lists or arguments, this should be fast enough. 
+    /// This class is thread-safe.
     /// </summary>
     internal class ArgumentsListToStringProvider : IArgumentsListToStringProvider
     {
+        #region Private constants
+
+        /// <summary>
+        /// The arguments list separator.
+        /// </summary>
+        private const string ArgumentsListSeparator = ",";
+
+        /// <summary>
+        /// The arguments set separator.
+        /// </summary>
+        private const string ArgumentsSetSeparator = ";";
+
+        #endregion
+
         #region Private fields
 
         /// <summary>
@@ -26,29 +42,24 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
         #region Constructors
 
         /// <summary>
-        /// Construct an argument to string provider with a given arguments
-        /// separator, a given interset separator and a given default
-        /// configuration object to string provider. This constructor is 
-        /// meant to be used in testing.
+        /// Construct an argument to string provider that uses a given
+        /// default object to string provider.
         /// </summary>
-        /// <param name="configurationObjectToString">The configuration object to string.</param>
-        /// <param name="argumentsSeparator">The arguments separator.</param>
-        /// <param name="intersetSeparator">The interset separator.</param>
-        public ArgumentsListToStringProvider(DefaultObjectToStringProvider configurationObjectToString)
+        /// <param name="objectToStringProvider">The configuration object to string.</param>
+        public ArgumentsListToStringProvider(DefaultObjectToStringProvider objectToStringProvider)
         {
-            _configurationObjectToString = configurationObjectToString ?? throw new ArgumentNullException(nameof(configurationObjectToString));
+            _configurationObjectToString = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
         }
 
         #endregion
 
-        #region IArgumentsToStringProvider implementation
+        #region IArgumentsToStringProvider methods
 
         /// <summary>
-        /// Converts a given list of construction arguments to string. 
-        /// Arguments must have objects with unique ids inside them
-        /// (this is verified in a debug mode).
+        /// Converts a given list of construction arguments to string,
+        /// using a default configuration object to string provider.
         /// </summary>
-        /// <param name="arguments">The arguments.</param>
+        /// <param name="arguments">The arguments list.</param>
         /// <returns>The string representation of the list.</returns>
         public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments)
         {
@@ -57,13 +68,12 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
 
         /// <summary>
         /// Converts a given list of construction arguments to string, using
-        /// a provided configuration object to string provider.
+        /// a given configuration object to string provider.
         /// </summary>
-        /// <param name="arguments">The arguments.</param>
+        /// <param name="arguments">The arguments list.</param>
         /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the list.</returns>
-        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments,
-                                      IObjectToStringProvider objectToString)
+        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IObjectToStringProvider objectToString)
         {
             if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -74,34 +84,45 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
             if (objectToString == null)
                 throw new ArgumentNullException(nameof(objectToString));
 
+            // We convert individual arguments to string
             var argumentsStrings = arguments.Select(args => ArgumentToString(args, objectToString));
 
-            return $"({string.Join(",", argumentsStrings)})";
+            // And join them using the arguments list separator
+            return $"({string.Join(ArgumentsListSeparator, argumentsStrings)})";
         }
+
+        #endregion
+
+        #region Private methods
 
         /// <summary>
         /// Converts a given construction argument to string.
         /// </summary>
-        /// <param name="constructionArgument">The given construction argument.</param>
-        /// <param name="objectToString">The configuration object to string converted.</param>
+        /// <param name="constructionArgument">The construction argument.</param>
+        /// <param name="objectToString">The configuration object to string provider.</param>
         /// <returns>The string representation of the argument.</returns>
-        private string ArgumentToString(ConstructionArgument constructionArgument,
-                                        IObjectToStringProvider objectToString)
+        private string ArgumentToString(ConstructionArgument constructionArgument, IObjectToStringProvider objectToString)
         {
+            // If we have an object argument
             if (constructionArgument is ObjectConstructionArgument objectArgument)
             {
+                // Then we simply converts it's passed object to string
                 return objectToString.ConvertToString(objectArgument.PassedObject);
             }
 
-            var setArgument = constructionArgument as SetConstructionArgument ?? throw new NullReferenceException();
+            // Otherwise we have a set construction argument
+            var setArgument = (SetConstructionArgument) constructionArgument;
 
+            // We'll recursively covert it's individual arguments to string
             var individualArgs = setArgument.PassedArguments
                     .Select(arg => ArgumentToString(arg, objectToString))
                     .ToList();
 
+            // Sort them to obtain the unique result
             individualArgs.Sort();
-            // 
-            return $"{{{string.Join(";", individualArgs)}}}";
+
+            // And compose the result
+            return $"{{{string.Join(ArgumentsSetSeparator, individualArgs)}}}";
         }
 
         #endregion

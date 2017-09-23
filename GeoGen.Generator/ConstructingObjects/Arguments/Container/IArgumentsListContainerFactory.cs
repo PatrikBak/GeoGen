@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
 {
     /// <summary>
-    /// An abstract factory for creating <see cref="IArgumentsListContainer"/>s.
+    /// Represents a factory for creating new instances of <see cref="IArgumentsListContainer"/>.
     /// </summary>
     internal interface IArgumentsListContainerFactory
     {

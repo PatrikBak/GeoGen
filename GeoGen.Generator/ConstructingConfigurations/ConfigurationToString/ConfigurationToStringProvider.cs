@@ -15,9 +15,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
         #region Private constants
 
         /// <summary>
-        /// The default separator.
+        /// The objects separator.
         /// </summary>
-        private const string DefaultSeparator = "|";
+        private const string ObjectsSeparator = "|";
 
         #endregion
 
@@ -45,7 +45,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
             // TODO: This can be replaced with iterating over some SortedDictionary
             objectStrings.Sort();
 
-            return string.Join(DefaultSeparator, objectStrings);
+            return string.Join(ObjectsSeparator, objectStrings);
         }
 
         #endregion

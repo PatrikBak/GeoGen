@@ -49,10 +49,10 @@
     <Compile Include="Constructions\ComposedConstruction.cs" />
     <Compile Include="Constructions\Construction.cs" />
     <Compile Include="Constructions\Arguments\ConstructionArgument.cs" />
-    <Compile Include="Constructions\PredefinedConstructionType.cs" />
+    <Compile Include="Constructions\PredefinedConstructions\PredefinedConstructionType.cs" />
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
-    <Compile Include="Constructions\PredefinedConstruction.cs" />
+    <Compile Include="Constructions\PredefinedConstructions\PredefinedConstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
     <Compile Include="Utilities\CollectionExtensions.cs" />
@@ -61,8 +61,8 @@
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMap.cs" />
     <Compile Include="Utilities\StringBasedContainer\StringBasedContainer.cs" />
-    <Compile Include="Utilities\Variations\VariationsProvider.cs" />
-    <Compile Include="Utilities\Variations\IVariationsProvider.cs" />
+    <Compile Include="Utilities\VariationsProviding\VariationsProvider.cs" />
+    <Compile Include="Utilities\VariationsProviding\IVariationsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

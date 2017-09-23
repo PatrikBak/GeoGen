@@ -1,7 +1,7 @@
-﻿namespace GeoGen.Core.Constructions
+﻿namespace GeoGen.Core.Constructions.PredefinedConstructions
 {
     /// <summary>
-    /// Represents a predifined construction type,such as Midpoint, Interestion. The module 
+    /// Represents a predefined construction type,such as Midpoint, Intersection. The module 
     /// implementing actual geometry is supposed to properly implement all the cases. 
     /// </summary>
     public enum PredefinedConstructionType
@@ -12,7 +12,7 @@
         Midpoint,
 
         /// <summary>
-        /// Construction of the interesection of two lines.
+        /// Construction of the intersection of two lines.
         /// </summary>
         Intersection,
 
@@ -22,7 +22,7 @@
         Projection,
 
         /// <summary>
-        /// Constructin of the circumcirle of a triangle.
+        /// Construction of the circumcircle of a triangle.
         /// </summary>
         Circumcircle
     }

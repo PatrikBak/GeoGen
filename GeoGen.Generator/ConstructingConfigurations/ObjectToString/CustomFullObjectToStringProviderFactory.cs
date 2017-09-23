@@ -7,14 +7,15 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// A default implementation of <see cref="ICustomFullObjectToStringProviderFactory"/>.
-    /// It caches given results, since there are supposed be com
+    /// It caches given results and compares them by the id of <see cref="DictionaryObjectIdResolver"/>s.
+    /// This class is not thread-safe.
     /// </summary>
     internal class CustomFullObjectToStringProviderFactory : ICustomFullObjectToStringProviderFactory
     {
         #region Private fields
 
         /// <summary>
-        /// The arguments to string provider.
+        /// The arguments list to string provider.
         /// </summary>
         private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
 
@@ -30,15 +31,11 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         /// <summary>
         /// Constructs a new custom full object to string provider factory
-        /// with a given arguments list to string provider and a given
-        /// custom argument to string provider factory.
+        /// that uses a given arguments list to string provider for creating
+        /// instances of <see cref="CustomFullObjectToStringProvider"/>.
         /// </summary>
         /// <param name="provider">The arguments list to string provider.</param>
-        /// <param name="factory">The custom argument to string provider factory.</param>
-        public CustomFullObjectToStringProviderFactory
-        (
-            IArgumentsListToStringProvider provider
-        )
+        public CustomFullObjectToStringProviderFactory(IArgumentsListToStringProvider provider)
         {
             _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             _cache = new Dictionary<int, CustomFullObjectToStringProvider>();
@@ -50,7 +47,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 
         /// <summary>
         /// Creates an instance of <see cref="CustomFullObjectToStringProvider"/>
-        /// with a given dictionary object id resolver.
+        /// that uses a given dictionary object id resolver as its id resolver.
         /// </summary>
         /// <param name="resolver">The dictionary object id resolver.</param>
         /// <returns>The custom full object to string provider.</returns>

@@ -14,7 +14,7 @@ namespace GeoGen.Core.Utilities.StringBasedContainer
         #region Protected fields
 
         /// <summary>
-        /// The set of all items.
+        /// The dictionary mapping string versions of items to items itself.
         /// </summary>
         protected readonly Dictionary<string, T> Items = new Dictionary<string, T>();
 

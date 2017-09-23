@@ -42,7 +42,6 @@
     <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\IDictionaryObjectIdResolversContainer.cs" />
     <Compile Include="ConstructingConfigurations\IdsFixing\IdsFixerFactory.cs" />
     <Compile Include="ConstructingConfigurations\IdsFixing\IIDsFixerFactory.cs" />
-    <Compile Include="ConfigurationsHandler.cs" />
     <Compile Include="ConstructingConfigurations\ConfigurationToString\ConfigurationToStringProvider.cs" />
     <Compile Include="ConstructingConfigurations\ConfigurationToString\IConfigurationToStringProvider.cs" />
     <Compile Include="ConstructingConfigurations\ObjectsContainer\ConfigurationObjectsContainer.cs" />
@@ -65,7 +64,6 @@
     <Compile Include="ConstructingConfigurations\ConfigurationConstructor.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsGenerator.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\ArgumentsListToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectToStringProviderBase.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\IArgumentsListToStringProvider.cs" />
     <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainer.cs" />
     <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainerFactory.cs" />
@@ -85,7 +83,7 @@
     <Compile Include="GeneratorException.cs" />
     <Compile Include="GeneratorInput.cs" />
     <Compile Include="GeneratorOutput.cs" />
-    <Compile Include="IConfigurationsHandler.cs" />
+    <Compile Include="ConfigurationsHandling\IConfigurationsHandler.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="IGeneratorFactory.cs" />
     <Compile Include="InitializationException.cs" />

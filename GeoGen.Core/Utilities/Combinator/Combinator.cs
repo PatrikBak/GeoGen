@@ -5,13 +5,15 @@ using System.Linq;
 namespace GeoGen.Core.Utilities.Combinator
 {
     /// <summary>
-    /// A recursive implementation of the interface <see cref="ICombinator{TKey,TValue}" />
+    /// A recursive implementation of the interface <see cref="ICombinator{TKey,TValue}"/>
     /// The class is thread-safe.
     /// </summary>
     /// <typeparam name="TKey">The dictionary key type.</typeparam>
     /// <typeparam name="TValue">The dictionary value type.</typeparam>
     public class Combinator<TKey, TValue> : ICombinator<TKey, TValue>
     {
+        #region ICombinator methods
+
         /// <summary>
         /// Generates all possible combinations of elements provided in the possibilities map. This method should
         /// work in a lazy way. For example: For { a, [1, 2] }, { b, [2, 3] } it will generate 4 dictionaries:
@@ -37,19 +39,27 @@ namespace GeoGen.Core.Utilities.Combinator
             );
         }
 
+        #endregion
+
+        #region Private methods
+
         /// <summary>
         /// Recursively generates all possible combinations stored in the array ordered such that together with
-        /// the keys list it represents a resultig dictionary.
+        /// the keys list it represents a resulting dictionary.
         /// </summary>
         /// <param name="index">The current index of the generation process. On start it should be 0.</param>
         /// <param name="result">The resulting array that will be yielded when it's ready. It size should be keys.Count</param>
         /// <param name="possibilities">The possibilities dictionary input.</param>
-        /// <param name="keys">Extracted list of keysfrom the possibities dictionary (so we don't have to enumerate them more than once).</param>
+        /// <param name="keys">Extracted list of keys from the possibilities dictionary (so we don't have to enumerate them more than once).</param>
         /// <returns>Laze enumerable of all possible combinations (ordered according to the order of the keys).</returns>
-        private static IEnumerable<TValue[]> GeneratePossibleArrays(int index, TValue[] result,
-            IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities, IReadOnlyList<TKey> keys)
+        private static IEnumerable<TValue[]> GeneratePossibleArrays
+        (
+            int index,
+            TValue[] result,
+            IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities,
+            IReadOnlyList<TKey> keys
+        )
         {
-            // TODO: Comment out
             foreach (var element in possibilities[keys[index]])
             {
                 result[index] = element;
@@ -67,5 +77,7 @@ namespace GeoGen.Core.Utilities.Combinator
                 }
             }
         }
+
+        #endregion
     }
 }

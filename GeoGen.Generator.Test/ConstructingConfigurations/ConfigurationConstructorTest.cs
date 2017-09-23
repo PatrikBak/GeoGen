@@ -4,7 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.Variations;
+using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
@@ -54,7 +54,16 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => Constructor(Objects(1, ConfigurationObjectType.Point)).ConstructWrapper(null)
+                () => Constructor(Objects(1, ConfigurationObjectType.Point)).ConstructWrapper((ConstructorOutput) null)
+            );
+        }
+
+        [Test]
+        public void Test_Passed_Initial_Configuration_Cant_Be_Null()
+        {
+            Assert.Throws<ArgumentNullException>
+            (
+                () => Constructor(Objects(1, ConfigurationObjectType.Point)).ConstructWrapper((Configuration) null)
             );
         }
 
@@ -404,6 +413,56 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.AreEqual(asString1, asString2);
             Console.WriteLine(asString1);
+        }
+
+        [Test]
+        public void Test_Constructor_With_Initial_Configuraton()
+        {
+            var objects = Objects(3, ConfigurationObjectType.Point);
+            var constructor = Constructor(objects);
+
+            var args1 = new List<ConstructionArgument>
+            {
+                new ObjectConstructionArgument(objects[0]),
+                new ObjectConstructionArgument(objects[1])
+            };
+            var constructed1 = ConstructedObject(42, 1, args1);
+            constructed1 = _container.Add(constructed1);
+
+            var args2 = new List<ConstructionArgument>
+            {
+                new SetConstructionArgument
+                (
+                    new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(constructed1),
+                        new ObjectConstructionArgument(objects[1])
+                    }
+                )
+            };
+            var constructed2 = ConstructedObject(43, 0, args2);
+            constructed2 = _container.Add(constructed2);
+
+            var constructed = new List<ConstructedConfigurationObject> {constructed1, constructed2};
+            var configuration = new Configuration(objects.ToSet(), constructed);
+            var wrapper = constructor.ConstructWrapper(configuration);
+
+            Assert.AreSame(wrapper.Configuration, configuration);
+
+            var map = wrapper.ConfigurationObjectsMap;
+            Assert.AreEqual(1, map.Count);
+            var allObjects = objects.Cast<ConfigurationObject>().Union(constructed);
+
+            Assert.IsTrue(allObjects.All(o => map[ConfigurationObjectType.Point].Contains(o)));
+            Assert.AreEqual(5, map[ConfigurationObjectType.Point].Count);
+
+            var forbidden = wrapper.ForbiddenArguments;
+            Assert.AreEqual(2, forbidden.Count);
+            Assert.AreEqual(1, forbidden[42].Count());
+            Assert.AreEqual(1, forbidden[43].Count());
+
+            Assert.IsTrue(forbidden[42].Contains(args1));
+            Assert.IsTrue(forbidden[43].Contains(args2));
         }
     }
 }

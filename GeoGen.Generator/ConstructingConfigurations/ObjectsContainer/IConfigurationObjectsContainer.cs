@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 
 namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
 {

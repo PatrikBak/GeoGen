@@ -5,7 +5,7 @@ namespace GeoGen.Core.Constructions.Parameters
     /// <summary>
     /// Represents a set of <see cref="ConstructionParameter"/>. It's given by the number of parameters, 
     /// and the type of parameters that it contains. The type of parameters of the set can possible be 
-    /// another set. For example, a properly defined interesection construction has the signature 
+    /// another set. For example, a properly defined intersection construction has the signature 
     /// { {P, P}, {P, P} }, where P represents a point. It's not supposed to be used as a set of with one 
     /// element, since it's either a  <see cref="ObjectConstructionParameter"/>, or a set within a set 
     /// (which doesn't make sense in  our context). 

@@ -4,7 +4,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// An abstract factory for creating <see cref="CustomFullObjectToStringProvider"/>
-    /// objects.
+    /// objects that use a <see cref="DictionaryObjectIdResolver"/>.
     /// </summary>
     internal interface ICustomFullObjectToStringProviderFactory
     {

@@ -61,7 +61,7 @@
     <Compile Include="Utilities\Combinator\CombinatorTest.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMapTest.cs" />
     <Compile Include="Utilities\EnumerableExtensionsTest.cs" />
-    <Compile Include="Utilities\Variations\VariationsProviderTest.cs" />
+    <Compile Include="Utilities\VariationsProviding\VariationsProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -8,8 +8,17 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// A default implementation of <see cref="IObjectToStringProvider"/>
     /// that uses a <see cref="DefaultObjectIdResolver"/>.
     /// </summary>
-    internal class DefaultObjectToStringProvider : ObjectToStringProviderBase
+    internal class DefaultObjectToStringProvider : IObjectToStringProvider
     {
+        #region IObjectToStringProvider properties
+
+        /// <summary>
+        /// Gets the object to string resolver that is used by this provider.
+        /// </summary>
+        public IObjectIdResolver Resolver { get; }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -18,8 +27,8 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// </summary>
         /// <param name="defaultResolver">The default object id resolver.</param>
         public DefaultObjectToStringProvider(DefaultObjectIdResolver defaultResolver)
-            : base(defaultResolver)
         {
+            Resolver = defaultResolver ?? throw new ArgumentNullException(nameof(defaultResolver));
         }
 
         #endregion
@@ -31,7 +40,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The string representation of the object.</returns>
-        public override string ConvertToString(ConfigurationObject configurationObject)
+        public string ConvertToString(ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));

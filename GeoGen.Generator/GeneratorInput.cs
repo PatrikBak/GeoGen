@@ -5,14 +5,12 @@ using GeoGen.Core.Constructions;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents an input for generator.
+    /// Represents an input for <see cref="IGenerator"/>.
     /// </summary>
     public class GeneratorInput
     {
-        #region Public proprties
-
         /// <summary>
-        /// Gets or sets the initial configuration from which the generation proccess starts.
+        /// Gets or sets the initial configuration from which the generation process starts.
         /// </summary>
         public Configuration InitialConfiguration { get; set; }
 
@@ -25,7 +23,5 @@ namespace GeoGen.Generator
         /// Gets or sets the maximal number of iterations that are to be performed by the generator.
         /// </summary>
         public int MaximalNumberOfIterations { get; set; }
-
-        #endregion
     }
 }

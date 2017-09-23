@@ -3,7 +3,7 @@
 namespace GeoGen.Core.Utilities.Combinator
 {
     /// <summary>
-    /// Represents a carthesian product generator from a given dictionary mapping TKey to the enumerable
+    /// Represents a Cartesian product generator from a given dictionary mapping TKey to the enumerable
     /// of elements of a given type. Each generated element is then a dictionary mapping TKeys to TValues.
     /// </summary>
     /// <typeparam name="TKey">The dictionary key type.</typeparam>

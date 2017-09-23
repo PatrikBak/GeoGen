@@ -4,7 +4,8 @@ using GeoGen.Core.Configurations;
 namespace GeoGen.Core.Constructions.Arguments
 {
     /// <summary>
-    /// Represent a <see cref="ConfigurationObject"/> that is passed as a <see cref="ConstructionArgument"/>. 
+    /// Represent a <see cref="ConfigurationObject"/> that is passed as a 
+    /// <see cref="ConstructionArgument"/> to a construction.
     /// </summary>
     public class ObjectConstructionArgument : ConstructionArgument
     {
@@ -20,7 +21,7 @@ namespace GeoGen.Core.Constructions.Arguments
         #region Constructor
 
         /// <summary>
-        /// Constrct a new object constuction argument wrapping a given passed configuration object.
+        /// Constructs a new object construction argument wrapping a given passed configuration object.
         /// </summary>
         /// <param name="passedObject">The passed configuration object.</param>
         public ObjectConstructionArgument(ConfigurationObject passedObject)

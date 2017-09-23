@@ -2,15 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Core.Utilities.Variations
+namespace GeoGen.Core.Utilities.VariationsProviding
 {
     /// <summary>
     /// A fast recursive implementation of the <see cref="IVariationsProvider{T}"/> interface.
     /// The class is thread-safe.
+    /// 
+    /// TODO: Consider caching values
+    /// 
     /// </summary>
     /// <typeparam name="T">The type of elements</typeparam>
     public class VariationsProvider<T> : IVariationsProvider<T>
     {
+        #region IVariationsProvider methods
+
         /// <summary>
         /// Generates all possible variations of a given list. For example: For the list {1, 2, 3} all 
         /// the variations with 2 elements are: {1, 2}, {1, 3}, {2, 1}, {2, 3}, {3, 1}, {3, 2}.
@@ -21,32 +26,21 @@ namespace GeoGen.Core.Utilities.Variations
         /// <returns>Lazy enumerable of all possible variations.</returns>
         public IEnumerable<IEnumerable<T>> GetVariations(IReadOnlyList<T> list, int numberOfElement)
         {
-            if (numberOfElement == 3 && list.Count == 3)
-            {
-                return new List<IEnumerable<T>>
-                {
-                    new[] {list[0], list[1], list[2]},
-                    new[] {list[0], list[2], list[1]},
-                    new[] {list[1], list[0], list[2]},
-                    new[] {list[1], list[2], list[0]},
-                    new[] {list[2], list[0], list[1]},
-                    new[] {list[2], list[1], list[0]}
-                };
-            }
-            else
-            {
-                if (list == null)
-                    throw new ArgumentNullException(nameof(list));
+            if (list == null)
+                throw new ArgumentNullException(nameof(list));
 
-                if (list.Empty())
-                    throw new ArgumentException("The list of elements can't be empty");
+            if (list.Empty())
+                throw new ArgumentException("The list of elements can't be empty");
 
-                if (numberOfElement < 1 || numberOfElement > list.Count)
-                    throw new ArgumentOutOfRangeException(nameof(numberOfElement), "The number of elements should be in the interval [1, list.Count].");
+            if (numberOfElement < 1 || numberOfElement > list.Count)
+                throw new ArgumentOutOfRangeException(nameof(numberOfElement), "The number of elements should be in the interval [1, list.Count].");
 
-                return GetVariations(0, list.ToArray(), new T[numberOfElement], numberOfElement);
-            }
+            return GetVariations(0, list.ToArray(), new T[numberOfElement], numberOfElement);
         }
+
+        #endregion
+
+        #region Private methods
 
         /// <summary>
         /// A recursive method to generate the variations.
@@ -58,7 +52,6 @@ namespace GeoGen.Core.Utilities.Variations
         /// <returns>Lazy enumerable of all possible variations.</returns>
         private static IEnumerable<IEnumerable<T>> GetVariations(int index, T[] listCopy, IList<T> result, int numberOfElements)
         {
-            // TODO: Comment out
             for (var i = index; i < listCopy.Length; i++)
             {
                 result[index] = listCopy[i];
@@ -91,5 +84,7 @@ namespace GeoGen.Core.Utilities.Variations
             v1 = v2;
             v2 = old;
         }
+
+        #endregion
     }
 }

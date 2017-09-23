@@ -8,13 +8,14 @@
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the ID of this configuration object. 
+        /// Gets or sets the id of this configuration object. It's supposed to 
+        /// be unique during a single generation process. 
         /// </summary>
         public virtual int? Id { get; set; }
 
         #endregion
 
-        #region Abstract properties
+        #region Public abstract properties
 
         /// <summary>
         /// Gets the actual geometrical type of this object (such as Point, Line...)

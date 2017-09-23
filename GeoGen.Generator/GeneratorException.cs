@@ -7,17 +7,12 @@ namespace GeoGen.Generator
     /// </summary>
     public class GeneratorException : Exception
     {
-        public GeneratorException()
-        {
-        }
-
+        /// <summary>
+        /// Constructs a new generator exception with a given message.
+        /// </summary>
+        /// <param name="message">The message.</param>
         public GeneratorException(string message)
             : base(message)
-        {
-        }
-
-        public GeneratorException(string message, Exception innerException)
-            : base(message, innerException)
         {
         }
     }

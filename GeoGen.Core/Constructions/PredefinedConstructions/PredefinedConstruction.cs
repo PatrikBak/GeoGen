@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Core.Constructions
+﻿namespace GeoGen.Core.Constructions.PredefinedConstructions
 {
     /// <summary>
     /// Represents a construction that is supposed be predefined, such as Midpoint, Line intersection...

@@ -21,8 +21,8 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
         #region Constructor
 
         /// <summary>
-        /// Constructs a new arguments container factory from a given arguments
-        /// list to string provider.
+        /// Constructs a new arguments container factory that creates
+        /// instances using a given arguments list to string provider.
         /// </summary>
         /// <param name="argumentsListToStringProvider">The arguments list to string provider.</param>
         public ArgumentsListContainerFactory(IArgumentsListToStringProvider argumentsListToStringProvider)
@@ -41,7 +41,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
         public IArgumentsListContainer CreateContainer()
         {
             return new ArgumentsListContainer(_argumentsListToStringProvider);
-        } 
+        }
 
         #endregion
     }

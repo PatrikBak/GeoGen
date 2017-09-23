@@ -3,12 +3,12 @@
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents the generator service, the key inferface of the Generator module.
+    /// Represents the interface of the whole generation process. 
     /// </summary>
     public interface IGenerator
     {
         /// <summary>
-        /// Starts the generation proccess and lazily return the output.
+        /// Starts the generation process and lazily returns the output.
         /// </summary>
         /// <returns>The generator output enumerable.</returns>
         IEnumerable<GeneratorOutput> Generate();

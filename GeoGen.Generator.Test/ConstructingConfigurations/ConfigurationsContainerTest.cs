@@ -10,7 +10,6 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
-using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
@@ -26,7 +25,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var defaultResolver = new DefaultObjectIdResolver();
             var defaultToString = new DefaultObjectToStringProvider(defaultResolver);
             var argsProvider = new ArgumentsListToStringProvider(defaultToString);
-            var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
             var configurationToStringProvider = new ConfigurationToStringProvider();
             var defaultFullProvider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
             var configuationObjectContainer = new ConfigurationObjectsContainer(defaultFullProvider);
@@ -52,12 +50,14 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             };
                         }
                     );
+            mock.Setup(s => s.ConstructWrapper(It.IsAny<Configuration>()))
+                    .Returns<Configuration>(configuration => new ConfigurationWrapper {Configuration = configuration});
 
             var constructor = mock.Object;
 
             return new ConfigurationsContainer
             (
-                argumentsContainerFactory, constructor, configurationToStringProvider,
+                constructor, configurationToStringProvider,
                 configuationObjectContainer, defaultFullProvider
             );
         }
@@ -71,72 +71,54 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         }
 
         [Test]
-        public void Test_Arguments_Container_Factory_Cant_Be_Null()
-        {
-            var handler = SimpleMock<IConfigurationConstructor>();
-            var provider = SimpleMock<IConfigurationToStringProvider>();
-            var container = SimpleMock<IConfigurationObjectsContainer>();
-            var fullResolver = MockFullResolver();
-
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ConfigurationsContainer(null, handler, provider, container, fullResolver)
-            );
-        }
-
-        [Test]
         public void Test_COnfiguration_Contructor_Cant_Be_Null()
         {
-            var factory = SimpleMock<IArgumentsListContainerFactory>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
             var fullResolver = MockFullResolver();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfigurationsContainer(factory, null, provider, container, fullResolver)
+                () => new ConfigurationsContainer(null, provider, container, fullResolver)
             );
         }
 
         [Test]
         public void Test_Configuration_To_String_Provider_Cant_Be_Null()
         {
-            var factory = SimpleMock<IArgumentsListContainerFactory>();
             var handler = SimpleMock<IConfigurationConstructor>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
             var fullResolver = MockFullResolver();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfigurationsContainer(factory, handler, null, container, fullResolver)
+                () => new ConfigurationsContainer(handler, null, container, fullResolver)
             );
         }
 
         [Test]
         public void Test_Objects_Container_Cant_Be_Null()
         {
-            var factory = SimpleMock<IArgumentsListContainerFactory>();
             var handler = SimpleMock<IConfigurationConstructor>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var fullResolver = MockFullResolver();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfigurationsContainer(factory, handler, provider, null, fullResolver)
+                () => new ConfigurationsContainer(handler, provider, null, fullResolver)
             );
         }
 
         [Test]
         public void Test_Default_Full_Resolver_Cant_Be_Null()
         {
-            var factory = SimpleMock<IArgumentsListContainerFactory>();
             var handler = SimpleMock<IConfigurationConstructor>();
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new ConfigurationsContainer(factory, handler, provider, container, null)
+                () => new ConfigurationsContainer(handler, provider, container, null)
             );
         }
 
@@ -200,16 +182,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var currentWrapper = currentLayer[0];
             Assert.AreEqual(configuration, currentWrapper.Configuration);
-
-            var forbidden = currentWrapper.ForbiddenArguments;
-            Assert.AreEqual(1, forbidden.Count);
-            Assert.AreEqual(2, forbidden[42].Count());
-
-            var objectsMap = currentWrapper.ConfigurationObjectsMap;
-            Assert.AreEqual(3, objectsMap.Count);
-            Assert.AreEqual(3, objectsMap[ConfigurationObjectType.Point].Count);
-            Assert.AreEqual(1, objectsMap[ConfigurationObjectType.Line].Count);
-            Assert.AreEqual(1, objectsMap[ConfigurationObjectType.Circle].Count);
         }
 
         [Test]

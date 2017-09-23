@@ -14,11 +14,6 @@ namespace GeoGen.Core.Configurations
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the ID of this configuration.
-        /// </summary>
-        public int Id { get; set; }
-
-        /// <summary>
         /// Gets the set of loose configuration objects within this configuration.
         /// </summary>
         public HashSet<LooseConfigurationObject> LooseObjects { get; }
