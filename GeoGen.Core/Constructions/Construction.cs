@@ -15,9 +15,11 @@ namespace GeoGen.Core.Constructions
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the ID of this construction. 
+        /// Gets or sets the id of this construction. The id should be
+        /// unit solely during the generation process. It will be reseted every time
+        /// the process starts over.
         /// </summary>
-        public virtual int? Id { get; set; }
+        public int? Id { get; set; }
 
         #endregion
 

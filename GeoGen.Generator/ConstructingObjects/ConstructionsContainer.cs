@@ -32,9 +32,7 @@ namespace GeoGen.Generator.ConstructingObjects
 
         /// <summary>
         /// Initializes the container with a given enumerable of constructions.
-        /// It performs the check whether the constructions have distinct ids (which is needed
-        /// during the generation process). If it doesn't, then the <see cref="InitializationException"/>
-        /// will be thrown.
+        /// The ids of the constructions will be ignored.
         /// </summary>
         /// <param name="constructions">The constructions enumerable.</param>
         public void Initialize(IEnumerable<Construction> constructions)
@@ -67,14 +65,14 @@ namespace GeoGen.Generator.ConstructingObjects
             // Enumerate the constructions
             var constructionsList = constructions.ToList();
 
-            // Cast ids to a set
-            var idsSet = constructionsList
-                    .Select(c => c.Id ?? throw new InitializationException("Construction id must be set"))
-                    .ToSet();
+            // Initialize a counter for ids
+            var counter = 0;
 
-            // Check distinct ids
-            if (idsSet.Count != constructionsList.Count)
-                throw new InitializationException("Passed constructions don't have unique ids.");
+            // Set ids
+            foreach (var construction in constructionsList)
+            {
+                construction.Id = counter++;
+            }
 
             // Set new items to the container casted to the construction wrapper
             _constructions.SetItems

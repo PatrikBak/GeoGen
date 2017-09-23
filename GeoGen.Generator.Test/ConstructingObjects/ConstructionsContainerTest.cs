@@ -37,23 +37,6 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         }
 
         [Test]
-        public void Test_Constructions_Cant_Have_Distint_Ids()
-        {
-            int[][] constructionIds =
-            {
-                new[] {1, 1, 2, 3, 4},
-                new[] {1, 1, 6},
-                new[] {7, 4, 3, 2, 1, 2}
-            };
-
-            foreach (var ids in constructionIds)
-            {
-                var constructions = ConstructionsWithId(ids);
-                Assert.Throws<InitializationException>(() => Container().Initialize(constructions));
-            }
-        }
-
-        [Test]
         public void Test_Wrappers_Constructions_Are_Set_Correctly()
         {
             var container = Container();

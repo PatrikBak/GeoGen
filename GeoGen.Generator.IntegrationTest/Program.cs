@@ -23,7 +23,7 @@ namespace GeoGen.Generator.IntegrationTest
                     .ToSet();
 
             var configuration = new Configuration(points, new List<ConstructedConfigurationObject>());
-            var constructions = new Midpoint {Id = 1}.SingleItemAsEnumerable().Cast<Construction>().ToList();
+            var constructions = new Midpoint().SingleItemAsEnumerable().Cast<Construction>().ToList();
 
             var input = new GeneratorInput
             {

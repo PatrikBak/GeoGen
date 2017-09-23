@@ -13,7 +13,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper Midpoint()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(1);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -38,7 +37,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper Intersection()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(2);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -69,7 +67,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper Projection()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(3);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -95,7 +92,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper CircleCenter()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(4);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -120,7 +116,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper CircumCircle()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(5);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Circle});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -145,7 +140,6 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static ConstructionWrapper CrazyConstruction()
         {
             var mock = new Mock<Construction>();
-            mock.Setup(s => s.Id).Returns(6);
             mock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {ConfigurationObjectType.Point});
             mock.Setup(s => s.ConstructionParameters).Returns
             (
@@ -175,12 +169,14 @@ namespace GeoGen.Generator.Test.TestHelpers
         public static Construction ConstructionWithId(int id)
         {
             var mock = new Mock<Construction>();
-            mock.Setup(c => c.Id).Returns(id);
 
             var output = Enumerable.Repeat(ConfigurationObjectType.Point, 2).ToList();
             mock.Setup(s => s.OutputTypes).Returns(output);
 
-            return mock.Object;
+            var result = mock.Object;
+            result.Id = id;
+
+            return result;
         }
 
         public static List<Construction> ConstructionsWithId(int[] ids)
@@ -198,9 +194,11 @@ namespace GeoGen.Generator.Test.TestHelpers
                             var mock = new Mock<Construction>();
                             var outputTypes = Enumerable.Repeat(ConfigurationObjectType.Point, outputCount).ToList();
                             mock.Setup(c => c.OutputTypes).Returns(outputTypes);
-                            mock.Setup(c => c.Id).Returns(i);
 
-                            return mock.Object;
+                            var result = mock.Object;
+                            result.Id = i;
+
+                            return result;
                         }
                     )
                     .Select(c => new ConstructionWrapper {Construction = c})

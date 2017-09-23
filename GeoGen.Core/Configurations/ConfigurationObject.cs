@@ -8,10 +8,11 @@
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the id of this configuration object. It's supposed to 
-        /// be unique during a single generation process. 
+        /// Gets or sets the id of this configuration object. The id should be
+        /// unit solely during the generation process. It will be reseted every time
+        /// the process starts over.
         /// </summary>
-        public virtual int? Id { get; set; }
+        public int? Id { get; set; }
 
         #endregion
 

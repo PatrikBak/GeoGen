@@ -12,9 +12,7 @@ namespace GeoGen.Generator.ConstructingObjects
     {
         /// <summary>
         /// Initializes the container with a given enumerable of constructions.
-        /// It performs the check whether the constructions have distinct ids (which is needed
-        /// during the generation process). If it doesn't, then the <see cref="InitializationException"/>
-        /// will be thrown.
+        /// The ids of the constructions will be ignored.
         /// </summary>
         /// <param name="constructions">The constructions enumerable.</param>
         void Initialize(IEnumerable<Construction> constructions);
