@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Core.Constructions.Arguments
 {

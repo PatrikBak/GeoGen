@@ -81,12 +81,15 @@
     <Compile Include="Generator.cs" />
     <Compile Include="ConstructingConfigurations\IConfigurationsContainer.cs" />
     <Compile Include="GeneratorException.cs" />
+    <Compile Include="GeneratorFactory.cs" />
     <Compile Include="GeneratorInput.cs" />
     <Compile Include="GeneratorOutput.cs" />
     <Compile Include="ConfigurationsHandling\IConfigurationsHandler.cs" />
     <Compile Include="IGenerator.cs" />
     <Compile Include="IGeneratorFactory.cs" />
     <Compile Include="InitializationException.cs" />
+    <Compile Include="NInject\ConstructionTestModule.cs" />
+    <Compile Include="NInject\GeneratorModuleBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConstructingConfigurations\ConfigurationWrapper.cs" />
     <Compile Include="ConstructingObjects\ConstructionWrapper.cs" />

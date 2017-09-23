@@ -49,10 +49,9 @@
     <Compile Include="Constructions\ComposedConstruction.cs" />
     <Compile Include="Constructions\Construction.cs" />
     <Compile Include="Constructions\Arguments\ConstructionArgument.cs" />
-    <Compile Include="Constructions\PredefinedConstructions\PredefinedConstructionType.cs" />
+    <Compile Include="Constructions\PredefinedConstructions\Midpoint.cs" />
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
-    <Compile Include="Constructions\PredefinedConstructions\PredefinedConstruction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
     <Compile Include="Utilities\CollectionExtensions.cs" />
