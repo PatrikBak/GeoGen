@@ -117,38 +117,38 @@ namespace GeoGen.Generator.ConstructingConfigurations
             if (newLayerOutput == null)
                 throw new ArgumentNullException(nameof(newLayerOutput));
 
-            // take the output
-            var newLayer = newLayerOutput
-                    // get new configuration for each
-                    .Select
-                    (
-                        output =>
-                        {
-                            // Add objects to the container and get their identified versions
-                            var newObjects = output.ConstructedObjects
-                                    .Select(o => _configurationObjectsContainer.Add(o))
-                                    .ToList();
+            // Clear the current layer
+            CurrentLayer.Clear();
 
-                            // Re-assign the output
-                            output.ConstructedObjects = newObjects;
+            foreach (var output in newLayerOutput)
+            {
+                // Add objects to the container and get their identified versions
+                var newObjects = output.ConstructedObjects
+                        .Select(o => _configurationObjectsContainer.Add(o))
+                        .ToList();
 
-                            // Let the constructor create a new wrapper
-                            var configuration = _configurationConstructor.ConstructWrapper(output);
+                // Pull initial constructed objects
+                var initialObjects = output.InitialConfiguration.Configuration.ConstructedObjects;
 
-                            // Add the representant to the container
-                            var result = Add(configuration.Configuration);
+                // Check if the configuration doesn't contain any of the new objects
+                // If yes, we then the configuration shouldn't be taken into account
+                if (initialObjects.Any(s => newObjects.Contains(s)))
+                    continue;
 
-                            // return the anonymous type wrapping the change result and the object
-                            return new {Change = result, Object = configuration};
-                        }
-                    )
-                    // take only objects that caused change of the container (i.e. new ones)
-                    .Where(arg => arg.Change)
-                    // take the resulting wrapper from them
-                    .Select(arg => arg.Object);
+                // Otherwise re-assign the output
+                output.ConstructedObjects = newObjects;
 
-            // Set the new layer (which will enumerate the query)
-            CurrentLayer.SetItems(newLayer);
+                // Let the constructor create a new wrapper
+                var configuration = _configurationConstructor.ConstructWrapper(output);
+
+                // Add the representant to the container
+                var result = Add(configuration.Configuration);
+
+                // If the container changed its content, then we can add the configuration
+                // to the new layer
+                if (result)
+                    CurrentLayer.Add(configuration);
+            }
         }
 
         #endregion

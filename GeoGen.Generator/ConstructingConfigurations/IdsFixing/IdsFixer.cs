@@ -56,39 +56,6 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
         #region IIdsFixer methods
 
         /// <summary>
-        /// Replaces a given construction argument with a new one that
-        /// has correct ids of its interior objects. 
-        /// </summary>
-        /// <param name="argument">The construction argument.</param>
-        /// <returns>The fixed configuration argument.</returns>
-        public ConstructionArgument FixArgument(ConstructionArgument argument)
-        {
-            if (argument == null)
-                throw new ArgumentNullException(nameof(argument));
-
-            // If the argument is an object argument
-            if (argument is ObjectConstructionArgument objectArgument)
-            {
-                // We'll convert the passed object
-                var fixedObject = FixObject(objectArgument.PassedObject);
-
-                // Construct and return the result
-                return new ObjectConstructionArgument(fixedObject);
-            }
-
-            // Otherwise we must have the set construction argument
-            var setArgument = (SetConstructionArgument) argument;
-
-            // We convert the interior arguments
-            var interiorArguments = setArgument.PassedArguments
-                    .Select(FixArgument)
-                    .ToSet();
-
-            // Construct and return the result
-            return new SetConstructionArgument(interiorArguments);
-        }
-
-        /// <summary>
         /// Replaces a given configuration object with a new one that 
         /// has correct ids of its interior objects.
         /// </summary>
@@ -139,6 +106,43 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
 
             // Return the fixed object
             return fixedObject;
+        }
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Replaces a given construction argument with a new one that
+        /// has correct ids of its interior objects. 
+        /// </summary>
+        /// <param name="argument">The construction argument.</param>
+        /// <returns>The fixed configuration argument.</returns>
+        private ConstructionArgument FixArgument(ConstructionArgument argument)
+        {
+            if (argument == null)
+                throw new ArgumentNullException(nameof(argument));
+
+            // If the argument is an object argument
+            if (argument is ObjectConstructionArgument objectArgument)
+            {
+                // We'll convert the passed object
+                var fixedObject = FixObject(objectArgument.PassedObject);
+
+                // Construct and return the result
+                return new ObjectConstructionArgument(fixedObject);
+            }
+
+            // Otherwise we must have the set construction argument
+            var setArgument = (SetConstructionArgument) argument;
+
+            // We convert the interior arguments
+            var interiorArguments = setArgument.PassedArguments
+                    .Select(FixArgument)
+                    .ToSet();
+
+            // Construct and return the result
+            return new SetConstructionArgument(interiorArguments);
         }
 
         #endregion

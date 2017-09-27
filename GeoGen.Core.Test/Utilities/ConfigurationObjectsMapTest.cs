@@ -13,8 +13,8 @@ namespace GeoGen.Core.Test.Utilities
         private static IEnumerable<ConfigurationObject> Objects(int p, int l, int c)
         {
             return Objects(p, ConfigurationObjectType.Point)
-                    .Union(Objects(l, ConfigurationObjectType.Line))
-                    .Union(Objects(c, ConfigurationObjectType.Circle));
+                    .Concat(Objects(l, ConfigurationObjectType.Line))
+                    .Concat(Objects(c, ConfigurationObjectType.Circle));
         }
 
         private static IEnumerable<ConfigurationObject> Objects(int count, ConfigurationObjectType type)

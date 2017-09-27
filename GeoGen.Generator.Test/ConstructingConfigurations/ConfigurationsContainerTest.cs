@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
@@ -10,9 +11,9 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
-using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
+using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations
@@ -41,15 +42,13 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             var newConfiguration = new Configuration
                             (
                                 initialConfiguration.LooseObjects,
-                                initialConfiguration.ConstructedObjects.Union(newObjects).ToList()
+                                initialConfiguration.ConstructedObjects.Concat(newObjects).ToList()
                             );
 
-                            return new ConfigurationWrapper
-                            {
-                                Configuration = newConfiguration
-                            };
+                            return new ConfigurationWrapper {Configuration = newConfiguration};
                         }
                     );
+
             mock.Setup(s => s.ConstructWrapper(It.IsAny<Configuration>()))
                     .Returns<Configuration>(configuration => new ConfigurationWrapper {Configuration = configuration});
 
@@ -71,7 +70,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         }
 
         [Test]
-        public void Test_COnfiguration_Contructor_Cant_Be_Null()
+        public void Test_Configuration_Contructor_Cant_Be_Null()
         {
             var provider = SimpleMock<IConfigurationToStringProvider>();
             var container = SimpleMock<IConfigurationObjectsContainer>();
@@ -129,6 +128,31 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         }
 
         [Test]
+        public void Test_Configuration_With_Duplicate_Objects_Is_Not_Added()
+        {
+            var container = Container();
+
+            var looseObjects = Objects(3, ConfigurationObjectType.Point);
+            var args = new List<ConstructionArgument> {new ObjectConstructionArgument(looseObjects[0])};
+            var constructed1 = ConstructedObject(42, 1, args);
+            var constructed2 = ConstructedObject(42, 1, args);
+            var constructed = new List<ConstructedConfigurationObject> {constructed1};
+            var configuration = new Configuration(looseObjects.ToSet(), constructed);
+            container.Initialize(configuration);
+
+            var wrapper = new ConfigurationWrapper {Configuration = configuration};
+            var output = new ConstructorOutput
+            {
+                InitialConfiguration = wrapper,
+                ConstructedObjects = new List<ConstructedConfigurationObject> {constructed2}
+            };
+
+            Assert.AreEqual(1, container.CurrentLayer.Count);
+            container.AddLayer(new List<ConstructorOutput> {output});
+            Assert.AreEqual(0, container.CurrentLayer.Count);
+        }
+
+        [Test]
         public void Test_Initialization_Is_Succesful()
         {
             var container = Container();
@@ -152,7 +176,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                     }
                 )
             };
-            var obj1 = ConfigurationObjects.ConstructedObject(42, 0, args1);
+            var obj1 = ConstructedObject(42, 0, args1);
 
             var args2 = new List<ConstructionArgument>
             {
@@ -166,7 +190,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                     }
                 )
             };
-            var obj2 = ConfigurationObjects.ConstructedObject(42, 1, args2);
+            var obj2 = ConstructedObject(42, 1, args2);
 
             var configuration = new Configuration
             (
@@ -246,7 +270,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             )
                         };
 
-                        var obj = ConfigurationObjects.ConstructedObject(42, 0, args);
+                        var obj = ConstructedObject(42, 0, args);
 
                         var output = new ConstructorOutput
                         {

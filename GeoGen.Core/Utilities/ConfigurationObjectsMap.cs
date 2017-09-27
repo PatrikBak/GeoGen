@@ -54,7 +54,7 @@ namespace GeoGen.Core.Utilities
 
             var objects = configuraton.LooseObjects
                     .Cast<ConfigurationObject>()
-                    .Union(configuraton.ConstructedObjects);
+                    .Concat(configuraton.ConstructedObjects);
 
             AddAll(objects);
         }

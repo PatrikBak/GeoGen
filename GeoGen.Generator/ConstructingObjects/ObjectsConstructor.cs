@@ -63,21 +63,9 @@ namespace GeoGen.Generator.ConstructingObjects
                 {
                     // Generate arguments
                     var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
-
-                    // Pull forbidden arguments for the current construction
-                    var forbiddenArguments = configurationWrapper.ForbiddenArguments;
-
+                    
                     // Unwrap construction
                     var unwrapedConstruction = constructionWrapper.Construction;
-
-                    // Pull the construction id.
-                    var constructionId = unwrapedConstruction.Id ?? throw new GeneratorException("Id must be set.");
-
-                    // If there are any arguments to be excluded, exclude them.
-                    if (forbiddenArguments.ContainsKey(constructionId))
-                    {
-                        generatedArguments.RemoveElementsFrom(forbiddenArguments[constructionId]);
-                    }
 
                     // Create new output enumerable
                     var newOutput = generatedArguments.Select

@@ -27,26 +27,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
 
             var mock = new Mock<IArgumentsListContainer>();
             mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
-
-            mock.Setup(s => s.RemoveElementsFrom(It.IsAny<IArgumentsListContainer>()))
-                    .Callback<IArgumentsListContainer>
-                    (
-                        c =>
-                        {
-                            int Id(IReadOnlyList<ConstructionArgument> arguments)
-                            {
-                                var argument = (ObjectConstructionArgument) arguments[0];
-
-                                return argument.PassedObject.Id ?? throw new Exception();
-                            }
-
-                            foreach (var argsToRemove in c)
-                            {
-                                argsList.RemoveAll(args => Id(args) == Id(argsToRemove));
-                            }
-                        }
-                    );
-
+            
             return mock.Object;
         }
 
@@ -66,65 +47,6 @@ namespace GeoGen.Generator.Test.ConstructingObjects
                     .Returns(() => ArgumentsListContainer(objects));
 
             return mock.Object;
-        }
-
-        private static IArgumentsListContainer Container
-        (
-            IEnumerable<ConfigurationObject> objects, int forbidenIdStart, int forbidenIdEnd
-        )
-        {
-            var mock = new Mock<IArgumentsListContainer>();
-
-            mock.Setup(c => c.GetEnumerator()).Returns(
-                () => objects.Where
-                        (
-                            o =>
-                            {
-                                var id = o.Id;
-
-                                return id >= forbidenIdStart && id <= forbidenIdEnd;
-                            }
-                        )
-                        .Select(o => new List<ConstructionArgument> {new ObjectConstructionArgument(o)})
-                        .GetEnumerator());
-
-            return mock.Object;
-        }
-
-        private static ConfigurationWrapper ConfigurationWrapper
-        (
-            List<LooseConfigurationObject> objects, int forbiddenConstructionsStartId,
-            int forbiddenConstructionEndId, int forbiddenArgumentsStartId, int forbiddenArgumentsEndId
-        )
-        {
-            var forbiddenArgs = new Dictionary<int, IArgumentsListContainer>();
-
-            for (var constructionId = forbiddenConstructionsStartId;
-                constructionId <= forbiddenConstructionEndId;
-                constructionId++)
-            {
-                var container = Container(objects, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
-                forbiddenArgs.Add(constructionId, container);
-            }
-
-            return new ConfigurationWrapper {ForbiddenArguments = forbiddenArgs};
-        }
-
-        private static int ExecuteConstructionProcces
-        (
-            int numberOfConstructions, int argumentsPerConstruction, int forbiddenConstructionsStartId,
-            int forbiddenConstructionEndId, int constructionOutputCount, int forbiddenArgumentsStartId,
-            int forbiddenArgumentsEndId
-        )
-        {
-            var objects = Objects(argumentsPerConstruction, ConfigurationObjectType.Point).ToList();
-            var container = ConstructionsContainer(numberOfConstructions, constructionOutputCount);
-            var argumentsGenerator = ArgumentsGenerator(objects);
-            var wrapper = ConfigurationWrapper(objects, forbiddenConstructionsStartId, forbiddenConstructionEndId, forbiddenArgumentsStartId, forbiddenArgumentsEndId);
-            var testConstructor = new ObjectsConstructor(container, argumentsGenerator);
-
-            return testConstructor.GenerateOutput(wrapper)
-                    .Sum(output => output.ConstructedObjects.Count);
         }
 
         [Test]
@@ -163,53 +85,17 @@ namespace GeoGen.Generator.Test.ConstructingObjects
         [TestCase(0, 0, 666, 0)]
         [TestCase(0, 1, 666, 0)]
         [TestCase(1, 0, 1, 0)]
-        public void Test_Without_Anything_Forbidden(int constructions, int arguments, int perConstruction, int expected)
+        public void Test_Constructions_Count(int constructions, int arguments, int perConstruction, int expected)
         {
-            var count = ExecuteConstructionProcces(constructions, arguments, 0, 0, perConstruction, 0, 0);
+            var objects = Objects(arguments, ConfigurationObjectType.Point).ToList();
+            var container = ConstructionsContainer(constructions, perConstruction);
+            var argumentsGenerator = ArgumentsGenerator(objects);
+            var wrapper = new ConfigurationWrapper();
+            var testConstructor = new ObjectsConstructor(container, argumentsGenerator);
 
-            Assert.AreEqual(expected, count);
-        }
+            var result = testConstructor.GenerateOutput(wrapper).Sum(output => output.ConstructedObjects.Count);
 
-        [TestCase(10, 20, 1, 1, 190)]
-        [TestCase(10, 20, 1, 3, 170)]
-        [TestCase(10, 20, 2, 20, 10)]
-        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_One_Output_Per_Construction
-        (
-            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected
-        )
-        {
-            var count = ExecuteConstructionProcces(constructions, arguments, 1, constructions, 1, forbiddenStart, forbiddenEnd);
-
-            Assert.AreEqual(expected, count);
-        }
-
-        [TestCase(10, 20, 1, 1, 380)]
-        [TestCase(10, 20, 1, 3, 340)]
-        [TestCase(10, 20, 2, 20, 20)]
-        public void Test_With_Arguments_Forbidden_For_All_Constructions_And_Two_Outputs_Per_Construction
-        (
-            int constructions, int arguments, int forbiddenStart, int forbiddenEnd, int expected
-        )
-        {
-            var count = ExecuteConstructionProcces(constructions, arguments, 1, constructions, 2, forbiddenStart, forbiddenEnd);
-
-            Assert.AreEqual(expected, count);
-        }
-
-        [TestCase(42, 42, 1, 1676)]
-        [TestCase(42, 42, 3, 5028)]
-        [TestCase(45, 41, 1, 1757)]
-        [TestCase(42, 666, 1, 27884)]
-        [TestCase(666, 42, 2, 55768)]
-        [TestCase(666, 666, 1, 443468)]
-        public void Test_With_Arguments_Forbidden_For_Few_Constructions
-        (
-            int constructions, int arguments, int perConstruction, int expected
-        )
-        {
-            var count = ExecuteConstructionProcces(constructions, arguments, 10, 20, perConstruction, 10, 17);
-
-            Assert.AreEqual(expected, count);
+            Assert.AreEqual(expected, result);
         }
     }
 }

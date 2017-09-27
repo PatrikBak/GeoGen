@@ -192,7 +192,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
             // Create enumerable for all objects
             var objects = configuration.LooseObjects
                     .Cast<ConfigurationObject>()
-                    .Union(configuration.ConstructedObjects);
+                    .Concat(configuration.ConstructedObjects);
 
             // Null id to all of them
             foreach (var configurationObject in objects)

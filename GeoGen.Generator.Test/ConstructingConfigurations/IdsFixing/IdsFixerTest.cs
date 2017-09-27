@@ -64,12 +64,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.IdsFixing
         }
 
         [Test]
-        public void Test_Passed_Argument_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Fixer().FixArgument(null));
-        }
-
-        [Test]
         public void Test_Passed_Object_Must_Have_Id()
         {
             var fixer = Fixer();
@@ -88,22 +82,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.IdsFixing
 
             Assert.AreEqual(8, fixedObj.Id);
             Assert.AreSame(_objectsContainer[8], fixedObj);
-        }
-
-        [Test]
-        public void Test_Fixing_Simple_Object_Argument()
-        {
-            var fixer = Fixer();
-
-            var obj = _objectsContainer[7];
-            var arg = new ObjectConstructionArgument(obj);
-            var fixedArg = fixer.FixArgument(arg);
-
-            Assert.IsInstanceOf<ObjectConstructionArgument>(fixedArg);
-            var passedObject = ((ObjectConstructionArgument) fixedArg).PassedObject;
-
-            Assert.AreEqual(8, passedObject.Id);
-            Assert.AreSame(_objectsContainer[8], passedObject);
         }
 
         [Test]
@@ -162,51 +140,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.IdsFixing
 
             Assert.IsTrue(AnyWithId(8));
             Assert.IsTrue(AnyWithId(9));
-        }
-
-        [Test]
-        public void Test_Fixing_Nested_Set_Argument()
-        {
-            var fixer = Fixer();
-
-            var arg = new SetConstructionArgument
-            (
-                new HashSet<ConstructionArgument>
-                {
-                    new SetConstructionArgument
-                    (
-                        new HashSet<ConstructionArgument>
-                        {
-                            new ObjectConstructionArgument(_objectsContainer[1]),
-                            new ObjectConstructionArgument(_objectsContainer[2])
-                        }
-                    ),
-                    new SetConstructionArgument
-                    (
-                        new HashSet<ConstructionArgument>
-                        {
-                            new ObjectConstructionArgument(_objectsContainer[5]),
-                            new ObjectConstructionArgument(_objectsContainer[1])
-                        }
-                    )
-                }
-            );
-
-            var fixedArg = fixer.FixArgument(arg);
-            Assert.IsInstanceOf<SetConstructionArgument>(fixedArg);
-
-            var passedArgs = ((SetConstructionArgument) fixedArg).PassedArguments;
-
-            Assert.AreEqual(2, passedArgs.Count);
-
-            var randomArg = passedArgs.First();
-            Assert.IsInstanceOf<SetConstructionArgument>(randomArg);
-            var castedRandom = (SetConstructionArgument) randomArg;
-
-            var containsSecond = castedRandom.PassedArguments
-                    .Any(o => ((ObjectConstructionArgument) o).PassedObject == _objectsContainer[2]);
-
-            Assert.IsTrue(containsSecond);
         }
 
         [Test]

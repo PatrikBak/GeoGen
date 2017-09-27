@@ -31,12 +31,6 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
         }
 
         [Test]
-        public void Test_Container_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Container().RemoveElementsFrom(null));
-        }
-
-        [Test]
         public void Test_Container_One_Set_With_Two_Elements()
         {
             var container = Container();
@@ -111,45 +105,6 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.Container
             container.AddArguments(new List<ConstructionArgument> {new SetConstructionArgument(new HashSet<ConstructionArgument> {set4, set3})});
 
             Assert.AreEqual(3, container.Count());
-        }
-
-        [Test]
-        public void Test_Remove_Elements_From_The_Given_Containr()
-        {
-            var args = Objects(15, ConfigurationObjectType.Point)
-                    .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
-                    .ToList();
-
-            var container = Container();
-
-            foreach (var arguments in args)
-            {
-                container.AddArguments(arguments);
-            }
-
-            var newContainer = Container();
-
-            var argumentsToRemove = args
-                    .Skip(5)
-                    .Take(4)
-                    .Select(
-                        arguments =>
-                        {
-                            var oldArgument = arguments[0] as ObjectConstructionArgument;
-                            var newArgument = new ObjectConstructionArgument(oldArgument?.PassedObject);
-
-                            return new List<ConstructionArgument> {newArgument};
-                        });
-
-            foreach (var arguments in argumentsToRemove)
-            {
-                newContainer.AddArguments(arguments);
-            }
-
-            container.RemoveElementsFrom(newContainer);
-
-            Assert.AreEqual(4, newContainer.Count());
-            Assert.AreEqual(11, container.Count());
         }
     }
 }

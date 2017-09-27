@@ -52,27 +52,6 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
             Add(arguments);
         }
 
-        /// <summary>
-        /// Removes all the elements contained in a given container
-        /// from this container. 
-        /// </summary>
-        /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
-        public void RemoveElementsFrom(IArgumentsListContainer elementsToBeRemoved)
-        {
-            if (elementsToBeRemoved == null)
-                throw new ArgumentNullException(nameof(elementsToBeRemoved));
-
-            // We assume the other container is also an instance of this class.
-            var argumentsContainer = (ArgumentsListContainer) elementsToBeRemoved;
-
-            // And so we can access to the protected items dictionary of the base class
-            foreach (var item in argumentsContainer.Items)
-            {
-                // And remove all its items from this items dictionary
-                Items.Remove(item.Key);
-            }
-        }
-
         #endregion
 
         #region StringBasedContainer methods

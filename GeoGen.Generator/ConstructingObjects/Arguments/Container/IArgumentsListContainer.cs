@@ -18,12 +18,5 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
         /// </summary>
         /// <param name="arguments">The arguments.</param>
         void AddArguments(IReadOnlyList<ConstructionArgument> arguments);
-
-        /// <summary>
-        /// Removes all the elements contained in a given container
-        /// from this container. 
-        /// </summary>
-        /// <param name="elementsToBeRemoved">The container of elements to be removed.</param>
-        void RemoveElementsFrom(IArgumentsListContainer elementsToBeRemoved);
     }
 }

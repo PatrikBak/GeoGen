@@ -46,7 +46,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             _argsContainerFactory = new ArgumentsListContainerFactory(argsToString);
             var fixer = new IdsFixerFactory(_container);
 
-            return new ConfigurationConstructor(finder, fixer, _argsContainerFactory);
+            return new ConfigurationConstructor(finder, fixer);
         }
 
         [Test]
@@ -117,7 +117,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                                 ConfigurationObjectsMap = objectsMap
                             };
 
@@ -133,12 +132,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             {
                 var result = handler.ConstructWrapper(testCase);
                 var asString = ConfigurationAsString(result.Configuration);
-
                 Assert.AreEqual("42({1;2})", asString);
-
-                var dictionary1 = result.ForbiddenArguments;
-                Assert.AreEqual(1, dictionary1.Count);
-                Assert.AreEqual(1, dictionary1[42].Count());
 
                 var dictionary2 = result.ConfigurationObjectsMap;
                 Assert.AreEqual(1, dictionary2.Count);
@@ -203,7 +197,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                                 ConfigurationObjectsMap = objectsMap
                             };
 
@@ -219,12 +212,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             {
                 var result = handler.ConstructWrapper(testCase);
                 var asString = ConfigurationAsString(result.Configuration);
-
                 Assert.AreEqual("42({1;2})|42({1;3})", asString);
-
-                var dictionary1 = result.ForbiddenArguments;
-                Assert.AreEqual(1, dictionary1.Count);
-                Assert.AreEqual(2, dictionary1[42].Count());
 
                 var dictionary2 = result.ConfigurationObjectsMap;
                 Assert.AreEqual(1, dictionary2.Count);
@@ -233,7 +221,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         }
 
         [Test]
-        public void Test_Forbidden_Args_And_Objects_Map_Are_Fixed_Correctly()
+        public void Test_Objects_Map_Is_Fixed_Correctly()
         {
             var looseObjects = new List<LooseConfigurationObject>
             {
@@ -278,12 +266,9 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             forbidden.AddArguments(forbiddenArgs1);
             forbidden.AddArguments(forbiddenArgs2);
 
-            var forbidenArgs = new Dictionary<int, IArgumentsListContainer> {{42, forbidden}};
-
             var wrapper = new ConfigurationWrapper
             {
                 Configuration = configuration,
-                ForbiddenArguments = forbidenArgs,
                 ConfigurationObjectsMap = objectsMap
             };
 
@@ -297,17 +282,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var asString = ConfigurationAsString(result.Configuration);
 
             Assert.AreEqual("42(1,2,3)", asString);
-
-            var dictionary1 = result.ForbiddenArguments;
-            Assert.AreEqual(1, dictionary1.Count);
-
-            var argumentsContainer = dictionary1[42];
-            Assert.AreEqual(3, argumentsContainer.Count());
-
-            var strings = argumentsContainer.Select(ArgsToString).ToList();
-
-            Assert.IsTrue(strings.Contains("(2,1,3)"));
-            Assert.IsTrue(strings.Contains("(1,3,2)"));
 
             var dictionary2 = result.ConfigurationObjectsMap;
             Assert.AreEqual(3, dictionary2.Count);
@@ -393,7 +367,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var wrapper = new ConfigurationWrapper
             {
                 Configuration = configuration,
-                ForbiddenArguments = new Dictionary<int, IArgumentsListContainer>(),
                 ConfigurationObjectsMap = objectsMap
             };
 
@@ -451,18 +424,10 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             var map = wrapper.ConfigurationObjectsMap;
             Assert.AreEqual(1, map.Count);
-            var allObjects = objects.Cast<ConfigurationObject>().Union(constructed);
+            var allObjects = objects.Cast<ConfigurationObject>().Concat(constructed);
 
             Assert.IsTrue(allObjects.All(o => map[ConfigurationObjectType.Point].Contains(o)));
             Assert.AreEqual(5, map[ConfigurationObjectType.Point].Count);
-
-            var forbidden = wrapper.ForbiddenArguments;
-            Assert.AreEqual(2, forbidden.Count);
-            Assert.AreEqual(1, forbidden[42].Count());
-            Assert.AreEqual(1, forbidden[43].Count());
-
-            Assert.IsTrue(forbidden[42].Contains(args1));
-            Assert.IsTrue(forbidden[43].Contains(args2));
         }
     }
 }
