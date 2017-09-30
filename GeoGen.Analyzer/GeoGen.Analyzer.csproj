@@ -34,7 +34,18 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerOutput.cs" />
+    <Compile Include="GradualAnalyzer.cs" />
+    <Compile Include="IGeometricalObjectsContainer.cs" />
+    <Compile Include="IGradualAnalyzer.cs" />
+    <Compile Include="ITheoremsFinder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">
+      <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
+      <Name>GeoGen.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

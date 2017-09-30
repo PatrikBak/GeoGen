@@ -18,6 +18,11 @@
         /// <summary>
         /// Three or more lines are concurrent
         /// </summary>
-        ConcurrentLines
+        ConcurrentLines,
+
+        /// <summary>
+        /// Two configuration objects are geometrically the same
+        /// </summary>
+        SameObjects
     }
 }

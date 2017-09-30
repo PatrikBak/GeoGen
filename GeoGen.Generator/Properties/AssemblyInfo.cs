@@ -14,7 +14,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-// Make assemblie's internal methods and classes visible to the test assembly
+// Make assemblies internal methods and classes visible to the test assembly
 [assembly: InternalsVisibleTo("GeoGen.Generator.Test")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 

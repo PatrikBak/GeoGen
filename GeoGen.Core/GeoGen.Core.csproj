@@ -54,6 +54,7 @@
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
+    <Compile Include="Theorems\SingleTheoremObject.cs" />
     <Compile Include="Theorems\Theorem.cs" />
     <Compile Include="Theorems\TheoremObject.cs" />
     <Compile Include="Theorems\TheoremType.cs" />
