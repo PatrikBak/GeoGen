@@ -15,9 +15,9 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The geometrical objects container.
+        /// The geometry holder.
         /// </summary>
-        private readonly IGeometricalObjectsContainer _container;
+        private readonly IGeometryHolder _holder;
 
         /// <summary>
         /// The theorem finder.
@@ -29,14 +29,14 @@ namespace GeoGen.Analyzer
         #region Constructor
 
         /// <summary>
-        /// Constructs a gradual analyzer that uses a given objects container
-        /// to determine duplicate objects and a given theorem finder.
+        /// Constructs a gradual analyzer that uses a given geometry holder
+        /// to register objects and a given theorem finder.
         /// </summary>
-        /// <param name="container">The geometrical objects container.</param>
+        /// <param name="holder">The geometry holder.</param>
         /// <param name="finder">THe theorems finder.</param>
-        public GradualAnalyzer(IGeometricalObjectsContainer container, ITheoremsFinder finder)
+        public GradualAnalyzer(IGeometryHolder holder, ITheoremsFinder finder)
         {
-            _container = container ?? throw new ArgumentNullException(nameof(container));
+            _holder = holder ?? throw new ArgumentNullException(nameof(holder));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
         }
 
@@ -64,12 +64,12 @@ namespace GeoGen.Analyzer
             var duplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
             var canBeConstructed = true;
 
-            // First we add new objects to the container
+            // First we add new objects to the holder
             foreach (var newObject in newObjects)
             {
-                // If we can successfully add a new object to the container
+                // If we can successfully register a new object to the holder
                 // Then we can move forward
-                if (_container.Add(newObject, out ConfigurationObject duplicate))
+                if (_holder.Register(newObject, out ConfigurationObject duplicate))
                     continue;
 
                 // Otherwise there is a problem with adding a new object. It means
@@ -85,7 +85,13 @@ namespace GeoGen.Analyzer
                 }
 
                 // Otherwise we're sure there is a duplicate object. We can update the 
-                // dictionary.
+                // dictionary. It can still be the same object as this, which is not a problem
+                // (it only means the very same object has been added to the container before)
+                if (newObject == duplicate)
+                    continue;
+
+                // If it's some other object, then it's interesting. We'll add the object
+                // to the duplicates map
                 duplicateObjects.Add(newObject, duplicate);
 
                 // The fact that two objects are duplicate might be interesting, so
@@ -117,7 +123,7 @@ namespace GeoGen.Analyzer
             // from new not-considered objects
             else
             {
-                _container.Remove(newObjects);
+                _holder.Remove(newObjects);
             }
 
             // And finally we can construct the result

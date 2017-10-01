@@ -5,9 +5,9 @@ using GeoGen.Core.Constructions.Parameters;
 namespace GeoGen.Core.Constructions.PredefinedConstructions
 {
     /// <summary>
-    /// Represents a construction of the midpoint between two points.
+    /// Represents an intersection construction of two lines given by two sets of points.
     /// </summary>
-    public class Midpoint : PredefinedConstruction
+    public class Intersection : PredefinedConstruction
     {
         #region Construction properties
 
@@ -28,11 +28,17 @@ namespace GeoGen.Core.Constructions.PredefinedConstructions
         /// <summary>
         /// Default constructor
         /// </summary>
-        public Midpoint()
+        public Intersection()
         {
             ConstructionParameters = new List<ConstructionParameter>
             {
-                new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                new SetConstructionParameter
+                (
+                    new SetConstructionParameter
+                    (
+                        new ObjectConstructionParameter(ConfigurationObjectType.Point), 2
+                    ), 2
+                )
             };
 
             OutputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
