@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Analyzer.Constructing;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
     /// A default implementation of <see cref="IGeometryHolder"/>. This
@@ -40,7 +41,7 @@ namespace GeoGen.Analyzer
 
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
-                if (!Register(constructedObject, out ConfigurationObject duplicate))
+                if (!Register(constructedObject, out ConstructedConfigurationObject duplicate))
                     continue;
 
                 if (duplicate == null)
@@ -50,24 +51,24 @@ namespace GeoGen.Analyzer
             }
         }
 
-        public bool Register(ConfigurationObject configurationObject, out ConfigurationObject duplicateVersion)
+        public bool Register(ConstructedConfigurationObject constructedObject, out ConstructedConfigurationObject duplicate)
         {
-            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
+            var id = constructedObject.Id ?? throw new AnalyzerException("Id must be set");
 
             if (_resolvedIds.Contains(id))
             {
-                duplicateVersion = configurationObject;
+                duplicate = constructedObject;
                 return false;
             }
 
             foreach (var container in _containers)
             {
-                var geometricalObject = _constructor.Construct(configurationObject);
+                var geometricalObject = _constructor.Construct(constructedObject, container);
 
-                // If the object is not constructible
+                // If objects are not constructible
                 if (geometricalObject == null)
                 {
-                    duplicateVersion = null;
+                    duplicate = null;
                     return false;
                 }
 
@@ -75,7 +76,7 @@ namespace GeoGen.Analyzer
 
                 if (geometricalObject != result)
                 {
-                    duplicateVersion = result.ConfigurationObject;
+                    duplicate = (ConstructedConfigurationObject) result.ConfigurationObject;
                     return false;
                 }
 
@@ -83,7 +84,7 @@ namespace GeoGen.Analyzer
             }
 
             _resolvedIds.Add(id);
-            duplicateVersion = null;
+            duplicate = null;
             return true;
         }
 

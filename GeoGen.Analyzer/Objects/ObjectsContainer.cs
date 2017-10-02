@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Analyzer.Geometry;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Objects
 {
     internal class ObjectsContainer : IObjectsContainer
     {
@@ -18,9 +17,7 @@ namespace GeoGen.Analyzer
         public GeometricalObject Add(GeometricalObject geometricalObject)
         {
             if (_objectsDictionary.ContainsKey(geometricalObject))
-            {
                 return _objectsDictionary[geometricalObject];
-            }
 
             _objectsDictionary.Add(geometricalObject, geometricalObject);
 
@@ -38,5 +35,7 @@ namespace GeoGen.Analyzer
             _objectsDictionary.Remove(_idToObjects[id]);
             _idToObjects.Remove(id);
         }
+
+        public GeometricalObject this[int id] => _idToObjects[id];
     }
 }

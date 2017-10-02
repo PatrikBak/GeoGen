@@ -1,6 +1,6 @@
-﻿using GeoGen.Analyzer.Geometry;
+﻿using GeoGen.Analyzer.Objects;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal interface IRandomObjectsProvider
     {

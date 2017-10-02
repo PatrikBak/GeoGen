@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Analyzer.Objects;
+using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using NUnit.Framework;
 using static GeoGen.Analyzer.Test.TestHelpers.Utilities;
@@ -31,12 +33,6 @@ namespace GeoGen.Analyzer.Test
             var finder = SimpleMock<ITheoremsFinder>();
 
             Assert.Throws<ArgumentNullException>(() => new GradualAnalyzer(null, finder));
-        }
-
-        [Test]
-        public void Test_Old_Objects_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Analyzer().Analyze(null, new List<ConfigurationObject>()));
         }
 
         [Test]

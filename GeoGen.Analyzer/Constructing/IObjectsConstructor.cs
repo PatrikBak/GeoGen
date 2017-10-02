@@ -1,7 +1,7 @@
-﻿using GeoGen.Analyzer.Geometry;
+﻿using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     /// <summary>
     /// Represents a constructor of geometrical objects. It's 
@@ -15,6 +15,8 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The geometrical object.</returns>
-        GeometricalObject Construct(ConfigurationObject configurationObject);
+        GeometricalObject Construct(ConstructedConfigurationObject constructedObject, IObjectsContainer container);
+
+        GeometricalObject Construct(LooseConfigurationObject looseObject);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Analyzer.Objects;
+using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
@@ -51,7 +53,7 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        public AnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConfigurationObject> newObjects)
+        public AnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
         {
             if (oldObjects == null)
                 throw new ArgumentNullException(nameof(oldObjects));
@@ -69,7 +71,7 @@ namespace GeoGen.Analyzer
             {
                 // If we can successfully register a new object to the holder
                 // Then we can move forward
-                if (_holder.Register(newObject, out ConfigurationObject duplicate))
+                if (_holder.Register(newObject, out ConstructedConfigurationObject duplicate))
                     continue;
 
                 // Otherwise there is a problem with adding a new object. It means
@@ -116,7 +118,7 @@ namespace GeoGen.Analyzer
             // we'll do the usual theorem finding
             if (!canBeConstructed && duplicateObjects.Empty())
             {
-                var newTheorems = _finder.FindTheorems(oldObjects, newObjects);
+                var newTheorems = _finder.Find(oldObjects, newObjects);
                 theorems.AddRange(newTheorems);
             }
             // Otherwise we won't analyze the configuration and clean the container

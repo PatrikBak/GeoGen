@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
-using GeoGen.Analyzer.Geometry;
+using GeoGen.Analyzer.AnalyticalGeometry;
+using GeoGen.Analyzer.Objects;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal class RandomObjectsProvider : IRandomObjectsProvider
     {
@@ -66,7 +67,9 @@ namespace GeoGen.Analyzer
         private Circle RandomCircle()
         {
             var center = RandomPoint();
-            var radius = RandomDoubleInRange();
+
+            // Adding a non-zero constant to be sure that we have a non-zero radius
+            var radius = RandomDoubleInRange() + 0.01;
 
             return new Circle(center, radius);
         }

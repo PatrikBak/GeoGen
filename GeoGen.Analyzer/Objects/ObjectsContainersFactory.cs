@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Analyzer.Constructing;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Objects
 {
     internal class ObjectsContainersFactory : IObjectsContainersFactory
     {

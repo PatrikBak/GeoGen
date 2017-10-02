@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal class ConstructorsResolver : IConstructorsResolver
     {

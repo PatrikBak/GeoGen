@@ -2,7 +2,7 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Theorems
 {
     /// <summary>
     /// Represents a service that does actual geometrical theorem finding.
@@ -17,6 +17,6 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The found theorems enumerable.</returns>
-        IEnumerable<Theorem> FindTheorems(List<ConfigurationObject> oldObjects, List<ConfigurationObject> newObjects);
+        IEnumerable<Theorem> Find(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
     }
 }

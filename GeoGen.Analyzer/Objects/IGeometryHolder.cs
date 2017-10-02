@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
     /// Represents a holder of all geometry. In fact, it's a wrapper for all
@@ -23,7 +23,7 @@ namespace GeoGen.Analyzer
         /// <param name="configurationObject">The configuration object.</param>
         /// <param name="duplicateVersion">The out parameter where the reference to duplicate object will be set.</param>
         /// <returns>true, if the content has changed, false otherwise.</returns>
-        bool Register(ConfigurationObject configurationObject, out ConfigurationObject duplicateVersion);
+        bool Register(ConstructedConfigurationObject constructedObject, out ConstructedConfigurationObject duplicate);
 
         /// <summary>
         /// Removes given configuration objects from the holder, if they exist.

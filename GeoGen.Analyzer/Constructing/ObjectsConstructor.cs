@@ -1,9 +1,10 @@
 using System;
-using GeoGen.Analyzer.Geometry;
+using GeoGen.Analyzer.AnalyticalGeometry;
+using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal class ObjectsConstructor : IObjectsConstructor
     {
@@ -17,13 +18,8 @@ namespace GeoGen.Analyzer
             _resolver = resolver;
         }
 
-        public GeometricalObject Construct(ConfigurationObject configurationObject)
+        public GeometricalObject Construct(ConstructedConfigurationObject constructedObject, IObjectsContainer container)
         {
-            if (configurationObject is LooseConfigurationObject looseObject)
-                return ConstructLooseObject(looseObject);
-
-            var constructedObject = (ConstructedConfigurationObject) configurationObject;
-
             var construction = constructedObject.Construction;
 
             var arguments = constructedObject.PassedArguments;
@@ -32,17 +28,23 @@ namespace GeoGen.Analyzer
             {
                 var constructor = _resolver.Resolve(predefinedConstruction);
 
-                var result = constructor.Apply(arguments);
-                result.ConfigurationObject = configurationObject;
+                var result = constructor.Apply(arguments, container);
 
-                return result;
+                if (result == null)
+                    return null;
+
+                var geometricalObject = result[constructedObject.Index];
+
+                geometricalObject.ConfigurationObject = constructedObject;
+
+                return geometricalObject;
             }
 
-            // TODO: Composed constructions
-            throw new NotImplementedException("Composed constructions are not resolved yet");
+            // TODO: Composed construction are not figured out yet...
+            throw new NotImplementedException();
         }
 
-        private GeometricalObject ConstructLooseObject(LooseConfigurationObject looseObject)
+        public GeometricalObject Construct(LooseConfigurationObject looseObject)
         {
             GeometricalObject result;
 

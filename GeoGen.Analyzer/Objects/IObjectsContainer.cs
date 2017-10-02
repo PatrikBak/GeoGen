@@ -1,6 +1,4 @@
-﻿using GeoGen.Analyzer.Geometry;
-
-namespace GeoGen.Analyzer
+﻿namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
     /// Represents a container for <see cref="GeometricalObject"/>s.
@@ -22,5 +20,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="id">The id.</param>
         void Remove(int id);
+
+        GeometricalObject this[int id] { get; }
     }
 }

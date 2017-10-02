@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal interface IConstructorsResolver
     {

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Analyzer.Geometry;
+using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Constructions.Arguments;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Constructing
 {
     internal interface IPredefinedConstructor
     {
         Type PredefinedConstructionType { get; }
 
-        GeometricalObject Apply(IReadOnlyList<ConstructionArgument> arguments);
+        List<GeometricalObject> Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container);
     }
 }
