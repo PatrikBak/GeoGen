@@ -90,5 +90,10 @@ namespace GeoGen.Core.Utilities
         }
 
         #endregion
+
+        public int CountOfType(ConfigurationObjectType type)
+        {
+            return !ContainsKey(type) ? 0 : this[type].Count;
+        }
     }
 }

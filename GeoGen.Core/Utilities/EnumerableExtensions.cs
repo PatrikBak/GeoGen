@@ -47,5 +47,23 @@ namespace GeoGen.Core.Utilities
 
             return new HashSet<T>(enumerable);
         }
+
+        /// <summary>
+        /// Adds the specified element at the end of the IEnummerable.
+        /// </summary>
+        /// <typeparam name="T">The type of elements the IEnumerable contains.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="item">The item to be concatenated.</param>
+        /// <returns>An IEnumerable, enumerating first the items in the existing enumerable</returns>
+        public static IEnumerable<T> ConcatItem<T>(this IEnumerable<T> enumerable, T item)
+        {
+            if (null == enumerable)
+                throw new ArgumentException(nameof(enumerable));
+
+            foreach (var t in enumerable)
+                yield return t;
+
+            yield return item;
+        }
     }
 }

@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using GeoGen.Core.Theorems;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Theorems
 {
     internal interface ITheoremsContainer
     {

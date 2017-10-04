@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Analyzer.AnalyticalGeometry
 {
@@ -24,7 +25,12 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             throw new NotImplementedException();
         }
 
-        public static Point IntersectionOfLines(Point point1, Point point2, Point point3, Point point4)
+        public static Point IntersectionOfLines(List<Point> points)
+        {
+            throw new NotImplementedException();
+        }
+
+        public static bool ArePointsCollinear(List<Point> points)
         {
             throw new NotImplementedException();
         }

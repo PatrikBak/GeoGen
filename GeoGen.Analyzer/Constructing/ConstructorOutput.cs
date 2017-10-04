@@ -8,7 +8,7 @@ using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Constructing
 {
-    class ConstructorOutput
+    internal class ConstructorOutput
     {
         public List<GeometricalObject> Objects { get; set; }
 

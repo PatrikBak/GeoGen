@@ -2,7 +2,7 @@
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.Analyzer.Theorems
 {
     internal interface ITheoremsFinder
     {

@@ -52,7 +52,9 @@
   <ItemGroup>
     <Compile Include="GradualAnalyzerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestHelpers\ConfigurationObjects.cs" />
     <Compile Include="TestHelpers\Utilities.cs" />
+    <Compile Include="Theorems\TheoremsFinderTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

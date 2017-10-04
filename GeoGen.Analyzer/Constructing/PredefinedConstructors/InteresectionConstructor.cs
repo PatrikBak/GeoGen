@@ -36,7 +36,7 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                 var point3 = container.Get<Point>(obj3);
                 var point4 = container.Get<Point>(obj4);
 
-                var result = AnalyticalHelpers.IntersectionOfLines(point1, point2, point3, point4);
+                var result = AnalyticalHelpers.IntersectionOfLines(new List<Point> {point1, point2, point3, point4});
 
                 if (result == null)
                     return null;
