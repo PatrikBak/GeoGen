@@ -9,6 +9,6 @@ namespace GeoGen.Analyzer.Constructing
     {
         Type PredefinedConstructionType { get; }
 
-        List<GeometricalObject> Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container);
+        ConstructorOutput Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container);
     }
 }

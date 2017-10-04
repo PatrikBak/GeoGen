@@ -36,9 +36,12 @@
   <ItemGroup>
     <Compile Include="AnalyzerOutput.cs" />
     <Compile Include="AnalyzerException.cs" />
+    <Compile Include="Constructing\ConstructorOutput.cs" />
     <Compile Include="Constructing\ConstructorsResolver.cs" />
     <Compile Include="AnalyticalGeometry\AnalyticalHelpers.cs" />
     <Compile Include="AnalyticalGeometry\Circle.cs" />
+    <Compile Include="ITheoremsContainer.cs" />
+    <Compile Include="ITheoremsFinder.cs" />
     <Compile Include="Objects\GeometricalObject.cs" />
     <Compile Include="AnalyticalGeometry\Line.cs" />
     <Compile Include="AnalyticalGeometry\Point.cs" />
@@ -54,13 +57,15 @@
     <Compile Include="Objects\IGeometryHolder.cs" />
     <Compile Include="IGradualAnalyzer.cs" />
     <Compile Include="Constructing\IObjectsConstructor.cs" />
-    <Compile Include="Theorems\ITheoremsFinder.cs" />
     <Compile Include="Objects\ObjectsContainersFactory.cs" />
     <Compile Include="Constructing\PredefinedConstructors\InteresectionConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\MidpointConstructor.cs" />
+    <Compile Include="Objects\RegistrationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructing\RandomObjectsProvider.cs" />
-    <Compile Include="Theorems\ITheoremVerifier.cs" />
+    <Compile Include="Theorems\ITheoremFinder.cs" />
+    <Compile Include="Theorems\TheoremFinderBase.cs" />
+    <Compile Include="Theorems\TheoremFinders\ConcurrencyVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">

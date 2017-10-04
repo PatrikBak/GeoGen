@@ -29,6 +29,11 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             return new Point(point.X / factor, point.Y / factor);
         }
 
+        public static Point operator *(Point point, double factor)
+        {
+            return new Point(point.X * factor, point.Y * factor);
+        }
+
         public static bool operator ==(Point left, Point right)
         {
             return Equals(left, right);

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
@@ -36,6 +37,11 @@ namespace GeoGen.Analyzer.Objects
             _idToObjects.Remove(id);
         }
 
-        public GeometricalObject this[int id] => _idToObjects[id];
+        public T Get<T>(ConfigurationObject obj1) where T : GeometricalObject
+        {
+            var id = obj1.Id ?? throw new AnalyzerException("Id must be set.");
+
+            return (T) _idToObjects[id];
+        }
     }
 }

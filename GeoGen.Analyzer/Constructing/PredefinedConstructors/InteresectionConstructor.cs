@@ -5,6 +5,7 @@ using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
+using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
@@ -12,7 +13,7 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
     {
         public Type PredefinedConstructionType { get; } = typeof(Intersection);
 
-        public List<GeometricalObject> Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container)
+        public ConstructorOutput Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container)
         {
             if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -30,18 +31,41 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                 var obj3 = ((ObjectConstructionArgument) passedPoints2[0]).PassedObject;
                 var obj4 = ((ObjectConstructionArgument) passedPoints2[1]).PassedObject;
 
-                var point1 = (Point) container[obj1.Id ?? throw new Exception()];
-                var point2 = (Point) container[obj2.Id ?? throw new Exception()];
-                var point3 = (Point) container[obj3.Id ?? throw new Exception()];
-                var point4 = (Point) container[obj4.Id ?? throw new Exception()];
+                var point1 = container.Get<Point>(obj1);
+                var point2 = container.Get<Point>(obj2);
+                var point3 = container.Get<Point>(obj3);
+                var point4 = container.Get<Point>(obj4);
 
                 var result = AnalyticalHelpers.IntersectionOfLines(point1, point2, point3, point4);
 
-                return new List<GeometricalObject> {result};
+                if (result == null)
+                    return null;
+
+                var objects1 = new List<TheoremObject>
+                {
+                    new SingleTheoremObject(point1.ConfigurationObject),
+                    new SingleTheoremObject(point2.ConfigurationObject),
+                    new SingleTheoremObject(result.ConfigurationObject)
+                };
+                var objects2 = new List<TheoremObject>
+                {
+                    new SingleTheoremObject(point3.ConfigurationObject),
+                    new SingleTheoremObject(point4.ConfigurationObject),
+                    new SingleTheoremObject(result.ConfigurationObject)
+                };
+
+                var collinearityTheorem1 = new Theorem(TheoremType.CollinearPoints, objects1);
+                var collinearityTheorem2 = new Theorem(TheoremType.CollinearPoints, objects2);
+
+                return new ConstructorOutput
+                {
+                    Objects = new List<GeometricalObject> {result},
+                    Theorems = new List<Theorem> {collinearityTheorem1, collinearityTheorem2}
+                };
             }
             catch (Exception)
             {
-                return null;
+                throw new AnalyzerException("Incorrect arguments.");
             }
         }
     }

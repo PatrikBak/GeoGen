@@ -1,4 +1,6 @@
-﻿namespace GeoGen.Analyzer.Objects
+﻿using GeoGen.Core.Configurations;
+
+namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
     /// Represents a container for <see cref="GeometricalObject"/>s.
@@ -21,6 +23,6 @@
         /// <param name="id">The id.</param>
         void Remove(int id);
 
-        GeometricalObject this[int id] { get; }
+        T Get<T>(ConfigurationObject obj1) where T : GeometricalObject;
     }
 }

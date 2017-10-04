@@ -10,7 +10,7 @@ namespace GeoGen.Core.Theorems
     /// </summary>
     public class SingleTheoremObject : TheoremObject
     {
-        #region TeoremObjects properties
+        #region TheoremOject properties
 
         /// <summary>
         /// Gets the type of this object.
@@ -38,8 +38,8 @@ namespace GeoGen.Core.Theorems
                 throw new ArgumentNullException(nameof(configurationObject));
 
             Type = configurationObject.ObjectType;
-            InternalObjects = new List<ConfigurationObject> { configurationObject };
-        } 
+            InternalObjects = new List<ConfigurationObject> {configurationObject};
+        }
 
         #endregion
     }

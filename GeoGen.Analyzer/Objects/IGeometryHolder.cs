@@ -23,12 +23,6 @@ namespace GeoGen.Analyzer.Objects
         /// <param name="configurationObject">The configuration object.</param>
         /// <param name="duplicateVersion">The out parameter where the reference to duplicate object will be set.</param>
         /// <returns>true, if the content has changed, false otherwise.</returns>
-        bool Register(ConstructedConfigurationObject constructedObject, out ConstructedConfigurationObject duplicate);
-
-        /// <summary>
-        /// Removes given configuration objects from the holder, if they exist.
-        /// </summary>
-        /// <param name="objects">The configuration objects enumerable.</param>
-        void Remove(IEnumerable<ConfigurationObject> objects);
+        RegistrationResult Register(List<ConstructedConfigurationObject> constructedObject);
     }
 }

@@ -1,8 +1,10 @@
 using System;
+using System.Collections.Generic;
 using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
+using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Constructing
 {
@@ -18,11 +20,21 @@ namespace GeoGen.Analyzer.Constructing
             _resolver = resolver;
         }
 
-        public GeometricalObject Construct(ConstructedConfigurationObject constructedObject, IObjectsContainer container)
+        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects, IObjectsContainer container)
         {
-            var construction = constructedObject.Construction;
+            if (constructedObjects == null)
+                throw new ArgumentNullException(nameof(constructedObjects));
 
-            var arguments = constructedObject.PassedArguments;
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+
+            if (constructedObjects.Empty())
+                throw new ArgumentException("Constructed objects can't be empty");
+
+            // It's assumed that these constructed objects differs only by indices
+            var construction = constructedObjects[0].Construction;
+
+            var arguments = constructedObjects[0].PassedArguments;
 
             if (construction is PredefinedConstruction predefinedConstruction)
             {
@@ -33,14 +45,19 @@ namespace GeoGen.Analyzer.Constructing
                 if (result == null)
                     return null;
 
-                var geometricalObject = result[constructedObject.Index];
+                var objects = result.Objects;
 
-                geometricalObject.ConfigurationObject = constructedObject;
+                if (objects.Count != constructedObjects.Count)
+                    throw new AnalyzerException("Constructor output has incorrect number of objects");
 
-                return geometricalObject;
+                for (var i = 0; i < objects.Count; i++)
+                {
+                    objects[i].ConfigurationObject = constructedObjects[i];
+                }
+
+                return result;
             }
 
-            // TODO: Composed construction are not figured out yet...
             throw new NotImplementedException();
         }
 

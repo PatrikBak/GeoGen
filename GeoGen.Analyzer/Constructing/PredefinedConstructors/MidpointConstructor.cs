@@ -5,6 +5,7 @@ using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
+using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
@@ -12,7 +13,7 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
     {
         public Type PredefinedConstructionType { get; } = typeof(Midpoint);
 
-        public List<GeometricalObject> Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container)
+        public ConstructorOutput Apply(IReadOnlyList<ConstructionArgument> arguments, IObjectsContainer container)
         {
             if (arguments == null)
                 throw new ArgumentNullException(nameof(arguments));
@@ -25,16 +26,32 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                 var obj1 = ((ObjectConstructionArgument) passedPoints[0]).PassedObject;
                 var obj2 = ((ObjectConstructionArgument) passedPoints[1]).PassedObject;
 
-                var point1 = (Point) container[obj1.Id ?? throw new Exception()];
-                var point2 = (Point) container[obj2.Id ?? throw new Exception()];
+                var point1 = container.Get<Point>(obj1);
+                var point2 = container.Get<Point>(obj2);
 
                 var result = AnalyticalHelpers.Midpoint(point1, point2);
 
-                return new List<GeometricalObject> {result};
+                if (result == null)
+                    return null;
+
+                var objects = new List<TheoremObject>
+                {
+                    new SingleTheoremObject(point1.ConfigurationObject),
+                    new SingleTheoremObject(point2.ConfigurationObject),
+                    new SingleTheoremObject(result.ConfigurationObject)
+                };
+
+                var collinearityTheorem = new Theorem(TheoremType.CollinearPoints, objects);
+
+                return new ConstructorOutput
+                {
+                    Objects = new List<GeometricalObject> {result},
+                    Theorems = new List<Theorem> {collinearityTheorem}
+                };
             }
             catch (Exception)
             {
-                return null;
+                throw new AnalyzerException("Incorrect arguments.");
             }
         }
     }
