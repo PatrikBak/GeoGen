@@ -18,7 +18,7 @@ namespace GeoGen.Analyzer.Objects
     {
         private const int NumberOfContainers = 5;
 
-        private readonly IObjectsConstructor _constructor;
+        private readonly IConstructorsResolver _resolver;
 
         private readonly IObjectsContainersFactory _factory;
 
@@ -36,7 +36,7 @@ namespace GeoGen.Analyzer.Objects
             _containers.SetItems(containers);
 
             // TODO: Fix this
-            // I don't this will work with if there are at least two objects constructed
+            // I don't think this will work with if there are at least two objects constructed
             // with the same construction and arguments (i.e. that differs only by indices)
             // This can be fixed by finding these objects in the constructed objects list.
             // It shouldn't be hard because they are supposed to be there consecutively
@@ -73,19 +73,15 @@ namespace GeoGen.Analyzer.Objects
                 };
             }
 
-            // Otherwise we need to construct the objects in all containers along with
-            // default theorems. First prepare the list for theorems
-            var defaultTheorems = new List<Theorem>();
-
             // Let the helper method construct the result. Before returning it, 
             // we need to analyze it
-            var result = RegisterObjects(objects, defaultTheorems);
+            var result = RegisterObjects(objects, out List<Theorem> theorems);
 
             // If we can construct all the objects without duplications
             if (result.CanBeConstructed && result.DuplicateObjects.Empty())
             {
                 // Then we can register the default theorems
-                foreach (var theorem in defaultTheorems)
+                foreach (var theorem in theorems)
                 {
                     _theorems.Add(theorem);
                 }
@@ -119,21 +115,23 @@ namespace GeoGen.Analyzer.Objects
             return result;
         }
 
-        private RegistrationResult RegisterObjects(List<ConstructedConfigurationObject> objects, List<Theorem> theorems)
+        private RegistrationResult RegisterObjects(List<ConstructedConfigurationObject> objects, out List<Theorem> theorems)
         {
-            // First we prepare variables
+            // Initialize variables
             var canBeConstructed = true;
             var duplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
-            List<Theorem> defaultTheorems = null;
+
+            // Pull the constructor
+            var constructor = _resolver.Resolve(objects[0].Construction);
+
+            // Perform the construction
+            var constructorOutput = constructor.Construct(objects);
 
             // We iterate over all containers
             foreach (var container in _containers)
             {
-                // Let the constructor construct the object for new objects
-                var constructorOutput = _constructor.Construct(objects, container);
-
-                // Pull constructed geometrical objects
-                var constructedObjects = constructorOutput.Objects;
+                // Construct the objects
+                var constructedObjects = constructorOutput.ConstructorFunction(container);
 
                 // If they are null, that means the construction can't be provided 
                 // in this container and so we don't need to continue
@@ -175,15 +173,10 @@ namespace GeoGen.Analyzer.Objects
                 // with other containers
                 if (areThereDuplicates)
                     break;
-
-                // Otherwise we can set the default theorems to the ones gotten from the constructor
-                // This might be set uselessly a few times, but it's not a big deal.
-                defaultTheorems = constructorOutput.Theorems;
             }
 
-            // After finding all the objects we can set up the provided theorems list
-            if (defaultTheorems != null)
-                theorems.SetItems(defaultTheorems);
+            // Set the theorems
+            theorems = constructorOutput.Theorems;
 
             // And finally construct and return the result
             return new RegistrationResult

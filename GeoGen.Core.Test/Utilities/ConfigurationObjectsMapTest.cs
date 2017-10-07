@@ -22,16 +22,6 @@ namespace GeoGen.Core.Test.Utilities
             return Enumerable.Range(0, count).Select(o => new LooseConfigurationObject(type));
         }
 
-        private static Dictionary<ConfigurationObjectType, ConfigurationObjectType> MixDictionary()
-        {
-            return new Dictionary<ConfigurationObjectType, ConfigurationObjectType>
-            {
-                {ConfigurationObjectType.Point, ConfigurationObjectType.Circle},
-                {ConfigurationObjectType.Line, ConfigurationObjectType.Point},
-                {ConfigurationObjectType.Circle, ConfigurationObjectType.Line}
-            };
-        }
-
         [Test]
         public void Test_Constructor_Objects_Enumerable_Cant_Be_Null()
         {
@@ -120,7 +110,7 @@ namespace GeoGen.Core.Test.Utilities
         {
             var map = new ConfigurationObjectsMap();
 
-            Assert.Throws<ArgumentNullException>(() => map.AddAll((IEnumerable<ConfigurationObject>) null));
+            Assert.Throws<ArgumentNullException>(() => map.AddAll(null));
         }
 
         [Test]

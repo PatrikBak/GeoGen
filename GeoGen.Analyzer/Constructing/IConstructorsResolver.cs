@@ -1,9 +1,10 @@
-﻿using GeoGen.Core.Constructions;
+﻿using GeoGen.Analyzer.Constructing.Constructors;
+using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing
 {
     internal interface IConstructorsResolver
     {
-        IPredefinedConstructor Resolve(PredefinedConstruction predefinedConstruction);
+        IObjectsConstructor Resolve(Construction construction);
     }
 }

@@ -67,9 +67,8 @@ namespace GeoGen.Analyzer.Constructing
         private Circle RandomCircle()
         {
             var center = RandomPoint();
-
-            // Adding a non-zero constant to be sure that we have a non-zero radius
-            var radius = RandomDoubleInRange() + 0.01;
+            // This construct makes sure that we won't get a zero radius
+            var radius = (1 - _random.NextDouble()) * MaximalRandomValue;
 
             return new Circle(center, radius);
         }

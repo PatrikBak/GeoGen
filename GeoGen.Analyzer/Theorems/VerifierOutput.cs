@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Theorems;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer.Theorems
 {
-    internal class ConstructorOutput
+    internal class VerifierOutput
     {
-        public Func<IObjectsContainer, List<GeometricalObject>> ConstructorFunction { get; set; }
+        public Func<IObjectsContainer, bool> VerifierFunction { get; set; }
 
         public List<Theorem> Theorems { get; set; }
     }

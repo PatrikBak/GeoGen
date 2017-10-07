@@ -74,7 +74,15 @@ namespace GeoGen.Analyzer.Test.Theorems
             stopwatch.Start();
             var result = finder.Find(oldMap, newMap).Count();
             stopwatch.Stop();
+            Console.WriteLine($"It took fucking {stopwatch.ElapsedMilliseconds}");
+
+            var p = new VariationsProvider<int>();
+            stopwatch = new Stopwatch();
+            stopwatch.Start();
+            for(int i=0; i<252; i++){var count = p.GetVariations(Enumerable.Range(0, 6).ToList(), 6).Count();}
+            stopwatch.Stop();
             Console.WriteLine(stopwatch.ElapsedMilliseconds);
+            Console.WriteLine($"Calls {VariationsProvider<ConfigurationObject>.i}");
 
             //Assert.AreEqual(expected, result);
         }

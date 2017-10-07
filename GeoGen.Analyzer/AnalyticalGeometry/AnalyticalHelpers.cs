@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.AnalyticalGeometry
 {
@@ -12,7 +13,7 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
 
         public static bool ArePointsEqual(Point point1, Point point2)
         {
-            throw new NotImplementedException();
+            return point1.X.AlmostEquals(point2.X) && point1.Y.AlmostEquals(point2.Y);
         }
 
         public static bool AreCirclesEqual(Circle circle1, Circle circle2)

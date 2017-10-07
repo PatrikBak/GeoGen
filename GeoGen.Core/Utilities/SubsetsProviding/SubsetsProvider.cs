@@ -8,6 +8,8 @@ namespace GeoGen.Core.Utilities.SubsetsProviding
     {
         public IEnumerable<IEnumerable<T>> GetSubsets(IReadOnlyList<T> list, int numberOfElements)
         {
+            Console.WriteLine($"S: Calling for {list.Count} {numberOfElements}");
+
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
 

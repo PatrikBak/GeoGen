@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoGen.Analyzer.Constructing;
+using GeoGen.Analyzer.Constructing.Constructors;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
     internal class ObjectsContainersFactory : IObjectsContainersFactory
     {
-        private readonly IObjectsConstructor _constructor;
+        private readonly ILooseObjectsConstructor _constructor;
 
-        public ObjectsContainersFactory(IObjectsConstructor constructor)
+        public ObjectsContainersFactory(ILooseObjectsConstructor constructor)
         {
             _constructor = constructor;
         }
@@ -20,14 +21,13 @@ namespace GeoGen.Analyzer.Objects
                 throw new ArgumentNullException(nameof(looseObjects));
 
             var container = new ObjectsContainer();
+            var objects = _constructor.Construct(looseObjects);
 
-            foreach (var looseObject in looseObjects)
+            foreach (var looseObject in objects)
             {
-                var geometricalObject = _constructor.Construct(looseObject);
+                var result = container.Add(looseObject);
 
-                var result = container.Add(geometricalObject);
-
-                if (result == geometricalObject)
+                if (result == looseObject)
                     throw new AnalyzerException("Duplicate loose objects.");
             }
 

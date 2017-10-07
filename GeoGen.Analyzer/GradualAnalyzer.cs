@@ -22,7 +22,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly IGeometryHolder _holder;
 
-        private readonly ITheoremsFinder _finder;
+        private readonly ITheoremVerifier[] _verifiers;
 
         private readonly ITheoremsContainer _container;
 
@@ -81,7 +81,7 @@ namespace GeoGen.Analyzer
                 var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
                 var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-                theorems.AddRange(_finder.Find(oldObjectsMap, newObjectsMap));
+                theorems.AddRange(FindTheoems(oldObjectsMap, newObjectsMap));
             }
 
             // And finally we can construct the result
@@ -91,6 +91,23 @@ namespace GeoGen.Analyzer
                 CanBeFullyConstructed = canBeConstructed,
                 DuplicateObjects = duplicateObjects
             };
+        }
+
+        private IEnumerable<Theorem> FindTheoems(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
+        {
+            var result = new List<Theorem>();
+
+            foreach (var theoremVerifier in _verifiers)
+            {
+                var output = theoremVerifier.Verify(oldObjects, newObjects);
+
+                if (_holder.All(container => output.VerifierFunction(container)))
+                {
+                    result.AddRange(output.Theorems);
+                }
+            }
+
+            return result;
         }
 
         #endregion

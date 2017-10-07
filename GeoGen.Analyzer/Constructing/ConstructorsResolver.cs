@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Analyzer.Constructing.Constructors;
 using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing
@@ -23,16 +24,21 @@ namespace GeoGen.Analyzer.Constructing
             }
         }
 
-        public IPredefinedConstructor Resolve(PredefinedConstruction predefinedConstruction)
+        public IObjectsConstructor Resolve(Construction construction)
         {
-            try
+            if (construction is PredefinedConstruction predefinedConstruction)
             {
-                return _constructors[predefinedConstruction.GetType()];
+                try
+                {
+                    return _constructors[predefinedConstruction.GetType()];
+                }
+                catch (KeyNotFoundException)
+                {
+                    throw new AnalyzerException("Unresolvable predefined constructor.");
+                }
             }
-            catch (KeyNotFoundException)
-            {
-                throw new AnalyzerException("Unresolvable predefined constructor.");
-            }
+
+            throw new NotImplementedException();
         }
     }
 }
