@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer.Test", "Geo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator.IntegrationTest", "GeoGen.Generator.IntegrationTest\GeoGen.Generator.IntegrationTest.csproj", "{1817BD9D-B688-405B-956E-E5386577B0EE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.AnalyticalGeometry", "GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj", "{8291B54F-23DD-4117-8511-300DDE547A69}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{1817BD9D-B688-405B-956E-E5386577B0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1817BD9D-B688-405B-956E-E5386577B0EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1817BD9D-B688-405B-956E-E5386577B0EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8291B54F-23DD-4117-8511-300DDE547A69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8291B54F-23DD-4117-8511-300DDE547A69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8291B54F-23DD-4117-8511-300DDE547A69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8291B54F-23DD-4117-8511-300DDE547A69}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

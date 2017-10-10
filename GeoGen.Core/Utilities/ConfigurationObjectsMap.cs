@@ -95,5 +95,10 @@ namespace GeoGen.Core.Utilities
         {
             return !ContainsKey(type) ? 0 : this[type].Count;
         }
+
+        public ConfigurationObjectsMap Merge(ConfigurationObjectsMap newObjects)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

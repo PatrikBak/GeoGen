@@ -2,7 +2,7 @@
 
 namespace GeoGen.Analyzer.AnalyticalGeometry
 {
-    internal class Line : GeometricalObject
+    internal class Line 
     {
         public Point EndPoint1 { get; }
 
@@ -14,29 +14,6 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             EndPoint2 = endPoint2;
         }
 
-        public override bool Equals(GeometricalObject other)
-        {
-            var line = other as Line;
-
-            if (line == null)
-                return false;
-
-            return AnalyticalHelpers.AreLinesEqual(this, line);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((GeometricalObject) obj);
-        }
 
         public override int GetHashCode()
         {

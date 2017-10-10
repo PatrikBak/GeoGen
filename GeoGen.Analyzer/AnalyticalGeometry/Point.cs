@@ -2,7 +2,7 @@
 
 namespace GeoGen.Analyzer.AnalyticalGeometry
 {
-    internal class Point : GeometricalObject
+    internal class Point 
     {
         public double X { get; }
 
@@ -44,29 +44,8 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             return !Equals(left, right);
         }
 
-        public override bool Equals(GeometricalObject other)
-        {
-            var point = other as Point;
+        
 
-            if (point == null)
-                return false;
-
-            return AnalyticalHelpers.ArePointsEqual(point, this);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((GeometricalObject) obj);
-        }
 
         public override int GetHashCode()
         {

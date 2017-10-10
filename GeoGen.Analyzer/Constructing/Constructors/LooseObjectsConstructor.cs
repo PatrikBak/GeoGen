@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 
@@ -11,13 +11,13 @@ namespace GeoGen.Analyzer.Constructing.Constructors
     {
         private readonly IRandomObjectsProvider _provider;
 
-        public List<GeometricalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
+        public List<AnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
             return looseObjects.Select
             (
                 looseObject =>
                 {
-                    GeometricalObject result;
+                    AnalyticalObject result;
 
                     switch (looseObject.ObjectType)
                     {
@@ -33,8 +33,6 @@ namespace GeoGen.Analyzer.Constructing.Constructors
                         default:
                             throw new AnalyzerException("Unhandled case.");
                     }
-
-                    result.ConfigurationObject = looseObject;
 
                     return result;
                 }

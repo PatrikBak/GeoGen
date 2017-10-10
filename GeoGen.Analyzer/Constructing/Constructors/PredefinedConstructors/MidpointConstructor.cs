@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
@@ -27,26 +27,21 @@ namespace GeoGen.Analyzer.Constructing.Constructors.PredefinedConstructors
                 var obj1 = ((ObjectConstructionArgument) passedPoints[0]).PassedObject;
                 var obj2 = ((ObjectConstructionArgument) passedPoints[1]).PassedObject;
 
-                List<GeometricalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     var point1 = container.Get<Point>(obj1);
                     var point2 = container.Get<Point>(obj2);
 
-                    var result = AnalyticalHelpers.Midpoint(point1, point2);
+                    var result = Helpers.Midpoint(point1, point2);
 
-                    if (result == null)
-                        return null;
-
-                    result.ConfigurationObject = constructedObject;
-
-                    return new List<GeometricalObject> {result};
+                    return result == null ? null : new List<AnalyticalObject> {result};
                 }
 
                 var objects = new List<TheoremObject>
                 {
-                    new SingleTheoremObject(obj1),
-                    new SingleTheoremObject(obj2),
-                    new SingleTheoremObject(constructedObject)
+                    new TheoremObject(obj1),
+                    new TheoremObject(obj2),
+                    new TheoremObject(constructedObject)
                 };
                 var collinearityTheorem = new Theorem(TheoremType.CollinearPoints, objects);
 

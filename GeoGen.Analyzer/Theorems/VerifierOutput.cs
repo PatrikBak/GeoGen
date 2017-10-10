@@ -9,6 +9,6 @@ namespace GeoGen.Analyzer.Theorems
     {
         public Func<IObjectsContainer, bool> VerifierFunction { get; set; }
 
-        public List<Theorem> Theorems { get; set; }
+        public Func<Theorem> Theorem { get; set; }
     }
 }

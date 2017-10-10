@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Core.Objects;
 using GeoGen.Core.Utilities;
 
 namespace GeoGen.Core.Theorems
@@ -18,7 +19,7 @@ namespace GeoGen.Core.Theorems
         public TheoremType Type { get; }
 
         /// <summary>
-        /// Gets the list of theorem objects that this theorem is about.
+        /// Gets the list of geometrical objects that this theorem is about.
         /// </summary>
         public List<TheoremObject> InvolvedObjects { get; }
 
@@ -28,7 +29,7 @@ namespace GeoGen.Core.Theorems
 
         /// <summary>
         /// Constructs a new theorem given by a theorem type and a list of
-        /// objects that theorem is about.
+        /// objects that this theorem is about.
         /// </summary>
         /// <param name="type">The theorem type.</param>
         /// <param name="involvedObjects">The involved objects list.</param>
@@ -39,7 +40,7 @@ namespace GeoGen.Core.Theorems
 
             if (InvolvedObjects.Empty())
                 throw new ArgumentException("Involved objects can't be empty.");
-        }  
+        }
 
         #endregion
     }

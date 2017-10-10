@@ -2,7 +2,7 @@
 
 namespace GeoGen.Analyzer.AnalyticalGeometry
 {
-    internal class Circle : GeometricalObject
+    internal class Circle 
     {
         public Point Center { get; }
 
@@ -24,30 +24,9 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             return !Equals(left, right);
         }
 
-        public override bool Equals(GeometricalObject other)
-        {
-            var circle = other as Circle;
+       
 
-            if (circle == null)
-                return false;
-
-            return AnalyticalHelpers.AreCirclesEqual(circle, this);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(this, obj))
-                return true;
-
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (obj.GetType() != GetType())
-                return false;
-
-            return Equals((GeometricalObject) obj);
-        }
-
+        
         public override int GetHashCode()
         {
             var hash = 17;

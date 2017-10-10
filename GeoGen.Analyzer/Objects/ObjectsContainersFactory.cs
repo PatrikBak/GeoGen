@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Analyzer.Constructing;
 using GeoGen.Analyzer.Constructing.Constructors;
 using GeoGen.Core.Configurations;
@@ -20,14 +21,19 @@ namespace GeoGen.Analyzer.Objects
             if (looseObjects == null)
                 throw new ArgumentNullException(nameof(looseObjects));
 
+            var looseObjectsList = looseObjects.ToList();
             var container = new ObjectsContainer();
-            var objects = _constructor.Construct(looseObjects);
 
-            foreach (var looseObject in objects)
+            var objects = _constructor.Construct(looseObjectsList);
+
+            for (var i = 0; i < looseObjectsList.Count; i++)
             {
-                var result = container.Add(looseObject);
+                var configurationObject = looseObjectsList[i];
+                var analyticalObject = objects[i];
 
-                if (result == looseObject)
+                var result = container.Add(analyticalObject, configurationObject);
+
+                if (result == null)
                     throw new AnalyzerException("Duplicate loose objects.");
             }
 

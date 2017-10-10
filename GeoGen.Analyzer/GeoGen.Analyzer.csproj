@@ -44,8 +44,8 @@
     <Compile Include="Constructing\Constructors\IObjectsConstructor.cs" />
     <Compile Include="Constructing\Constructors\IPredefinedConstructor.cs" />
     <Compile Include="Constructing\Constructors\LooseObjectsConstructor.cs" />
+    <Compile Include="Theorems\IContainer.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />
-    <Compile Include="Objects\GeometricalObject.cs" />
     <Compile Include="AnalyticalGeometry\Line.cs" />
     <Compile Include="AnalyticalGeometry\Point.cs" />
     <Compile Include="Constructing\IConstructorsResolver.cs" />
@@ -65,9 +65,14 @@
     <Compile Include="Constructing\RandomObjectsProvider.cs" />
     <Compile Include="Theorems\ITheoremVerifier.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
+    <Compile Include="Theorems\TheoremVerifiers\ICoolInterface.cs" />
     <Compile Include="Theorems\VerifierOutput.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">
+      <Project>{8291B54F-23DD-4117-8511-300DDE547A69}</Project>
+      <Name>GeoGen.AnalyticalGeometry</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">
       <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
       <Name>GeoGen.Core</Name>

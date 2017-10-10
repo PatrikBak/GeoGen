@@ -35,7 +35,7 @@ namespace GeoGen.Analyzer.Test
 
         private static GradualAnalyzer Analyzer()
         {
-            var finder = SimpleMock<ITheoremsFinder>();
+            //var finder = SimpleMock<ITheoremsFinder>();
             var container = SimpleMock<IGeometryHolder>();
 
             //return new GradualAnalyzer(container, finder);
@@ -54,7 +54,7 @@ namespace GeoGen.Analyzer.Test
         [Test]
         public void Test_Container_Cant_Be_Null()
         {
-            var finder = SimpleMock<ITheoremsFinder>();
+            //var finder = SimpleMock<ITheoremsFinder>();
 
             //   Assert.Throws<ArgumentNullException>(() => new GradualAnalyzer(null, finder));
         }

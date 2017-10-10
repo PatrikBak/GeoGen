@@ -61,8 +61,8 @@ namespace GeoGen.Analyzer
                 // Construct involved objects
                 var involvedObjects = new List<TheoremObject>
                 {
-                    new SingleTheoremObject(newObject),
-                    new SingleTheoremObject(duplicate)
+                    new TheoremObject(newObject),
+                    new TheoremObject(duplicate)
                 };
 
                 // Construct theorem itself
@@ -99,11 +99,14 @@ namespace GeoGen.Analyzer
 
             foreach (var theoremVerifier in _verifiers)
             {
-                var output = theoremVerifier.Verify(oldObjects, newObjects);
+                var output = theoremVerifier.GetOutput(oldObjects, newObjects);
 
-                if (_holder.All(container => output.VerifierFunction(container)))
+                foreach (var verifierOutput in output)
                 {
-                    result.AddRange(output.Theorems);
+                    if (_holder.All(container => verifierOutput.VerifierFunction(container)))
+                    {
+                        result.Add(verifierOutput.Theorem());
+                    }
                 }
             }
 

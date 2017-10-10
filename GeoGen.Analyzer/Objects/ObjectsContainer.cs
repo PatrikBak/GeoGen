@@ -1,31 +1,32 @@
 ﻿using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
     internal class ObjectsContainer : IObjectsContainer
     {
-        private readonly Dictionary<GeometricalObject, GeometricalObject> _objectsDictionary;
+        private readonly Dictionary<AnalyticalObject, ConfigurationObject> _objectsDictionary;
 
-        private readonly Dictionary<int, GeometricalObject> _idToObjects;
+        private readonly Dictionary<int, AnalyticalObject> _idToObjects;
 
         public ObjectsContainer()
         {
-            _objectsDictionary = new Dictionary<GeometricalObject, GeometricalObject>();
-            _idToObjects = new Dictionary<int, GeometricalObject>();
+            _objectsDictionary = new Dictionary<AnalyticalObject, ConfigurationObject>();
+            _idToObjects = new Dictionary<int, AnalyticalObject>();
         }
 
-        public GeometricalObject Add(GeometricalObject geometricalObject)
+        public ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject originalObject)
         {
-            if (_objectsDictionary.ContainsKey(geometricalObject))
-                return _objectsDictionary[geometricalObject];
+            if (_objectsDictionary.ContainsKey(analyticalObject))
+                return _objectsDictionary[analyticalObject];
 
-            _objectsDictionary.Add(geometricalObject, geometricalObject);
+            _objectsDictionary.Add(analyticalObject, originalObject);
 
-            var id = geometricalObject.ConfigurationObject.Id ?? throw new AnalyzerException("Id must be set");
-            _idToObjects.Add(id, geometricalObject);
+            var id = originalObject.Id ?? throw new AnalyzerException("Id must be set");
+            _idToObjects.Add(id, analyticalObject);
 
-            return geometricalObject;
+            return originalObject;
         }
 
         public void Remove(int id)
@@ -37,7 +38,7 @@ namespace GeoGen.Analyzer.Objects
             _idToObjects.Remove(id);
         }
 
-        public T Get<T>(ConfigurationObject obj1) where T : GeometricalObject
+        public T Get<T>(ConfigurationObject obj1) where T : AnalyticalObject
         {
             var id = obj1.Id ?? throw new AnalyzerException("Id must be set.");
 

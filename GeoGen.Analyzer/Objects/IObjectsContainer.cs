@@ -1,4 +1,5 @@
-﻿using GeoGen.Core.Configurations;
+﻿using GeoGen.AnalyticalGeometry;
+using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
@@ -14,8 +15,9 @@ namespace GeoGen.Analyzer.Objects
         /// Otherwise it will return the object passed object itself.
         /// </summary>
         /// <param name="geometricalObject">The geometrical object.</param>
+        /// <param name="originalObject"></param>
         /// <returns>The equal version of the object.</returns>
-        GeometricalObject Add(GeometricalObject geometricalObject);
+        ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject originalObject);
 
         /// <summary>
         /// Removes the geometrical object with a given id, if it exists.
@@ -23,6 +25,6 @@ namespace GeoGen.Analyzer.Objects
         /// <param name="id">The id.</param>
         void Remove(int id);
 
-        T Get<T>(ConfigurationObject obj1) where T : GeometricalObject;
+        T Get<T>(ConfigurationObject obj1) where T : AnalyticalObject;
     }
 }

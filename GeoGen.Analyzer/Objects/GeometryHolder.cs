@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Constructing;
 using GeoGen.Analyzer.Theorems;
+using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
@@ -23,6 +24,8 @@ namespace GeoGen.Analyzer.Objects
         private readonly IObjectsContainersFactory _factory;
 
         private readonly ITheoremsContainer _theorems;
+
+        private readonly ICoolInterface _contextualContainer;
 
         private readonly HashSet<int> _resolvedIds;
 
@@ -86,11 +89,14 @@ namespace GeoGen.Analyzer.Objects
                     _theorems.Add(theorem);
                 }
 
-                // And mark all object ids as resolved
                 foreach (var configurationObject in objects)
                 {
+                    // We mark all the object id as resolved
                     var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
                     _resolvedIds.Add(id);
+
+                    // And add the object to the contextual container
+                    _contextualContainer.Add(configurationObject);
                 }
             }
             // Otherwise we want to return the state of the holder and its components
@@ -147,23 +153,24 @@ namespace GeoGen.Analyzer.Objects
 
                 // Otherwise we have constructible objects. We need to add them to 
                 // the container and check if we have duplicate objects on go
-                foreach (var constructedObject in constructedObjects)
+                for (var i = 0; i < constructedObjects.Count; i++)
                 {
-                    // Let the container resolve the new object
-                    var containerResult = container.Add(constructedObject);
+                    // Pull the constructed object
+                    var constructedObject = constructedObjects[i];
 
-                    // If it returned the same object, then we have a new object
-                    // and we can move further
-                    if (containerResult == constructedObject)
+                    // Pull the original object
+                    var originalObject = objects[i];
+
+                    // Let the container resolve the new object
+                    var containerResult = container.Add(constructedObject, originalObject);
+
+                    // If the container's result is null, i.e. the object
+                    // isn't already present in the container, we're fine
+                    if (containerResult == null)
                         continue;
 
-                    // Otherwise we have duplicate objects. We can pull 
-                    // the underlying configurations objects
-                    var originalObject = constructedObject.ConfigurationObject;
-                    var duplicateObject = containerResult.ConfigurationObject;
-
                     // Update the duplicates dictionary
-                    duplicateObjects.Add(originalObject, duplicateObject);
+                    duplicateObjects.Add(originalObject, originalObject);
 
                     // And set the local variable
                     areThereDuplicates = true;

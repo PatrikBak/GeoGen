@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
+using Circle = GeoGen.AnalyticalGeometry.Circle;
+using Line = GeoGen.AnalyticalGeometry.Line;
+using Point = GeoGen.AnalyticalGeometry.Point;
 
 namespace GeoGen.Analyzer.Constructing
 {
@@ -9,31 +13,31 @@ namespace GeoGen.Analyzer.Constructing
     {
         private const double MaximalRandomValue = 10.0;
 
-        private readonly Dictionary<Type, HashSet<GeometricalObject>> _objects;
+        private readonly Dictionary<Type, HashSet<AnalyticalObject>> _objects;
 
         private readonly Random _random;
 
         public RandomObjectsProvider()
         {
             _random = new Random(DateTime.Now.Millisecond);
-            _objects = new Dictionary<Type, HashSet<GeometricalObject>>();
+            _objects = new Dictionary<Type, HashSet<AnalyticalObject>>();
         }
 
-        public GeometricalObject NextRandomObject<T>() where T : GeometricalObject
+        public AnalyticalObject NextRandomObject<T>() where T : AnalyticalObject
         {
             var type = typeof(T);
 
-            HashSet<GeometricalObject> set;
+            HashSet<AnalyticalObject> set;
 
             if (!_objects.ContainsKey(type))
             {
-                set = new HashSet<GeometricalObject>();
+                set = new HashSet<AnalyticalObject>();
                 _objects.Add(type, set);
             }
             else
                 set = _objects[type];
 
-            GeometricalObject result = null;
+            AnalyticalObject result = null;
 
             while (true)
             {

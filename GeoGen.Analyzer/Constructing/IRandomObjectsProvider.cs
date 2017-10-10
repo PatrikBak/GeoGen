@@ -1,9 +1,10 @@
-﻿using GeoGen.Analyzer.Objects;
+﻿using GeoGen.AnalyticalGeometry;
+using GeoGen.Analyzer.Objects;
 
 namespace GeoGen.Analyzer.Constructing
 {
     internal interface IRandomObjectsProvider
     {
-        GeometricalObject NextRandomObject<T>() where T : GeometricalObject;
+        AnalyticalObject NextRandomObject<T>() where T : AnalyticalObject;
     }
 }
