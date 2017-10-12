@@ -113,7 +113,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
             var configurationWrapper = new ConfigurationWrapper
             {
                 Configuration = initialConfiguration,
-                ConfigurationObjectsMap = objectsMap,
+                ConfigurationObjectsMap = objectsMap
             };
 
             // Return it

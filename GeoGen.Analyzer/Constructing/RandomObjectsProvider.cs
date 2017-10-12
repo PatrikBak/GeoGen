@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using Circle = GeoGen.AnalyticalGeometry.Circle;
 using Line = GeoGen.AnalyticalGeometry.Line;

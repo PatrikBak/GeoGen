@@ -20,11 +20,27 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// The geometry holder.
         /// </summary>
-        private readonly IGeometryHolder _holder;
+        private readonly IGeometryRegistrar _registrar;
 
         private readonly ITheoremVerifier[] _verifiers;
 
         private readonly ITheoremsContainer _container;
+
+        private readonly IObjectsContainersHolder _containersHolder;
+
+        public GradualAnalyzer
+        (
+            IGeometryRegistrar registrar,
+            ITheoremVerifier[] verifiers,
+            ITheoremsContainer container,
+            IObjectsContainersHolder containersHolder
+        )
+        {
+            _registrar = registrar;
+            _verifiers = verifiers;
+            _container = container;
+            _containersHolder = containersHolder;
+        }
 
         #endregion
 
@@ -45,7 +61,7 @@ namespace GeoGen.Analyzer
             if (newObjects == null)
                 throw new ArgumentNullException(nameof(newObjects));
 
-            var result = _holder.Register(newObjects);
+            var result = _registrar.Register(newObjects);
 
             var duplicateObjects = result.DuplicateObjects;
             var canBeConstructed = result.CanBeConstructed;
@@ -68,9 +84,8 @@ namespace GeoGen.Analyzer
                 // Construct theorem itself
                 var theorem = new Theorem(TheoremType.SameObjects, involvedObjects);
 
-                // TODO: I'm not sure if this is needed when the handler is properly implemented
-                if (_container.Add(theorem))
-                    theorems.Add(theorem);
+                // Add it to our theorems
+                theorems.Add(theorem);
             }
 
             // Now we're done with adding objects to the container.
@@ -81,7 +96,10 @@ namespace GeoGen.Analyzer
                 var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
                 var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-                theorems.AddRange(FindTheoems(oldObjectsMap, newObjectsMap));
+                var newTheorems = FindTheoems(oldObjectsMap, newObjectsMap)
+                        .Where(theorem => !_container.Contains(theorem));
+
+                theorems.AddRange(newTheorems);
             }
 
             // And finally we can construct the result
@@ -103,7 +121,7 @@ namespace GeoGen.Analyzer
 
                 foreach (var verifierOutput in output)
                 {
-                    if (_holder.All(container => verifierOutput.VerifierFunction(container)))
+                    if (_containersHolder.All(container => verifierOutput.VerifierFunction(container)))
                     {
                         result.Add(verifierOutput.Theorem());
                     }

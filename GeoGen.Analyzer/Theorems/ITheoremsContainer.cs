@@ -4,6 +4,8 @@ namespace GeoGen.Analyzer.Theorems
 {
     internal interface ITheoremsContainer
     {
-        bool Add(Theorem theorem);
+        void Add(Theorem theorem);
+
+        bool Contains(Theorem theorem);
     }
 }

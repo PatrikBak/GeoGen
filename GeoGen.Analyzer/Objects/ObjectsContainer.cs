@@ -38,11 +38,16 @@ namespace GeoGen.Analyzer.Objects
             _idToObjects.Remove(id);
         }
 
-        public T Get<T>(ConfigurationObject obj1) where T : AnalyticalObject
+        public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject
         {
-            var id = obj1.Id ?? throw new AnalyzerException("Id must be set.");
+            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
             return (T) _idToObjects[id];
+        }
+
+        public AnalyticalObject Get(ConfigurationObject configurationObject)
+        {
+            return Get<AnalyticalObject>(configurationObject);
         }
     }
 }

@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Constructing;
+using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Analyzer.Theorems;
-using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
@@ -12,31 +12,37 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
-    /// A default implementation of <see cref="IGeometryHolder"/>. This
+    /// A default implementation of <see cref="IGeometryRegistrar"/>. This
     /// class is not thread-safe.
     /// </summary>
-    internal class GeometryHolder : IGeometryHolder
+    internal class GeometryRegistrar : IGeometryRegistrar
     {
-        private const int NumberOfContainers = 5;
-
         private readonly IConstructorsResolver _resolver;
-
-        private readonly IObjectsContainersFactory _factory;
 
         private readonly ITheoremsContainer _theorems;
 
-        private readonly ICoolInterface _contextualContainer;
+        private readonly IContextualContainer _contextualContainer;
 
         private readonly HashSet<int> _resolvedIds;
 
-        private readonly List<IObjectsContainer> _containers;
+        private readonly IObjectsContainersHolder _containers;
+
+        public GeometryRegistrar
+        (
+            IConstructorsResolver resolver,
+            IObjectsContainersFactory factory,
+            ITheoremsContainer theorems,
+            IContextualContainer contextualContainer)
+        {
+            _resolver = resolver;
+            _theorems = theorems;
+            _contextualContainer = contextualContainer;
+            _resolvedIds = new HashSet<int>();
+        }
 
         public void Initialize(Configuration configuration)
         {
-            var containers = Enumerable.Range(0, NumberOfContainers)
-                    .Select(i => _factory.CreateContainer(configuration.LooseObjects));
-
-            _containers.SetItems(containers);
+            _containers.Initialize(configuration.LooseObjects);
 
             // TODO: Fix this
             // I don't think this will work with if there are at least two objects constructed
@@ -206,16 +212,6 @@ namespace GeoGen.Analyzer.Objects
                 return false;
 
             throw new AnalyzerException("Some objects from the same construction are present and other are not.");
-        }
-
-        public IEnumerator<IObjectsContainer> GetEnumerator()
-        {
-            return _containers.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
         }
     }
 }

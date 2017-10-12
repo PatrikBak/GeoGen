@@ -11,6 +11,11 @@ namespace GeoGen.Analyzer.Constructing.Constructors
     {
         private readonly IRandomObjectsProvider _provider;
 
+        public LooseObjectsConstructor(IRandomObjectsProvider provider)
+        {
+            _provider = provider;
+        }
+
         public List<AnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
             return looseObjects.Select

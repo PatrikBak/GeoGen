@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer.Objects
     /// It's supposed to handle adding new objects, finding out if the object can be constructed
     /// and finding duplicate objects.
     /// </summary>
-    internal interface IGeometryHolder : IEnumerable<IObjectsContainer>
+    internal interface IGeometryRegistrar
     {
         /// <summary>
         /// Initializes the holder with a given configuration.

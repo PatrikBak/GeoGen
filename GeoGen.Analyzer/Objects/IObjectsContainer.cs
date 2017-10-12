@@ -1,4 +1,5 @@
 ﻿using GeoGen.AnalyticalGeometry;
+using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
@@ -25,6 +26,8 @@ namespace GeoGen.Analyzer.Objects
         /// <param name="id">The id.</param>
         void Remove(int id);
 
-        T Get<T>(ConfigurationObject obj1) where T : AnalyticalObject;
+        T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject;
+
+        AnalyticalObject Get(ConfigurationObject configurationObject);
     }
 }

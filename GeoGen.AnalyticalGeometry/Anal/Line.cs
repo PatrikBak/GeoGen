@@ -1,6 +1,4 @@
-﻿using GeoGen.Analyzer.Objects;
-
-namespace GeoGen.Analyzer.AnalyticalGeometry
+﻿namespace GeoGen.AnalyticalGeometry.Anal
 {
     internal class Line 
     {

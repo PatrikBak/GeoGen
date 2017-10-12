@@ -1,26 +1,41 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
-using GeoGen.Core.Objects;
+using GeoGen.Analyzer.Objects.GeometricalObjects;
+using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.SubsetsProviding;
 
 namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {
-    internal class ConcurrencyVerifier : ITheoremVerifier
+    internal class ConcurrencyVerifier : TheoremVerifierBase
     {
-        private ICoolInterface _contextualContainer;
+        public override TheoremType TheoremType { get; } = TheoremType.ConcurrentLines;
 
-        private IIntersector _intersector;
+        private readonly IContextualContainer _contextualContainer;
 
-        private ISubsetsProvider<GeometricalObject> _subsetsProvider;
+        private readonly IIntersector _intersector;
 
-        public IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
+        private readonly ISubsetsProvider<GeometricalObject> _subsetsProvider;
+
+        public ConcurrencyVerifier
+        (
+            ITheoremObjectConstructor theoremObjectConstructor,
+            IContextualContainer contextualContainer,
+            IIntersector intersector,
+            ISubsetsProvider<GeometricalObject> subsetsProvider
+        )
+            : base(theoremObjectConstructor)
+        {
+            _contextualContainer = contextualContainer;
+            _intersector = intersector;
+            _subsetsProvider = subsetsProvider;
+        }
+
+        public override IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
         {
             var allObjectsMap = oldObjects.Merge(newObjects);
 
@@ -52,35 +67,26 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                                     .Select(obj => _contextualContainer.GetAnalyticalObject(obj, container))
                                     .ToSet();
 
+                            var allObjectsAnalytical = allObjectsMap
+                                    .AllObjects()
+                                    .Select(container.Get)
+                                    .ToSet();
+
                             var newIntersections = _intersector
                                     .Intersect(analyticalObjects)
-                                    .Where(point => _contextualContainer.IsContained(point, allObjectsMap));
+                                    .Where(allObjectsAnalytical.Contains);
 
                             return newIntersections.Empty();
                         }
 
-                        Theorem Theorem()
-                        {
-                            var configurationObjects = allObjects
-                                    .Select(obj => _contextualContainer.GetContainedObjects(allObjectsMap, obj));
-
-                            return null;
-
-                        }
-
                         yield return new VerifierOutput
                         {
-                            Theorem = Theorem,
+                            Theorem = () => CreateTheorem(allObjectsMap, allObjects),
                             VerifierFunction = Verify
                         };
                     }
                 }
             }
-        }
-
-        private Theorem CreateTheorem(List<GeometricalObject> allObjects)
-        {
-            return null;
         }
     }
 }

@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyticalObject.cs" />
+    <Compile Include="Anal\Circle.cs" />
+    <Compile Include="Anal\Line.cs" />
+    <Compile Include="Anal\Point.cs" />
     <Compile Include="Circle.cs" />
     <Compile Include="Helpers.cs" />
     <Compile Include="IIntersector.cs" />

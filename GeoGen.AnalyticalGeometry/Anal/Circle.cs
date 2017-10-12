@@ -1,8 +1,6 @@
-﻿using GeoGen.Analyzer.Objects;
-
-namespace GeoGen.Analyzer.AnalyticalGeometry
+﻿namespace GeoGen.AnalyticalGeometry.Anal
 {
-    internal class Circle 
+    internal class Circle
     {
         public Point Center { get; }
 
@@ -24,9 +22,7 @@ namespace GeoGen.Analyzer.AnalyticalGeometry
             return !Equals(left, right);
         }
 
-       
 
-        
         public override int GetHashCode()
         {
             var hash = 17;

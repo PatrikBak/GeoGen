@@ -38,24 +38,27 @@
     <Compile Include="AnalyzerException.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />
     <Compile Include="Constructing\ConstructorsResolver.cs" />
-    <Compile Include="AnalyticalGeometry\AnalyticalHelpers.cs" />
-    <Compile Include="AnalyticalGeometry\Circle.cs" />
     <Compile Include="Constructing\Constructors\ILooseObjectsConstructor.cs" />
     <Compile Include="Constructing\Constructors\IObjectsConstructor.cs" />
     <Compile Include="Constructing\Constructors\IPredefinedConstructor.cs" />
     <Compile Include="Constructing\Constructors\LooseObjectsConstructor.cs" />
-    <Compile Include="Theorems\IContainer.cs" />
+    <Compile Include="Objects\GeometricalObjects\CircleObject.cs" />
+    <Compile Include="Objects\GeometricalObjects\Container\ContextualContainer.cs" />
+    <Compile Include="Objects\GeometricalObjects\GeometricalObject.cs" />
+    <Compile Include="Objects\GeometricalObjects\LineObject.cs" />
+    <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
+    <Compile Include="Objects\IObjectsContainersHolder.cs" />
+    <Compile Include="Objects\ObjectsContainersHolder.cs" />
+    <Compile Include="Theorems\ITheoremObjectConstructor.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />
-    <Compile Include="AnalyticalGeometry\Line.cs" />
-    <Compile Include="AnalyticalGeometry\Point.cs" />
     <Compile Include="Constructing\IConstructorsResolver.cs" />
     <Compile Include="Objects\IObjectsContainersFactory.cs" />
     <Compile Include="Constructing\IRandomObjectsProvider.cs" />
     <Compile Include="Objects\ObjectsContainer.cs" />
-    <Compile Include="Objects\GeometryHolder.cs" />
+    <Compile Include="Objects\GeometryRegistrar.cs" />
     <Compile Include="Objects\IObjectsContainer.cs" />
     <Compile Include="GradualAnalyzer.cs" />
-    <Compile Include="Objects\IGeometryHolder.cs" />
+    <Compile Include="Objects\IGeometryRegistrar.cs" />
     <Compile Include="IGradualAnalyzer.cs" />
     <Compile Include="Objects\ObjectsContainersFactory.cs" />
     <Compile Include="Constructing\Constructors\PredefinedConstructors\InteresectionConstructor.cs" />
@@ -64,8 +67,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructing\RandomObjectsProvider.cs" />
     <Compile Include="Theorems\ITheoremVerifier.cs" />
+    <Compile Include="Theorems\TheoremObjectConstructor.cs" />
+    <Compile Include="Theorems\TheoremsContainer.cs" />
+    <Compile Include="Theorems\TheoremVerifierBase.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
-    <Compile Include="Theorems\TheoremVerifiers\ICoolInterface.cs" />
+    <Compile Include="Objects\GeometricalObjects\Container\IContextualContainer.cs" />
     <Compile Include="Theorems\VerifierOutput.cs" />
   </ItemGroup>
   <ItemGroup>

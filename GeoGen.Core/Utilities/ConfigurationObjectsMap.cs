@@ -100,5 +100,10 @@ namespace GeoGen.Core.Utilities
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<ConfigurationObject> AllObjects()
+        {
+            return Values.SelectMany(value => value);
+        }
     }
 }

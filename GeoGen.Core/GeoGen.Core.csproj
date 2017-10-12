@@ -58,13 +58,8 @@
     <Compile Include="Constructions\PredefinedConstructions\Midpoint.cs" />
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
-    <Compile Include="Objects\CircleObject.cs" />
-    <Compile Include="Objects\GeometricalObject.cs" />
-    <Compile Include="Objects\LineObject.cs" />
-    <Compile Include="Objects\PointObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
-    <Compile Include="Theorems\ITheoremConstructor.cs" />
     <Compile Include="Theorems\TheoremObjectSignature.cs" />
     <Compile Include="Theorems\Theorem.cs" />
     <Compile Include="Theorems\TheoremObject.cs" />
@@ -75,6 +70,7 @@
     <Compile Include="Utilities\DoubleExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMap.cs" />
+    <Compile Include="Utilities\Map.cs" />
     <Compile Include="Utilities\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Utilities\SubsetsProviding\ISubsetsProvider.cs" />
     <Compile Include="Utilities\SubsetsProviding\SubsetsProvider.cs" />
