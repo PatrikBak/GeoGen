@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Constructing;
-using GeoGen.Analyzer.Constructing.Constructors;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects

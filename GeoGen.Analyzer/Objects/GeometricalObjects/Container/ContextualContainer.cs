@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 
@@ -11,7 +12,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
     {
         private readonly IObjectsContainersHolder _containersHolder;
 
-        private readonly IIntersector _intersector;
+        private readonly IAnalyticalHelper _analyticalHelper;
 
         private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>> _objects;
 
@@ -159,7 +160,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
                 var p2 = (Point) objects.Forward[point2];
                 var p3 = (Point) objects.Forward[proccesedPoint];
 
-                var analyticalCircle = _intersector.CreateCircle(p1, p2, p3);
+                var analyticalCircle = new Circle(p1, p2, p3);
                 containersMap.Add(container, analyticalCircle);
 
                 if (objects.ContainsRight(analyticalCircle))
@@ -205,7 +206,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
                 var p1 = (Point) objects.Forward[proccesedPoint];
                 var p2 = (Point) objects.Forward[pointFromEnumerator];
 
-                var analyticalLine = _intersector.CreateLine(p1, p2);
+                var analyticalLine = new Line(p1, p2);
                 containersMap.Add(container, analyticalLine);
 
                 if (objects.ContainsRight(analyticalLine))
@@ -273,7 +274,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
                 var point = (Point) _objects[container].Forward[pointObject];
                 var analyticalObject = _objects[container].Forward[geometricalObject];
 
-                var liesOn = _intersector.LiesOn(analyticalObject, point);
+                var liesOn = _analyticalHelper.LiesOn(analyticalObject, point);
 
                 if (result.HasValue && result.Value != liesOn)
                 {

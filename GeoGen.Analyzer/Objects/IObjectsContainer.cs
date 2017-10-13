@@ -1,4 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry;
+﻿using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Core.Configurations;
 

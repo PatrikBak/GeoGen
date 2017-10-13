@@ -2,17 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Theorems;
+using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer.Constructing.Constructors.PredefinedConstructors
+namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
     internal class InteresectionConstructor : IPredefinedConstructor
     {
         public Type PredefinedConstructionType { get; } = typeof(Intersection);
+
+        private readonly IAnalyticalHelper _analyticalHelper;
+
+        public InteresectionConstructor(IAnalyticalHelper analyticalHelper)
+        {
+            _analyticalHelper = analyticalHelper;
+        }
 
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
@@ -39,9 +48,14 @@ namespace GeoGen.Analyzer.Constructing.Constructors.PredefinedConstructors
                     var point3 = container.Get<Point>(obj3);
                     var point4 = container.Get<Point>(obj4);
 
-                    var result = Helpers.IntersectionOfLines(new List<Point> {point1, point2, point3, point4});
+                    var points = new HashSet<Point> {point1, point2, point3, point4};
 
-                    return result == null ? null : new List<AnalyticalObject> {result};
+                    var result = _analyticalHelper.Intersect(points);
+
+                    if (result.Empty() || result.Any(points.Contains))
+                        return null;
+
+                    return result.Cast<AnalyticalObject>().ToList();
                 }
 
                 var objects1 = new List<TheoremObject>

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Theorems;
 
-namespace GeoGen.Analyzer.Constructing.Constructors.PredefinedConstructors
+namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
     internal class MidpointConstructor : IPredefinedConstructor
     {
@@ -32,7 +32,7 @@ namespace GeoGen.Analyzer.Constructing.Constructors.PredefinedConstructors
                     var point1 = container.Get<Point>(obj1);
                     var point2 = container.Get<Point>(obj2);
 
-                    var result = Helpers.Midpoint(point1, point2);
+                    var result = Point.Midpoint(point1, point2);
 
                     return result == null ? null : new List<AnalyticalObject> {result};
                 }

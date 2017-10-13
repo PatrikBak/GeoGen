@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Analyzer.Constructing.Constructors;
 using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing

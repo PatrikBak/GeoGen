@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Theorems;
 

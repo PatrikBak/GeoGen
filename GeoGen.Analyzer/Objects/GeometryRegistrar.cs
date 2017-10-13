@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Constructing;
@@ -19,24 +18,25 @@ namespace GeoGen.Analyzer.Objects
     {
         private readonly IConstructorsResolver _resolver;
 
-        private readonly ITheoremsContainer _theorems;
+        private readonly ITheoremsContainer _theoremsContainer;
 
         private readonly IContextualContainer _contextualContainer;
 
-        private readonly HashSet<int> _resolvedIds;
-
         private readonly IObjectsContainersHolder _containers;
+
+        private readonly HashSet<int> _resolvedIds;
 
         public GeometryRegistrar
         (
             IConstructorsResolver resolver,
-            IObjectsContainersFactory factory,
-            ITheoremsContainer theorems,
-            IContextualContainer contextualContainer)
+            ITheoremsContainer theoremsContainer,
+            IContextualContainer contextualContainer,
+            IObjectsContainersHolder containers)
         {
             _resolver = resolver;
-            _theorems = theorems;
+            _theoremsContainer = theoremsContainer;
             _contextualContainer = contextualContainer;
+            _containers = containers;
             _resolvedIds = new HashSet<int>();
         }
 
@@ -84,15 +84,15 @@ namespace GeoGen.Analyzer.Objects
 
             // Let the helper method construct the result. Before returning it, 
             // we need to analyze it
-            var result = RegisterObjects(objects, out List<Theorem> theorems);
+            var result = RegisterObjects(objects, out List<Theorem> defaultTheorems);
 
             // If we can construct all the objects without duplications
             if (result.CanBeConstructed && result.DuplicateObjects.Empty())
             {
                 // Then we can register the default theorems
-                foreach (var theorem in theorems)
+                foreach (var theorem in defaultTheorems)
                 {
-                    _theorems.Add(theorem);
+                    _theoremsContainer.Add(theorem);
                 }
 
                 foreach (var configurationObject in objects)
@@ -130,8 +130,8 @@ namespace GeoGen.Analyzer.Objects
         private RegistrationResult RegisterObjects(List<ConstructedConfigurationObject> objects, out List<Theorem> theorems)
         {
             // Initialize variables
-            var canBeConstructed = true;
-            var duplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
+            bool? canBeConstructed = null;
+            List<ConfigurationObject> duplicates = null;
 
             // Pull the constructor
             var constructor = _resolver.Resolve(objects[0].Construction);
@@ -149,16 +149,23 @@ namespace GeoGen.Analyzer.Objects
                 // in this container and so we don't need to continue
                 if (constructedObjects == null)
                 {
+                    if (canBeConstructed != null && canBeConstructed.Value)
+                        throw new AnalyzerException("Inconsistent containers");
+
+                    // We can mark the object as not constructible
                     canBeConstructed = false;
-                    break;
+
+                    // And move to the next container
+                    continue;
                 }
 
-                // Initialize a local variable to indicate if we have
-                // duplicate objects
-                var areThereDuplicates = false;
+                // Otherwise the object is fine
+                canBeConstructed = true;
 
-                // Otherwise we have constructible objects. We need to add them to 
-                // the container and check if we have duplicate objects on go
+                // Initialize a set of duplicate indices
+                var localDuplicates = Enumerable.Repeat((ConfigurationObject) null, objects.Count).ToList();
+
+                // We iterate over the objects to find duplicates
                 for (var i = 0; i < constructedObjects.Count; i++)
                 {
                     // Pull the constructed object
@@ -175,27 +182,36 @@ namespace GeoGen.Analyzer.Objects
                     if (containerResult == null)
                         continue;
 
-                    // Update the duplicates dictionary
-                    duplicateObjects.Add(originalObject, originalObject);
-
-                    // And set the local variable
-                    areThereDuplicates = true;
+                    // Update the duplicates set
+                    localDuplicates[i] = containerResult;
                 }
 
-                // If there are duplicate objects, we don't want to continue
-                // with other containers
-                if (areThereDuplicates)
-                    break;
+                if (duplicates != null && !duplicates.SequenceEqual(localDuplicates))
+                    throw new AnalyzerException("Inconsistent containers.");
+
+                duplicates = localDuplicates;
             }
 
             // Set the theorems
             theorems = constructorOutput.Theorems;
 
+            // Initialize duplicates objects dictionary
+            var duplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
+
+            // Construct it by iterating over objects
+            for (var i = 0; i < objects.Count; i++)
+            {
+                var duplicate = duplicates?[i];
+
+                if (duplicate != null)
+                    duplicateObjects.Add(objects[i], duplicate);
+            }
+
             // And finally construct and return the result
             return new RegistrationResult
             {
                 DuplicateObjects = duplicateObjects,
-                CanBeConstructed = canBeConstructed
+                CanBeConstructed = canBeConstructed ?? throw new AnalyzerException("Impossible")
             };
         }
 

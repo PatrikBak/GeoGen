@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
         private readonly IContextualContainer _contextualContainer;
 
-        private readonly IIntersector _intersector;
+        private readonly IAnalyticalHelper _analyticalHelper;
 
         private readonly ISubsetsProvider<GeometricalObject> _subsetsProvider;
 
@@ -25,13 +25,13 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
         (
             ITheoremObjectConstructor theoremObjectConstructor,
             IContextualContainer contextualContainer,
-            IIntersector intersector,
+            IAnalyticalHelper analyticalHelper,
             ISubsetsProvider<GeometricalObject> subsetsProvider
         )
             : base(theoremObjectConstructor)
         {
             _contextualContainer = contextualContainer;
-            _intersector = intersector;
+            _analyticalHelper = analyticalHelper;
             _subsetsProvider = subsetsProvider;
         }
 
@@ -72,7 +72,7 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                                     .Select(container.Get)
                                     .ToSet();
 
-                            var newIntersections = _intersector
+                            var newIntersections = _analyticalHelper
                                     .Intersect(analyticalObjects)
                                     .Where(allObjectsAnalytical.Contains);
 

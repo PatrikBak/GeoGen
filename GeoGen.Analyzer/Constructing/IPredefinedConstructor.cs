@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Analyzer.Constructing.Constructors
+namespace GeoGen.Analyzer.Constructing
 {
     internal interface IPredefinedConstructor : IObjectsConstructor
     {

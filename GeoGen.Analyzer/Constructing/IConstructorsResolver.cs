@@ -1,5 +1,4 @@
-﻿using GeoGen.Analyzer.Constructing.Constructors;
-using GeoGen.Core.Constructions;
+﻿using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing
 {

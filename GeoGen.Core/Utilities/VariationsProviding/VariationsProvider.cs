@@ -26,9 +26,6 @@ namespace GeoGen.Core.Utilities.VariationsProviding
         /// <returns>Lazy enumerable of all possible variations.</returns>
         public IEnumerable<IEnumerable<T>> GetVariations(IReadOnlyList<T> list, int numberOfElement)
         {
-            //Console.WriteLine($"V: Calling for {list.Count} {numberOfElement}");
-            i++;
-
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
 
@@ -40,8 +37,6 @@ namespace GeoGen.Core.Utilities.VariationsProviding
 
             return GetVariations(0, list.ToArray(), new T[numberOfElement], numberOfElement);
         }
-
-        public static int i = 0;
 
         #endregion
 

@@ -22,24 +22,15 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly IGeometryRegistrar _registrar;
 
-        private readonly ITheoremVerifier[] _verifiers;
-
         private readonly ITheoremsContainer _container;
 
-        private readonly IObjectsContainersHolder _containersHolder;
+        private ITheoremsVerifier _verifier;
 
-        public GradualAnalyzer
-        (
-            IGeometryRegistrar registrar,
-            ITheoremVerifier[] verifiers,
-            ITheoremsContainer container,
-            IObjectsContainersHolder containersHolder
-        )
+        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsContainer container, ITheoremsVerifier verifier)
         {
             _registrar = registrar;
-            _verifiers = verifiers;
             _container = container;
-            _containersHolder = containersHolder;
+            _verifier = verifier;
         }
 
         #endregion
@@ -72,8 +63,6 @@ namespace GeoGen.Analyzer
                 var newObject = pair.Key;
                 var duplicate = pair.Value;
 
-                duplicateObjects.Add(newObject, duplicate);
-
                 // Construct involved objects
                 var involvedObjects = new List<TheoremObject>
                 {
@@ -96,7 +85,8 @@ namespace GeoGen.Analyzer
                 var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
                 var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-                var newTheorems = FindTheoems(oldObjectsMap, newObjectsMap)
+                var newTheorems = _verifier
+                        .FindTheorems(oldObjectsMap, newObjectsMap)
                         .Where(theorem => !_container.Contains(theorem));
 
                 theorems.AddRange(newTheorems);
@@ -109,26 +99,6 @@ namespace GeoGen.Analyzer
                 CanBeFullyConstructed = canBeConstructed,
                 DuplicateObjects = duplicateObjects
             };
-        }
-
-        private IEnumerable<Theorem> FindTheoems(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
-        {
-            var result = new List<Theorem>();
-
-            foreach (var theoremVerifier in _verifiers)
-            {
-                var output = theoremVerifier.GetOutput(oldObjects, newObjects);
-
-                foreach (var verifierOutput in output)
-                {
-                    if (_containersHolder.All(container => verifierOutput.VerifierFunction(container)))
-                    {
-                        result.Add(verifierOutput.Theorem());
-                    }
-                }
-            }
-
-            return result;
         }
 
         #endregion

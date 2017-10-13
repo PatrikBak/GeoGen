@@ -1,12 +1,8 @@
 using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.Objects;
-using Circle = GeoGen.AnalyticalGeometry.Circle;
-using Line = GeoGen.AnalyticalGeometry.Line;
-using Point = GeoGen.AnalyticalGeometry.Point;
+using GeoGen.AnalyticalGeometry.Objects;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.AnalyticalGeometry.RandomObjects
 {
     internal class RandomObjectsProvider : IRandomObjectsProvider
     {
@@ -48,9 +44,6 @@ namespace GeoGen.Analyzer.Constructing
 
                 if (type == typeof(Circle))
                     result = RandomCircle();
-
-                if (result == null)
-                    throw new AnalyzerException("Unhandled case");
 
                 if (set.Add(result))
                     break;

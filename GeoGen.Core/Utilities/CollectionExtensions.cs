@@ -24,6 +24,12 @@ namespace GeoGen.Core.Utilities
 
             collection.Clear();
 
+            if (collection is List<T> list)
+            {
+                list.AddRange(newItems);
+                return;
+            }
+
             foreach (var item in newItems)
             {
                 collection.Add(item);

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.Objects;
+using GeoGen.AnalyticalGeometry.Objects;
+using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Constructing.Constructors
+namespace GeoGen.Analyzer.Constructing
 {
     internal class LooseObjectsConstructor : ILooseObjectsConstructor
     {

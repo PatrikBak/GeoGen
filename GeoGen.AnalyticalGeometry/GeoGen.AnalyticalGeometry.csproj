@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{8291B54F-23DD-4117-8511-300DDE547A69}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>GeoGen.AnalyticalGeometry</RootNamespace>
     <AssemblyName>GeoGen.AnalyticalGeometry</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -42,17 +45,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyticalObject.cs" />
-    <Compile Include="Anal\Circle.cs" />
-    <Compile Include="Anal\Line.cs" />
-    <Compile Include="Anal\Point.cs" />
-    <Compile Include="Circle.cs" />
-    <Compile Include="Helpers.cs" />
-    <Compile Include="IIntersector.cs" />
-    <Compile Include="Line.cs" />
-    <Compile Include="Point.cs" />
-    <Compile Include="Program.cs" />
+    <Compile Include="Objects\AnalyticalObject.cs" />
+    <Compile Include="Objects\Circle.cs" />
+    <Compile Include="Objects\Line.cs" />
+    <Compile Include="Objects\Point.cs" />
+    <Compile Include="IAnalyticalHelper.cs" />
+    <Compile Include="RandomObjects\IRandomObjectsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomObjects\RandomObjectsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
