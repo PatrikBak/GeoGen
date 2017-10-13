@@ -6,7 +6,7 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Objects
 {
-    internal class ObjectsContainersHolder : IObjectsContainersHolder
+    internal sealed class ObjectsContainersHolder : IObjectsContainersHolder
     {
         private const int NumberOfContainers = 5;
 

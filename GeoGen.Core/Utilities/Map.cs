@@ -2,9 +2,9 @@
 
 namespace GeoGen.Core.Utilities
 {
-    public class Map<T1, T2>
+    public sealed class Map<T1, T2>
     {
-        public class Indexer<T3, T4>
+        public sealed class Indexer<T3, T4>
         {
             private readonly Dictionary<T3, T4> _dictionary;
 

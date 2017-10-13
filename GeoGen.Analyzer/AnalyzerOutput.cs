@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents an output from the analyzer.
     /// </summary>
-    public class AnalyzerOutput
+    public sealed class AnalyzerOutput
     {
         /// <summary>
         /// Gets or set the list of theorems found during the analysis. 

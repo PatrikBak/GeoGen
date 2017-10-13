@@ -6,7 +6,7 @@ using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Constructing
 {
-    internal class ConstructorOutput
+    internal sealed class ConstructorOutput
     {
         public Func<IObjectsContainer, List<AnalyticalObject>> ConstructorFunction { get; set; }
 

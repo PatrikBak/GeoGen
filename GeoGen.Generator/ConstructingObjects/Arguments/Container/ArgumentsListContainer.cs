@@ -15,7 +15,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
     /// equal points on go, we don't need to use the full object as
     /// string representation (that uses only loose object's ids).
     /// </summary>
-    internal class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
+    internal sealed class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
     {
         #region Private fields
 

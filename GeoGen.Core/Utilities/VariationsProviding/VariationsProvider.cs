@@ -6,13 +6,13 @@ namespace GeoGen.Core.Utilities.VariationsProviding
 {
     /// <summary>
     /// A fast recursive implementation of the <see cref="IVariationsProvider{T}"/> interface.
-    /// The class is thread-safe.
+    /// The sealed class is thread-safe.
     /// 
     /// TODO: Consider caching values
     /// 
     /// </summary>
     /// <typeparam name="T">The type of elements</typeparam>
-    public class VariationsProvider<T> : IVariationsProvider<T>
+    public sealed class VariationsProvider<T> : IVariationsProvider<T>
     {
         #region IVariationsProvider methods
 

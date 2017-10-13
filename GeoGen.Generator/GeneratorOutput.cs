@@ -1,6 +1,6 @@
 ﻿namespace GeoGen.Generator
 {
-    public class GeneratorOutput
+    public sealed class GeneratorOutput
     {
     }
 }

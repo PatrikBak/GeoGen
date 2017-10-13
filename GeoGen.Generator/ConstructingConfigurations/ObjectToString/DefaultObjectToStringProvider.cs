@@ -8,7 +8,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// A default implementation of <see cref="IObjectToStringProvider"/>
     /// that uses a <see cref="DefaultObjectIdResolver"/>.
     /// </summary>
-    internal class DefaultObjectToStringProvider : IObjectToStringProvider
+    internal sealed class DefaultObjectToStringProvider : IObjectToStringProvider
     {
         #region IObjectToStringProvider properties
 

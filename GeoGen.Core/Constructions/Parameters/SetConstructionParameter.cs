@@ -10,7 +10,7 @@ namespace GeoGen.Core.Constructions.Parameters
     /// element, since it's either a  <see cref="ObjectConstructionParameter"/>, or a set within a set 
     /// (which doesn't make sense in  our context). 
     /// </summary>
-    public class SetConstructionParameter : ConstructionParameter
+    public sealed class SetConstructionParameter : ConstructionParameter
     {
         #region Public properties
 

@@ -11,7 +11,7 @@ using GeoGen.Core.Utilities.SubsetsProviding;
 
 namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {
-    internal class ConcurrencyVerifier : TheoremVerifierBase
+    internal sealed class ConcurrencyVerifier : TheoremVerifierBase
     {
         public override TheoremType TheoremType { get; } = TheoremType.ConcurrentLines;
 

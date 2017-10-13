@@ -6,7 +6,7 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Theorems
 {
-    internal class TheoremObjectConstructor : ITheoremObjectConstructor
+    internal sealed class TheoremObjectConstructor : ITheoremObjectConstructor
     {
         public TheoremObject Construct(ConfigurationObjectsMap objects, GeometricalObject geometricalObject)
         {

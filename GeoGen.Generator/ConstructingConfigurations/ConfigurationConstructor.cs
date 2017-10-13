@@ -9,10 +9,10 @@ using GeoGen.Generator.ConstructingObjects;
 namespace GeoGen.Generator.ConstructingConfigurations
 {
     /// <summary>
-    /// A default implementation of <see cref="IConfigurationConstructor"/>. This class
+    /// A default implementation of <see cref="IConfigurationConstructor"/>. This sealed class
     /// is thread-safe (assuming that all it's dependencies are like that).
     /// </summary>
-    internal class ConfigurationConstructor : IConfigurationConstructor
+    internal sealed class ConfigurationConstructor : IConfigurationConstructor
     {
         #region Private fields
 
@@ -32,7 +32,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
 
         /// <summary>
         /// Constructs a new configuration constructor. This constructor uses
-        /// the least configuration finder to obtain the symmetry-class representant, 
+        /// the least configuration finder to obtain the symmetry-sealed class representant, 
         /// ids fixer factory to fix ids according to this representant, and
         /// arguments list container factory to obtain argument containers for
         /// forbidden arguments.
@@ -78,7 +78,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
             // Create the new configuration
             var newConfiguration = new Configuration(currentConfiguration.LooseObjects, allConstructedObjects);
 
-            // Let the resolver find it's symmetry-class representant
+            // Let the resolver find it's symmetry-sealed class representant
             var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(newConfiguration);
 
             // Get the ids fixer for this resolver from the factory

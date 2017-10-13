@@ -4,7 +4,7 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
-    internal class ObjectsContainer : IObjectsContainer
+    internal sealed class ObjectsContainer : IObjectsContainer
     {
         private readonly Dictionary<AnalyticalObject, ConfigurationObject> _objectsDictionary;
 

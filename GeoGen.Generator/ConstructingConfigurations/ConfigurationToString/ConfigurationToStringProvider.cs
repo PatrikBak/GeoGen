@@ -8,9 +8,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ConfigurationToString
     /// <summary>
     /// A default implementation of <see cref="IConfigurationToStringProvider"/>.
     /// It simply converts each object to string and join these strings using the default
-    /// separator. This class is thread-safe.
+    /// separator. This sealed class is thread-safe.
     /// </summary>
-    internal class ConfigurationToStringProvider : IConfigurationToStringProvider
+    internal sealed class ConfigurationToStringProvider : IConfigurationToStringProvider
     {
         #region Private constants
 

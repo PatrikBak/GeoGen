@@ -9,9 +9,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
     /// A default implementation of <see cref="IIdsFixerFactory"/>.
     /// It creates <see cref="IdsFixerFactory"/> objects and caches them in
     /// a dictionary. The keys of the dictionary are ids of 
-    /// <see cref="DictionaryObjectIdResolver"/>. This class is not thread-safe.
+    /// <see cref="DictionaryObjectIdResolver"/>. This sealed class is not thread-safe.
     /// </summary>
-    internal class IdsFixerFactory : IIdsFixerFactory
+    internal sealed class IdsFixerFactory : IIdsFixerFactory
     {
         #region Private fields
 

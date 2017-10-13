@@ -10,9 +10,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
 {
     /// <summary>
     /// A default implementation of <see cref="IDictionaryObjectIdResolversContainer"/>.
-    /// This class is not thread-safe.
+    /// This sealed class is not thread-safe.
     /// </summary>
-    internal class DictionaryObjectIdResolversContainer : IDictionaryObjectIdResolversContainer
+    internal sealed class DictionaryObjectIdResolversContainer : IDictionaryObjectIdResolversContainer
     {
         #region Private fields
 

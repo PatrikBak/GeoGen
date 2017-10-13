@@ -10,7 +10,7 @@ using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
-    internal class MidpointConstructor : IPredefinedConstructor
+    internal sealed class MidpointConstructor : IPredefinedConstructor
     {
         public Type PredefinedConstructionType { get; } = typeof(Midpoint);
 

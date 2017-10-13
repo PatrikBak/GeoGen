@@ -12,9 +12,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding
     /// symmetric to [A, B, C, midpoint(B, C)]. The 'formal' definition of this symmetry
     /// could be: Configuration C1 is symmetric to configuration C2 if and only if
     /// there isn't a permutation of loose points of C1 that after applying to C2
-    /// yields the same configuration as C1. This class is not thread-safe.
+    /// yields the same configuration as C1. This sealed class is not thread-safe.
     /// </summary>
-    internal class LeastConfigurationFinder : ILeastConfigurationFinder
+    internal sealed class LeastConfigurationFinder : ILeastConfigurationFinder
     {
         #region Private fields
 
@@ -65,7 +65,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding
 
         /// <summary>
         /// Finds the 'least' configuration representant of the equivalency
-        /// class specified by a given configuration. This equivalency class
+        /// sealed class specified by a given configuration. This equivalency sealed class
         /// is represented as a <see cref="DictionaryObjectIdResolver"/>.
         /// </summary>
         /// <param name="configuration">The configuration.</param>

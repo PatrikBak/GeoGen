@@ -12,7 +12,7 @@ namespace GeoGen.Generator.ConstructingObjects
     /// <summary>
     /// A default implementation of <see cref="IConstructionsContainer"/>.
     /// </summary>
-    internal class ConstructionsContainer : IConstructionsContainer
+    internal sealed class ConstructionsContainer : IConstructionsContainer
     {
         #region Private fields
 

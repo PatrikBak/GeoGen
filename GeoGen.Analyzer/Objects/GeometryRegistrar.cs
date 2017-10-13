@@ -14,7 +14,7 @@ namespace GeoGen.Analyzer.Objects
     /// A default implementation of <see cref="IGeometryRegistrar"/>. This
     /// class is not thread-safe.
     /// </summary>
-    internal class GeometryRegistrar : IGeometryRegistrar
+    internal sealed class GeometryRegistrar : IGeometryRegistrar
     {
         private readonly IConstructorsResolver _resolver;
 

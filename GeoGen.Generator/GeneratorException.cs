@@ -5,7 +5,7 @@ namespace GeoGen.Generator
     /// <summary>
     /// An exception used for internal generator errors.
     /// </summary>
-    public class GeneratorException : Exception
+    public sealed class GeneratorException : Exception
     {
         /// <summary>
         /// Constructs a new generator exception with a given message.

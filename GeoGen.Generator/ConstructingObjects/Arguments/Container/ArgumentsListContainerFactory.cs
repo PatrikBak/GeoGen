@@ -7,7 +7,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.Container
     /// A default implementation of <see cref="IArgumentsListContainerFactory"/> that
     /// creates instances of <see cref="ArgumentsListContainer"/>.
     /// </summary>
-    internal class ArgumentsListContainerFactory : IArgumentsListContainerFactory
+    internal sealed class ArgumentsListContainerFactory : IArgumentsListContainerFactory
     {
         #region Private fields
 

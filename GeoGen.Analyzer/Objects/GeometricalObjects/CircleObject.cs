@@ -3,7 +3,7 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects.GeometricalObjects
 {
-    public class CircleObject : GeometricalObject
+    public sealed class CircleObject : GeometricalObject
     {
         public HashSet<PointObject> Points { get; set; }
 

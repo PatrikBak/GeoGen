@@ -4,13 +4,13 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Generator.ConstructingConfigurations
 {
     /// <summary>
-    /// An internal wrapper class for a <see cref="Configuration"/>, containing some
+    /// An internal wrapper sealed class for a <see cref="Configuration"/>, containing some
     /// additional data regarding the configuration. 
     /// </summary>
-    internal class ConfigurationWrapper
+    internal sealed class ConfigurationWrapper
     {
         /// <summary>
-        /// Gets or sets the configuration object that this class wraps.
+        /// Gets or sets the configuration object that this sealed class wraps.
         /// </summary>
         public Configuration Configuration { get; set; }
 

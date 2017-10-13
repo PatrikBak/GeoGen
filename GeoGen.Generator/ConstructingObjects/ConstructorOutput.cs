@@ -5,9 +5,9 @@ using GeoGen.Generator.ConstructingConfigurations;
 namespace GeoGen.Generator.ConstructingObjects
 {
     /// <summary>
-    /// An internal class representing the output from a constructor.
+    /// An internal sealed class representing the output from a constructor.
     /// </summary>
-    internal class ConstructorOutput
+    internal sealed class ConstructorOutput
     {
         /// <summary>
         /// Gets or sets the initial configuration wrapper that was extended.

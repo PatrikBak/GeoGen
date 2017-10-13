@@ -13,7 +13,7 @@ namespace GeoGen.Analyzer
     /// A default implementation of <see cref="IGradualAnalyzer"/>.
     /// This class is thread-safe.
     /// </summary>
-    internal class GradualAnalyzer : IGradualAnalyzer
+    internal sealed class GradualAnalyzer : IGradualAnalyzer
     {
         #region Private fields
 

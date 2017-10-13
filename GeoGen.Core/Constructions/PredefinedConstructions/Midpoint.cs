@@ -7,7 +7,7 @@ namespace GeoGen.Core.Constructions.PredefinedConstructions
     /// <summary>
     /// Represents a construction of the midpoint between two points.
     /// </summary>
-    public class Midpoint : PredefinedConstruction
+    public sealed class Midpoint : PredefinedConstruction
     {
         #region Construction properties
 

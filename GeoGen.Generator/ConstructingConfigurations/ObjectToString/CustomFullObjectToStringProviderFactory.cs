@@ -8,9 +8,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// <summary>
     /// A default implementation of <see cref="ICustomFullObjectToStringProviderFactory"/>.
     /// It caches given results and compares them by the id of <see cref="DictionaryObjectIdResolver"/>s.
-    /// This class is not thread-safe.
+    /// This sealed class is not thread-safe.
     /// </summary>
-    internal class CustomFullObjectToStringProviderFactory : ICustomFullObjectToStringProviderFactory
+    internal sealed class CustomFullObjectToStringProviderFactory : ICustomFullObjectToStringProviderFactory
     {
         #region Private fields
 

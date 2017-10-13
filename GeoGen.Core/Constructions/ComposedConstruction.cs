@@ -12,7 +12,7 @@ namespace GeoGen.Core.Constructions
     /// This is supposed to represent a complex constructions that user can define by themselves, for instance
     /// the construction that takes 3 points and outputs the orthocenter of the triangle formed by those points.
     /// </summary>
-    public class ComposedConstruction : Construction
+    public sealed class ComposedConstruction : Construction
     {
         #region Public properties
 

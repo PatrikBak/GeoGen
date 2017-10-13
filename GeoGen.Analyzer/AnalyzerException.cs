@@ -2,7 +2,7 @@
 
 namespace GeoGen.Analyzer
 {
-    internal class AnalyzerException : Exception
+    internal sealed class AnalyzerException : Exception
     {
         public AnalyzerException(string message)
             : base(message)

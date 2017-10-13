@@ -9,7 +9,7 @@ namespace GeoGen.Core.Configurations
     /// <see cref="LooseConfigurationObject"/> and a list of <see cref="ConstructedConfigurationObject"/>. 
     /// The constructed objects are supposed to be ordered so that it's possible to construct them in that order.
     /// </summary>
-    public class Configuration
+    public sealed class Configuration
     {
         #region Public properties
 

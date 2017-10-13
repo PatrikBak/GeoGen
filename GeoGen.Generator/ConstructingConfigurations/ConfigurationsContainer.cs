@@ -14,7 +14,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
     /// <summary>
     /// A default implementation of <see cref="IConfigurationsContainer"/>.
     /// </summary>
-    internal class ConfigurationsContainer : StringBasedContainer<Configuration>, IConfigurationsContainer
+    internal sealed class ConfigurationsContainer : StringBasedContainer<Configuration>, IConfigurationsContainer
     {
         #region Private fields
 

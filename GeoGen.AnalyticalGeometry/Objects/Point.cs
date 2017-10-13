@@ -1,6 +1,6 @@
 ﻿namespace GeoGen.AnalyticalGeometry.Objects
 {
-    public class Point : AnalyticalObject
+    public sealed class Point : AnalyticalObject
     {
         public double X { get; }
 
@@ -10,11 +10,6 @@
         {
             X = x;
             Y = y;
-        }
-
-        public static Point Midpoint(Point point1, Point point2)
-        {
-            return (point1 + point2) / 2;
         }
 
         public static Point operator +(Point point1, Point point2)
@@ -47,7 +42,12 @@
             return !Equals(left, right);
         }
 
-        protected bool Equals(Point other)
+        public static Point Midpoint(Point point1, Point point2)
+        {
+            return (point1 + point2) / 2;
+        }
+
+        private bool Equals(Point other)
         {
             return X.Equals(other.X) && Y.Equals(other.Y);
         }

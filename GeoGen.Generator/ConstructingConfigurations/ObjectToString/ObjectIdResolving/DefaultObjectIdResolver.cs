@@ -7,7 +7,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
     /// A default implementation of <see cref="IObjectIdResolver"/>
     /// that just simply returns the id of a given object (it must be set).
     /// </summary>
-    internal class DefaultObjectIdResolver : IObjectIdResolver
+    internal sealed class DefaultObjectIdResolver : IObjectIdResolver
     {
         #region Public static fields
 

@@ -4,7 +4,7 @@ using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer.Theorems
 {
-    internal class VerifierOutput
+    internal sealed class VerifierOutput
     {
         public Func<IObjectsContainer, bool> VerifierFunction { get; set; }
 

@@ -9,7 +9,7 @@ namespace GeoGen.Core.Constructions.Arguments
     /// It's size is not supposed to be 1, since it's either a <see cref="ObjectConstructionArgument"/>, or a set
     /// within a set (which doesn't make sense in our context). 
     /// </summary>
-    public class SetConstructionArgument : ConstructionArgument
+    public sealed class SetConstructionArgument : ConstructionArgument
     {
         #region Public properties
 

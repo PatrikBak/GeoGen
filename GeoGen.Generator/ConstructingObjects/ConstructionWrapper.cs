@@ -5,10 +5,10 @@ using GeoGen.Core.Constructions;
 namespace GeoGen.Generator.ConstructingObjects
 {
     /// <summary>
-    /// An internal wrapper class for a <see cref="Configuration"/>, containing some
+    /// An internal wrapper sealed class for a <see cref="Configuration"/>, containing some
     /// additional data regarding the construction.
     /// </summary>
-    internal class ConstructionWrapper
+    internal sealed class ConstructionWrapper
     {
         /// <summary>
         /// Gets or sets the construction that is wrapped by this object.

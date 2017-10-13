@@ -7,14 +7,14 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// An implementation of <see cref="FullObjectToStringProviderBase"/> that
-    /// uses a custom <see cref="IObjectIdResolver"/>. This class is meant to be 
+    /// uses a custom <see cref="IObjectIdResolver"/>. This sealed class is meant to be 
     /// used during the symmetric configurations detection, together with 
     /// <see cref="DictionaryObjectIdResolver"/> (<see cref="LeastConfigurationFinder"/>. 
     /// It expects that all objects have their ids already set. It automatically 
     /// caches the evaluated results (unlike <see cref="DefaultFullObjectToStringProvider"/>), 
     /// since it already has the ids available.
     /// </summary>
-    internal class CustomFullObjectToStringProvider : FullObjectToStringProviderBase
+    internal sealed class CustomFullObjectToStringProvider : FullObjectToStringProviderBase
     {
         #region Constructor
 

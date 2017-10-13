@@ -12,7 +12,7 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
-    internal class InteresectionConstructor : IPredefinedConstructor
+    internal sealed class InteresectionConstructor : IPredefinedConstructor
     {
         public Type PredefinedConstructionType { get; } = typeof(Intersection);
 

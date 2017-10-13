@@ -14,7 +14,7 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
     /// <summary>
     /// A default implementation of the <see cref="IArgumentsGenerator"/> interface.
     /// </summary>
-    internal class ArgumentsGenerator : IArgumentsGenerator
+    internal sealed class ArgumentsGenerator : IArgumentsGenerator
     {
         #region Private fields
 

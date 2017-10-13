@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GeoGen.Core.Utilities.SubsetsProviding
 {
-    public class SubsetsProvider<T> : ISubsetsProvider<T>
+    public sealed class SubsetsProvider<T> : ISubsetsProvider<T>
     {
         public IEnumerable<IEnumerable<T>> GetSubsets(IReadOnlyList<T> list, int numberOfElements)
         {

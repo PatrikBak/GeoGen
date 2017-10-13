@@ -5,11 +5,11 @@ using GeoGen.Core.Configurations;
 namespace GeoGen.Core.Theorems
 {
     /// <summary>
-    /// A base class that represented a geometrical object used in <see cref="Theorem"/>.
-    /// The idea behind this class that we might have a theorem about a line that we don't
+    /// A base sealed class that represented a geometrical object used in <see cref="Theorem"/>.
+    /// The idea behind this sealed class that we might have a theorem about a line that we don't
     /// have physically in the configuration (just two of its points). 
     /// </summary>
-    public class TheoremObject
+    public sealed class TheoremObject
     {
         #region Public properties
 

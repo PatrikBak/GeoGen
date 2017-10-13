@@ -7,7 +7,7 @@ namespace GeoGen.Core.Constructions.PredefinedConstructions
     /// <summary>
     /// Represents an intersection construction of two lines given by two sets of points.
     /// </summary>
-    public class Intersection : PredefinedConstruction
+    public sealed class Intersection : PredefinedConstruction
     {
         #region Construction properties
 

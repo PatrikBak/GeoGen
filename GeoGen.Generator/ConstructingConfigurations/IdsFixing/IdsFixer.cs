@@ -12,9 +12,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.IdsFixing
     /// <summary>
     /// A default implementation of <see cref="IIdsFixer"/>. It uses 
     /// <see cref="DictionaryObjectIdResolver"/> and caches resolved
-    /// results. This class is not thread-safe.
+    /// results. This sealed class is not thread-safe.
     /// </summary>
-    internal class IdsFixer : IIdsFixer
+    internal sealed class IdsFixer : IIdsFixer
     {
         #region Private fields
 

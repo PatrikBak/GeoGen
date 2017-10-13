@@ -7,14 +7,14 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
 {
     /// <summary>
     /// An implementation of <see cref="FullObjectToStringProviderBase"/> that
-    /// uses <see cref="DefaultObjectIdResolver"/>. This class is meant to be used 
-    /// in a class that cares care of creating unique <see cref="ConfigurationObject"/>s.
+    /// uses <see cref="DefaultObjectIdResolver"/>. This sealed class is meant to be used 
+    /// in a sealed class that cares care of creating unique <see cref="ConfigurationObject"/>s.
     /// These objects don't have their id set at first, but we assume that all their underlying
     /// objects have and that they also have their string versions cached. This caching must be
     /// done manually using the method CacheObject, since the id is not known during the 
     /// to string conversion process.
     /// </summary>
-    internal class DefaultFullObjectToStringProvider : FullObjectToStringProviderBase
+    internal sealed class DefaultFullObjectToStringProvider : FullObjectToStringProviderBase
     {
         #region Constructor
 

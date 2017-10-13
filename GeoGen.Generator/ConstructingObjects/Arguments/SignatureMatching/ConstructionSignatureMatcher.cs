@@ -10,9 +10,9 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching
 {
     /// <summary>
     /// A default implementation of the <see cref="IConstructionSignatureMatcher"/> interface.
-    /// This class is thread-safe.
+    /// This sealed class is thread-safe.
     /// </summary>
-    internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
+    internal sealed class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {
         #region IConstructionSignatureMatcher methods
 

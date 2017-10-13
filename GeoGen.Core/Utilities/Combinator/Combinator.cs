@@ -6,11 +6,11 @@ namespace GeoGen.Core.Utilities.Combinator
 {
     /// <summary>
     /// A recursive implementation of the interface <see cref="ICombinator{TKey,TValue}"/>
-    /// The class is thread-safe.
+    /// The sealed class is thread-safe.
     /// </summary>
     /// <typeparam name="TKey">The dictionary key type.</typeparam>
     /// <typeparam name="TValue">The dictionary value type.</typeparam>
-    public class Combinator<TKey, TValue> : ICombinator<TKey, TValue>
+    public sealed class Combinator<TKey, TValue> : ICombinator<TKey, TValue>
     {
         #region ICombinator methods
 

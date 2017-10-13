@@ -7,7 +7,7 @@ namespace GeoGen.Core.Configurations
     /// that is passed as an argument to <see cref="Construction"/> to create more complex objects of type
     /// <see cref="ConstructedConfigurationObject"/>. It is defined by a <see cref="ConfigurationObjectType"/>.
     /// </summary>
-    public class LooseConfigurationObject : ConfigurationObject
+    public sealed class LooseConfigurationObject : ConfigurationObject
     {
         #region Configuration object properties
 

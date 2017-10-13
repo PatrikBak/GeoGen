@@ -8,7 +8,7 @@ namespace GeoGen.Core.Theorems
     /// Represents a theorem that can hold true in a configuration. For example:
     /// Collinear points, concyclic points, a line tangent to a circle...
     /// </summary>
-    public class Theorem
+    public sealed class Theorem
     {
         #region Public properties
 

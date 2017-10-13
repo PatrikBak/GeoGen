@@ -12,9 +12,9 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString
     /// It creates a unique representation of arguments lists by sorting the 
     /// string representations of the sets arguments. Since we don't expect
     /// to have long lists or arguments, this should be fast enough. 
-    /// This class is thread-safe.
+    /// This sealed class is thread-safe.
     /// </summary>
-    internal class ArgumentsListToStringProvider : IArgumentsListToStringProvider
+    internal sealed class ArgumentsListToStringProvider : IArgumentsListToStringProvider
     {
         #region Private constants
 

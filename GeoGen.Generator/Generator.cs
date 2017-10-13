@@ -10,7 +10,7 @@ namespace GeoGen.Generator
     /// <summary>
     /// A default implementation of <see cref="IGenerator"/>.
     /// </summary>
-    internal class Generator : IGenerator
+    internal sealed class Generator : IGenerator
     {
         #region Private fields
 

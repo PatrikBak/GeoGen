@@ -11,7 +11,7 @@ namespace GeoGen.Core.Configurations
     /// the list of <see cref="ConstructionArgument"/>s that have been passed to the construction, and an index
     /// (the construction could have more output objects).
     /// </summary>
-    public class ConstructedConfigurationObject : ConfigurationObject
+    public sealed class ConstructedConfigurationObject : ConfigurationObject
     {
         #region Public properties
 

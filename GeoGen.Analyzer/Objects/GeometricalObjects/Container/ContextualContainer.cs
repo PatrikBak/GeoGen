@@ -8,7 +8,7 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 {
-    internal class ContextualContainer : IContextualContainer
+    internal sealed class ContextualContainer : IContextualContainer
     {
         private readonly IObjectsContainersHolder _containersHolder;
 

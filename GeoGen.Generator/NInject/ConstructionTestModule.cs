@@ -8,17 +8,17 @@ namespace GeoGen.Generator.NInject
     /// <summary>
     /// A generator module used for testing constructions process itself without
     /// using the Analyzer module. It inject <see cref="IConfigurationsHandler"/>
-    /// to a dummy class that for every generated configuration simply returns
+    /// to a dummy sealed class that for every generated configuration simply returns
     /// a new instance of empty generator output.
     /// </summary>
-    public class ConstructionTestModule : GeneratorModuleBase
+    public sealed class ConstructionTestModule : GeneratorModuleBase
     {
         /// <summary>
         /// A dummy implementation of <see cref="IConfigurationsHandler"/>
         /// that does nothing with the output. This is useful for testing the
         /// generation process performance that doesn't include the analyzer module.
         /// </summary>
-        internal class DummyConfigurationsHandler : IConfigurationsHandler
+        internal sealed class DummyConfigurationsHandler : IConfigurationsHandler
         {
             public IEnumerable<GeneratorOutput> GenerateFinalOutput(IEnumerable<ConfigurationWrapper> configurations)
             {

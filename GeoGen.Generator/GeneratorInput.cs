@@ -7,7 +7,7 @@ namespace GeoGen.Generator
     /// <summary>
     /// Represents an input for <see cref="IGenerator"/>.
     /// </summary>
-    public class GeneratorInput
+    public sealed class GeneratorInput
     {
         /// <summary>
         /// Gets or sets the initial configuration from which the generation process starts.

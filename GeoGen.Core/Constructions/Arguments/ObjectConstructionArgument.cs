@@ -7,7 +7,7 @@ namespace GeoGen.Core.Constructions.Arguments
     /// Represent a <see cref="ConfigurationObject"/> that is passed as a 
     /// <see cref="ConstructionArgument"/> to a construction.
     /// </summary>
-    public class ObjectConstructionArgument : ConstructionArgument
+    public sealed class ObjectConstructionArgument : ConstructionArgument
     {
         #region Public properties
 

@@ -12,9 +12,9 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer
     /// A default implementation of <see cref="IConfigurationObjectsContainer"/>
     /// using <see cref="StringBasedContainer{T}"/>, where T is <see cref="ConfigurationObject"/>.
     /// This string based container uses <see cref="DefaultFullObjectToStringProvider"/>.
-    /// This class is not thread-safe.
+    /// This sealed class is not thread-safe.
     /// </summary>
-    internal class ConfigurationObjectsContainer : StringBasedContainer<ConfigurationObject>, IConfigurationObjectsContainer
+    internal sealed class ConfigurationObjectsContainer : StringBasedContainer<ConfigurationObject>, IConfigurationObjectsContainer
     {
         #region Private fields
 

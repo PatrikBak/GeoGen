@@ -9,7 +9,7 @@ namespace GeoGen.Core.Utilities
     /// Represents a dictionary mapping configuration objects types to
     /// lists of objects of that type. 
     /// </summary>
-    public class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, List<ConfigurationObject>>
+    public sealed class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, List<ConfigurationObject>>
     {
         #region Constructors
 

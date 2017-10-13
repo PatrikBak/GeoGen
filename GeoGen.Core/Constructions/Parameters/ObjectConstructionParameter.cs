@@ -6,7 +6,7 @@ namespace GeoGen.Core.Constructions.Parameters
     /// Represent a <see cref="ConstructionParameter"/> that is a simple configuration object (such as Point, Line...). 
     /// It is defined by a value of <see cref="ConfigurationObjectType"/>, since it holds a definition, not a value.
     /// </summary>
-    public class ObjectConstructionParameter : ConstructionParameter
+    public sealed class ObjectConstructionParameter : ConstructionParameter
     {
         #region Public properties
 

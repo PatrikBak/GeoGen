@@ -10,7 +10,7 @@ namespace GeoGen.Generator.ConstructingObjects
     /// <summary>
     /// A default implementation of <see cref="IObjectsConstructor"/>.
     /// </summary>
-    internal class ObjectsConstructor : IObjectsConstructor
+    internal sealed class ObjectsConstructor : IObjectsConstructor
     {
         #region Private fields
 

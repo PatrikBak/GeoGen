@@ -3,7 +3,7 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
-    internal class RegistrationResult
+    internal sealed class RegistrationResult
     {
         public bool CanBeConstructed { get; set; }
 

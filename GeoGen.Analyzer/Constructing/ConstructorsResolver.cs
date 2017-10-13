@@ -4,7 +4,7 @@ using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing
 {
-    internal class ConstructorsResolver : IConstructorsResolver
+    internal sealed class ConstructorsResolver : IConstructorsResolver
     {
         private readonly Dictionary<Type, IPredefinedConstructor> _constructors;
 

@@ -13,7 +13,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString
     /// using only ids of loose objects. This is useful for determining comparing
     /// configurations objects (<see cref="DefaultFullObjectToStringProvider"/>, or
     /// for determining symmetric configurations (<see cref="CustomFullObjectToStringProvider"/>
-    /// and <see cref="LeastConfigurationFinder"/>). This class is not thread-safe.
+    /// and <see cref="LeastConfigurationFinder"/>). This sealed class is not thread-safe.
     /// </summary>
     internal abstract class FullObjectToStringProviderBase : IObjectToStringProvider
     {

@@ -6,7 +6,7 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
-    internal class ObjectsContainersFactory : IObjectsContainersFactory
+    internal sealed class ObjectsContainersFactory : IObjectsContainersFactory
     {
         private readonly ILooseObjectsConstructor _constructor;
 

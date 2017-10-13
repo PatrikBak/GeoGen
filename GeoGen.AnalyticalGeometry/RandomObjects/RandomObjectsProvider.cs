@@ -4,7 +4,7 @@ using GeoGen.AnalyticalGeometry.Objects;
 
 namespace GeoGen.AnalyticalGeometry.RandomObjects
 {
-    internal class RandomObjectsProvider : IRandomObjectsProvider
+    internal sealed class RandomObjectsProvider : IRandomObjectsProvider
     {
         private const double MaximalRandomValue = 10.0;
 
