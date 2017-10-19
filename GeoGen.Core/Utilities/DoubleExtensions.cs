@@ -4,7 +4,9 @@ namespace GeoGen.Core.Utilities
 {
     public static class DoubleExtensions
     {
-        public static bool AlmostEquals(this double value1, double value2, int units = 10)
+        private const int DefaultEqualityUnits = 10;
+
+        public static bool IsEqualTo(this double value1, double value2, int units = DefaultEqualityUnits)
         {
             var lValue1 = BitConverter.DoubleToInt64Bits(value1);
             var lValue2 = BitConverter.DoubleToInt64Bits(value2);
@@ -18,6 +20,11 @@ namespace GeoGen.Core.Utilities
             var diff = Math.Abs(lValue1 - lValue2);
 
             return diff <= units;
+        }
+
+        public static bool IsNotEqualTo(this double value1, double value2, int units = DefaultEqualityUnits)
+        {
+            return !value1.IsEqualTo(value2, units);
         }
     }
 }

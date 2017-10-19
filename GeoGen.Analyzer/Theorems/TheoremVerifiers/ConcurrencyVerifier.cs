@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.SubsetsProviding;
@@ -67,14 +69,14 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                                     .Select(obj => _contextualContainer.GetAnalyticalObject(obj, container))
                                     .ToSet();
 
-                            var allObjectsAnalytical = allObjectsMap
-                                    .AllObjects()
+                            var allPointsAnalytical = allObjectsMap[ConfigurationObjectType.Point]
                                     .Select(container.Get)
+                                    .Cast<Point>()
                                     .ToSet();
 
                             var newIntersections = _analyticalHelper
                                     .Intersect(analyticalObjects)
-                                    .Where(allObjectsAnalytical.Contains);
+                                    .Where(allPointsAnalytical.Contains);
 
                             return newIntersections.Empty();
                         }

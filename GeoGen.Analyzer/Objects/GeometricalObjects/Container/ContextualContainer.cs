@@ -14,7 +14,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 
         private readonly IAnalyticalHelper _analyticalHelper;
 
-        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>> _objects;
+        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticalObject>> _objects;
 
         private readonly Dictionary<int, GeometricalObject> _configurationObjectIdToGeometrical;
 
@@ -401,7 +401,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             }
         }
 
-        public AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
+        public IAnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
         {
             return _objects[objectsContainer].Forward[geometricalObject];
         }

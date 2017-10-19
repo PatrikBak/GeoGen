@@ -45,17 +45,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Objects\AnalyticalObject.cs" />
+    <Compile Include="AnalyticalHelper.cs" />
+    <Compile Include="IAnalyticalObject.cs" />
     <Compile Include="Objects\Circle.cs" />
     <Compile Include="Objects\Line.cs" />
     <Compile Include="Objects\Point.cs" />
     <Compile Include="IAnalyticalHelper.cs" />
+    <Compile Include="RandomObjects\IRandomnessProvider.cs" />
     <Compile Include="RandomObjects\IRandomObjectsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RandomObjects\RandomnessProvider.cs" />
     <Compile Include="RandomObjects\RandomObjectsProvider.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">
+      <Project>{c2a889d2-7219-4f33-9637-8da9540c3e97}</Project>
+      <Name>GeoGen.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

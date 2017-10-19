@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core.Configurations;
@@ -15,13 +16,13 @@ namespace GeoGen.Analyzer.Constructing
             _provider = provider;
         }
 
-        public List<AnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
+        public List<IAnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
             return looseObjects.Select
             (
                 looseObject =>
                 {
-                    AnalyticalObject result;
+                    IAnalyticalObject result;
 
                     switch (looseObject.ObjectType)
                     {

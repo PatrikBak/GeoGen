@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
@@ -27,14 +28,14 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                 var obj1 = ((ObjectConstructionArgument) passedPoints[0]).PassedObject;
                 var obj2 = ((ObjectConstructionArgument) passedPoints[1]).PassedObject;
 
-                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     var point1 = container.Get<Point>(obj1);
                     var point2 = container.Get<Point>(obj2);
 
-                    var result = Point.Midpoint(point1, point2);
+                    var result = point1.Midpoint(point2);
 
-                    return result == null ? null : new List<AnalyticalObject> {result};
+                    return result == null ? null : new List<IAnalyticalObject> {result};
                 }
 
                 var objects = new List<TheoremObject>

@@ -4,82 +4,147 @@ using GeoGen.AnalyticalGeometry.Objects;
 
 namespace GeoGen.AnalyticalGeometry.RandomObjects
 {
+    /// <summary>
+    /// A default implementation of <see cref="IRandomObjectsProvider"/>.
+    /// </summary>
     internal sealed class RandomObjectsProvider : IRandomObjectsProvider
     {
+        #region Private fields
+
+        /// <summary>
+        /// The maximal value of generated doubles.
+        /// </summary>
         private const double MaximalRandomValue = 10.0;
 
-        private readonly Dictionary<Type, HashSet<AnalyticalObject>> _objects;
+        /// <summary>
+        /// The dictionary mapping types of objects to the sets of currently
+        /// generated objects of that type.
+        /// </summary>
+        private readonly Dictionary<Type, HashSet<IAnalyticalObject>> _objects;
 
-        private readonly Random _random;
+        /// <summary>
+        /// The randomness provider.
+        /// </summary>
+        private readonly IRandomnessProvider _random; 
 
-        public RandomObjectsProvider()
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new random objects provided that uses a given
+        /// randomness provider.
+        /// </summary>
+        /// <param name="random">The randomness provider.</param>
+        public RandomObjectsProvider(IRandomnessProvider random)
         {
-            _random = new Random(DateTime.Now.Millisecond);
-            _objects = new Dictionary<Type, HashSet<AnalyticalObject>>();
-        }
+            _random = random;
+            _objects = new Dictionary<Type, HashSet<IAnalyticalObject>>();
+        } 
 
-        public AnalyticalObject NextRandomObject<T>() where T : AnalyticalObject
+        #endregion
+
+        #region IRandomObjectsProvider methods
+
+        /// <summary>
+        /// Generates the next random object.
+        /// </summary>
+        /// <typeparam name="T">The type of the object.</typeparam>
+        /// <returns>The next random object.</returns>
+        public IAnalyticalObject NextRandomObject<T>() where T : IAnalyticalObject
         {
+            // Pull the type
             var type = typeof(T);
 
-            HashSet<AnalyticalObject> set;
+            // Find the corresponding set to the type.
+            var set = FindSetForType(type);
 
-            if (!_objects.ContainsKey(type))
-            {
-                set = new HashSet<AnalyticalObject>();
-                _objects.Add(type, set);
-            }
-            else
-                set = _objects[type];
+            // Initialize result
+            IAnalyticalObject result;
 
-            AnalyticalObject result = null;
-
+            // Generate
             while (true)
             {
                 if (type == typeof(Point))
                     result = RandomPoint();
-
-                if (type == typeof(Line))
+                else if (type == typeof(Line))
                     result = RandomLine();
-
-                if (type == typeof(Circle))
+                else if (type == typeof(Circle))
                     result = RandomCircle();
+                else
+                    throw new Exception("Unhandled case");
 
+                // If adding the result to the set caused the change of the set,
+                // then we've found the right object and we can break.
                 if (set.Add(result))
                     break;
+
+                // Otherwise we continue with the random generation. 
             }
 
+            // And return the result.
             return result;
+        } 
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Finds the set of objects for given type. If the type 
+        /// hasn't been registered yet, this method will do that.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The set.</returns>
+        private HashSet<IAnalyticalObject> FindSetForType(Type type)
+        {
+            if (_objects.ContainsKey(type))
+                return _objects[type];
+
+            var set = new HashSet<IAnalyticalObject>();
+            _objects.Add(type, set);
+
+            return set;
         }
 
+        /// <summary>
+        /// Creates a random point..
+        /// </summary>
+        /// <returns>The random point.</returns>
         private Point RandomPoint()
         {
-            var x = RandomDoubleInRange();
-            var y = RandomDoubleInRange();
+            var x = _random.NextDouble(MaximalRandomValue);
+            var y = _random.NextDouble(MaximalRandomValue);
 
             return new Point(x, y);
         }
 
+        /// <summary>
+        /// Creates a random circle.
+        /// </summary>
+        /// <returns>The random circle.</returns>
         private Circle RandomCircle()
         {
             var center = RandomPoint();
-            // This construct makes sure that we won't get a zero radius
-            var radius = (1 - _random.NextDouble()) * MaximalRandomValue;
+
+            // The radius will be in the interval (0, MaximalRandomValue]
+            var radius = MaximalRandomValue - _random.NextDouble(MaximalRandomValue);
 
             return new Circle(center, radius);
         }
 
+        /// <summary>
+        /// Creates a random line.
+        /// </summary>
+        /// <returns>The random line.</returns>
         private Line RandomLine()
         {
             var point1 = RandomPoint();
             var point2 = RandomPoint();
 
             return new Line(point1, point2);
-        }
+        } 
 
-        private double RandomDoubleInRange()
-        {
-            return _random.NextDouble() * MaximalRandomValue;
-        }
+        #endregion
     }
 }

@@ -8,20 +8,12 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
     internal sealed class InteresectionConstructor : IPredefinedConstructor
     {
         public Type PredefinedConstructionType { get; } = typeof(Intersection);
-
-        private readonly IAnalyticalHelper _analyticalHelper;
-
-        public InteresectionConstructor(IAnalyticalHelper analyticalHelper)
-        {
-            _analyticalHelper = analyticalHelper;
-        }
 
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
@@ -41,7 +33,7 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                 var obj3 = ((ObjectConstructionArgument) passedPoints2[0]).PassedObject;
                 var obj4 = ((ObjectConstructionArgument) passedPoints2[1]).PassedObject;
 
-                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     var point1 = container.Get<Point>(obj1);
                     var point2 = container.Get<Point>(obj2);
@@ -50,12 +42,15 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 
                     var points = new HashSet<Point> {point1, point2, point3, point4};
 
-                    var result = _analyticalHelper.Intersect(points);
+                    var line1 = new Line(point1, point2);
+                    var line2 = new Line(point3, point4);
 
-                    if (result.Empty() || result.Any(points.Contains))
+                    var result = line1.IntersectionWith(line2);
+
+                    if (result == null || points.Contains(result.Value))
                         return null;
 
-                    return result.Cast<AnalyticalObject>().ToList();
+                    return new List<IAnalyticalObject> {result};
                 }
 
                 var objects1 = new List<TheoremObject>

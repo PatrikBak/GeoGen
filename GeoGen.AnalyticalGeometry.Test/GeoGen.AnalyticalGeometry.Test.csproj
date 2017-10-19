@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8C183726-BDDF-4553-B7BC-F575F3FE5DEA}</ProjectGuid>
+    <ProjectGuid>{78898B9E-351F-4A29-B8C8-E361190EA3B2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeoGen.Analyzer.Test</RootNamespace>
-    <AssemblyName>GeoGen.Analyzer.Test</AssemblyName>
+    <RootNamespace>GeoGen.AnalyticalGeometry.Test</RootNamespace>
+    <AssemblyName>GeoGen.AnalyticalGeometry.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -37,39 +37,24 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Castle.Core, Version=4.1.1.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.1.1\lib\net45\Castle.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq, Version=4.7.99.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
-      <HintPath>..\packages\Moq.4.7.99\lib\net45\Moq.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.7.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\packages\NUnit.3.7.1\lib\net45\nunit.framework.dll</HintPath>
+    <Reference Include="nunit.framework, Version=3.8.1.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
+      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GradualAnalyzerTest.cs" />
+    <Compile Include="Objects\PointTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestHelpers\ConfigurationObjects.cs" />
-    <Compile Include="TestHelpers\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj">
-      <Project>{CF6DFF81-E56F-4FAE-B176-524976BD5780}</Project>
-      <Name>GeoGen.Analyzer</Name>
+    <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">
+      <Project>{8291B54F-23DD-4117-8511-300DDE547A69}</Project>
+      <Name>GeoGen.AnalyticalGeometry</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">
-      <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
-      <Name>GeoGen.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Theorems\" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

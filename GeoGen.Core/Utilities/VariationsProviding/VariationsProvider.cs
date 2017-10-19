@@ -69,7 +69,7 @@ namespace GeoGen.Core.Utilities.VariationsProviding
                     }
                 }
 
-                Swap(ref listCopy[i], ref listCopy[index]);
+                Utils.Swap(ref listCopy[i], ref listCopy[index]);
             }
         }
 

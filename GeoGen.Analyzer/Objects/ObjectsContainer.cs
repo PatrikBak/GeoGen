@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Core.Configurations;
 
@@ -6,17 +7,17 @@ namespace GeoGen.Analyzer.Objects
 {
     internal sealed class ObjectsContainer : IObjectsContainer
     {
-        private readonly Dictionary<AnalyticalObject, ConfigurationObject> _objectsDictionary;
+        private readonly Dictionary<IAnalyticalObject, ConfigurationObject> _objectsDictionary;
 
-        private readonly Dictionary<int, AnalyticalObject> _idToObjects;
+        private readonly Dictionary<int, IAnalyticalObject> _idToObjects;
 
         public ObjectsContainer()
         {
-            _objectsDictionary = new Dictionary<AnalyticalObject, ConfigurationObject>();
-            _idToObjects = new Dictionary<int, AnalyticalObject>();
+            _objectsDictionary = new Dictionary<IAnalyticalObject, ConfigurationObject>();
+            _idToObjects = new Dictionary<int, IAnalyticalObject>();
         }
 
-        public ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject originalObject)
+        public ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject originalObject)
         {
             if (_objectsDictionary.ContainsKey(analyticalObject))
                 return _objectsDictionary[analyticalObject];
@@ -38,16 +39,16 @@ namespace GeoGen.Analyzer.Objects
             _idToObjects.Remove(id);
         }
 
-        public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject
+        public T Get<T>(ConfigurationObject configurationObject) where T : IAnalyticalObject
         {
             var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
             return (T) _idToObjects[id];
         }
 
-        public AnalyticalObject Get(ConfigurationObject configurationObject)
+        public IAnalyticalObject Get(ConfigurationObject configurationObject)
         {
-            return Get<AnalyticalObject>(configurationObject);
+            return Get<IAnalyticalObject>(configurationObject);
         }
     }
 }

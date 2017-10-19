@@ -1,4 +1,5 @@
-﻿using GeoGen.AnalyticalGeometry.Objects;
+﻿using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Core.Configurations;
 
@@ -18,7 +19,7 @@ namespace GeoGen.Analyzer.Objects
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="originalObject"></param>
         /// <returns>The equal version of the object.</returns>
-        ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject originalObject);
+        ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject originalObject);
 
         /// <summary>
         /// Removes the geometrical object with a given id, if it exists.
@@ -26,8 +27,8 @@ namespace GeoGen.Analyzer.Objects
         /// <param name="id">The id.</param>
         void Remove(int id);
 
-        T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject;
+        T Get<T>(ConfigurationObject configurationObject) where T : IAnalyticalObject;
 
-        AnalyticalObject Get(ConfigurationObject configurationObject);
+        IAnalyticalObject Get(ConfigurationObject configurationObject);
     }
 }

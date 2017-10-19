@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
@@ -13,6 +14,6 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 
         IEnumerable<T> GetObjects<T>(ConfigurationObjectsMap objects) where T : GeometricalObject;
 
-        AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer);
+        IAnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer);
     }
 }
