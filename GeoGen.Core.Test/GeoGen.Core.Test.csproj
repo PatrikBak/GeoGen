@@ -61,6 +61,7 @@
     <Compile Include="Utilities\CollectionExtensionsTest.cs" />
     <Compile Include="Utilities\Combinator\CombinatorTest.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMapTest.cs" />
+    <Compile Include="Utilities\DoubleExtensionsTest.cs" />
     <Compile Include="Utilities\EnumerableExtensionsTest.cs" />
     <Compile Include="Utilities\SubsetsProviding\SubsetsProviderTest.cs" />
     <Compile Include="Utilities\VariationsProviding\VariationsProviderTest.cs" />

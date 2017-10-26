@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.AnalyticalGeometry.Objects
+namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
     /// <summary>
     /// Represents a geometrical 2D circle.
@@ -20,7 +20,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <summary>
         /// Gets the radius of the circle.
         /// </summary>
-        public double Radius { get; }
+        public RoundedDouble Radius { get; }
 
         #endregion
 
@@ -62,11 +62,10 @@ namespace GeoGen.AnalyticalGeometry.Objects
         public Circle(Point center, double radius)
         {
             Center = center;
-
-            if (radius <= 0)
-                throw new ArgumentOutOfRangeException(nameof(radius), "The radius must be positive.");
-
             Radius = radius;
+
+            if (Radius <= 0)
+                throw new ArgumentOutOfRangeException(nameof(radius), "The radius must be positive.");
         }
 
         #endregion
@@ -80,11 +79,11 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <returns>true, if the point lies on the circle, false otherwise.</returns>
         public bool Contains(Point point)
         {
-            // We simply check whether the coordinates of the point meets the equation
+            // We simply check whether the coordinates of the point meet the equation
             var dx = point.X - Center.X;
             var dy = point.Y - Center.Y;
 
-            return (dx * dx + dy * dy).IsEqualTo(Radius * Radius);
+            return (RoundedDouble) (dx * dx + dy * dy) == Radius * Radius;
         }
 
         /// <summary>
@@ -211,7 +210,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = a.IsEqualTo(0);
+            var changingVariables = (RoundedDouble) a != 0;
 
             // If yes, we use the helper method to do so
             if (changingVariables)
@@ -264,7 +263,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <returns>true, if they are equal, false otherwise.</returns>
         private bool Equals(Circle other)
         {
-            return Center.Equals(other.Center) && Radius.IsEqualTo(other.Radius);
+            return Center == other.Center && Radius == other.Radius;
         }
 
         #endregion
@@ -297,7 +296,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
             {
                 return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
             }
-        } 
+        }
 
         #endregion
     }

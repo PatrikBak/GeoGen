@@ -47,9 +47,9 @@
   <ItemGroup>
     <Compile Include="AnalyticalHelper.cs" />
     <Compile Include="IAnalyticalObject.cs" />
-    <Compile Include="Objects\Circle.cs" />
-    <Compile Include="Objects\Line.cs" />
-    <Compile Include="Objects\Point.cs" />
+    <Compile Include="AnalyticalObjects\Circle.cs" />
+    <Compile Include="AnalyticalObjects\Line.cs" />
+    <Compile Include="AnalyticalObjects\Point.cs" />
     <Compile Include="IAnalyticalHelper.cs" />
     <Compile Include="RandomObjects\IRandomnessProvider.cs" />
     <Compile Include="RandomObjects\IRandomObjectsProvider.cs" />

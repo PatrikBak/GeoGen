@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.Objects;
+using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 
 namespace GeoGen.AnalyticalGeometry.RandomObjects
 {

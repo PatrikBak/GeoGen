@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.AnalyticalGeometry.Objects
+namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
     /// <summary>
     /// Represents a geometrical 2D point.
@@ -13,10 +13,10 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <summary>
         /// Gets the X coordinate.
         /// </summary>
-        public double X { get; }
+        public RoundedDouble X { get; }
 
         /// Gets the X coordinate.
-        public double Y { get; }
+        public RoundedDouble Y { get; }
 
         #endregion
 
@@ -80,7 +80,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
             // The general rotation matrix in 2D is 
             // 
             // cos(T)  -sin(T)
-            // sin(T)  -cos(T)
+            // sin(T)   cos(T)
             //
             // To use this we first need to translate the point to the origin
 
@@ -90,7 +90,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
 
             // Now we use the matrix
             var newX = cosT * dx - sinT * dy;
-            var newY = sinT * dx - cosT * dy;
+            var newY = sinT * dx + cosT * dy;
 
             // And we use the reversed translation to get the result
             return new Point(newX + center.X, newY + center.Y);
@@ -182,6 +182,29 @@ namespace GeoGen.AnalyticalGeometry.Objects
             return !Equals(left, right);
         }
 
+        /// <summary>
+        /// Creates the perpendicular project of this point onto
+        /// a given line. If this point lines on the line, the result
+        /// will be the point itself.
+        /// </summary>
+        /// <param name="line">The line.</param>
+        /// <returns>The projection.</returns>
+        public Point Project(Line line)
+        {
+            // Get the perpendicular line
+            var perpendicularLine = line.PerpendicularLine(this);
+
+            // Intersect it with the given line
+            var intersection = perpendicularLine.IntersectionWith(line);
+
+            // Get the result. It definitely should exist if the 
+            // line methods are implemented correctly
+            var result = intersection ?? throw new Exception("Math has stopped working. The world is about to end.");
+
+            // Return the result
+            return result;
+        }
+
         #endregion
 
         #region Private methods
@@ -193,7 +216,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <returns>true, if they are equal, false otherwise.</returns>
         private bool Equals(Point other)
         {
-            return X.IsEqualTo(other.X) && Y.IsEqualTo(other.Y);
+            return X == other.X && Y == other.Y;
         }
 
         #endregion

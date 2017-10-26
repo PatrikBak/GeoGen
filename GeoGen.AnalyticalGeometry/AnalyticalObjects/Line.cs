@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.AnalyticalGeometry.Objects
+namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
     /// <summary>
     /// Represents a geometrical 2D line.
@@ -13,17 +13,17 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <summary>
         /// Gets the A coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public double A { get; }
+        public RoundedDouble A { get; }
 
         /// <summary>
         /// Gets the B coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public double B { get; }
+        public RoundedDouble B { get; }
 
         /// <summary>
         /// Gets the C coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public double C { get; }
+        public RoundedDouble C { get; }
 
         #endregion
 
@@ -53,7 +53,28 @@ namespace GeoGen.AnalyticalGeometry.Objects
 
             // For any line they're infinitely many equations of the form Ax + By + C = 0.
             // In order for us to have the unique representation for each one, we would
-            // want to have A^2 + B^2 + C^2 = 1. Therefore we scale the calculated coefficients.
+            // want to have A^2 + B^2 + C^2 = 1 and A > 0 if A != 0 or B > 0 otherwise.
+            // Then the representation will be unique
+
+            if ((RoundedDouble) a != 0)
+            {
+                if (a < 0)
+                {
+                    a = -a;
+                    b = -b;
+                    c = -c;
+                }
+            }
+            else
+            {
+                if (b < 0)
+                {
+                    b = -b;
+                    c = -c;
+                }
+            }
+
+            // Now we can finally scale the coefficients. 
 
             var scale = Math.Sqrt(a * a + b * b + c * c);
 
@@ -108,12 +129,12 @@ namespace GeoGen.AnalyticalGeometry.Objects
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if (delta.IsEqualTo(0))
+            if ((RoundedDouble) delta == 0)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
-            var x = (c2 * a1 - c1 * a2) / delta;
-            var y = (c1 * b2 - c2 * b1) / delta;
+            var x = (c1 * b2 - c2 * b1) / delta;
+            var y = (c2 * a1 - c1 * a2) / delta;
 
             // And construct the result
             return new Point(x, y);
@@ -127,7 +148,28 @@ namespace GeoGen.AnalyticalGeometry.Objects
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (A * point.X + B * point.Y + C).IsEqualTo(0);
+            return (RoundedDouble) (A * point.X + B * point.Y + C) == 0;
+        }
+
+        /// <summary>
+        /// Creates a line that is perpendicular to this one and passes through a
+        /// given point.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <returns>The perpendicular line.</returns>
+        public Line PerpendicularLine(Point point)
+        {
+            // Math suggests that the directional vector of the result
+            // will be (A,B). We have one point on the line, [x,y]
+            // the other could be [x+A, y+B] (they will not be the same 
+            // because either A != 0, or B != 0). Then we can simply
+            // use the constructor for line from 2 points
+
+            // Create the other point
+            var otherPoint = new Point(point.X + A, point.Y + B);
+
+            // Create the line from 2 points
+            return new Line(point, otherPoint);
         }
 
         #endregion
@@ -167,7 +209,7 @@ namespace GeoGen.AnalyticalGeometry.Objects
         /// <returns>true, if they are equal, false otherwise.</returns>
         private bool Equals(Line other)
         {
-            return A.IsEqualTo(other.A) && B.IsEqualTo(other.B) && C.IsEqualTo(other.C);
+            return A == other.A && B == other.B && C == other.C;
         }
 
         #endregion

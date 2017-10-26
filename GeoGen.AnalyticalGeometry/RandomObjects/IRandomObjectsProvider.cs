@@ -1,6 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry.Objects;
-
-namespace GeoGen.AnalyticalGeometry.RandomObjects
+﻿namespace GeoGen.AnalyticalGeometry.RandomObjects
 {
     /// <summary>
     /// Represents a simple generator of mutually distinct analytical objects.

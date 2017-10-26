@@ -7,12 +7,12 @@ namespace GeoGen.Core.Utilities
     {
         public static List<double> SolveQuadraticEquation(double a, double b, double c)
         {
-            var d = b * b - 4 * a * c;
+            var d = (RoundedDouble) (b * b - 4 * a * c);
 
             if (d < 0)
                 return new List<double>();
 
-            if (d.IsEqualTo(0))
+            if (d == 0)
                 return new List<double> {-b / (2 * a)};
 
             var squareRoot = Math.Sqrt(d);

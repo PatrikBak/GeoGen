@@ -67,11 +67,11 @@
     <Compile Include="Utilities\CollectionExtensions.cs" />
     <Compile Include="Utilities\Combinator\Combinator.cs" />
     <Compile Include="Utilities\Combinator\ICombinator.cs" />
-    <Compile Include="Utilities\DoubleExtensions.cs" />
     <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMap.cs" />
     <Compile Include="Utilities\Map.cs" />
     <Compile Include="Utilities\MathUtils.cs" />
+    <Compile Include="Utilities\RoundedDouble.cs" />
     <Compile Include="Utilities\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Utilities\SubsetsProviding\ISubsetsProvider.cs" />
     <Compile Include="Utilities\SubsetsProviding\SubsetsProvider.cs" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.Objects;
+using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core.Configurations;
 
