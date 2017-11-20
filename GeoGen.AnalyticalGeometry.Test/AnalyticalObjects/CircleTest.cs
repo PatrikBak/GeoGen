@@ -1,7 +1,8 @@
 ﻿using System;
-using System.CodeDom;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
+using GeoGen.Core.Utilities;
 using NUnit.Framework;
 
 namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
@@ -85,7 +86,7 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
         }
 
         [Test]
-        public void Test_Equals_And_Hash_Code()
+        public void Test_Equals_And_Hash_Code_On_Nine_Points_Circle()
         {
             var a = new Point(0, 0);
             var b = new Point(7, 4);
@@ -105,11 +106,12 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
             var midBh = h.Midpoint(b);
             var midCh = h.Midpoint(c);
 
-            // Nine-points circle
+            // Nine-points circle points
             var points = new List<Point> {midAb, midBc, midCa, midAh, midBh, midCh, projA, projB, projC};
 
             var circles = new List<Circle>();
 
+            // Let's generate all triples of points. Each should represent the same circle.
             for (var i = 0; i < points.Count; i++)
             {
                 for (var j = i + 1; j < points.Count; j++)
@@ -127,6 +129,8 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
                 foreach (var circle2 in circles)
                 {
                     Assert.IsTrue(circle1 == circle2);
+                    Assert.IsFalse(circle1 != circle2);
+                    Assert.IsTrue(circle1.Equals(circle2));
                     Assert.IsTrue(circle1.GetHashCode() == circle2.GetHashCode());
                 }
             }
@@ -141,6 +145,260 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
 
             Assert.IsTrue(ninePointCircle.Center == center);
             Assert.IsTrue(ninePointCircle.Radius == abcCircle.Radius / 2);
+        }
+
+        [Test]
+        public void Test_Contains()
+        {
+            var center = new Point(7, 4);
+            var circle = new Circle(center, 5);
+
+            Assert.IsTrue(circle.Contains(new Point(4, 0)));
+            Assert.IsTrue(circle.Contains(new Point(4, 8)));
+            Assert.IsTrue(circle.Contains(new Point(2, 4)));
+            Assert.IsTrue(circle.Contains(new Point(11.1, 4 + 3 * Math.Sqrt(91) / 10)));
+            Assert.IsTrue(circle.Contains(new Point(11.1, 4 - 3 * Math.Sqrt(91) / 10)));
+
+            Assert.IsFalse(circle.Contains(center));
+            Assert.IsFalse(circle.Contains(new Point(17, 1)));
+            Assert.IsFalse(circle.Contains(new Point(42, 666)));
+
+            for (double a = 0; a <= 360; a++)
+            {
+                var rotated = new Point(2, 4).Rotate(center, a);
+                Assert.IsTrue(circle.Contains(rotated));
+            }
+        }
+
+        [Test]
+        public void Test_Intersection_With_Line_That_Doesnt_Intersect()
+        {
+            var center = new Point(-4, 7);
+            var circle = new Circle(center, 4);
+
+            var points = new List<Tuple<Point, Point>>
+            {
+                new Tuple<Point, Point>(new Point(-7, 13), new Point(-1, 11)),
+                new Tuple<Point, Point>(new Point(-8.01, 3), new Point(-8.01, 4)),
+                new Tuple<Point, Point>(new Point(1, 11.01), new Point(-1, 11.01)),
+            };
+
+            foreach (var tuple in points)
+            {
+                var line = new Line(tuple.Item1, tuple.Item2);
+                var interesections = circle.IntersectWith(line);
+
+                Assert.IsTrue(interesections.Empty());
+            }
+        }
+
+        [Test]
+        public void Test_Intersection_With_Line_That_Is_Tangent()
+        {
+            var center = new Point(-4, 7);
+            var circle = new Circle(center, 4);
+
+            var points = new List<Tuple<Point, Point>>
+            {
+                new Tuple<Point, Point>(new Point(-8, 3), new Point(-8, 4)),
+                new Tuple<Point, Point>(new Point(1, 11), new Point(-1, 11)),
+                new Tuple<Point, Point>(new Point(-1, 7 - Math.Sqrt(7)), new Point(-1 - Math.Sqrt(7), 4 - Math.Sqrt(7)))
+            };
+
+            var results = new List<Point>
+            {
+                new Point(-8, 7),
+                new Point(-4, 11),
+                new Point(-1, 7 - Math.Sqrt(7))
+            };
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                var tuple = points[i];
+                var line = new Line(tuple.Item1, tuple.Item2);
+                var interesections = circle.IntersectWith(line);
+
+                Assert.AreEqual(1, interesections.Count);
+                Assert.AreEqual(results[i], interesections.First());
+            }
+        }
+
+        [Test]
+        public void Test_Intersection_With_Line_That_Interesects_At_Two_Points()
+        {
+            var center = new Point(-4, 7);
+            var circle = new Circle(center, 4);
+
+            var points = new List<Tuple<Point, Point>>
+            {
+                new Tuple<Point, Point>(new Point(-4, 11), new Point(-4, 7)),
+                new Tuple<Point, Point>(new Point(-8, 7), new Point(0, 7)),
+                new Tuple<Point, Point>(new Point(-6, 9), new Point(-3, 8)),
+                new Tuple<Point, Point>(new Point(-5, 12), new Point(-9, 7))
+            };
+
+            var results = new List<List<Point>>
+            {
+                new List<Point> {new Point(-4, 3), new Point(-4, 11)},
+                new List<Point> {new Point(-8, 7), new Point(0, 7)},
+                new List<Point> {new Point(0, 7), new Point(-36.0 / 5, 47.0 / 5)},
+                new List<Point> {new Point((-289 - 4 * Math.Sqrt(31)) / 41, (387 - 5 * Math.Sqrt(31)) / 41), new Point((4 * Math.Sqrt(31) - 289) / 41, (387 + 5 * Math.Sqrt(31)) / 41)}
+            };
+
+            bool EqualPoints(int i, IEnumerable<Point> result)
+            {
+                return result.ToSet().SetEquals(results[i].ToSet());
+            }
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                Console.WriteLine($"{i}");
+                var tuple = points[i];
+                var line = new Line(tuple.Item1, tuple.Item2);
+                var intersections = circle.IntersectWith(line);
+
+                Assert.AreEqual(2, intersections.Count);
+                Assert.IsTrue(EqualPoints(i, intersections));
+            }
+        }
+
+        [Test]
+        public void Test_Intersection_With_Equal_Circle()
+        {
+            var circle = new Circle(new Point(1, 1), 5);
+
+            var points = new List<Point>
+            {
+                new Point(1, 6),
+                new Point(4, 5),
+                new Point(6, 1),
+                new Point(5, -2),
+                new Point(1, -4),
+                new Point(-3, -2),
+                new Point(-4, 1),
+                new Point(-3, 4),
+                new Point(-2, 5),
+                new Point(5, 4),
+                new Point(4, -3),
+                new Point(-2, -3)
+            };
+
+            var circles = new List<Circle> {circle};
+
+            for (var i = 0; i < points.Count; i++)
+            {
+                for (var j = i + 1; j < points.Count; j++)
+                {
+                    for (var k = j + 1; k < points.Count; k++)
+                    {
+                        circles.Add(new Circle(points[i], points[j], points[k]));
+                    }
+                }
+            }
+
+            for (var i = 0; i < circles.Count; i++)
+            {
+                for (var j = i + 1; j < circles.Count; j++)
+                {
+                    var circle1 = circles[i];
+                    var circle2 = circles[j];
+
+                    Assert.Throws<ArgumentException>(() => circle1.IntersectWith(circle2));
+                    Assert.Throws<ArgumentException>(() => circle2.IntersectWith(circle1));
+                    Assert.Throws<ArgumentException>(() => circle1.IntersectWith(circle1));
+                    Assert.Throws<ArgumentException>(() => circle2.IntersectWith(circle2));
+                }
+            }
+        }
+
+        [Test]
+        public void Test_Inteserction_With_Circle_That_Doesnt_Intersect()
+        {
+            var mainCircle = new Circle(new Point(1, 1), 5);
+
+            var circles = new List<Circle>
+            {
+                new Circle(new Point(1, 1), 11),
+                new Circle(new Point(1, 1), 4),
+                new Circle(new Point(1, 1), 8),
+                new Circle(new Point(-2, 2), 1),
+                new Circle(new Point(0, 0), 3),
+                new Circle(new Point(7, 1), 0.999)
+            };
+
+            foreach (var circle in circles)
+            {
+                Assert.IsTrue(circle.IntersectWith(mainCircle).Empty());
+            }
+        }
+
+        [Test]
+        public void Test_Inteserction_With_Circle_That_Is_Tangent()
+        {
+            var mainCircle = new Circle(new Point(1, 1), 5);
+
+            var circles = new List<Circle>
+            {
+                new Circle(new Point(1, 3.5), 2.5),
+                new Circle(new Point(1, 16), 10),
+                new Circle(new Point(1.5, 1), 4.5),
+                new Circle(new Point(5.8, 4.6), 1)
+            };
+
+            var results = new List<Point>
+            {
+                new Point(1, 6),
+                new Point(1, 6),
+                new Point(6, 1),
+                new Point(5, 4)
+            };
+
+            for (var i = 0; i < circles.Count; i++)
+            {
+                Console.WriteLine(i);
+                var circle = circles[i];
+                var intersections = mainCircle.IntersectWith(circle);
+
+                Assert.AreEqual(1, intersections.Count);
+                Assert.AreEqual(results[i], intersections[0]);
+            }
+        }
+
+        [Test]
+        public void Test_Inteserction_With_Circle_That_Intersect_At_Two_Points()
+        {
+            var mainCircle = new Circle(new Point(1, 1), 5);
+
+            var circles = new List<Circle>
+            {
+                new Circle(new Point(8, 1), Math.Sqrt(18)),
+                new Circle(new Point(-3, -5), Math.Sqrt(5)),
+                new Circle(new Point(1, 2), Math.Sqrt(20)),
+                new Circle(new Point(3, -5), Math.Sqrt(40))
+            };
+
+            var results = new List<List<Point>>
+            {
+                new List<Point> {new Point(5, 4), new Point(5, -2)},
+                new List<Point> {new Point(-2, -3), new Point(-20.0 / 13, -43.0 / 13)},
+                new List<Point> {new Point(-3, 4), new Point(5, 4)},
+                new List<Point> {new Point((13 - 9 * Math.Sqrt(15)) / 8, (-7 - 3 * Math.Sqrt(15)) / 8), new Point((13 + 9 * Math.Sqrt(15)) / 8, (-7 + 3 * Math.Sqrt(15)) / 8)}
+            };
+
+            bool EqualPoints(int i, IEnumerable<Point> result)
+            {
+                return result.ToSet().SetEquals(results[i].ToSet());
+            }
+
+            for (var i = 0; i < circles.Count; i++)
+            {
+                Console.WriteLine(i);
+                var circle = circles[i];
+                var interesections = mainCircle.IntersectWith(circle);
+
+                Assert.AreEqual(2, interesections.Count);
+                Assert.IsTrue(EqualPoints(i, interesections));
+            }
         }
     }
 }

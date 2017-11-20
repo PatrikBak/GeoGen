@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace GeoGen.Core.Utilities
 {
@@ -92,6 +93,11 @@ namespace GeoGen.Core.Utilities
         public override int GetHashCode()
         {
             return RoundedValue.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return RoundedValue.ToString(CultureInfo.InvariantCulture);
         }
     }
 }

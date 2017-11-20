@@ -75,7 +75,6 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             }
 
             // Now we can finally scale the coefficients. 
-
             var scale = Math.Sqrt(a * a + b * b + c * c);
 
             A = a / scale;

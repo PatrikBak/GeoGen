@@ -210,7 +210,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = (RoundedDouble) a != 0;
+            var changingVariables = (RoundedDouble) a == 0;
 
             // If yes, we use the helper method to do so
             if (changingVariables)

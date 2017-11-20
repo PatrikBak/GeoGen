@@ -121,6 +121,10 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
             Assert.IsTrue(ab != ac);
             Assert.IsFalse(ab != ad);
             Assert.IsFalse(ad != ba);
+
+            Assert.IsFalse(ab.Equals(ac));
+            Assert.IsTrue(ab.Equals(ad));
+            Assert.IsTrue(ad.Equals(ba));
         }
 
         [Test]

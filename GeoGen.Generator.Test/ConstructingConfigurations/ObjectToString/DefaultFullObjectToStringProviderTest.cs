@@ -29,7 +29,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
         [Test]
         public void Test_Arguments_Provider_Cant_Be_Null()
         {
-            var resolver = SimpleMock<DefaultObjectIdResolver>();
+            var resolver = new DefaultObjectIdResolver();
 
             Assert.Throws<ArgumentNullException>(() => new DefaultFullObjectToStringProvider(null, resolver));
         }
