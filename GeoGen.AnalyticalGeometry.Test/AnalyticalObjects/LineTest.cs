@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Utilities;
 using NUnit.Framework;
 
 namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects

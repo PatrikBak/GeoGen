@@ -56,25 +56,31 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // want to have A^2 + B^2 + C^2 = 1 and A > 0 if A != 0 or B > 0 otherwise.
             // Then the representation will be unique
 
+            // If a is not zero, we want it to be positive
             if ((RoundedDouble) a != 0)
             {
+                // If it's not positive
                 if (a < 0)
                 {
+                    // We multiply the whole equation by -1
                     a = -a;
                     b = -b;
                     c = -c;
                 }
             }
+            // Otherwise if a is 0, we want b to be positive
             else
             {
+                // If b is negative
                 if (b < 0)
                 {
+                    // We multiply the whole equation by -1
                     b = -b;
                     c = -c;
                 }
             }
 
-            // Now we can finally scale the coefficients. 
+            // Now we can finally scale the coefficients so that A^2 + B^2 + C^2 = 1 holds true
             var scale = Math.Sqrt(a * a + b * b + c * c);
 
             A = a / scale;

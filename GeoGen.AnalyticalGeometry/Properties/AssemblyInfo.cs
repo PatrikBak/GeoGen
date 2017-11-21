@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -20,6 +21,10 @@ using System.Runtime.InteropServices;
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("8291b54f-23dd-4117-8511-300dde547a69")]
+
+// Make assemblies internal methods and sealed classes visible to the test assembly
+[assembly: InternalsVisibleTo("GeoGen.AnalyticalGeometry.Test")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 // Version information for an assembly consists of the following four values:
 //

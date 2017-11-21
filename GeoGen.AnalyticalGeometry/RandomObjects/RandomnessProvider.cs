@@ -12,7 +12,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// <summary>
         /// The random object.
         /// </summary>
-        private readonly Random _random = new Random(DateTime.Now.Millisecond);
+        private readonly Random _random = new Random();
 
         #endregion
 

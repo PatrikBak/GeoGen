@@ -9,12 +9,16 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
     /// </summary>
     internal sealed class RandomObjectsProvider : IRandomObjectsProvider
     {
-        #region Private fields
+        #region Public constants
 
         /// <summary>
         /// The maximal value of generated doubles.
         /// </summary>
-        private const double MaximalRandomValue = 10.0;
+        public const double MaximalRandomValue = 10.0;
+
+        #endregion
+
+        #region Private fields
 
         /// <summary>
         /// The dictionary mapping types of objects to the sets of currently
@@ -25,7 +29,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// <summary>
         /// The randomness provider.
         /// </summary>
-        private readonly IRandomnessProvider _random; 
+        private readonly IRandomnessProvider _random;
 
         #endregion
 
@@ -38,9 +42,9 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// <param name="random">The randomness provider.</param>
         public RandomObjectsProvider(IRandomnessProvider random)
         {
-            _random = random;
+            _random = random ?? throw new ArgumentNullException(nameof(random));
             _objects = new Dictionary<Type, HashSet<IAnalyticalObject>>();
-        } 
+        }
 
         #endregion
 
@@ -84,7 +88,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
 
             // And return the result.
             return result;
-        } 
+        }
 
         #endregion
 
@@ -139,11 +143,21 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// <returns>The random line.</returns>
         private Line RandomLine()
         {
-            var point1 = RandomPoint();
-            var point2 = RandomPoint();
+            // We generate in loop until we're successful
+            while (true)
+            {
+                // Generate two points
+                var point1 = RandomPoint();
+                var point2 = RandomPoint();
 
-            return new Line(point1, point2);
-        } 
+                // If there are not the same
+                if (point1 != point2)
+                {
+                    // We'll free to return and construct the line
+                    return new Line(point1, point2);
+                }
+            }
+        }
 
         #endregion
     }
