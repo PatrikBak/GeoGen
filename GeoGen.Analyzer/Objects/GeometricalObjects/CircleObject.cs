@@ -1,22 +1,31 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects.GeometricalObjects
 {
-    public sealed class CircleObject : GeometricalObject
+    internal sealed class CircleObject : GeometricalObject
     {
-        public HashSet<PointObject> Points { get; set; }
+        public HashSet<PointObject> Points { get; } = new HashSet<PointObject>();
 
         public CircleObject(ConfigurationObject configurationObject, int id)
             : base(configurationObject, id)
         {
-            Points = new HashSet<PointObject>();
         }
 
         public CircleObject(int id, params PointObject[] points)
             : base(id)
         {
-            Points = new HashSet<PointObject>(points);
+            if (points == null)
+                throw new ArgumentNullException(nameof(points));
+
+            foreach (var pointObject in points)
+            {
+                if (pointObject == null)
+                    throw new ArgumentException("Passed null point");
+
+                Points.Add(pointObject);
+            }
         }
     }
 }

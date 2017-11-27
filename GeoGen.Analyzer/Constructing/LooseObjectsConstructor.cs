@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
@@ -13,33 +14,32 @@ namespace GeoGen.Analyzer.Constructing
 
         public LooseObjectsConstructor(IRandomObjectsProvider provider)
         {
-            _provider = provider;
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         public List<IAnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
+            if (looseObjects == null)
+                throw new ArgumentNullException(nameof(looseObjects));
+
             return looseObjects.Select
             (
                 looseObject =>
                 {
-                    IAnalyticalObject result;
+                    if (looseObject == null)
+                        throw new ArgumentException("Loose objects contains null value.");
 
                     switch (looseObject.ObjectType)
                     {
                         case ConfigurationObjectType.Point:
-                            result = _provider.NextRandomObject<Point>();
-                            break;
+                            return _provider.NextRandomObject<Point>();
                         case ConfigurationObjectType.Line:
-                            result = _provider.NextRandomObject<Line>();
-                            break;
+                            return _provider.NextRandomObject<Line>();
                         case ConfigurationObjectType.Circle:
-                            result = _provider.NextRandomObject<Circle>();
-                            break;
+                            return _provider.NextRandomObject<Circle>();
                         default:
                             throw new AnalyzerException("Unhandled case.");
                     }
-
-                    return result;
                 }
             ).ToList();
         }

@@ -11,8 +11,7 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Analyzer.Objects
 {
     /// <summary>
-    /// A default implementation of <see cref="IGeometryRegistrar"/>. This
-    /// class is not thread-safe.
+    /// A default implementation of <see cref="IGeometryRegistrar"/>.
     /// </summary>
     internal sealed class GeometryRegistrar : IGeometryRegistrar
     {
@@ -95,11 +94,11 @@ namespace GeoGen.Analyzer.Objects
                     _theoremsContainer.Add(theorem);
                 }
 
+                // Loop over objects
                 foreach (var configurationObject in objects)
                 {
-                    // We mark all the object id as resolved
-                    var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
-                    _resolvedIds.Add(id);
+                    // To mark the object's id as resolved
+                    _resolvedIds.Add(configurationObject.Id ?? throw new AnalyzerException("Id must be set."));
 
                     // And add the object to the contextual container
                     _contextualContainer.Add(configurationObject);
@@ -116,9 +115,8 @@ namespace GeoGen.Analyzer.Objects
                     // And over all containers
                     foreach (var container in _containers)
                     {
-                        // To make sure the objects will be deleted from all containers
-                        var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
-                        container.Remove(id);
+                        // Remove the object from the container
+                        container.Remove(configurationObject);
                     }
                 }
             }
@@ -149,10 +147,12 @@ namespace GeoGen.Analyzer.Objects
                 // in this container and so we don't need to continue
                 if (constructedObjects == null)
                 {
+                    // However if some container marked this objects as constructible,
+                    // then we have inconsistency
                     if (canBeConstructed != null && canBeConstructed.Value)
                         throw new AnalyzerException("Inconsistent containers");
 
-                    // We can mark the object as not constructible
+                    // Otherwise we can mark the object as not constructible
                     canBeConstructed = false;
 
                     // And move to the next container
@@ -162,7 +162,7 @@ namespace GeoGen.Analyzer.Objects
                 // Otherwise the object is fine
                 canBeConstructed = true;
 
-                // Initialize a set of duplicate indices
+                // Initializes duplicates list
                 var localDuplicates = Enumerable.Repeat((ConfigurationObject) null, objects.Count).ToList();
 
                 // We iterate over the objects to find duplicates
@@ -177,12 +177,12 @@ namespace GeoGen.Analyzer.Objects
                     // Let the container resolve the new object
                     var containerResult = container.Add(constructedObject, originalObject);
 
-                    // If the container's result is null, i.e. the object
+                    // If the container's result is not our object, i.e. the object
                     // isn't already present in the container, we're fine
-                    if (containerResult == null)
+                    if (containerResult != originalObject)
                         continue;
 
-                    // Update the duplicates set
+                    // Update the duplicates list
                     localDuplicates[i] = containerResult;
                 }
 

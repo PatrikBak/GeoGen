@@ -12,7 +12,7 @@ namespace GeoGen.Analyzer.Objects
 
         public ObjectsContainersFactory(ILooseObjectsConstructor constructor)
         {
-            _constructor = constructor;
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
         }
 
         public IObjectsContainer CreateContainer(IEnumerable<LooseConfigurationObject> looseObjects)
@@ -21,6 +21,18 @@ namespace GeoGen.Analyzer.Objects
                 throw new ArgumentNullException(nameof(looseObjects));
 
             var looseObjectsList = looseObjects.ToList();
+
+            if (looseObjectsList.Contains(null))
+                throw new ArgumentException("Loose objects contain null");
+
+            var ids = looseObjectsList
+                    .Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set"))
+                    .Distinct()
+                    .ToList();
+
+            if (ids.Count != looseObjectsList.Count)
+                throw new ArgumentException("Duplicate loose objects");
+
             var container = new ObjectsContainer();
 
             var objects = _constructor.Construct(looseObjectsList);
@@ -30,10 +42,7 @@ namespace GeoGen.Analyzer.Objects
                 var configurationObject = looseObjectsList[i];
                 var analyticalObject = objects[i];
 
-                var result = container.Add(analyticalObject, configurationObject);
-
-                if (result == null)
-                    throw new AnalyzerException("Duplicate loose objects.");
+                container.Add(analyticalObject, configurationObject);
             }
 
             return container;

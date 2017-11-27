@@ -91,6 +91,17 @@ namespace GeoGen.Core.Utilities
 
         #endregion
 
+        public new List<ConfigurationObject> this[ConfigurationObjectType type]
+        {
+            get
+            {
+                if (!ContainsKey(type))
+                    return new List<ConfigurationObject>();
+
+                return base[type];
+            }
+        }
+
         public int CountOfType(ConfigurationObjectType type)
         {
             return !ContainsKey(type) ? 0 : this[type].Count;

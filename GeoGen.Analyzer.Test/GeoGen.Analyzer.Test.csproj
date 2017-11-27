@@ -50,15 +50,31 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constructing\ConstructorsResolverTest.cs" />
+    <Compile Include="Constructing\LooseObjectsConstructorTest.cs" />
+    <Compile Include="Constructing\PredefinedConstructors\IntersectionConstructorTest.cs" />
+    <Compile Include="Constructing\PredefinedConstructors\MidpointConstructorTest.cs" />
     <Compile Include="GradualAnalyzerTest.cs" />
+    <Compile Include="Objects\Container\ContextualContainerTest.cs" />
+    <Compile Include="Objects\GeometricalObjects\CircleObjectTest.cs" />
+    <Compile Include="Objects\GeometricalObjects\LineObjectTest.cs" />
+    <Compile Include="Objects\GeometricalObjects\PointObjectTest.cs" />
+    <Compile Include="Objects\ObjectsContainerFactoryTest.cs" />
+    <Compile Include="Objects\ObjectsContainersHolderTest.cs" />
+    <Compile Include="Objects\ObjectsContainerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ConfigurationObjects.cs" />
+    <Compile Include="TestHelpers\TheoremsHelper.cs" />
     <Compile Include="TestHelpers\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">
+      <Project>{8291B54F-23DD-4117-8511-300DDE547A69}</Project>
+      <Name>GeoGen.AnalyticalGeometry</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj">
       <Project>{CF6DFF81-E56F-4FAE-B176-524976BD5780}</Project>
       <Name>GeoGen.Analyzer</Name>

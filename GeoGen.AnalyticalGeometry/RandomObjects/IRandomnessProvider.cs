@@ -7,7 +7,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
     /// The reason for having this as an interface is that we can mock it
     /// to have reusable unit tests.
     /// </summary>
-    internal interface IRandomnessProvider
+    public interface IRandomnessProvider
     {
         /// <summary>
         /// Generates a double number in the range [0, upperBound)

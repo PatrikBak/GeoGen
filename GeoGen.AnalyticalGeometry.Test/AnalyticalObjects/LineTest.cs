@@ -19,7 +19,7 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
                 new Tuple<Point, Point>(new Point(1, 1), new Point(7, 2)),
                 new Tuple<Point, Point>(new Point(-4, 3), new Point(8, 2)),
                 new Tuple<Point, Point>(new Point(7, 5), new Point(7, 6)),
-                new Tuple<Point, Point>(new Point(1, 1), new Point(2, 1)),
+                new Tuple<Point, Point>(new Point(1, 1), new Point(2, 1))
             };
 
             var expected = new List<List<int>>

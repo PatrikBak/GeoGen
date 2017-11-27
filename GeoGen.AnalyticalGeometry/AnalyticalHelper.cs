@@ -9,8 +9,10 @@ namespace GeoGen.AnalyticalGeometry
     /// <summary>
     /// A default implementation of <see cref="IAnalyticalHelper"/>.
     /// </summary>
-    internal class AnalyticalHelper : IAnalyticalHelper
+    public class AnalyticalHelper : IAnalyticalHelper
     {
+        #region IAnalyticalHelper implementation
+
         /// <summary>
         /// Finds all intersections of given analytical objects. They must not
         /// contain <see cref="Point"/>s and duplicate objects.
@@ -19,59 +21,6 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The set of intersections. An empty set, if there's none.</returns>
         public HashSet<Point> Intersect(IEnumerable<IAnalyticalObject> inputObjects)
         {
-            // Local function to find all intersections of two given analytical objects.
-            HashSet<Point> Intersect(IAnalyticalObject o1, IAnalyticalObject o2)
-            {
-                // Safely cast o1 to nullable Line and Circle
-                var o1Line = o1 as Line?;
-                var o1Circle = o1 as Circle?;
-
-                // The same goes with for o2
-                var o2Line = o2 as Line?;
-                var o2Circle = o2 as Circle?;
-
-                // If we have two lines
-                if (o1Line != null && o2Line != null)
-                {
-                    // Then we call the intersection method
-                    var result = o1Line.Value.IntersectionWith(o2Line.Value);
-
-                    // And if the intersection is null, return an empty set, otherwise the set
-                    // containing the result
-                    return result == null ? new HashSet<Point>() : new HashSet<Point> {result.Value};
-                }
-
-                // If we have two circles
-                if (o1Circle != null && o2Circle != null)
-                {
-                    // Intersect the circles and cast the result to set
-                    return o1Circle.Value.IntersectWith(o2Circle.Value).ToSet();
-                }
-
-                // Otherwise we have a line and a circle.
-                Line line;
-                Circle circle;
-
-                // Find the line.
-                if (o1Line != null)
-                    line = o1Line.Value;
-                else if (o2Line != null)
-                    line = o2Line.Value;
-                else
-                    throw new Exception("Unhandled analytical object");
-
-                // Find the circle.
-                if (o1Circle != null)
-                    circle = o1Circle.Value;
-                else if (o2Circle != null)
-                    circle = o2Circle.Value;
-                else
-                    throw new Exception("Unhandled analytical object");
-
-                // And finally intersect the circle and the line
-                return circle.IntersectWith(line).ToSet();
-            }
-
             // Enumerate input objects
             var originalObjects = inputObjects.ToList();
 
@@ -143,5 +92,69 @@ namespace GeoGen.AnalyticalGeometry
 
             throw new Exception("Unhandled case");
         }
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Intersects two given analytical objects that are not points.
+        /// </summary>
+        /// <param name="o1">The first object.</param>
+        /// <param name="o2">The second object.</param>
+        /// <returns>The set of intersections.</returns>
+        private static HashSet<Point> Intersect(IAnalyticalObject o1, IAnalyticalObject o2)
+        {
+            // Safely cast o1 to nullable Line and Circle
+            var o1Line = o1 as Line?;
+            var o1Circle = o1 as Circle?;
+
+            // The same goes with for o2
+            var o2Line = o2 as Line?;
+            var o2Circle = o2 as Circle?;
+
+            // If we have two lines
+            if (o1Line != null && o2Line != null)
+            {
+                // Then we call the intersection method
+                var result = o1Line.Value.IntersectionWith(o2Line.Value);
+
+                // And if the intersection is null, return an empty set, otherwise the set
+                // containing the result
+                return result == null ? new HashSet<Point>() : new HashSet<Point> {result.Value};
+            }
+
+            // If we have two circles
+            if (o1Circle != null && o2Circle != null)
+            {
+                // Intersect the circles and cast the result to set
+                return o1Circle.Value.IntersectWith(o2Circle.Value).ToSet();
+            }
+
+            // Otherwise we have a line and a circle.
+            Line line;
+            Circle circle;
+
+            // Find the line.
+            if (o1Line != null)
+                line = o1Line.Value;
+            else if (o2Line != null)
+                line = o2Line.Value;
+            else
+                throw new Exception("Unhandled analytical object");
+
+            // Find the circle.
+            if (o1Circle != null)
+                circle = o1Circle.Value;
+            else if (o2Circle != null)
+                circle = o2Circle.Value;
+            else
+                throw new Exception("Unhandled analytical object");
+
+            // And finally intersect the circle and the line
+            return circle.IntersectWith(line).ToSet();
+        }
+
+        #endregion
     }
 }

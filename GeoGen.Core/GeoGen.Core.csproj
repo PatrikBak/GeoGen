@@ -75,6 +75,7 @@
     <Compile Include="Utilities\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Utilities\SubsetsProviding\ISubsetsProvider.cs" />
     <Compile Include="Utilities\SubsetsProviding\SubsetsProvider.cs" />
+    <Compile Include="Utilities\ThrowHelper.cs" />
     <Compile Include="Utilities\Utils.cs" />
     <Compile Include="Utilities\VariationsProviding\VariationsProvider.cs" />
     <Compile Include="Utilities\VariationsProviding\IVariationsProvider.cs" />

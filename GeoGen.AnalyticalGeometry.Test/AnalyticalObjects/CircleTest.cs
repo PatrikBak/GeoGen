@@ -180,7 +180,7 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
             {
                 new Tuple<Point, Point>(new Point(-7, 13), new Point(-1, 11)),
                 new Tuple<Point, Point>(new Point(-8.01, 3), new Point(-8.01, 4)),
-                new Tuple<Point, Point>(new Point(1, 11.01), new Point(-1, 11.01)),
+                new Tuple<Point, Point>(new Point(1, 11.01), new Point(-1, 11.01))
             };
 
             foreach (var tuple in points)

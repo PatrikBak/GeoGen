@@ -42,6 +42,7 @@
     <Compile Include="Constructing\IObjectsConstructor.cs" />
     <Compile Include="Constructing\IPredefinedConstructor.cs" />
     <Compile Include="Constructing\LooseObjectsConstructor.cs" />
+    <Compile Include="InconsistentContainersException.cs" />
     <Compile Include="Theorems\ITheoremsVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\CircleObject.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\ContextualContainer.cs" />

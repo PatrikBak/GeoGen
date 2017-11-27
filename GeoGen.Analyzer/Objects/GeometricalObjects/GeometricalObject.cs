@@ -3,7 +3,7 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects.GeometricalObjects
 {
-    public abstract class GeometricalObject : IEquatable<GeometricalObject>
+    internal abstract class GeometricalObject
     {
         public int Id { get; }
 
@@ -11,24 +11,13 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects
 
         protected GeometricalObject(ConfigurationObject configurationObject, int id)
         {
-            ConfigurationObject = configurationObject;
+            ConfigurationObject = configurationObject ?? throw new ArgumentNullException(nameof(configurationObject));
             Id = id;
         }
 
         protected GeometricalObject(int id)
         {
             Id = id;
-        }
-
-        public bool Equals(GeometricalObject other)
-        {
-            if (ReferenceEquals(null, other))
-                return false;
-
-            if (ReferenceEquals(this, other))
-                return true;
-
-            return Id == other.Id;
         }
 
         public override bool Equals(object obj)
@@ -42,7 +31,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects
             if (obj.GetType() != GetType())
                 return false;
 
-            return Equals((GeometricalObject) obj);
+            return ((GeometricalObject) obj).Id == Id;
         }
 
         public override int GetHashCode()

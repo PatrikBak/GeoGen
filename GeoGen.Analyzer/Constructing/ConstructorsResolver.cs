@@ -17,7 +17,13 @@ namespace GeoGen.Analyzer.Constructing
 
             foreach (var constructor in constructors)
             {
+                if (constructor == null)
+                    throw new ArgumentException("Constructors can't contain null objects");
+
                 var type = constructor.PredefinedConstructionType;
+
+                if (_constructors.ContainsKey(type))
+                    throw new ArgumentException("Duplicate constructors");
 
                 _constructors.Add(type, constructor);
             }
@@ -25,6 +31,9 @@ namespace GeoGen.Analyzer.Constructing
 
         public IObjectsConstructor Resolve(Construction construction)
         {
+            if (construction == null)
+                throw new ArgumentNullException(nameof(construction));
+
             if (construction is PredefinedConstruction predefinedConstruction)
             {
                 try
