@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Permissions;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Core.Configurations;

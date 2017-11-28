@@ -13,7 +13,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
     {
         #region Private fields
 
-        private readonly IObjectsContainersHolder _containersHolder;
+        private readonly IObjectsContainersManager _containersManager;
 
         private readonly IAnalyticalHelper _analyticalHelper;
 
@@ -33,9 +33,9 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 
         #region Constructor
 
-        public ContextualContainer(IObjectsContainersHolder containersHolder, IAnalyticalHelper analyticalHelper)
+        public ContextualContainer(IObjectsContainersManager containersManager, IAnalyticalHelper analyticalHelper)
         {
-            _containersHolder = containersHolder ?? throw new ArgumentNullException(nameof(containersHolder));
+            _containersManager = containersManager ?? throw new ArgumentNullException(nameof(containersManager));
             _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
             _configurationObjectIdToGeometricalObjects = new Dictionary<int, GeometricalObject>();
             _lines = new HashSet<LineObject>();
@@ -44,7 +44,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 
             _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticalObject>>();
 
-            foreach (var objectsContainer in containersHolder)
+            foreach (var objectsContainer in containersManager)
             {
                 _objects.Add(objectsContainer, new Map<GeometricalObject, IAnalyticalObject>());
             }
@@ -190,7 +190,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             {
                 // Then we simply cast points from the map to their geometrical
                 // objects
-                var points = oldObjects[ConfigurationObjectType.Point]
+                var points = newObjects[ConfigurationObjectType.Point]
                         .Select(GetGeometricalObject)
                         .Cast<T>();
 
@@ -313,7 +313,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             GeometricalObject result = null;
 
             // We loop over containers
-            foreach (var container in _containersHolder)
+            foreach (var container in _containersManager)
             {
                 // Pull the analytical representation of this object. It must exist,
                 // which is a part of the contract of this class
@@ -453,7 +453,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             LineObject result = null;
 
             // Iterate over containers
-            foreach (var container in _containersHolder)
+            foreach (var container in _containersManager)
             {
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
@@ -529,7 +529,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             bool? collinear = null;
 
             // Iterate over containers
-            foreach (var container in _containersHolder)
+            foreach (var container in _containersManager)
             {
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
@@ -682,7 +682,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             bool? result = null;
 
             // Iterate over containers
-            foreach (var container in _containersHolder)
+            foreach (var container in _containersManager)
             {
                 // Pull analytical representations of the objects
                 var point = (Point) _objects[container].Forward[pointObject];

@@ -34,7 +34,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyzerOutput.cs" />
+    <Compile Include="GradualAnalyzerOutput.cs" />
     <Compile Include="AnalyzerException.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />
     <Compile Include="Constructing\ConstructorsResolver.cs" />
@@ -49,8 +49,8 @@
     <Compile Include="Objects\GeometricalObjects\GeometricalObject.cs" />
     <Compile Include="Objects\GeometricalObjects\LineObject.cs" />
     <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
-    <Compile Include="Objects\IObjectsContainersHolder.cs" />
-    <Compile Include="Objects\ObjectsContainersHolder.cs" />
+    <Compile Include="Objects\IObjectsContainersManager.cs" />
+    <Compile Include="Objects\ObjectsContainersManager.cs" />
     <Compile Include="Theorems\TheoremsVerifier.cs" />
     <Compile Include="Theorems\ITheoremObjectConstructor.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />

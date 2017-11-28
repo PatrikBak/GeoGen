@@ -4,10 +4,28 @@ using GeoGen.Core.Constructions;
 
 namespace GeoGen.Analyzer.Constructing
 {
+    /// <summary>
+    /// A default implementation of <see cref="IConstructorsResolver"/>.
+    /// </summary>
     internal sealed class ConstructorsResolver : IConstructorsResolver
     {
-        private readonly Dictionary<Type, IPredefinedConstructor> _constructors;
+        #region Private fields
 
+        /// <summary>
+        /// The dictionary mapping types of predefined constructions to their 
+        /// predefined constructors.
+        /// </summary>
+        private readonly Dictionary<Type, IPredefinedConstructor> _constructors; 
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a new constructors resolver with provided predefined
+        /// constructors.
+        /// </summary>
+        /// <param name="constructors">The predefined constructors array.</param>
         public ConstructorsResolver(IPredefinedConstructor[] constructors)
         {
             if (constructors == null)
@@ -29,6 +47,16 @@ namespace GeoGen.Analyzer.Constructing
             }
         }
 
+        #endregion
+
+        #region IConstructorsResolver implementation
+
+        /// <summary>
+        /// Find the corresponding <see cref="IObjectsConstructor"/> for 
+        /// a given <see cref="Construction"/>.
+        /// </summary>
+        /// <param name="construction">The construction.</param>
+        /// <returns>The constructor.</returns>
         public IObjectsConstructor Resolve(Construction construction)
         {
             if (construction == null)
@@ -48,5 +76,7 @@ namespace GeoGen.Analyzer.Constructing
 
             throw new NotImplementedException();
         }
+
+        #endregion
     }
 }

@@ -12,12 +12,12 @@ namespace GeoGen.Analyzer
     public interface IGradualAnalyzer
     {
         /// <summary>
-        /// Analyses a given configuration provided as two lists, or old and new configuration
+        /// Analyses a given configuration provided as two lists, old and new configuration
         /// objects.
         /// </summary>
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        AnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
+        GradualAnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
     }
 }

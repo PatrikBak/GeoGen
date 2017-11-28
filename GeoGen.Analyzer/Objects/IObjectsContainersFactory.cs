@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
-using GeoGen.Core.Configurations;
-
-namespace GeoGen.Analyzer.Objects
+﻿namespace GeoGen.Analyzer.Objects
 {
+    /// <summary>
+    /// Represents a factory that takes care of creating <see cref="IObjectsContainer"/>s.
+    /// </summary>
     internal interface IObjectsContainersFactory
     {
-        IObjectsContainer CreateContainer(IEnumerable<LooseConfigurationObject> looseObjects);
+        /// <summary>
+        /// Creates an empty objects container.
+        /// </summary>
+        /// <returns>An empty objects container.</returns>
+        IObjectsContainer CreateContainer();
     }
 }

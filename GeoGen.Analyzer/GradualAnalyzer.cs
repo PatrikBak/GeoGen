@@ -17,14 +17,11 @@ namespace GeoGen.Analyzer
     {
         #region Private fields
 
-        /// <summary>
-        /// The geometry holder.
-        /// </summary>
         private readonly IGeometryRegistrar _registrar;
 
         private readonly ITheoremsContainer _container;
 
-        private ITheoremsVerifier _verifier;
+        private readonly ITheoremsVerifier _verifier;
 
         public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsContainer container, ITheoremsVerifier verifier)
         {
@@ -44,7 +41,7 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        public AnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
+        public GradualAnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
         {
             if (oldObjects == null)
                 throw new ArgumentNullException(nameof(oldObjects));
@@ -54,50 +51,43 @@ namespace GeoGen.Analyzer
 
             var result = _registrar.Register(newObjects);
 
-            var duplicateObjects = result.DuplicateObjects;
+            var duplicateObjects = result.GeometricalDuplicates;
             var canBeConstructed = result.CanBeConstructed;
             var theorems = new List<Theorem>();
+
+            var unambiguouslyConstructible = duplicateObjects.Empty() && canBeConstructed;
+
+            if (unambiguouslyConstructible)
+            {
+                var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
+                var newObjectsMap = new ConfigurationObjectsMap(newObjects);
+
+                var newTheorems = _verifier.FindTheorems(oldObjectsMap, newObjectsMap)
+                        .Where(theorem => !_container.Contains(theorem));
+
+                theorems.AddRange(newTheorems);
+            }
 
             foreach (var pair in duplicateObjects)
             {
                 var newObject = pair.Key;
                 var duplicate = pair.Value;
 
-                // Construct involved objects
                 var involvedObjects = new List<TheoremObject>
                 {
                     new TheoremObject(newObject),
                     new TheoremObject(duplicate)
                 };
 
-                // Construct theorem itself
                 var theorem = new Theorem(TheoremType.SameObjects, involvedObjects);
 
-                // Add it to our theorems
                 theorems.Add(theorem);
             }
 
-            // Now we're done with adding objects to the container.
-            // If we can construct all objects and there are no duplicate objects,
-            // we'll do the usual theorem finding
-            if (canBeConstructed && duplicateObjects.Empty())
-            {
-                var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
-                var newObjectsMap = new ConfigurationObjectsMap(newObjects);
-
-                var newTheorems = _verifier
-                        .FindTheorems(oldObjectsMap, newObjectsMap)
-                        .Where(theorem => !_container.Contains(theorem));
-
-                theorems.AddRange(newTheorems);
-            }
-
-            // And finally we can construct the result
-            return new AnalyzerOutput
+            return new GradualAnalyzerOutput
             {
                 Theorems = theorems,
-                CanBeFullyConstructed = canBeConstructed,
-                DuplicateObjects = duplicateObjects
+                UnambiguouslyConstructible = unambiguouslyConstructible
             };
         }
 

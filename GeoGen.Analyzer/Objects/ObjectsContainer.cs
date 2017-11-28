@@ -6,6 +6,9 @@ using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer.Objects
 {
+    /// <summary>
+    /// A default implementation of <see cref="IObjectsContainer"/>.
+    /// </summary>
     internal sealed class ObjectsContainer : IObjectsContainer
     {
         #region Private fields

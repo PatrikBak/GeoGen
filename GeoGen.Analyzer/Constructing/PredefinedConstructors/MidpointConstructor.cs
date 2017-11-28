@@ -12,20 +12,28 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
+    /// <summary>
+    /// A constructor for the <see cref="Midpoint"/> construction.
+    /// </summary>
     internal sealed class MidpointConstructor : IPredefinedConstructor
     {
+        /// <summary>
+        /// Gets the type of this predefined construction.
+        /// </summary>
         public Type PredefinedConstructionType { get; } = typeof(Midpoint);
 
+        /// <summary>
+        /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
+        /// </summary>
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
 
-            if (constructedObjects.Count != 1)
-                throw new ArgumentException("The construction expects one object");
-
-            try
+           try
             {
+                ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
+
                 var constructedObject = constructedObjects[0];
                 var arguments = constructedObject.PassedArguments;
 

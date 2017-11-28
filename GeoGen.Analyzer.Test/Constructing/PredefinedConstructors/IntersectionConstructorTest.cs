@@ -34,8 +34,8 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
         [Test]
         public void Test_Constructed_Objects_Must_Have_Count_One()
         {
-            Assert.Throws<ArgumentException>(() => Constructor().Construct(new List<ConstructedConfigurationObject>()));
-            Assert.Throws<ArgumentException>(() => Constructor().Construct(new List<ConstructedConfigurationObject> {null, null}));
+            Assert.Throws<AnalyzerException>(() => Constructor().Construct(new List<ConstructedConfigurationObject>()));
+            Assert.Throws<AnalyzerException>(() => Constructor().Construct(new List<ConstructedConfigurationObject> {null, null}));
         }
 
         [Test]
@@ -68,16 +68,22 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
                 (
                     new HashSet<ConstructionArgument>
                     {
-                        new ObjectConstructionArgument(points[0]),
-                        new ObjectConstructionArgument(points[1])
-                    }
-                ),
-                new SetConstructionArgument
-                (
-                    new HashSet<ConstructionArgument>
-                    {
-                        new ObjectConstructionArgument(points[2]),
-                        new ObjectConstructionArgument(points[3])
+                        new SetConstructionArgument
+                        (
+                            new HashSet<ConstructionArgument>
+                            {
+                                new ObjectConstructionArgument(points[0]),
+                                new ObjectConstructionArgument(points[1])
+                            }
+                        ),
+                        new SetConstructionArgument
+                        (
+                            new HashSet<ConstructionArgument>
+                            {
+                                new ObjectConstructionArgument(points[2]),
+                                new ObjectConstructionArgument(points[3])
+                            }
+                        )
                     }
                 )
             };

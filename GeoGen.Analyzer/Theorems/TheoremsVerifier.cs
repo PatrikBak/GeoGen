@@ -8,11 +8,11 @@ namespace GeoGen.Analyzer.Theorems
 {
     internal sealed class TheoremsVerifier : ITheoremsVerifier
     {
-        private readonly IObjectsContainersHolder _containers;
+        private readonly IObjectsContainersManager _containers;
 
         private readonly ITheoremVerifier[] _verifiers;
 
-        public TheoremsVerifier(IObjectsContainersHolder containers, ITheoremVerifier[] verifiers)
+        public TheoremsVerifier(IObjectsContainersManager containers, ITheoremVerifier[] verifiers)
         {
             _containers = containers;
             _verifiers = verifiers;

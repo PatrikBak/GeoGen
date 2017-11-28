@@ -12,30 +12,39 @@ using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {
+    /// <summary>
+    /// A constructor for the <see cref="Intersection"/> construction.
+    /// </summary>
     internal sealed class InteresectionConstructor : IPredefinedConstructor
     {
+        /// <summary>
+        /// Gets the type of this predefined construction.
+        /// </summary>
         public Type PredefinedConstructionType { get; } = typeof(Intersection);
 
+        /// <summary>
+        /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
+        /// </summary>
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
 
-            if (constructedObjects.Count != 1)
-                throw new ArgumentException("The construction expects one object");
-
             try
             {
+                ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
+
                 var constructedObject = constructedObjects[0];
                 var arguments = constructedObject.PassedArguments;
 
-                ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 2);
+                ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 1);
 
-                var setArgument1 = (SetConstructionArgument) arguments[0];
-                var setArgument2 = (SetConstructionArgument) arguments[1];
+                var setArguments = ((SetConstructionArgument) arguments[0]).PassedArguments.ToList();
 
-                var passedPoints1 = setArgument1.PassedArguments.ToList();
-                var passedPoints2 = setArgument2.PassedArguments.ToList();
+                ThrowHelper.ThrowExceptionIfNotTrue(setArguments.Count == 2);
+
+                var passedPoints1 = ((SetConstructionArgument) setArguments[0]).PassedArguments.ToList();
+                var passedPoints2 = ((SetConstructionArgument) setArguments[1]).PassedArguments.ToList();
 
                 ThrowHelper.ThrowExceptionIfNotTrue(passedPoints1.Count == 2);
                 ThrowHelper.ThrowExceptionIfNotTrue(passedPoints2.Count == 2);

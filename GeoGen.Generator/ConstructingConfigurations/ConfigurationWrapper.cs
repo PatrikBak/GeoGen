@@ -4,7 +4,7 @@ using GeoGen.Core.Utilities;
 namespace GeoGen.Generator.ConstructingConfigurations
 {
     /// <summary>
-    /// An internal wrapper sealed class for a <see cref="Configuration"/>, containing some
+    /// An internal wrapper sealed class for a <see cref="Core.Configurations.Configuration"/>, containing some
     /// additional data regarding the configuration. 
     /// </summary>
     internal sealed class ConfigurationWrapper

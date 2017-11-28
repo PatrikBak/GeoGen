@@ -59,8 +59,9 @@
     <Compile Include="Objects\GeometricalObjects\CircleObjectTest.cs" />
     <Compile Include="Objects\GeometricalObjects\LineObjectTest.cs" />
     <Compile Include="Objects\GeometricalObjects\PointObjectTest.cs" />
-    <Compile Include="Objects\ObjectsContainerFactoryTest.cs" />
-    <Compile Include="Objects\ObjectsContainersHolderTest.cs" />
+    <Compile Include="Objects\GeometryRegistrarTest.cs" />
+    <Compile Include="Objects\ObjectsContainersFactoryTest.cs" />
+    <Compile Include="Objects\ObjectsContainersManagerTest.cs" />
     <Compile Include="Objects\ObjectsContainerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ConfigurationObjects.cs" />

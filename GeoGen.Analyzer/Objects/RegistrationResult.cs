@@ -7,6 +7,6 @@ namespace GeoGen.Analyzer.Objects
     {
         public bool CanBeConstructed { get; set; }
 
-        public Dictionary<ConfigurationObject, ConfigurationObject> DuplicateObjects { get; set; }
+        public Dictionary<ConfigurationObject, ConfigurationObject> GeometricalDuplicates { get; set; }
     }
 }

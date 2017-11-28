@@ -21,104 +21,95 @@ namespace GeoGen.Analyzer.Objects
 
         private readonly IContextualContainer _contextualContainer;
 
-        private readonly IObjectsContainersHolder _containers;
+        private readonly IObjectsContainersManager _containers;
 
-        private readonly HashSet<int> _resolvedIds;
+        private readonly Dictionary<int, RegistrationResult> _resolvedIds;
 
         public GeometryRegistrar
         (
             IConstructorsResolver resolver,
             ITheoremsContainer theoremsContainer,
             IContextualContainer contextualContainer,
-            IObjectsContainersHolder containers)
+            IObjectsContainersManager containers)
         {
-            _resolver = resolver;
-            _theoremsContainer = theoremsContainer;
-            _contextualContainer = contextualContainer;
-            _containers = containers;
-            _resolvedIds = new HashSet<int>();
+            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _theoremsContainer = theoremsContainer ?? throw new ArgumentNullException(nameof(theoremsContainer));
+            _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
+            _containers = containers ?? throw new ArgumentNullException(nameof(containers));
+            _resolvedIds = new Dictionary<int, RegistrationResult>();
         }
 
         public void Initialize(Configuration configuration)
         {
-            _containers.Initialize(configuration.LooseObjects);
+            if (configuration == null)
+                throw new ArgumentNullException(nameof(configuration));
 
-            // TODO: Fix this
-            // I don't think this will work with if there are at least two objects constructed
-            // with the same construction and arguments (i.e. that differs only by indices)
-            // This can be fixed by finding these objects in the constructed objects list.
-            // It shouldn't be hard because they are supposed to be there consecutively
-            foreach (var constructedObject in configuration.ConstructedObjects)
+            // Pull loose objects
+            var looseObjects = configuration.LooseObjects;
+
+            // Initialize the containers
+            _containers.Initialize(looseObjects);
+
+            // Initialize the contextual container
+            foreach (var configurationObject in looseObjects)
             {
-                var objectAsList = new List<ConstructedConfigurationObject> {constructedObject};
-
-                var registrationResult = Register(objectAsList);
-
-                if (!registrationResult.CanBeConstructed)
-                    throw new AnalyzerException("Unconstructible situation.");
-
-                if (!registrationResult.DuplicateObjects.Empty())
-                    throw new AnalyzerException("Situation with duplicate objects");
+                _contextualContainer.Add(configurationObject);
             }
+
+            if (configuration.ConstructedObjects.Empty())
+                return;
+
+            throw new NotImplementedException("Implement initialization of constructed objects");
         }
 
-        public RegistrationResult Register(List<ConstructedConfigurationObject> objects)
+        public RegistrationResult Register(List<ConstructedConfigurationObject> constructedObjects)
         {
-            if (objects == null)
-                throw new ArgumentNullException(nameof(objects));
+            if (constructedObjects == null)
+                throw new ArgumentNullException(nameof(constructedObjects));
 
-            if (objects.Empty())
+            if (constructedObjects.Empty())
                 throw new ArgumentException("Objects can't be empty");
 
             // First we check if the objects haven't been registered before.
-            if (ObjectsAreAlreadyPresent(objects))
+            if (ObjectsAreAlreadyPresent(constructedObjects))
             {
-                // If yes, then the state of the theorems and object containers won't change
-                return new RegistrationResult
-                {
-                    CanBeConstructed = true,
-                    DuplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>()
-                };
+                // If yes, then we pull some id
+                var id = constructedObjects[0].Id ?? throw new AnalyzerException("Id must be set");
+
+                // And grab the result from the cache
+                return _resolvedIds[id];
             }
 
             // Let the helper method construct the result. Before returning it, 
             // we need to analyze it
-            var result = RegisterObjects(objects, out List<Theorem> defaultTheorems);
+            var result = RegisterObjects(constructedObjects, out List<Theorem> defaultTheorems);
 
-            // If we can construct all the objects without duplications
-            if (result.CanBeConstructed && result.DuplicateObjects.Empty())
+            // If we can't construct the objects or there are duplicates
+            // we might just result the result directly
+            if (!result.CanBeConstructed || !result.GeometricalDuplicates.Empty())
+                return result;
+
+            // Cache the result
+            foreach (var configurationObject in constructedObjects)
             {
-                // Then we can register the default theorems
-                foreach (var theorem in defaultTheorems)
-                {
-                    _theoremsContainer.Add(theorem);
-                }
+                // Pull id
+                var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
-                // Loop over objects
-                foreach (var configurationObject in objects)
-                {
-                    // To mark the object's id as resolved
-                    _resolvedIds.Add(configurationObject.Id ?? throw new AnalyzerException("Id must be set."));
-
-                    // And add the object to the contextual container
-                    _contextualContainer.Add(configurationObject);
-                }
+                // To mark the object's id as resolved
+                _resolvedIds.Add(id, result);
             }
-            // Otherwise we want to return the state of the holder and its components
-            // to the state before calling this method
-            else
+
+            // Then we can register the default theorems
+            foreach (var theorem in defaultTheorems)
             {
-                // The only change that might cause inconsistency was adding objects
-                // to the containers. Therefore we iterate over all objects
-                foreach (var configurationObject in objects)
-                {
-                    // And over all containers
-                    foreach (var container in _containers)
-                    {
-                        // Remove the object from the container
-                        container.Remove(configurationObject);
-                    }
-                }
+                _theoremsContainer.Add(theorem);
+            }
+
+            // We further need to register the objects to the contextual container
+            foreach (var configurationObject in constructedObjects)
+            {
+                // And add the object to the contextual container
+                _contextualContainer.Add(configurationObject);
             }
 
             // And finally we can return the result.
@@ -144,7 +135,7 @@ namespace GeoGen.Analyzer.Objects
                 var constructedObjects = constructorOutput.ConstructorFunction(container);
 
                 // If they are null, that means the construction can't be provided 
-                // in this container and so we don't need to continue
+                // in this container 
                 if (constructedObjects == null)
                 {
                     // However if some container marked this objects as constructible,
@@ -159,10 +150,11 @@ namespace GeoGen.Analyzer.Objects
                     continue;
                 }
 
-                // Otherwise the object is fine
+                // If we got here, the construction is possible
                 canBeConstructed = true;
 
-                // Initializes duplicates list
+                // Now we need to find duplicates that we stored in this list
+                // initialized with nulls
                 var localDuplicates = Enumerable.Repeat((ConfigurationObject) null, objects.Count).ToList();
 
                 // We iterate over the objects to find duplicates
@@ -177,12 +169,13 @@ namespace GeoGen.Analyzer.Objects
                     // Let the container resolve the new object
                     var containerResult = container.Add(constructedObject, originalObject);
 
-                    // If the container's result is not our object, i.e. the object
-                    // isn't already present in the container, we're fine
-                    if (containerResult != originalObject)
+                    // If the container's result is the same as our object, i.e. the object
+                    // isn't already present in the container, then the constructed
+                    // object is new
+                    if (containerResult == originalObject)
                         continue;
 
-                    // Update the duplicates list
+                    // Otherwise we update the duplicates list
                     localDuplicates[i] = containerResult;
                 }
 
@@ -210,16 +203,16 @@ namespace GeoGen.Analyzer.Objects
             // And finally construct and return the result
             return new RegistrationResult
             {
-                DuplicateObjects = duplicateObjects,
+                GeometricalDuplicates = duplicateObjects,
                 CanBeConstructed = canBeConstructed ?? throw new AnalyzerException("Impossible")
             };
         }
 
-        private bool ObjectsAreAlreadyPresent(List<ConstructedConfigurationObject> objects)
+        private bool ObjectsAreAlreadyPresent(IReadOnlyCollection<ConstructedConfigurationObject> objects)
         {
             var ids = objects.Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set"));
 
-            var presentIds = ids.Count(id => _resolvedIds.Contains(id));
+            var presentIds = ids.Count(id => _resolvedIds.ContainsKey(id));
 
             if (presentIds == objects.Count)
                 return true;

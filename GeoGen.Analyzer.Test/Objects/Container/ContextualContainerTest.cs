@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
     [TestFixture]
     public class ContextualContainerTest
     {
-        private static IObjectsContainersHolder _holder;
+        private static IObjectsContainersManager _manager;
 
         private static ContextualContainer Container(params Dictionary<ConfigurationObject, IAnalyticalObject>[] objects)
         {
@@ -40,17 +40,17 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     )
                     .ToList();
 
-            var holder = new Mock<IObjectsContainersHolder>();
+            var manager = new Mock<IObjectsContainersManager>();
 
-            holder.Setup(s => s.GetEnumerator()).Returns(() => containers.GetEnumerator());
+            manager.Setup(s => s.GetEnumerator()).Returns(() => containers.GetEnumerator());
 
-            _holder = holder.Object;
+            _manager = manager.Object;
 
-            return new ContextualContainer(_holder, helper);
+            return new ContextualContainer(_manager, helper);
         }
 
         [Test]
-        public void Test_Containers_Holder_Cant_Be_Null()
+        public void Test_Containers_Manager_Cant_Be_Null()
         {
             var helper = SimpleMock<IAnalyticalHelper>();
 
@@ -60,7 +60,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
         [Test]
         public void Test_Analytical_Helper_Cant_Be_Null()
         {
-            var holder = SimpleMock<IObjectsContainersHolder>();
+            var holder = SimpleMock<IObjectsContainersManager>();
 
             Assert.Throws<ArgumentNullException>(() => new ContextualContainer(holder, null));
         }
@@ -335,7 +335,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
 
             var container = Container(dictionaries);
 
-            Assert.Throws<ArgumentNullException>(() => container.GetAnalyticalObject(null, _holder.First()));
+            Assert.Throws<ArgumentNullException>(() => container.GetAnalyticalObject(null, _manager.First()));
         }
 
         [Test]
@@ -358,7 +358,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
 
             var geometricalObject = new PointObject(configurationObjects[0], 100);
 
-            Assert.Throws<ArgumentException>(() => container.GetAnalyticalObject(geometricalObject, _holder.First()));
+            Assert.Throws<ArgumentException>(() => container.GetAnalyticalObject(geometricalObject, _manager.First()));
         }
 
         [Test]
@@ -383,7 +383,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
 
             var geometricalObject = container.First();
 
-            var analyticalObject = container.GetAnalyticalObject(geometricalObject, _holder.First());
+            var analyticalObject = container.GetAnalyticalObject(geometricalObject, _manager.First());
 
             Assert.AreEqual(new Point(0, 0), analyticalObject);
         }
