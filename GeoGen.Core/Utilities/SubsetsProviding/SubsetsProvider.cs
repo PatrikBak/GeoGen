@@ -4,9 +4,9 @@ using System.Linq;
 
 namespace GeoGen.Core.Utilities.SubsetsProviding
 {
-    public sealed class SubsetsProvider<T> : ISubsetsProvider<T>
+    public sealed class SubsetsProvider : ISubsetsProvider
     {
-        public IEnumerable<IEnumerable<T>> GetSubsets(IReadOnlyList<T> list, int numberOfElements)
+        public IEnumerable<IEnumerable<T>> GetSubsets<T>(IReadOnlyList<T> list, int numberOfElements)
         {
             if (list == null)
                 throw new ArgumentNullException(nameof(list));

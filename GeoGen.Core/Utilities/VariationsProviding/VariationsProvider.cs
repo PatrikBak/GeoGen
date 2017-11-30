@@ -5,14 +5,13 @@ using System.Linq;
 namespace GeoGen.Core.Utilities.VariationsProviding
 {
     /// <summary>
-    /// A fast recursive implementation of the <see cref="IVariationsProvider{T}"/> interface.
+    /// A fast recursive implementation of the <see cref="IVariationsProvider"/> interface.
     /// The sealed class is thread-safe.
     /// 
     /// TODO: Consider caching values
     /// 
     /// </summary>
-    /// <typeparam name="T">The type of elements</typeparam>
-    public sealed class VariationsProvider<T> : IVariationsProvider<T>
+    public sealed class VariationsProvider : IVariationsProvider
     {
         #region IVariationsProvider methods
 
@@ -24,7 +23,7 @@ namespace GeoGen.Core.Utilities.VariationsProviding
         /// <param name="list">The list whose elements are used in variations.</param>
         /// <param name="numberOfElement">The number of elements in each variation.</param>
         /// <returns>Lazy enumerable of all possible variations.</returns>
-        public IEnumerable<IEnumerable<T>> GetVariations(IReadOnlyList<T> list, int numberOfElement)
+        public IEnumerable<IEnumerable<T>> GetVariations<T>(IReadOnlyList<T> list, int numberOfElement)
         {
             if (list == null)
                 throw new ArgumentNullException(nameof(list));
@@ -45,12 +44,13 @@ namespace GeoGen.Core.Utilities.VariationsProviding
         /// <summary>
         /// A recursive method to generate the variations.
         /// </summary>
+        /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="index">Current index of the generation process. On start it should be 0.</param>
         /// <param name="listCopy">The copy of the list that we're using. It will to be modified.</param>
         /// <param name="result">The resulting list that will be yield when it's ready. The count should be numberOfElements.</param>
         /// <param name="numberOfElements">The number of elements in each variation.</param>
         /// <returns>Lazy enumerable of all possible variations.</returns>
-        private static IEnumerable<IEnumerable<T>> GetVariations(int index, T[] listCopy, IList<T> result, int numberOfElements)
+        private static IEnumerable<IEnumerable<T>> GetVariations<T>(int index, T[] listCopy, IList<T> result, int numberOfElements)
         {
             for (var i = index; i < listCopy.Length; i++)
             {
@@ -76,9 +76,10 @@ namespace GeoGen.Core.Utilities.VariationsProviding
         /// <summary>
         /// Swaps the value of two elements.
         /// </summary>
+        /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="v1">The reference of the first element.</param>
         /// <param name="v2">The reference of the second element.</param>
-        private static void Swap(ref T v1, ref T v2)
+        private static void Swap<T>(ref T v1, ref T v2)
         {
             var old = v1;
             v1 = v2;

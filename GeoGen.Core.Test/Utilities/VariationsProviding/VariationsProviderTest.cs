@@ -9,9 +9,9 @@ namespace GeoGen.Core.Test.Utilities.VariationsProviding
     [TestFixture]
     public class VariationsProviderTest
     {
-        private static IVariationsProvider<int> Provider()
+        private static IVariationsProvider Provider()
         {
-            return new VariationsProvider<int>();
+            return new VariationsProvider();
         }
 
         [Test]
@@ -115,7 +115,7 @@ namespace GeoGen.Core.Test.Utilities.VariationsProviding
         [Test]
         public void Test_List_Is_Not_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Provider().GetVariations(null, 42));
+            Assert.Throws<ArgumentNullException>(() => Provider().GetVariations<int>(null, 42));
         }
 
         [Test]

@@ -1,4 +1,4 @@
-﻿using GeoGen.Core.Utilities.Combinator;
+﻿using GeoGen.Core.Utilities.Combinations;
 using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
@@ -32,11 +32,11 @@ namespace GeoGen.Generator.NInject
             Bind<IObjectsConstructor>().To<ObjectsConstructor>().InSingletonScope();
             Bind<IConstructionsContainer>().To<ConstructionsContainer>().InSingletonScope();
             Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
-            Bind(typeof(ICombinator<,>)).To(typeof(Combinator<,>)).InSingletonScope();
+            Bind<ICombinator>().To<Combinator>().InSingletonScope();
             Bind<IConstructionSignatureMatcher>().To<ConstructionSignatureMatcher>().InSingletonScope();
-            Bind(typeof(IVariationsProvider<>)).To(typeof(VariationsProvider<>)).InSingletonScope();
+            Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
             Bind<IArgumentsListContainerFactory>().To<ArgumentsListContainerFactory>().InSingletonScope();
-            Bind<IArgumentsListToStringProvider>().To<ArgumentsListToStringProvider>().InSingletonScope();
+            Bind<IVariationsProvider>().To<VariationsProvider>().InSingletonScope();
             Bind<IConfigurationsContainer>().To<ConfigurationsContainer>().InSingletonScope();
             Bind<IConfigurationConstructor>().To<ConfigurationConstructor>().InSingletonScope();
             Bind<ILeastConfigurationFinder>().To<LeastConfigurationFinder>().InSingletonScope();

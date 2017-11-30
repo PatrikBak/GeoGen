@@ -25,7 +25,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.LeastConfigurationFin
             var defaultToString = new DefaultObjectToStringProvider(resolver);
             var argsListToString = new ArgumentsListToStringProvider(defaultToString);
             var fullObjectToStringFactory = new CustomFullObjectToStringProviderFactory(argsListToString);
-            var variationsProvider = new VariationsProvider<LooseConfigurationObject>();
+            var variationsProvider = new VariationsProvider();
             var configurationToString = new ConfigurationToStringProvider();
             var dicionaryResolversContainer = new DictionaryObjectIdResolversContainer(variationsProvider);
             dicionaryResolversContainer.Initialize(objects.ToList());

@@ -37,7 +37,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var fullProvider = new DefaultFullObjectToStringProvider(argsToString, resolver);
             _container = new ConfigurationObjectsContainer(fullProvider);
             _container.Initialize(AsConfiguration(objects));
-            var variations = new VariationsProvider<LooseConfigurationObject>();
+            var variations = new VariationsProvider();
             var configurationToString = new ConfigurationToStringProvider();
             var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
             var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variations);

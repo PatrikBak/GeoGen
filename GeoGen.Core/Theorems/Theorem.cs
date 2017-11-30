@@ -18,7 +18,7 @@ namespace GeoGen.Core.Theorems
         public TheoremType Type { get; }
 
         /// <summary>
-        /// Gets the list of geometrical objects that this theorem is about.
+        /// Gets the list of theorem objects that this theorem is about.
         /// </summary>
         public List<TheoremObject> InvolvedObjects { get; }
 

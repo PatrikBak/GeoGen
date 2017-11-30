@@ -19,14 +19,11 @@ namespace GeoGen.Analyzer
 
         private readonly IGeometryRegistrar _registrar;
 
-        private readonly ITheoremsContainer _container;
-
         private readonly ITheoremsVerifier _verifier;
 
-        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsContainer container, ITheoremsVerifier verifier)
+        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsVerifier verifier)
         {
             _registrar = registrar;
-            _container = container;
             _verifier = verifier;
         }
 
@@ -62,10 +59,7 @@ namespace GeoGen.Analyzer
                 var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
                 var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-                var newTheorems = _verifier.FindTheorems(oldObjectsMap, newObjectsMap)
-                        .Where(theorem => !_container.Contains(theorem));
-
-                theorems.AddRange(newTheorems);
+                theorems.AddRange(_verifier.FindTheorems(oldObjectsMap, newObjectsMap));
             }
 
             foreach (var pair in duplicateObjects)

@@ -14,7 +14,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
     {
         private static DictionaryObjectIdResolversContainer Container()
         {
-            var variationsProvider = new VariationsProvider<LooseConfigurationObject>();
+            var variationsProvider = new VariationsProvider();
 
             return new DictionaryObjectIdResolversContainer(variationsProvider);
         }

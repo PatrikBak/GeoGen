@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Core.Utilities.Combinator
+namespace GeoGen.Core.Utilities.Combinations
 {
     /// <summary>
     /// Represents a Cartesian product generator from a given dictionary mapping TKey to the enumerable
     /// of elements of a given type. Each generated element is then a dictionary mapping TKeys to TValues.
     /// </summary>
-    /// <typeparam name="TKey">The dictionary key type.</typeparam>
-    /// <typeparam name="TValue">The dictionary value type.</typeparam>
-    public interface ICombinator<TKey, TValue>
+    public interface ICombinator
     {
         /// <summary>
         /// Generates all possible combinations of elements provided in the possibilities map. This method should
@@ -18,6 +16,6 @@ namespace GeoGen.Core.Utilities.Combinator
         /// </summary>
         /// <param name="possibilities">The possibilities dictionary.</param>
         /// <returns>The lazy enumerable of resulting combinations.</returns>
-        IEnumerable<Dictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities);
+        IEnumerable<Dictionary<TKey, TValue>> Combine<TKey, TValue>(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities);
     }
 }

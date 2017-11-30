@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.Combinator;
+using GeoGen.Core.Utilities.Combinations;
 using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
@@ -31,12 +31,12 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
         /// <summary>
         /// The variations of configuration objects provider.
         /// </summary>
-        private readonly IVariationsProvider<ConfigurationObject> _variationsProvider;
+        private readonly IVariationsProvider _variationsProvider;
 
         /// <summary>
         /// The combinator of lists of configuration object of distinct types.
         /// </summary>
-        private readonly ICombinator<ConfigurationObjectType, List<ConfigurationObject>> _combinator;
+        private readonly ICombinator _combinator;
 
         #endregion
 
@@ -55,9 +55,9 @@ namespace GeoGen.Generator.ConstructingObjects.Arguments
         /// <param name="argumentsListContainerFactory">The arguments list container factory.</param>
         public ArgumentsGenerator
         (
-            ICombinator<ConfigurationObjectType, List<ConfigurationObject>> combinator,
+            ICombinator combinator,
             IConstructionSignatureMatcher signatureMatcher,
-            IVariationsProvider<ConfigurationObject> variationsProvider,
+            IVariationsProvider variationsProvider,
             IArgumentsListContainerFactory argumentsListContainerFactory
         )
         {

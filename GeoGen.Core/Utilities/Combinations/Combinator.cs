@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Core.Utilities.Combinator
+namespace GeoGen.Core.Utilities.Combinations
 {
     /// <summary>
-    /// A recursive implementation of the interface <see cref="ICombinator{TKey,TValue}"/>
-    /// The sealed class is thread-safe.
+    /// A default recursive implementation of <see cref="ICombinator"/>.
     /// </summary>
-    /// <typeparam name="TKey">The dictionary key type.</typeparam>
-    /// <typeparam name="TValue">The dictionary value type.</typeparam>
-    public sealed class Combinator<TKey, TValue> : ICombinator<TKey, TValue>
+    public sealed class Combinator : ICombinator
     {
         #region ICombinator methods
 
@@ -22,7 +19,7 @@ namespace GeoGen.Core.Utilities.Combinator
         /// </summary>
         /// <param name="possibilities">The possibilities dictionary.</param>
         /// <returns>The lazy enumerable of resulting combinations.</returns>
-        public IEnumerable<Dictionary<TKey, TValue>> Combine(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities)
+        public IEnumerable<Dictionary<TKey, TValue>> Combine<TKey, TValue>(IReadOnlyDictionary<TKey, IEnumerable<TValue>> possibilities)
         {
             if (possibilities == null)
                 throw new ArgumentNullException(nameof(possibilities));
@@ -47,12 +44,14 @@ namespace GeoGen.Core.Utilities.Combinator
         /// Recursively generates all possible combinations stored in the array ordered such that together with
         /// the keys list it represents a resulting dictionary.
         /// </summary>
+        /// <typeparam name="TKey">The key type.</typeparam>
+        /// <typeparam name="TValue">The value type..</typeparam>
         /// <param name="index">The current index of the generation process. On start it should be 0.</param>
         /// <param name="result">The resulting array that will be yielded when it's ready. It size should be keys.Count</param>
         /// <param name="possibilities">The possibilities dictionary input.</param>
         /// <param name="keys">Extracted list of keys from the possibilities dictionary (so we don't have to enumerate them more than once).</param>
         /// <returns>Laze enumerable of all possible combinations (ordered according to the order of the keys).</returns>
-        private static IEnumerable<TValue[]> GeneratePossibleArrays
+        private static IEnumerable<TValue[]> GeneratePossibleArrays<TKey, TValue>
         (
             int index,
             TValue[] result,

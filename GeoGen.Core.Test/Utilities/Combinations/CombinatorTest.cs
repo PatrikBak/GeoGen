@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Utilities.Combinator;
+using GeoGen.Core.Utilities.Combinations;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities.Combinator
+namespace GeoGen.Core.Test.Utilities.Combinations
 {
     [TestFixture]
     public class CombinatorTest
     {
-        private static Combinator<int, int> Combinator()
+        private static Combinator Combinator()
         {
-            return new Combinator<int, int>();
+            return new Combinator();
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace GeoGen.Core.Test.Utilities.Combinator
         [Test]
         public void Test_Possibilities_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Combinator().Combine(null));
+            Assert.Throws<ArgumentNullException>(() => Combinator().Combine<int, int>(null));
         }
     }
 }

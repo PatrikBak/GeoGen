@@ -9,7 +9,7 @@
 
         /// <summary>
         /// Gets or sets the id of this configuration object. The id should be
-        /// unit solely during the generation process. It will be reseted every time
+        /// unique solely during the generation process. It will be reseted every time
         /// the process starts over.
         /// </summary>
         public int? Id { get; set; }

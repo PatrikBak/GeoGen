@@ -24,7 +24,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         /// <summary>
         /// The variations provider.
         /// </summary>
-        private readonly IVariationsProvider<LooseConfigurationObject> _variationsProvider;
+        private readonly IVariationsProvider _variationsProvider;
 
         /// <summary>
         /// Indicates if the container has been initialized.
@@ -41,7 +41,7 @@ namespace GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdRes
         /// objects.
         /// </summary>
         /// <param name="variationsProvider">The variations provider.</param>
-        public DictionaryObjectIdResolversContainer(IVariationsProvider<LooseConfigurationObject> variationsProvider)
+        public DictionaryObjectIdResolversContainer(IVariationsProvider variationsProvider)
         {
             _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(variationsProvider));
         }

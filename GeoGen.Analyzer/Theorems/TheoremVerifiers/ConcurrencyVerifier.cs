@@ -21,13 +21,13 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
         private readonly IAnalyticalHelper _analyticalHelper;
 
-        private readonly ISubsetsProvider<GeometricalObject> _subsetsProvider;
+        private readonly ISubsetsProvider _subsetsProvider;
 
         public ConcurrencyVerifier
         (
             IContextualContainer contextualContainer,
             IAnalyticalHelper analyticalHelper,
-            ISubsetsProvider<GeometricalObject> subsetsProvider
+            ISubsetsProvider subsetsProvider
         )
         {
             _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));

@@ -10,9 +10,9 @@ namespace GeoGen.Core.Test.Utilities.SubsetsProviding
     [TestFixture]
     public class SubsetsProviderTest
     {
-        private static SubsetsProvider<int> Provider()
+        private static SubsetsProvider Provider()
         {
-            return new SubsetsProvider<int>();
+            return new SubsetsProvider();
         }
 
         private static List<int> Elements(int count)
@@ -23,7 +23,7 @@ namespace GeoGen.Core.Test.Utilities.SubsetsProviding
         [Test]
         public void Test_List_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new SubsetsProvider<int>().GetSubsets(null, 1));
+            Assert.Throws<ArgumentNullException>(() => new SubsetsProvider().GetSubsets<int>(null, 1));
         }
 
         [TestCase(-666)]
@@ -31,7 +31,7 @@ namespace GeoGen.Core.Test.Utilities.SubsetsProviding
         [TestCase(-1)]
         public void Test_Elements_Number_Must_Be_NonNegative(int number)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider<int>().GetSubsets(Elements(1), number));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider().GetSubsets(Elements(1), number));
         }
 
         [TestCase(6)]
@@ -40,7 +40,7 @@ namespace GeoGen.Core.Test.Utilities.SubsetsProviding
         [TestCase(666)]
         public void Test_Elements_Number_Must_Be_At_Most_List_Count(int number)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider<int>().GetSubsets(Elements(5), number));
+            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider().GetSubsets(Elements(5), number));
         }
 
         [TestCase(0, 0, 1)]

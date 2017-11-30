@@ -14,10 +14,13 @@ namespace GeoGen.Analyzer.Theorems
 
         private readonly ITheoremVerifier[] _verifiers;
 
-        public TheoremsVerifier(IObjectsContainersManager containers, ITheoremVerifier[] verifiers)
+        private readonly ITheoremsContainer _container;
+
+        public TheoremsVerifier(IObjectsContainersManager containers, ITheoremVerifier[] verifiers, ITheoremsContainer container)
         {
             _containers = containers;
             _verifiers = verifiers;
+            _container = container;
         }
 
         public IEnumerable<Theorem> FindTheorems(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
@@ -28,7 +31,12 @@ namespace GeoGen.Analyzer.Theorems
 
                 foreach (var verifierOutput in output)
                 {
-                    if (_containers.All(container => verifierOutput.VerifierFunction(container)))
+                    if (!_containers.All(container => verifierOutput.VerifierFunction(container)))
+                        continue;
+
+                    var theorem = CreateTheorem(verifierOutput);
+
+                    if (!_container.Contains(theorem))
                     {
                         yield return CreateTheorem(verifierOutput);
                     }

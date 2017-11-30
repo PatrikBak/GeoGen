@@ -25,7 +25,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
         private static ConcurrencyVerifier Verifier(params Dictionary<ConfigurationObject, IAnalyticalObject>[] objects)
         {
             var helper = new AnalyticalHelper();
-            var provider = new SubsetsProvider<GeometricalObject>();
+            var provider = new SubsetsProvider();
 
             var containers = objects
                     .Select
@@ -73,7 +73,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
         public void Test_Contextual_Container_Cant_Be_Null()
         {
             var helper = SimpleMock<IAnalyticalHelper>();
-            var provider = SimpleMock<ISubsetsProvider<GeometricalObject>>();
+            var provider = SimpleMock<ISubsetsProvider>();
 
             Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(null, helper, provider));
         }
@@ -82,7 +82,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
         public void Test_Analytical_Helper_Cant_Be_Null()
         {
             var container = SimpleMock<IContextualContainer>();
-            var provider = SimpleMock<ISubsetsProvider<GeometricalObject>>();
+            var provider = SimpleMock<ISubsetsProvider>();
 
             Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(container, null, provider));
         }

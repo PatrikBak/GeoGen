@@ -2,8 +2,8 @@
 
 namespace GeoGen.Core.Utilities.SubsetsProviding
 {
-    public interface ISubsetsProvider<T>
+    public interface ISubsetsProvider
     {
-        IEnumerable<IEnumerable<T>> GetSubsets(IReadOnlyList<T> list, int numberOfElements);
+        IEnumerable<IEnumerable<T>> GetSubsets<T>(IReadOnlyList<T> list, int numberOfElements);
     }
 }
