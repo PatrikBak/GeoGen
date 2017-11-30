@@ -13,9 +13,9 @@ using GeoGen.Core.Utilities.SubsetsProviding;
 
 namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {
-    internal sealed class ConcurrencyVerifier : TheoremVerifierBase
+    internal sealed class ConcurrencyVerifier : ITheoremVerifier
     {
-        public override TheoremType TheoremType { get; } = TheoremType.ConcurrentLines;
+        public TheoremType TheoremType { get; } = TheoremType.ConcurrentLines;
 
         private readonly IContextualContainer _contextualContainer;
 
@@ -25,20 +25,24 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
         public ConcurrencyVerifier
         (
-            ITheoremObjectConstructor theoremObjectConstructor,
             IContextualContainer contextualContainer,
             IAnalyticalHelper analyticalHelper,
             ISubsetsProvider<GeometricalObject> subsetsProvider
         )
-            : base(theoremObjectConstructor)
         {
-            _contextualContainer = contextualContainer;
-            _analyticalHelper = analyticalHelper;
-            _subsetsProvider = subsetsProvider;
+            _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
+            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
+            _subsetsProvider = subsetsProvider ?? throw new ArgumentNullException(nameof(subsetsProvider));
         }
 
-        public override IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
+        public IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
         {
+            if (oldObjects == null)
+                throw new ArgumentNullException(nameof(oldObjects));
+
+            if (newObjects == null)
+                throw new ArgumentNullException(nameof(newObjects));
+
             var allObjectsMap = oldObjects.Merge(newObjects);
 
             var newLines = _contextualContainer.GetNewObjects<CircleObject>(oldObjects, newObjects);
@@ -49,7 +53,7 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
             var oldCircles = _contextualContainer.GetObjects<CircleObject>(oldObjects);
             var oldLinesAndCircles = oldLines.Concat(oldCircles.Cast<GeometricalObject>()).ToList();
 
-            var maxSize = Math.Max(newLinesAndCircles.Count, 3);
+            var maxSize = Math.Min(newLinesAndCircles.Count, 3);
 
             for (var size = 1; size <= maxSize; size++)
             {
@@ -61,11 +65,11 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
                     foreach (var subsetOfOldObjects in _subsetsProvider.GetSubsets(oldLinesAndCircles, neededCount))
                     {
-                        var allObjects = subsetOfOldObjects.Concat(newObjectsList).ToList();
+                        var involdedObjects = subsetOfOldObjects.Concat(newObjectsList).ToList();
 
                         bool Verify(IObjectsContainer container)
                         {
-                            var analyticalObjects = allObjects
+                            var analyticalObjects = involdedObjects
                                     .Select(obj => _contextualContainer.GetAnalyticalObject(obj, container))
                                     .ToSet();
 
@@ -76,14 +80,16 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
                             var newIntersections = _analyticalHelper
                                     .Intersect(analyticalObjects)
-                                    .Where(allPointsAnalytical.Contains);
+                                    .Where(p => !allPointsAnalytical.Contains(p));
 
-                            return newIntersections.Empty();
+                            return newIntersections.Any();
                         }
 
                         yield return new VerifierOutput
                         {
-                            Theorem = () => CreateTheorem(allObjectsMap, allObjects),
+                            TheoremType = TheoremType,
+                            AllObjects = allObjectsMap,
+                            InvoldedObjects = involdedObjects,
                             VerifierFunction = Verify
                         };
                     }

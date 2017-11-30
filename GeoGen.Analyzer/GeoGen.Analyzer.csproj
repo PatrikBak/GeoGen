@@ -51,8 +51,8 @@
     <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
     <Compile Include="Objects\IObjectsContainersManager.cs" />
     <Compile Include="Objects\ObjectsContainersManager.cs" />
+    <Compile Include="Theorems\SimpleTheoremContainer.cs" />
     <Compile Include="Theorems\TheoremsVerifier.cs" />
-    <Compile Include="Theorems\ITheoremObjectConstructor.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />
     <Compile Include="Constructing\IConstructorsResolver.cs" />
     <Compile Include="Objects\IObjectsContainersFactory.cs" />
@@ -68,8 +68,6 @@
     <Compile Include="Objects\RegistrationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Theorems\ITheoremVerifier.cs" />
-    <Compile Include="Theorems\TheoremObjectConstructor.cs" />
-    <Compile Include="Theorems\TheoremVerifierBase.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\IContextualContainer.cs" />
     <Compile Include="Theorems\VerifierOutput.cs" />

@@ -109,7 +109,7 @@ namespace GeoGen.Core.Utilities
 
         public ConfigurationObjectsMap Merge(ConfigurationObjectsMap newObjects)
         {
-            throw new NotImplementedException();
+            return new ConfigurationObjectsMap(AllObjects().Concat(newObjects.AllObjects()));
         }
 
         public IEnumerable<ConfigurationObject> AllObjects()
