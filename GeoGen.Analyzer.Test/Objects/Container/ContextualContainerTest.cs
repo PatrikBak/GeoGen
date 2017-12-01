@@ -618,6 +618,12 @@ namespace GeoGen.Analyzer.Test.Objects.Container
 
             Assert.AreEqual(9, circles.Count);
             Assert.IsTrue(circles.All(c => c.Points.Any(p => p.ConfigurationObject == newObjects[0])));
+
+            var linesWithoutPhysical = container.GetNewObjects<LineObject>(oldMap, newMap, false).ToList();
+            var circlesWithoutPhysical = container.GetNewObjects<CircleObject>(oldMap, newMap, false).ToList();
+
+            Assert.IsTrue(lines.SequenceEqual(linesWithoutPhysical));
+            Assert.IsTrue(circles.SequenceEqual(circlesWithoutPhysical));
         }
 
         [Test]
@@ -700,6 +706,12 @@ namespace GeoGen.Analyzer.Test.Objects.Container
             Assert.AreEqual(2, points.Count);
             Assert.AreEqual(7, lines.Count);
             Assert.AreEqual(23, circles.Count);
+
+            var linesWithoutPhysical = container.GetNewObjects<LineObject>(oldObjects, newObjects, false).ToList();
+            var circlesWithoutPhysical = container.GetNewObjects<CircleObject>(oldObjects, newObjects, false).ToList();
+
+            Assert.AreEqual(7, linesWithoutPhysical.Count);
+            Assert.AreEqual(22, circlesWithoutPhysical.Count);
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;

@@ -68,6 +68,7 @@
     <Compile Include="Objects\RegistrationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Theorems\ITheoremVerifier.cs" />
+    <Compile Include="Theorems\TheoremVerifiers\CollinearityVerifier.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\IContextualContainer.cs" />
     <Compile Include="Theorems\VerifierOutput.cs" />

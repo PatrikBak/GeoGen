@@ -87,7 +87,6 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
                         yield return new VerifierOutput
                         {
-                            TheoremType = TheoremType,
                             AllObjects = allObjectsMap,
                             InvoldedObjects = involdedObjects,
                             VerifierFunction = Verify

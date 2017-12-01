@@ -55,7 +55,7 @@ namespace GeoGen.Core.Utilities.VariationsProviding
             for (var i = index; i < listCopy.Length; i++)
             {
                 result[index] = listCopy[i];
-                Swap(ref listCopy[i], ref listCopy[index]);
+                Utils.Swap(ref listCopy[i], ref listCopy[index]);
 
                 if (index == numberOfElements - 1)
                 {
@@ -71,19 +71,6 @@ namespace GeoGen.Core.Utilities.VariationsProviding
 
                 Utils.Swap(ref listCopy[i], ref listCopy[index]);
             }
-        }
-
-        /// <summary>
-        /// Swaps the value of two elements.
-        /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="v1">The reference of the first element.</param>
-        /// <param name="v2">The reference of the second element.</param>
-        private static void Swap<T>(ref T v1, ref T v2)
-        {
-            var old = v1;
-            v1 = v2;
-            v2 = old;
         }
 
         #endregion

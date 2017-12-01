@@ -27,6 +27,8 @@ namespace GeoGen.Analyzer.Theorems
         {
             foreach (var theoremVerifier in _verifiers)
             {
+                var theoremType = theoremVerifier.TheoremType;
+
                 var output = theoremVerifier.GetOutput(oldObjects, newObjects);
 
                 foreach (var verifierOutput in output)
@@ -34,23 +36,23 @@ namespace GeoGen.Analyzer.Theorems
                     if (!_containers.All(container => verifierOutput.VerifierFunction(container)))
                         continue;
 
-                    var theorem = CreateTheorem(verifierOutput);
+                    var theorem = CreateTheorem(verifierOutput, theoremType);
 
                     if (!_container.Contains(theorem))
                     {
-                        yield return CreateTheorem(verifierOutput);
+                        yield return theorem;
                     }
                 }
             }
         }
 
-        private static Theorem CreateTheorem(VerifierOutput verifierOutput)
+        private static Theorem CreateTheorem(VerifierOutput verifierOutput, TheoremType type)
         {
             var objects = verifierOutput.InvoldedObjects
                     .Select(obj => Construct(verifierOutput.AllObjects, obj))
                     .ToList();
 
-            return new Theorem(verifierOutput.TheoremType, objects);
+            return new Theorem(type, objects);
         }
 
         private static TheoremObject Construct(ConfigurationObjectsMap objects, GeometricalObject geometricalObject)

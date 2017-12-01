@@ -10,7 +10,6 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments;
-using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using Ninject.Modules;

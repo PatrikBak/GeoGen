@@ -30,7 +30,8 @@ namespace GeoGen.Analyzer.Objects
             IConstructorsResolver resolver,
             ITheoremsContainer theoremsContainer,
             IContextualContainer contextualContainer,
-            IObjectsContainersManager containers)
+            IObjectsContainersManager containers
+        )
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _theoremsContainer = theoremsContainer ?? throw new ArgumentNullException(nameof(theoremsContainer));
@@ -108,7 +109,6 @@ namespace GeoGen.Analyzer.Objects
             // We further need to register the objects to the contextual container
             foreach (var configurationObject in constructedObjects)
             {
-                // And add the object to the contextual container
                 _contextualContainer.Add(configurationObject);
             }
 
