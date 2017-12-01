@@ -19,7 +19,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 
         IEnumerable<T> GetObjects<T>(ConfigurationObjectsMap objects) where T : GeometricalObject;
 
-        IEnumerable<T> GetNewObjects<T>(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects, bool includePhysicalObjects = true) where T : GeometricalObject;
+        IEnumerable<T> GetNewObjects<T>(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects) where T : GeometricalObject;
 
         IAnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer);
     }

@@ -176,7 +176,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             }
         }
 
-        public IEnumerable<T> GetNewObjects<T>(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects, bool includePhysicalObjects = true)
+        public IEnumerable<T> GetNewObjects<T>(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
             where T : GeometricalObject
         {
             if (oldObjects == null)
@@ -227,10 +227,6 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
                     .Select(GetGeometricalObject)
                     .ToSet();
 
-            // Then we need the set of physical objects (i.e. literally present)
-            // of the type, of it's requested
-            var newObjectsOfType = newObjects[type].Select(GetGeometricalObject);
-
             // Then we need all points from old objects
             var oldPoints = oldObjects[ConfigurationObjectType.Point]
                     .Select(GetGeometricalObject)
@@ -254,27 +250,9 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
                     // Take only distinct ones
                     .Distinct()
                     // Take only those that can be constructed from all of our points
-                    .Where(obj => CanBeConstructedFromPoints(obj, neededPoints, allPoints));
-
-
-            // If we should include physical objects
-            if (includePhysicalObjects)
-            {
-                // Include them
-                resultingObjects = resultingObjects.Union(newObjectsOfType);
-            }
-            // Otherwise
-            else
-            {
-                // Enumerate new objects to set
-                var newObjectOfTypeSet = newObjectsOfType.ToSet();
-
-                // Take only those objects that are NOT new
-                resultingObjects = resultingObjects.Where(obj => !newObjectOfTypeSet.Contains(obj));
-            }
-
-            // Continue in query construction
-            resultingObjects = resultingObjects
+                    .Where(obj => CanBeConstructedFromPoints(obj, neededPoints, allPoints))
+                    // Union with new objects
+                    .Union(newObjects[type].Select(GetGeometricalObject))
                     // Take only those that CAN'T be constructed from old points 
                     .Where(obj => !CanBeConstructedFromPoints(obj, neededPoints, oldPoints))
                     // And are not contained in the old physical lines / circles
