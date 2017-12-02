@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Analyzer.Objects;
@@ -11,7 +9,6 @@ using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.SubsetsProviding;
 using Moq;
 using NUnit.Framework;
 
@@ -106,7 +103,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                     {configurationObjects[3], new Point(3, -1)},
                     {configurationObjects[4], new Point(4, 1.5)},
                     {configurationObjects[5], new Point(0, 1.5)},
-                    {configurationObjects[6], new Point(7.0/3, 2.0/3)},
+                    {configurationObjects[6], new Point(7.0/3, 2.0/3)}
                 },
                 new Dictionary<ConfigurationObject, IAnalyticalObject>
                 {

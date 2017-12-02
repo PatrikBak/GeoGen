@@ -10,6 +10,7 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments;
+using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using Ninject.Modules;
@@ -30,11 +31,11 @@ namespace GeoGen.Generator.NInject
             Bind<IGeneratorFactory>().To<GeneratorFactory>().InSingletonScope();
             Bind<IObjectsConstructor>().To<ObjectsConstructor>().InSingletonScope();
             Bind<IConstructionsContainer>().To<ConstructionsContainer>().InSingletonScope();
-            Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
             Bind<ICombinator>().To<Combinator>().InSingletonScope();
             Bind<IConstructionSignatureMatcher>().To<ConstructionSignatureMatcher>().InSingletonScope();
             Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
             Bind<IArgumentsListContainerFactory>().To<ArgumentsListContainerFactory>().InSingletonScope();
+            Bind<IArgumentsListToStringProvider>().To<ArgumentsListToStringProvider>().InSingletonScope();
             Bind<IVariationsProvider>().To<VariationsProvider>().InSingletonScope();
             Bind<IConfigurationsContainer>().To<ConfigurationsContainer>().InSingletonScope();
             Bind<IConfigurationConstructor>().To<ConfigurationConstructor>().InSingletonScope();
@@ -44,6 +45,7 @@ namespace GeoGen.Generator.NInject
             Bind<IDictionaryObjectIdResolversContainer>().To<DictionaryObjectIdResolversContainer>().InSingletonScope();
             Bind<IIdsFixerFactory>().To<IdsFixerFactory>().InSingletonScope();
             Bind<IConfigurationObjectsContainer>().To<ConfigurationObjectsContainer>().InSingletonScope();
+            Bind<IConfigurationsHandler>().To<ConfigurationsHandler>().InSingletonScope();
             Bind<DefaultObjectIdResolver>().ToSelf().InSingletonScope();
             Bind<DefaultObjectToStringProvider>().ToSelf().InSingletonScope();
             Bind<DefaultFullObjectToStringProvider>().ToSelf().InSingletonScope();

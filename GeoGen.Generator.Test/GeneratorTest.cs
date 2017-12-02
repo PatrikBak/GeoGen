@@ -46,21 +46,30 @@ namespace GeoGen.Generator.Test
             // adding a new layer
             var containterMock = new Mock<IConfigurationsContainer>();
             containterMock.Setup(c => c.CurrentLayer).Returns(() => configurations);
-            containterMock.Setup(c => c.AddLayer(It.IsAny<List<ConstructorOutput>>()))
-                    .Callback<List<ConstructorOutput>>(c => configurations.SetItems(c.Select(i => i.InitialConfiguration)));
+            containterMock.Setup(c => c.AddLayer(It.IsAny<IEnumerable<ConstructorOutput>>()))
+                    .Returns<IEnumerable<ConstructorOutput>>
+                    (
+                        c =>
+                        {
+                            var result = c.Select(output => output.InitialConfiguration).ToList();
+
+                            configurations.SetItems(result);
+
+                            return result;
+                        }
+                    );
             var configurationContainer = containterMock.Object;
 
             // setup configuration handler mock that converts all generated configurations 
             // except for one into the generator output
             var configurationHandlerMock = new Mock<IConfigurationsHandler>();
             configurationHandlerMock.Setup(h => h.GenerateFinalOutput(It.IsAny<IEnumerable<ConfigurationWrapper>>()))
-                    .Returns(() => configurations.Skip(1).Select(c => new GeneratorOutput()));
+                    .Returns<IEnumerable<ConfigurationWrapper>>(w => w.Skip(1).Select(c => new GeneratorOutput()));
             var configurationHandler = configurationHandlerMock.Object;
 
             // setup configuration constructor that generates new configuration by repeating
             // the provided one by the given number of times
             var configurationConstructorMock = new Mock<IObjectsConstructor>();
-
             configurationConstructorMock.Setup(c => c.GenerateOutput(It.IsAny<ConfigurationWrapper>()))
                     .Returns<ConfigurationWrapper>
                     (
@@ -74,7 +83,6 @@ namespace GeoGen.Generator.Test
                                     }
                                 )
                     );
-
             var congigurationConstructer = configurationConstructorMock.Object;
 
             return new Generator(configurationContainer, congigurationConstructer, configurationHandler, iterations);

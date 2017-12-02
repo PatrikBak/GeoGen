@@ -33,7 +33,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         [Test]
         public void Test_Parameters_Cant_Be_Null()
         {
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
 
             Assert.Throws<ArgumentNullException>(() => Matcher().Match(null, objects));
         }
@@ -41,7 +41,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         [Test]
         public void Test_Parameters_Cant_Be_Empty()
         {
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
             var parameters = new List<ConstructionParameter>();
 
             Assert.Throws<ArgumentException>(() => Matcher().Match(parameters, objects));
@@ -51,7 +51,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Not_Enough_Objects_To_Match()
         {
             var matcher = Matcher();
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
 
             var testParams = new List<ConstructionParameter>
             {
@@ -66,7 +66,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Signature_Of_Ray()
         {
             var matcher = Matcher();
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
 
             var rayParams = new List<ConstructionParameter>
             {
@@ -85,7 +85,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Signature_Of_Midpoint()
         {
             var matcher = Matcher();
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
 
             var midpointParams = new List<ConstructionParameter>
             {
@@ -114,7 +114,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments.SignatureMatching
         public void Test_Signature_Of_Intersection()
         {
             var matcher = Matcher();
-            var objects = Configuration(5, 0, 1).ConfigurationObjectsMap;
+            var objects = Configuration(5, 0, 1).AllObjectsMap;
 
             var midpointParams = new List<ConstructionParameter>
             {

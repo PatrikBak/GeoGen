@@ -24,9 +24,17 @@ namespace GeoGen.Generator.ConstructingConfigurations
         void Initialize(Configuration initialConfiguration);
 
         /// <summary>
-        /// Processes a new layer of a constructor output.
+        /// Processes a new layer of constructors outputs and lazily returns the configurations.
         /// </summary>
-        /// <param name="newLayerOutput">The new layer output.</param>
-        void AddLayer(List<ConstructorOutput> newLayerOutput);
+        /// <param name="output">The new layer output.</param>
+        /// <returns>The configuration wrappers.</returns>
+        IEnumerable<ConfigurationWrapper> AddLayer(IEnumerable<ConstructorOutput> output);
+
+        /// <summary>
+        /// Forbids all configurations that contains a given configuration object.
+        /// Use cases for these are when we have a non-constructible or duplicate objects.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object.</param>
+        void ForbidConfigurationsContaining(ConfigurationObject configurationObject);
     }
 }

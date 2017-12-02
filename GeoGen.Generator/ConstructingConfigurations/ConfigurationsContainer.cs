@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Core.Utilities.StringBasedContainer;
@@ -37,6 +36,11 @@ namespace GeoGen.Generator.ConstructingConfigurations
         /// The default full object to string provider.
         /// </summary>
         private readonly DefaultFullObjectToStringProvider _objectToStringProvider;
+
+        /// <summary>
+        /// The set of ids that are forbidden to be in configurations.
+        /// </summary>
+        private readonly HashSet<int> _forbiddenObjectsId;
 
         #endregion
 
@@ -77,6 +81,7 @@ namespace GeoGen.Generator.ConstructingConfigurations
             _configurationToStringProvider = configurationToStringProvider ?? throw new ArgumentNullException(nameof(configurationToStringProvider));
             _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(configurationObjectsContainer));
             _objectToStringProvider = objectToStringProvider ?? throw new ArgumentNullException(nameof(objectToStringProvider));
+            _forbiddenObjectsId = new HashSet<int>();
         }
 
         #endregion
@@ -109,46 +114,106 @@ namespace GeoGen.Generator.ConstructingConfigurations
         }
 
         /// <summary>
-        /// Processes a new layer of a constructor output.
+        /// Processes a new layer of constructors outputs and returns the configurations.
         /// </summary>
-        /// <param name="newLayerOutput">The new layer output.</param>
-        public void AddLayer(List<ConstructorOutput> newLayerOutput)
+        /// <param name="output">The new layer output.</param>
+        /// <returns>The configuration wrappers.</returns>
+        public IEnumerable<ConfigurationWrapper> AddLayer(IEnumerable<ConstructorOutput> output)
         {
-            if (newLayerOutput == null)
-                throw new ArgumentNullException(nameof(newLayerOutput));
+            if (output == null)
+                throw new ArgumentNullException(nameof(output));
 
-            // Clear the current layer
-            CurrentLayer.Clear();
+            // Initialize the list of items that's gonna be the new layer items
+            var items = new List<ConfigurationWrapper>();
 
-            foreach (var output in newLayerOutput)
+            foreach (var currentOutput in output)
             {
-                // Add objects to the container and get their identified versions
-                var newObjects = output.ConstructedObjects
-                        .Select(o => _configurationObjectsContainer.Add(o))
-                        .ToList();
+                // First pull initial constructed objects so we can compare
+                // them with new ones
+                var initialObjects = currentOutput.InitialConfiguration.Configuration.ConstructedObjects;
 
-                // Pull initial constructed objects
-                var initialObjects = output.InitialConfiguration.Configuration.ConstructedObjects;
+                // Initialize a boolean value indicating if we should skip this 
+                // configuration
+                var skipConfiguration = false;
 
-                // Check if the configuration doesn't contain any of the new objects
-                // If yes, we then the configuration shouldn't be taken into account
-                if (initialObjects.Any(s => newObjects.Contains(s)))
+                // Initialize the new constructed objects list (with objects with set id)
+                var newObjects = new List<ConstructedConfigurationObject>();
+
+                // Iterate over constructed objects
+                foreach (var constructedObject in currentOutput.ConstructedObjects)
+                {
+                    // Get the result from the container
+                    var containerResult = _configurationObjectsContainer.Add(constructedObject);
+
+                    // If the object is currently in the configuration
+                    if (initialObjects.Contains(containerResult))
+                    {
+                        // Set the flag indicating to skip the configuration
+                        skipConfiguration = true;
+
+                        // Break the cycle
+                        break;
+                    }
+
+                    // Pull id
+                    var id = containerResult.Id ?? throw new GeneratorException("Id must be set");
+
+                    // If the object with this id is forbidden
+                    if (_forbiddenObjectsId.Contains(id))
+                    {
+                        // Set the flag indicating to skip the configuration
+                        skipConfiguration = true;
+
+                        // Break the cycle
+                        break;
+                    }
+
+                    // Otherwise we add the result to the new objects
+                    newObjects.Add(containerResult);
+                }
+
+                // If we should skip the configuration, skip it
+                if (skipConfiguration)
                     continue;
 
                 // Otherwise re-assign the output
-                output.ConstructedObjects = newObjects;
+                currentOutput.ConstructedObjects = newObjects;
 
                 // Let the constructor create a new wrapper
-                var configuration = _configurationConstructor.ConstructWrapper(output);
+                var configuration = _configurationConstructor.ConstructWrapper(currentOutput);
 
-                // Add the representant to the container
-                var result = Add(configuration.Configuration);
+                // Add the configuration to the container.
+                if (!Add(configuration.Configuration))
+                {
+                    // If the content hasn't changed, continue
+                    continue;
+                }
 
-                // If the container changed its content, then we can add the configuration
-                // to the new layer
-                if (result)
-                    CurrentLayer.Add(configuration);
+                // Otherwise we have a new configuration. We add it to the items list
+                items.Add(configuration);
+
+                // And yield it
+                yield return configuration;
             }
+
+            // Update the current layer
+            CurrentLayer.SetItems(items);
+        }
+
+        /// <summary>
+        /// Forbids all configurations that contains a given configuration object.
+        /// Use cases for these are when we have a non-constructible or duplicate objects.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object.</param>
+        public void ForbidConfigurationsContaining(ConfigurationObject configurationObject)
+        {
+            if (configurationObject == null)
+                throw new ArgumentNullException(nameof(configurationObject));
+
+            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
+
+            if (!_forbiddenObjectsId.Add(id))
+                throw new GeneratorException("The object has been already forbidden");
         }
 
         #endregion

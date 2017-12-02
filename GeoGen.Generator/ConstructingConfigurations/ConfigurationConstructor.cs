@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
@@ -74,11 +75,10 @@ namespace GeoGen.Generator.ConstructingConfigurations
                     .Concat(newObjects)
                     .ToList();
 
-
             // Create the new configuration
             var newConfiguration = new Configuration(currentConfiguration.LooseObjects, allConstructedObjects);
 
-            // Let the resolver find it's symmetry-sealed class representant
+            // Let the resolver find it's symmetry class representant
             var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(newConfiguration);
 
             // Get the ids fixer for this resolver from the factory
@@ -94,7 +94,10 @@ namespace GeoGen.Generator.ConstructingConfigurations
             return new ConfigurationWrapper
             {
                 Configuration = newConfiguration,
-                ConfigurationObjectsMap = typeToObjectsMap
+                AllObjectsMap = typeToObjectsMap,
+                LastAddedObjects = newObjects,
+                OriginalObjects = wrapper.AllObjectsMap.AllObjects().ToList(),
+                Excluded = false
             };
         }
 
@@ -113,7 +116,10 @@ namespace GeoGen.Generator.ConstructingConfigurations
             var configurationWrapper = new ConfigurationWrapper
             {
                 Configuration = initialConfiguration,
-                ConfigurationObjectsMap = objectsMap
+                AllObjectsMap = objectsMap,
+                LastAddedObjects = new List<ConstructedConfigurationObject>(),
+                OriginalObjects = objectsMap.AllObjects().ToList(),
+                Excluded = false
             };
 
             // Return it

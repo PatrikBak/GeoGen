@@ -14,6 +14,7 @@ using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+using static GeoGen.Generator.Test.TestHelpers.Configurations;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations
@@ -148,8 +149,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             };
 
             Assert.AreEqual(1, container.CurrentLayer.Count);
-            container.AddLayer(new List<ConstructorOutput> {output});
-            Assert.AreEqual(0, container.CurrentLayer.Count);
+            Assert.AreEqual(0, container.AddLayer(new List<ConstructorOutput> {output}).Count());
         }
 
         [Test]
@@ -211,7 +211,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
         [Test]
         public void Test_Passed_New_Layer_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Container().AddLayer(null));
+            Assert.Throws<ArgumentNullException>(() => Container().AddLayer(null).ToList());
         }
 
         [Test]
@@ -283,8 +283,83 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                 }
             }
 
-            container.AddLayer(layer);
+            Assert.AreEqual(21, container.AddLayer(layer).Count());
             Assert.AreEqual(21, container.CurrentLayer.Count);
+        }
+
+        [Test]
+        public void Test_Forbidden_Configuration_Object_Is_Not_Null()
+        {
+            Assert.Throws<ArgumentNullException>(() => Container().ForbidConfigurationsContaining(null));
+        }
+
+        [Test]
+        public void Test_Forbidding_Configuration_Objects_Does_Work()
+        {
+            var objects = Objects(3, ConfigurationObjectType.Point);
+
+            var configuration = AsConfiguration(objects);
+
+            var wrapper = new ConfigurationWrapper
+            {
+                Configuration = configuration,
+                AllObjectsMap = new ConfigurationObjectsMap(objects)
+            };
+
+            var container = Container();
+
+            container.Initialize(configuration);
+
+            List<ConstructionArgument> Args(ConfigurationObject o1, ConfigurationObject o2)
+            {
+                var result = new List<ConstructionArgument>
+                {
+                    new SetConstructionArgument
+                    (
+                        new HashSet<ConstructionArgument>
+                        {
+                            new ObjectConstructionArgument(o1),
+                            new ObjectConstructionArgument(o2)
+                        }
+                    )
+                };
+
+                return result;
+            }
+
+            var point = ConstructedObject(42, 1, Args(objects[0], objects[1]));
+
+            var layer = container.AddLayer
+            (
+                new List<ConstructorOutput>
+                {
+                    new ConstructorOutput
+                    {
+                        ConstructedObjects = new List<ConstructedConfigurationObject> {point},
+                        InitialConfiguration = wrapper
+                    }
+                }
+            ).ToList();
+
+            Assert.AreEqual(1, layer.Count);
+
+            container.ForbidConfigurationsContaining(point);
+
+            var samePoint = ConstructedObject(42, 1, Args(objects[0], objects[1]));
+
+            layer = container.AddLayer
+            (
+                new List<ConstructorOutput>
+                {
+                    new ConstructorOutput
+                    {
+                        ConstructedObjects = new List<ConstructedConfigurationObject> {samePoint},
+                        InitialConfiguration = wrapper
+                    }
+                }
+            ).ToList();
+
+            Assert.AreEqual(0, layer.Count);
         }
     }
 }

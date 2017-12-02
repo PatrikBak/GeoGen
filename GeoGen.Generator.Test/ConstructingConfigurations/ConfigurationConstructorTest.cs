@@ -29,7 +29,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
         private static ArgumentsListContainerFactory _argsContainerFactory;
 
-        private static ConfigurationConstructor Constructor(List<LooseConfigurationObject> objects)
+        private static ConfigurationConstructor Constructor(IReadOnlyList<LooseConfigurationObject> objects)
         {
             var resolver = new DefaultObjectIdResolver();
             var provider = new DefaultObjectToStringProvider(resolver);
@@ -117,7 +117,8 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ConfigurationObjectsMap = objectsMap
+                                AllObjectsMap = objectsMap,
+                                OriginalObjects = looseObjects.Cast<ConfigurationObject>().ToList()
                             };
 
                             return new ConstructorOutput
@@ -131,12 +132,23 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             foreach (var testCase in testCases)
             {
                 var result = handler.ConstructWrapper(testCase);
+
+                Assert.IsFalse(result.Excluded);
+                Assert.NotNull(result.Configuration);
+
                 var asString = ConfigurationAsString(result.Configuration);
                 Assert.AreEqual("42({1;2})", asString);
 
-                var dictionary2 = result.ConfigurationObjectsMap;
-                Assert.AreEqual(1, dictionary2.Count);
-                Assert.AreEqual(4, dictionary2[ConfigurationObjectType.Point].Count);
+                var allObjects = result.AllObjectsMap;
+                Assert.AreEqual(1, allObjects.Count);
+                Assert.AreEqual(4, allObjects[ConfigurationObjectType.Point].Count);
+
+                var originalObjects = result.OriginalObjects;
+                Assert.AreEqual(3, originalObjects.Count);
+                Assert.IsTrue(originalObjects.All(o => o is LooseConfigurationObject));
+
+                var constructedObjects = result.LastAddedObjects;
+                Assert.AreEqual(1, constructedObjects.Count);
             }
         }
 
@@ -197,7 +209,8 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
                             var wrapper = new ConfigurationWrapper
                             {
                                 Configuration = configuration,
-                                ConfigurationObjectsMap = objectsMap
+                                AllObjectsMap = objectsMap,
+                                OriginalObjects = looseObjects.Cast<ConfigurationObject>().ToList()
                             };
 
                             return new ConstructorOutput
@@ -211,12 +224,23 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             foreach (var testCase in testCases)
             {
                 var result = handler.ConstructWrapper(testCase);
+
+                Assert.IsFalse(result.Excluded);
+                Assert.NotNull(result.Configuration);
+
                 var asString = ConfigurationAsString(result.Configuration);
                 Assert.AreEqual("42({1;2})|42({1;3})", asString);
 
-                var dictionary2 = result.ConfigurationObjectsMap;
-                Assert.AreEqual(1, dictionary2.Count);
-                Assert.AreEqual(5, dictionary2[ConfigurationObjectType.Point].Count);
+                var allObjects = result.AllObjectsMap;
+                Assert.AreEqual(1, allObjects.Count);
+                Assert.AreEqual(5, allObjects[ConfigurationObjectType.Point].Count);
+
+                var originalObjects = result.OriginalObjects;
+                Assert.AreEqual(3, originalObjects.Count);
+                Assert.IsTrue(originalObjects.All(o => o is LooseConfigurationObject));
+
+                var constructedObjects = result.LastAddedObjects;
+                Assert.AreEqual(2, constructedObjects.Count);
             }
         }
 
@@ -269,7 +293,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var wrapper = new ConfigurationWrapper
             {
                 Configuration = configuration,
-                ConfigurationObjectsMap = objectsMap
+                AllObjectsMap = objectsMap
             };
 
             var output = new ConstructorOutput
@@ -283,7 +307,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.AreEqual("42(1,2,3)", asString);
 
-            var dictionary2 = result.ConfigurationObjectsMap;
+            var dictionary2 = result.AllObjectsMap;
             Assert.AreEqual(3, dictionary2.Count);
             Assert.AreEqual(4, dictionary2[ConfigurationObjectType.Point].Count);
             Assert.AreEqual(2, dictionary2[ConfigurationObjectType.Line].Count);
@@ -367,7 +391,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var wrapper = new ConfigurationWrapper
             {
                 Configuration = configuration,
-                ConfigurationObjectsMap = objectsMap
+                AllObjectsMap = objectsMap
             };
 
             var output = new ConstructorOutput
@@ -422,12 +446,19 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
 
             Assert.AreSame(wrapper.Configuration, configuration);
 
-            var map = wrapper.ConfigurationObjectsMap;
+            var map = wrapper.AllObjectsMap;
             Assert.AreEqual(1, map.Count);
             var allObjects = objects.Cast<ConfigurationObject>().Concat(constructed);
 
             Assert.IsTrue(allObjects.All(o => map[ConfigurationObjectType.Point].Contains(o)));
             Assert.AreEqual(5, map[ConfigurationObjectType.Point].Count);
+
+            Assert.IsFalse(wrapper.Excluded);
+
+            var originalObjects = wrapper.OriginalObjects;
+
+            Assert.AreEqual(5, originalObjects.Count);
+            Assert.IsEmpty(wrapper.LastAddedObjects);
         }
     }
 }

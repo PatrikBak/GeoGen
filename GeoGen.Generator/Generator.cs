@@ -76,46 +76,26 @@ namespace GeoGen.Generator
         /// <returns>The generator output enumerable.</returns>
         public IEnumerable<GeneratorOutput> Generate()
         {
-            // Iterate for the given number of times
-            for (var index = 0; index < _maximalNumberOfIterations; index++)
-            {
-                // Iterate through the output of the current iteration
-                foreach (var generatorOutput in GenerateOutputInCurrentIteration())
+            return Enumerable.Range(0, _maximalNumberOfIterations).SelectMany
+            (
+                iterationIndex =>
                 {
-                    yield return generatorOutput;
+                    // Create the output for new layer
+                    var outputForNewLayer = _configurationsContainer
+                            // Get the current layer
+                            .CurrentLayer
+                            // Take only not excluded configurations
+                            .Where(configuration => !configuration.Excluded)
+                            // Construct configurations and merge them
+                            .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
+
+                    // Create the configurations on new layer
+                    var newLayersConfigurations = _configurationsContainer.AddLayer(outputForNewLayer);
+
+                    // Let the handle process the configurations to obtain the output
+                    return _configurationsHandler.GenerateFinalOutput(newLayersConfigurations);
                 }
-            }
-        }
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Generates the output for the current iteration.
-        /// </summary>
-        /// <returns>The output.</returns>
-        private IEnumerable<GeneratorOutput> GenerateOutputInCurrentIteration()
-        {
-            var newLayerConfigurations = _configurationsContainer
-                    // Get the current layer
-                    .CurrentLayer
-                    // Create configurations and merge them
-                    .SelectMany(d => _objectsConstructor.GenerateOutput(d))
-                    // Enumerate them to list
-                    .ToList();
-
-            // Make the container aware of the new layer
-            _configurationsContainer.AddLayer(newLayerConfigurations);
-
-            // Pull the current (new) layer
-            var currentLayer = _configurationsContainer.CurrentLayer;
-
-            // Let the handler handle the container and lazily return the output
-            foreach (var generatorOutput in _configurationsHandler.GenerateFinalOutput(currentLayer))
-            {
-                yield return generatorOutput;
-            }
+            );
         }
 
         #endregion

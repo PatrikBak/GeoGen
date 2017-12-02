@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
-using NUnit.Framework;
-using static GeoGen.Analyzer.Test.TestHelpers.Utilities;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
+using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using Moq;
+using NUnit.Framework;
+using static GeoGen.Analyzer.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Analyzer.Test.Objects.Container
 {

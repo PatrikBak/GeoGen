@@ -179,7 +179,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3},
                 new LooseConfigurationObject(ConfigurationObjectType.Line) {Id = 4},
                 new LooseConfigurationObject(ConfigurationObjectType.Line) {Id = 5},
-                new LooseConfigurationObject(ConfigurationObjectType.Circle) {Id = 6},
+                new LooseConfigurationObject(ConfigurationObjectType.Circle) {Id = 6}
             };
 
             var dictionaries = new[]
