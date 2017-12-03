@@ -33,7 +33,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling
                             return new GradualAnalyzerOutput
                             {
                                 Theorems = Enumerable.Repeat((Theorem) null, analyzerCalls).ToList(),
-                                UnambiguouslyConstructible = analyzerCalls % 3 == 0
+                                UnambiguouslyConstructible = analyzerCalls % 3 != 0
                             };
                         }
                     );

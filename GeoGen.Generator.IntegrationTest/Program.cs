@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using GeoGen.Analyzer;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.PredefinedConstructions;
+using GeoGen.Core.NInject;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.NInject;
 using Ninject;
@@ -15,7 +17,8 @@ namespace GeoGen.Generator.IntegrationTest
     {
         private static void Main()
         {
-            var kernel = new StandardKernel(new ConstructionTestModule());
+            var kernel = new StandardKernel(new GeneratorModule(), new CoreModule());
+            kernel.Bind<IGradualAnalyzer>().To<DummyGradualAnalyzer>().InSingletonScope();
             var factory = kernel.Get<IGeneratorFactory>();
 
             var points = Enumerable.Range(0, 3)

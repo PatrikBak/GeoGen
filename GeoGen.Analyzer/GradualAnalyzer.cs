@@ -55,10 +55,7 @@ namespace GeoGen.Analyzer
 
             if (unambiguouslyConstructible)
             {
-                var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
-                var newObjectsMap = new ConfigurationObjectsMap(newObjects);
-
-                theorems.AddRange(_verifier.FindTheorems(oldObjectsMap, newObjectsMap));
+                theorems.AddRange(_verifier.FindTheorems(oldObjects, newObjects));
             }
 
             foreach (var pair in duplicateObjects)
@@ -66,7 +63,7 @@ namespace GeoGen.Analyzer
                 var newObject = pair.Key;
                 var duplicate = pair.Value;
 
-                var involvedObjects = new List<TheoremObject>
+                var involvedObjects = new HashSet<TheoremObject>
                 {
                     new TheoremObject(newObject),
                     new TheoremObject(duplicate)

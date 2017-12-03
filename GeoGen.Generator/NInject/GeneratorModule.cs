@@ -1,6 +1,4 @@
-﻿using GeoGen.Core.Utilities.Combinations;
-using GeoGen.Core.Utilities.VariationsProviding;
-using GeoGen.Generator.ConfigurationsHandling;
+﻿using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
@@ -18,25 +16,22 @@ using Ninject.Modules;
 namespace GeoGen.Generator.NInject
 {
     /// <summary>
-    /// Represents a base NInject module for generator. It injects everything except
-    /// for <see cref="IConfigurationsHandler"/>.
+    /// A NInject module that binds things from the Core module.
     /// </summary>
-    public abstract class GeneratorModuleBase : NinjectModule
+    public class GeneratorModule : NinjectModule
     {
         /// <summary>
-        /// Executes all bindings.
+        /// Loads all bindings.
         /// </summary>
         public override void Load()
         {
             Bind<IGeneratorFactory>().To<GeneratorFactory>().InSingletonScope();
             Bind<IObjectsConstructor>().To<ObjectsConstructor>().InSingletonScope();
             Bind<IConstructionsContainer>().To<ConstructionsContainer>().InSingletonScope();
-            Bind<ICombinator>().To<Combinator>().InSingletonScope();
             Bind<IConstructionSignatureMatcher>().To<ConstructionSignatureMatcher>().InSingletonScope();
             Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
             Bind<IArgumentsListContainerFactory>().To<ArgumentsListContainerFactory>().InSingletonScope();
             Bind<IArgumentsListToStringProvider>().To<ArgumentsListToStringProvider>().InSingletonScope();
-            Bind<IVariationsProvider>().To<VariationsProvider>().InSingletonScope();
             Bind<IConfigurationsContainer>().To<ConfigurationsContainer>().InSingletonScope();
             Bind<IConfigurationConstructor>().To<ConfigurationConstructor>().InSingletonScope();
             Bind<ILeastConfigurationFinder>().To<LeastConfigurationFinder>().InSingletonScope();

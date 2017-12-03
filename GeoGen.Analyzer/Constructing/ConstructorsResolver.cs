@@ -75,6 +75,8 @@ namespace GeoGen.Analyzer.Constructing
             }
 
             throw new NotImplementedException();
+
+            // TODO: Implement custom constructions constructor
         }
 
         #endregion

@@ -5,6 +5,7 @@ using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
+using GeoGen.Analyzer.Theorems;
 using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
@@ -20,6 +21,8 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
     public class ConcurrencyVerifierTest
     {
         private static IObjectsContainersManager _containers;
+
+        private static IContextualContainer _contextualContainer;
 
         private static ConcurrencyVerifier Verifier(params Dictionary<ConfigurationObject, IAnalyticalObject>[] objects)
         {
@@ -59,13 +62,15 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 }
             }
 
-            return new ConcurrencyVerifier(container, helper, provider);
+            _contextualContainer = container;
+
+            return new ConcurrencyVerifier(helper, provider, _contextualContainer);
         }
 
         [Test]
         public void Test_Theorem_Type_Is_Correct()
         {
-            Assert.AreEqual(TheoremType.ConcurrentLines, Verifier().TheoremType);
+            Assert.AreEqual(TheoremType.ConcurrentObjects, Verifier().TheoremType);
         }
 
         [Test]
@@ -74,7 +79,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
             var helper = SimpleMock<IAnalyticalHelper>();
             var provider = SimpleMock<ISubsetsProvider>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(null, helper, provider));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(helper, provider, null));
         }
 
         [Test]
@@ -83,7 +88,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
             var container = SimpleMock<IContextualContainer>();
             var provider = SimpleMock<ISubsetsProvider>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(container, null, provider));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(null, provider, container));
         }
 
         [Test]
@@ -92,19 +97,13 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
             var container = SimpleMock<IContextualContainer>();
             var helper = SimpleMock<IAnalyticalHelper>();
 
-            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(container, helper, null));
+            Assert.Throws<ArgumentNullException>(() => new ConcurrencyVerifier(helper, null, container));
         }
 
         [Test]
-        public void Test_Old_Objects_Cant_Be_Null()
+        public void Test_Verifier_Input_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(null, new ConfigurationObjectsMap()).ToList());
-        }
-
-        [Test]
-        public void Test_New_Objects_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(new ConfigurationObjectsMap(), null).ToList());
+            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(null).ToList());
         }
 
         [Test]
@@ -162,7 +161,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
 
             var newMap = new ConfigurationObjectsMap(newObjects);
 
-            var correctOutputs = verifier.GetOutput(oldMap, newMap)
+            var input = new VerifierInput(_contextualContainer, oldMap, newMap);
+
+            var correctOutputs = verifier.GetOutput(input)
                     .Where(output => _containers.All(c => output.VerifierFunction(c)))
                     .ToList();
 
@@ -224,7 +225,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
 
             var newMap = new ConfigurationObjectsMap(newObjects);
 
-            var correctOutputs = verifier.GetOutput(oldMap, newMap)
+            var input = new VerifierInput(_contextualContainer, oldMap, newMap);
+
+            var correctOutputs = verifier.GetOutput(input)
                     .Where(output => _containers.All(c => output.VerifierFunction(c)))
                     .ToList();
 

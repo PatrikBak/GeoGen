@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 
@@ -12,32 +11,19 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
     {
         public TheoremType TheoremType { get; } = TheoremType.CollinearPoints;
 
-        private readonly IContextualContainer _container;
-
-        public CollinearityVerifier(IContextualContainer container)
+        public IEnumerable<VerifierOutput> GetOutput(VerifierInput verifierInput)
         {
-            _container = container ?? throw new ArgumentNullException(nameof(container));
-        }
-
-        public IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
-        {
-            if (oldObjects == null)
-                throw new ArgumentNullException(nameof(oldObjects));
-
-            if (newObjects == null)
-                throw new ArgumentNullException(nameof(newObjects));
-
-            // Create all objects dictionary
-            var allObjects = oldObjects.Merge(newObjects);
-
+            if (verifierInput == null)
+                throw new ArgumentNullException(nameof(verifierInput));
+            
             // Take all points from the container
-            var allPoints = _container.GetObjects<PointObject>(allObjects).ToList();
+            var allPoints = verifierInput.AllPoints;
 
             // Take new points
-            var newPoints = _container.GetNewObjects<PointObject>(oldObjects, newObjects).ToList();
+            var newPoints = verifierInput.NewPoints;
 
             // Get all non-physical lines
-            var lineObjects = _container.GetObjects<LineObject>(allObjects);
+            var lineObjects = verifierInput.AllLines;
 
             // Iterate over lines
             foreach (var lineObject in lineObjects)
@@ -60,9 +46,8 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                 // The objects container is not even needed
                 yield return new VerifierOutput
                 {
-                    AllObjects = allObjects,
                     InvoldedObjects = containingPoints.Cast<GeometricalObject>().ToList(),
-                    VerifierFunction = container => true
+                    VerifierFunction = null
                 };
             }
         }

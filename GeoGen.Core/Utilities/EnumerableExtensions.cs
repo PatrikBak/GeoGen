@@ -48,6 +48,14 @@ namespace GeoGen.Core.Utilities
             return new HashSet<T>(enumerable);
         }
 
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> equalityComparer)
+        {
+            if (enumerable == null)
+                throw new ArgumentNullException(nameof(enumerable));
+
+            return new HashSet<T>(enumerable, equalityComparer);
+        }
+
         /// <summary>
         /// Adds the specified element at the end of the IEnummerable.
         /// </summary>

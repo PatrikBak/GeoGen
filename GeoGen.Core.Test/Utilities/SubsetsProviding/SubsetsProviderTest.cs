@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Utilities.SubsetsProviding;
 using NUnit.Framework;
@@ -69,16 +68,6 @@ namespace GeoGen.Core.Test.Utilities.SubsetsProviding
                     .Any(array => array[0] == 5 && array[1] == 7 && array[2] == 8);
 
             Assert.IsTrue(contains);
-        }
-
-        [Test]
-        public void Test_Time()
-        {
-            var s = new Stopwatch();
-            s.Start();
-            var c = Provider().GetSubsets(Elements(10), 5).Count();
-            s.Stop();
-            Console.WriteLine(s.ElapsedMilliseconds);
         }
     }
 }

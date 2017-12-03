@@ -3,7 +3,9 @@
     public enum TheoremObjectSignature
     {
         SingleObject,
+
         LineGivenByPoints,
+
         CircleGivenByPoints
     }
 }

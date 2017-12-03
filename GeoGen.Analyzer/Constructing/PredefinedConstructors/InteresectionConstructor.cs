@@ -85,13 +85,13 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                     return new List<IAnalyticalObject> {result};
                 }
 
-                var objects1 = new List<TheoremObject>
+                var objects1 = new HashSet<TheoremObject>
                 {
                     new TheoremObject(obj1),
                     new TheoremObject(obj2),
                     new TheoremObject(constructedObject)
                 };
-                var objects2 = new List<TheoremObject>
+                var objects2 = new HashSet<TheoremObject>
                 {
                     new TheoremObject(obj3),
                     new TheoremObject(obj4),

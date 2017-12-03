@@ -16,9 +16,9 @@
         ConcyclicPoints,
 
         /// <summary>
-        /// Three or more lines are concurrent
+        /// Three concurrent objects that each is either line, or circle
         /// </summary>
-        ConcurrentLines,
+        ConcurrentObjects,
 
         /// <summary>
         /// Two configuration objects are geometrically the same

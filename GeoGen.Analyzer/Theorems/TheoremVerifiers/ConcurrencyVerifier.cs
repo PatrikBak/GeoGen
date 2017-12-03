@@ -15,62 +15,54 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {
     internal sealed class ConcurrencyVerifier : ITheoremVerifier
     {
-        public TheoremType TheoremType { get; } = TheoremType.ConcurrentLines;
+        public TheoremType TheoremType { get; } = TheoremType.ConcurrentObjects;
 
-        private readonly IContextualContainer _contextualContainer;
+        private readonly IAnalyticalHelper _helper;
 
-        private readonly IAnalyticalHelper _analyticalHelper;
+        private readonly ISubsetsProvider _provider;
 
-        private readonly ISubsetsProvider _subsetsProvider;
+        private readonly IContextualContainer _container;
 
-        public ConcurrencyVerifier
-        (
-            IContextualContainer contextualContainer,
-            IAnalyticalHelper analyticalHelper,
-            ISubsetsProvider subsetsProvider
-        )
+        public ConcurrencyVerifier(IAnalyticalHelper helper, ISubsetsProvider provider, IContextualContainer container)
         {
-            _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
-            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
-            _subsetsProvider = subsetsProvider ?? throw new ArgumentNullException(nameof(subsetsProvider));
+            _helper = helper ?? throw new ArgumentNullException(nameof(helper));
+            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
-        public IEnumerable<VerifierOutput> GetOutput(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
+        public IEnumerable<VerifierOutput> GetOutput(VerifierInput verifierInput)
         {
-            if (oldObjects == null)
-                throw new ArgumentNullException(nameof(oldObjects));
+            if (verifierInput == null)
+                throw new ArgumentNullException(nameof(verifierInput));
 
-            if (newObjects == null)
-                throw new ArgumentNullException(nameof(newObjects));
+            var allObjectsMap = verifierInput.AllObjects;
 
-            var allObjectsMap = oldObjects.Merge(newObjects);
-
-            var newLines = _contextualContainer.GetNewObjects<CircleObject>(oldObjects, newObjects);
-            var newCircles = _contextualContainer.GetNewObjects<LineObject>(oldObjects, newObjects);
+            var newLines = verifierInput.NewLines;
+            var newCircles = verifierInput.NewCircles;
             var newLinesAndCircles = newLines.Concat(newCircles.Cast<GeometricalObject>()).ToList();
 
-            var oldLines = _contextualContainer.GetObjects<LineObject>(oldObjects);
-            var oldCircles = _contextualContainer.GetObjects<CircleObject>(oldObjects);
+            var oldLines = verifierInput.OldLines;
+            var oldCircles = verifierInput.OldCircles;
             var oldLinesAndCircles = oldLines.Concat(oldCircles.Cast<GeometricalObject>()).ToList();
 
             var maxSize = Math.Min(newLinesAndCircles.Count, 3);
 
             for (var size = 1; size <= maxSize; size++)
             {
-                foreach (var subsetOfNewObjects in _subsetsProvider.GetSubsets(newLinesAndCircles, size))
+                foreach (var subsetOfNewObjects in _provider.GetSubsets(newLinesAndCircles, size))
                 {
                     var newObjectsList = subsetOfNewObjects.ToList();
 
                     var neededCount = 3 - size;
 
-                    foreach (var subsetOfOldObjects in _subsetsProvider.GetSubsets(oldLinesAndCircles, neededCount))
+                    foreach (var subsetOfOldObjects in _provider.GetSubsets(oldLinesAndCircles, neededCount))
                     {
                         var involdedObjects = subsetOfOldObjects.Concat(newObjectsList).ToList();
 
                         bool Verify(IObjectsContainer container)
                         {
                             var analyticalObjects = involdedObjects
-                                    .Select(obj => _contextualContainer.GetAnalyticalObject(obj, container))
+                                    .Select(obj => _container.GetAnalyticalObject(obj, container))
                                     .ToSet();
 
                             var allPointsAnalytical = allObjectsMap[ConfigurationObjectType.Point]
@@ -78,7 +70,7 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                                     .Cast<Point>()
                                     .ToSet();
 
-                            var newIntersections = _analyticalHelper
+                            var newIntersections = _helper
                                     .Intersect(analyticalObjects)
                                     .Where(p => !allPointsAnalytical.Contains(p));
 
@@ -87,7 +79,6 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
                         yield return new VerifierOutput
                         {
-                            AllObjects = allObjectsMap,
                             InvoldedObjects = involdedObjects,
                             VerifierFunction = Verify
                         };

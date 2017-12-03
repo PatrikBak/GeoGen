@@ -20,19 +20,19 @@ namespace GeoGen.Core.Theorems
         /// <summary>
         /// Gets the list of theorem objects that this theorem is about.
         /// </summary>
-        public List<TheoremObject> InvolvedObjects { get; }
+        public HashSet<TheoremObject> InvolvedObjects { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructs a new theorem given by a theorem type and a list of
+        /// Constructs a new theorem given by a theorem type and a set of
         /// objects that this theorem is about.
         /// </summary>
         /// <param name="type">The theorem type.</param>
         /// <param name="involvedObjects">The involved objects list.</param>
-        public Theorem(TheoremType type, List<TheoremObject> involvedObjects)
+        public Theorem(TheoremType type, HashSet<TheoremObject> involvedObjects)
         {
             Type = type;
             InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));

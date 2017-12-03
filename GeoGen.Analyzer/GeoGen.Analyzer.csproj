@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -43,6 +46,7 @@
     <Compile Include="Constructing\IPredefinedConstructor.cs" />
     <Compile Include="Constructing\LooseObjectsConstructor.cs" />
     <Compile Include="InconsistentContainersException.cs" />
+    <Compile Include="NInject\AnalyerModule.cs" />
     <Compile Include="Theorems\ITheoremsVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\CircleObject.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\ContextualContainer.cs" />
@@ -51,7 +55,7 @@
     <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
     <Compile Include="Objects\IObjectsContainersManager.cs" />
     <Compile Include="Objects\ObjectsContainersManager.cs" />
-    <Compile Include="Theorems\SimpleTheoremContainer.cs" />
+    <Compile Include="Theorems\TheoremsContainer.cs" />
     <Compile Include="Theorems\TheoremsVerifier.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />
     <Compile Include="Constructing\IConstructorsResolver.cs" />
@@ -71,6 +75,7 @@
     <Compile Include="Theorems\TheoremVerifiers\CollinearityVerifier.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\IContextualContainer.cs" />
+    <Compile Include="Theorems\VerifierInput.cs" />
     <Compile Include="Theorems\VerifierOutput.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +87,9 @@
       <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
       <Name>GeoGen.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
+using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 
 namespace GeoGen.Analyzer.Theorems
 {
     internal interface ITheoremsVerifier
     {
-        IEnumerable<Theorem> FindTheorems(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects);
+        IEnumerable<Theorem> FindTheorems(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
     }
 }

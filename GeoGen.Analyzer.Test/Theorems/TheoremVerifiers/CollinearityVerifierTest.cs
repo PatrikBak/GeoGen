@@ -5,6 +5,7 @@ using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
+using GeoGen.Analyzer.Theorems;
 using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
@@ -17,6 +18,8 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
     [TestFixture]
     public class CollinearityVerifierTest
     {
+        private static IContextualContainer _container;
+
         private static CollinearityVerifier Verifier(params Dictionary<ConfigurationObject, IAnalyticalObject>[] objects)
         {
             var helper = new AnalyticalHelper();
@@ -52,7 +55,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 }
             }
 
-            return new CollinearityVerifier(container);
+            _container = container;
+
+            return new CollinearityVerifier();
         }
 
         [Test]
@@ -62,21 +67,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
         }
 
         [Test]
-        public void Test_Contextual_Container_Cant_Be_Null()
+        public void Test_Verifier_Input_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new CollinearityVerifier(null));
-        }
-
-        [Test]
-        public void Test_Old_Objects_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(null, new ConfigurationObjectsMap()).ToList());
-        }
-
-        [Test]
-        public void Test_New_Objects_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(new ConfigurationObjectsMap(), null).ToList());
+            Assert.Throws<ArgumentNullException>(() => Verifier().GetOutput(null).ToList());
         }
 
         [Test]
@@ -138,7 +131,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
 
             var newMap = new ConfigurationObjectsMap(newObjects);
 
-            var output = verifier.GetOutput(oldMap, newMap).ToList();
+            var input = new VerifierInput(_container, oldMap, newMap);
+
+            var output = verifier.GetOutput(input).ToList();
 
             Assert.AreEqual(3, output.Count);
         }
@@ -189,7 +184,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
 
             var newMap = new ConfigurationObjectsMap(newObjects);
 
-            var output = verifier.GetOutput(oldMap, newMap).ToList();
+            var input = new VerifierInput(_container, oldMap, newMap);
+
+            var output = verifier.GetOutput(input).ToList();
 
             Assert.AreEqual(1, output.Count);
         }
