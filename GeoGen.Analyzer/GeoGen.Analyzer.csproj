@@ -47,6 +47,7 @@
     <Compile Include="Constructing\LooseObjectsConstructor.cs" />
     <Compile Include="InconsistentContainersException.cs" />
     <Compile Include="NInject\AnalyerModule.cs" />
+    <Compile Include="Theorems\ITheoremConstructor.cs" />
     <Compile Include="Theorems\ITheoremsVerifier.cs" />
     <Compile Include="Objects\GeometricalObjects\CircleObject.cs" />
     <Compile Include="Objects\GeometricalObjects\Container\ContextualContainer.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
     <Compile Include="Objects\IObjectsContainersManager.cs" />
     <Compile Include="Objects\ObjectsContainersManager.cs" />
+    <Compile Include="Theorems\TheoremConstructor.cs" />
     <Compile Include="Theorems\TheoremsContainer.cs" />
     <Compile Include="Theorems\TheoremsVerifier.cs" />
     <Compile Include="Theorems\ITheoremsContainer.cs" />

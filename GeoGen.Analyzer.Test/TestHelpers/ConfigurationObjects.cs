@@ -6,6 +6,7 @@ namespace GeoGen.Analyzer.Test.TestHelpers
 {
     internal static class ConfigurationObjects
     {
+
         public static ConfigurationObject Object(ConfigurationObjectType type, int id)
         {
             return new LooseConfigurationObject(type) { Id = id };

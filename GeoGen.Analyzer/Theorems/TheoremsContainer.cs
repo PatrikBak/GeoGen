@@ -84,11 +84,17 @@ namespace GeoGen.Analyzer.Theorems
 
         public void Add(Theorem theorem)
         {
+            if (theorem == null)
+                throw new ArgumentNullException(nameof(theorem));
+
             _theoremsDictionary[theorem.Type].Add(theorem);
         }
 
         public bool Contains(Theorem theorem)
         {
+            if (theorem == null)
+                throw new ArgumentNullException(nameof(theorem));
+
             return _theoremsDictionary[theorem.Type].Contains(theorem);
         }
 

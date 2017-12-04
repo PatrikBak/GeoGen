@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
@@ -90,9 +91,9 @@ namespace GeoGen.Analyzer.Theorems
 
         public VerifierInput(IContextualContainer container, ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
         {
-            _container = container;
-            _oldObjects = oldObjects;
-            _newObjects = newObjects;
+            _container = container ?? throw new ArgumentNullException(nameof(container));
+            _oldObjects = oldObjects ?? throw new ArgumentNullException(nameof(oldObjects));
+            _newObjects = newObjects ?? throw new ArgumentNullException(nameof(newObjects));
             AllObjects = oldObjects.Merge(newObjects);
         }
     }

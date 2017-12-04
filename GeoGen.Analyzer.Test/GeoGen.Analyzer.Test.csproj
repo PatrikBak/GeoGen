@@ -67,6 +67,10 @@
     <Compile Include="TestHelpers\ConfigurationObjects.cs" />
     <Compile Include="TestHelpers\TheoremsHelper.cs" />
     <Compile Include="TestHelpers\Utilities.cs" />
+    <Compile Include="Theorems\TheoremConstructorTest.cs" />
+    <Compile Include="Theorems\VerifierInputTest.cs" />
+    <Compile Include="Theorems\TheoremsContainerTest.cs" />
+    <Compile Include="Theorems\TheoremsVerifierTest.cs" />
     <Compile Include="Theorems\TheoremVerifiers\CollinearityVerifierTest.cs" />
     <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifierTest.cs" />
   </ItemGroup>

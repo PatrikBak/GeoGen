@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
@@ -15,22 +17,25 @@ namespace GeoGen.Analyzer.Theorems
 
         private readonly IObjectsContainersManager _containersManager;
 
-        private readonly ITheoremsContainer _theoremsContainer;
-
         private readonly IContextualContainer _contextualContainer;
+
+        private readonly ITheoremConstructor _constructor;
 
         public TheoremsVerifier
         (
             ITheoremVerifier[] verifiers,
             IObjectsContainersManager containersManager,
-            ITheoremsContainer theoremsContainer,
-            IContextualContainer contextualContainer
+            IContextualContainer contextualContainer,
+            ITheoremConstructor constructor
         )
         {
-            _verifiers = verifiers;
-            _containersManager = containersManager;
-            _theoremsContainer = theoremsContainer;
-            _contextualContainer = contextualContainer;
+            _verifiers = verifiers ?? throw new ArgumentNullException(nameof(verifiers));
+            _containersManager = containersManager ?? throw new ArgumentNullException(nameof(containersManager));
+            _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+
+            if (_verifiers.Contains(null))
+                throw new ArgumentException("Null theorem verifier passed to TheoremsVerifier constructor.");
         }
 
         public IEnumerable<Theorem> FindTheorems(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
@@ -56,54 +61,11 @@ namespace GeoGen.Analyzer.Theorems
                     if (!isTrue)
                         continue;
 
-                    var theoremObjects = verifierOutput.InvoldedObjects
-                            .Select(obj => Construct(input.AllObjects, obj))
-                            .ToSet();
+                    var theorem = _constructor.Construct(verifierOutput.InvoldedObjects, input.AllObjects, theoremType);
 
-                    var theorem = new Theorem(theoremType, theoremObjects);
-
-                    if (!_theoremsContainer.Contains(theorem))
-                    {
-                        yield return theorem;
-                    }
+                    yield return theorem;
                 }
             }
-        }
-
-        private static TheoremObject Construct(ConfigurationObjectsMap objects, GeometricalObject geometricalObject)
-        {
-            if (geometricalObject is PointObject)
-                return new TheoremObject(geometricalObject.ConfigurationObject);
-
-            var line = geometricalObject as LineObject;
-            var circle = geometricalObject as CircleObject;
-
-            var type = line != null
-                ? ConfigurationObjectType.Line
-                : ConfigurationObjectType.Circle;
-
-            var configurationObject = geometricalObject.ConfigurationObject;
-
-            if (configurationObject != null && objects[type].Contains(configurationObject))
-            {
-                return new TheoremObject(configurationObject);
-            }
-
-            var points = line?.Points ?? circle?.Points ?? throw new AnalyzerException("Unhandled case");
-
-            var pointIds = points
-                    .Select(p => p.ConfigurationObject.Id ?? throw new AnalyzerException("Id must be set"))
-                    .ToSet();
-
-            var involedObjects = objects[ConfigurationObjectType.Point]
-                    .Where(point => pointIds.Contains(point.Id ?? throw new AnalyzerException("Id must be set")))
-                    .ToList();
-
-            var objectType = line != null
-                ? TheoremObjectSignature.LineGivenByPoints
-                : TheoremObjectSignature.CircleGivenByPoints;
-
-            return new TheoremObject(involedObjects, objectType);
         }
     }
 }

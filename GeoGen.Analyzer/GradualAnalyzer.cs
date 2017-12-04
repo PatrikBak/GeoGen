@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
@@ -20,10 +21,17 @@ namespace GeoGen.Analyzer
 
         private readonly ITheoremsVerifier _verifier;
 
-        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsVerifier verifier)
+        private readonly ITheoremsContainer _container;
+
+        #endregion
+
+        #region Constructor
+
+        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsVerifier verifier, ITheoremsContainer container)
         {
-            _registrar = registrar;
-            _verifier = verifier;
+            _registrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
+            _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
+            _container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
         #endregion
@@ -55,7 +63,10 @@ namespace GeoGen.Analyzer
 
             if (unambiguouslyConstructible)
             {
-                theorems.AddRange(_verifier.FindTheorems(oldObjects, newObjects));
+                var foundTheorems = _verifier.FindTheorems(oldObjects, newObjects)
+                        .Where(theorem => !_container.Contains(theorem));
+
+                theorems.AddRange(foundTheorems);
             }
 
             foreach (var pair in duplicateObjects)

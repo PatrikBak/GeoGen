@@ -2,7 +2,6 @@
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using NUnit.Framework;
-using NUnit.Framework.Internal;
 
 namespace GeoGen.Core.Test.Theorems
 {
