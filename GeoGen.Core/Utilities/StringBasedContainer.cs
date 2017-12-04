@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GeoGen.Core.Utilities.StringBasedContainer
+namespace GeoGen.Core.Utilities
 {
     /// <summary>
     /// Represents a container of distinct items that are compared based on their string versions.

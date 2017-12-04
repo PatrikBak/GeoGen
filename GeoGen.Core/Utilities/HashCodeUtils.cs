@@ -6,7 +6,7 @@ namespace GeoGen.Core.Utilities
     /// <summary>
     /// A static helper class for hash coding.
     /// </summary>
-    public static class HashCodeUtilities
+    public static class HashCodeUtils
     {
         /// <summary>
         /// Gets an order independent hash code of a given collection, using a given function 

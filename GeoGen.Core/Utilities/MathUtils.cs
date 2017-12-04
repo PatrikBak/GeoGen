@@ -7,6 +7,9 @@ namespace GeoGen.Core.Utilities
     {
         public static List<double> SolveQuadraticEquation(double a, double b, double c)
         {
+            if ((RoundedDouble) a == 0)
+                throw new ArithmeticException("The x^2 coefficient cannot be zero.");
+
             var d = (RoundedDouble) (b * b - 4 * a * c);
 
             if (d < 0)

@@ -59,13 +59,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Theorems\TheoremObjectTest.cs" />
     <Compile Include="Theorems\TheoremTest.cs" />
+    <Compile Include="Utilities\CacheBasedContainerTest.cs" />
     <Compile Include="Utilities\CollectionExtensionsTest.cs" />
     <Compile Include="Utilities\Combinations\CombinatorTest.cs" />
     <Compile Include="Utilities\ConfigurationObjectsMapTest.cs" />
-    <Compile Include="Utilities\DoubleExtensionsTest.cs" />
     <Compile Include="Utilities\EnumerableExtensionsTest.cs" />
     <Compile Include="Utilities\HashCodeUtilitiesTest.cs" />
+    <Compile Include="Utilities\MapTest.cs" />
+    <Compile Include="Utilities\MathUtilsTest.cs" />
+    <Compile Include="Utilities\RoundedDoubleTest.cs" />
     <Compile Include="Utilities\SubsetsProviding\SubsetsProviderTest.cs" />
+    <Compile Include="Utilities\ThrowHelperTest.cs" />
+    <Compile Include="Utilities\UtilsTest.cs" />
     <Compile Include="Utilities\VariationsProviding\VariationsProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>

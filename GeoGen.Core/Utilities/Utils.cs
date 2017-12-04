@@ -1,5 +1,8 @@
 ﻿namespace GeoGen.Core.Utilities
 {
+    /// <summary>
+    /// General C# utilities
+    /// </summary>
     public static class Utils
     {
         /// <summary>

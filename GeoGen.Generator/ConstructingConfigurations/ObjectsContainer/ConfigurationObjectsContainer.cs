@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities.StringBasedContainer;
+using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 
 namespace GeoGen.Generator.ConstructingConfigurations.ObjectsContainer

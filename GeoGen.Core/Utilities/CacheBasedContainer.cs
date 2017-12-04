@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Core.Utilities.CacheBasedContainer
+namespace GeoGen.Core.Utilities
 {
     public class CacheBasedContainer<T> : IEnumerable<T>
     {
         private class WrappedValue
         {
-            public T value;
+            public T Value { get; }
 
             private readonly IEqualityComparer<T> _comparer;
 
@@ -17,7 +17,7 @@ namespace GeoGen.Core.Utilities.CacheBasedContainer
 
             public WrappedValue(T value, IEqualityComparer<T> comparer)
             {
-                this.value = value;
+                Value = value;
                 _comparer = comparer;
                 _hashCode = _comparer.GetHashCode(value);
             }
@@ -33,12 +33,13 @@ namespace GeoGen.Core.Utilities.CacheBasedContainer
                 if (obj.GetType() != GetType())
                     return false;
 
-                return _comparer.Equals(((WrappedValue) obj).value, value);
+                return _comparer.Equals(((WrappedValue) obj).Value, Value);
             }
 
             public override int GetHashCode()
             {
-                return _hashCode;
+                return _comparer.GetHashCode(Value);
+                //return _hashCode;
             }
         }
 
@@ -54,17 +55,23 @@ namespace GeoGen.Core.Utilities.CacheBasedContainer
 
         public void Add(T value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             _values.Add(new WrappedValue(value, _equalityComparer));
         }
 
         public bool Contains(T value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             return _values.Contains(new WrappedValue(value, _equalityComparer));
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            return _values.Select(v => v.value).GetEnumerator();
+            return _values.Select(v => v.Value).GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

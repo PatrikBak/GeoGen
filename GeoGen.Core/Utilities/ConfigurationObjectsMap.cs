@@ -89,32 +89,55 @@ namespace GeoGen.Core.Utilities
             }
         }
 
-        #endregion
-
-        public new List<ConfigurationObject> this[ConfigurationObjectType type]
-        {
-            get
-            {
-                if (!ContainsKey(type))
-                    return new List<ConfigurationObject>();
-
-                return base[type];
-            }
-        }
-
+        /// <summary>
+        /// Returns the count of objects of a given type contained
+        /// in this map.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The count.</returns>
         public int CountOfType(ConfigurationObjectType type)
         {
             return !ContainsKey(type) ? 0 : this[type].Count;
         }
 
-        public ConfigurationObjectsMap Merge(ConfigurationObjectsMap newObjects)
+        /// <summary>
+        /// Creates a new objects map that is the result of merging
+        /// this one with a given one.
+        /// </summary>
+        /// <param name="map">A given objects map.</param>
+        /// <returns></returns>
+        public ConfigurationObjectsMap Merge(ConfigurationObjectsMap map)
         {
-            return new ConfigurationObjectsMap(AllObjects().Concat(newObjects.AllObjects()));
+            if (map == null)
+                throw new ArgumentNullException(nameof(map));
+
+            return new ConfigurationObjectsMap(AllObjects().Concat(map.AllObjects()));
         }
 
+        /// <summary>
+        /// Enumerates all objects contained in the map.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<ConfigurationObject> AllObjects()
         {
             return Values.SelectMany(value => value);
         }
+
+        #endregion
+
+        #region Indexer
+
+        /// <summary>
+        /// Gets all configuration objects with a given type, or
+        /// an empty list if there is no such object.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The list of objects</returns>
+        public new List<ConfigurationObject> this[ConfigurationObjectType type]
+        {
+            get => !ContainsKey(type) ? new List<ConfigurationObject>() : base[type];
+        }
+
+        #endregion
     }
 }

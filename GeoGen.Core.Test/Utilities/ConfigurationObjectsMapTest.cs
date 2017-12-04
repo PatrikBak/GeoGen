@@ -142,5 +142,59 @@ namespace GeoGen.Core.Test.Utilities
             Assert.AreEqual(4, map[ConfigurationObjectType.Line].Count);
             Assert.AreEqual(4, map[ConfigurationObjectType.Circle].Count);
         }
+
+        [Test]
+        public void Test_Count_Of_Type()
+        {
+            var map = new ConfigurationObjectsMap(Objects(4, 0, 3));
+
+            Assert.AreEqual(4, map.CountOfType(ConfigurationObjectType.Point));
+            Assert.AreEqual(0, map.CountOfType(ConfigurationObjectType.Line));
+            Assert.AreEqual(3, map.CountOfType(ConfigurationObjectType.Circle));
+        }
+
+        [Test]
+        public void Test_Merge_Map_Cant_Be_Null()
+        {
+            var map = new ConfigurationObjectsMap(Objects(4, 0, 3));
+
+            Assert.Throws<ArgumentNullException>(() => map.Merge(null));
+        }
+
+        [Test]
+        public void Test_Merge()
+        {
+            var map1 = new ConfigurationObjectsMap(Objects(1, 2, 3));
+            var map2 = new ConfigurationObjectsMap(Objects(3, 2, 1));
+
+            var merged = map1.Merge(map2);
+
+            Assert.AreEqual(6, map1.AllObjects().Count());
+            Assert.AreEqual(6, map2.AllObjects().Count());
+
+            Assert.AreEqual(12, merged.AllObjects().Count());
+            Assert.IsTrue(merged.AllObjects().All(o => map1.AllObjects().Contains(o) || map2.AllObjects().Contains(o)));
+        }
+
+        [Test]
+        public void Test_All_Objects()
+        {
+            var map = new ConfigurationObjectsMap(Objects(1, 2, 3));
+
+            Assert.AreEqual(6, map.AllObjects().Count());
+            Assert.AreEqual(1, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Point));
+            Assert.AreEqual(2, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Line));
+            Assert.AreEqual(3, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Circle));
+        }
+
+        [Test]
+        public void Test_Indexer()
+        {
+            var map = new ConfigurationObjectsMap(Objects(1, 0, 3));
+
+            Assert.AreEqual(1, map[ConfigurationObjectType.Point].Count);
+            Assert.AreEqual(0, map[ConfigurationObjectType.Line].Count);
+            Assert.AreEqual(3, map[ConfigurationObjectType.Circle].Count);
+        }
     }
 }

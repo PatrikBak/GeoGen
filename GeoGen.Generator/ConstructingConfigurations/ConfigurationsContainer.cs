@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.StringBasedContainer;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;

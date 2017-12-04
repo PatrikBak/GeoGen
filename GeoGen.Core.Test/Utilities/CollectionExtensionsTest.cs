@@ -11,11 +11,14 @@ namespace GeoGen.Core.Test.Utilities
         [Test]
         public void Test_Set_Items_Items_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() =>
-            {
-                var list = new List<int>();
-                list.SetItems(null);
-            });
+            Assert.Throws<ArgumentNullException>
+            (
+                () =>
+                {
+                    var list = new List<int>();
+                    list.SetItems(null);
+                }
+            );
         }
 
         [Test]

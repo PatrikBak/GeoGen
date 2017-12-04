@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.CacheBasedContainer;
 
 namespace GeoGen.Analyzer.Theorems
 {

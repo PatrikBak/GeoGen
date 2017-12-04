@@ -1,4 +1,6 @@
-﻿using GeoGen.Generator.ConfigurationsHandling;
+﻿using GeoGen.Core.Utilities.Combinations;
+using GeoGen.Core.Utilities.VariationsProviding;
+using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
@@ -41,6 +43,8 @@ namespace GeoGen.Generator.NInject
             Bind<IIdsFixerFactory>().To<IdsFixerFactory>().InSingletonScope();
             Bind<IConfigurationObjectsContainer>().To<ConfigurationObjectsContainer>().InSingletonScope();
             Bind<IConfigurationsHandler>().To<ConfigurationsHandler>().InSingletonScope();
+            Bind<ICombinator>().To<Combinator>().InSingletonScope();
+            Bind<IVariationsProvider>().To<VariationsProvider>().InSingletonScope();
             Bind<DefaultObjectIdResolver>().ToSelf().InSingletonScope();
             Bind<DefaultObjectToStringProvider>().ToSelf().InSingletonScope();
             Bind<DefaultFullObjectToStringProvider>().ToSelf().InSingletonScope();
