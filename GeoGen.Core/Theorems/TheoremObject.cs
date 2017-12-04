@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 
@@ -17,12 +18,16 @@ namespace GeoGen.Core.Theorems
         public TheoremObject(IEnumerable<ConfigurationObject> objects, TheoremObjectSignature type)
         {
             Type = type;
-            InternalObjects = objects.ToSet();
+            InternalObjects = objects?.ToSet() ?? throw new ArgumentNullException(nameof(objects));
         }
 
         public TheoremObject(ConfigurationObject configurationObject)
-            : this(new List<ConfigurationObject> {configurationObject}, TheoremObjectSignature.SingleObject)
         {
+            if (configurationObject == null)
+                throw new ArgumentNullException(nameof(configurationObject));
+
+            Type = TheoremObjectSignature.SingleObject;
+            InternalObjects = new HashSet<ConfigurationObject> {configurationObject};
         }
     }
 }

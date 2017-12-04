@@ -38,8 +38,7 @@ namespace GeoGen.Core.Utilities
 
             public override int GetHashCode()
             {
-                return _comparer.GetHashCode(Value);
-                //return _hashCode;
+                return _hashCode;
             }
         }
 
