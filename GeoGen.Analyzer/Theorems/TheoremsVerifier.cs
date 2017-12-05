@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices;
 using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GeoGen.Analyzer;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
@@ -22,10 +23,11 @@ namespace GeoGen.Generator.Test
             var handler = SimpleMock<IConfigurationsHandler>();
             var configurations = SimpleMock<IConfigurationsContainer>();
             var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var initialiazer = SimpleMock<IAnalyzerInitializer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new GeneratorFactory(null, constructor, handler, configurations, resolvers)
+                () => new GeneratorFactory(null, constructor, handler, configurations, resolvers, initialiazer)
             );
         }
 
@@ -36,10 +38,11 @@ namespace GeoGen.Generator.Test
             var handler = SimpleMock<IConfigurationsHandler>();
             var configurations = SimpleMock<IConfigurationsContainer>();
             var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var initialiazer = SimpleMock<IAnalyzerInitializer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new GeneratorFactory(constructions, null, handler, configurations, resolvers)
+                () => new GeneratorFactory(constructions, null, handler, configurations, resolvers, initialiazer)
             );
         }
 
@@ -50,10 +53,11 @@ namespace GeoGen.Generator.Test
             var constructor = SimpleMock<IObjectsConstructor>();
             var configurations = SimpleMock<IConfigurationsContainer>();
             var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var initialiazer = SimpleMock<IAnalyzerInitializer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new GeneratorFactory(constructions, constructor, null, configurations, resolvers)
+                () => new GeneratorFactory(constructions, constructor, null, configurations, resolvers, initialiazer)
             );
         }
 
@@ -64,10 +68,11 @@ namespace GeoGen.Generator.Test
             var constructor = SimpleMock<IObjectsConstructor>();
             var handler = SimpleMock<IConfigurationsHandler>();
             var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var initialiazer = SimpleMock<IAnalyzerInitializer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new GeneratorFactory(constructions, constructor, handler, null, resolvers)
+                () => new GeneratorFactory(constructions, constructor, handler, null, resolvers, initialiazer)
             );
         }
 
@@ -78,10 +83,26 @@ namespace GeoGen.Generator.Test
             var constructor = SimpleMock<IObjectsConstructor>();
             var handler = SimpleMock<IConfigurationsHandler>();
             var configurations = SimpleMock<IConfigurationsContainer>();
+            var initialiazer = SimpleMock<IAnalyzerInitializer>();
 
             Assert.Throws<ArgumentNullException>
             (
-                () => new GeneratorFactory(constructions, constructor, handler, configurations, null)
+                () => new GeneratorFactory(constructions, constructor, handler, configurations, null, initialiazer)
+            );
+        }
+
+        [Test]
+        public void Test_Analyzer_Initialiazer_Cant_Be_Null()
+        {
+            var constructions = SimpleMock<IConstructionsContainer>();
+            var constructor = SimpleMock<IObjectsConstructor>();
+            var handler = SimpleMock<IConfigurationsHandler>();
+            var configurations = SimpleMock<IConfigurationsContainer>();
+            var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+
+            Assert.Throws<ArgumentNullException>
+            (
+                () => new GeneratorFactory(constructions, constructor, handler, configurations, resolvers, null)
             );
         }
 
@@ -93,8 +114,9 @@ namespace GeoGen.Generator.Test
             var handler = SimpleMock<IConfigurationsHandler>();
             var configurations = SimpleMock<IConfigurationsContainer>();
             var resolvers = SimpleMock<IDictionaryObjectIdResolversContainer>();
+            var initializer = SimpleMock<IAnalyzerInitializer>();
 
-            var generator = new GeneratorFactory(constructions, constructor, handler, configurations, resolvers);
+            var generator = new GeneratorFactory(constructions, constructor, handler, configurations, resolvers, initializer);
 
             var input = new GeneratorInput
             {

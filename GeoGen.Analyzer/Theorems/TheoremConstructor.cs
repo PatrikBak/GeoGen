@@ -27,7 +27,7 @@ namespace GeoGen.Analyzer.Theorems
 
         private static TheoremObject Construct(ConfigurationObjectsMap objects, GeometricalObject geometricalObject)
         {
-            if (geometricalObject is PointObject)
+          if (geometricalObject is PointObject)
                 return new TheoremObject(geometricalObject.ConfigurationObject);
 
             var line = geometricalObject as LineObject;

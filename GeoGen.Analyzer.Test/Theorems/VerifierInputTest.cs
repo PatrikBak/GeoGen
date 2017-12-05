@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Analyzer.Test.TestHelpers;

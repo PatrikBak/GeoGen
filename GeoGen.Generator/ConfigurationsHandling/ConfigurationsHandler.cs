@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Analyzer;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations;
@@ -65,7 +66,7 @@ namespace GeoGen.Generator.ConfigurationsHandling
                 var newObjects = configurationWrapper.LastAddedObjects;
 
                 // Call the analyzer
-                var analyzerOutput = _analyzer.Analyze(oldObjects, newObjects);
+                var analyzerOutput = _analyzer.Analyze(oldObjects, newObjects);               
 
                 // Pull the information if we should exclude the configuration and the new objects
                 var shouldBeExcluded = !analyzerOutput.UnambiguouslyConstructible;

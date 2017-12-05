@@ -82,7 +82,7 @@ namespace GeoGen.Analyzer
 
                 var theorem = new Theorem(TheoremType.SameObjects, involvedObjects);
 
-                theorems.Add(theorem);
+                //theorems.Add(theorem);
             }
 
             return new GradualAnalyzerOutput

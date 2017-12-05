@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
@@ -87,8 +88,13 @@ namespace GeoGen.Generator.ConstructingConfigurations
             // Fix the configuration
             newConfiguration = FixConfiguration(newConfiguration, idsFixer);
 
+            // Find new objects
+            newObjects = FindNewObjects(newConfiguration, newObjects.Count);
+
             // Create new objects map
             var typeToObjectsMap = new ConfigurationObjectsMap(newConfiguration);
+
+            
 
             // Return the new wrapper
             return new ConfigurationWrapper
@@ -96,9 +102,20 @@ namespace GeoGen.Generator.ConstructingConfigurations
                 Configuration = newConfiguration,
                 AllObjectsMap = typeToObjectsMap,
                 LastAddedObjects = newObjects,
-                OriginalObjects = wrapper.AllObjectsMap.AllObjects().ToList(),
+                OriginalObjects = typeToObjectsMap.AllObjects().Where(o => !newObjects.Contains(o)).ToList(),
                 Excluded = false
             };
+        }
+
+        private List<ConstructedConfigurationObject> FindNewObjects(Configuration newConfiguration, int newObjectsCount)
+        {
+            var allConstructed = newConfiguration.ConstructedObjects;
+
+            var list =  allConstructed.Skip(allConstructed.Count - newObjectsCount).ToList();
+
+            Debug.Assert(list.Count == newObjectsCount);
+
+            return list;
         }
 
         /// <summary>

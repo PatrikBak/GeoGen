@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
@@ -180,6 +181,21 @@ namespace GeoGen.Generator.ConstructingConfigurations
 
                 // Let the constructor create a new wrapper
                 var configuration = _configurationConstructor.ConstructWrapper(currentOutput);
+
+                // We need to check again if the objects ids aren't forbidden, cause
+                // they might have changed
+                // TODO: Isn't it enough to check new objects? I'm not sure
+                var notForbidden = configuration.AllObjectsMap
+                        .AllObjects()
+                        .Select(o => o.Id ?? throw new GeneratorException("Id must be set"))
+                        .All(id => !_forbiddenObjectsId.Contains(id));
+
+                // If there is a new forbidden object
+                if (!notForbidden)
+                {
+                    // Skip it
+                    continue;
+                }
 
                 // Add the configuration to the container.
                 if (!Add(configuration.Configuration))

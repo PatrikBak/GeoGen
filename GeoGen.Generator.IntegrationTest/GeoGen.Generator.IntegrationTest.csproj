@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DummyGradualAnalyzer.cs" />
+    <Compile Include="OutputFormatter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -54,6 +55,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">
+      <Project>{8291B54F-23DD-4117-8511-300DDE547A69}</Project>
+      <Name>GeoGen.AnalyticalGeometry</Name>
+    </ProjectReference>
     <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj">
       <Project>{CF6DFF81-E56F-4FAE-B176-524976BD5780}</Project>
       <Name>GeoGen.Analyzer</Name>

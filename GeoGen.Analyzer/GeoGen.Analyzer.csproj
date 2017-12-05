@@ -37,6 +37,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerInitializer.cs" />
     <Compile Include="GradualAnalyzerOutput.cs" />
     <Compile Include="AnalyzerException.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />
@@ -45,6 +46,7 @@
     <Compile Include="Constructing\IObjectsConstructor.cs" />
     <Compile Include="Constructing\IPredefinedConstructor.cs" />
     <Compile Include="Constructing\LooseObjectsConstructor.cs" />
+    <Compile Include="IAnalyzerFactory.cs" />
     <Compile Include="InconsistentContainersException.cs" />
     <Compile Include="NInject\AnalyerModule.cs" />
     <Compile Include="Theorems\ITheoremConstructor.cs" />

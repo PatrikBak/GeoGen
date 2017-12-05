@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;

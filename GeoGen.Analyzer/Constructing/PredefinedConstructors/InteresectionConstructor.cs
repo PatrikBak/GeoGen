@@ -77,7 +77,16 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
                     var line1 = new Line(point1, point2);
                     var line2 = new Line(point3, point4);
 
-                    var result = line1.IntersectionWith(line2);
+                    Point? result;
+
+                    try
+                    {
+                        result = line1.IntersectionWith(line2);
+                    }
+                    catch (ArgumentException)
+                    {
+                        return null;
+                    }
 
                     if (result == null || points.Contains(result.Value))
                         return null;

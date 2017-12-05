@@ -768,7 +768,18 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
             // Look up the object in the dictionary
-            return _configurationObjectIdToGeometricalObjects[id];
+            try
+            {
+                return _configurationObjectIdToGeometricalObjects[id];
+            }
+            catch (KeyNotFoundException)
+            {
+                // Fix the container
+                Add(configurationObject);
+
+                // Re-call this method, now it should work 
+                return GetGeometricalObject(configurationObject);
+            }
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using GeoGen.Analyzer;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
@@ -35,9 +36,14 @@ namespace GeoGen.Generator
         private readonly IConfigurationsContainer _configurationsContainer;
 
         /// <summary>
-        /// The dictionary object id resolvers container
+        /// The dictionary object id resolvers container.
         /// </summary>
         private readonly IDictionaryObjectIdResolversContainer _dictionaryIdResolversContainer;
+
+        /// <summary>
+        /// The initializer for the analyzer module.
+        /// </summary>
+        private readonly IAnalyzerInitializer _analyzerInitializer;
 
         #endregion
 
@@ -51,13 +57,15 @@ namespace GeoGen.Generator
         /// <param name="configurationsHandler">The configurations handler.</param>
         /// <param name="configurationsContainer">The configurations container.</param>
         /// <param name="dictionaryIdResolversContainer">The dictionary id resolvers container.</param>
+        /// <param name="analyzerInitializer">The analyzer initializer.</param>
         public GeneratorFactory
         (
             IConstructionsContainer constructionsContainer,
             IObjectsConstructor objectsConstructor,
             IConfigurationsHandler configurationsHandler,
             IConfigurationsContainer configurationsContainer,
-            IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer
+            IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer,
+            IAnalyzerInitializer analyzerInitializer
         )
         {
             _constructionsContainer = constructionsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
@@ -65,6 +73,7 @@ namespace GeoGen.Generator
             _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationsHandler));
             _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
             _dictionaryIdResolversContainer = dictionaryIdResolversContainer ?? throw new ArgumentNullException(nameof(dictionaryIdResolversContainer));
+            _analyzerInitializer = analyzerInitializer ?? throw new ArgumentNullException(nameof(analyzerInitializer));
         }
 
         #endregion
@@ -81,6 +90,7 @@ namespace GeoGen.Generator
             _constructionsContainer.Initialize(generatorInput.Constructions);
             _configurationsContainer.Initialize(generatorInput.InitialConfiguration);
             _dictionaryIdResolversContainer.Initialize(generatorInput.InitialConfiguration.LooseObjects.ToList());
+            _analyzerInitializer.Initialize(generatorInput.InitialConfiguration);
             var iterations = generatorInput.MaximalNumberOfIterations;
 
             return new Generator(_configurationsContainer, _objectsConstructor, _configurationsHandler, iterations);

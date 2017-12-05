@@ -5,7 +5,7 @@ namespace GeoGen.Core.Utilities
 {
     public struct RoundedDouble
     {
-        public const int DoubleRoundingPrecision = 12;
+        public const int DoubleRoundingPrecision = 6;
 
         public double OriginalValue { get; }
 

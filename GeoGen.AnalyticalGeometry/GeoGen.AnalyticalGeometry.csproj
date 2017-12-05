@@ -35,6 +35,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -51,6 +54,7 @@
     <Compile Include="AnalyticalObjects\Line.cs" />
     <Compile Include="AnalyticalObjects\Point.cs" />
     <Compile Include="IAnalyticalHelper.cs" />
+    <Compile Include="Ninject\AnalyticalGeometryModule.cs" />
     <Compile Include="RandomObjects\IRandomnessProvider.cs" />
     <Compile Include="RandomObjects\IRandomObjectsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -62,6 +66,9 @@
       <Project>{c2a889d2-7219-4f33-9637-8da9540c3e97}</Project>
       <Name>GeoGen.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
