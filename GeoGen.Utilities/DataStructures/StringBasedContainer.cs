@@ -26,6 +26,20 @@ namespace GeoGen.Utilities
 
         #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// Constructs a string based container that uses a given to string converter
+        /// for converting items to string.
+        /// </summary>
+        /// <param name="converter">The converter.</param>
+        protected StringBasedContainer(IToStringConverter<T> converter)
+        {
+            Converter = converter ?? throw new ArgumentNullException(nameof(converter));
+        }
+
+        #endregion
+
         #region Protected methods
 
         /// <summary>

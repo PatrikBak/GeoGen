@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
-using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
+using GeoGen.Generator.LeastConfigurationFinder.IdsFixing;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 

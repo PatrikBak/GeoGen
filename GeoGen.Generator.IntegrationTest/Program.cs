@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.Ninject;
+using GeoGen.Analyzer;
 using GeoGen.Analyzer.NInject;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
@@ -10,7 +11,6 @@ using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Generator;
 using GeoGen.Core.NInject;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.NInject;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.ContextPreservation;
@@ -26,13 +26,15 @@ namespace GeoGen.Generator.IntegrationTest
         {
             var kernel = new StandardKernel
             (
-                new GeneratorModule(),
-                new CoreModule(),
-                new AnalyerModule(),
-                new AnalyticalGeometryModule()
+                    new GeneratorModule(),
+                    new CoreModule(),
+                    new AnalyerModule(),
+                    new AnalyticalGeometryModule()
             );
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
+
+            kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
 
             var factory = kernel.Get<IGeneratorFactory>();
 
@@ -43,17 +45,16 @@ namespace GeoGen.Generator.IntegrationTest
             var configuration = new Configuration(points, new List<ConstructedConfigurationObject>());
             var constructions = new List<Construction>
             {
-                new Midpoint()
+                    new Midpoint {Id = 0}
             };
 
             var input = new GeneratorInput
             {
-                InitialConfiguration = configuration,
-                Constructions = constructions,
-                MaximalNumberOfIterations = 3
+                    InitialConfiguration = configuration,
+                    Constructions = constructions,
+                    MaximalNumberOfIterations = 7
             };
 
-            var formatter = new OutputFormatter();
             var generator = factory.CreateGenerator(input);
             var stopwatch = new Stopwatch();
 
@@ -63,6 +64,13 @@ namespace GeoGen.Generator.IntegrationTest
 
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
+
+            //PrintResults(result);
+        }
+
+        private static void PrintTheorems(List<GeneratorOutput> result)
+        {
+            var formatter = new OutputFormatter();
 
             Console.WriteLine("Results:\n");
 

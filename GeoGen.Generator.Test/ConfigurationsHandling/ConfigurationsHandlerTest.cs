@@ -5,8 +5,6 @@ using GeoGen.Analyzer;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Theorems;
-using GeoGen.Generator.ConfigurationsHandling;
-using GeoGen.Generator.ConstructingConfigurations;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;

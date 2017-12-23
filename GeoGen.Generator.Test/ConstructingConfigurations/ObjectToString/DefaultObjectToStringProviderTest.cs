@@ -1,8 +1,6 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using NUnit.Framework;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
@@ -12,17 +10,17 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
     {
         private static DefaultObjectIdResolver _defaultResolver;
 
-        private static DefaultObjectToStringProvider Provider()
+        private static DefaultObjectToStringConverter Provider()
         {
             _defaultResolver = new DefaultObjectIdResolver();
 
-            return new DefaultObjectToStringProvider(_defaultResolver);
+            return new DefaultObjectToStringConverter(_defaultResolver);
         }
 
         [Test]
         public void Test_Default_Resolver_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new DefaultObjectToStringProvider(null));
+            Assert.Throws<ArgumentNullException>(() => new DefaultObjectToStringConverter(null));
         }
 
         [Test]

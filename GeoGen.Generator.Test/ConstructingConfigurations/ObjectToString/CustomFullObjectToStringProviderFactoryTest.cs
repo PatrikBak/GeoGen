@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
-using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
@@ -13,7 +10,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
     {
         private static CustomFullObjectToStringProviderFactory Factory()
         {
-            var provider = SimpleMock<IArgumentsListToStringProvider>();
+            var provider = SimpleMock<IArgumentsListToStringConverter>();
 
             return new CustomFullObjectToStringProviderFactory(provider);
         }

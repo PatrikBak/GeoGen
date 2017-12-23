@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Generator
 {
     /// <summary>
     /// An exception used for internal generator errors.
@@ -12,7 +12,7 @@ namespace GeoGen.Core.Generator
         /// </summary>
         /// <param name="message">The message.</param>
         public GeneratorException(string message)
-            : base(message)
+                : base(message)
         {
         }
 
@@ -32,6 +32,11 @@ namespace GeoGen.Core.Generator
         }
 
         public static GeneratorException ConstructionsMustHaveUniqueId()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static GeneratorException ConfigurationIdNotSet()
         {
             throw new NotImplementedException();
         }

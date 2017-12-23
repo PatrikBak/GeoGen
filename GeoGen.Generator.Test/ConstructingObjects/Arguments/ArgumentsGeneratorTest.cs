@@ -1,224 +1,224 @@
-﻿using System;
-using System.Linq;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
-using GeoGen.Generator.ConstructingObjects.Arguments;
-using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
-using GeoGen.Generator.ConstructingObjects.Arguments.Container;
-using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
-using GeoGen.Utilities;
-using NUnit.Framework;
-using static GeoGen.Generator.Test.TestHelpers.Configurations;
-using static GeoGen.Generator.Test.TestHelpers.Constructions;
-using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
-using static GeoGen.Generator.Test.TestHelpers.Utilities;
+﻿//using System;
+//using System.Linq;
+//using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
+//using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
+//using GeoGen.Generator.ConstructingObjects.Arguments;
+//using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
+//using GeoGen.Generator.ConstructingObjects.Arguments.Container;
+//using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
+//using GeoGen.Utilities;
+//using NUnit.Framework;
+//using static GeoGen.Generator.Test.TestHelpers.Configurations;
+//using static GeoGen.Generator.Test.TestHelpers.Constructions;
+//using static GeoGen.Generator.Test.TestHelpers.ToStringHelper;
+//using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
-namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
-{
-    [TestFixture]
-    public class ArgumentsGeneratorTest
-    {
-        private static ArgumentsGenerator ArgumentsGenerator()
-        {
-            var combinator = new Combinator();
-            var variationsProvider = new VariationsProvider();
-            var resolver = new DefaultObjectIdResolver();
-            var provider = new DefaultObjectToStringProvider(resolver);
-            var signatureMatcher = new ConstructionSignatureMatcher();
-            var argsProvider = new ArgumentsListToStringProvider(provider);
-            //var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
+//namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
+//{
+//    [TestFixture]
+//    public class ArgumentsGeneratorTest
+//    {
+//        private static ArgumentsGenerator ArgumentsGenerator()
+//        {
+//            var combinator = new Combinator();
+//            var variationsProvider = new VariationsProvider();
+//            var resolver = new DefaultObjectIdResolver();
+//            var provider = new DefaultObjectToStringProvider(resolver);
+//            var signatureMatcher = new ConstructionSignatureMatcher();
+//            var argsProvider = new ArgumentsListToStringProvider(provider);
+//            //var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
-            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null);
-        }
+//            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null);
+//        }
 
-        [Test]
-        public void Test_Combinator_Cant_Be_Null()
-        {
-            var variationsProvider = SimpleMock<IVariationsProvider>();
-            var matcher = SimpleMock<IConstructionSignatureMatcher>();
-            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
+//        [Test]
+//        public void Test_Combinator_Cant_Be_Null()
+//        {
+//            var variationsProvider = SimpleMock<IVariationsProvider>();
+//            var matcher = SimpleMock<IConstructionSignatureMatcher>();
+//            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ArgumentsGenerator(null, matcher, variationsProvider, argumentsFactory)
-            );
-        }
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => new ArgumentsGenerator(null, matcher, variationsProvider, argumentsFactory)
+//            );
+//        }
 
-        [Test]
-        public void Test_Variations_Provider_Cant_Be_Null()
-        {
-            var combinator = SimpleMock<ICombinator>();
-            var matcher = SimpleMock<IConstructionSignatureMatcher>();
-            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
+//        [Test]
+//        public void Test_Variations_Provider_Cant_Be_Null()
+//        {
+//            var combinator = SimpleMock<ICombinator>();
+//            var matcher = SimpleMock<IConstructionSignatureMatcher>();
+//            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ArgumentsGenerator(combinator, matcher, null, argumentsFactory)
-            );
-        }
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => new ArgumentsGenerator(combinator, matcher, null, argumentsFactory)
+//            );
+//        }
 
-        [Test]
-        public void Test_Signature_Matcher_Cant_Be_Null()
-        {
-            var combinator = SimpleMock<ICombinator>();
-            var variationsProvider = SimpleMock<IVariationsProvider>();
-            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
+//        [Test]
+//        public void Test_Signature_Matcher_Cant_Be_Null()
+//        {
+//            var combinator = SimpleMock<ICombinator>();
+//            var variationsProvider = SimpleMock<IVariationsProvider>();
+//            var argumentsFactory = SimpleMock<IArgumentsListContainerFactory>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ArgumentsGenerator(combinator, null, variationsProvider, argumentsFactory)
-            );
-        }
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => new ArgumentsGenerator(combinator, null, variationsProvider, argumentsFactory)
+//            );
+//        }
 
-        [Test]
-        public void Test_Arguments_Container_Cant_Be_Null()
-        {
-            var combinator = SimpleMock<ICombinator>();
-            var variationsProvider = SimpleMock<IVariationsProvider>();
-            var matcher = SimpleMock<IConstructionSignatureMatcher>();
+//        [Test]
+//        public void Test_Arguments_Container_Cant_Be_Null()
+//        {
+//            var combinator = SimpleMock<ICombinator>();
+//            var variationsProvider = SimpleMock<IVariationsProvider>();
+//            var matcher = SimpleMock<IConstructionSignatureMatcher>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ArgumentsGenerator(combinator, matcher, variationsProvider, null)
-            );
-        }
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => new ArgumentsGenerator(combinator, matcher, variationsProvider, null)
+//            );
+//        }
 
-        [Test]
-        public void Test_Passed_Construction_Wrapper_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>
-            (
-                () => ArgumentsGenerator().GenerateArguments(Configuration(1, 1, 1), null)
-            );
-        }
+//        [Test]
+//        public void Test_Passed_Construction_Wrapper_Cant_Be_Null()
+//        {
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => ArgumentsGenerator().GenerateArguments(Configuration(1, 1, 1), null)
+//            );
+//        }
 
-        [Test]
-        public void Test_Passed_Configuration_Wrapper_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>
-            (
-                () => ArgumentsGenerator().GenerateArguments(null, CrazyConstruction())
-            );
-        }
+//        [Test]
+//        public void Test_Passed_Configuration_Wrapper_Cant_Be_Null()
+//        {
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => ArgumentsGenerator().GenerateArguments(null, CrazyConstruction())
+//            );
+//        }
 
-        [TestCase(1, 10, 11, 0)]
-        [TestCase(2, 10, 11, 1)]
-        [TestCase(7, 0, 1, 21)]
-        [TestCase(20, 0, 0, 190)]
-        public void Test_Midpoint(int point, int lines, int circles, int expected)
-        {
-            var construction = Midpoint();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(1, 10, 11, 0)]
+//        [TestCase(2, 10, 11, 1)]
+//        [TestCase(7, 0, 1, 21)]
+//        [TestCase(20, 0, 0, 190)]
+//        public void Test_Midpoint(int point, int lines, int circles, int expected)
+//        {
+//            var construction = Midpoint();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase(1, 10, 11, 0)]
-        [TestCase(2, 10, 11, 0)]
-        [TestCase(3, 10, 11, 0)]
-        [TestCase(4, 10, 11, 3)]
-        [TestCase(15, 10, 11, 4095)]
-        public void Test_Intersection(int point, int lines, int circles, int expected)
-        {
-            var construction = Intersection();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(1, 10, 11, 0)]
+//        [TestCase(2, 10, 11, 0)]
+//        [TestCase(3, 10, 11, 0)]
+//        [TestCase(4, 10, 11, 3)]
+//        [TestCase(15, 10, 11, 4095)]
+//        public void Test_Intersection(int point, int lines, int circles, int expected)
+//        {
+//            var construction = Intersection();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase(1, 10, 11, 0)]
-        [TestCase(2, 10, 11, 0)]
-        [TestCase(3, 10, 11, 3)]
-        [TestCase(10, 10, 11, 360)]
-        [TestCase(15, 10, 11, 1365)]
-        public void Test_Projection(int point, int lines, int circles, int expected)
-        {
-            var construction = Projection();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(1, 10, 11, 0)]
+//        [TestCase(2, 10, 11, 0)]
+//        [TestCase(3, 10, 11, 3)]
+//        [TestCase(10, 10, 11, 360)]
+//        [TestCase(15, 10, 11, 1365)]
+//        public void Test_Projection(int point, int lines, int circles, int expected)
+//        {
+//            var construction = Projection();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase(17, 10, 11, 11)]
-        [TestCase(17, 10, 12, 12)]
-        [TestCase(17, 10, 1, 1)]
-        [TestCase(17, 10, 14, 14)]
-        [TestCase(17, 10, 0, 0)]
-        public void Test_CircleCenter(int point, int lines, int circles, int expected)
-        {
-            var construction = CircleCenter();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(17, 10, 11, 11)]
+//        [TestCase(17, 10, 12, 12)]
+//        [TestCase(17, 10, 1, 1)]
+//        [TestCase(17, 10, 14, 14)]
+//        [TestCase(17, 10, 0, 0)]
+//        public void Test_CircleCenter(int point, int lines, int circles, int expected)
+//        {
+//            var construction = CircleCenter();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase(1, 10, 11, 0)]
-        [TestCase(2, 10, 11, 0)]
-        [TestCase(3, 10, 11, 1)]
-        [TestCase(4, 10, 11, 4)]
-        [TestCase(7, 10, 11, 35)]
-        [TestCase(11, 10, 11, 165)]
-        public void Test_Circum_Circle(int point, int lines, int circles, int expected)
-        {
-            var construction = CircumCircle();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(1, 10, 11, 0)]
+//        [TestCase(2, 10, 11, 0)]
+//        [TestCase(3, 10, 11, 1)]
+//        [TestCase(4, 10, 11, 4)]
+//        [TestCase(7, 10, 11, 35)]
+//        [TestCase(11, 10, 11, 165)]
+//        public void Test_Circum_Circle(int point, int lines, int circles, int expected)
+//        {
+//            var construction = CircumCircle();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase(7, 2, 11, 0)]
-        [TestCase(11, 11, 2, 0)]
-        [TestCase(0, 9, 11, 0)]
-        [TestCase(11, 4, 7, 4620)]
-        [TestCase(6, 6, 6, 7200)]
-        public void Test_CrazyConstruction(int point, int lines, int circles, int expected)
-        {
-            var construction = CrazyConstruction();
-            var configuration = Configuration(point, lines, circles);
+//        [TestCase(7, 2, 11, 0)]
+//        [TestCase(11, 11, 2, 0)]
+//        [TestCase(0, 9, 11, 0)]
+//        [TestCase(11, 4, 7, 4620)]
+//        [TestCase(6, 6, 6, 7200)]
+//        public void Test_CrazyConstruction(int point, int lines, int circles, int expected)
+//        {
+//            var construction = CrazyConstruction();
+//            var configuration = Configuration(point, lines, circles);
 
-            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
-            Assert.AreEqual(expected, result.Count);
-        }
+//            var result = ArgumentsGenerator().GenerateArguments(configuration, construction).ToList();
+//            Assert.AreEqual(expected, result.Count);
+//        }
 
-        [TestCase("({4;9})")]
-        [TestCase("({1;2})")]
-        [TestCase("({8;9})")]
-        public void Test_Midpoint_Existence_Of_Arguments(string argument)
-        {
-            var construction = Midpoint();
-            var configuration = Configuration(10, 4, 4);
+//        [TestCase("({4;9})")]
+//        [TestCase("({1;2})")]
+//        [TestCase("({8;9})")]
+//        public void Test_Midpoint_Existence_Of_Arguments(string argument)
+//        {
+//            var construction = Midpoint();
+//            var configuration = Configuration(10, 4, 4);
 
-            var result = ArgumentsGenerator()
-                    .GenerateArguments(configuration, construction)
-                    .Select(ArgsToString)
-                    .ToList();
+//            var result = ArgumentsGenerator()
+//                    .GenerateArguments(configuration, construction)
+//                    .Select(ArgsToString)
+//                    .ToList();
 
-            var contains = result.Any(s => s.Equals(argument));
+//            var contains = result.Any(s => s.Equals(argument));
 
-            Assert.IsTrue(contains);
-        }
+//            Assert.IsTrue(contains);
+//        }
 
-        [TestCase("(13,{7;8;9},1,{14;15})")]
-        [TestCase("(15,{10;12;9},5,{14;16})")]
-        [TestCase("(18,{10;11;12},6,{16;17})")]
-        public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
-        {
-            // Points are [1-6], Lines are [7-12], Circles are [13-18]
-            var construction = CrazyConstruction();
-            var configuration = Configuration(6, 6, 6);
+//        [TestCase("(13,{7;8;9},1,{14;15})")]
+//        [TestCase("(15,{10;12;9},5,{14;16})")]
+//        [TestCase("(18,{10;11;12},6,{16;17})")]
+//        public void Test_Crazy_Construction_Existence_Of_Arguments(string argument)
+//        {
+//            // Points are [1-6], Lines are [7-12], Circles are [13-18]
+//            var construction = CrazyConstruction();
+//            var configuration = Configuration(6, 6, 6);
 
-            var result = ArgumentsGenerator()
-                    .GenerateArguments(configuration, construction)
-                    .Select(ArgsToString)
-                    .ToList();
+//            var result = ArgumentsGenerator()
+//                    .GenerateArguments(configuration, construction)
+//                    .Select(ArgsToString)
+//                    .ToList();
 
-            var contains = result.Any(s => s.Equals(argument));
-            Assert.IsTrue(contains);
-        }
-    }
-}
+//            var contains = result.Any(s => s.Equals(argument));
+//            Assert.IsTrue(contains);
+//        }
+//    }
+//}

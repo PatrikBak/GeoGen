@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
-using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.Test.TestHelpers;
 using GeoGen.Utilities;
 using NUnit.Framework;
