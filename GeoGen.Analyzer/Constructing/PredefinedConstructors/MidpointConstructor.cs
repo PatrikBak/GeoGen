@@ -9,6 +9,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
 {

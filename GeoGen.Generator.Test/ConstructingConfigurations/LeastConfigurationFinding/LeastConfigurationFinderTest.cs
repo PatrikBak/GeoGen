@@ -4,13 +4,13 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.LeastConfigurationFinding;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.Test.TestHelpers;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
@@ -27,8 +27,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.LeastConfigurationFin
             var fullObjectToStringFactory = new CustomFullObjectToStringProviderFactory(argsListToString);
             var variationsProvider = new VariationsProvider();
             var configurationToString = new ConfigurationToStringProvider();
-            var dicionaryResolversContainer = new DictionaryObjectIdResolversContainer(variationsProvider);
-            dicionaryResolversContainer.Initialize(objects.ToList());
+            var dicionaryResolversContainer = new DictionaryObjectIdResolversContainer(null, variationsProvider);
 
             return new LeastConfigurationFinder(configurationToString, fullObjectToStringFactory, dicionaryResolversContainer);
         }

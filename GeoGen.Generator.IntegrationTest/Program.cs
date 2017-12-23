@@ -3,15 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.Ninject;
-using GeoGen.Analyzer;
 using GeoGen.Analyzer.NInject;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.PredefinedConstructions;
+using GeoGen.Core.Generator;
 using GeoGen.Core.NInject;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.NInject;
+using GeoGen.Utilities;
 using Ninject;
+using Ninject.Extensions.ContextPreservation;
+using Ninject.Extensions.Factory;
+using Ninject.Extensions.NamedScope;
+using Ninject.Planning.Bindings.Resolvers;
 
 namespace GeoGen.Generator.IntegrationTest
 {
@@ -27,6 +32,8 @@ namespace GeoGen.Generator.IntegrationTest
                 new AnalyticalGeometryModule()
             );
 
+            kernel.Components.RemoveAll<IMissingBindingResolver>();
+
             var factory = kernel.Get<IGeneratorFactory>();
 
             var points = Enumerable.Range(0, 3)
@@ -36,7 +43,7 @@ namespace GeoGen.Generator.IntegrationTest
             var configuration = new Configuration(points, new List<ConstructedConfigurationObject>());
             var constructions = new List<Construction>
             {
-                new Midpoint(),
+                new Midpoint()
             };
 
             var input = new GeneratorInput

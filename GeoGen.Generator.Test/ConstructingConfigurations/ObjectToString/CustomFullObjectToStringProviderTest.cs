@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Generator;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
@@ -194,14 +195,6 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
             provider.ConvertToString(newObject);
 
             Assert.AreEqual(4, callCounter);
-        }
-
-        [Test]
-        public void Test_Resolver_Is_Returned()
-        {
-            var resolver = Provider().Resolver;
-
-            Assert.AreEqual(_objectIdResolver, resolver);
         }
     }
 }

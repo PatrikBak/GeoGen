@@ -9,7 +9,7 @@ using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.SubsetsProviding;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {

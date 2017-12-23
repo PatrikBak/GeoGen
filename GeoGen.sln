@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.27130.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{C2A889D2-7219-4F33-9637-8DA9540C3E97}"
 EndProject
@@ -27,7 +27,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{631197FC-8F94-42C6-917D-E9F985930528}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities", "GeoGen.Utilities\GeoGen.Utilities.csproj", "{98202CF2-D348-4AD7-8888-4281B0229DAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities.Test", "GeoGen.Utilities.Test\GeoGen.Utilities.Test.csproj", "{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56}"
+EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -69,6 +76,14 @@ Global
 		{78898B9E-351F-4A29-B8C8-E361190EA3B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78898B9E-351F-4A29-B8C8-E361190EA3B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78898B9E-351F-4A29-B8C8-E361190EA3B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98202CF2-D348-4AD7-8888-4281B0229DAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98202CF2-D348-4AD7-8888-4281B0229DAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98202CF2-D348-4AD7-8888-4281B0229DAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98202CF2-D348-4AD7-8888-4281B0229DAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,5 +98,13 @@ Global
 		{1817BD9D-B688-405B-956E-E5386577B0EE} = {631197FC-8F94-42C6-917D-E9F985930528}
 		{8291B54F-23DD-4117-8511-300DDE547A69} = {CB93CF6B-9F7A-4B07-8A2E-11223360816A}
 		{78898B9E-351F-4A29-B8C8-E361190EA3B2} = {2794F121-7AE7-4968-BDB1-FA82D2AF2F74}
+		{98202CF2-D348-4AD7-8888-4281B0229DAB} = {CB93CF6B-9F7A-4B07-8A2E-11223360816A}
+		{EA7747B9-2BEC-46D6-9917-20D9B5E6AE56} = {2794F121-7AE7-4968-BDB1-FA82D2AF2F74}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8A1F7E02-2F5D-4DAF-B5EF-88D07B858353}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

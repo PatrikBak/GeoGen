@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Theorems
 {

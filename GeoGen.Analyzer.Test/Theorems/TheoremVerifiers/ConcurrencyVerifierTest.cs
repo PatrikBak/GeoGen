@@ -10,7 +10,7 @@ using GeoGen.Analyzer.Theorems.TheoremVerifiers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.SubsetsProviding;
+using GeoGen.Utilities;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Analyzer.Test.TestHelpers.Utilities;

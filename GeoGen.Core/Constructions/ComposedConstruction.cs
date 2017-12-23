@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Core.Constructions
 {

@@ -6,6 +6,7 @@ using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
 {

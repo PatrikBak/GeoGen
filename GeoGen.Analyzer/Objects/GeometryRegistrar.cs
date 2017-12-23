@@ -7,6 +7,7 @@ using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Objects
 {
@@ -27,6 +28,7 @@ namespace GeoGen.Analyzer.Objects
 
         public GeometryRegistrar
         (
+            Configuration initialConfiguration,
             IConstructorsResolver resolver,
             ITheoremsContainer theoremsContainer,
             IContextualContainer contextualContainer,
@@ -38,9 +40,10 @@ namespace GeoGen.Analyzer.Objects
             _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
             _containers = containers ?? throw new ArgumentNullException(nameof(containers));
             _resolvedIds = new Dictionary<int, RegistrationResult>();
+            Initialize(initialConfiguration);
         }
 
-        public void Initialize(Configuration configuration)
+        private void Initialize(Configuration configuration)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));

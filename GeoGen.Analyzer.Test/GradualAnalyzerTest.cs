@@ -7,6 +7,7 @@ using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Analyzer.Test.TestHelpers.Utilities;

@@ -30,69 +30,76 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ninject, Version=3.2.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.2.2.0\lib\net45-full\Ninject.dll</HintPath>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.ContextPreservation, Version=3.3.1.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.ContextPreservation.3.3.1\lib\net45\Ninject.Extensions.ContextPreservation.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.Factory, Version=3.3.2.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.Factory.3.3.2\lib\net45\Ninject.Extensions.Factory.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject.Extensions.NamedScope, Version=3.3.0.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.Extensions.NamedScope.3.3.0\lib\net45\Ninject.Extensions.NamedScope.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Deployment" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigurationsHandling\ConfigurationsHandler.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\DictionaryObjectIdResolversContainer.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\IDictionaryObjectIdResolversContainer.cs" />
-    <Compile Include="ConstructingConfigurations\IdsFixing\IdsFixerFactory.cs" />
-    <Compile Include="ConstructingConfigurations\IdsFixing\IIDsFixerFactory.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationToString\ConfigurationToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationToString\IConfigurationToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectsContainer\ConfigurationObjectsContainer.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectsContainer\IConfigurationObjectsContainer.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\DefaultFullObjectToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\FullObjectToStringProviderBase.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\CustomFullObjectToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\DefaultObjectToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\CustomFullObjectToStringProviderFactory.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ICustomFullObjectToStringProviderFactory.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\DefaultObjectIdResolver.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\IObjectToStringProvider.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\DictionaryObjectIdResolver.cs" />
-    <Compile Include="ConstructingConfigurations\ObjectToString\ObjectIdResolving\IObjectIdResolver.cs" />
-    <Compile Include="ConstructingConfigurations\IdsFixing\IdsFixer.cs" />
-    <Compile Include="ConstructingConfigurations\IdsFixing\IIdsFixer.cs" />
-    <Compile Include="ConstructingConfigurations\IConfigurationConstructor.cs" />
-    <Compile Include="ConstructingConfigurations\LeastConfigurationFinding\ILeastConfigurationFinder.cs" />
-    <Compile Include="ConstructingConfigurations\LeastConfigurationFinding\LeastConfigurationFinder.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationConstructor.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsGenerator.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\ArgumentsListToStringProvider.cs" />
-    <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\IArgumentsListToStringProvider.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainer.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Container\ArgumentsListContainerFactory.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Container\IArgumentsListContainerFactory.cs" />
-    <Compile Include="ConstructingObjects\ObjectsConstructor.cs" />
-    <Compile Include="ConstructingObjects\ConstructionsContainer.cs" />
-    <Compile Include="ConstructingObjects\ConstructorOutput.cs" />
-    <Compile Include="ConstructingObjects\Arguments\Container\IArgumentsListContainer.cs" />
-    <Compile Include="ConstructingObjects\Arguments\IArgumentsGenerator.cs" />
-    <Compile Include="ConstructingObjects\IObjectsConstructor.cs" />
-    <Compile Include="ConstructingObjects\IConstructionsContainer.cs" />
-    <Compile Include="ConstructingObjects\Arguments\SignatureMatching\ConstructionSignatureMatcher.cs" />
-    <Compile Include="ConstructingObjects\Arguments\SignatureMatching\IConstructionSignatureMatcher.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationsContainer.cs" />
-    <Compile Include="Generator.cs" />
-    <Compile Include="ConstructingConfigurations\IConfigurationsContainer.cs" />
+    <Compile Include="Configurations\ConfigurationsHandler.cs" />
+    <Compile Include="Configurations\ObjectToString\ObjectIdResolving\DictionaryObjectIdResolversContainer.cs" />
+    <Compile Include="Configurations\ObjectToString\ObjectIdResolving\IDictionaryObjectIdResolversContainer.cs" />
+    <Compile Include="Configurations\IdsFixing\IdsFixerFactory.cs" />
+    <Compile Include="Configurations\IdsFixing\IIDsFixerFactory.cs" />
+    <Compile Include="Configurations\ConfigurationToString\ConfigurationToStringProvider.cs" />
+    <Compile Include="Configurations\ConfigurationToString\IConfigurationToStringProvider.cs" />
+    <Compile Include="Configurations\ObjectsContainer\ConfigurationObjectsContainer.cs" />
+    <Compile Include="Configurations\ObjectsContainer\IConfigurationObjectsContainer.cs" />
+    <Compile Include="Configurations\ObjectToString\DefaultFullObjectToStringProvider.cs" />
+    <Compile Include="Configurations\ObjectToString\FullObjectToStringProviderBase.cs" />
+    <Compile Include="Configurations\ObjectToString\CustomFullObjectToStringProvider.cs" />
+    <Compile Include="Configurations\ObjectToString\DefaultObjectToStringProvider.cs" />
+    <Compile Include="Configurations\ObjectToString\CustomFullObjectToStringProviderFactory.cs" />
+    <Compile Include="Configurations\ObjectToString\ICustomFullObjectToStringProviderFactory.cs" />
+    <Compile Include="Configurations\ObjectToString\ObjectIdResolving\DefaultObjectIdResolver.cs" />
+    <Compile Include="Configurations\ObjectToString\IObjectToStringProvider.cs" />
+    <Compile Include="Configurations\ObjectToString\ObjectIdResolving\DictionaryObjectIdResolver.cs" />
+    <Compile Include="Configurations\ObjectToString\ObjectIdResolving\IObjectIdResolver.cs" />
+    <Compile Include="Configurations\IdsFixing\IdsFixer.cs" />
+    <Compile Include="Configurations\IdsFixing\IIdsFixer.cs" />
+    <Compile Include="Configurations\IConfigurationConstructor.cs" />
+    <Compile Include="Configurations\LeastConfigurationFinding\ILeastConfigurationFinder.cs" />
+    <Compile Include="Configurations\LeastConfigurationFinding\LeastConfigurationFinder.cs" />
+    <Compile Include="Configurations\ConfigurationConstructor.cs" />
+    <Compile Include="Arguments\ArgumentsGenerator.cs" />
+    <Compile Include="Arguments\ArgumentsListToStringProvider.cs" />
+    <Compile Include="Arguments\IArgumentsListToStringProvider.cs" />
+    <Compile Include="Arguments\ArgumentsListContainer.cs" />
+    <Compile Include="Arguments\IArgumentsListContainerFactory.cs" />
     <Compile Include="GeneratorException.cs" />
-    <Compile Include="GeneratorFactory.cs" />
-    <Compile Include="GeneratorInput.cs" />
-    <Compile Include="GeneratorOutput.cs" />
-    <Compile Include="ConfigurationsHandling\IConfigurationsHandler.cs" />
-    <Compile Include="IGenerator.cs" />
-    <Compile Include="IGeneratorFactory.cs" />
+    <Compile Include="Objects\ObjectsConstructor.cs" />
+    <Compile Include="Objects\ConstructionsContainer.cs" />
+    <Compile Include="Objects\ConstructorOutput.cs" />
+    <Compile Include="Arguments\IArgumentsListContainer.cs" />
+    <Compile Include="Arguments\IArgumentsGenerator.cs" />
+    <Compile Include="Objects\IObjectsConstructor.cs" />
+    <Compile Include="Objects\IConstructionsContainer.cs" />
+    <Compile Include="Arguments\ConstructionSignatureMatcher.cs" />
+    <Compile Include="Arguments\IConstructionSignatureMatcher.cs" />
+    <Compile Include="Configurations\ConfigurationsManager.cs" />
+    <Compile Include="Generator.cs" />
+    <Compile Include="Configurations\IConfigurationsManager.cs" />
+    <Compile Include="Configurations\IConfigurationsHandler.cs" />
     <Compile Include="InitializationException.cs" />
-    <Compile Include="NInject\GeneratorModule.cs" />
+    <Compile Include="GeneratorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationWrapper.cs" />
-    <Compile Include="ConstructingObjects\ConstructionWrapper.cs" />
+    <Compile Include="Configurations\ConfigurationWrapper.cs" />
+    <Compile Include="Objects\ConstructionWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj">
@@ -103,8 +110,13 @@
       <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
       <Name>GeoGen.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj">
+      <Project>{98202cf2-d348-4ad7-8888-4281b0229dab}</Project>
+      <Name>GeoGen.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />

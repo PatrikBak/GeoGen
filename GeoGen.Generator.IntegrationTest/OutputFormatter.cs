@@ -12,10 +12,6 @@ namespace GeoGen.Generator.IntegrationTest
     {
         private Dictionary<int, char> _objectIdToString;
 
-        public OutputFormatter()
-        {
-        }
-
         public string Format(Configuration configuration)
         {
             _objectIdToString = new Dictionary<int, char>();
@@ -83,7 +79,9 @@ namespace GeoGen.Generator.IntegrationTest
                 return ObjectToStringById(theoremObject.InternalObjects.First());
             }
 
-            return $"({string.Join(", ", theoremObject.InternalObjects.Select(ObjectToStringById))})";
+            var isLine = theoremObject.Type == TheoremObjectSignature.LineGivenByPoints;
+
+            return $"{(isLine ? "[" : "(")}{string.Join(", ", theoremObject.InternalObjects.Select(ObjectToStringById))}{(isLine ? "]" : ")")}";
         }
 
         private string ObjectToStringById(ConfigurationObject configurationObject)

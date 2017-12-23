@@ -7,6 +7,7 @@ using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.Configurations;

@@ -4,10 +4,12 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Generator;
 using GeoGen.Core.Utilities;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects;
+using GeoGen.Utilities;
 using Moq;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
@@ -44,7 +46,7 @@ namespace GeoGen.Generator.Test
 
             // setup container mock so it returns configurations and overrides them when we're
             // adding a new layer
-            var containterMock = new Mock<IConfigurationsContainer>();
+            var containterMock = new Mock<IConfigurationsManager>();
             containterMock.Setup(c => c.CurrentLayer).Returns(() => configurations);
             containterMock.Setup(c => c.AddLayer(It.IsAny<IEnumerable<ConstructorOutput>>()))
                     .Returns<IEnumerable<ConstructorOutput>>
@@ -109,7 +111,7 @@ namespace GeoGen.Generator.Test
         public void Test_Number_Of_Iterations_Is_At_Least_One(int number)
         {
             var constructor = SimpleMock<IObjectsConstructor>();
-            var container = SimpleMock<IConfigurationsContainer>();
+            var container = SimpleMock<IConfigurationsManager>();
             var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentOutOfRangeException>(() => new Generator(container, constructor, handler, number));
@@ -127,7 +129,7 @@ namespace GeoGen.Generator.Test
         [Test]
         public void Test_Generator_Constructor_Cannot_Be_Null()
         {
-            var container = SimpleMock<IConfigurationsContainer>();
+            var container = SimpleMock<IConfigurationsManager>();
             var handler = SimpleMock<IConfigurationsHandler>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, null, handler, 1));
@@ -137,7 +139,7 @@ namespace GeoGen.Generator.Test
         public void Test_Generator_Handler_Cannot_Be_Null()
         {
             var constructor = SimpleMock<IObjectsConstructor>();
-            var container = SimpleMock<IConfigurationsContainer>();
+            var container = SimpleMock<IConfigurationsManager>();
 
             Assert.Throws<ArgumentNullException>(() => new Generator(container, constructor, null, 1));
         }

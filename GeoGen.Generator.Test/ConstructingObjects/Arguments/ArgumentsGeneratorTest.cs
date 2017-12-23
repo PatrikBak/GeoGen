@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Linq;
-using GeoGen.Core.Utilities.Combinations;
-using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolving;
 using GeoGen.Generator.ConstructingObjects.Arguments;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Configurations;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
@@ -27,9 +26,9 @@ namespace GeoGen.Generator.Test.ConstructingObjects.Arguments
             var provider = new DefaultObjectToStringProvider(resolver);
             var signatureMatcher = new ConstructionSignatureMatcher();
             var argsProvider = new ArgumentsListToStringProvider(provider);
-            var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
+            //var argumentsContainerFactory = new ArgumentsListContainerFactory(argsProvider);
 
-            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, argumentsContainerFactory);
+            return new ArgumentsGenerator(combinator, signatureMatcher, variationsProvider, null);
         }
 
         [Test]

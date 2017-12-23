@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer.Test.Objects
     {
         private static ObjectsContainersManager Manager(int? numberOfContainers = null)
         {
-            var factory = new ObjectsContainersFactory();
+            //var factory = new ObjectsContainersFactory();
 
             var currentContainer = 0;
 
@@ -26,8 +26,8 @@ namespace GeoGen.Analyzer.Test.Objects
                     .Returns(() => Objects()[currentContainer++]);
 
             return numberOfContainers == null
-                ? new ObjectsContainersManager(factory, mock.Object)
-                : new ObjectsContainersManager(factory, mock.Object, numberOfContainers.Value);
+                ? new ObjectsContainersManager(null, mock.Object)
+                : new ObjectsContainersManager(null, mock.Object, numberOfContainers.Value);
         }
 
         private static List<IAnalyticalObject>[] Objects()

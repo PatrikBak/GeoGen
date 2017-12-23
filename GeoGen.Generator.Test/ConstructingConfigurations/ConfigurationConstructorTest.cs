@@ -4,7 +4,6 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Utilities;
-using GeoGen.Core.Utilities.VariationsProviding;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingConfigurations.ConfigurationToString;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
@@ -15,6 +14,7 @@ using GeoGen.Generator.ConstructingConfigurations.ObjectToString.ObjectIdResolvi
 using GeoGen.Generator.ConstructingObjects;
 using GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString;
 using GeoGen.Generator.ConstructingObjects.Arguments.Container;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
 using static GeoGen.Generator.Test.TestHelpers.Configurations;
@@ -27,7 +27,7 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
     {
         private static ConfigurationObjectsContainer _container;
 
-        private static ArgumentsListContainerFactory _argsContainerFactory;
+        private static IArgumentsListContainerFactory _argsContainerFactory;
 
         private static ConfigurationConstructor Constructor(IReadOnlyList<LooseConfigurationObject> objects)
         {
@@ -35,15 +35,14 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations
             var provider = new DefaultObjectToStringProvider(resolver);
             var argsToString = new ArgumentsListToStringProvider(provider);
             var fullProvider = new DefaultFullObjectToStringProvider(argsToString, resolver);
-            _container = new ConfigurationObjectsContainer(fullProvider);
-            _container.Initialize(AsConfiguration(objects));
+            _container = new ConfigurationObjectsContainer(null, fullProvider);
+            //_container.Initialize(AsConfiguration(objects));
             var variations = new VariationsProvider();
             var configurationToString = new ConfigurationToStringProvider();
             var objectToStringFactory = new CustomFullObjectToStringProviderFactory(argsToString);
-            var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(variations);
-            dictionaryObjectIdResolversContainer.Initialize(objects);
+            var dictionaryObjectIdResolversContainer = new DictionaryObjectIdResolversContainer(null, variations);
             var finder = new LeastConfigurationFinder(configurationToString, objectToStringFactory, dictionaryObjectIdResolversContainer);
-            _argsContainerFactory = new ArgumentsListContainerFactory(argsToString);
+            //_argsContainerFactory = new ArgumentsListContainerFactory(argsToString);
             var fixer = new IdsFixerFactory(_container);
 
             return new ConfigurationConstructor(finder, fixer);

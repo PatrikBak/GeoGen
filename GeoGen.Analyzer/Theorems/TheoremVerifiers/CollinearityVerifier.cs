@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Analyzer.Objects.GeometricalObjects;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 {

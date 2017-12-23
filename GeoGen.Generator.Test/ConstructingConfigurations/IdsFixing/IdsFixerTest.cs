@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core.Generator;
 using GeoGen.Generator.ConstructingConfigurations.IdsFixing;
 using GeoGen.Generator.ConstructingConfigurations.ObjectsContainer;
 using GeoGen.Generator.ConstructingConfigurations.ObjectToString;
@@ -27,9 +28,9 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.IdsFixing
             var argsProvider = new ArgumentsListToStringProvider(defaultToString);
             var provider = new DefaultFullObjectToStringProvider(argsProvider, defaultResolver);
 
-            _objectsContainer = new ConfigurationObjectsContainer(provider);
+            _objectsContainer = new ConfigurationObjectsContainer(null, provider);
             var objects = Objects(42, ConfigurationObjectType.Point, includeIds: false).ToList();
-            _objectsContainer.Initialize(AsConfiguration(objects));
+            //_objectsContainer.Initialize(AsConfiguration(objects));
 
             return new IdsFixer(_objectsContainer, DictionaryIdResolver());
         }

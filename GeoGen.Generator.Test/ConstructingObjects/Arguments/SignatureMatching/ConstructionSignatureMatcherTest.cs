@@ -4,6 +4,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Core.Generator;
 using GeoGen.Generator.ConstructingObjects.Arguments.SignatureMatching;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Configurations;

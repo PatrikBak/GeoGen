@@ -38,7 +38,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling
                         }
                     );
 
-            var container = new Mock<IConfigurationsContainer>();
+            var container = new Mock<IConfigurationsManager>();
             container.Setup(s => s.ForbidConfigurationsContaining(It.IsAny<ConfigurationObject>()))
                     .Callback<ConfigurationObject>(o => forbiddenIds.Add(o.Id ?? throw new Exception()));
 
@@ -48,7 +48,7 @@ namespace GeoGen.Generator.Test.ConfigurationsHandling
         [Test]
         public void Test_Analyzer_Cant_Be_Null()
         {
-            var container = SimpleMock<IConfigurationsContainer>();
+            var container = SimpleMock<IConfigurationsManager>();
 
             Assert.Throws<ArgumentNullException>(() => new ConfigurationsHandler(null, container));
         }

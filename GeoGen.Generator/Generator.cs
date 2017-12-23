@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Core.Generator;
 using GeoGen.Generator.ConfigurationsHandling;
 using GeoGen.Generator.ConstructingConfigurations;
 using GeoGen.Generator.ConstructingObjects;
@@ -15,9 +16,9 @@ namespace GeoGen.Generator
         #region Private fields
 
         /// <summary>
-        /// The configurations container.
+        /// The configurations manager.
         /// </summary>
-        private readonly IConfigurationsContainer _configurationsContainer;
+        private readonly IConfigurationsManager _configurationsManager;
 
         /// <summary>
         /// The configurations handler.
@@ -40,30 +41,30 @@ namespace GeoGen.Generator
 
         /// <summary>
         /// Constructs a new generator. The generator uses the objects constructor for 
-        /// creating new configuration objects, the configurations container for
-        /// registering them (it's supposed be already initialized) and the configurations
-        /// handler for handling constructed configurations (passing them to the analyzer and
-        /// processing its output). Also a number of iterations that are to be performed is specified.
+        /// creating new configuration objects, the configurations container that is able 
+        /// to create new configurations from those objects, and the configurations handler 
+        /// that passes created configurations to the analyzer and processes its output. 
         /// </summary>
-        /// <param name="configurationsContainer">The container</param>
-        /// <param name="objectsConstructor">The configuration constructor</param>
-        /// <param name="configurationsHandler">The configurations handler</param>
-        /// <param name="maximalNumberOfIterations">The maximal number of iterations.</param>
+        /// <param name="configurationsManager">The configurations manager.</param>
+        /// <param name="objectsConstructor">The objects constructor.</param>
+        /// <param name="configurationsHandler">The configurations handler.</param>
+        /// <param name="maximalNumberOfIterations">The maximal number of iterations to be performed.</param>
         public Generator
         (
-            IConfigurationsContainer configurationsContainer,
+            IConfigurationsManager configurationsManager,
             IObjectsConstructor objectsConstructor,
             IConfigurationsHandler configurationsHandler,
             int maximalNumberOfIterations
         )
         {
+            _configurationsManager = configurationsManager ?? throw new ArgumentNullException(nameof(configurationsManager));
+            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationsHandler));
+            _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
+
             if (maximalNumberOfIterations <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximalNumberOfIterations), "Number of iterations must be at least one");
 
             _maximalNumberOfIterations = maximalNumberOfIterations;
-            _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
-            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationsHandler));
-            _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
         }
 
         #endregion
@@ -80,19 +81,19 @@ namespace GeoGen.Generator
             (
                 iterationIndex =>
                 {
-                    // Create the output for new layer
-                    var outputForNewLayer = _configurationsContainer
-                            // Get the current layer
+                    // From the container
+                    var outputForNewLayer = _configurationsManager
+                            // Take the current layer
                             .CurrentLayer
                             // Take only not excluded configurations
                             .Where(configuration => !configuration.Excluded)
-                            // Construct configurations and merge them
+                            // Construct outputs from each of them
                             .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
 
-                    // Create the configurations on new layer
-                    var newLayersConfigurations = _configurationsContainer.AddLayer(outputForNewLayer);
+                    // Take the enumerable for creating the new layer
+                    var newLayersConfigurations = _configurationsManager.AddLayer(outputForNewLayer);
 
-                    // Let the handle process the configurations to obtain the output
+                    // Let the handler lazily process the configurations to obtain the output
                     return _configurationsHandler.GenerateFinalOutput(newLayersConfigurations);
                 }
             );

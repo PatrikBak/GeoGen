@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Utilities;
+using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
@@ -104,7 +105,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // Otherwise we're solving the system:
             // 
             // (x-m1)^2 + (y-n1)^2 = r1^2       (1)
-            // (x-m2)^2 + (y-n1)^2 = r2^2       (2)
+            // (x-m2)^2 + (y-n2)^2 = r2^2       (2)
             //
             // The idea is to solve the equivalent system 
             // (1), (1) - (2) instead. Since (1) - (2)
