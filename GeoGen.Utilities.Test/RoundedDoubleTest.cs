@@ -34,7 +34,7 @@ namespace GeoGen.Core.Test.Utilities
                 TestNumber(DoubleRoundingPrecision - 1),
                 TestNumber(DoubleRoundingPrecision),
                 TestNumber(DoubleRoundingPrecision + 1),
-                TestNumber(DoubleRoundingPrecision + 10),
+                TestNumber(DoubleRoundingPrecision + 10)
             };
 
             var roundedValues = new List<double>

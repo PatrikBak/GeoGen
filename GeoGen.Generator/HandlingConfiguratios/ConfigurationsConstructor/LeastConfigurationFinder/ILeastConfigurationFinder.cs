@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Generator.LeastConfigurationFinder
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a service that is for a given configuration able to find

@@ -7,7 +7,7 @@ using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
-namespace GeoGen.Generator.ConstructionSignatureMatching
+namespace GeoGen.Generator
 {
     /// <summary>
     /// A default implementation of the <see cref="IConstructionSignatureMatcher"/> interface.

@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Generator.ArgumentsGenerator
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// Represent a generator of all possible mutually distinct construction arguments, for

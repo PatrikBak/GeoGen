@@ -5,6 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Generator;
 using GeoGen.Generator.Test.TestHelpers;
 using GeoGen.Utilities;
+using Moq;
 using NUnit.Framework;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.ObjectIdResolving
@@ -12,76 +13,40 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
     [TestFixture]
     public class DictionaryObjectIdResolversContainerTest
     {
-        private static DictionaryObjectIdResolversContainer Container()
+        private static DictionaryObjectIdResolversContainer Container(IEnumerable<LooseConfigurationObject> objects = null)
         {
             var variationsProvider = new VariationsProvider();
 
-           // return new DictionaryObjectIdResolversContainer(variationsProvider);
-            return null;
+            var container = new Mock<IConfigurationObjectsContainer>();
+
+            var looseObjects = objects ?? Enumerable.Empty<LooseConfigurationObject>();
+
+            container.Setup(s => s.LooseObjects).Returns(looseObjects);
+
+            return new DictionaryObjectIdResolversContainer(container.Object, variationsProvider);
         }
 
         [Test]
         public void Test_Variations_Provider_Cant_Be_Null()
         {
-            //Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolversContainer(null));
+            var container = new Mock<IConfigurationObjectsContainer>();
+
+            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolversContainer(container.Object, null));
         }
 
         [Test]
-        public void Test_Cant_Iterate_Before_Initialization()
+        public void Test_Object_Container_Cant_Be_Null()
         {
-            Assert.Throws<GeneratorException>(() => Container().FirstOrDefault());
-        }
+            var provider = new Mock<IVariationsProvider>();
 
-        [Test]
-        public void Test_Loose_Objects_List_Cant_Be_Null()
-        {
-            //Assert.Throws<ArgumentNullException>(() => Container().Initialize(null));
-        }
-
-        [Test]
-        public void Test_Loose_Object_List_Cant_Be_Empty()
-        {
-            //Assert.Throws<ArgumentException>(() => Container().Initialize(new List<LooseConfigurationObject>()));
-        }
-
-        [Test]
-        public void Test_Cant_Iterate_After_Incorrect_Reinitialization()
-        {
-            var container = Container();
-            //container.Initialize(ConfigurationObjects.Objects(2, ConfigurationObjectType.Point));
-
-            try
-            {
-                //container.Initialize(null);
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
-
-            Assert.Throws<GeneratorException>(() => Container().FirstOrDefault());
-        }
-
-        [Test]
-        public void Test_Objects_Must_Have_Set_Ids()
-        {
-            var objects = new List<LooseConfigurationObject>
-            {
-                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1},
-                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 2},
-                new LooseConfigurationObject(ConfigurationObjectType.Point),
-                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3}
-            };
-
-            //Assert.Throws<GeneratorException>(() => Container().Initialize(objects));
+            Assert.Throws<ArgumentNullException>(() => new DictionaryObjectIdResolversContainer(null, provider.Object));
         }
 
         [Test]
         public void Test_Resolvers_In_Container_Are_Correct()
         {
             var objects = ConfigurationObjects.Objects(3, ConfigurationObjectType.Point, 4);
-            var container = Container();
-            //container.Initialize(objects);
+            var container = Container(objects);
             var resolvers = container.ToList();
 
             // Permutations: [4,5,6], [4,6,5], [5,4,6], [5,6,4], [6,4,5], [6,5,4]
@@ -97,6 +62,36 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.Object
             Assert.AreEqual(5, fourth.ResolveId(objects[0]));
             Assert.AreEqual(6, fourth.ResolveId(objects[1]));
             Assert.AreEqual(4, fourth.ResolveId(objects[2]));
+        }
+
+        [Test]
+        public void Test_Compose_Method_Dictionaries_Cant_Be_Null()
+        {
+            var objects = ConfigurationObjects.Objects(3, ConfigurationObjectType.Point, 4);
+            var container = Container(objects);
+            var resolvers = container.ToList();
+
+            Assert.Throws<ArgumentNullException>(() => container.Compose(null, resolvers.First()));
+            Assert.Throws<ArgumentNullException>(() => container.Compose(resolvers.First(), null));
+        }
+
+        [Test]
+        public void Test_Compose_Method_With_Correct_Dictionaries()
+        {
+            var objects = ConfigurationObjects.Objects(3, ConfigurationObjectType.Point, 4);
+            var container = Container(objects);
+            var resolvers = container.ToList();
+
+            // Permutations: [4,5,6], [4,6,5], [5,4,6], [5,6,4], [6,5,4], [6,4,5]
+            
+            var second = resolvers[1];
+            var fourth = resolvers[3];
+
+            var composed1 = container.Compose(second, fourth);
+            Assert.AreSame(resolvers[2], composed1);
+
+            var composed2 = container.Compose(fourth, second);
+            Assert.AreSame(resolvers[4], composed2);
         }
     }
 }

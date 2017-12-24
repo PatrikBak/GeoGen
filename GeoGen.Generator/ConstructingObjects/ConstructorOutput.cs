@@ -11,7 +11,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// Gets or sets the initial configuration wrapper that was extended.
         /// </summary>
-        public ConfigurationWrapper InitialConfiguration { get; set; }
+        public ConfigurationWrapper OriginalConfiguration { get; set; }
 
         /// <summary>
         /// Gets or set the list of outputted constructed configuration objects.

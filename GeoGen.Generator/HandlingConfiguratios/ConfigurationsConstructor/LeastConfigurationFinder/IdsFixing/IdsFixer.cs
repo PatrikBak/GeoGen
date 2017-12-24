@@ -5,7 +5,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Utilities;
 
-namespace GeoGen.Generator.LeastConfigurationFinder.IdsFixing
+namespace GeoGen.Generator
 {
     /// <summary>
     /// A default implementation of <see cref="IIdsFixer"/>. It uses 

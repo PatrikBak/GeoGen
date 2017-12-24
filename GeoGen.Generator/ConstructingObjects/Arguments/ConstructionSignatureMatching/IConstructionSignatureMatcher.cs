@@ -3,7 +3,7 @@ using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.Parameters;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Generator.ConstructionSignatureMatching
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a converter between lists of <see cref="ConstructionParameter"/>s and 

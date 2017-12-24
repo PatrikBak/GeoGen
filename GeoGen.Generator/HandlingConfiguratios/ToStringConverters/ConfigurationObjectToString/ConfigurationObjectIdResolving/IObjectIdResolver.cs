@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core.Configurations;
-using GeoGen.Generator.LeastConfigurationFinder;
 
 namespace GeoGen.Generator
 {

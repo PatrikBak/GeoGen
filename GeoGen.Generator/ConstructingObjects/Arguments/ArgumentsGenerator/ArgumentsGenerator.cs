@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.ConstructionSignatureMatching;
 using GeoGen.Utilities;
 
-namespace GeoGen.Generator.ArgumentsGenerator
+namespace GeoGen.Generator
 {
     /// <summary>
     /// A default implementation of the <see cref="IArgumentsGenerator"/> interface.

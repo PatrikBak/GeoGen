@@ -14,24 +14,6 @@ namespace GeoGen.Generator
     /// </summary>
     internal sealed class DefaultFullObjectToStringConverter : FullObjectToStringConverterBase, IDefaultFullObjectToStringConverter
     {
-        #region Public constants
-
-        /// <summary>
-        /// The default id of the converter.
-        /// </summary>
-        public const int DefaultId = 1;
-
-        #endregion
-
-        #region IObjectToStringConverter properties
-
-        /// <summary>
-        /// Gets the unique id of this converter. 
-        /// </summary>
-        public override int Id { get; } = DefaultId;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>

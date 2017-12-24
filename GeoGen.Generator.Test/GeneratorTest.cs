@@ -50,7 +50,7 @@ namespace GeoGen.Generator.Test
                     (
                         c =>
                         {
-                            var result = c.Select(output => output.InitialConfiguration).ToList();
+                            var result = c.Select(output => output.OriginalConfiguration).ToList();
 
                             configurations.SetItems(result);
 
@@ -77,7 +77,7 @@ namespace GeoGen.Generator.Test
                                 (
                                     cc => new ConstructorOutput
                                     {
-                                        InitialConfiguration = configuration,
+                                        OriginalConfiguration = configuration,
                                         ConstructedObjects = new List<ConstructedConfigurationObject> {constructedConfigurationObject}
                                     }
                                 )

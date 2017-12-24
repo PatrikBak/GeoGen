@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.LeastConfigurationFinder;
 
 namespace GeoGen.Generator
 {
@@ -16,12 +14,12 @@ namespace GeoGen.Generator
     /// </summary>
     internal abstract class FullObjectToStringConverterBase : IObjectToStringConverter
     {
-        #region Public abstract properties
+        #region IObjectToStringConverter properties
 
         /// <summary>
-        /// Gets the unique id of this converter. 
+        /// Gets the object id resolver associated with this convert
         /// </summary>
-        public abstract int Id { get; }
+        public IObjectIdResolver Resolver { get; }
 
         #endregion
 
@@ -35,11 +33,6 @@ namespace GeoGen.Generator
         #endregion
 
         #region Protected fields
-
-        /// <summary>
-        /// The object id resolver.
-        /// </summary>
-        protected readonly IObjectIdResolver Resolver;
 
         /// <summary>
         /// The cache dictionary mapping constructed object's ids to their 

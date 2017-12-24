@@ -9,26 +9,12 @@ namespace GeoGen.Generator
     /// </summary>
     internal sealed class DefaultObjectToStringConverter : IDefaultObjectToStringConverter
     {
-        #region Public constants
-
-        /// <summary>
-        /// The default id of the converter.
-        /// </summary>
-        public const int DefaultId = 0;
-
-        #endregion
-
         #region IObjectToStringConverter properties
 
         /// <summary>
         /// Gets the object to string resolver that is used by this provider.
         /// </summary>
         public IObjectIdResolver Resolver { get; }
-
-        /// <summary>
-        /// Gets the unique id of this converter. 
-        /// </summary>
-        public int Id { get; } = DefaultId;
 
         #endregion
 

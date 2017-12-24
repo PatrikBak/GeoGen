@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Generator.LeastConfigurationFinder.IdsFixing
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a factory for creating <see cref="IIdsFixer"/> 

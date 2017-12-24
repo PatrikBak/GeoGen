@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GeoGen.Generator.LeastConfigurationFinder.IdsFixing
+namespace GeoGen.Generator
 {
     /// <summary>
     /// A default implementation of <see cref="IIdsFixerFactory"/>.

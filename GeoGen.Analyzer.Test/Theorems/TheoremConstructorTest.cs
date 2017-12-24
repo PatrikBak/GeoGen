@@ -118,7 +118,7 @@ namespace GeoGen.Analyzer.Test.Theorems
             {
                 new PointObject(point1, 1),
                 new PointObject(point2, 2),
-                new PointObject(point3, 3),
+                new PointObject(point3, 3)
             };
 
             var linesAndCircles = new List<GeometricalObject>

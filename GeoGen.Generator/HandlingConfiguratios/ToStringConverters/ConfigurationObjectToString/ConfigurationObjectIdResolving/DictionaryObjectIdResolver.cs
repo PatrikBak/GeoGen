@@ -66,5 +66,63 @@ namespace GeoGen.Generator
         }
 
         #endregion
+
+        #region Public methods
+
+        public Dictionary<int, int> Compose(DictionaryObjectIdResolver resolver)
+        {
+            if (resolver == null)
+                throw new ArgumentNullException(nameof(resolver));
+
+            if (resolver._realIdsToResolvedIds.Count != _realIdsToResolvedIds.Count)
+                throw new ArgumentException("Cannot compose two dictionary resolvers with distinct number of elements.");
+
+            var result = new Dictionary<int, int>();
+
+            foreach (var pair in _realIdsToResolvedIds)
+            {
+                var key = pair.Key;
+
+                var value = pair.Value;
+
+                if (!resolver._realIdsToResolvedIds.ContainsKey(value))
+                    throw new ArgumentException("Values of the first dictionary resolver doesn't match the key of the second one.");
+
+                result.Add(key, resolver._realIdsToResolvedIds[value]);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Checks if the functionality of the dictionary is equivalently
+        /// shown in the provided dictionary.
+        /// </summary>
+        /// <param name="idsDictionary">The ids dictionary.</param>
+        public bool IsEquivalentTo(Dictionary<int, int> idsDictionary)
+        {
+            if (idsDictionary == null)
+                throw new ArgumentNullException(nameof(idsDictionary));
+
+            if (_realIdsToResolvedIds.Count != idsDictionary.Count)
+                return false;
+
+            foreach (var pair in idsDictionary)
+            {
+                var key = pair.Key;
+
+                if (!_realIdsToResolvedIds.ContainsKey(key))
+                    return false;
+
+                var internalValue = _realIdsToResolvedIds[key];
+
+                if (internalValue != pair.Value)
+                    return false;
+            }
+
+            return true;
+        }
+
+        #endregion
     }
 }

@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Generator.LeastConfigurationFinder;
-using GeoGen.Generator.LeastConfigurationFinder.IdsFixing;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {
@@ -27,6 +26,11 @@ namespace GeoGen.Generator
         private readonly IIdsFixerFactory _idsFixerFactory;
 
         /// <summary>
+        /// The default object id resolver.
+        /// </summary>
+        private readonly IDefaultObjectIdResolver _resolver;
+
+        /// <summary>
         /// The last configuration id.
         /// </summary>
         private int _lastId;
@@ -41,13 +45,20 @@ namespace GeoGen.Generator
         /// ids fixer factory to fix ids according to this representant, and
         /// arguments list container factory to obtain argument containers for
         /// forbidden arguments.
+        /// TODO
         /// </summary>
         /// <param name="finder">The least configuration finder.</param>
         /// <param name="factory">The ids fixer factory.</param>
-        public ConfigurationConstructor(ILeastConfigurationFinder finder, IIdsFixerFactory factory)
+        public ConfigurationConstructor
+        (
+                ILeastConfigurationFinder finder,
+                IIdsFixerFactory factory,
+                IDefaultObjectIdResolver resolver
+        )
         {
             _leastConfigurationFinder = finder ?? throw new ArgumentNullException(nameof(finder));
             _idsFixerFactory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _resolver = resolver;
         }
 
         #endregion
@@ -64,62 +75,119 @@ namespace GeoGen.Generator
             if (constructorOutput == null)
                 throw new ArgumentNullException(nameof(constructorOutput));
 
-            // Pull original configuration wrapper
-            var wrapper = constructorOutput.InitialConfiguration;
+            var initialWrapper = CreateWrapperFromOutput(constructorOutput);
 
-            // Pull new objects
-            var newObjects = constructorOutput.ConstructedObjects;
+            //Check(initialWrapper);
+
+            // Let the resolver find it's symmetry class representant
+            var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(initialWrapper);
+
+            var finalWrapper = CreateFinalWrapper(initialWrapper, leastResolver);
+
+            //Check(finalWrapper);
+
+            return finalWrapper;
+        }
+
+        private ConfigurationWrapper CreateWrapperFromOutput(ConstructorOutput constructorOutput)
+        {
+            // Pull initial configuration wrapper
+            var originalConfigurationWrapper = constructorOutput.OriginalConfiguration;
 
             // Pull original configuration
-            var currentConfiguration = wrapper.Configuration;
+            var originalConfiguration = originalConfigurationWrapper.Configuration;
+
+            // Construct original objects list
+            var originalObjects = originalConfigurationWrapper.AllObjectsMap.AllObjects().ToList();
 
             // Merge original constructed objects with the new ones
-            var allConstructedObjects = currentConfiguration
+            var allConstructedObjects = originalConfiguration
                     .ConstructedObjects
-                    .Concat(newObjects)
+                    .Concat(constructorOutput.ConstructedObjects)
                     .ToList();
 
             // Create the new configuration
-            var newConfiguration = new Configuration(currentConfiguration.LooseObjects, allConstructedObjects);
+            var newConfiguration = new Configuration(originalConfiguration.LooseObjects, allConstructedObjects);
 
             // Create the new wrapper for the resolver
-            var newWrapper = new ConfigurationWrapper
+            return new ConfigurationWrapper
             {
                     Id = _lastId++,
                     Configuration = newConfiguration,
-                    PreviousConfiguration = wrapper,
                     AllObjectsMap = new ConfigurationObjectsMap(newConfiguration),
-                    LastAddedObjects = newObjects,
-                    Excluded = false,
-                    OriginalObjects = constructorOutput.InitialConfiguration.AllObjectsMap.AllObjects().ToList()
+                    PreviousConfiguration = originalConfigurationWrapper,
+                    OriginalObjects = originalObjects,
+                    LastAddedObjects = constructorOutput.ConstructedObjects,
+                    ResolverToMinimalForm = _resolver,
+                    Excluded = false
             };
+        }
 
-            // Let the resolver find it's symmetry class representant
-            var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(newWrapper);
-
+        private ConfigurationWrapper CreateFinalWrapper(ConfigurationWrapper initialWrapper, DictionaryObjectIdResolver resolver)
+        {
             // Get the ids fixer for this resolver from the factory
-            var idsFixer = _idsFixerFactory.CreateFixer(leastResolver);
+            var idsFixer = _idsFixerFactory.CreateFixer(resolver);
 
             // Fix the configuration
-            newConfiguration = FixConfiguration(newConfiguration, idsFixer);
+            var newConfiguration = FixConfiguration(initialWrapper.Configuration, idsFixer);
 
             // Find new objects
-            newObjects = FindNewObjects(newConfiguration, newObjects.Count);
+            var newObjects = FindNewObjects(newConfiguration, initialWrapper.LastAddedObjects.Count);
 
             // Create new objects map
             var typeToObjectsMap = new ConfigurationObjectsMap(newConfiguration);
 
+            // Create original objects
+            var originalObjects = typeToObjectsMap.AllObjects().Where(o => !newObjects.Contains(o)).ToList();
+
             // Return the new wrapper
             return new ConfigurationWrapper
             {
-                    Id = newWrapper.Id,
+                    Id = initialWrapper.Id,
                     Configuration = newConfiguration,
-                    PreviousConfiguration = wrapper,
+                    ResolverToMinimalForm = resolver,
+                    PreviousConfiguration = initialWrapper.PreviousConfiguration,
                     AllObjectsMap = typeToObjectsMap,
                     LastAddedObjects = newObjects,
-                    OriginalObjects = typeToObjectsMap.AllObjects().Where(o => !newObjects.Contains(o)).ToList(),
+                    OriginalObjects = originalObjects,
                     Excluded = false
             };
+        }
+
+        private void Check(ConfigurationWrapper wrapper)
+        {
+            // All objects = Last added + Original
+            var allObjectsSet = wrapper.AllObjectsMap.AllObjects().ToSet();
+
+            var theoreticalAllObjectss = wrapper.OriginalObjects.Concat(wrapper.LastAddedObjects).ToSet();
+
+            if (!allObjectsSet.SetEquals(theoreticalAllObjectss))
+            {
+                Console.WriteLine();
+            }
+
+            // All objects = All objects of configuration
+            var allObjects2 = wrapper
+                    .Configuration
+                    .ConstructedObjects
+                    .Cast<ConfigurationObject>()
+                    .Concat(wrapper.Configuration.LooseObjects)
+                    .ToSet();
+
+            if (!allObjectsSet.SetEquals(allObjects2))
+            {
+                Console.WriteLine();
+            }
+
+            // Original objects = All objects from previous configuration
+            var allFromPrevious = wrapper.PreviousConfiguration == null
+                    ? new HashSet<ConfigurationObject>()
+                    : new ConfigurationObjectsMap(wrapper.PreviousConfiguration.AllObjectsMap).AllObjects().ToSet();
+
+            if (!wrapper.OriginalObjects.ToSet().SetEquals(allFromPrevious))
+            {
+                Console.WriteLine();
+            }
         }
 
         /// <summary>
@@ -142,7 +210,8 @@ namespace GeoGen.Generator
                     LastAddedObjects = new List<ConstructedConfigurationObject>(),
                     OriginalObjects = objectsMap.AllObjects().ToList(),
                     Excluded = false,
-                    PreviousConfiguration = null
+                    PreviousConfiguration = null,
+                    ResolverToMinimalForm = _resolver
             };
 
             // Return it

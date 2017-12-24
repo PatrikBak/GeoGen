@@ -1,6 +1,5 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.LeastConfigurationFinder;
 
 namespace GeoGen.Generator
 {
@@ -15,15 +14,6 @@ namespace GeoGen.Generator
     /// </summary>
     internal sealed class CustomFullObjectToStringConverter : FullObjectToStringConverterBase
     {
-        #region IObjectToStringConverter properties
-
-        /// <summary>
-        /// Gets the unique id of this converter. 
-        /// </summary>
-        public override int Id => Resolver.Id + 1;
-
-        #endregion
-
         #region Constructor
 
         /// <summary>

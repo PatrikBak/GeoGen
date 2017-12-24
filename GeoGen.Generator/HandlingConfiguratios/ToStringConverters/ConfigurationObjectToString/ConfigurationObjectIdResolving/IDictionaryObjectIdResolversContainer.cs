@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.LeastConfigurationFinder;
 
 namespace GeoGen.Generator
 {
@@ -15,5 +14,6 @@ namespace GeoGen.Generator
     /// </summary>
     internal interface IDictionaryObjectIdResolversContainer : IEnumerable<DictionaryObjectIdResolver>
     {
+        DictionaryObjectIdResolver Compose(DictionaryObjectIdResolver first, DictionaryObjectIdResolver second);
     }
 }

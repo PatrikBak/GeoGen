@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core.Configurations;
 
-namespace GeoGen.Generator.LeastConfigurationFinder.IdsFixing
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a service that can replace configuration objects with their

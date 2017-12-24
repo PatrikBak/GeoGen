@@ -6,8 +6,8 @@ namespace GeoGen.Generator
     internal interface IObjectToStringConverter : IToStringConverter<ConfigurationObject>
     {
         /// <summary>
-        /// Gets the unique id of this converter. 
+        /// Gets the object id resolver associated with this convert
         /// </summary>
-        int Id { get; }
+        IObjectIdResolver Resolver { get; }
     }
 }

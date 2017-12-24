@@ -193,7 +193,7 @@ namespace GeoGen.Generator
 
             // Pull ids of initial objects and cast them to set
             var initialIds = output
-                    .InitialConfiguration
+                    .OriginalConfiguration
                     .AllObjectsMap
                     .AllObjects()
                     .Select(obj => obj.Id ?? throw GeneratorException.ObjectsIdNotSet())

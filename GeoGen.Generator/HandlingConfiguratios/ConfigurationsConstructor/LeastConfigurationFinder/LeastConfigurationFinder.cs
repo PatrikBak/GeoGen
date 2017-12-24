@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Generator.LeastConfigurationFinder
+namespace GeoGen.Generator
 {
     /// <summary>
     /// An implementation of <see cref="ILeastConfigurationFinder"/> that detects

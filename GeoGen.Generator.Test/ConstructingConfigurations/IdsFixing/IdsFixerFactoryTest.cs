@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Generator.LeastConfigurationFinder.IdsFixing;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Utilities;
 

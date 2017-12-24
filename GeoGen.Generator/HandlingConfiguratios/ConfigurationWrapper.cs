@@ -22,6 +22,8 @@ namespace GeoGen.Generator
 
         public ConfigurationWrapper PreviousConfiguration { get; set; }
 
+        public IObjectIdResolver ResolverToMinimalForm { get; set; }
+
         /// <summary>
         /// Gets or sets the precalculated configuration objects map. This map is
         /// useful during the objects construction process, since we need to have

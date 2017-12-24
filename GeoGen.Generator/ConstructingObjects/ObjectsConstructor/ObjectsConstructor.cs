@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Generator.ArgumentsGenerator;
 
 namespace GeoGen.Generator
 {
@@ -80,7 +79,7 @@ namespace GeoGen.Generator
                             // Create and return an output for these objects
                             return new ConstructorOutput
                             {
-                                InitialConfiguration = configurationWrapper,
+                                OriginalConfiguration = configurationWrapper,
                                 ConstructedObjects = constructedObjects
                             };
                         }

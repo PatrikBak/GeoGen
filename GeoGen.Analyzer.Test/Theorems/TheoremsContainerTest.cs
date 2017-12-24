@@ -77,20 +77,20 @@ namespace GeoGen.Analyzer.Test.Theorems
                 },
                 new[]
                 {
-                    new TheoremObject(points.Skip(1).ToList(), TheoremObjectSignature.LineGivenByPoints),
+                    new TheoremObject(points.Skip(1).ToList(), TheoremObjectSignature.LineGivenByPoints)
                 },
                 new[]
                 {
-                    new TheoremObject(points.Skip(2).ToList(), TheoremObjectSignature.CircleGivenByPoints),
+                    new TheoremObject(points.Skip(2).ToList(), TheoremObjectSignature.CircleGivenByPoints)
                 },
                 new[]
                 {
-                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.CircleGivenByPoints),
+                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.CircleGivenByPoints)
                 },
                 new[]
                 {
-                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.LineGivenByPoints),
-                },
+                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.LineGivenByPoints)
+                }
             };
 
             var types = Enum.GetValues(typeof(TheoremType)).Cast<TheoremType>().ToList();
