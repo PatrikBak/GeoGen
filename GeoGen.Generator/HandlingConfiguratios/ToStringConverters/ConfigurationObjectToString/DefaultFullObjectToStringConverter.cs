@@ -38,22 +38,35 @@ namespace GeoGen.Generator
         /// <returns>The cached value, if exists, otherwise an empty string.</returns>
         protected override string ResolveCachedValue(ConfigurationObject configurationObject)
         {
-            // If the objects doesn't have an id, we can't have it cached
-            if (!configurationObject.Id.HasValue)
-            {
-                return string.Empty;
-            }
+            //// If the objects doesn't have an id, we can't have it cached
+            //if (!configurationObject.Id.HasValue)
+            //{
+            //    return string.Empty;
+            //}
 
-            try
-            {
-                // We assume that we must have cached all objects (if not, this will cause 
-                // KeyNotFound exception, so we'll hit the catch block)
-                return Cache[configurationObject.Id.Value];
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new GeneratorException("The object with this id hasn't been cached.");
-            }
+            //try
+            //{
+            //    // We assume that we must have cached all objects (if not, this will cause 
+            //    // KeyNotFound exception, so we'll hit the catch block)
+            //    return Cache[configurationObject.Id.Value];
+            //}
+            //catch (KeyNotFoundException)
+            //{
+            //    throw new GeneratorException("The object with this id hasn't been cached.");
+            //}
+
+            var id = configurationObject.Id;
+
+            if (id == null)
+                return string.Empty;
+
+            var idValue = id.Value;
+
+            if (Cache.ContainsKey(idValue))
+                return Cache[idValue];
+
+            return string.Empty;
+
         }
 
         /// <summary>

@@ -6,9 +6,12 @@ namespace GeoGen.Generator
     {
         private readonly IDictionaryObjectIdResolversContainer _dictionaryResolversContainer;
 
-        public ResolversComposer(IDictionaryObjectIdResolversContainer dictionaryResolversContainer)
+        private readonly IDefaultObjectIdResolver _defaultObjectIdResolver;
+
+        public ResolversComposer(IDictionaryObjectIdResolversContainer dictionaryResolversContainer, IDefaultObjectIdResolver defaultObjectIdResolver)
         {
             _dictionaryResolversContainer = dictionaryResolversContainer;
+            _defaultObjectIdResolver = defaultObjectIdResolver;
         }
 
         public IObjectIdResolver Compose(IObjectIdResolver first, IObjectIdResolver second)
@@ -28,7 +31,10 @@ namespace GeoGen.Generator
             var dictionaryResolver1 = (DictionaryObjectIdResolver) first;
             var dictionaryResolver2 = (DictionaryObjectIdResolver) second;
 
-            return _dictionaryResolversContainer.Compose(dictionaryResolver1, dictionaryResolver2);
+            var result = _dictionaryResolversContainer.Compose(dictionaryResolver1, dictionaryResolver2);
+
+            //return result;
+            return result.Identity ? (IObjectIdResolver) _defaultObjectIdResolver : result;
         }
     }
 }

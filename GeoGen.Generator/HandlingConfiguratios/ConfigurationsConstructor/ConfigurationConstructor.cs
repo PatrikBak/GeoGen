@@ -123,16 +123,19 @@ namespace GeoGen.Generator
             };
         }
 
-        private ConfigurationWrapper CreateFinalWrapper(ConfigurationWrapper initialWrapper, DictionaryObjectIdResolver resolver)
+        private ConfigurationWrapper CreateFinalWrapper(ConfigurationWrapper wrapper, IObjectIdResolver resolver)
         {
+            if (resolver is IDefaultObjectIdResolver)
+                return wrapper;
+
             // Get the ids fixer for this resolver from the factory
-            var idsFixer = _idsFixerFactory.CreateFixer(resolver);
+            var idsFixer = _idsFixerFactory.CreateFixer((DictionaryObjectIdResolver) resolver);
 
             // Fix the configuration
-            var newConfiguration = FixConfiguration(initialWrapper.Configuration, idsFixer);
+            var newConfiguration = FixConfiguration(wrapper.Configuration, idsFixer);
 
             // Find new objects
-            var newObjects = FindNewObjects(newConfiguration, initialWrapper.LastAddedObjects.Count);
+            var newObjects = FindNewObjects(newConfiguration, wrapper.LastAddedObjects.Count);
 
             // Create new objects map
             var typeToObjectsMap = new ConfigurationObjectsMap(newConfiguration);
@@ -143,10 +146,10 @@ namespace GeoGen.Generator
             // Return the new wrapper
             return new ConfigurationWrapper
             {
-                    Id = initialWrapper.Id,
+                    Id = wrapper.Id,
                     Configuration = newConfiguration,
                     ResolverToMinimalForm = resolver,
-                    PreviousConfiguration = initialWrapper.PreviousConfiguration,
+                    PreviousConfiguration = wrapper.PreviousConfiguration,
                     AllObjectsMap = typeToObjectsMap,
                     LastAddedObjects = newObjects,
                     OriginalObjects = originalObjects,

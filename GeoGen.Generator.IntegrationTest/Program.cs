@@ -10,12 +10,8 @@ using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Generator;
 using GeoGen.Core.NInject;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 using Ninject;
-using Ninject.Extensions.ContextPreservation;
-using Ninject.Extensions.Factory;
-using Ninject.Extensions.NamedScope;
 using Ninject.Planning.Bindings.Resolvers;
 
 namespace GeoGen.Generator.IntegrationTest
@@ -65,10 +61,10 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
 
-            //PrintResults(result);
+            //PrintTheorems(result);
         }
 
-        private static void PrintTheorems(List<GeneratorOutput> result)
+        private static void PrintTheorems(IEnumerable<GeneratorOutput> result)
         {
             var formatter = new OutputFormatter();
 

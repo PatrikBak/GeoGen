@@ -15,6 +15,6 @@
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The dictionary object id resolver.</returns>
-        DictionaryObjectIdResolver FindLeastConfiguration(ConfigurationWrapper configuration);
+        IObjectIdResolver FindLeastConfiguration(ConfigurationWrapper configuration);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Generator
@@ -10,6 +11,12 @@ namespace GeoGen.Generator
     /// </summary>
     internal sealed class DictionaryObjectIdResolver : IObjectIdResolver
     {
+        #region Public properties
+
+        public bool Identity { get; }
+
+        #endregion
+
         #region Private fields
 
         /// <summary>
@@ -44,6 +51,7 @@ namespace GeoGen.Generator
 
             Id = id;
             _realIdsToResolvedIds = realIdsToResolvedIds ?? throw new ArgumentNullException(nameof(realIdsToResolvedIds));
+            Identity = realIdsToResolvedIds.All(pair => pair.Key == pair.Value);
         }
 
         #endregion

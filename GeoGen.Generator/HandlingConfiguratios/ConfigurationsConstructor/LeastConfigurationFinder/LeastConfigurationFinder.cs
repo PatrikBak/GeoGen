@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace GeoGen.Generator
 {
@@ -29,6 +30,10 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly IDictionaryObjectIdResolversContainer _dictionaryIdResolversContainer;
 
+        private readonly IDefaultConfigurationToStringConverter _defaultConfigurationToString;
+
+        private readonly IDefaultFullObjectToStringConverter _fullObjectToStringConverter;
+
         #endregion
 
         #region Constructor
@@ -39,6 +44,7 @@ namespace GeoGen.Generator
         /// provider factory (that is used for getting full object to string
         /// providers to be passed during configuration to string conversion)
         /// and a container of all dictionary object id resolvers.
+        /// TODO:
         /// </summary>
         /// <param name="configurationToString">The configuration to string provider.</param>
         /// <param name="objectToStringFactory">The custom full object to string provider factory.</param>
@@ -47,12 +53,14 @@ namespace GeoGen.Generator
         (
             IConfigurationToStringProvider configurationToString,
             ICustomFullObjectToStringProviderFactory objectToStringFactory,
-            IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer
+            IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer,
+            IDefaultConfigurationToStringConverter defaultConfigurationToString
         )
         {
             _configurationToString = configurationToString ?? throw new ArgumentNullException(nameof(configurationToString));
             _objectToStringFactory = objectToStringFactory ?? throw new ArgumentNullException(nameof(objectToStringFactory));
             _dictionaryIdResolversContainer = dictionaryIdResolversContainer ?? throw new ArgumentNullException(nameof(dictionaryIdResolversContainer));
+            _defaultConfigurationToString = defaultConfigurationToString;
         }
 
         #endregion
@@ -66,17 +74,19 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The dictionary object id resolver.</returns>
-        public DictionaryObjectIdResolver FindLeastConfiguration(ConfigurationWrapper configuration)
+        public IObjectIdResolver FindLeastConfiguration(ConfigurationWrapper configuration)
         {
             if (configuration == null)
                 throw new ArgumentNullException(nameof(configuration));
 
+            // Prepare result
+            var result = _defaultConfigurationToString.Resolver;
+
             // Prepare variables
-            string leastString = null;
-            DictionaryObjectIdResolver result = null;
+            var leastString = _defaultConfigurationToString.ConvertToString(configuration);
 
             // Iterate over all the dictionary id resolvers
-            foreach (var resolver in _dictionaryIdResolversContainer)
+            foreach (var resolver in _dictionaryIdResolversContainer.GetNonIdenticalResolvers())
             {
                 // For a given get the custom object to string provider from the factory
                 var customProvider = _objectToStringFactory.GetCustomProvider(resolver);

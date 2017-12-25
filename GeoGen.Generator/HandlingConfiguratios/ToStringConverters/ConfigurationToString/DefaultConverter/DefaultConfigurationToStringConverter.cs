@@ -25,5 +25,7 @@ namespace GeoGen.Generator
 
             return _configurationToString.ConvertToString(item, _objectToString);
         }
+
+        public IObjectIdResolver Resolver => _objectToString.Resolver;
     }
 }

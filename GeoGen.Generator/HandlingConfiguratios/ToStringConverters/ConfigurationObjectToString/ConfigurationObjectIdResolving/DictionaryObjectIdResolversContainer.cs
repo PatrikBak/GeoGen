@@ -25,6 +25,8 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly IVariationsProvider _variationsProvider;
 
+        private DictionaryObjectIdResolver _idenity;
+
         /// <summary>
         /// The dictionary that works such that if we have two dictionary resolvers 
         /// r1, r2 with ids i1, i2, then the resolve _compositionCache[i1][i2] is 
@@ -78,6 +80,8 @@ namespace GeoGen.Generator
             var newResolvers = _variationsProvider
                     // Get variations
                     .GetVariations(objectsAsList, objectsAsList.Count)
+                    // Cast the variations to the list
+                    .Select(variation => variation.ToList())
                     // Cast them to the dictionary mapping object's indices to their ids
                     .Select
                     (
@@ -91,7 +95,14 @@ namespace GeoGen.Generator
                                         obj => obj.Id ?? throw GeneratorException.ObjectsIdNotSet()
                                 );
 
-                                return new DictionaryObjectIdResolver(variationsCounter++, dictionary);
+                                var result = new DictionaryObjectIdResolver(variationsCounter++, dictionary);
+
+                                if (objectsAsList.SequenceEqual(variation))
+                                {
+                                    _idenity = result;
+                                }
+
+                                return result;
                             }
                     );
 
@@ -152,6 +163,11 @@ namespace GeoGen.Generator
             {
                 throw new GeneratorException("An attempt to get composed dictionary that were not created by this container.");
             }
+        }
+
+        public IEnumerable<DictionaryObjectIdResolver> GetNonIdenticalResolvers()
+        {
+            return this.Where(variation => variation != _idenity);
         }
 
         #endregion

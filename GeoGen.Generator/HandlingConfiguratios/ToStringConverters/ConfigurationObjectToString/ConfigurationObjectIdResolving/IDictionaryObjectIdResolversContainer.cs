@@ -15,5 +15,7 @@ namespace GeoGen.Generator
     internal interface IDictionaryObjectIdResolversContainer : IEnumerable<DictionaryObjectIdResolver>
     {
         DictionaryObjectIdResolver Compose(DictionaryObjectIdResolver first, DictionaryObjectIdResolver second);
+
+        IEnumerable<DictionaryObjectIdResolver> GetNonIdenticalResolvers();
     }
 }

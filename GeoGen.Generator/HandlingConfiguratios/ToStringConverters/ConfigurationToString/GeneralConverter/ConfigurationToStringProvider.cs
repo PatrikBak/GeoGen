@@ -30,7 +30,7 @@ namespace GeoGen.Generator
         /// mapping converted configurations ids to the sorted set of their
         /// constructed objects.
         /// </summary>
-        private readonly Dictionary<int, Dictionary<int, SortedSet<string>>> _cache;
+        private readonly Dictionary<int, Dictionary<int, SortedSet<string>>> _cachedSets;
 
         /// <summary>
         /// The initial configuration.
@@ -56,7 +56,7 @@ namespace GeoGen.Generator
         {
             _initialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             _composer = composer ?? throw new ArgumentNullException(nameof(composer));
-            _cache = new Dictionary<int, Dictionary<int, SortedSet<string>>>();
+            _cachedSets = new Dictionary<int, Dictionary<int, SortedSet<string>>>();
         }
 
         #endregion
@@ -78,8 +78,15 @@ namespace GeoGen.Generator
             if (objectToString == null)
                 throw new ArgumentNullException(nameof(objectToString));
 
+            // Resolve the cached value
+            var cachedValue = ResolveCache(configuration, objectToString);
+
+            // If there's any, return it
+            if (cachedValue != string.Empty)
+                return cachedValue;
+
             // Get the dictionary for the converter
-            var dictionary = GetDictionaryForConverter(objectToString);
+            var dictionary = GetDictionaryForResolver(objectToString.Resolver);
 
             // Pull initial configuration
             var previousConfiguration = configuration.PreviousConfiguration;
@@ -116,6 +123,8 @@ namespace GeoGen.Generator
                 dictionary.Add(id, initialResult);
             }
 
+            // Let the helper method find the set of strings corresponding to the
+            // original configuration (with regards to current converter)
             var originalConfigurationSet = FindOriginalConfigurationSet(configuration, objectToString);
 
             // Copy the set. This should be O(n)
@@ -137,84 +146,68 @@ namespace GeoGen.Generator
             // Cache the result
             dictionary.Add(currentId, result);
 
-            // Return joined result
-            //return string.Join(ObjectsSeparator, result);
+            // Construct joined result
+            var resultString = string.Join(ObjectsSeparator, result);
 
-            var r = string.Join(ObjectsSeparator, result);
+            // Return the result
+            return resultString;
+        }
 
-            //var s = OriginalSolution(configuration, objectToString);
+        private string ResolveCache(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
+        {
+            // Pull id of the current configuration
+            var currentId = configuration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
 
-            //if (r != s)
-            //{
-            //    Console.WriteLine();
-            //}
+            // Compose the real converter
+            var converter = _composer.Compose(objectToString.Resolver, configuration.ResolverToMinimalForm);
 
-            return r;
+            // Get dictionary for it
+            var dictionary = GetDictionaryForResolver(converter);
+
+            // If there is the current id
+            if (dictionary.ContainsKey(currentId))
+            {
+                // Return joined strings
+                return string.Join(ObjectsSeparator, dictionary[currentId]);
+            }
+
+            // Otherwise return empty string
+            return string.Empty;
         }
 
         private SortedSet<string> FindOriginalConfigurationSet(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
         {
-            var previousConfiguration = configuration.PreviousConfiguration;
-            
-            // Now we can convert the current one. Pull id of previous configuration
-            var previousId = previousConfiguration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            // Pull id of previous configuration
+            var previousId = configuration.PreviousConfiguration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
 
-            // Pull the resolver to minimal form 
+            // Pull the minimal form resolver of the previous configuration
             var previousResolver = configuration.PreviousConfiguration.ResolverToMinimalForm;
 
-            // Compose it with the current one
+            // Compose it with the current resolver
             var originalConfigurationResolver = _composer.Compose(previousResolver, objectToString.Resolver);
 
+            // Compose it yet again with the resolver of the current configuration
+            // (it is assumed that this one is by default set to the identity which wouldn't change anything)
             originalConfigurationResolver = _composer.Compose(originalConfigurationResolver, configuration.ResolverToMinimalForm);
 
-            // We'll pull the initial sorted set
-            var originalConfigurationSet = _cache[originalConfigurationResolver.Id][previousId];
-            return originalConfigurationSet;
+            // And now we can return the original configuration
+            return _cachedSets[originalConfigurationResolver.Id][previousId];
         }
 
-        private string OriginalSolution(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
-        {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
-
-            if (objectToString == null)
-                throw new ArgumentNullException(nameof(objectToString));
-
-            var objectStrings = configuration
-                    .Configuration
-                    .ConstructedObjects
-                    .Select(objectToString.ConvertToString)
-                    .ToList();
-
-            objectStrings.Sort();
-
-            var r = string.Join(ObjectsSeparator, objectStrings);
-
-            return r;
-        }
-
-        private static StreamWriter sw;
-
-        static ConfigurationToStringProvider()
-        {
-            //sw = new StreamWriter(new FileStream("C:\\Users\\Patrik Bak\\Desktop\\new.txt", FileMode.Open, FileAccess.ReadWrite));
-            //sw.AutoFlush = true;
-        }
-
-        private Dictionary<int, SortedSet<string>> GetDictionaryForConverter(IObjectToStringConverter converter)
+        private Dictionary<int, SortedSet<string>> GetDictionaryForResolver(IObjectIdResolver resolver)
         {
             // Pull resolver id
-            var converterId = converter.Resolver.Id;
+            var resolverId = resolver.Id;
 
             // If the cache doesn't contain this id
-            if (!_cache.ContainsKey(converterId))
+            if (!_cachedSets.ContainsKey(resolverId))
             {
                 // Add new dictionary to the cache
-                _cache.Add(converterId, new Dictionary<int, SortedSet<string>>());
+                _cachedSets.Add(resolverId, new Dictionary<int, SortedSet<string>>());
             }
 
             // Return the cache dictionary
-            return _cache[converterId];
+            return _cachedSets[resolverId];
         }
 
         #endregion
