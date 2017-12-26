@@ -11,10 +11,14 @@ namespace GeoGen.Utilities
 
         public double RoundedValue { get; }
 
+        private readonly Lazy<int> _hashCode;
+
         public RoundedDouble(double originalValue)
         {
             OriginalValue = originalValue;
-            RoundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
+            var roundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
+            RoundedValue = roundedValue;
+            _hashCode = new Lazy<int>(() => roundedValue.GetHashCode());
         }
 
         public static implicit operator RoundedDouble(double value)
@@ -84,10 +88,10 @@ namespace GeoGen.Utilities
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return false;
 
-            return obj is RoundedDouble && Equals((RoundedDouble) obj);
+            return obj is RoundedDouble d && Equals(d);
         }
 
         public override int GetHashCode()

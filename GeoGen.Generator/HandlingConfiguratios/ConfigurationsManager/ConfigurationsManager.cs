@@ -54,10 +54,10 @@ namespace GeoGen.Generator
         /// <param name="configurationsContainer">The configurations container.</param>
         public ConfigurationsManager
         (
-                Configuration initialConfiguration,
-                IConfigurationConstructor configurationConstructor,
-                IConfigurationsContainer configurationsContainer,
-                IConfigurationsResolver configurationsResolver)
+            Configuration initialConfiguration,
+            IConfigurationConstructor configurationConstructor,
+            IConfigurationsContainer configurationsContainer,
+            IConfigurationsResolver configurationsResolver)
         {
             _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
             _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
@@ -145,6 +145,9 @@ namespace GeoGen.Generator
 
             // Let the constructor construct wrapper for the initial configuration.
             var configurationWrapper = _configurationConstructor.ConstructWrapper(initialConfiguration);
+
+            // Let the resolver resolve the initial configuration
+            _configurationsResolver.ResolveInitialConfiguration(configurationWrapper);
 
             // Set the current layer items
             CurrentLayer.SetItems(configurationWrapper.SingleItemAsEnumerable());

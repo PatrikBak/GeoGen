@@ -8,11 +8,5 @@ namespace GeoGen.Analyzer.Objects
     /// </summary>
     internal interface IObjectsContainersManager : IEnumerable<IObjectsContainer>
     {
-        /// <summary>
-        /// Initializes the manager with given loose objects. The manager is supposed
-        /// to create containers and initialize them with the given objects.
-        /// </summary>
-        /// <param name="looseObjects">The loose objects.</param>
-        void Initialize(IEnumerable<LooseConfigurationObject> looseObjects);
     }
 }

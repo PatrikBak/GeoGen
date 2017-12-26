@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
@@ -178,7 +179,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
         }
 
         public IEnumerable<T> GetNewObjects<T>(ConfigurationObjectsMap oldObjects, ConfigurationObjectsMap newObjects)
-            where T : GeometricalObject
+                where T : GeometricalObject
         {
             if (oldObjects == null)
                 throw new ArgumentNullException(nameof(oldObjects));
@@ -769,18 +770,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
             // Look up the object in the dictionary
-            try
-            {
-                return _configurationObjectIdToGeometricalObjects[id];
-            }
-            catch (KeyNotFoundException)
-            {
-                // Fix the container
-                Add(configurationObject);
-
-                // Re-call this method, now it should work 
-                return GetGeometricalObject(configurationObject);
-            }
+            return _configurationObjectIdToGeometricalObjects[id];
         }
 
         #endregion

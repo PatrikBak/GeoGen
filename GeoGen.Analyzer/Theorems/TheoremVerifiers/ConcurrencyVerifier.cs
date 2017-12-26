@@ -21,13 +21,10 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
 
         private readonly ISubsetsProvider _provider;
 
-        private readonly IContextualContainer _container;
-
-        public ConcurrencyVerifier(IAnalyticalHelper helper, ISubsetsProvider provider, IContextualContainer container)
+        public ConcurrencyVerifier(IAnalyticalHelper helper, ISubsetsProvider provider)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-            _container = container ?? throw new ArgumentNullException(nameof(container));
         }
 
         public IEnumerable<VerifierOutput> GetOutput(VerifierInput verifierInput)
@@ -62,7 +59,7 @@ namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
                         bool Verify(IObjectsContainer container)
                         {
                             var analyticalObjects = involdedObjects
-                                    .Select(obj => _container.GetAnalyticalObject(obj, container))
+                                    .Select(obj => verifierInput._container.GetAnalyticalObject(obj, container))
                                     .ToSet();
 
                             var allPointsAnalytical = allObjectsMap[ConfigurationObjectType.Point]

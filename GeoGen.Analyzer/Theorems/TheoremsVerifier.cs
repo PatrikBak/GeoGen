@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
@@ -42,7 +43,10 @@ namespace GeoGen.Analyzer.Theorems
 
             var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-            var input = new VerifierInput(_contextualContainer, oldObjectsMap, newObjectsMap);
+            var container = new ContextualContainer(_containersManager, new AnalyticalHelper());
+            oldObjects.ForEach(container.Add);
+            newObjects.ForEach(container.Add);
+            var input = new VerifierInput(container, oldObjectsMap, newObjectsMap);
 
             foreach (var theoremVerifier in _verifiers)
             {

@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer.Objects
         /// <summary>
         /// The default number of container that this manager manages.
         /// </summary>
-        public const int DefaultNumberOfContainers = 6;
+        public const int DefaultNumberOfContainers = 3;
 
         #endregion
 
@@ -40,50 +40,41 @@ namespace GeoGen.Analyzer.Objects
         /// <summary>
         /// Constructs a new objects containers manager that creates
         /// containers using a given factory, uses a given loose objects
-        /// constructor to initialize the containers with a default
-        /// number of containers.
-        /// </summary>
-        /// <param name="factory">The objects containers factory.</param>
-        /// <param name="constructor">The loose objects constructor.</param>
-        public ObjectsContainersManager(IObjectsContainersFactory factory, ILooseObjectsConstructor constructor)
-            : this(factory, constructor, DefaultNumberOfContainers)
-        {
-        }
-
-        /// <summary>
-        /// Constructs a new objects containers manager that creates
-        /// containers using a given factory, uses a given loose objects
         /// constructor to initialize the containers and holds a given
         /// number of containers.
         /// </summary>
+        /// <param name="looseObjects"></param>
         /// <param name="factory">The objects containers factory.</param>
         /// <param name="constructor">The loose objects constructor.</param>
-        /// <param name="containers">The number of containers.</param>
-        public ObjectsContainersManager(IObjectsContainersFactory factory, ILooseObjectsConstructor constructor, int containers)
+        public ObjectsContainersManager
+        (
+                IEnumerable<LooseConfigurationObject> looseObjects,
+                IObjectsContainersFactory factory,
+                ILooseObjectsConstructor constructor
+        )
         {
             if (factory == null)
                 throw new ArgumentNullException(nameof(factory));
 
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
 
-            if (containers <= 0)
-                throw new ArgumentOutOfRangeException(nameof(containers), "Number of container must be at least one.");
-
-            _containers = Enumerable.Range(0, containers)
+            _containers = Enumerable.Range(0, DefaultNumberOfContainers)
                     .Select(i => factory.CreateContainer())
                     .ToList();
+
+            Initialize(looseObjects);
         }
 
         #endregion
 
-        #region IObjectsContainerManager implementation
+        #region Private methods
 
         /// <summary>
         /// Initializes the manager with given loose objects. The manager is supposed
         /// to create containers and initialize them with the given objects.
         /// </summary>
         /// <param name="looseObjects">The loose objects.</param>
-        public void Initialize(IEnumerable<LooseConfigurationObject> looseObjects)
+        private void Initialize(IEnumerable<LooseConfigurationObject> looseObjects)
         {
             if (looseObjects == null)
                 throw new ArgumentNullException(nameof(looseObjects));

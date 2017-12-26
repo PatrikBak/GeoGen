@@ -104,6 +104,44 @@ namespace GeoGen.Generator
             return true;
         }
 
+        public void ResolveInitialConfiguration(ConfigurationWrapper configuration)
+        {
+            // Initialize list of current objects that belongs to a single 
+            // construction with a first object
+            var currentObjects = new List<ConstructedConfigurationObject>();
+
+            // Local function to determine whether current objects
+            // should be sent to register
+            bool ShouldBeSentToRegister() => currentObjects.Count == currentObjects[0].Construction.OutputTypes.Count;
+
+            // Iterate over all constructed objects
+            foreach (var constructedObject in configuration.Configuration.ConstructedObjects)
+            {
+                // Add object between current objects
+                currentObjects.Add(constructedObject);
+
+                // If we shouldn't send the objects to the register, 
+                // then we can't do anything else yet
+                if (!ShouldBeSentToRegister())
+                    continue;
+
+                // Otherwise we register the objects using the method
+                var registrationResult = Register(currentObjects);
+
+                // Switch over the result
+                switch (registrationResult)
+                {
+                    case RegistrationResult.Unconstructible:
+                        throw new GeneratorException("Initial configuration contains unconstructible objects.");
+                    case RegistrationResult.Duplicates:
+                        throw new GeneratorException("Initial configuration contains duplicates.");
+                }
+
+                // And finally reset the current objects
+                currentObjects.Clear();
+            }
+        }
+
         /// <summary>
         /// Constructs new objects from a given output and determines if we
         /// correct objects (i.e. not duplicate or forbidden ones). It might 

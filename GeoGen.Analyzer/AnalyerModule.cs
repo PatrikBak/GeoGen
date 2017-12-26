@@ -28,8 +28,8 @@ namespace GeoGen.Analyzer.NInject
             BindInGeneratorScope<ILooseObjectsConstructor, LooseObjectsConstructor>();
             BindInGeneratorScope<IConstructorsResolver, ConstructorsResolver>();
             BindInGeneratorScope<IContextualContainer, ContextualContainer>();
-            BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>();
-            BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>("initialConfiguration", input => input.InitialConfiguration);
+            BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjects);
+            BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>();
             BindInTransietScope<IObjectsContainer, ObjectsContainer>();
 
             BindFactoryInGeneratorScope<IObjectsContainersFactory>();

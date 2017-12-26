@@ -20,50 +20,21 @@ namespace GeoGen.Analyzer.Objects
 
         private readonly ITheoremsContainer _theoremsContainer;
 
-        private readonly IContextualContainer _contextualContainer;
-
         private readonly IObjectsContainersManager _containers;
 
         private readonly HashSet<int> _resolvedIds;
 
         public GeometryRegistrar
         (
-                Configuration initialConfiguration,
                 IConstructorsResolver resolver,
                 ITheoremsContainer theoremsContainer,
-                IContextualContainer contextualContainer,
                 IObjectsContainersManager containers
         )
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _theoremsContainer = theoremsContainer ?? throw new ArgumentNullException(nameof(theoremsContainer));
-            _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
             _containers = containers ?? throw new ArgumentNullException(nameof(containers));
             _resolvedIds = new HashSet<int>();
-            Initialize(initialConfiguration);
-        }
-
-        private void Initialize(Configuration configuration)
-        {
-            if (configuration == null)
-                throw new ArgumentNullException(nameof(configuration));
-
-            // Pull loose objects
-            var looseObjects = configuration.LooseObjects;
-
-            // Initialize the containers
-            _containers.Initialize(looseObjects);
-
-            // Initialize the contextual container
-            foreach (var configurationObject in looseObjects)
-            {
-                _contextualContainer.Add(configurationObject);
-            }
-
-            if (configuration.ConstructedObjects.Empty())
-                return;
-
-            throw new NotImplementedException("Implement initialization of constructed objects");
         }
 
         public RegistrationResult Register(List<ConstructedConfigurationObject> constructedObjects)
@@ -105,7 +76,7 @@ namespace GeoGen.Analyzer.Objects
             // We further need to register the objects to the contextual container
             foreach (var configurationObject in constructedObjects)
             {
-                _contextualContainer.Add(configurationObject);
+               //_contextualContainer.Add(configurationObject);
             }
 
             // And finally we can return the result (which should be OK)

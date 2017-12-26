@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer.Theorems
 {
     internal class VerifierInput
     {
-        private readonly IContextualContainer _container;
+        public readonly IContextualContainer _container;
 
         private readonly ConfigurationObjectsMap _oldObjects;
 
