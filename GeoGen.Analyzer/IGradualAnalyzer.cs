@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Theorems;
 
 namespace GeoGen.Analyzer
 {
@@ -18,6 +19,6 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        GradualAnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
+        List<Theorem> Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
     }
 }

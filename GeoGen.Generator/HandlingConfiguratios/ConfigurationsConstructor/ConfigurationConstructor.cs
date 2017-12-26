@@ -77,14 +77,10 @@ namespace GeoGen.Generator
 
             var initialWrapper = CreateWrapperFromOutput(constructorOutput);
 
-            //Check(initialWrapper);
-
             // Let the resolver find it's symmetry class representant
             var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(initialWrapper);
 
             var finalWrapper = CreateFinalWrapper(initialWrapper, leastResolver);
-
-            //Check(finalWrapper);
 
             return finalWrapper;
         }
@@ -156,43 +152,7 @@ namespace GeoGen.Generator
                     Excluded = false
             };
         }
-
-        private void Check(ConfigurationWrapper wrapper)
-        {
-            // All objects = Last added + Original
-            var allObjectsSet = wrapper.AllObjectsMap.AllObjects().ToSet();
-
-            var theoreticalAllObjectss = wrapper.OriginalObjects.Concat(wrapper.LastAddedObjects).ToSet();
-
-            if (!allObjectsSet.SetEquals(theoreticalAllObjectss))
-            {
-                Console.WriteLine();
-            }
-
-            // All objects = All objects of configuration
-            var allObjects2 = wrapper
-                    .Configuration
-                    .ConstructedObjects
-                    .Cast<ConfigurationObject>()
-                    .Concat(wrapper.Configuration.LooseObjects)
-                    .ToSet();
-
-            if (!allObjectsSet.SetEquals(allObjects2))
-            {
-                Console.WriteLine();
-            }
-
-            // Original objects = All objects from previous configuration
-            var allFromPrevious = wrapper.PreviousConfiguration == null
-                    ? new HashSet<ConfigurationObject>()
-                    : new ConfigurationObjectsMap(wrapper.PreviousConfiguration.AllObjectsMap).AllObjects().ToSet();
-
-            if (!wrapper.OriginalObjects.ToSet().SetEquals(allFromPrevious))
-            {
-                Console.WriteLine();
-            }
-        }
-
+        
         /// <summary>
         /// Constructs a configuration wrapper from a given configuration (meant
         /// to be as initial).

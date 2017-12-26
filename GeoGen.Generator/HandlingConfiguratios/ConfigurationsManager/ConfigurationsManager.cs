@@ -21,17 +21,12 @@ namespace GeoGen.Generator
         /// <summary>
         /// The configurations container.
         /// </summary>
-        private readonly IConfigurationObjectsContainer _configurationObjectsContainer;
-
-        /// <summary>
-        /// The configurations container.
-        /// </summary>
         private readonly IConfigurationsContainer _configurationsContainer;
 
         /// <summary>
-        /// The set of ids that are forbidden to be in configurations.
+        /// The configurations resolver.
         /// </summary>
-        private readonly HashSet<int> _forbiddenObjectsId;
+        private readonly IConfigurationsResolver _configurationsResolver;
 
         #endregion
 
@@ -61,14 +56,12 @@ namespace GeoGen.Generator
         (
                 Configuration initialConfiguration,
                 IConfigurationConstructor configurationConstructor,
-                IConfigurationObjectsContainer configurationObjectsContainer,
-                IConfigurationsContainer configurationsContainer
-        )
+                IConfigurationsContainer configurationsContainer,
+                IConfigurationsResolver configurationsResolver)
         {
             _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
-            _configurationObjectsContainer = configurationObjectsContainer ?? throw new ArgumentNullException(nameof(configurationObjectsContainer));
             _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
-            _forbiddenObjectsId = new HashSet<int>();
+            _configurationsResolver = configurationsResolver ?? throw new ArgumentNullException(nameof(configurationsResolver));
             Initialize(initialConfiguration);
         }
 
@@ -92,32 +85,28 @@ namespace GeoGen.Generator
             // Iterate over all constructor outputs
             foreach (var currentOutput in output)
             {
-                // Let the helper method construct new objects and find out if some 
-                // of them aren't forbidden or duplicate
-                var newObjects = ConstructNewObjects(currentOutput, out var skipConfiguration);
+                // Let the resolver resolve the output and find out if it's correct
+                var isCorrect = _configurationsResolver.ResolveNewOutput(currentOutput);
 
-                // If we should skip the configuration, skip it
-                if (skipConfiguration)
+                // If it's not, skip it
+                if (!isCorrect)
                     continue;
-
-                // Otherwise re-assign the output
-                currentOutput.ConstructedObjects = newObjects;
 
                 // Let the constructor create a new wrapper
                 var configuration = _configurationConstructor.ConstructWrapper(currentOutput);
 
-                // We need to check again if the objects ids aren't forbidden, cause
-                // they might have changed
-                var notForbidden = configuration
-                        .LastAddedObjects
-                        .Select(o => o.Id ?? throw new GeneratorException("Id must be set"))
-                        .All(id => !_forbiddenObjectsId.Contains(id));
+                // Find out if the interior objects have been mapped to other ones
+                var isMappedToItself = configuration.ResolverToMinimalForm is IDefaultObjectIdResolver;
 
-                // If there is a new forbidden object
-                if (!notForbidden)
+                // If we're not mapped to itself, we need to resolve the new configuration as well
+                if (!isMappedToItself)
                 {
-                    // Skip it
-                    continue;
+                    // Let the resolve determine correctness
+                    isCorrect = _configurationsResolver.ResolveMappedOutput(configuration);
+
+                    // If the configuration is not correct, skip it
+                    if (!isCorrect)
+                        continue;
                 }
 
                 // If everything's fine, then we can add the configuration to the container.
@@ -141,22 +130,6 @@ namespace GeoGen.Generator
             _configurationsContainer.Clear();
         }
 
-        /// <summary>
-        /// Forbids all configurations that contains a given configuration object.
-        /// Use cases for these are when we have a non-constructible or duplicate objects.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        public void ForbidConfigurationsContaining(ConfigurationObject configurationObject)
-        {
-            if (configurationObject == null)
-                throw new ArgumentNullException(nameof(configurationObject));
-
-            var id = configurationObject.Id ?? throw GeneratorException.ObjectsIdNotSet();
-
-            if (!_forbiddenObjectsId.Add(id))
-                throw new GeneratorException("The object has been already forbidden");
-        }
-
         #endregion
 
         #region Private methods
@@ -175,68 +148,6 @@ namespace GeoGen.Generator
 
             // Set the current layer items
             CurrentLayer.SetItems(configurationWrapper.SingleItemAsEnumerable());
-        }
-
-        /// <summary>
-        /// Constructs new objects from a given output and determines if we
-        /// correct objects (i.e. not duplicate or forbidden ones). It might 
-        /// happen that some object from the output won't be added to the
-        /// container at all. 
-        /// </summary>
-        /// <param name="output">The constructor output.</param>
-        /// <param name="correctObjects">The correct objects flag.</param>
-        /// <returns>The list of new constructed objects.</returns>
-        private List<ConstructedConfigurationObject> ConstructNewObjects(ConstructorOutput output, out bool correctObjects)
-        {
-            // Initialize result
-            var result = new List<ConstructedConfigurationObject>();
-
-            // Pull ids of initial objects and cast them to set
-            var initialIds = output
-                    .OriginalConfiguration
-                    .AllObjectsMap
-                    .AllObjects()
-                    .Select(obj => obj.Id ?? throw GeneratorException.ObjectsIdNotSet())
-                    .ToSet();
-
-            // Iterate over all constructed objects
-            foreach (var constructedObject in output.ConstructedObjects)
-            {
-                // Get the result from the container
-                var containerResult = _configurationObjectsContainer.Add(constructedObject);
-
-                // If the object is currently in the configuration
-                if (initialIds.Contains(containerResult.Id ?? throw GeneratorException.ObjectsIdNotSet()))
-                {
-                    // Set the flag indicating that there is an incorrect object
-                    correctObjects = true;
-
-                    // Terminate
-                    return null;
-                }
-
-                // Pull id
-                var id = containerResult.Id ?? throw GeneratorException.ObjectsIdNotSet();
-
-                // If the object with this id is forbidden
-                if (_forbiddenObjectsId.Contains(id))
-                {
-                    // Set the flag indicating that there is an incorrect object
-                    correctObjects = true;
-
-                    // Terminate
-                    return null;
-                }
-
-                // Otherwise we add the result to the new objects
-                result.Add(containerResult);
-            }
-
-            // If we got here, then we have only correct objects
-            correctObjects = false;
-
-            // Therefore we can return the objects
-            return result;
         }
 
         #endregion

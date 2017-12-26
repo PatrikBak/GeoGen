@@ -1,6 +1,7 @@
 ﻿using System;
 using GeoGen.Analyzer.Constructing;
 using GeoGen.Analyzer.Constructing.PredefinedConstructors;
+using GeoGen.Analyzer.Drawing;
 using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Analyzer.Theorems;
@@ -28,6 +29,7 @@ namespace GeoGen.Analyzer.NInject
             BindInGeneratorScope<IConstructorsResolver, ConstructorsResolver>();
             BindInGeneratorScope<IContextualContainer, ContextualContainer>();
             BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>();
+            BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>("initialConfiguration", input => input.InitialConfiguration);
             BindInTransietScope<IObjectsContainer, ObjectsContainer>();
 
             BindFactoryInGeneratorScope<IObjectsContainersFactory>();
@@ -37,8 +39,6 @@ namespace GeoGen.Analyzer.NInject
 
             BindInGeneratorScope<IPredefinedConstructor, MidpointConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, InteresectionConstructor>();
-
-            BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>("initialConfiguration", input => input.InitialConfiguration);
         }
     }
 }

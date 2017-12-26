@@ -54,7 +54,8 @@
     <Compile Include="AlternativeObjectsToString.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\DefaultConverter\DefaultArgumentsListToStringConverter.cs" />
     <Compile Include="ConstructingObjects\Arguments\ArgumentsListToString\DefaultConverter\IDefaultArgumentsListToStringConverter.cs" />
-    <Compile Include="HandlingConfiguratios\ConfigurationsHandler\ConfigurationsHandler.cs" />
+    <Compile Include="HandlingConfiguratios\ConfigurationsResolver\ConfigurationsResolver.cs" />
+    <Compile Include="HandlingConfiguratios\ConfigurationsResolver\IConfigurationsResolver.cs" />
     <Compile Include="HandlingConfiguratios\Containers\ConfigurationsContainer\ConfigurationsContainer.cs" />
     <Compile Include="HandlingConfiguratios\Containers\ConfigurationsContainer\IConfigurationsContainer.cs" />
     <Compile Include="HandlingConfiguratios\ToStringConverters\ConfigurationObjectToString\ConfigurationObjectIdResolving\ResolversComposing\IResolversComposer.cs" />
@@ -106,7 +107,6 @@
     <Compile Include="HandlingConfiguratios\ConfigurationsManager\ConfigurationsManager.cs" />
     <Compile Include="Generator.cs" />
     <Compile Include="HandlingConfiguratios\ConfigurationsManager\IConfigurationsManager.cs" />
-    <Compile Include="HandlingConfiguratios\ConfigurationsHandler\IConfigurationsHandler.cs" />
     <Compile Include="InitializationException.cs" />
     <Compile Include="GeneratorModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

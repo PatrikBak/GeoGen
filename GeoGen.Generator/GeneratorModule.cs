@@ -31,7 +31,6 @@ namespace GeoGen.Generator
             // Handling configurations
             BindInGeneratorScope<IConfigurationsManager, ConfigurationsManager>("initialConfiguration", input => input.InitialConfiguration);
             BindInGeneratorScope<IConfigurationObjectsContainer, ConfigurationObjectsContainer>("initialConfiguration", input => input.InitialConfiguration);
-            BindInGeneratorScope<IConfigurationsHandler, ConfigurationsHandler>();
             BindInGeneratorScope<IConfigurationConstructor, ConfigurationConstructor>();
             BindInGeneratorScope<IIdsFixerFactory, IdsFixerFactory>();
             BindInGeneratorScope<ILeastConfigurationFinder, LeastConfigurationFinder>();
@@ -43,6 +42,7 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IConfigurationsContainer, ConfigurationsContainer>();
             BindInGeneratorScope<IDefaultConfigurationToStringConverter, DefaultConfigurationToStringConverter>();
             BindInGeneratorScope<IResolversComposer, ResolversComposer>();
+            BindInGeneratorScope<IConfigurationsResolver, ConfigurationsResolver>();
         }
     }
 }

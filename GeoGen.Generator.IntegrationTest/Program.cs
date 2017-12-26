@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.Ninject;
 using GeoGen.Analyzer;
+using GeoGen.Analyzer.Drawing;
 using GeoGen.Analyzer.NInject;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
@@ -30,7 +31,8 @@ namespace GeoGen.Generator.IntegrationTest
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
 
-            kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            //kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
 
             var factory = kernel.Get<IGeneratorFactory>();
 
@@ -41,14 +43,15 @@ namespace GeoGen.Generator.IntegrationTest
             var configuration = new Configuration(points, new List<ConstructedConfigurationObject>());
             var constructions = new List<Construction>
             {
-                    new Midpoint {Id = 0}
+                    new Midpoint {Id = 0},
+                    //new Intersection {Id = 1},
             };
 
             var input = new GeneratorInput
             {
                     InitialConfiguration = configuration,
                     Constructions = constructions,
-                    MaximalNumberOfIterations = 7
+                    MaximalNumberOfIterations = 4
             };
 
             var generator = factory.CreateGenerator(input);
@@ -64,7 +67,7 @@ namespace GeoGen.Generator.IntegrationTest
             //PrintTheorems(result);
         }
 
-        private static void PrintTheorems(IEnumerable<GeneratorOutput> result)
+        private static void PrintTheorems(List<GeneratorOutput> result)
         {
             var formatter = new OutputFormatter();
 
@@ -80,10 +83,23 @@ namespace GeoGen.Generator.IntegrationTest
                     Console.WriteLine(formatter.Format(generatorOutput.Theorems));
                     Console.WriteLine("-------------------\n");
                 }
-                catch (Exception)
+                finally
                 {
-                    Console.Error.WriteLine("Exception :(");
                 }
+
+                //catch (Exception e)
+                //{
+                //    Console.Error.WriteLine("Exception :(");
+                //}
+            }
+
+            var s = $"{string.Join(", ", result.Select(o => o.Theorems.Count))}";
+
+            if (s != "1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1")
+            {
+                Console.WriteLine("Still inconsistency..");
+                Console.WriteLine("Old s: 1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1");
+                Console.WriteLine($"New s: {s}");
             }
         }
     }

@@ -32,8 +32,6 @@ namespace GeoGen.Generator
 
         private readonly IDefaultConfigurationToStringConverter _defaultConfigurationToString;
 
-        private readonly IDefaultFullObjectToStringConverter _fullObjectToStringConverter;
-
         #endregion
 
         #region Constructor

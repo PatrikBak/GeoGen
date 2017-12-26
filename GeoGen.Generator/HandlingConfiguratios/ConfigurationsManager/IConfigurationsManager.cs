@@ -22,12 +22,5 @@ namespace GeoGen.Generator
         /// <param name="output">The new layer output.</param>
         /// <returns>The configuration wrappers.</returns>
         IEnumerable<ConfigurationWrapper> AddLayer(IEnumerable<ConstructorOutput> output);
-
-        /// <summary>
-        /// Forbids all configurations that contains a given configuration object.
-        /// Use cases for these are when we have a non-constructible or duplicate objects.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        void ForbidConfigurationsContaining(ConfigurationObject configurationObject);
     }
 }

@@ -7,13 +7,9 @@ namespace GeoGen.Generator.IntegrationTest
 {
     internal class DummyGradualAnalyzer : IGradualAnalyzer
     {
-        public GradualAnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
+        public List<Theorem> Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
         {
-            return new GradualAnalyzerOutput
-            {
-                    Theorems = new List<Theorem> { null },
-                    UnambiguouslyConstructible = true
-            };
+            return new List<Theorem> {null};
         }
     }
 }

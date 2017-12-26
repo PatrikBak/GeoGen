@@ -18,8 +18,6 @@ namespace GeoGen.Analyzer
     {
         #region Private fields
 
-        private readonly IGeometryRegistrar _registrar;
-
         private readonly ITheoremsVerifier _verifier;
 
         private readonly ITheoremsContainer _container;
@@ -28,9 +26,8 @@ namespace GeoGen.Analyzer
 
         #region Constructor
 
-        public GradualAnalyzer(IGeometryRegistrar registrar, ITheoremsVerifier verifier, ITheoremsContainer container)
+        public GradualAnalyzer(ITheoremsVerifier verifier, ITheoremsContainer container)
         {
-            _registrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
             _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
             _container = container ?? throw new ArgumentNullException(nameof(container));
         }
@@ -46,7 +43,7 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        public GradualAnalyzerOutput Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
+        public List<Theorem> Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
         {
             if (oldObjects == null)
                 throw new ArgumentNullException(nameof(oldObjects));
@@ -54,43 +51,9 @@ namespace GeoGen.Analyzer
             if (newObjects == null)
                 throw new ArgumentNullException(nameof(newObjects));
 
-            var result = _registrar.Register(newObjects);
-
-            var duplicateObjects = result.GeometricalDuplicates;
-            var canBeConstructed = result.CanBeConstructed;
-            var theorems = new List<Theorem>();
-
-            var unambiguouslyConstructible = duplicateObjects.Empty() && canBeConstructed;
-
-            if (unambiguouslyConstructible)
-            {
-                var foundTheorems = _verifier.FindTheorems(oldObjects, newObjects)
-                        .Where(theorem => !_container.Contains(theorem));
-
-                theorems.AddRange(foundTheorems);
-            }
-
-            foreach (var pair in duplicateObjects)
-            {
-                var newObject = pair.Key;
-                var duplicate = pair.Value;
-
-                var involvedObjects = new HashSet<TheoremObject>
-                {
-                    new TheoremObject(newObject),
-                    new TheoremObject(duplicate)
-                };
-
-                var theorem = new Theorem(TheoremType.SameObjects, involvedObjects);
-
-                //theorems.Add(theorem);
-            }
-
-            return new GradualAnalyzerOutput
-            {
-                Theorems = theorems,
-                UnambiguouslyConstructible = unambiguouslyConstructible
-            };
+            return _verifier.FindTheorems(oldObjects, newObjects)
+                    .Where(theorem => !_container.Contains(theorem))
+                    .ToList();
         }
 
         #endregion

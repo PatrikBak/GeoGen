@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Analyzer;
 using GeoGen.Core.Generator;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {
@@ -18,14 +20,11 @@ namespace GeoGen.Generator
         private readonly IConfigurationsManager _configurationsManager;
 
         /// <summary>
-        /// The configurations handler.
-        /// </summary>
-        private readonly IConfigurationsHandler _configurationsHandler;
-
-        /// <summary>
         /// The configuration constructor.
         /// </summary>
         private readonly IObjectsConstructor _objectsConstructor;
+
+        private readonly IGradualAnalyzer _gradualAnalyzer;
 
         /// <summary>
         /// The maximal number of iterations that are supposed to be performed.
@@ -48,14 +47,14 @@ namespace GeoGen.Generator
         /// <param name="maximalNumberOfIterations">The maximal number of iterations to be performed.</param>
         public Generator
         (
-            IConfigurationsManager configurationsManager,
-            IObjectsConstructor objectsConstructor,
-            IConfigurationsHandler configurationsHandler,
-            int maximalNumberOfIterations
+                IConfigurationsManager configurationsManager,
+                IObjectsConstructor objectsConstructor,
+                IGradualAnalyzer gradualAnalyzer,
+                int maximalNumberOfIterations
         )
         {
             _configurationsManager = configurationsManager ?? throw new ArgumentNullException(nameof(configurationsManager));
-            _configurationsHandler = configurationsHandler ?? throw new ArgumentNullException(nameof(configurationsHandler));
+            _gradualAnalyzer = gradualAnalyzer ?? throw new ArgumentNullException(nameof(gradualAnalyzer));
             _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
 
             if (maximalNumberOfIterations <= 0)
@@ -74,26 +73,49 @@ namespace GeoGen.Generator
         /// <returns>The generator output enumerable.</returns>
         public IEnumerable<GeneratorOutput> Generate()
         {
-            return Enumerable.Range(0, _maximalNumberOfIterations).SelectMany
-            (
-                iterationIndex =>
-                {
-                    // From the container
-                    var outputForNewLayer = _configurationsManager
-                            // Take the current layer
-                            .CurrentLayer
-                            // Take only not excluded configurations
-                            .Where(configuration => !configuration.Excluded)
-                            // Construct outputs from each of them
-                            .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
+            return Enumerable.Range(0, _maximalNumberOfIterations)
+                    .SelectMany
+                    (
+                            iterationIndex =>
+                            {
+                                // From the container
+                                var outputForNewLayer = _configurationsManager
+                                        // Take the current layer
+                                        .CurrentLayer
+                                        // Take only not excluded configurations
+                                        .Where(configuration => !configuration.Excluded)
+                                        // Construct outputs from each of them
+                                        .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
 
-                    // Take the enumerable for creating the new layer
-                    var newLayersConfigurations = _configurationsManager.AddLayer(outputForNewLayer);
+                                // Take the enumerable for creating the new layer
+                                return _configurationsManager.AddLayer(outputForNewLayer);
+                            }
+                    )
+                    .Select
+                    (
+                            configurationWrapper =>
+                            {
+                                // Pull old objects
+                                var oldObjects = configurationWrapper.OriginalObjects;
 
-                    // Let the handler lazily process the configurations to obtain the output
-                    return _configurationsHandler.GenerateFinalOutput(newLayersConfigurations);
-                }
-            );
+                                // Pull new objects
+                                var newObjects = configurationWrapper.LastAddedObjects;
+
+                                // Call the analyzer
+                                var theorems = _gradualAnalyzer.Analyze(oldObjects, newObjects);
+
+                                // Unwrap configuration
+                                var unwrappedConfiguration = configurationWrapper.Configuration;
+
+                                // Return the output
+                                return new GeneratorOutput
+                                {
+                                        Configuration = unwrappedConfiguration,
+                                        Theorems = theorems
+                                };
+                            }
+                    )
+                    .Where(output => !output.Theorems.Empty());
         }
 
         #endregion

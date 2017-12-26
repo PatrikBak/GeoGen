@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Constructing;
+using GeoGen.Analyzer.Drawing;
 using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer.Objects
@@ -24,22 +24,22 @@ namespace GeoGen.Analyzer.Objects
 
         private readonly IObjectsContainersManager _containers;
 
-        private readonly Dictionary<int, RegistrationResult> _resolvedIds;
+        private readonly HashSet<int> _resolvedIds;
 
         public GeometryRegistrar
         (
-            Configuration initialConfiguration,
-            IConstructorsResolver resolver,
-            ITheoremsContainer theoremsContainer,
-            IContextualContainer contextualContainer,
-            IObjectsContainersManager containers
+                Configuration initialConfiguration,
+                IConstructorsResolver resolver,
+                ITheoremsContainer theoremsContainer,
+                IContextualContainer contextualContainer,
+                IObjectsContainersManager containers
         )
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _theoremsContainer = theoremsContainer ?? throw new ArgumentNullException(nameof(theoremsContainer));
             _contextualContainer = contextualContainer ?? throw new ArgumentNullException(nameof(contextualContainer));
             _containers = containers ?? throw new ArgumentNullException(nameof(containers));
-            _resolvedIds = new Dictionary<int, RegistrationResult>();
+            _resolvedIds = new HashSet<int>();
             Initialize(initialConfiguration);
         }
 
@@ -76,34 +76,27 @@ namespace GeoGen.Analyzer.Objects
 
             // First we check if the objects haven't been registered before.
             if (ObjectsAreAlreadyPresent(constructedObjects))
-            {
-                // If yes, then we pull some id
-                var id = constructedObjects[0].Id ?? throw new AnalyzerException("Id must be set");
-
-                // And grab the result from the cache
-                return _resolvedIds[id];
-            }
+                return RegistrationResult.Ok;
 
             // Let the helper method construct the result. Before returning it, 
             // we need to analyze it
-            var result = RegisterObjects(constructedObjects, out List<Theorem> defaultTheorems);
+            var result = RegisterObjects(constructedObjects, out var defaultTheorems);
 
-            // If we can't construct the objects or there are duplicates
-            // we might just result the result directly
-            if (!result.CanBeConstructed || !result.GeometricalDuplicates.Empty())
+            // If result is not ok, we can just directly return it
+            if (result != RegistrationResult.Ok)
                 return result;
 
-            // Cache the result
+            // Otherwise we need to mark the result as resolved
             foreach (var configurationObject in constructedObjects)
             {
                 // Pull id
                 var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
 
                 // To mark the object's id as resolved
-                _resolvedIds.Add(id, result);
+                _resolvedIds.Add(id);
             }
 
-            // Then we can register the default theorems
+            // And we can register the default theorems
             foreach (var theorem in defaultTheorems)
             {
                 _theoremsContainer.Add(theorem);
@@ -115,7 +108,7 @@ namespace GeoGen.Analyzer.Objects
                 _contextualContainer.Add(configurationObject);
             }
 
-            // And finally we can return the result.
+            // And finally we can return the result (which should be OK)
             return result;
         }
 
@@ -137,7 +130,7 @@ namespace GeoGen.Analyzer.Objects
                 // Construct the objects
                 var constructedObjects = constructorOutput.ConstructorFunction(container);
 
-                // If they are null, that means the construction can't be provided 
+                // If they are null, that means the construction can't be done 
                 // in this container 
                 if (constructedObjects == null)
                 {
@@ -182,40 +175,34 @@ namespace GeoGen.Analyzer.Objects
                     localDuplicates[i] = containerResult;
                 }
 
+                // If duplicates have been already set and they are not equal to the
+                // current duplicates, then we have inconsistency
                 if (duplicates != null && !duplicates.SequenceEqual(localDuplicates))
                     throw new AnalyzerException("Inconsistent containers.");
 
+                // Otherwise we can mark the current duplicates
                 duplicates = localDuplicates;
             }
 
             // Set the theorems
             theorems = constructorOutput.Theorems;
 
-            // Initialize duplicates objects dictionary
-            var duplicateObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
+            // If we can't construct it, we return unconstructible result
+            if (!canBeConstructed ?? throw new AnalyzerException("Impossible"))
+                return RegistrationResult.Unconstructible;
 
-            // Construct it by iterating over objects
-            for (var i = 0; i < objects.Count; i++)
-            {
-                var duplicate = duplicates?[i];
+            // Let's find out if there are any duplicates
+            var anyDuplicate = duplicates.Any(o => o != null);
 
-                if (duplicate != null)
-                    duplicateObjects.Add(objects[i], duplicate);
-            }
-
-            // And finally construct and return the result
-            return new RegistrationResult
-            {
-                GeometricalDuplicates = duplicateObjects,
-                CanBeConstructed = canBeConstructed ?? throw new AnalyzerException("Impossible")
-            };
+            // According to that we'll return the final result
+            return anyDuplicate ? RegistrationResult.Duplicates : RegistrationResult.Ok;
         }
 
         private bool ObjectsAreAlreadyPresent(IReadOnlyCollection<ConstructedConfigurationObject> objects)
         {
             var ids = objects.Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set"));
 
-            var presentIds = ids.Count(id => _resolvedIds.ContainsKey(id));
+            var presentIds = ids.Count(id => _resolvedIds.Contains(id));
 
             if (presentIds == objects.Count)
                 return true;

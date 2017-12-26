@@ -186,10 +186,6 @@ namespace GeoGen.Generator
             // Compose it with the current resolver
             var originalConfigurationResolver = _composer.Compose(previousResolver, objectToString.Resolver);
 
-            // Compose it yet again with the resolver of the current configuration
-            // (it is assumed that this one is by default set to the identity which wouldn't change anything)
-            originalConfigurationResolver = _composer.Compose(originalConfigurationResolver, configuration.ResolverToMinimalForm);
-
             // And now we can return the original configuration
             return _cachedSets[originalConfigurationResolver.Id][previousId];
         }

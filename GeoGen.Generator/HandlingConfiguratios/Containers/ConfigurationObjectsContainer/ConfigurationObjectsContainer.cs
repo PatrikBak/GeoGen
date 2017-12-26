@@ -96,11 +96,13 @@ namespace GeoGen.Generator
             var newId = Items.Count + 1;
             constructedObject.Id = newId;
 
-            // Add it to the container and the id dictionary
+            // Add it to the container 
             Items.Add(stringRepresentation, constructedObject);
+
+            // Add it to the id to object dictionary 
             _idToObjectDictionary.Add(newId, constructedObject);
 
-            // Cache the gotten string version to the provider
+            // Cache the gotten string version
             _converter.CacheObject(newId, stringRepresentation);
 
             // Return the object
