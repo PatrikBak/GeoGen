@@ -2,6 +2,8 @@
 using System.Linq;
 using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Combinations;
+using GeoGen.Utilities.Variations;
 
 namespace GeoGen.Generator
 {
@@ -109,6 +111,7 @@ namespace GeoGen.Generator
                                 // And enumerate them to the list (so we can access the object by index)
                                 .Select(variation => variation.ToList())
                     );
+                                          
 
             // Let the factory create the resulting container
             var result = _argumentsListContainerFactory.CreateContainer();

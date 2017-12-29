@@ -9,16 +9,21 @@ namespace GeoGen.Core.Utilities
     /// Represents a dictionary mapping configuration objects types to
     /// lists of objects of that type. 
     /// </summary>
-    public sealed class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, List<ConfigurationObject>>
+    public sealed class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, IReadOnlyList<ConfigurationObject>>
     {
-        #region Constructors
+        #region Private fields
 
-        /// <summary>
-        /// Constructs an empty configuration objects map.
-        /// </summary>
-        public ConfigurationObjectsMap()
-        {
-        }
+        private readonly Lazy<IReadOnlyList<ConfigurationObject>> _allObjectsInitializer;
+
+        #endregion
+
+        #region Public properties
+
+        public IReadOnlyList<ConfigurationObject> AllObjects => _allObjectsInitializer.Value;
+
+        #endregion
+
+        #region Constructors
 
         /// <summary>
         /// Constructs a configuration objects map from a dictionary
@@ -26,8 +31,16 @@ namespace GeoGen.Core.Utilities
         /// </summary>
         /// <param name="objects"></param>
         public ConfigurationObjectsMap(IDictionary<ConfigurationObjectType, List<ConfigurationObject>> objects)
-            : base(objects)
         {
+            if (objects == null)
+                throw new ArgumentNullException(nameof(objects));
+
+            foreach (var pair in objects)
+            {
+                Add(pair.Key, pair.Value);
+            }
+
+            _allObjectsInitializer = new Lazy<IReadOnlyList<ConfigurationObject>>(FindAllObjects);
         }
 
         /// <summary>
@@ -40,7 +53,9 @@ namespace GeoGen.Core.Utilities
             if (objects == null)
                 throw new ArgumentNullException(nameof(objects));
 
-            AddAll(objects);
+            Initialize(objects);
+
+            _allObjectsInitializer = new Lazy<IReadOnlyList<ConfigurationObject>>(FindAllObjects);
         }
 
         /// <summary>
@@ -53,41 +68,17 @@ namespace GeoGen.Core.Utilities
                 throw new ArgumentNullException(nameof(configuraton));
 
             var objects = configuraton.LooseObjects
-                    .Cast<ConfigurationObject>()
-                    .Concat(configuraton.ConstructedObjects);
+                                      .Cast<ConfigurationObject>()
+                                      .Concat(configuraton.ConstructedObjects);
 
-            AddAll(objects);
+            Initialize(objects);
+
+            _allObjectsInitializer = new Lazy<IReadOnlyList<ConfigurationObject>>(FindAllObjects);
         }
 
         #endregion
 
         #region Public methods
-
-        /// <summary>
-        /// Adds all objects from a given enumerable to the map.
-        /// </summary>
-        /// <param name="objects">The objects enumerable.</param>
-        public void AddAll(IEnumerable<ConfigurationObject> objects)
-        {
-            if (objects == null)
-                throw new ArgumentNullException(nameof(objects));
-
-            foreach (var configurationObject in objects)
-            {
-                var type = configurationObject?.ObjectType ?? throw new ArgumentException("Null object");
-
-                List<ConfigurationObject> list;
-
-                if (!ContainsKey(type))
-                {
-                    list = new List<ConfigurationObject>();
-                    Add(type, list);
-                }
-
-                list = this[type];
-                list.Add(configurationObject);
-            }
-        }
 
         /// <summary>
         /// Returns the count of objects of a given type contained
@@ -111,16 +102,7 @@ namespace GeoGen.Core.Utilities
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
 
-            return new ConfigurationObjectsMap(AllObjects().Concat(map.AllObjects()));
-        }
-
-        /// <summary>
-        /// Enumerates all objects contained in the map.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<ConfigurationObject> AllObjects()
-        {
-            return Values.SelectMany(value => value);
+            return new ConfigurationObjectsMap(AllObjects.Concat(map.AllObjects));
         }
 
         #endregion
@@ -133,9 +115,44 @@ namespace GeoGen.Core.Utilities
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The list of objects</returns>
-        public new List<ConfigurationObject> this[ConfigurationObjectType type]
+        public new IReadOnlyList<ConfigurationObject> this[ConfigurationObjectType type]
         {
             get => !ContainsKey(type) ? new List<ConfigurationObject>() : base[type];
+        }
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
+        /// Adds all objects from a given enumerable to the map.
+        /// </summary>
+        /// <param name="objects">The objects enumerable.</param>
+        private void Initialize(IEnumerable<ConfigurationObject> objects)
+        {
+            if (objects == null)
+                throw new ArgumentNullException(nameof(objects));
+
+            foreach (var configurationObject in objects)
+            {
+                var type = configurationObject?.ObjectType ?? throw new ArgumentException("Null object");
+
+                List<ConfigurationObject> list;
+
+                if (!ContainsKey(type))
+                {
+                    list = new List<ConfigurationObject>();
+                    Add(type, list);
+                }
+
+                list = (List<ConfigurationObject>) base[type];
+                list.Add(configurationObject);
+            }
+        }
+
+        private List<ConfigurationObject> FindAllObjects()
+        {
+            return this.SelectMany(pair => pair.Value).ToList();
         }
 
         #endregion

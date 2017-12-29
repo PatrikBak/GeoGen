@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 
-namespace GeoGen.Analyzer.Theorems
+namespace GeoGen.Analyzer
 {
     internal sealed class TheoremsContainer : ITheoremsContainer
     {

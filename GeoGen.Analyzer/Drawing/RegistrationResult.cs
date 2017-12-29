@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using GeoGen.Core.Configurations;
-
-namespace GeoGen.Analyzer.Drawing
+﻿namespace GeoGen.Analyzer
 {
     public enum RegistrationResult
     {

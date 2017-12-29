@@ -7,7 +7,7 @@ using Ninject.Extensions.NamedScope;
 using Ninject.Modules;
 using Ninject.Planning.Targets;
 
-namespace GeoGen.Core.NInject
+namespace GeoGen.Core
 {
     public abstract class BaseModule : NinjectModule
     {

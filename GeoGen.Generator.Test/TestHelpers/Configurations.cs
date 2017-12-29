@@ -14,7 +14,7 @@ namespace GeoGen.Generator.Test.TestHelpers
             var lines = Objects(nlines, ConfigurationObjectType.Line, npoints + 1);
             var circles = Objects(ncircles, ConfigurationObjectType.Circle, npoints + nlines + 1);
 
-            var objects = new HashSet<LooseConfigurationObject>(points.Concat(lines).Concat(circles));
+            var objects = new List<LooseConfigurationObject>(points.Concat(lines).Concat(circles));
 
             var configuration = new Configuration(objects, new List<ConstructedConfigurationObject>());
 
@@ -29,7 +29,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
         public static Configuration AsConfiguration(IEnumerable<LooseConfigurationObject> objects)
         {
-            return new Configuration(new HashSet<LooseConfigurationObject>(objects), new List<ConstructedConfigurationObject>());
+            return new Configuration(new List<LooseConfigurationObject>(objects), new List<ConstructedConfigurationObject>());
         }
     }
 }

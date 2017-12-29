@@ -2,10 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.Constructing;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainersManager"/>.
@@ -49,7 +48,7 @@ namespace GeoGen.Analyzer.Objects
         public ObjectsContainersManager
         (
                 IEnumerable<LooseConfigurationObject> looseObjects,
-                IObjectsContainersFactory factory,
+                IObjectsContainerFactory factory,
                 ILooseObjectsConstructor constructor
         )
         {

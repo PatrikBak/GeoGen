@@ -70,6 +70,7 @@
     <Compile Include="Constructions\Construction.cs" />
     <Compile Include="Constructions\Arguments\ConstructionArgument.cs" />
     <Compile Include="Constructions\PredefinedConstruction.cs" />
+    <Compile Include="Constructions\PredefinedConstructions\Circumcenter.cs" />
     <Compile Include="Constructions\PredefinedConstructions\Intersection.cs" />
     <Compile Include="Constructions\PredefinedConstructions\Midpoint.cs" />
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />

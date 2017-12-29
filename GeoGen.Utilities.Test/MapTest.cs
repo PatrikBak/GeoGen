@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities
+namespace GeoGen.Utilities.Test
 {
     [TestFixture]
     public class MapTest

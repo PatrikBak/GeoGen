@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
-using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;

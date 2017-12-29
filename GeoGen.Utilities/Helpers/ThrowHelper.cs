@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Helpers
 {
     /// <summary>
     /// A helper class for throwing exceptions

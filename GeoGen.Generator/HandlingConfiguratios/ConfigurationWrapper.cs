@@ -35,7 +35,7 @@ namespace GeoGen.Generator
         /// Gets or sets the list of configuration objects that are not last added.
         /// All objects are union of original objects and last added objects.
         /// </summary>
-        public List<ConfigurationObject> OriginalObjects { get; set; }
+        public IReadOnlyList<ConfigurationObject> OriginalObjects { get; set; }
 
         /// <summary>
         /// Gets or sets the list of constructed configuration objects 

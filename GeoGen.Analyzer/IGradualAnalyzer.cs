@@ -19,6 +19,6 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        List<Theorem> Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects);
+        List<Theorem> Analyze(IReadOnlyList<ConfigurationObject> oldObjects, IReadOnlyList<ConstructedConfigurationObject> newObjects);
     }
 }

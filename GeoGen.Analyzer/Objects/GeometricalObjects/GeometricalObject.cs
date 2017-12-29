@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects.GeometricalObjects
+namespace GeoGen.Analyzer
 {
     internal abstract class GeometricalObject
     {

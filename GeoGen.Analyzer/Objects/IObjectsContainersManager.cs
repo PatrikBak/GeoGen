@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a manager of all available <see cref="IObjectsContainer"/>s.

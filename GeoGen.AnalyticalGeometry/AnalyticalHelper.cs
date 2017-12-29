@@ -107,29 +107,29 @@ namespace GeoGen.AnalyticalGeometry
         private static HashSet<Point> Intersect(IAnalyticalObject o1, IAnalyticalObject o2)
         {
             // Safely cast o1 to nullable Line and Circle
-            var o1Line = o1 as Line?;
-            var o1Circle = o1 as Circle?;
+            var o1Line = o1 as Line;
+            var o1Circle = o1 as Circle;
 
             // The same goes with for o2
-            var o2Line = o2 as Line?;
-            var o2Circle = o2 as Circle?;
+            var o2Line = o2 as Line;
+            var o2Circle = o2 as Circle;
 
             // If we have two lines
             if (o1Line != null && o2Line != null)
             {
                 // Then we call the intersection method
-                var result = o1Line.Value.IntersectionWith(o2Line.Value);
+                var result = o1Line.IntersectionWith(o2Line);
 
                 // And if the intersection is null, return an empty set, otherwise the set
                 // containing the result
-                return result == null ? new HashSet<Point>() : new HashSet<Point> {result.Value};
+                return result == null ? new HashSet<Point>() : new HashSet<Point> {result};
             }
 
             // If we have two circles
             if (o1Circle != null && o2Circle != null)
             {
                 // Intersect the circles and cast the result to set
-                return o1Circle.Value.IntersectWith(o2Circle.Value).ToSet();
+                return o1Circle.IntersectWith(o2Circle).ToSet();
             }
 
             // Otherwise we have a line and a circle.
@@ -138,17 +138,17 @@ namespace GeoGen.AnalyticalGeometry
 
             // Find the line.
             if (o1Line != null)
-                line = o1Line.Value;
+                line = o1Line;
             else if (o2Line != null)
-                line = o2Line.Value;
+                line = o2Line;
             else
                 throw new Exception("Unhandled analytical object");
 
             // Find the circle.
             if (o1Circle != null)
-                circle = o1Circle.Value;
+                circle = o1Circle;
             else if (o2Circle != null)
-                circle = o2Circle.Value;
+                circle = o2Circle;
             else
                 throw new Exception("Unhandled analytical object");
 

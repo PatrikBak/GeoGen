@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
@@ -9,7 +8,7 @@ using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
-namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
+namespace GeoGen.Analyzer
 {
     internal sealed class ContextualContainer : IContextualContainer
     {
@@ -275,15 +274,7 @@ namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
             if (objectsContainer == null)
                 throw new ArgumentNullException(nameof(objectsContainer));
 
-            if (!_objects.ContainsKey(objectsContainer))
-                throw new ArgumentException("Unknown container");
-
-            var map = _objects[objectsContainer];
-
-            if (!map.ContainsLeft(geometricalObject))
-                throw new ArgumentException("Unknown geometrical object.");
-
-            return map.GetRight(geometricalObject);
+            return _objects[objectsContainer].GetRight(geometricalObject);
         }
 
         #endregion

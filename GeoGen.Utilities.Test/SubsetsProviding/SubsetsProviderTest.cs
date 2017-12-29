@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Subsets;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities.SubsetsProviding
+namespace GeoGen.Utilities.Test.SubsetsProviding
 {
     [TestFixture]
     public class SubsetsProviderTest

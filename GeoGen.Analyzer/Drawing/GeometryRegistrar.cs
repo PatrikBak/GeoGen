@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.Constructing;
-using GeoGen.Analyzer.Drawing;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
-using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Utilities;
 
-namespace GeoGen.Analyzer.Objects
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A default implementation of <see cref="IGeometryRegistrar"/>.

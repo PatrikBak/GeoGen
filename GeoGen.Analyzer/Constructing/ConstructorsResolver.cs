@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A default implementation of <see cref="IConstructorsResolver"/>.
@@ -15,7 +15,14 @@ namespace GeoGen.Analyzer.Constructing
         /// The dictionary mapping types of predefined constructions to their 
         /// predefined constructors.
         /// </summary>
-        private readonly Dictionary<Type, IPredefinedConstructor> _constructors; 
+        private readonly Dictionary<Type, IPredefinedConstructor> _predefinedConstructors;
+
+        private readonly Dictionary<int, IComposedConstructor> _composedConstructors;
+
+        /// <summary>
+        /// The factory for composed constructors
+        /// </summary>
+        private readonly IComposedConstructorFactory _factory;
 
         #endregion
 
@@ -26,12 +33,15 @@ namespace GeoGen.Analyzer.Constructing
         /// constructors.
         /// </summary>
         /// <param name="constructors">The predefined constructors array.</param>
-        public ConstructorsResolver(IPredefinedConstructor[] constructors)
+        public ConstructorsResolver(IPredefinedConstructor[] constructors, IComposedConstructorFactory factory)
         {
             if (constructors == null)
                 throw new ArgumentNullException(nameof(constructors));
 
-            _constructors = new Dictionary<Type, IPredefinedConstructor>();
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+
+            _predefinedConstructors = new Dictionary<Type, IPredefinedConstructor>();
+            _composedConstructors = new Dictionary<int, IComposedConstructor>();
 
             foreach (var constructor in constructors)
             {
@@ -40,10 +50,10 @@ namespace GeoGen.Analyzer.Constructing
 
                 var type = constructor.PredefinedConstructionType;
 
-                if (_constructors.ContainsKey(type))
+                if (_predefinedConstructors.ContainsKey(type))
                     throw new ArgumentException("Duplicate constructors");
 
-                _constructors.Add(type, constructor);
+                _predefinedConstructors.Add(type, constructor);
             }
         }
 
@@ -66,7 +76,7 @@ namespace GeoGen.Analyzer.Constructing
             {
                 try
                 {
-                    return _constructors[predefinedConstruction.GetType()];
+                    return _predefinedConstructors[predefinedConstruction.GetType()];
                 }
                 catch (KeyNotFoundException)
                 {
@@ -74,9 +84,18 @@ namespace GeoGen.Analyzer.Constructing
                 }
             }
 
-            throw new NotImplementedException();
+            var composedConstruction = (ComposedConstruction) construction;
 
-            // TODO: Implement custom constructions constructor
+            var id = composedConstruction.Id ?? throw new AnalyzerException("Id must be set");
+
+            if (_composedConstructors.ContainsKey(id))
+                return _composedConstructors[id];
+
+            var constructor = _factory.Create(composedConstruction);
+
+            _composedConstructors.Add(id, constructor);
+
+            return constructor;
         }
 
         #endregion

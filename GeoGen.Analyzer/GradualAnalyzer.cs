@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Theorems;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
@@ -43,7 +41,7 @@ namespace GeoGen.Analyzer
         /// <param name="oldObjects">The old objects.</param>
         /// <param name="newObjects">The new objects.</param>
         /// <returns>The analyzer output.</returns>
-        public List<Theorem> Analyze(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
+        public List<Theorem> Analyze(IReadOnlyList<ConfigurationObject> oldObjects, IReadOnlyList<ConstructedConfigurationObject> newObjects)
         {
             if (oldObjects == null)
                 throw new ArgumentNullException(nameof(oldObjects));

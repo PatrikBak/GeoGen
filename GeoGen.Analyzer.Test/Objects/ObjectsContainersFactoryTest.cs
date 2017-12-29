@@ -1,5 +1,4 @@
-﻿using GeoGen.Analyzer.Objects;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 namespace GeoGen.Analyzer.Test.Objects
 {

@@ -1,14 +1,17 @@
 ﻿using System;
 using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
     /// <summary>
     /// Represents a geometrical 2D point.
     /// </summary>
-    public struct Point : IAnalyticalObject
+    public class Point : IAnalyticalObject
     {
+        private Lazy<int> _hashCode;
+
         #region Public properties
 
         /// <summary>
@@ -30,8 +33,13 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         /// <param name="y">/// Gets the X coordinate.</param>
         public Point(double x, double y)
         {
-            X = x;
-            Y = y;
+            RoundedDouble roundedX = x;
+            RoundedDouble roundedY = y;
+
+            X = roundedX;
+            Y = roundedY;
+
+            _hashCode = new Lazy<int>(() => (roundedX.GetHashCode() * 397) ^ roundedY.GetHashCode());
         }
 
         #endregion
@@ -246,9 +254,10 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
+            return _hashCode.Value;
             unchecked
             {
-                return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+                //return (X.GetHashCode() * 397) ^ Y.GetHashCode();
             }
         }
 

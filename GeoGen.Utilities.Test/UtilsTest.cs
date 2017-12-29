@@ -1,9 +1,8 @@
 ﻿using GeoGen.Core.Configurations;
-using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities
+namespace GeoGen.Utilities.Test
 {
     [TestFixture]
     public class UtilsTest

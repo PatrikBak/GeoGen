@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects.GeometricalObjects
+namespace GeoGen.Analyzer
 {
     internal sealed class CircleObject : GeometricalObject
     {

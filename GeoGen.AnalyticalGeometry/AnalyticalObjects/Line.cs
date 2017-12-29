@@ -7,8 +7,10 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
     /// <summary>
     /// Represents a geometrical 2D line.
     /// </summary>
-    public struct Line : IAnalyticalObject
+    public class Line : IAnalyticalObject
     {
+        private Lazy<int> _hashCode;
+
         #region Public properties
 
         /// <summary>
@@ -87,6 +89,18 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             A = a / scale;
             B = b / scale;
             C = c / scale;
+
+            var ACopy = A;
+            var BCopy = B;
+            var CCopy = C;
+
+            _hashCode = new Lazy<int>(() =>
+            {
+                var hashCode = ACopy.GetHashCode();
+                hashCode = (hashCode * 397) ^ BCopy.GetHashCode();
+                hashCode = (hashCode * 397) ^ CCopy.GetHashCode();
+                return hashCode;
+            });
         }
 
         #endregion
@@ -101,7 +115,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         /// </summary>
         /// <param name="otherLine">The other line.</param>
         /// <returns>The intersection, or null, if there isn't any.</returns>
-        public Point? IntersectionWith(Line otherLine)
+        public Point IntersectionWith(Line otherLine)
         {
             if (this == otherLine)
                 throw new ArgumentException("Equal lines");
@@ -244,12 +258,13 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
+            return _hashCode.Value;
             unchecked
             {
-                var hashCode = A.GetHashCode();
-                hashCode = (hashCode * 397) ^ B.GetHashCode();
-                hashCode = (hashCode * 397) ^ C.GetHashCode();
-                return hashCode;
+                //var hashCode = A.GetHashCode();
+                //hashCode = (hashCode * 397) ^ B.GetHashCode();
+                //hashCode = (hashCode * 397) ^ C.GetHashCode();
+                //return hashCode;
             }
         }
 

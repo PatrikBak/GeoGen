@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer.Drawing;
+using GeoGen.Analyzer;
 using GeoGen.Core.Configurations;
 using GeoGen.Utilities;
 
@@ -45,45 +45,32 @@ namespace GeoGen.Generator
 
         public bool ResolveMappedOutput(ConfigurationWrapper configuration)
         {
-            // Initialize list of current objects that belongs to a single 
-            // construction with a first object
-            var currentObjects = new List<ConstructedConfigurationObject>();
-
-            // Local function to determine whether current objects
-            // should be sent to register
-            bool ShouldBeSentToRegister() => currentObjects.Count == currentObjects[0].Construction.OutputTypes.Count;
-
-            // Iterate over all constructed objects
-            foreach (var constructedObject in configuration.Configuration.ConstructedObjects)
+            // Iterate over constructed objects representing an output
+            // of a single construction
+            foreach (var constructedObjects in configuration.Configuration.GroupConstructedObjects())
             {
-                // Pull id
-                var id = constructedObject.Id ?? throw GeneratorException.ObjectsIdNotSet();
+                // Find ids
+                var ids = constructedObjects
+                          .Select(o => o.Id ?? throw GeneratorException.ObjectsIdNotSet())
+                          .ToSet();
 
-                // Find out if it's forbidden
-                var duplicate = _duplicateObjectsIds.Contains(id);
+                // Find out if there is a duplicate
+                var duplicate = ids.Any(_duplicateObjectsIds.Contains);
 
                 // If it is duplicate, return failure
                 if (duplicate)
                     return false;
 
                 // Find out if it is unconstructible
-                var unconstructible = _unconstructibleObjectsIds.Contains(id);
+                var unconstructible = ids.Any(_unconstructibleObjectsIds.Contains);
 
                 // If it is unconstructible, then we have a geometrical inconsistency,
                 // because the original object was resolved as OK
                 if (unconstructible)
                     throw new GeneratorException("Geometrical inconsistency between original object and mapped object");
 
-                // The object is fine, we can add it to the current objects
-                currentObjects.Add(constructedObject);
-
-                // If we shouldn't send the objects to the register, 
-                // then we can't do anything else yet
-                if (!ShouldBeSentToRegister())
-                    continue;
-
                 // Otherwise we register the objects using the method
-                var registrationResult = Register(currentObjects);
+                var registrationResult = Register(constructedObjects);
 
                 // Switch over the result
                 switch (registrationResult)
@@ -95,9 +82,6 @@ namespace GeoGen.Generator
                         // If the objects are duplicates, we'll return the failure
                         return false;
                 }
-
-                // And finally reset the current objects
-                currentObjects.Clear();
             }
 
             // If we got here, we have correct objects
@@ -106,27 +90,11 @@ namespace GeoGen.Generator
 
         public void ResolveInitialConfiguration(ConfigurationWrapper configuration)
         {
-            // Initialize list of current objects that belongs to a single 
-            // construction with a first object
-            var currentObjects = new List<ConstructedConfigurationObject>();
-
-            // Local function to determine whether current objects
-            // should be sent to register
-            bool ShouldBeSentToRegister() => currentObjects.Count == currentObjects[0].Construction.OutputTypes.Count;
-
             // Iterate over all constructed objects
-            foreach (var constructedObject in configuration.Configuration.ConstructedObjects)
+            foreach (var constructedObjects in configuration.Configuration.GroupConstructedObjects())
             {
-                // Add object between current objects
-                currentObjects.Add(constructedObject);
-
-                // If we shouldn't send the objects to the register, 
-                // then we can't do anything else yet
-                if (!ShouldBeSentToRegister())
-                    continue;
-
                 // Otherwise we register the objects using the method
-                var registrationResult = Register(currentObjects);
+                var registrationResult = Register(constructedObjects);
 
                 // Switch over the result
                 switch (registrationResult)
@@ -136,9 +104,6 @@ namespace GeoGen.Generator
                     case RegistrationResult.Duplicates:
                         throw new GeneratorException("Initial configuration contains duplicates.");
                 }
-
-                // And finally reset the current objects
-                currentObjects.Clear();
             }
         }
 
@@ -158,11 +123,11 @@ namespace GeoGen.Generator
 
             // Pull ids of initial objects and cast them to set
             var initialIds = output
-                    .OriginalConfiguration
-                    .Configuration
-                    .ConstructedObjects
-                    .Select(obj => obj.Id ?? throw GeneratorException.ObjectsIdNotSet())
-                    .ToSet();
+                             .OriginalConfiguration
+                             .Configuration
+                             .ConstructedObjects
+                             .Select(obj => obj.Id ?? throw GeneratorException.ObjectsIdNotSet())
+                             .ToSet();
 
             // Iterate over all constructed objects
             foreach (var constructedObject in output.ConstructedObjects)

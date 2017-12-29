@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Analyzer.Constructing.PredefinedConstructors;
-using GeoGen.Analyzer.Objects;
 using GeoGen.Analyzer.Test.TestHelpers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;

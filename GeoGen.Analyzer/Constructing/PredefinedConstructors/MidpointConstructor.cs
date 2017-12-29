@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 
-namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A constructor for the <see cref="Midpoint"/> construction.
@@ -31,7 +29,7 @@ namespace GeoGen.Analyzer.Constructing.PredefinedConstructors
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
 
-           try
+            try
             {
                 ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
 

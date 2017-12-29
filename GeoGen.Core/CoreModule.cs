@@ -1,6 +1,8 @@
-﻿using GeoGen.Utilities;
+﻿using GeoGen.Utilities.Combinations;
+using GeoGen.Utilities.Subsets;
+using GeoGen.Utilities.Variations;
 
-namespace GeoGen.Core.NInject
+namespace GeoGen.Core
 {
     public class CoreModule : BaseModule
     {

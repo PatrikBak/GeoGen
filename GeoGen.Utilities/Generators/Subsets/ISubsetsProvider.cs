@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Subsets
 {
     public interface ISubsetsProvider
     {

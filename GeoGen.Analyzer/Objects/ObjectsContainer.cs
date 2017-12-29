@@ -4,7 +4,7 @@ using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainer"/>.

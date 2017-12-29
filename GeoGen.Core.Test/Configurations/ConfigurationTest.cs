@@ -28,7 +28,7 @@ namespace GeoGen.Core.Test.Configurations
                 () =>
                 {
                     var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                    var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
+                    var looseObjects = new List<LooseConfigurationObject> {looseObject};
                     new Configuration(looseObjects, null);
                 }
             );
@@ -41,7 +41,7 @@ namespace GeoGen.Core.Test.Configurations
             (
                 () =>
                 {
-                    var looseObjects = new HashSet<LooseConfigurationObject>();
+                    var looseObjects = new List<LooseConfigurationObject>();
                     var constructedObjects = new List<ConstructedConfigurationObject>();
                     new Configuration(looseObjects, constructedObjects);
                 }

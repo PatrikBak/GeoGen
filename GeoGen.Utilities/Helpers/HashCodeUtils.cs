@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Helpers
 {
     /// <summary>
     /// A static helper class for hash coding.

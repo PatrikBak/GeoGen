@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,6 +58,7 @@
     <Compile Include="DataStructures\CacheBasedContainer.cs" />
     <Compile Include="DataStructures\IToStringConverter.cs" />
     <Compile Include="Extentions\CollectionExtensions.cs" />
+    <Compile Include="Extentions\DoubleExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
     <Compile Include="Extentions\EnumerableExtensions.cs" />

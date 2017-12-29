@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities.Helpers
 {
     /// <summary>
     /// General C# utilities

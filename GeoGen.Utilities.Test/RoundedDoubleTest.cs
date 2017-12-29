@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
-using static GeoGen.Utilities.RoundedDouble;
 
-namespace GeoGen.Core.Test.Utilities
+namespace GeoGen.Utilities.Test
 {
     [TestFixture]
     public class RoundedDoubleTest
@@ -31,21 +29,21 @@ namespace GeoGen.Core.Test.Utilities
                 TestNumber(0),
                 TestNumber(1),
                 TestNumber(10),
-                TestNumber(DoubleRoundingPrecision - 1),
-                TestNumber(DoubleRoundingPrecision),
-                TestNumber(DoubleRoundingPrecision + 1),
-                TestNumber(DoubleRoundingPrecision + 10)
+                TestNumber(RoundedDouble.DoubleRoundingPrecision - 1),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision + 1),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision + 10)
             };
 
             var roundedValues = new List<double>
             {
                 0,
                 0.1,
-                0.1111111111,
-                TestNumber(DoubleRoundingPrecision - 1),
-                TestNumber(DoubleRoundingPrecision),
-                TestNumber(DoubleRoundingPrecision),
-                TestNumber(DoubleRoundingPrecision)
+                0.111111,
+                TestNumber(RoundedDouble.DoubleRoundingPrecision - 1),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision)
             };
 
             for (var i = 0; i < numbers.Count; i++)
@@ -61,23 +59,23 @@ namespace GeoGen.Core.Test.Utilities
         [Test]
         public void Test_Implicit_Cast_From_Rounded_Double_To_Double()
         {
-            var rounded = new RoundedDouble(TestNumber(DoubleRoundingPrecision + 1));
+            var rounded = new RoundedDouble(TestNumber(RoundedDouble.DoubleRoundingPrecision + 1));
 
             var number = 1.0 * rounded;
 
             Assert.AreEqual(number, rounded.OriginalValue);
-            Assert.AreEqual(TestNumber(DoubleRoundingPrecision), rounded.RoundedValue);
+            Assert.AreEqual(TestNumber(RoundedDouble.DoubleRoundingPrecision), rounded.RoundedValue);
         }
 
         [Test]
         public void Test_Implicit_Cast_From_Double_To_Rounded_Double()
         {
-            var number = TestNumber(DoubleRoundingPrecision + 1);
+            var number = TestNumber(RoundedDouble.DoubleRoundingPrecision + 1);
 
             RoundedDouble rounded = number;
 
             Assert.AreEqual(number, rounded.OriginalValue);
-            Assert.AreEqual(TestNumber(DoubleRoundingPrecision), rounded.RoundedValue);
+            Assert.AreEqual(TestNumber(RoundedDouble.DoubleRoundingPrecision), rounded.RoundedValue);
         }
 
         [Test]
@@ -91,9 +89,9 @@ namespace GeoGen.Core.Test.Utilities
                 4e-66,
                 12,
                 7e100,
-                TestNumber(DoubleRoundingPrecision),
-                TestNumber(DoubleRoundingPrecision + 10),
-                TestNumber(DoubleRoundingPrecision - 1)
+                TestNumber(RoundedDouble.DoubleRoundingPrecision),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision + 10),
+                TestNumber(RoundedDouble.DoubleRoundingPrecision - 1)
             };
 
             foreach (var double1 in doubles)
@@ -119,8 +117,8 @@ namespace GeoGen.Core.Test.Utilities
         [Test]
         public void Test_Comparision_Operators_Are_Invonked_On_Rounded_Values()
         {
-            var double1 = (RoundedDouble) TestNumber(DoubleRoundingPrecision);
-            var double2 = (RoundedDouble) TestNumber(DoubleRoundingPrecision + 2);
+            var double1 = (RoundedDouble) TestNumber(RoundedDouble.DoubleRoundingPrecision);
+            var double2 = (RoundedDouble) TestNumber(RoundedDouble.DoubleRoundingPrecision + 2);
 
             Assert.IsFalse(double1 < double2);
             Assert.IsTrue(double1 <= double2);

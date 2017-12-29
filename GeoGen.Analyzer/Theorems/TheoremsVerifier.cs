@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer.Theorems
+namespace GeoGen.Analyzer
 {
     internal sealed class TheoremsVerifier : ITheoremsVerifier
     {
@@ -37,15 +35,19 @@ namespace GeoGen.Analyzer.Theorems
                 throw new ArgumentException("Null theorem verifier passed to TheoremsVerifier constructor.");
         }
 
-        public IEnumerable<Theorem> FindTheorems(List<ConfigurationObject> oldObjects, List<ConstructedConfigurationObject> newObjects)
+        public IEnumerable<Theorem> FindTheorems(IReadOnlyList<ConfigurationObject> oldObjects, IReadOnlyList<ConstructedConfigurationObject> newObjects)
         {
             var oldObjectsMap = new ConfigurationObjectsMap(oldObjects);
 
             var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
             var container = new ContextualContainer(_containersManager, new AnalyticalHelper());
-            oldObjects.ForEach(container.Add);
-            newObjects.ForEach(container.Add);
+
+            foreach (var configurationObject in oldObjects.Concat(newObjects))
+            {
+                container.Add(configurationObject);
+            }
+            
             var input = new VerifierInput(container, oldObjectsMap, newObjectsMap);
 
             foreach (var theoremVerifier in _verifiers)

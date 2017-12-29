@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Variations
 {
     /// <summary>
     /// Represents a non-repeating variations generator from a given list of items with 

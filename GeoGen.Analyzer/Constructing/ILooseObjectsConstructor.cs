@@ -2,7 +2,7 @@
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represent a simple constructor of loose configuration objects.

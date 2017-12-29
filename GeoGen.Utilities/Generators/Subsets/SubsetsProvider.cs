@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Subsets
 {
     public sealed class SubsetsProvider : ISubsetsProvider
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Combinations
 {
     /// <summary>
     /// Represents a Cartesian product generator from a given dictionary mapping TKey to the enumerable

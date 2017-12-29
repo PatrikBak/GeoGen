@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects;
 
-namespace GeoGen.Analyzer.Theorems
+namespace GeoGen.Analyzer
 {
     internal sealed class VerifierOutput
     {

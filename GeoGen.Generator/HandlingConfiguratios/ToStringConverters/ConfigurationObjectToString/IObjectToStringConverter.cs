@@ -1,5 +1,5 @@
 ﻿using GeoGen.Core.Configurations;
-using GeoGen.Utilities.DataStructures;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {

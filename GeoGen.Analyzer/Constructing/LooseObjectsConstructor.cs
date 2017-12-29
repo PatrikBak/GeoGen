@@ -6,7 +6,7 @@ using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A default implementation of <see cref="ILooseObjectsConstructor"/> that uses 

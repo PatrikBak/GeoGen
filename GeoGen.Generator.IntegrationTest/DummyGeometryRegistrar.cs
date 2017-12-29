@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Analyzer.Drawing;
+using GeoGen.Analyzer;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Generator.IntegrationTest

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GeoGen.Utilities.Helpers;
 
-namespace GeoGen.Utilities
+namespace GeoGen.Utilities.Variations
 {
     /// <summary>
     /// A fast recursive implementation of the <see cref="IVariationsProvider"/> interface.

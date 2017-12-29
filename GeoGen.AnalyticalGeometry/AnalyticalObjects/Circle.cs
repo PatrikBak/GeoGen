@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 {
     /// <summary>
     /// Represents a geometrical 2D circle.
     /// </summary>
-    public struct Circle : IAnalyticalObject
+    public class Circle : IAnalyticalObject
     {
+        private Lazy<int> _hashCOde;
+
         #region Public properties
 
         /// <summary>
@@ -53,6 +56,11 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // Otherwise the situation is fine and radius is the distance
             // from any point to the center.
             Radius = point1.DistanceTo(Center);
+
+            var radiusCopy = Radius;
+            var centerCopy = Center;
+
+            _hashCOde = new Lazy<int>(() => (centerCopy.GetHashCode() * 397) ^ radiusCopy.GetHashCode());
         }
 
         /// <summary>
@@ -67,6 +75,11 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 
             if (Radius <= 0)
                 throw new ArgumentOutOfRangeException(nameof(radius), "The radius must be positive.");
+
+            var radiusCopy = Radius;
+            var centerCopy = Center;
+
+            _hashCOde = new Lazy<int>(() => (centerCopy.GetHashCode() * 397) ^ radiusCopy.GetHashCode());
         }
 
         #endregion
@@ -293,9 +306,11 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
+            return _hashCOde.Value;
             unchecked
             {
-                return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
+                
+                //return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
             }
         }
 

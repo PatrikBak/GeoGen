@@ -3,9 +3,9 @@ using System.Globalization;
 
 namespace GeoGen.Utilities
 {
-    public struct RoundedDouble
+    public class RoundedDouble
     {
-        public const int DoubleRoundingPrecision = 6;
+        public const int DoubleRoundingPrecision = 5;
 
         public double OriginalValue { get; }
 
@@ -16,6 +16,7 @@ namespace GeoGen.Utilities
         public RoundedDouble(double originalValue)
         {
             OriginalValue = originalValue;
+            //var roundedValue = originalValue.AdjustPrecision(DoubleRoundingPrecision);
             var roundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
             RoundedValue = roundedValue;
             _hashCode = new Lazy<int>(() => roundedValue.GetHashCode());
@@ -96,6 +97,7 @@ namespace GeoGen.Utilities
 
         public override int GetHashCode()
         {
+            //return _hashCode.Value;
             return RoundedValue.GetHashCode();
         }
 

@@ -9,7 +9,7 @@ using GeoGen.Utilities;
 namespace GeoGen.Core.Constructions
 {
     /// <summary>
-    /// Represents a composed <see cref="Construction"/> that is defined as an output of some configuration. 
+    /// Represents a <see cref="Construction"/> that is defined as an output of some configuration. 
     /// This is supposed to represent a complex constructions that user can define by themselves, for instance
     /// the construction that takes 3 points and outputs the orthocenter of the triangle formed by those points.
     /// </summary>
@@ -55,7 +55,7 @@ namespace GeoGen.Core.Constructions
         public ComposedConstruction
         (
             Configuration parentalConfiguration,
-            ISet<int> outputObjectsIndices,
+            IList<int> outputObjectsIndices,
             IReadOnlyList<ConstructionParameter> constructionParameters
         )
         {

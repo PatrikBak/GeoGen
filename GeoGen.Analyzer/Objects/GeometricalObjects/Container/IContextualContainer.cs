@@ -3,7 +3,7 @@ using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer.Objects.GeometricalObjects.Container
+namespace GeoGen.Analyzer
 {
     internal interface IContextualContainer : IEnumerable<GeometricalObject>
     {

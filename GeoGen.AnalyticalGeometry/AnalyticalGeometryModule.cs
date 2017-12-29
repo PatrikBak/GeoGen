@@ -1,8 +1,7 @@
 ﻿using GeoGen.AnalyticalGeometry.RandomObjects;
-using GeoGen.Core.NInject;
-using Ninject.Modules;
+using GeoGen.Core;
 
-namespace GeoGen.AnalyticalGeometry.Ninject
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// A NInject module that binds things from the Analytical Geometry module.

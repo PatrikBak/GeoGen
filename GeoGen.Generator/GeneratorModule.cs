@@ -1,5 +1,5 @@
-﻿using GeoGen.Core.Generator;
-using GeoGen.Core.NInject;
+﻿using GeoGen.Core;
+using GeoGen.Core.Generator;
 
 namespace GeoGen.Generator
 {

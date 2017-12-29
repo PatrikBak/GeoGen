@@ -1,9 +1,8 @@
-﻿using GeoGen.Core.Theorems;
-using System.Collections.Generic;
-using GeoGen.Analyzer.Objects.GeometricalObjects;
+﻿using System.Collections.Generic;
+using GeoGen.Core.Theorems;
 using GeoGen.Core.Utilities;
 
-namespace GeoGen.Analyzer.Theorems
+namespace GeoGen.Analyzer
 {
     internal interface ITheoremConstructor
     {

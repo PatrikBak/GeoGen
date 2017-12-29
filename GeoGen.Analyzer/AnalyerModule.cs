@@ -1,15 +1,7 @@
-﻿using System;
-using GeoGen.Analyzer.Constructing;
-using GeoGen.Analyzer.Constructing.PredefinedConstructors;
-using GeoGen.Analyzer.Drawing;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
-using GeoGen.Analyzer.Theorems;
-using GeoGen.Analyzer.Theorems.TheoremVerifiers;
-using GeoGen.Core.NInject;
-using Ninject.Modules;
+﻿using GeoGen.Core;
+using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer.NInject
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A NInject module that binds things from the Core module.
@@ -28,17 +20,19 @@ namespace GeoGen.Analyzer.NInject
             BindInGeneratorScope<ILooseObjectsConstructor, LooseObjectsConstructor>();
             BindInGeneratorScope<IConstructorsResolver, ConstructorsResolver>();
             BindInGeneratorScope<IContextualContainer, ContextualContainer>();
+            BindFactoryInGeneratorScope<IComposedConstructorFactory>();
             BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjects);
             BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>();
             BindInTransietScope<IObjectsContainer, ObjectsContainer>();
 
-            BindFactoryInGeneratorScope<IObjectsContainersFactory>();
+            BindFactoryInGeneratorScope<IObjectsContainerFactory>();
 
             BindInGeneratorScope<ITheoremVerifier, ConcurrencyVerifier>();
             BindInGeneratorScope<ITheoremVerifier, CollinearityVerifier>();
 
             BindInGeneratorScope<IPredefinedConstructor, MidpointConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, InteresectionConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, CircumcenterConstructor>();
         }
     }
 }

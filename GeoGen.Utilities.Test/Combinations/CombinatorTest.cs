@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Combinations;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities.Combinations
+namespace GeoGen.Utilities.Test.Combinations
 {
     [TestFixture]
     public class CombinatorTest

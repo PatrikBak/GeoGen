@@ -1,7 +1,7 @@
 ﻿using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Objects
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a container that handles mapping <see cref="ConfigurationObject"/>

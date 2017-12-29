@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Analyzer.Objects;
 using GeoGen.Core.Theorems;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an output of a <see cref="IObjectsConstructor"/>.

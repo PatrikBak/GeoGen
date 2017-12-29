@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
+using GeoGen.Utilities.Variations;
 using NUnit.Framework;
 
-namespace GeoGen.Core.Test.Utilities.VariationsProviding
+namespace GeoGen.Utilities.Test.VariationsProviding
 {
     [TestFixture]
     public class VariationsProviderTest

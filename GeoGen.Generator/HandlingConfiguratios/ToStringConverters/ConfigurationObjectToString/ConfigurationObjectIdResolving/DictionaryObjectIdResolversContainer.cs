@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using GeoGen.Core.Configurations;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Variations;
 
 namespace GeoGen.Generator
 {

@@ -14,8 +14,8 @@ namespace GeoGen.Core.Test.Utilities
         private static IEnumerable<ConfigurationObject> Objects(int p, int l, int c)
         {
             return Objects(p, ConfigurationObjectType.Point)
-                    .Concat(Objects(l, ConfigurationObjectType.Line))
-                    .Concat(Objects(c, ConfigurationObjectType.Circle));
+                   .Concat(Objects(l, ConfigurationObjectType.Line))
+                   .Concat(Objects(c, ConfigurationObjectType.Circle));
         }
 
         private static IEnumerable<ConfigurationObject> Objects(int count, ConfigurationObjectType type)
@@ -95,7 +95,7 @@ namespace GeoGen.Core.Test.Utilities
         [Test]
         public void Test_Constructor_Configuration()
         {
-            var objects = Objects(1, 2, 3).Cast<LooseConfigurationObject>().ToSet();
+            var objects = Objects(1, 2, 3).Cast<LooseConfigurationObject>().ToList();
             var constructed = new List<ConstructedConfigurationObject>();
             var configuration = new Configuration(objects, constructed);
 
@@ -104,44 +104,6 @@ namespace GeoGen.Core.Test.Utilities
             Assert.AreEqual(1, map[ConfigurationObjectType.Point].Count);
             Assert.AreEqual(2, map[ConfigurationObjectType.Line].Count);
             Assert.AreEqual(3, map[ConfigurationObjectType.Circle].Count);
-        }
-
-        [Test]
-        public void Test_Add_All_Objects_Enumerable_Cant_Be_Null()
-        {
-            var map = new ConfigurationObjectsMap();
-
-            Assert.Throws<ArgumentNullException>(() => map.AddAll(null));
-        }
-
-        [Test]
-        public void Test_Add_All_Empty_Enumerable()
-        {
-            var map = new ConfigurationObjectsMap();
-            Assert.AreEqual(0, map.Count);
-
-            map.AddAll(new List<ConfigurationObject>());
-            Assert.AreEqual(0, map.Count);
-
-            map.AddAll(Objects(1, 0, 0));
-            Assert.AreEqual(1, map.Count);
-            Assert.AreEqual(1, map[ConfigurationObjectType.Point].Count);
-
-            map.AddAll(new List<ConfigurationObject>());
-            Assert.AreEqual(1, map.Count);
-            Assert.AreEqual(1, map[ConfigurationObjectType.Point].Count);
-        }
-
-        [Test]
-        public void Test_Add_All_Objects_Enumerable()
-        {
-            var map = new ConfigurationObjectsMap(Objects(3, 2, 1));
-            map.AddAll(Objects(1, 2, 3));
-
-            Assert.AreEqual(3, map.Count);
-            Assert.AreEqual(4, map[ConfigurationObjectType.Point].Count);
-            Assert.AreEqual(4, map[ConfigurationObjectType.Line].Count);
-            Assert.AreEqual(4, map[ConfigurationObjectType.Circle].Count);
         }
 
         [Test]
@@ -170,11 +132,11 @@ namespace GeoGen.Core.Test.Utilities
 
             var merged = map1.Merge(map2);
 
-            Assert.AreEqual(6, map1.AllObjects().Count());
-            Assert.AreEqual(6, map2.AllObjects().Count());
+            Assert.AreEqual(6, map1.AllObjects.Count);
+            Assert.AreEqual(6, map2.AllObjects.Count());
 
-            Assert.AreEqual(12, merged.AllObjects().Count());
-            Assert.IsTrue(merged.AllObjects().All(o => map1.AllObjects().Contains(o) || map2.AllObjects().Contains(o)));
+            Assert.AreEqual(12, merged.AllObjects.Count());
+            Assert.IsTrue(merged.AllObjects.All(o => map1.AllObjects.Contains(o) || map2.AllObjects.Contains(o)));
         }
 
         [Test]
@@ -182,10 +144,10 @@ namespace GeoGen.Core.Test.Utilities
         {
             var map = new ConfigurationObjectsMap(Objects(1, 2, 3));
 
-            Assert.AreEqual(6, map.AllObjects().Count());
-            Assert.AreEqual(1, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Point));
-            Assert.AreEqual(2, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Line));
-            Assert.AreEqual(3, map.AllObjects().Count(o => o.ObjectType == ConfigurationObjectType.Circle));
+            Assert.AreEqual(6, map.AllObjects.Count());
+            Assert.AreEqual(1, map.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Point));
+            Assert.AreEqual(2, map.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Line));
+            Assert.AreEqual(3, map.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Circle));
         }
 
         [Test]

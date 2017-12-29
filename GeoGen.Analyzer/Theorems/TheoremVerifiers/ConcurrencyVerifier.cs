@@ -3,15 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Analyzer.Objects;
-using GeoGen.Analyzer.Objects.GeometricalObjects;
-using GeoGen.Analyzer.Objects.GeometricalObjects.Container;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
+using GeoGen.Utilities.Subsets;
 
-namespace GeoGen.Analyzer.Theorems.TheoremVerifiers
+namespace GeoGen.Analyzer
 {
     internal sealed class ConcurrencyVerifier : ITheoremVerifier
     {

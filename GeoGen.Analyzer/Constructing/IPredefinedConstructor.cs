@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an <see cref="IObjectsConstructor"/> of predefined constructions, 

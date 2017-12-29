@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Utilities;
-using GeoGen.Utilities.DataStructures;
 
 namespace GeoGen.Generator
 {

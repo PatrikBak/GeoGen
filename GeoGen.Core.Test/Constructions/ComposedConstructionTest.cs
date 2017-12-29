@@ -23,7 +23,7 @@ namespace GeoGen.Core.Test.Constructions
             var constructedObject = new ConstructedConfigurationObject(constructon, arguments, 0);
             var constructedObjects = new List<ConstructedConfigurationObject> {constructedObject, constructedObject};
             var looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var looseObjects = new HashSet<LooseConfigurationObject> {looseObject};
+            var looseObjects = new List<LooseConfigurationObject> {looseObject};
 
             return new Configuration(looseObjects, constructedObjects);
         }
@@ -33,7 +33,7 @@ namespace GeoGen.Core.Test.Constructions
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => new ComposedConstruction(null, new HashSet<int> {0}, new List<ConstructionParameter>())
+                () => new ComposedConstruction(null, new List<int> {0}, new List<ConstructionParameter>())
             );
         }
 
@@ -51,7 +51,7 @@ namespace GeoGen.Core.Test.Constructions
         {
             Assert.Throws<ArgumentException>
             (
-                () => new ComposedConstruction(Configuration(), new HashSet<int>(), new List<ConstructionParameter>())
+                () => new ComposedConstruction(Configuration(), new List<int>(), new List<ConstructionParameter>())
             );
         }
 
@@ -60,7 +60,7 @@ namespace GeoGen.Core.Test.Constructions
         {
             Assert.Throws<ArgumentException>
             (
-                () => new ComposedConstruction(Configuration(), new HashSet<int> {1, 2}, new List<ConstructionParameter>())
+                () => new ComposedConstruction(Configuration(), new List<int> {1, 2}, new List<ConstructionParameter>())
             );
         }
 
@@ -68,7 +68,7 @@ namespace GeoGen.Core.Test.Constructions
         public void Test_Output_Object_Indices_Are_Correct()
         {
             var parameters = new List<ConstructionParameter> {new ObjectConstructionParameter(ConfigurationObjectType.Point)};
-            new ComposedConstruction(Configuration(), new HashSet<int> {0, 1}, parameters);
+            new ComposedConstruction(Configuration(), new List<int> {0, 1}, parameters);
         }
 
         [Test]
@@ -76,7 +76,7 @@ namespace GeoGen.Core.Test.Constructions
         {
             Assert.Throws<ArgumentNullException>
             (
-                () => new ComposedConstruction(Configuration(), new HashSet<int> {0}, null)
+                () => new ComposedConstruction(Configuration(), new List<int> {0}, null)
             );
         }
 
@@ -85,7 +85,7 @@ namespace GeoGen.Core.Test.Constructions
         {
             Assert.Throws<ArgumentException>
             (
-                () => new ComposedConstruction(Configuration(), new HashSet<int> {0}, new List<ConstructionParameter>())
+                () => new ComposedConstruction(Configuration(), new List<int> {0}, new List<ConstructionParameter>())
             );
         }
     }

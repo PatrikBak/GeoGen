@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core.Constructions;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a service that is able to find the right

@@ -1,4 +1,4 @@
-﻿using GeoGen.Utilities.DataStructures;
+﻿using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {

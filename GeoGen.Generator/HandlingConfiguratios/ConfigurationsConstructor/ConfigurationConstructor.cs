@@ -94,7 +94,7 @@ namespace GeoGen.Generator
             var originalConfiguration = originalConfigurationWrapper.Configuration;
 
             // Construct original objects list
-            var originalObjects = originalConfigurationWrapper.AllObjectsMap.AllObjects().ToList();
+            var originalObjects = originalConfigurationWrapper.AllObjectsMap.AllObjects;
 
             // Merge original constructed objects with the new ones
             var allConstructedObjects = originalConfiguration
@@ -137,7 +137,7 @@ namespace GeoGen.Generator
             var typeToObjectsMap = new ConfigurationObjectsMap(newConfiguration);
 
             // Create original objects
-            var originalObjects = typeToObjectsMap.AllObjects().Where(o => !newObjects.Contains(o)).ToList();
+            var originalObjects = typeToObjectsMap.AllObjects.Where(o => !newObjects.Contains(o)).ToList();
 
             // Return the new wrapper
             return new ConfigurationWrapper
@@ -171,7 +171,7 @@ namespace GeoGen.Generator
                     Configuration = initialConfiguration,
                     AllObjectsMap = objectsMap,
                     LastAddedObjects = new List<ConstructedConfigurationObject>(),
-                    OriginalObjects = objectsMap.AllObjects().ToList(),
+                    OriginalObjects = objectsMap.AllObjects,
                     Excluded = false,
                     PreviousConfiguration = null,
                     ResolverToMinimalForm = _resolver

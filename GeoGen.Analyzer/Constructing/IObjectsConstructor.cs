@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using GeoGen.Core.Configurations;
 
-namespace GeoGen.Analyzer.Constructing
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
