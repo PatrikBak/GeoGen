@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 using NUnit.Framework;
 

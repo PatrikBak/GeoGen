@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using GeoGen.Core.Configurations;
+using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Theorems;
 
@@ -35,12 +36,20 @@ namespace GeoGen.Generator.IntegrationTest
         {
             var result = new StringBuilder();
 
-            result.Append($"{constructedObject.Construction.GetType().Name}")
+            result.Append(ConstructionToString(constructedObject.Construction))
                     .Append("(")
                     .Append(string.Join(", ", constructedObject.PassedArguments.Select(ArgumentToString)))
                     .Append(")");
 
             return result.ToString();
+        }
+
+        private string ConstructionToString(Construction construction)
+        {
+            if (construction is PredefinedConstruction)
+                return construction.GetType().Name;
+
+            return ((ComposedConstruction) construction).Name;
         }
 
         private string ArgumentToString(ConstructionArgument argument)

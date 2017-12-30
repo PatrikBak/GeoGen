@@ -14,17 +14,17 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
     [TestFixture]
     public class ComposedConstructorTest
     {
-        private readonly Midpoint _midpoint = new Midpoint {Id = 1};
+        private readonly MidpointFromPoints _midpoint = new MidpointFromPoints {Id = 1};
 
-        private readonly Intersection _intersection = new Intersection {Id = 2};
+        private readonly IntersectionFromPoints _intersection = new IntersectionFromPoints {Id = 2};
 
         private static ComposedConstructor Constructor(ComposedConstruction construction)
         {
             var predefinedConstructors = new IPredefinedConstructor[]
             {
-                new MidpointConstructor(),
-                new CircumcenterConstructor(),
-                new InteresectionConstructor(),
+                new MidpointFromPointsConstructor(),
+                new CircumcenterFromPointsConstructor(),
+                new InteresectionFromPointsConstructor(),
             };
 
             var factory = new Mock<IComposedConstructorFactory>();

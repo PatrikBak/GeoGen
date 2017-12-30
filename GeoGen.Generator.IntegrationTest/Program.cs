@@ -7,10 +7,8 @@ using GeoGen.Analyzer;
 using GeoGen.Core;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
 using GeoGen.Core.Constructions.PredefinedConstructions;
 using GeoGen.Core.Generator;
-using GeoGen.Utilities;
 using Ninject;
 using Ninject.Planning.Bindings.Resolvers;
 
@@ -18,47 +16,17 @@ namespace GeoGen.Generator.IntegrationTest
 {
     public class Program
     {
-        private static Midpoint _midpoint;
+        private static ConstructionsContainer _constructionsContainer;
 
-        private static Intersection _intersection;
+        private static ComposedConstructions _composedConstructions;
 
-        private static Circumcenter _circumcenter;
+        private static ConstructorHelper _constructorHelper;
 
         private static void Main()
         {
-            //var p = 1.0 / 3;
-            //Console.WriteLine(p);
-
-            //var random = new Random();
-            //var sw = new Stopwatch();
-            //var list = new List<double>();
-            //var list2 = new List<decimal>();
-            //for (var i = 0; i < 100_000_00; i++)
-            //{
-            //    var d = random.NextDouble();
-            //    //list.Add(d);
-            //    list2.Add(new decimal(d));
-
-
-            //}
-            //sw.Start();
-            //foreach (var d in list)
-            //{
-            //    Math.Round(d);
-            //}
-            //sw.Stop();
-            //Console.WriteLine(sw.ElapsedMilliseconds);
-            //sw.Restart();
-            //foreach (var d in list2)
-            //{
-            //    Math.Round(d);
-            //}
-            //sw.Stop();
-            //Console.WriteLine(sw.ElapsedMilliseconds);
-
-            _midpoint = new Midpoint { Id = 0 };
-            _intersection = new Intersection { Id = 1 };
-            _circumcenter = new Circumcenter {Id = 2};
+            _constructionsContainer = new ConstructionsContainer();
+            _composedConstructions = new ComposedConstructions(_constructionsContainer);
+            _constructorHelper = new ConstructorHelper(_constructionsContainer);
 
             var kernel = new StandardKernel
             (
@@ -70,31 +38,19 @@ namespace GeoGen.Generator.IntegrationTest
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
 
-            //kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
-            //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
-
+            kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
+           
             var factory = kernel.Get<IGeneratorFactory>();
 
             var points = Enumerable.Range(0, 3)
-                                   .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point))
-                                   .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point))
+                    .ToList();
 
-            // Ok, let's make some midpoints
-            var m1 = CreateMidpoint(points[0], points[1]);
-            var m2 = CreateMidpoint(points[0], points[2]);
-            var m3 = CreateMidpoint(points[1], points[2]);
-            var o = CreateCircumcenter(points[0], points[1], points[2]);
-            //var m4 = CreateMidpoint(m2, points[1]);
-
-            // And intersection
-            //var g = CreateIntersection(points[0], m2, points[1], m3);
-
-            var constructedObjects = new List<ConstructedConfigurationObject>();
-            //var constructedObjects = new List<ConstructedConfigurationObject> { m1, m2, m3, o };
-
+            var constructedObjects = ConstructedObjects(points);
 
             var configuration = new Configuration(points, constructedObjects);
-            var constructions = new List<Construction> { _midpoint, };
+            var constructions = Constructions();
 
             var input = new GeneratorInput
             {
@@ -113,55 +69,25 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
 
-           // PrintTheorems(result);
+            //PrintTheorems(result);
         }
 
-        private static ConstructedConfigurationObject CreateCircumcenter(params ConfigurationObject[] objects)
+        private static List<Construction> Constructions()
         {
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            return new List<Construction>
             {
-                new ObjectConstructionArgument(objects[0]),
-                new ObjectConstructionArgument(objects[1]),
-                new ObjectConstructionArgument(objects[2]),
-            });
-
-            var argumentsList = new List<ConstructionArgument> { argument };
-
-            return new ConstructedConfigurationObject(_circumcenter, argumentsList, 0);
+                //_composedConstructions.AddCentroidFromPoints(),
+                _composedConstructions.AddIncenterFromPoints(),
+                _constructionsContainer.Get<MidpointFromPoints>(),
+               // _constructionsContainer.Get<IntersectionFromPoints>()
+            };
         }
 
-        private static ConstructedConfigurationObject CreateIntersection(params ConfigurationObject[] objects)
+        private static List<ConstructedConfigurationObject> ConstructedObjects(List<LooseConfigurationObject> points)
         {
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            return new List<ConstructedConfigurationObject>
             {
-                new SetConstructionArgument(new HashSet<ConstructionArgument>
-                {
-                    new ObjectConstructionArgument(objects[0]),
-                    new ObjectConstructionArgument(objects[1])
-                }),
-                new SetConstructionArgument(new HashSet<ConstructionArgument>
-                {
-                    new ObjectConstructionArgument(objects[2]),
-                    new ObjectConstructionArgument(objects[3])
-                })
-            });
-
-            var argumentsList = new List<ConstructionArgument> {argument};
-
-            return new ConstructedConfigurationObject(_intersection, argumentsList, 0);
-        }
-
-        private static ConstructedConfigurationObject CreateMidpoint(ConfigurationObject o1, ConfigurationObject o2)
-        {
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
-            {
-                new ObjectConstructionArgument(o1),
-                new ObjectConstructionArgument(o2)
-            });
-
-            var argumentsList = new List<ConstructionArgument> {argument};
-
-            return new ConstructedConfigurationObject(_midpoint, argumentsList, 0);
+            };
         }
 
         private static void PrintTheorems(List<GeneratorOutput> result)
@@ -184,14 +110,14 @@ namespace GeoGen.Generator.IntegrationTest
                 Console.ReadKey(true);
             }
 
-            var s = $"{string.Join(", ", result.Select(o => o.Theorems.Count))}";
+            //var s = $"{string.Join(", ", result.Select(o => o.Theorems.Count))}";
 
-            if (s != "1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1")
-            {
-                Console.WriteLine("Still inconsistency..");
-                Console.WriteLine("Old s: 1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1");
-                Console.WriteLine($"New s: {s}");
-            }
+            //if (s != "1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1")
+            //{
+            //    Console.WriteLine("Still inconsistency..");
+            //    Console.WriteLine("Old s: 1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1");
+            //    Console.WriteLine($"New s: {s}");
+            //}
         }
     }
 }

@@ -59,7 +59,7 @@ namespace GeoGen.Analyzer
                 foreach (var verifierOutput in output)
                 {
                     var verifierFunction = verifierOutput.VerifierFunction;
-
+                    
                     var isTrue = verifierFunction == null || _containersManager.All(verifierFunction);
 
                     if (!isTrue)

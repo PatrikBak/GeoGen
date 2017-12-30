@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry
@@ -97,7 +96,7 @@ namespace GeoGen.AnalyticalGeometry
         #endregion
 
         #region Private methods
-
+       
         /// <summary>
         /// Intersects two given analytical objects that are not points.
         /// </summary>

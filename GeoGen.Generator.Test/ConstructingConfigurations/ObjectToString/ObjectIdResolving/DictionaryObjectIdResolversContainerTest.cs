@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
 using GeoGen.Generator.Test.TestHelpers;
-using GeoGen.Utilities;
 using GeoGen.Utilities.Variations;
 using Moq;
 using NUnit.Framework;

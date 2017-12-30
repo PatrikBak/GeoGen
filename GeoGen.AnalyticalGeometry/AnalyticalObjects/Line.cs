@@ -1,5 +1,5 @@
 ﻿using System;
-using GeoGen.Core.Utilities;
+using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
@@ -269,5 +269,10 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         }
 
         #endregion
+
+        public Point RandomPointOnLine(IRandomnessProvider provider)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

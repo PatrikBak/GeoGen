@@ -12,14 +12,14 @@ using GeoGen.Utilities.Helpers;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A constructor for the <see cref="Midpoint"/> construction.
+    /// A constructor for the <see cref="MidpointFromPoints"/> construction.
     /// </summary>
-    internal sealed class MidpointConstructor : IPredefinedConstructor
+    internal sealed class MidpointFromPointsConstructor : IPredefinedConstructor
     {
         /// <summary>
         /// Gets the type of this predefined construction.
         /// </summary>
-        public Type PredefinedConstructionType { get; } = typeof(Midpoint);
+        public Type PredefinedConstructionType { get; } = typeof(MidpointFromPoints);
 
         /// <summary>
         /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.

@@ -69,12 +69,6 @@ namespace GeoGen.Analyzer
                 _theoremsContainer.Add(theorem);
             }
 
-            // We further need to register the objects to the contextual container
-            foreach (var configurationObject in constructedObjects)
-            {
-               //_contextualContainer.Add(configurationObject);
-            }
-
             // And finally we can return the result (which should be OK)
             return result;
         }

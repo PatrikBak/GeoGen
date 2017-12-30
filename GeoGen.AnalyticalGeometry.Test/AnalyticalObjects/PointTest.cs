@@ -1,8 +1,8 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 using NUnit.Framework;
 
@@ -99,7 +99,7 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
             {
                 true,
                 false,
-                false,
+                true,
                 true
             };
 
@@ -291,6 +291,45 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
 
             var aXbcCopy = aXbc.Project(new Line(b, c));
             Assert.IsTrue(aXbcCopy == aXbc);
+        }
+
+        [Test]
+        public void Test_Internal_Angel_Bisector_With_Intencter()
+        {
+            var a = new Point(1, 3);
+            var b = new Point(2, 5);
+            var c = new Point(7, 7);
+
+            var alfa = a.InternalAngelBisector(b, c);
+            var betta = b.InternalAngelBisector(a, c);
+            var gamma = c.InternalAngelBisector(a, b);
+
+            Assert.IsTrue(alfa.Contains(a));
+            Assert.IsTrue(betta.Contains(b));
+            Assert.IsTrue(gamma.Contains(c));
+            
+            var i1 = alfa.IntersectionWith(betta);
+            var i2 = betta.IntersectionWith(gamma);
+            var i3 = gamma.IntersectionWith(alfa);
+
+            Assert.AreEqual(i1, i2);
+            Assert.AreEqual(i2, i3);
+            Assert.AreEqual(i3, i1);
+        }
+
+        [Test]
+        public void Test_Internal_Angel_Bisector_With__Svrcek_Point()
+        {
+            var a = new Point(1, 3);
+            var b = new Point(2, 5);
+            var c = new Point(7, 7);
+
+            var alfa = a.InternalAngelBisector(b, c);
+            var bcBisector = b.PerpendicularBisector(c);
+            var circumCircle = new Circle(a, b, c);
+            var intersection = alfa.IntersectionWith(bcBisector);
+
+            Assert.IsTrue(circumCircle.Contains(intersection));
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using GeoGen.Core;
-using GeoGen.Core.Constructions;
+using GeoGen.Core.Constructions.PredefinedConstructions;
 
 namespace GeoGen.Analyzer
 {
@@ -19,6 +19,7 @@ namespace GeoGen.Analyzer
             BindInGeneratorScope<ITheoremsContainer, TheoremsContainer>();
             BindInGeneratorScope<ILooseObjectsConstructor, LooseObjectsConstructor>();
             BindInGeneratorScope<IConstructorsResolver, ConstructorsResolver>();
+            BindInTransietScope<IComposedConstructor, ComposedConstructor>();
             BindInGeneratorScope<IContextualContainer, ContextualContainer>();
             BindFactoryInGeneratorScope<IComposedConstructorFactory>();
             BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjects);
@@ -30,9 +31,13 @@ namespace GeoGen.Analyzer
             BindInGeneratorScope<ITheoremVerifier, ConcurrencyVerifier>();
             BindInGeneratorScope<ITheoremVerifier, CollinearityVerifier>();
 
-            BindInGeneratorScope<IPredefinedConstructor, MidpointConstructor>();
-            BindInGeneratorScope<IPredefinedConstructor, InteresectionConstructor>();
-            BindInGeneratorScope<IPredefinedConstructor, CircumcenterConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, CircumcircleFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, InteresectionFromLinesConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, InteresectionFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, InternalAngelBisectorFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, LoosePointOnLineFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, MidpointFromPointsConstructor>();
         }
     }
 }

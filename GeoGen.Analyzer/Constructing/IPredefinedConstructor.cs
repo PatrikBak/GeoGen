@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an <see cref="IObjectsConstructor"/> of predefined constructions, 
-    /// such as <see cref="Midpoint"/>.
+    /// such as <see cref="MidpointFromPoints"/>.
     /// </summary>
     internal interface IPredefinedConstructor : IObjectsConstructor
     {

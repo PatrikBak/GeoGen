@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
@@ -72,7 +69,18 @@ namespace GeoGen.Analyzer
                     // And add the new objects to the container
                     for (var i = 0; i < objects.Count; i++)
                     {
-                        internalContainer.Add(objects[i], internalConstructedObjects[i]);
+                        // Take internal objects
+                        var internalObject = internalConstructedObjects[i];
+
+                        // Add id to the container
+                        var result = internalContainer.Add(objects[i], internalObject);
+
+                        // If the result is different from the internal object, 
+                        // meaning that there is a duplicate, then we say this construction is incorrect
+                        if (result != internalObject)
+                        {
+                            return null;
+                        }
                     }
                 }
 

@@ -15,12 +15,12 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
     [TestFixture]
     public class IntersectionConstructorTest
     {
-        private static InteresectionConstructor Constructor() => new InteresectionConstructor();
+        private static InteresectionFromPointsConstructor Constructor() => new InteresectionFromPointsConstructor();
 
         [Test]
         public void Test_Type_Is_Correct()
         {
-            Assert.AreEqual(typeof(Intersection), Constructor().PredefinedConstructionType);
+            Assert.AreEqual(typeof(IntersectionFromPoints), Constructor().PredefinedConstructionType);
         }
 
         [Test]
@@ -48,7 +48,7 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
                 new ObjectConstructionArgument(points[2])
             };
 
-            var constructedObject = new ConstructedConfigurationObject(new Intersection(), arguments, 0);
+            var constructedObject = new ConstructedConfigurationObject(new IntersectionFromPoints(), arguments, 0);
 
             var listOfObjects = new List<ConstructedConfigurationObject> {constructedObject};
 
@@ -62,31 +62,22 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
 
             var arguments = new List<ConstructionArgument>
             {
-                new SetConstructionArgument
-                (
-                    new HashSet<ConstructionArgument>
+                new SetConstructionArgument(new HashSet<ConstructionArgument>
+                {
+                    new SetConstructionArgument(new HashSet<ConstructionArgument>
                     {
-                        new SetConstructionArgument
-                        (
-                            new HashSet<ConstructionArgument>
-                            {
-                                new ObjectConstructionArgument(points[0]),
-                                new ObjectConstructionArgument(points[1])
-                            }
-                        ),
-                        new SetConstructionArgument
-                        (
-                            new HashSet<ConstructionArgument>
-                            {
-                                new ObjectConstructionArgument(points[2]),
-                                new ObjectConstructionArgument(points[3])
-                            }
-                        )
-                    }
-                )
+                        new ObjectConstructionArgument(points[0]),
+                        new ObjectConstructionArgument(points[1])
+                    }),
+                    new SetConstructionArgument(new HashSet<ConstructionArgument>
+                    {
+                        new ObjectConstructionArgument(points[2]),
+                        new ObjectConstructionArgument(points[3])
+                    })
+                })
             };
 
-            var constructedObject = new ConstructedConfigurationObject(new Intersection(), arguments, 0);
+            var constructedObject = new ConstructedConfigurationObject(new IntersectionFromPoints(), arguments, 0);
 
             var listOfObjects = new List<ConstructedConfigurationObject> {constructedObject};
 

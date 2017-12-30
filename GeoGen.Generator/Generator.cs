@@ -47,10 +47,10 @@ namespace GeoGen.Generator
         /// <param name="maximalNumberOfIterations">The maximal number of iterations to be performed.</param>
         public Generator
         (
-                IConfigurationsManager configurationsManager,
-                IObjectsConstructor objectsConstructor,
-                IGradualAnalyzer gradualAnalyzer,
-                int maximalNumberOfIterations
+            IConfigurationsManager configurationsManager,
+            IObjectsConstructor objectsConstructor,
+            IGradualAnalyzer gradualAnalyzer,
+            int maximalNumberOfIterations
         )
         {
             _configurationsManager = configurationsManager ?? throw new ArgumentNullException(nameof(configurationsManager));
@@ -76,44 +76,44 @@ namespace GeoGen.Generator
             return Enumerable.Range(0, _maximalNumberOfIterations)
                     .SelectMany
                     (
-                            iterationIndex =>
-                            {
-                                // From the container
-                                var outputForNewLayer = _configurationsManager
-                                        // Take the current layer
-                                        .CurrentLayer
-                                        // Take only not excluded configurations
-                                        .Where(configuration => !configuration.Excluded)
-                                        // Construct outputs from each of them
-                                        .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
+                        iterationIndex =>
+                        {
+                            // From the container
+                            var outputForNewLayer = _configurationsManager
+                                    // Take the current layer
+                                    .CurrentLayer
+                                    // Take only not excluded configurations
+                                    .Where(configuration => !configuration.Excluded)
+                                    // Construct outputs from each of them
+                                    .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
 
-                                // Take the enumerable for creating the new layer
-                                return _configurationsManager.AddLayer(outputForNewLayer);
-                            }
+                            // Take the enumerable for creating the new layer
+                            return _configurationsManager.AddLayer(outputForNewLayer);
+                        }
                     )
                     .Select
                     (
-                            configurationWrapper =>
+                        configurationWrapper =>
+                        {
+                            // Pull old objects
+                            var oldObjects = configurationWrapper.OriginalObjects;
+
+                            // Pull new objects
+                            var newObjects = configurationWrapper.LastAddedObjects;
+
+                            // Call the analyzer
+                            var theorems = _gradualAnalyzer.Analyze(oldObjects, newObjects);
+
+                            // Unwrap configuration
+                            var unwrappedConfiguration = configurationWrapper.Configuration;
+
+                            // Return the output
+                            return new GeneratorOutput
                             {
-                                // Pull old objects
-                                var oldObjects = configurationWrapper.OriginalObjects;
-
-                                // Pull new objects
-                                var newObjects = configurationWrapper.LastAddedObjects;
-
-                                // Call the analyzer
-                                var theorems = _gradualAnalyzer.Analyze(oldObjects, newObjects);
-
-                                // Unwrap configuration
-                                var unwrappedConfiguration = configurationWrapper.Configuration;
-
-                                // Return the output
-                                return new GeneratorOutput
-                                {
-                                        Configuration = unwrappedConfiguration,
-                                        Theorems = theorems
-                                };
-                            }
+                                Configuration = unwrappedConfiguration,
+                                Theorems = theorems
+                            };
+                        }
                     )
                     .Where(output => !output.Theorems.Empty());
         }

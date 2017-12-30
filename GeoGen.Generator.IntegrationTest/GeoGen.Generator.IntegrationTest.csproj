@@ -59,7 +59,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConsoleWriter.cs" />
+    <Compile Include="ComposedConstructions.cs" />
+    <Compile Include="ConstructionsContainer.cs" />
+    <Compile Include="ConstructorHelper.cs" />
     <Compile Include="DummyGeometryRegistrar.cs" />
     <Compile Include="DummyGradualAnalyzer.cs" />
     <Compile Include="OutputFormatter.cs" />

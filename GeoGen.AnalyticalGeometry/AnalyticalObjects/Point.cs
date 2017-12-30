@@ -1,5 +1,5 @@
 ﻿using System;
-using GeoGen.Core.Utilities;
+using System.Linq;
 using GeoGen.Utilities;
 using GeoGen.Utilities.Helpers;
 
@@ -262,5 +262,38 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         }
 
         #endregion
+
+        public Line InternalAngelBisector(Point ray1Point, Point ray2Point)
+        {
+            // First we create the circle with center in [this] and radius
+            // equal to distance between dist and first ray point
+            var circle = new Circle(this, ray1Point.DistanceTo(this));
+
+            // Second we create the circle connecting [this] and the second ray point
+            var line = new Line(this, ray2Point);
+
+            // Now we intersect them
+            var intersections = circle.IntersectWith(line);
+
+            // Logically we must have 2 intersections. We need to pick
+            // the one lying on the ray from [this] to the second point
+
+            // Generally, if we have a point C that lies on the line AB, then
+            // there exists a real number 't' such that t = (C-A)/(B-A).
+            // Point C then lies on the ray AB if and only if t >= 0 (if t=0, then C=A)
+            // Since we know that C lies on AB, we just need to calculate the expression
+            // for let's say x-coordinates. In our case: 
+            //
+            // A = [this]
+            // B = ray2Point
+            // C = one of intersections
+            //
+            // The intersection must logically exist
+            var correctIntersection = intersections.First(intersection => (intersection.X - X) / (ray2Point.X - X) >= 0);
+
+            // Now we just return the perpendicular bisector of the line 
+            // connecting the first ray point with this correct intersection
+            return ray1Point.PerpendicularBisector(correctIntersection);
+        }
     }
 }

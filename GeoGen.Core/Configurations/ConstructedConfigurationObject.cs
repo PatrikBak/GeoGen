@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
 namespace GeoGen.Core.Configurations

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
 using NUnit.Framework;
 
 namespace GeoGen.Core.Test.Utilities

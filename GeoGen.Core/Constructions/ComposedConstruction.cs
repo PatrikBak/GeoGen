@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 
 namespace GeoGen.Core.Constructions
@@ -15,6 +14,8 @@ namespace GeoGen.Core.Constructions
     /// </summary>
     public sealed class ComposedConstruction : Construction
     {
+        public string Name { get; set; }
+
         #region Public properties
 
         /// <summary>

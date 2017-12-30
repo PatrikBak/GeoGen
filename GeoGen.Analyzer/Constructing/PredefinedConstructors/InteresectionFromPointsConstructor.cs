@@ -12,14 +12,14 @@ using GeoGen.Utilities.Helpers;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A constructor for the <see cref="Intersection"/> construction.
+    /// A constructor for the <see cref="IntersectionFromPoints"/> construction.
     /// </summary>
-    internal sealed class InteresectionConstructor : IPredefinedConstructor
+    internal sealed class InteresectionFromPointsConstructor : IPredefinedConstructor
     {
         /// <summary>
         /// Gets the type of this predefined construction.
         /// </summary>
-        public Type PredefinedConstructionType { get; } = typeof(Intersection);
+        public Type PredefinedConstructionType { get; } = typeof(IntersectionFromPoints);
 
         /// <summary>
         /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.

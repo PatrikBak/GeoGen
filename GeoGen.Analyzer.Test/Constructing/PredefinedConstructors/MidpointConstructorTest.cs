@@ -15,12 +15,12 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
     [TestFixture]
     public class MidpointConstructorTest
     {
-        private static MidpointConstructor Constructor() => new MidpointConstructor();
+        private static MidpointFromPointsConstructor Constructor() => new MidpointFromPointsConstructor();
 
         [Test]
         public void Test_Type_Is_Correct()
         {
-            Assert.AreEqual(typeof(Midpoint), Constructor().PredefinedConstructionType);
+            Assert.AreEqual(typeof(MidpointFromPoints), Constructor().PredefinedConstructionType);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
                 new ObjectConstructionArgument(points[1])
             };
 
-            var constructedObject = new ConstructedConfigurationObject(new Midpoint(), arguments, 0);
+            var constructedObject = new ConstructedConfigurationObject(new MidpointFromPoints(), arguments, 0);
 
             var listOfObjects = new List<ConstructedConfigurationObject> {constructedObject};
 
@@ -71,7 +71,7 @@ namespace GeoGen.Analyzer.Test.Constructing.PredefinedConstructors
                 )
             };
 
-            var constructedObject = new ConstructedConfigurationObject(new Midpoint(), arguments, 0);
+            var constructedObject = new ConstructedConfigurationObject(new MidpointFromPoints(), arguments, 0);
 
             var listOfObjects = new List<ConstructedConfigurationObject> {constructedObject};
 

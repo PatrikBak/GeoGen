@@ -4,7 +4,6 @@ using System.Linq;
 using GeoGen.Analyzer.Test.TestHelpers;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
 using GeoGen.Utilities;
 using NUnit.Framework;
 

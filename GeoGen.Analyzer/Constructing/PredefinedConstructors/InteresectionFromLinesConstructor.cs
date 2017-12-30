@@ -11,10 +11,19 @@ using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
-    internal class CircumcenterConstructor : IPredefinedConstructor
+    /// <summary>
+    /// A constructor for the <see cref="IntersectionFromPoints"/> construction.
+    /// </summary>
+    internal sealed class InteresectionFromLinesConstructor : IPredefinedConstructor
     {
-        public Type PredefinedConstructionType { get; } = typeof(Circumcenter);
+        /// <summary>
+        /// Gets the type of this predefined construction.
+        /// </summary>
+        public Type PredefinedConstructionType { get; } = typeof(IntersectionFromLines);
 
+        /// <summary>
+        /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
+        /// </summary>
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
@@ -29,42 +38,31 @@ namespace GeoGen.Analyzer
 
                 ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 1);
 
-                var setArgument = (SetConstructionArgument)arguments[0];
-                var passedPoints = setArgument.PassedArguments.ToList();
+                var setArguments = ((SetConstructionArgument) arguments[0]).PassedArguments.ToList();
 
-                ThrowHelper.ThrowExceptionIfNotTrue(passedPoints.Count == 3);
+                ThrowHelper.ThrowExceptionIfNotTrue(setArguments.Count == 2);
 
-                var obj1 = ((ObjectConstructionArgument)passedPoints[0]).PassedObject;
-                var obj2 = ((ObjectConstructionArgument)passedPoints[1]).PassedObject;
-                var obj3 = ((ObjectConstructionArgument)passedPoints[2]).PassedObject;
-
-                ThrowHelper.ThrowExceptionIfNotTrue(obj1.ObjectType == ConfigurationObjectType.Point);
-                ThrowHelper.ThrowExceptionIfNotTrue(obj2.ObjectType == ConfigurationObjectType.Point);
-                ThrowHelper.ThrowExceptionIfNotTrue(obj3.ObjectType == ConfigurationObjectType.Point);
-
+                var passedLine1 = ((ObjectConstructionArgument) setArguments[0]).PassedObject;
+                var passedLine2 = ((ObjectConstructionArgument) setArguments[1]).PassedObject;
+                
                 List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
 
-                    var point1 = container.Get<Point>(obj1);
-                    var point2 = container.Get<Point>(obj2);
-                    var point3 = container.Get<Point>(obj3);
-
-                    Point result;
+                    var line1 = container.Get<Line>(passedLine1);
+                    var line2 = container.Get<Line>(passedLine2);
 
                     try
                     {
-                        result = new Circle(point1, point2, point3).Center;
+                        return new List<IAnalyticalObject> {line1.IntersectionWith(line2)};
                     }
                     catch (ArgumentException)
                     {
                         return null;
                     }
-
-                    return new List<IAnalyticalObject> { result };
                 }
-
+                
                 return new ConstructorOutput
                 {
                     ConstructorFunction = ConstructorFunction,

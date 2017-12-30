@@ -4,13 +4,13 @@ using GeoGen.Core.Constructions.Parameters;
 
 namespace GeoGen.Core.Constructions.PredefinedConstructions
 {
-    public class Circumcenter : PredefinedConstruction
+    public class CircumcenterFromPoints : PredefinedConstruction
     {
         public override IReadOnlyList<ConstructionParameter> ConstructionParameters { get; }
 
         public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
-        public Circumcenter()
+        public CircumcenterFromPoints()
         {
             ConstructionParameters = new List<ConstructionParameter>
             {

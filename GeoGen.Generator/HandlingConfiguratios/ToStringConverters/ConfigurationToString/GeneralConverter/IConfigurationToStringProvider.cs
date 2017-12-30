@@ -1,6 +1,4 @@
-﻿using GeoGen.Core.Configurations;
-
-namespace GeoGen.Generator
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a converter of configuration to string. It uses
