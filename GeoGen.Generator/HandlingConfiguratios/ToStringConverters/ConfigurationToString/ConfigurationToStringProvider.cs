@@ -35,11 +35,6 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly Configuration _initialConfiguration;
 
-        /// <summary>
-        /// The composer of object id resolvers.
-        /// </summary>
-        private readonly IResolversComposer _composer;
-
         #endregion
 
         #region Constructor
@@ -50,10 +45,9 @@ namespace GeoGen.Generator
         /// to string conversion.
         /// </summary>
         /// <param name="initialConfiguration">The initial configuration.</param>
-        public ConfigurationToStringProvider(Configuration initialConfiguration, IResolversComposer composer)
+        public ConfigurationToStringProvider(Configuration initialConfiguration)
         {
             _initialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
-            _composer = composer ?? throw new ArgumentNullException(nameof(composer));
             _cachedSets = new Dictionary<int, Dictionary<int, SortedSet<string>>>();
         }
 
@@ -156,11 +150,8 @@ namespace GeoGen.Generator
             // Pull id of the current configuration
             var currentId = configuration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
 
-            // Compose the real converter
-            var converter = _composer.Compose(objectToString.Resolver, configuration.ResolverToMinimalForm);
-
-            // Get dictionary for it
-            var dictionary = GetDictionaryForResolver(converter);
+            // Get dictionary for the resolver
+            var dictionary = GetDictionaryForResolver(objectToString.Resolver);
 
             // If there is the current id
             if (dictionary.ContainsKey(currentId))
@@ -175,17 +166,14 @@ namespace GeoGen.Generator
 
         private SortedSet<string> FindOriginalConfigurationSet(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
         {
+            // Pull resolver id 
+            var resolverId = objectToString.Resolver.Id;
+
             // Pull id of previous configuration
             var previousId = configuration.PreviousConfiguration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
 
-            // Pull the minimal form resolver of the previous configuration
-            var previousResolver = configuration.PreviousConfiguration.ResolverToMinimalForm;
-
-            // Compose it with the current resolver
-            var originalConfigurationResolver = _composer.Compose(previousResolver, objectToString.Resolver);
-
-            // And now we can return the original configuration
-            return _cachedSets[originalConfigurationResolver.Id][previousId];
+            // Pull now we can return the original configuration
+            return _cachedSets[resolverId][previousId];
         }
 
         private Dictionary<int, SortedSet<string>> GetDictionaryForResolver(IObjectIdResolver resolver)

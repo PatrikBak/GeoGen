@@ -20,14 +20,9 @@ namespace GeoGen.Generator
         private readonly ILeastConfigurationFinder _leastConfigurationFinder;
 
         /// <summary>
-        /// The ids fixer factory.
-        /// </summary>
-        private readonly IIdsFixerFactory _idsFixerFactory;
-
-        /// <summary>
         /// The default object id resolver.
         /// </summary>
-        private readonly IDefaultObjectIdResolver _resolver;
+        private readonly IDefaultObjectIdResolver _defaultResolver;
 
         /// <summary>
         /// The last configuration id.
@@ -48,16 +43,10 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="finder">The least configuration finder.</param>
         /// <param name="factory">The ids fixer factory.</param>
-        public ConfigurationConstructor
-        (
-                ILeastConfigurationFinder finder,
-                IIdsFixerFactory factory,
-                IDefaultObjectIdResolver resolver
-        )
+        public ConfigurationConstructor(ILeastConfigurationFinder finder, IDefaultObjectIdResolver defaultResolver)
         {
             _leastConfigurationFinder = finder ?? throw new ArgumentNullException(nameof(finder));
-            _idsFixerFactory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _resolver = resolver;
+            _defaultResolver = defaultResolver;
         }
 
         #endregion
@@ -79,21 +68,15 @@ namespace GeoGen.Generator
             // Let the resolver find it's symmetry class representant
             var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(initialWrapper);
 
-            var finalWrapper = CreateFinalWrapper(initialWrapper, leastResolver);
+            initialWrapper.ResolverToMinimalForm = leastResolver;
 
-            return finalWrapper;
+            return initialWrapper;
         }
 
         private ConfigurationWrapper CreateWrapperFromOutput(ConstructorOutput constructorOutput)
         {
-            // Pull initial configuration wrapper
-            var originalConfigurationWrapper = constructorOutput.OriginalConfiguration;
-
             // Pull original configuration
-            var originalConfiguration = originalConfigurationWrapper.Configuration;
-
-            // Construct original objects list
-            var originalObjects = originalConfigurationWrapper.AllObjectsMap.AllObjects;
+            var originalConfiguration = constructorOutput.OriginalConfiguration.Configuration;
 
             // Merge original constructed objects with the new ones
             var allConstructedObjects = originalConfiguration
@@ -107,51 +90,15 @@ namespace GeoGen.Generator
             // Create the new wrapper for the resolver
             return new ConfigurationWrapper
             {
-                    Id = _lastId++,
-                    Configuration = newConfiguration,
-                    AllObjectsMap = new ConfigurationObjectsMap(newConfiguration),
-                    PreviousConfiguration = originalConfigurationWrapper,
-                    OriginalObjects = originalObjects,
-                    LastAddedObjects = constructorOutput.ConstructedObjects,
-                    ResolverToMinimalForm = _resolver,
-                    Excluded = false
+                Id = _lastId++,
+                Configuration = newConfiguration,
+                PreviousConfiguration = constructorOutput.OriginalConfiguration,
+                OriginalObjects = constructorOutput.OriginalConfiguration.OriginalObjects,
+                LastAddedObjects = constructorOutput.ConstructedObjects,
+                ResolverToMinimalForm = _defaultResolver,
             };
         }
 
-        private ConfigurationWrapper CreateFinalWrapper(ConfigurationWrapper wrapper, IObjectIdResolver resolver)
-        {
-            if (resolver is IDefaultObjectIdResolver)
-                return wrapper;
-
-            // Get the ids fixer for this resolver from the factory
-            var idsFixer = _idsFixerFactory.CreateFixer((DictionaryObjectIdResolver) resolver);
-
-            // Fix the configuration
-            var newConfiguration = FixConfiguration(wrapper.Configuration, idsFixer);
-
-            // Find new objects
-            var newObjects = FindNewObjects(newConfiguration, wrapper.LastAddedObjects.Count);
-
-            // Create new objects map
-            var typeToObjectsMap = new ConfigurationObjectsMap(newConfiguration);
-
-            // Create original objects
-            var originalObjects = typeToObjectsMap.AllObjects.Where(o => !newObjects.Contains(o)).ToList();
-
-            // Return the new wrapper
-            return new ConfigurationWrapper
-            {
-                    Id = wrapper.Id,
-                    Configuration = newConfiguration,
-                    ResolverToMinimalForm = resolver,
-                    PreviousConfiguration = wrapper.PreviousConfiguration,
-                    AllObjectsMap = typeToObjectsMap,
-                    LastAddedObjects = newObjects,
-                    OriginalObjects = originalObjects,
-                    Excluded = false
-            };
-        }
-        
         /// <summary>
         /// Constructs a configuration wrapper from a given configuration (meant
         /// to be as initial).
@@ -166,52 +113,16 @@ namespace GeoGen.Generator
             // Create wrapper
             var configurationWrapper = new ConfigurationWrapper
             {
-                    Id = _lastId++,
-                    Configuration = initialConfiguration,
-                    AllObjectsMap = objectsMap,
-                    LastAddedObjects = new List<ConstructedConfigurationObject>(),
-                    OriginalObjects = objectsMap.AllObjects,
-                    Excluded = false,
-                    PreviousConfiguration = null,
-                    ResolverToMinimalForm = _resolver
+                Id = _lastId++,
+                Configuration = initialConfiguration,
+                LastAddedObjects = new List<ConstructedConfigurationObject>(),
+                OriginalObjects = objectsMap.AllObjects,
+                PreviousConfiguration = null,
+                ResolverToMinimalForm = _defaultResolver
             };
 
             // Return it
             return configurationWrapper;
-        }
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Fixes a given configurations and returns the fixed version.
-        /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <param name="idsFixer">The ids fixer.</param>
-        /// <returns>The fixed configuration.</returns>
-        private static Configuration FixConfiguration(Configuration configuration, IIdsFixer idsFixer)
-        {
-            // Loose objects are going to be still the same
-            var looseObjects = configuration.LooseObjects;
-
-            // We let the fixer fix the constructed objects
-            var constructedObjects = configuration.ConstructedObjects
-                    .Select(idsFixer.FixObject)
-                    .Cast<ConstructedConfigurationObject>()
-                    .ToList();
-
-            // And return the result
-            return new Configuration(looseObjects, constructedObjects);
-        }
-
-        private static List<ConstructedConfigurationObject> FindNewObjects(Configuration newConfiguration, int newObjectsCount)
-        {
-            var allConstructed = newConfiguration.ConstructedObjects;
-
-            var list = allConstructed.Skip(allConstructed.Count - newObjectsCount).ToList();
-
-            return list;
         }
 
         #endregion

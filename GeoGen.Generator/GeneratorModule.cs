@@ -32,17 +32,16 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IConfigurationsManager, ConfigurationsManager>("initialConfiguration", input => input.InitialConfiguration);
             BindInGeneratorScope<IConfigurationObjectsContainer, ConfigurationObjectsContainer>("initialConfiguration", input => input.InitialConfiguration);
             BindInGeneratorScope<IConfigurationConstructor, ConfigurationConstructor>();
-            BindInGeneratorScope<IIdsFixerFactory, IdsFixerFactory>();
             BindInGeneratorScope<ILeastConfigurationFinder, LeastConfigurationFinder>();
-            BindInGeneratorScope<ICustomFullObjectToStringProviderFactory, CustomFullObjectToStringProviderFactory>();
+            BindInGeneratorScope<ICustomFullObjectToStringConverterFactory, CustomFullObjectToStringConverterFactory>();
             BindInGeneratorScope<IDictionaryObjectIdResolversContainer, DictionaryObjectIdResolversContainer>();
             BindInGeneratorScope<IConfigurationToStringProvider, ConfigurationToStringProvider>("initialConfiguration", input => input.InitialConfiguration);
             BindInGeneratorScope<IArgumentsListToStringConverter, ArgumentsListToStringConverter>();
             BindInGeneratorScope<IDefaultFullObjectToStringConverter, DefaultFullObjectToStringConverter>();
             BindInGeneratorScope<IConfigurationsContainer, ConfigurationsContainer>();
-            BindInGeneratorScope<IDefaultConfigurationToStringConverter, DefaultConfigurationToStringConverter>();
-            BindInGeneratorScope<IResolversComposer, ResolversComposer>();
             BindInGeneratorScope<IConfigurationsResolver, ConfigurationsResolver>();
+            BindInGeneratorScope<IFullConfigurationToStringConverter, FullConfigurationToStringConverter>();
+            BindInGeneratorScope<IFullObjectToStringConverterFactory, FullObjectToStringConverterFactory>();
         }
     }
 }

@@ -82,8 +82,6 @@ namespace GeoGen.Generator
                             var outputForNewLayer = _configurationsManager
                                     // Take the current layer
                                     .CurrentLayer
-                                    // Take only not excluded configurations
-                                    .Where(configuration => !configuration.Excluded)
                                     // Construct outputs from each of them
                                     .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration));
 

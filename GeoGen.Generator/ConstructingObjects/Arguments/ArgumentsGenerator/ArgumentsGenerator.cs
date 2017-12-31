@@ -94,7 +94,7 @@ namespace GeoGen.Generator
             // variations of the objects, having the needed count of elements.
             var dictionaryForCombinator = configuration
                     // Pull the map from the configuration
-                    .AllObjectsMap
+                    .Configuration.ObjectsMap
                     // Take only objects of the type that is needed for the construction
                     .Where(pair => construction.ObjectTypesToNeededCount.ContainsKey(pair.Key))
                     // Cast to the dictionary
@@ -158,7 +158,7 @@ namespace GeoGen.Generator
                 var neededCount = pair.Value;
 
                 // Pull the map with objects
-                var map = configuration.AllObjectsMap;
+                var map = configuration.Configuration.ObjectsMap;
 
                 // If there is no object of the type, we certainly can't perform the construction
                 if (!map.ContainsKey(type))

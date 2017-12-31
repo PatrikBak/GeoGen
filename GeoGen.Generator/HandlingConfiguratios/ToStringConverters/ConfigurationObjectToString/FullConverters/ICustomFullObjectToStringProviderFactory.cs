@@ -4,7 +4,7 @@
     /// An abstract factory for creating <see cref="CustomFullObjectToStringConverter"/>
     /// objects that use a <see cref="DictionaryObjectIdResolver"/>.
     /// </summary>
-    internal interface ICustomFullObjectToStringProviderFactory
+    internal interface ICustomFullObjectToStringConverterFactory
     {
         /// <summary>
         /// Creates an instance of <see cref="CustomFullObjectToStringConverter"/>

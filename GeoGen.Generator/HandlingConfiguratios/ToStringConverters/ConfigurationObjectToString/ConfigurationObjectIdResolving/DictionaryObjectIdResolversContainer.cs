@@ -27,13 +27,6 @@ namespace GeoGen.Generator
 
         private DictionaryObjectIdResolver _idenity;
 
-        /// <summary>
-        /// The dictionary that works such that if we have two dictionary resolvers 
-        /// r1, r2 with ids i1, i2, then the resolve _compositionCache[i1][i2] is 
-        /// the resolver r1 o r2 (where o is the composition operator)
-        /// </summary>
-        private readonly Dictionary<int, Dictionary<int, DictionaryObjectIdResolver>> _compositionCache;
-
         #endregion
 
         #region Constructor
@@ -49,9 +42,7 @@ namespace GeoGen.Generator
         public DictionaryObjectIdResolversContainer(IConfigurationObjectsContainer container, IVariationsProvider variationsProvider)
         {
             _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(variationsProvider));
-            _compositionCache = new Dictionary<int, Dictionary<int, DictionaryObjectIdResolver>>();
             Initialize(container?.LooseObjects ?? throw new ArgumentNullException(nameof(container)));
-            InitializeCompositionCache();
         }
 
         #endregion
@@ -110,68 +101,13 @@ namespace GeoGen.Generator
             _resolvers.SetItems(newResolvers);
         }
 
-        /// <summary>
-        /// Initializes the composition cache dictionary.
-        /// </summary>
-        private void InitializeCompositionCache()
-        {
-            // First add initial dictionaries
-            foreach (var resolver in _resolvers)
-            {
-                // Pull resolver id
-                var resolverId = resolver.Id;
-
-                // Add new dictionary
-                _compositionCache.Add(resolverId, new Dictionary<int, DictionaryObjectIdResolver>());
-            }
-
-            // Iterate twice over resolvers
-            foreach (var first in _resolvers)
-            {
-                // To get all possible pairs of dictionaries
-                foreach (var second in _resolvers)
-                {
-                    // Compose dictionaries
-                    var composedDictionary = first.Compose(second);
-
-                    // Find the resolver that is equivalent to the composition result
-                    var composedResoler = _resolvers.First(resolver => resolver.IsEquivalentTo(composedDictionary));
-
-                    // Update the cache
-                    _compositionCache[first.Id].Add(second.Id, composedResoler);
-                }
-            }
-        }
-
         #endregion
-
-        #region Public methods
-
-        public DictionaryObjectIdResolver Compose(DictionaryObjectIdResolver first, DictionaryObjectIdResolver second)
-        {
-            if (first == null)
-                throw new ArgumentNullException(nameof(first));
-
-            if (second == null)
-                throw new ArgumentNullException(nameof(second));
-
-            try
-            {
-                return _compositionCache[first.Id][second.Id];
-            }
-            catch (KeyNotFoundException)
-            {
-                throw new GeneratorException("An attempt to get composed dictionary that were not created by this container.");
-            }
-        }
 
         public IEnumerable<DictionaryObjectIdResolver> GetNonIdenticalResolvers()
         {
             return this.Where(variation => variation != _idenity);
         }
-
-        #endregion
-
+        
         #region IEnumerable methods
 
         public IEnumerator<DictionaryObjectIdResolver> GetEnumerator()

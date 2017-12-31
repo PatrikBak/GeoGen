@@ -23,7 +23,6 @@ namespace GeoGen.Generator.Test.TestHelpers
             return new ConfigurationWrapper
             {
                 Configuration = configuration,
-                AllObjectsMap = map
             };
         }
 

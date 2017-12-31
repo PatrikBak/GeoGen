@@ -39,7 +39,7 @@ namespace GeoGen.Generator.IntegrationTest
             kernel.Components.RemoveAll<IMissingBindingResolver>();
 
             kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
-            kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
+            //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
            
             var factory = kernel.Get<IGeneratorFactory>();
 
@@ -56,7 +56,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 3
+                MaximalNumberOfIterations = 7
             };
 
             var generator = factory.CreateGenerator(input);
@@ -77,7 +77,7 @@ namespace GeoGen.Generator.IntegrationTest
             return new List<Construction>
             {
                 //_composedConstructions.AddCentroidFromPoints(),
-                _composedConstructions.AddIncenterFromPoints(),
+               // _composedConstructions.AddIncenterFromPoints(),
                 _constructionsContainer.Get<MidpointFromPoints>(),
                // _constructionsContainer.Get<IntersectionFromPoints>()
             };

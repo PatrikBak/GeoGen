@@ -20,44 +20,24 @@ namespace GeoGen.Generator
         private readonly IConfigurationToStringProvider _configurationToString;
 
         /// <summary>
-        /// The custom full object to string provider factory.
-        /// </summary>
-        private readonly ICustomFullObjectToStringProviderFactory _objectToStringFactory;
-
-        /// <summary>
         /// The dictionary object id resolvers container.
         /// </summary>
         private readonly IDictionaryObjectIdResolversContainer _dictionaryIdResolversContainer;
 
-        private readonly IDefaultConfigurationToStringConverter _defaultConfigurationToString;
+        private readonly IFullObjectToStringConverterFactory _factory;
 
+        private readonly IDefaultObjectIdResolver _defaultResolver;
+        
         #endregion
 
         #region Constructor
 
-        /// <summary>
-        /// Constructs a new least configuration finder that uses
-        /// a configuration to string provider, a full object to string
-        /// provider factory (that is used for getting full object to string
-        /// providers to be passed during configuration to string conversion)
-        /// and a container of all dictionary object id resolvers.
-        /// TODO:
-        /// </summary>
-        /// <param name="configurationToString">The configuration to string provider.</param>
-        /// <param name="objectToStringFactory">The custom full object to string provider factory.</param>
-        /// <param name="dictionaryIdResolversContainer">The dictionary object id resolvers container. </param>
-        public LeastConfigurationFinder
-        (
-            IConfigurationToStringProvider configurationToString,
-            ICustomFullObjectToStringProviderFactory objectToStringFactory,
-            IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer,
-            IDefaultConfigurationToStringConverter defaultConfigurationToString
-        )
+        public LeastConfigurationFinder(IConfigurationToStringProvider configurationToString, IDictionaryObjectIdResolversContainer dictionaryIdResolversContainer, IFullObjectToStringConverterFactory factory, IDefaultObjectIdResolver defaultResolver)
         {
-            _configurationToString = configurationToString ?? throw new ArgumentNullException(nameof(configurationToString));
-            _objectToStringFactory = objectToStringFactory ?? throw new ArgumentNullException(nameof(objectToStringFactory));
-            _dictionaryIdResolversContainer = dictionaryIdResolversContainer ?? throw new ArgumentNullException(nameof(dictionaryIdResolversContainer));
-            _defaultConfigurationToString = defaultConfigurationToString;
+            _configurationToString = configurationToString;
+            _dictionaryIdResolversContainer = dictionaryIdResolversContainer;
+            _factory = factory;
+            _defaultResolver = defaultResolver;
         }
 
         #endregion
@@ -77,16 +57,16 @@ namespace GeoGen.Generator
                 throw new ArgumentNullException(nameof(configuration));
 
             // Prepare result
-            var result = _defaultConfigurationToString.Resolver;
+            IObjectIdResolver result = _defaultResolver;
 
             // Prepare variables
-            var leastString = _defaultConfigurationToString.ConvertToString(configuration);
+            var leastString = _configurationToString.ConvertToString(configuration, _factory.Get(_defaultResolver));
 
             // Iterate over all the dictionary id resolvers
             foreach (var resolver in _dictionaryIdResolversContainer.GetNonIdenticalResolvers())
             {
                 // For a given get the custom object to string provider from the factory
-                var customProvider = _objectToStringFactory.GetCustomProvider(resolver);
+                var customProvider = _factory.Get(resolver);
 
                 // Convert a given configuration to string using the gotten resolver
                 var stringVersion = _configurationToString.ConvertToString(configuration, customProvider);

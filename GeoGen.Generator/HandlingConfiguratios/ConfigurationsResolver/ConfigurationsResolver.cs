@@ -43,57 +43,11 @@ namespace GeoGen.Generator
             return true;
         }
 
-        public bool ResolveMappedOutput(ConfigurationWrapper configuration)
-        {
-            // Iterate over constructed objects representing an output
-            // of a single construction
-            foreach (var constructedObjects in configuration.Configuration.GroupConstructedObjects())
-            {
-                // Find ids
-                var ids = constructedObjects
-                          .Select(o => o.Id ?? throw GeneratorException.ObjectsIdNotSet())
-                          .ToSet();
-
-                // Find out if there is a duplicate
-                var duplicate = ids.Any(_duplicateObjectsIds.Contains);
-
-                // If it is duplicate, return failure
-                if (duplicate)
-                    return false;
-
-                // Find out if it is unconstructible
-                var unconstructible = ids.Any(_unconstructibleObjectsIds.Contains);
-
-                // If it is unconstructible, then we have a geometrical inconsistency,
-                // because the original object was resolved as OK
-                if (unconstructible)
-                    throw new GeneratorException("Geometrical inconsistency between original object and mapped object");
-
-                // Otherwise we register the objects using the method
-                var registrationResult = Register(constructedObjects);
-
-                // Switch over the result
-                switch (registrationResult)
-                {
-                    case RegistrationResult.Unconstructible:
-                        // If the objects are not constructible, then again we have the inconsistency
-                        throw new GeneratorException("Geometrical inconsistency between original object and mapped object");
-                    case RegistrationResult.Duplicates:
-                        // If the objects are duplicates, we'll return the failure
-                        return false;
-                }
-            }
-
-            // If we got here, we have correct objects
-            return true;
-        }
-
         public void ResolveInitialConfiguration(ConfigurationWrapper configuration)
         {
             // Iterate over all constructed objects
             foreach (var constructedObjects in configuration.Configuration.GroupConstructedObjects())
             {
-                // Otherwise we register the objects using the method
                 var registrationResult = Register(constructedObjects);
 
                 // Switch over the result

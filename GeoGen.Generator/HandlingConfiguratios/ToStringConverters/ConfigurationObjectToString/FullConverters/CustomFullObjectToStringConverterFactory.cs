@@ -4,11 +4,11 @@ using System.Collections.Generic;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="ICustomFullObjectToStringProviderFactory"/>.
+    /// A default implementation of <see cref="ICustomFullObjectToStringConverterFactory"/>.
     /// It caches given results and compares them by the id of <see cref="DictionaryObjectIdResolver"/>s.
     /// This sealed class is not thread-safe.
     /// </summary>
-    internal sealed class CustomFullObjectToStringProviderFactory : ICustomFullObjectToStringProviderFactory
+    internal sealed class CustomFullObjectToStringConverterFactory : ICustomFullObjectToStringConverterFactory
     {
         #region Private fields
 
@@ -33,7 +33,7 @@ namespace GeoGen.Generator
         /// instances of <see cref="CustomFullObjectToStringConverter"/>.
         /// </summary>
         /// <param name="converter>The arguments list to string provider.</param>
-        public CustomFullObjectToStringProviderFactory(IArgumentsListToStringConverter converter)
+        public CustomFullObjectToStringConverterFactory(IArgumentsListToStringConverter converter)
         {
             _argumentsListToStringConverter = converter ?? throw new ArgumentNullException(nameof(converter));
             _cache = new Dictionary<int, CustomFullObjectToStringConverter>();

@@ -8,17 +8,17 @@ namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString
     [TestFixture]
     public class CustomFullObjectToStringProviderFactoryTest
     {
-        private static CustomFullObjectToStringProviderFactory Factory()
+        private static CustomFullObjectToStringConverterFactory Factory()
         {
             var provider = SimpleMock<IArgumentsListToStringConverter>();
 
-            return new CustomFullObjectToStringProviderFactory(provider);
+            return new CustomFullObjectToStringConverterFactory(provider);
         }
 
         [Test]
         public void Test_Arguments_To_String_Provider_Cant_Be_Null()
         {
-            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringProviderFactory(null));
+            Assert.Throws<ArgumentNullException>(() => new CustomFullObjectToStringConverterFactory(null));
         }
 
 

@@ -4,7 +4,7 @@ namespace GeoGen.Generator
 {
     internal class ConfigurationsContainer : StringBasedContainer<ConfigurationWrapper>, IConfigurationsContainer
     {
-        public ConfigurationsContainer(IDefaultConfigurationToStringConverter converter)
+        public ConfigurationsContainer(IFullConfigurationToStringConverter converter)
                 : base(converter)
         {
         }

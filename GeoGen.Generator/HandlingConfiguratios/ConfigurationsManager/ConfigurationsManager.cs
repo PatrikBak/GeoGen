@@ -94,20 +94,6 @@ namespace GeoGen.Generator
                 // Let the constructor create a new wrapper
                 var configuration = _configurationConstructor.ConstructWrapper(currentOutput);
 
-                // Find out if the interior objects have been mapped to other ones
-                var isMappedToItself = configuration.ResolverToMinimalForm is IDefaultObjectIdResolver;
-
-                // If we're not mapped to itself, we need to resolve the new configuration as well
-                if (!isMappedToItself)
-                {
-                    // Let the resolve determine correctness
-                    isCorrect = _configurationsResolver.ResolveMappedOutput(configuration);
-
-                    // If the configuration is not correct, skip it
-                    if (!isCorrect)
-                        continue;
-                }
-
                 // If everything's fine, then we can add the configuration to the container.
                 if (!_configurationsContainer.Add(configuration))
                 {

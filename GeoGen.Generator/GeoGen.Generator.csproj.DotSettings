@@ -40,6 +40,7 @@
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationobjecttostring/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving_005Cresolverscomposing/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationobjecttostring_005Cfullconverters/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationobjecttostring_005Cobjectidresolving/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationtostring/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverters_005Cconfigurationtostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
