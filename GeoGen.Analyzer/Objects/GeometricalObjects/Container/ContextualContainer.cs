@@ -320,7 +320,7 @@ namespace GeoGen.Analyzer
                     if (result != null)
                     {
                         // Then we clearly have inconsistency between containers
-                        throw new InconsistentContainersException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
                     }
 
                     // Otherwise the object probably doesn't exist and we can continue
@@ -334,7 +334,7 @@ namespace GeoGen.Analyzer
                 if (result != null && geometricalObject != result)
                 {
                     // Then we clearly have inconsistency between containers
-                    throw new InconsistentContainersException("Inconsistent containers");
+                    throw new InconsistentContainersException(container);
                 }
 
                 // If we're fine, we can set the result to the geometrical object
@@ -468,7 +468,7 @@ namespace GeoGen.Analyzer
                     // If the current result hasn't been set and is distinct
                     // from the pulled line, then we have an inconsistency
                     if (result != null && result != newResult)
-                        throw new InconsistentContainersException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
 
                     // Otherwise we can update the result
                     result = (LineObject) newResult;
@@ -542,7 +542,7 @@ namespace GeoGen.Analyzer
                     // If it's been marked that they are, then we have inconsistency
 
                     if (collinear != null && collinear.Value)
-                        throw new InconsistentContainersException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
 
                     // If we're fine, then we mark the points as not collinear
                     collinear = false;
@@ -553,7 +553,7 @@ namespace GeoGen.Analyzer
                     // not collinear, then we have inconsistency 
 
                     if (collinear != null && !collinear.Value)
-                        throw new InconsistentContainersException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
 
                     // If we're fine, then we mark the points as collinear
                     collinear = true;
@@ -575,7 +575,7 @@ namespace GeoGen.Analyzer
                     // If the current result hasn't been set and is distinct
                     // from the pulled circle, then we have an inconsistency
                     if (result != null && result != newResult)
-                        throw new InconsistentContainersException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
 
                     // Otherwise we can update the result
                     result = (CircleObject) newResult;
@@ -686,7 +686,7 @@ namespace GeoGen.Analyzer
                 // found value, then we have inconsistency
                 if (result != null && result.Value != liesOn)
                 {
-                    throw new InconsistentContainersException("Inconsistent containers");
+                    throw new InconsistentContainersException(container);
                 }
 
                 // Otherwise we update the result

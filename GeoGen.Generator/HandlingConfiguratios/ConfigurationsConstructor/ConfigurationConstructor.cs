@@ -63,14 +63,14 @@ namespace GeoGen.Generator
             if (constructorOutput == null)
                 throw new ArgumentNullException(nameof(constructorOutput));
 
-            var initialWrapper = CreateWrapperFromOutput(constructorOutput);
+            var wrapper = CreateWrapperFromOutput(constructorOutput);
 
             // Let the resolver find it's symmetry class representant
-            var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(initialWrapper);
+            var leastResolver = _leastConfigurationFinder.FindLeastConfiguration(wrapper);
 
-            initialWrapper.ResolverToMinimalForm = leastResolver;
+            wrapper.ResolverToMinimalForm = leastResolver;
 
-            return initialWrapper;
+            return wrapper;
         }
 
         private ConfigurationWrapper CreateWrapperFromOutput(ConstructorOutput constructorOutput)
@@ -93,7 +93,7 @@ namespace GeoGen.Generator
                 Id = _lastId++,
                 Configuration = newConfiguration,
                 PreviousConfiguration = constructorOutput.OriginalConfiguration,
-                OriginalObjects = constructorOutput.OriginalConfiguration.OriginalObjects,
+                OriginalObjects = constructorOutput.OriginalConfiguration.Configuration.ObjectsMap.AllObjects,
                 LastAddedObjects = constructorOutput.ConstructedObjects,
                 ResolverToMinimalForm = _defaultResolver,
             };

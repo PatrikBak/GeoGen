@@ -41,13 +41,19 @@ namespace GeoGen.Analyzer
 
             var newObjectsMap = new ConfigurationObjectsMap(newObjects);
 
-            var container = new ContextualContainer(_containersManager, new AnalyticalHelper());
-
-            foreach (var configurationObject in oldObjects.Concat(newObjects))
+            var container = _containersManager.ExecuteAndResolvePossibleIncosistencies(() =>
             {
-                container.Add(configurationObject);
-            }
-            
+                var r = new ContextualContainer(_containersManager, new AnalyticalHelper());
+
+                foreach (var configurationObject in oldObjects.Concat(newObjects))
+                {
+                    r.Add(configurationObject);
+                }
+
+                return r;
+            });
+
+
             var input = new VerifierInput(container, oldObjectsMap, newObjectsMap);
 
             foreach (var theoremVerifier in _verifiers)
@@ -59,7 +65,7 @@ namespace GeoGen.Analyzer
                 foreach (var verifierOutput in output)
                 {
                     var verifierFunction = verifierOutput.VerifierFunction;
-                    
+
                     var isTrue = verifierFunction == null || _containersManager.All(verifierFunction);
 
                     if (!isTrue)

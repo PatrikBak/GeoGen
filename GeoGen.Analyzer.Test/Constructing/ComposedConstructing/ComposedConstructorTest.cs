@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
@@ -14,9 +15,9 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
     [TestFixture]
     public class ComposedConstructorTest
     {
-        private readonly MidpointFromPoints _midpoint = new MidpointFromPoints {Id = 1};
+        private readonly MidpointFromPoints _midpoint = new MidpointFromPoints { Id = 1 };
 
-        private readonly IntersectionFromPoints _intersection = new IntersectionFromPoints {Id = 2};
+        private readonly IntersectionFromPoints _intersection = new IntersectionFromPoints { Id = 2 };
 
         private static ComposedConstructor Constructor(ComposedConstruction construction)
         {
@@ -37,13 +38,13 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             factory.Setup(s => s.Create(It.IsAny<ComposedConstruction>()))
                    .Returns<ComposedConstruction>(c => new ComposedConstructor(c, resolver, containersFactory.Object));
 
-            return (ComposedConstructor) resolver.Resolve(construction);
+            return (ComposedConstructor)resolver.Resolve(construction);
         }
 
         private ComposedConstruction MidpointAsComposedConstruction()
         {
             var objects = Enumerable.Range(0, 2)
-                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
                                     .ToList();
 
             var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
@@ -52,11 +53,11 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new ObjectConstructionArgument(objects[1])
             });
 
-            var argumentsList = new List<ConstructionArgument> {argument};
+            var argumentsList = new List<ConstructionArgument> { argument };
 
-            var midpoint = new ConstructedConfigurationObject(_midpoint, argumentsList, 0) {Id = 2};
+            var midpoint = new ConstructedConfigurationObject(_midpoint, argumentsList, 0) { Id = 2 };
 
-            var constructedObjects = new List<ConstructedConfigurationObject> {midpoint};
+            var constructedObjects = new List<ConstructedConfigurationObject> { midpoint };
 
             var configuration = new Configuration(objects, constructedObjects);
 
@@ -65,13 +66,13 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            return new ComposedConstruction(configuration, new List<int> {0}, parameters) {Id = 3};
+            return new ComposedConstruction(configuration, new List<int> { 0 }, parameters) { Id = 3 };
         }
 
         private ComposedConstruction CentroidUsingComposedMidpoint()
         {
             var objects = Enumerable.Range(0, 3)
-                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
                                     .ToList();
 
             var argument1 = new SetConstructionArgument(new HashSet<ConstructionArgument>
@@ -85,11 +86,11 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new ObjectConstructionArgument(objects[2])
             });
 
-            var argumentsList1 = new List<ConstructionArgument> {argument1};
-            var argumentsList2 = new List<ConstructionArgument> {argument2};
+            var argumentsList1 = new List<ConstructionArgument> { argument1 };
+            var argumentsList2 = new List<ConstructionArgument> { argument2 };
 
-            var midpoint1 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList1, 0) {Id = 3};
-            var midpoint2 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList2, 0) {Id = 4};
+            var midpoint1 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList1, 0) { Id = 3 };
+            var midpoint2 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList2, 0) { Id = 4 };
 
             var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
             {
@@ -105,11 +106,11 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 })
             });
 
-            var argumentsList = new List<ConstructionArgument> {argument};
+            var argumentsList = new List<ConstructionArgument> { argument };
 
-            var centroid = new ConstructedConfigurationObject(_intersection, argumentsList, 0) {Id = 5};
+            var centroid = new ConstructedConfigurationObject(_intersection, argumentsList, 0) { Id = 5 };
 
-            var constructedObjects = new List<ConstructedConfigurationObject> {midpoint1, midpoint2, centroid};
+            var constructedObjects = new List<ConstructedConfigurationObject> { midpoint1, midpoint2, centroid };
 
             var configuration = new Configuration(objects, constructedObjects);
 
@@ -118,7 +119,7 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            return new ComposedConstruction(configuration, new List<int> {2}, parameters) {Id = 4};
+            return new ComposedConstruction(configuration, new List<int> { 2 }, parameters) { Id = 4 };
         }
 
         [Test]
@@ -129,12 +130,12 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             var constructor = Constructor(midpoint);
 
             var looseObjects = Enumerable.Range(0, 2)
-                                         .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                                         .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
                                          .ToList();
 
             var container = new ObjectsContainer();
-            container.Add(new Point(1, 2), looseObjects[0]);
-            container.Add(new Point(2, 3), looseObjects[1]);
+            Add(container, new Point(1, 2), looseObjects[0]);
+            Add(container, new Point(2, 3), looseObjects[1]);
 
             var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
             {
@@ -142,13 +143,20 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new ObjectConstructionArgument(looseObjects[1])
             });
 
-            var midpointObject = new ConstructedConfigurationObject(midpoint, new ConstructionArgument[]{argument}, 0);
+            var midpointObject = new ConstructedConfigurationObject(midpoint, new ConstructionArgument[] { argument }, 0);
 
-            var result = constructor.Construct(new List<ConstructedConfigurationObject> {midpointObject});
+            var result = constructor.Construct(new List<ConstructedConfigurationObject> { midpointObject });
 
             var output = result.ConstructorFunction(container);
 
             Assert.AreEqual(new Point(1.5, 2.5), output[0]);
+        }
+
+        private void Add(IObjectsContainer container, IAnalyticalObject analyticalObject, ConfigurationObject configurationObject)
+        {
+            List<IAnalyticalObject> Function(IObjectsContainer c) => new List<IAnalyticalObject> {analyticalObject};
+
+            container.Add(new[] {configurationObject}, Function);
         }
 
         [Test]
@@ -163,9 +171,9 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                                          .ToList();
 
             var container = new ObjectsContainer();
-            container.Add(new Point(1, 2), looseObjects[0]);
-            container.Add(new Point(2, 3), looseObjects[1]);
-            container.Add(new Point(7, 9), looseObjects[2]);
+            Add(container, new Point(1, 2), looseObjects[0]);
+            Add(container, new Point(2, 3), looseObjects[1]);
+            Add(container, new Point(7, 9), looseObjects[2]);
 
             var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
             {
@@ -180,7 +188,7 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
 
             var output = result.ConstructorFunction(container);
 
-            Assert.AreEqual(new Point(10.0/3, 14.0/3), output[0]);
+            Assert.AreEqual(new Point(10.0 / 3, 14.0 / 3), output[0]);
         }
 
         [Test]
@@ -195,9 +203,9 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                                          .ToList();
 
             var container = new ObjectsContainer();
-            container.Add(new Point(1, 2), looseObjects[0]);
-            container.Add(new Point(2, 3), looseObjects[1]);
-            container.Add(new Point(7, 8), looseObjects[2]);
+            Add(container,new Point(1, 2), looseObjects[0]);
+            Add(container,new Point(2, 3), looseObjects[1]);
+            Add(container, new Point(7, 8), looseObjects[2]);
 
             var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
             {

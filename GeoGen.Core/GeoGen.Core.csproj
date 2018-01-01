@@ -80,6 +80,7 @@
     <Compile Include="Constructions\PredefinedConstructions\MidpointFromPoints.cs" />
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
+    <Compile Include="Constructions\PredefinedConstructions\PerpendicularLineFromPoints.cs" />
     <Compile Include="Generator\GeneratorInput.cs" />
     <Compile Include="Generator\GeneratorOutput.cs" />
     <Compile Include="Generator\IGenerator.cs" />

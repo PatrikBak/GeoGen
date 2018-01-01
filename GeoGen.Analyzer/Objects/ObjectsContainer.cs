@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core.Configurations;
@@ -62,7 +63,7 @@ namespace GeoGen.Analyzer
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The representation of an equal object.</returns>
-        public ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject configurationObject)
+        private ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
@@ -82,6 +83,66 @@ namespace GeoGen.Analyzer
             _idToObjects.Add(id, analyticalObject);
 
             return configurationObject;
+        }
+
+        public void Reconstruct()
+        {
+            var counter = 0;
+
+            while (true)
+            {
+                _idToObjects.Clear();
+                _objectsDictionary.Clear();
+
+                var successful = true;
+
+                foreach (var reconstructor in _reconstructors)
+                {
+                    if (reconstructor())
+                        continue;
+
+                    successful = false;
+                    break;
+                }
+
+                counter++;
+
+                if (successful)
+                    break;
+            }
+
+            Wtf.MaximalContainerIterations = Math.Max(Wtf.MaximalContainerIterations, counter);
+        }
+
+        private readonly List<Func<bool>> _reconstructors = new List<Func<bool>>();
+
+        public List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<IAnalyticalObject>> constructor)
+        {
+            var objectsList = objects.ToList();
+
+            List<ConfigurationObject> Construct()
+            {
+                var analytical = constructor(this);
+
+                if (analytical is null)
+                    return null;
+
+                return objectsList.Select((o, i) => Add(analytical[i], o)).ToList();
+            }
+
+            var currentResult = Construct();
+
+            if (currentResult != null && currentResult.SequenceEqual(objectsList))
+            {
+                _reconstructors.Add(() =>
+                {
+                    var result = Construct();
+
+                    return result != null && objectsList.SequenceEqual(result);
+                });
+            }
+
+            return currentResult;
         }
 
         /// <summary>

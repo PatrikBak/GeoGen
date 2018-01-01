@@ -1,10 +1,14 @@
-﻿namespace GeoGen.Analyzer
+﻿using System;
+
+namespace GeoGen.Analyzer
 {
-    public class InconsistentContainersException : AnalyzerException
+    internal class InconsistentContainersException : AnalyzerException
     {
-        public InconsistentContainersException(string message)
-            : base(message)
+        public IObjectsContainer InconsistentContainer { get; }
+
+        public InconsistentContainersException(IObjectsContainer inconsistentContainer)
         {
+            InconsistentContainer = inconsistentContainer;
         }
     }
 }

@@ -37,18 +37,27 @@ namespace GeoGen.Analyzer
                 // Initialize the internal container for sub-results
                 var internalContainer = _factory.CreateContainer();
 
-                // Initialize the loose objects
-                for (var i = 0; i < looseObjects.Count; i++)
+                // Create constructor function
+                List<IAnalyticalObject> InternalConstructorFunction(IObjectsContainer c)
                 {
-                    // Take loose object
-                    var looseObject = looseObjects[i];
+                    var result = new List<IAnalyticalObject>();
 
-                    // Take real object
-                    var realObjectAnalytical = container.Get(inputObjects[i]);
+                    for (var i = 0; i < looseObjects.Count; i++)
+                    {
+                        // Take input object
+                        var inputObject = inputObjects[i];
 
-                    // Register them to the container
-                    internalContainer.Add(realObjectAnalytical, looseObject);
+                        // Take real object
+                        var realObjectAnalytical = container.Get(inputObject);
+                        
+                        // Add this object to the results list
+                        result.Add(realObjectAnalytical);
+                    }
+
+                    return result;
                 }
+
+                internalContainer.Add(looseObjects, InternalConstructorFunction);
 
                 // Initialize the constructed objects
                 foreach (var internalConstructedObjects in _construction.ParentalConfiguration.GroupConstructedObjects())
@@ -56,32 +65,18 @@ namespace GeoGen.Analyzer
                     // Find the constructor
                     var constructor = _resolver.Resolve(internalConstructedObjects[0].Construction);
 
-                    // Perform the construction
-                    var objects = constructor.Construct(internalConstructedObjects).ConstructorFunction(internalContainer);
+                    // Find the constructor function
+                    var constructorFunction = constructor.Construct(internalConstructedObjects).ConstructorFunction;
 
-                    // If these objects are not constructible, then 
-                    // even the whole construction is not possible for this input
-                    if (objects == null)
-                    {
+                    // Add objects to the container
+                    var result = internalContainer.Add(internalConstructedObjects, constructorFunction);
+
+                    // Find out if we have correct result
+                    var correctResult = result != null && result.SequenceEqual(internalConstructedObjects);
+
+                    // If not, the whole construction is not possible
+                    if (!correctResult)
                         return null;
-                    }
-
-                    // And add the new objects to the container
-                    for (var i = 0; i < objects.Count; i++)
-                    {
-                        // Take internal objects
-                        var internalObject = internalConstructedObjects[i];
-
-                        // Add id to the container
-                        var result = internalContainer.Add(objects[i], internalObject);
-
-                        // If the result is different from the internal object, 
-                        // meaning that there is a duplicate, then we say this construction is incorrect
-                        if (result != internalObject)
-                        {
-                            return null;
-                        }
-                    }
                 }
 
                 // Return the result

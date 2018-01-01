@@ -45,10 +45,12 @@ namespace GeoGen.Analyzer
             if (ObjectsAreAlreadyPresent(constructedObjects))
                 return RegistrationResult.Ok;
 
-            // Let the helper method construct the result. Before returning it, 
-            // we need to analyze it
-            var result = RegisterObjects(constructedObjects, out var defaultTheorems);
+            List<Theorem> defaultTheorems = null;
 
+            RegistrationResult Register() => RegisterObjects(constructedObjects, out defaultTheorems);
+
+            var result = _containers.ExecuteAndResolvePossibleIncosistencies(Register);
+            
             // If result is not ok, we can just directly return it
             if (result != RegistrationResult.Ok)
                 return result;
@@ -79,26 +81,26 @@ namespace GeoGen.Analyzer
             bool? canBeConstructed = null;
             List<ConfigurationObject> duplicates = null;
 
-            // Pull the constructor
-            var constructor = _resolver.Resolve(objects[0].Construction);
-
             // Perform the construction
-            var constructorOutput = constructor.Construct(objects);
+            var constructorOutput = _resolver.Resolve(objects[0].Construction).Construct(objects);
 
-            // We iterate over all containers
+            // Pull the constructor function
+            var constructorFunction = constructorOutput.ConstructorFunction;
+
+            // Add objects to all containers
             foreach (var container in _containers)
             {
-                // Construct the objects
-                var constructedObjects = constructorOutput.ConstructorFunction(container);
+                // Add objects
+                var containerResult  = container.Add(objects, constructorFunction);
 
                 // If they are null, that means the construction can't be done 
                 // in this container 
-                if (constructedObjects == null)
+                if (containerResult == null)
                 {
                     // However if some container marked this objects as constructible,
                     // then we have inconsistency
                     if (canBeConstructed != null && canBeConstructed.Value)
-                        throw new AnalyzerException("Inconsistent containers");
+                        throw new InconsistentContainersException(container);
 
                     // Otherwise we can mark the object as not constructible
                     canBeConstructed = false;
@@ -110,36 +112,15 @@ namespace GeoGen.Analyzer
                 // If we got here, the construction is possible
                 canBeConstructed = true;
 
-                // Now we need to find duplicates that we stored in this list
-                // initialized with nulls
-                var localDuplicates = Enumerable.Repeat((ConfigurationObject) null, objects.Count).ToList();
-
-                // We iterate over the objects to find duplicates
-                for (var i = 0; i < constructedObjects.Count; i++)
-                {
-                    // Pull the constructed object
-                    var constructedObject = constructedObjects[i];
-
-                    // Pull the original object
-                    var originalObject = objects[i];
-
-                    // Let the container resolve the new object
-                    var containerResult = container.Add(constructedObject, originalObject);
-
-                    // If the container's result is the same as our object, i.e. the object
-                    // isn't already present in the container, then the constructed
-                    // object is new
-                    if (containerResult == originalObject)
-                        continue;
-
-                    // Otherwise we update the duplicates list
-                    localDuplicates[i] = containerResult;
-                }
+                // Let's find the local duplicates
+                var localDuplicates = Enumerable.Range(0, containerResult.Count)
+                        .Select(i => containerResult[i] == objects[i] ? null : containerResult[i])
+                        .ToList();
 
                 // If duplicates have been already set and they are not equal to the
                 // current duplicates, then we have inconsistency
                 if (duplicates != null && !duplicates.SequenceEqual(localDuplicates))
-                    throw new AnalyzerException("Inconsistent containers.");
+                    throw new InconsistentContainersException(container);
 
                 // Otherwise we can mark the current duplicates
                 duplicates = localDuplicates;

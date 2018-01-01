@@ -38,7 +38,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
 
-            kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            //kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
             //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
            
             var factory = kernel.Get<IGeneratorFactory>();
@@ -56,30 +56,42 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 7
+                MaximalNumberOfIterations = 3
             };
 
-            var generator = factory.CreateGenerator(input);
-            var stopwatch = new Stopwatch();
+            //while (true)
+            //{
+                var generator = factory.CreateGenerator(input);
+                var stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            var result = generator.Generate().ToList();
-            stopwatch.Stop();
+                stopwatch.Start();
+                var result = generator.Generate().ToList();
+                stopwatch.Stop();
 
-            Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
-            Console.WriteLine($"Generated: {result.Count}");
+                    Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
+                    Console.WriteLine($"Generated: {result.Count}");
+                    Console.WriteLine($"Registration inconsistencies: {Wtf.Inconsistencies}");
+                    Console.WriteLine($"Maximal attempts to resolve: {Wtf.MaximalNeededAttemps}");
+                    Console.WriteLine($"Maximal interior re-initializations: {Wtf.MaximalContainerIterations}");
 
-            //PrintTheorems(result);
+                    Wtf.Reset();
+            //}
+
+            //Console.WriteLine(Wtf._possibilities);
+            PrintTheorems(result);
         }
 
         private static List<Construction> Constructions()
         {
             return new List<Construction>
             {
-                //_composedConstructions.AddCentroidFromPoints(),
-               // _composedConstructions.AddIncenterFromPoints(),
+                _composedConstructions.AddCentroidFromPoints(),
+                _composedConstructions.AddIncenterFromPoints(),
                 _constructionsContainer.Get<MidpointFromPoints>(),
-               // _constructionsContainer.Get<IntersectionFromPoints>()
+                //_constructionsContainer.Get<IntersectionFromPoints>()
+                _constructionsContainer.Get<IntersectionFromLines>(),
+                _constructionsContainer.Get<PerpendicularLineFromPoints>(),
+                _constructionsContainer.Get<InternalAngelBisectorFromPoints>(),
             };
         }
 
@@ -90,10 +102,11 @@ namespace GeoGen.Generator.IntegrationTest
             };
         }
 
-        private static void PrintTheorems(List<GeneratorOutput> result)
+        private static void PrintTheorems(IEnumerable<GeneratorOutput> result)
         {
             var formatter = new OutputFormatter();
 
+            Console.ReadKey(true);
             Console.WriteLine("Results:\n");
 
             var i = 1;

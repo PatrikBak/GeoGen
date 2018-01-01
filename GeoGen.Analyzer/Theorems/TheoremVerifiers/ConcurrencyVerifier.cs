@@ -10,6 +10,21 @@ using GeoGen.Utilities.Subsets;
 
 namespace GeoGen.Analyzer
 {
+    public class Wtf
+    {
+        public static int Possibilities;
+        public static int Inconsistencies;
+        public static int MaximalNeededAttemps;
+        public static int MaximalContainerIterations;
+
+        public static void Reset()
+        {
+            Possibilities = 0;
+            Inconsistencies = 0;
+            MaximalNeededAttemps = 0;
+        }
+    }
+
     internal sealed class ConcurrencyVerifier : ITheoremVerifier
     {
         public TheoremType TheoremType { get; } = TheoremType.ConcurrentObjects;
@@ -51,6 +66,8 @@ namespace GeoGen.Analyzer
 
                     foreach (var subsetOfOldObjects in _provider.GetSubsets(oldLinesAndCircles, neededCount))
                     {
+                        Wtf.Possibilities++;
+
                         var involdedObjects = subsetOfOldObjects.Concat(newObjectsList).ToList();
 
                         bool Verify(IObjectsContainer container)

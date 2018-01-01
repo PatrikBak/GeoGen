@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer
@@ -16,7 +18,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// The default number of container that this manager manages.
         /// </summary>
-        public const int DefaultNumberOfContainers = 1;
+        public const int DefaultNumberOfContainers = 5;
 
         #endregion
 
@@ -94,24 +96,16 @@ namespace GeoGen.Analyzer
             if (ids.Count != looseObjectsList.Count)
                 throw new ArgumentException("Duplicate objects");
 
-            // For each container
+            // Initialize the constructor function
+            List<IAnalyticalObject> ConstructorFunction(IObjectsContainer c)
+            {
+                return _constructor.Construct(looseObjectsList);
+            }
+
+            // Add loose objects to all containers
             foreach (var container in _containers)
             {
-                // Construct the objects
-                var objects = _constructor.Construct(looseObjectsList);
-
-                // Iterate over them
-                for (var i = 0; i < looseObjectsList.Count; i++)
-                {
-                    // Pull the configuration object
-                    var configurationObject = looseObjectsList[i];
-
-                    // Pull the analytical version of it
-                    var analyticalObject = objects[i];
-
-                    // Add it to the container
-                    container.Add(analyticalObject, configurationObject);
-                }
+                container.Add(looseObjectsList, ConstructorFunction);
             }
         }
 
@@ -122,6 +116,41 @@ namespace GeoGen.Analyzer
         public IEnumerator<IObjectsContainer> GetEnumerator()
         {
             return _containers.GetEnumerator();
+        }
+
+        public T ExecuteAndResolvePossibleIncosistencies<T>(Func<T> function)
+        {
+            var a = 0;
+            
+            while (true)
+            {
+                try
+                {
+                    a++;
+
+                    
+                    var result =  function();
+
+                    Wtf.MaximalNeededAttemps = Math.Max(Wtf.MaximalNeededAttemps, a);
+
+                    return result;
+                }
+                catch (InconsistentContainersException)
+                {
+                    Wtf.Inconsistencies++;
+
+                    var sw = new Stopwatch();
+                    sw.Start();
+
+                    foreach (var container in _containers)
+                    {
+                        container.Reconstruct();
+                    }
+
+                    sw.Stop();
+                    Console.WriteLine(sw.ElapsedMilliseconds);
+                }
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

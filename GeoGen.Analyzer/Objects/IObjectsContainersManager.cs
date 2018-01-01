@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace GeoGen.Analyzer
@@ -7,5 +8,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal interface IObjectsContainersManager : IEnumerable<IObjectsContainer>
     {
+        T ExecuteAndResolvePossibleIncosistencies<T>(Func<T> function);
     }
 }

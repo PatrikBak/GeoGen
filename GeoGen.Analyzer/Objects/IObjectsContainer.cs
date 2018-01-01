@@ -1,4 +1,6 @@
-﻿using GeoGen.AnalyticalGeometry;
+﻿using System;
+using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core.Configurations;
 
 namespace GeoGen.Analyzer
@@ -10,6 +12,8 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal interface IObjectsContainer
     {
+        void Reconstruct();
+
         /// <summary>
         /// Adds a given object to the container. If the analytical version 
         /// of the object is already present in the container, then it will return
@@ -18,8 +22,9 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="configurationObject">The configuration object.</param>
+        /// <param name="constructor"></param>
         /// <returns>The representation of an equal object.</returns>
-        ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject configurationObject);
+        List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<IAnalyticalObject>> constructor);
 
         /// <summary>
         /// Removes a given configuration object from the container. 

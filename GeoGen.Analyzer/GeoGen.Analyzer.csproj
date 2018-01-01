@@ -58,6 +58,7 @@
     <Compile Include="Constructing\PredefinedConstructors\InteresectionFromLinesConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\InternalAngelBisectorFromPointsConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\LoosePointOnLineFromPointsConstructor.cs" />
+    <Compile Include="Constructing\PredefinedConstructors\PerpendicularLineFromPointsConstructor.cs" />
     <Compile Include="Drawing\GeometryRegistrar.cs" />
     <Compile Include="Drawing\IGeometryRegistrar.cs" />
     <Compile Include="Drawing\RegistrationResult.cs" />
