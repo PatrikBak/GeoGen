@@ -1,20 +1,30 @@
-﻿namespace GeoGen.Core.Configurations
+﻿using System.Windows.Forms;
+
+namespace GeoGen.Core.Configurations
 {
     /// <summary>
     /// Represents an object that can be contained in a <see cref="Configuration"/>.
     /// </summary>
     public abstract class ConfigurationObject
     {
-        #region Public properties
+        //private readonly WriteOnce<int> _id = new WriteOnce<int>();
 
-        /// <summary>
-        /// Gets or sets the id of this configuration object. The id should be
-        /// unique solely during the generation process. It will be reseted every time
-        /// the process starts over.
-        /// </summary>
+        //#region Public properties
+
+        ///// <summary>
+        ///// Gets or sets the id of this configuration object. The id should be
+        ///// unique solely during the generation process. It will be reseted every time
+        ///// the process starts over.
+        ///// </summary>
+        //public int Id
+        //{
+        //    get => _id;
+        //    set => _id.Value = value;
+        //}
+
+        //#endregion
+
         public int? Id { get; set; }
-
-        #endregion
 
         #region Public abstract properties
 

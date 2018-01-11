@@ -26,13 +26,13 @@ namespace GeoGen.Core.Configurations
         /// <summary>
         /// Gets the list of loose configuration objects within this configuration.
         /// </summary>
-        public List<LooseConfigurationObject> LooseObjects { get; }
+        public IReadOnlyList<LooseConfigurationObject> LooseObjects { get; }
 
         /// <summary>
         /// Gets the list of constructed configuration objects within this configuration. 
         /// They're supposed be ordered so that it's possible to construct them in that order.
         /// </summary>
-        public List<ConstructedConfigurationObject> ConstructedObjects { get; }
+        public IReadOnlyList<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         /// <summary>
         /// Gets the configuration objects map of this configuration.
@@ -48,7 +48,7 @@ namespace GeoGen.Core.Configurations
         /// </summary>
         /// <param name="looseObjects">The list of loose configuration objects.</param>
         /// <param name="constructedObjects">The list constructed configuration objects.</param>
-        public Configuration(List<LooseConfigurationObject> looseObjects, List<ConstructedConfigurationObject> constructedObjects)
+        public Configuration(IReadOnlyList<LooseConfigurationObject> looseObjects, IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
         {
             LooseObjects = looseObjects ?? throw new ArgumentNullException(nameof(looseObjects));
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));

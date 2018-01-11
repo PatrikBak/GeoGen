@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
+using GeoGen.Core.Generator;
 using NUnit.Framework;
 using static GeoGen.Generator.Test.TestHelpers.Constructions;
 
@@ -27,7 +28,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
                 CircleCenter(),
                 CircumCircle(),
                 CrazyConstruction()
-            }.Select(wrapper => wrapper.Construction);
+            }.Select(wrapper => wrapper.WrappedConstruction);
         }
 
         [Test]
@@ -43,7 +44,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
             //container.Initialize(CorrectConstructions());
 
             Assert.AreEqual(6, container.Count());
-            Assert.IsTrue(container.All(c => c.Construction != null));
+            Assert.IsTrue(container.All(c => c.WrappedConstruction != null));
         }
 
         [Test]

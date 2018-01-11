@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.Core.Configurations;
 
 namespace GeoGen.Core.Constructions.Arguments
 {
@@ -43,5 +44,15 @@ namespace GeoGen.Core.Constructions.Arguments
         }
 
         #endregion
+
+        public override void Visit(Action<ConstructionArgument> actionForInternalObjects)
+        {
+            actionForInternalObjects(this);
+
+            foreach (var argument in PassedArguments)
+            {
+                argument.Visit(actionForInternalObjects);
+            }
+        }
     }
 }

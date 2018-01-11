@@ -5,6 +5,7 @@ using System.Linq;
 using GeoGen.Core.Configurations;
 using GeoGen.Core.Constructions;
 using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Core.Generator;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
@@ -14,12 +15,12 @@ namespace GeoGen.Generator
     /// It has the constructor that expects initial constructions to be passed in.
     /// The <see cref="ConstructionWrapper"/>s will be then created from the them.
     /// </summary>
-    internal sealed class ConstructionsContainer : IConstructionsContainer
+    internal class ConstructionsContainer : IConstructionsContainer
     {
         #region Private fields
 
         /// <summary>
-        /// The constructions list
+        /// The list containing all construction wrappers
         /// </summary>
         private readonly List<ConstructionWrapper> _constructions = new List<ConstructionWrapper>();
 
@@ -28,27 +29,27 @@ namespace GeoGen.Generator
         #region Constructor
 
         /// <summary>
-        /// Constructs a container and adds given initial constructions to it.
+        /// Constructs a container that contains given constructions.
         /// </summary>
-        /// <param name="initialConstructions">The initial constructions.</param>
-        public ConstructionsContainer(IEnumerable<Construction> initialConstructions)
+        /// <param name="constructions">The constructions.</param>
+        public ConstructionsContainer(IEnumerable<Construction> constructions)
         {
-            Initialize(initialConstructions);
+            Initialize(constructions);
         }
 
         #endregion
 
-        #region Private methods
+        #region Initialization
 
         /// <summary>
         /// Initializes the container with a given enumerable of constructions.
-        /// The ids of the constructions must be set.
+        /// The ids of the constructions must have their ids set.
         /// </summary>
         /// <param name="constructions">The constructions enumerable.</param>
         private void Initialize(IEnumerable<Construction> constructions)
         {
             if (constructions == null)
-                throw new ArgumentNullException(nameof(constructions));
+                throw ConstructionException.ConstructionsMustNotBeNull();
 
             // Enumerate the constructions
             var constructionsList = constructions.ToList();
@@ -57,17 +58,11 @@ namespace GeoGen.Generator
             CheckUniqueIds(constructionsList);
 
             // Set new items to the container casted to the construction wrapper
-            _constructions.SetItems
-            (
-                constructionsList.Select
-                (
-                    construction => new ConstructionWrapper
-                    {
-                        Construction = construction,
-                        ObjectTypesToNeededCount = DetermineObjectTypesToCount(construction)
-                    }
-                )
-            );
+            _constructions.SetItems(constructionsList.Select(construction => new ConstructionWrapper
+            {
+                WrappedConstruction = construction,
+                ObjectTypesToNeededCount = DetermineObjectTypesToCount(construction)
+            }));
         }
 
         /// <summary>
@@ -76,22 +71,27 @@ namespace GeoGen.Generator
         /// <param name="constructions">The constructions.</param>
         private static void CheckUniqueIds(IReadOnlyCollection<Construction> constructions)
         {
-            var ids = constructions.Select(construction => construction ?? throw GeneratorException.ConstructionMostNotBeNull())
-                    .Select(construction => construction.Id ?? throw GeneratorException.ConstructionIdMustBeSet())
+            // Cast constructions to the set of their ids (and check for null constructions on go)
+            var ids = constructions.Select(construction => construction ?? throw ConstructionException.ConstructionMostNotBeNull())
+                    .Select(construction => construction.Id ?? throw ConstructionException.ConstructionIdNotSet())
                     .ToSet();
 
-            if (ids.Count != constructions.Count)
-            {
-                throw GeneratorException.ConstructionsMustHaveUniqueId();
-            }
+            // The ids are unique if and only if the number of actual ids is the same
+            // as the number of the constructions
+            var uniqueIds = ids.Count == constructions.Count;
+
+            // We expect ids to be unique
+            if (!uniqueIds)
+                throw ConstructionException.ConstructionsMustHaveUniqueId();
         }
 
         /// <summary>
-        /// Gets the type to count of objects of a given type dictionary for a given construction.
+        /// Gets a dictionary mapping object types to number of objects of that type needed
+        /// to be passed to a given construction.
         /// </summary>
         /// <param name="construction">The construction.</param>
         /// <returns>The dictionary.</returns>
-        private static Dictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount(Construction construction)
+        private Dictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount(Construction construction)
         {
             // Get the list containing all needed types (with possibly duplicate items)
             var allTypes = construction.ConstructionParameters.SelectMany(ObjectTypesOf);
@@ -123,12 +123,14 @@ namespace GeoGen.Generator
         /// construction parameter.
         /// </summary>
         /// <param name="constructionParameter">The construction parameter.</param>
-        /// <returns>The types contained within it.</returns>
-        private static List<ConfigurationObjectType> ObjectTypesOf(ConstructionParameter constructionParameter)
+        /// <returns>The types contained within it (it might contain duplicates).</returns>
+        private List<ConfigurationObjectType> ObjectTypesOf(ConstructionParameter constructionParameter)
         {
             // If we have an object parameter, we'll return a list containing only the expected type
             if (constructionParameter is ObjectConstructionParameter objectParameter)
+            {
                 return new List<ConfigurationObjectType> {objectParameter.ExpectedType};
+            }
 
             // Otherwise we have a set parameter
             var setParameter = (SetConstructionParameter) constructionParameter;

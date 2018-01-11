@@ -1,6 +1,6 @@
 ﻿namespace GeoGen.Utilities
 {
-    public interface IToStringConverter<T>
+    public interface IToStringConverter<in T>
     {
         /// <summary>
         /// Converts a given item to string.

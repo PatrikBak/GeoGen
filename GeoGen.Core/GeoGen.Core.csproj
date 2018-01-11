@@ -81,6 +81,9 @@
     <Compile Include="Constructions\Parameters\ConstructionParameter.cs" />
     <Compile Include="Constructions\Parameters\ObjectConstructionParameter.cs" />
     <Compile Include="Constructions\PredefinedConstructions\PerpendicularLineFromPoints.cs" />
+    <Compile Include="Generator\Exceptions\ConstructionsException.cs" />
+    <Compile Include="Generator\Exceptions\GeneratorException.cs" />
+    <Compile Include="Generator\Exceptions\InitializationException.cs" />
     <Compile Include="Generator\GeneratorInput.cs" />
     <Compile Include="Generator\GeneratorOutput.cs" />
     <Compile Include="Generator\IGenerator.cs" />
@@ -89,6 +92,7 @@
     <Compile Include="CoreModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
+    <Compile Include="SetOnce.cs" />
     <Compile Include="Theorems\TheoremObjectSignature.cs" />
     <Compile Include="Theorems\Theorem.cs" />
     <Compile Include="Theorems\TheoremObject.cs" />

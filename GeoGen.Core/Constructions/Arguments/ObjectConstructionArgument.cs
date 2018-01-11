@@ -30,5 +30,10 @@ namespace GeoGen.Core.Constructions.Arguments
         }
 
         #endregion
+
+        public override void Visit(Action<ConstructionArgument> actionForInternalObjects)
+        {
+            actionForInternalObjects(this);
+        }
     }
 }

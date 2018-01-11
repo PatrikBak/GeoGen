@@ -62,7 +62,7 @@ namespace GeoGen.Analyzer
                     Theorems = new List<Theorem>()
                 };
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 throw new AnalyzerException("Incorrect arguments");
             }

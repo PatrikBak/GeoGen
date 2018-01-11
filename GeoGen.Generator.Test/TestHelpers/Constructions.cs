@@ -28,7 +28,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -58,7 +58,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -83,7 +83,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -107,7 +107,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -131,7 +131,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -160,7 +160,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
             return new ConstructionWrapper
             {
-                Construction = mock.Object,
+                WrappedConstruction = mock.Object,
                 ObjectTypesToNeededCount = dictonary
             };
         }
@@ -200,7 +200,7 @@ namespace GeoGen.Generator.Test.TestHelpers
                             return result;
                         }
                     )
-                    .Select(c => new ConstructionWrapper {Construction = c})
+                    .Select(c => new ConstructionWrapper {WrappedConstruction = c})
                     .ToList();
         }
     }

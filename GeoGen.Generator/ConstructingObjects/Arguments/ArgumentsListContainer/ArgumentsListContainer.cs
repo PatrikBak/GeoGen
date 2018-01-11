@@ -5,21 +5,22 @@ using GeoGen.Utilities;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// An implementation of <see cref="T:GeoGen.Generator.ConstructingObjects.Arguments.Container.IArgumentsListContainer" /> that 
-    /// uses <see cref="T:GeoGen.Core.Utilities.StringBasedContainer`1" />, where T is the list of 
-    /// <see cref="T:GeoGen.Core.Constructions.Arguments.ConstructionArgument" />, together with 
-    /// <see cref="T:GeoGen.Generator.ConstructingObjects.Arguments.ArgumentsListToString.IArgumentsListToStringProvider" />. and the default 
-    /// configuration object to string provider. Since we eliminate 
-    /// equal points on go, we don't need to use the full object as
-    /// string representation (that uses only loose object's ids).
+    /// A default implementation of <see cref="IArgumentsListContainer" />. 
+    /// This implementation uses <see cref="StringBasedContainer{T}"/>, so
+    /// all arguments are converted to string. This conversion is done
+    /// using <see cref="IDefaultArgumentsListToStringConverter"/>, that uses
+    /// short-signature of an argument. In this signature, objects are converted
+    /// to string by simply converting its id to string. Since we eliminate 
+    /// equal points on go, we don't need to use the full object representation 
+    /// (which uses only loose object's ids and reveals the way that objects are constructed).
     /// </summary>
-    internal sealed class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
+    internal class ArgumentsListContainer : StringBasedContainer<IReadOnlyList<ConstructionArgument>>, IArgumentsListContainer
     {
         #region Constructor
 
         /// <summary>
-        /// Constructs an arguments list container that internally uses 
-        /// a given converter of list of construction arguments.
+        /// Constructs an arguments list container that internally converts
+        /// elements to string using a given converter of lists of construction arguments.
         /// </summary>
         /// <param name="converter">The converter.</param>
         public ArgumentsListContainer(IDefaultArgumentsListToStringConverter converter)
@@ -29,7 +30,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IArguments container methods
+        #region IArgumentsListContainer implementation
 
         /// <summary>
         /// Adds an argument list to the container.

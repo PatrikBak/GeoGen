@@ -85,9 +85,7 @@ namespace GeoGen.Core
                 if (inputParameters.Count != 1)
                     throw new Exception($"There is more than one parameter with the name {inputParameterName}");
 
-                var input = inputParameters[0].GetValue(context, target) as GeneratorInput;
-
-                if (input == null)
+                if (!(inputParameters[0].GetValue(context, target) is GeneratorInput input))
                     throw new Exception($"The parameter with the name {inputParameterName} should be an instance of {nameof(GeneratorInput)}.");
 
                 return argumentValue(input);

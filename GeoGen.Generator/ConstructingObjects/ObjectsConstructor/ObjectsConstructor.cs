@@ -7,18 +7,22 @@ namespace GeoGen.Generator
 {
     /// <summary>
     /// A default implementation of <see cref="IObjectsConstructor"/>.
+    /// It uses a given <see cref="IConstructionsContainer"/> that contains
+    /// all constructions to be performed on given configurations. The 
+    /// arguments for new <see cref="ConstructedConfigurationObject"/>s
+    /// are generated using a provided <see cref="IArgumentsGenerator"/>.
     /// </summary>
-    internal sealed class ObjectsConstructor : IObjectsConstructor
+    internal class ObjectsConstructor : IObjectsConstructor
     {
         #region Private fields
 
         /// <summary>
-        /// The constructions container.
+        /// The container of all constructions that are performed on given configurations.
         /// </summary>
         private readonly IConstructionsContainer _constructionsContainer;
 
         /// <summary>
-        /// The arguments generator.
+        /// The generator of arguments that are passed to newly created constructed objects.
         /// </summary>
         private readonly IArgumentsGenerator _argumentsGenerator;
 
@@ -42,52 +46,43 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IObjectsConstructor methods
+        #region IObjectsConstructor implementation
 
         /// <summary>
-        /// Performs all possible constructions to a given configuration.
+        /// Performs all possible constructions on a given configuration.
         /// </summary>
         /// <param name="configurationWrapper">The configuration wrapper.</param>
         /// <returns>The enumerable of constructor outputs.</returns>
         public IEnumerable<ConstructorOutput> GenerateOutput(ConfigurationWrapper configurationWrapper)
         {
-            if (configurationWrapper == null)
-                throw new ArgumentNullException(nameof(configurationWrapper));
-
             // For each construction create many outputs
-            return _constructionsContainer.SelectMany
-            (
-                // For a single construction
-                constructionWrapper =>
+            return _constructionsContainer.SelectMany(constructionWrapper =>
+            {
+                // Generate arguments
+                var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
+
+                // Unwrap construction
+                var unwrapedConstruction = constructionWrapper.WrappedConstruction;
+
+                // Cast each arguments list to a new constructor output
+                var newOutput = generatedArguments.Select(arguments =>
                 {
-                    // Generate arguments
-                    var generatedArguments = _argumentsGenerator.GenerateArguments(configurationWrapper, constructionWrapper);
+                    // Construct the needed number of objects
+                    var constructedObjects = Enumerable.Range(0, unwrapedConstruction.OutputTypes.Count)
+                            .Select(i => new ConstructedConfigurationObject(unwrapedConstruction, arguments, i))
+                            .ToList();
 
-                    // Unwrap construction
-                    var unwrapedConstruction = constructionWrapper.Construction;
-
-                    // Create new output enumerable
-                    var newOutput = generatedArguments.Select
-                    (
-                        arguments =>
-                        {
-                            // Construct objects  with all indices
-                            var constructedObjects = Enumerable.Range(0, unwrapedConstruction.OutputTypes.Count)
-                                    .Select(i => new ConstructedConfigurationObject(unwrapedConstruction, arguments, i))
-                                    .ToList();
-
-                            // Create and return an output for these objects
-                            return new ConstructorOutput
-                            {
-                                OriginalConfiguration = configurationWrapper,
-                                ConstructedObjects = constructedObjects
-                            };
-                        }
-                    );
-
-                    // Return it
-                    return newOutput;
+                    // Create and return the output
+                    return new ConstructorOutput
+                    {
+                        OriginalConfiguration = configurationWrapper,
+                        ConstructedObjects = constructedObjects
+                    };
                 });
+
+                // Return the enumerable of outputs
+                return newOutput;
+            });
         }
 
         #endregion

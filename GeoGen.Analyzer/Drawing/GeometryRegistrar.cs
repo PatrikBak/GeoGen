@@ -59,7 +59,7 @@ namespace GeoGen.Analyzer
             foreach (var configurationObject in constructedObjects)
             {
                 // Pull id
-                var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
+                var id = configurationObject.Id?? throw new AnalyzerException("Id must be set.");
 
                 // To mark the object's id as resolved
                 _resolvedIds.Add(id);

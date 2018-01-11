@@ -1,8 +1,7 @@
 ﻿namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represent a generator of all possible mutually distinct construction arguments, for
-    /// given <see cref="ConfigurationWrapper"/> and <see cref="ConstructionWrapper"/>.
+    /// Represent a generator of all possible mutually distinct construction arguments.
     /// </summary>
     internal interface IArgumentsGenerator
     {
