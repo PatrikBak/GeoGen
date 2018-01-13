@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.PredefinedConstructions;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
-    internal class InternalAngelBisectorFromPointsConstructor : IPredefinedConstructor
+    internal class InternalAngelBisectorFromPointsConstructor : PredefinedConstructorBase
     {
-        public Type PredefinedConstructionType { get; } = typeof(InternalAngelBisectorFromPoints);
-
-        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
+        /// <summary>
+        /// Constructs a given list of constructed configurations objects. This objects 
+        /// should be the result of the same construction.
+        /// </summary>
+        /// <param name="constructedObjects">The constructed objects list.</param>
+        /// <returns>The constructor output.</returns>
+        public override ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));

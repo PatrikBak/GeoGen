@@ -1,13 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Parameters;
+using GeoGen.Core;
 using Moq;
 
 namespace GeoGen.Generator.Test.TestHelpers
 {
-    internal static class Constructions
+    internal static class ConstructionsHelper
     {
         public static ConstructionWrapper Midpoint()
         {

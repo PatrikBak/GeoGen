@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {

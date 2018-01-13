@@ -1,7 +1,7 @@
-﻿namespace GeoGen.Core.Theorems
+﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a type of a <see cref="Theorem"/>, such as collinearity.
+    /// Represents a type of a <see cref="Theorem"/>.
     /// </summary>
     public enum TheoremType
     {
@@ -16,13 +16,8 @@
         ConcyclicPoints,
 
         /// <summary>
-        /// Three concurrent objects that each is either line, or circle
+        /// Three or more concurrent objects that each is either line, or circle
         /// </summary>
-        ConcurrentObjects,
-
-        /// <summary>
-        /// Two configuration objects are geometrically the same
-        /// </summary>
-        SameObjects
+        ConcurrentObjects
     }
 }

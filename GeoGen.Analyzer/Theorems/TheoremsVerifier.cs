@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {

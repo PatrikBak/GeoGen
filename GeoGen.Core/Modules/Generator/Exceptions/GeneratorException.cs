@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Core
 {
     /// <summary>
-    /// An exception used for internal generator errors.
+    /// Represents an exception that is thrown when something wrong
+    /// happens in the generator module. 
     /// </summary>
     public class GeneratorException : Exception
     {
@@ -19,16 +20,6 @@ namespace GeoGen.Core.Generator
         public GeneratorException(string message, Exception innerException)
                 : base(message, innerException)
         {
-        }
-
-        public static GeneratorException ObjectIdNotSet()
-        {
-            return new GeneratorException("Configuration objects id must be set.");
-        }
-
-        public static GeneratorException ConfigurationIdNotSet()
-        {
-            return new GeneratorException("Configuration id is not set.");
         }
     }
 }

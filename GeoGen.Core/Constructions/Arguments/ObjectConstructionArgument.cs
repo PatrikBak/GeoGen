@@ -1,18 +1,16 @@
 ﻿using System;
-using GeoGen.Core.Configurations;
 
-namespace GeoGen.Core.Constructions.Arguments
+namespace GeoGen.Core
 {
     /// <summary>
-    /// Represent a <see cref="ConfigurationObject"/> that is passed as a 
-    /// <see cref="ConstructionArgument"/> to a construction.
+    /// Represents a <see cref="ConstructionArgument"/> that wraps a single <see cref="ConfigurationObject"/>.
     /// </summary>
-    public sealed class ObjectConstructionArgument : ConstructionArgument
+    public class ObjectConstructionArgument : ConstructionArgument
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the object that is passed to a construction.
+        /// Gets the object that this argument wraps.
         /// </summary>
         public ConfigurationObject PassedObject { get; }
 
@@ -21,7 +19,7 @@ namespace GeoGen.Core.Constructions.Arguments
         #region Constructor
 
         /// <summary>
-        /// Constructs a new object construction argument wrapping a given passed configuration object.
+        /// Default constructor.
         /// </summary>
         /// <param name="passedObject">The passed configuration object.</param>
         public ObjectConstructionArgument(ConfigurationObject passedObject)
@@ -31,9 +29,18 @@ namespace GeoGen.Core.Constructions.Arguments
 
         #endregion
 
-        public override void Visit(Action<ConstructionArgument> actionForInternalObjects)
+        #region Overridden methods
+
+        /// <summary>
+        /// Executes an action on the configuration objects that are contained.
+        /// inside the argument.
+        /// </summary>
+        /// <param name="action">The action to be performed on each object.</param>
+        public override void Visit(Action<ConfigurationObject> action)
         {
-            actionForInternalObjects(this);
+            action(PassedObject);
         }
+
+        #endregion
     }
 }

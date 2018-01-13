@@ -1,17 +1,15 @@
-﻿using GeoGen.Core.Configurations;
-
-namespace GeoGen.Core.Constructions.Parameters
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represent a <see cref="ConstructionParameter"/> that is a simple configuration object (such as Point, Line...). 
-    /// It is defined by a value of <see cref="ConfigurationObjectType"/>, since it holds a definition, not a value.
+    /// It is defined by a value of <see cref="ConfigurationObjectType"/>.
     /// </summary>
-    public sealed class ObjectConstructionParameter : ConstructionParameter
+    public class ObjectConstructionParameter : ConstructionParameter
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the expected type of a parameter.
+        /// Gets the expected type of the parameter.
         /// </summary>
         public ConfigurationObjectType ExpectedType { get; }
 
@@ -20,9 +18,9 @@ namespace GeoGen.Core.Constructions.Parameters
         #region Constructor
 
         /// <summary>
-        /// Construct a new object construction parameter wrapping a configuration object type.
+        /// Default constructor.
         /// </summary>
-        /// <param name="expectedType">The configuration object type.</param>
+        /// <param name="expectedType">The object type represented by this parameter.</param>
         public ObjectConstructionParameter(ConfigurationObjectType expectedType)
         {
             ExpectedType = expectedType;

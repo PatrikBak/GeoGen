@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core;
 using GeoGen.Generator.Test.TestHelpers;
 using Moq;
 using NUnit.Framework;
@@ -29,7 +28,7 @@ namespace GeoGen.Generator.Test.ConstructingObjects
 
         private static IConstructionsContainer ConstructionsContainer(int count, int outputCount)
         {
-            var constructions = Constructions.ConstructionWrappers(count, outputCount);
+            var constructions = ConstructionsHelper.ConstructionWrappers(count, outputCount);
             var mock = new Mock<IConstructionsContainer>();
             mock.Setup(c => c.GetEnumerator()).Returns(constructions.GetEnumerator());
 

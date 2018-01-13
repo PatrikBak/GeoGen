@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Parameters;
 
-namespace GeoGen.Core.Constructions
+namespace GeoGen.Core
 {
     /// <summary>
-    /// An abstract representation of a construction that we use to add 
-    /// <see cref="ConstructedConfigurationObject"/> to a <see cref="Configuration"/>. 
-    /// It's given by the input signature, which is a list of <see cref="ConstructionParameter"/>, 
-    /// and the output signature, which is a list of <see cref="ConfigurationObjectType"/>. 
+    /// Represents a construction that is used to define <see cref="ConstructedConfigurationObject"/>s.
+    /// It's given by the input signature, which is a list of <see cref="ConstructionParameter"/>s, 
+    /// and the output signature, which is a list of <see cref="ConfigurationObjectType"/>s. 
     /// </summary>
     public abstract class Construction
     {
@@ -16,7 +13,7 @@ namespace GeoGen.Core.Constructions
 
         /// <summary>
         /// Gets or sets the id of this construction. The id should be
-        /// unit solely during the generation process. It will be reseted every time
+        /// unique solely during the generation process. It will be reseted every time
         /// the process starts over.
         /// </summary>
         public int? Id { get; set; }
@@ -26,12 +23,12 @@ namespace GeoGen.Core.Constructions
         #region Public abstract properties
 
         /// <summary>
-        /// Gets the construction input signature, i.e. the unmodifiable list of construction parameters.
+        /// Gets the construction input signature, i.e. the list of construction parameters.
         /// </summary>
         public abstract IReadOnlyList<ConstructionParameter> ConstructionParameters { get; }
 
         /// <summary>
-        /// Gets the construction output signature, i.e. the unmodifiable list of configuration object types.
+        /// Gets the construction output signature, i.e. the list of configuration object types.
         /// </summary>
         public abstract IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 

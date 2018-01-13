@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
@@ -124,7 +123,7 @@ namespace GeoGen.Generator
                     .OriginalConfiguration
                     .WrappedConfiguration
                     .ConstructedObjects
-                    .Select(obj => obj.Id ?? throw GeneratorException.ObjectIdNotSet())
+                    .Select(obj => obj.Id ?? throw new GeneratorException("Configuration objects id must be set."))
                     .ToSet();
 
             // Determine if there are no duplicates and all objects are not forbidden
@@ -134,7 +133,7 @@ namespace GeoGen.Generator
                 var containerResult = _container.Add(constructedObject);
 
                 // Pull the id
-                var id = containerResult.Id ?? throw GeneratorException.ObjectIdNotSet();
+                var id = containerResult.Id ?? throw new GeneratorException("Configuration objects id must be set.");
 
                 // If the object is currently in the configuration
                 if (initialIds.Contains(id))
@@ -203,7 +202,7 @@ namespace GeoGen.Generator
                 return result;
 
             // Otherwise pull ids
-            var ids = constructedObjects.Select(o => o.Id ?? throw GeneratorException.ObjectIdNotSet());
+            var ids = constructedObjects.Select(o => o.Id ?? throw new GeneratorException("Configuration objects id must be set."));
 
             // Update the forbidden ids set
             foreach (var id in ids)

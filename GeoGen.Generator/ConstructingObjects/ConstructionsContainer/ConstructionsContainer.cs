@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
@@ -49,7 +45,7 @@ namespace GeoGen.Generator
         private void Initialize(IEnumerable<Construction> constructions)
         {
             if (constructions == null)
-                throw ConstructionException.ConstructionsMustNotBeNull();
+                throw new InitializationException("Constructions can't be null.");
 
             // Enumerate the constructions
             var constructionsList = constructions.ToList();
@@ -72,8 +68,8 @@ namespace GeoGen.Generator
         private static void CheckUniqueIds(IReadOnlyCollection<Construction> constructions)
         {
             // Cast constructions to the set of their ids (and check for null constructions on go)
-            var ids = constructions.Select(construction => construction ?? throw ConstructionException.ConstructionMostNotBeNull())
-                    .Select(construction => construction.Id ?? throw ConstructionException.ConstructionIdNotSet())
+            var ids = constructions.Select(construction => construction ?? throw new InitializationException("Constructions contain null."))
+                    .Select(construction => construction.Id ?? throw new InitializationException("Constructions must have their ids set."))
                     .ToSet();
 
             // The ids are unique if and only if the number of actual ids is the same
@@ -82,7 +78,7 @@ namespace GeoGen.Generator
 
             // We expect ids to be unique
             if (!uniqueIds)
-                throw ConstructionException.ConstructionsMustHaveUniqueId();
+                throw new InitializationException("Constructions don't have unique ids.");
         }
 
         /// <summary>

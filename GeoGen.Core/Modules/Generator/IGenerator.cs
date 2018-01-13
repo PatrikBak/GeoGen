@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Core.Generator
+namespace GeoGen.Core
 {
     /// <summary>
-    /// A basic interface for the generator module.
+    /// A basic interface for the generator module that executes the generation
+    /// process. The goal is to generate <see cref="Configuration"/>s and <see cref="Theorem"/>s
+    /// that hold true in them, using a <see cref="GeneratorInput"/>.
     /// </summary>
     public interface IGenerator
     {

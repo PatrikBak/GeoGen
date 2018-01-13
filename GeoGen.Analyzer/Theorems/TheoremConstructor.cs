@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Theorems;
-using GeoGen.Core.Utilities;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
@@ -20,7 +18,7 @@ namespace GeoGen.Analyzer
 
             var theoremObjects = involvedObjects
                     .Select(obj => Construct(allObjects, obj))
-                    .ToSet();
+                    .ToList();
 
             return new Theorem(type, theoremObjects);
         }
@@ -58,7 +56,7 @@ namespace GeoGen.Analyzer
                 ? TheoremObjectSignature.LineGivenByPoints
                 : TheoremObjectSignature.CircleGivenByPoints;
 
-            return new TheoremObject(involedObjects, objectType);
+            return new TheoremObject(objectType, involedObjects);
         }
     }
 }

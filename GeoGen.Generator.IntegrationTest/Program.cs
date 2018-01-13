@@ -2,121 +2,15 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer;
 using GeoGen.Core;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.PredefinedConstructions;
-using GeoGen.Core.Generator;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using GeoGen.Utilities;
 using Ninject;
 using Ninject.Planning.Bindings.Resolvers;
 
 namespace GeoGen.Generator.IntegrationTest
 {
-    public class Js : JsonConverter
-    {
-        public override bool CanConvert(Type objectType)
-        {
-            Console.WriteLine(objectType.Name);
-            if (objectType == typeof(InternalAngelBisectorFromPoints))
-            {
-                Console.WriteLine();
-            }
-
-            return objectType.IsSubclassOf(typeof(Construction));
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var jo = JObject.Load(reader);
-
-            if (jo["$type"].Value<string>() == nameof(PredefinedConstruction))
-                return jo.ToObject<PredefinedConstruction>(serializer);
-
-            if (jo["$type"].Value<string>() == nameof(ComposedConstruction))
-                return jo.ToObject<ComposedConstruction>(serializer);
-
-            return null;
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            JToken t = JToken.FromObject(value);
-
-            if (t.Type != JTokenType.Object)
-            {
-                t.WriteTo(writer);
-            }
-            else
-            {
-                JObject o = (JObject) t;
-                o.AddFirst(new JProperty("$type", value.GetType().Name));
-
-                o.WriteTo(writer);
-            }
-        }
-    }
-
-    public class Tree
-    {
-        private static int _i = 0;
-        public static int _calls = 0;
-        public int Number { get; }
-        public Tree Left { get; set; }
-        public Tree Right { get; set; }
-
-        public Tree()
-        {
-            Number = _i++;
-        }
-
-        public IEnumerable<int> Preorder1()
-        {
-            _calls++;
-            if (Left != null)
-            {
-                foreach (var i in Left.Preorder1().ToList())
-                {
-                    Console.WriteLine($"Yielding {i}");
-                    yield return i;
-                }
-            }
-
-            Console.WriteLine($"Yielding {Number}");
-            yield return Number;
-
-            if (Right != null)
-            {
-                foreach (var i in Right.Preorder1().ToList())
-                {
-                    Console.WriteLine($"Yielding {i}");
-                    yield return i;
-                }
-            }
-        }
-
-        public IEnumerable<int> Preorder2()
-        {
-            var stack = new Stack<Tree>();
-            stack.Push(this);
-            while (stack.Count != 0)
-            {
-                var current = stack.Pop();
-                if (current == null)
-                    continue;
-                Console.WriteLine($"Yielding {current.Number}");
-                yield return current.Number;
-                stack.Push(current.Left);
-                stack.Push(current.Right);
-            }
-        }
-    }
-
     public class Program
     {
         private static ConstructionsContainer _constructionsContainer;
@@ -195,7 +89,7 @@ namespace GeoGen.Generator.IntegrationTest
             var kernel = new StandardKernel
             (
                 new GeneratorModule(),
-                new CoreModule(),
+                new UtilitiesModule(),
                 new AnalyerModule(),
                 new AnalyticalGeometryModule()
             );
@@ -220,7 +114,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 7
+                MaximalNumberOfIterations = 4
             };
 
             var generator = factory.CreateGenerator(input);
@@ -243,13 +137,13 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-                //_composedConstructions.AddCentroidFromPoints(),
-                //_composedConstructions.AddIncenterFromPoints(),
-                                _constructionsContainer.Get<MidpointFromPoints>(),
-                //_constructionsContainer.Get<IntersectionFromPoints>()
-              //  _constructionsContainer.Get<IntersectionFromLines>(),
-              //  _constructionsContainer.Get<PerpendicularLineFromPoints>(),
-               // _constructionsContainer.Get<InternalAngelBisectorFromPoints>(),
+                _composedConstructions.AddCentroidFromPoints(),
+                _composedConstructions.AddIncenterFromPoints(),
+                //_constructionsContainer.Get(MidpointFromPoints),
+                //_constructionsContainer.Get(IntersectionOfLinesFromPoints),
+                //_constructionsContainer.Get(IntersectionOfLines),
+                //_constructionsContainer.Get(PerpendicularLineFromPoints),
+                //_constructionsContainer.Get(InternalAngelBisectorFromPoints),
             };
         }
 
@@ -262,7 +156,7 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void PrintTheorems(IEnumerable<GeneratorOutput> result)
         {
-            var formatter = new OutputFormatter();
+            var formatter = new OutputFormatter(_constructionsContainer);
 
             Console.ReadKey(true);
             Console.WriteLine("Results:\n");

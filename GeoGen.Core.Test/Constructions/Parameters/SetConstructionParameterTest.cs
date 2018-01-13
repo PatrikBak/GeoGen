@@ -1,5 +1,4 @@
 ﻿using System;
-using GeoGen.Core.Constructions.Parameters;
 using Moq;
 using NUnit.Framework;
 

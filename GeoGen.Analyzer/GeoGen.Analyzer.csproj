@@ -53,9 +53,10 @@
     <Compile Include="Constructing\ComposedConstructions\ComposedConstructor.cs" />
     <Compile Include="Constructing\ComposedConstructions\IComposedConstructor.cs" />
     <Compile Include="Constructing\ComposedConstructions\IComposedConstructorFactory.cs" />
+    <Compile Include="Constructing\PredefinedConstructorBase.cs" />
     <Compile Include="Constructing\PredefinedConstructors\CircumcircleFromPointsConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\CircumcenterFromPointsConstructor.cs" />
-    <Compile Include="Constructing\PredefinedConstructors\InteresectionFromLinesConstructor.cs" />
+    <Compile Include="Constructing\PredefinedConstructors\IntersectionOfLinesConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\InternalAngelBisectorFromPointsConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\LoosePointOnLineFromPointsConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\PerpendicularLineFromPointsConstructor.cs" />
@@ -63,7 +64,6 @@
     <Compile Include="Drawing\IGeometryRegistrar.cs" />
     <Compile Include="Drawing\RegistrationResult.cs" />
     <Compile Include="GradualAnalyzerOutput.cs" />
-    <Compile Include="AnalyzerException.cs" />
     <Compile Include="Constructing\ConstructorOutput.cs" />
     <Compile Include="Constructing\ConstructorsResolver.cs" />
     <Compile Include="Constructing\ILooseObjectsConstructor.cs" />
@@ -91,7 +91,7 @@
     <Compile Include="Objects\IObjectsContainer.cs" />
     <Compile Include="GradualAnalyzer.cs" />
     <Compile Include="IGradualAnalyzer.cs" />
-    <Compile Include="Constructing\PredefinedConstructors\InteresectionFromPointsConstructor.cs" />
+    <Compile Include="Constructing\PredefinedConstructors\InteresectionOfLinesFromPointsConstructor.cs" />
     <Compile Include="Constructing\PredefinedConstructors\MidpointFromPointsConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Theorems\ITheoremVerifier.cs" />

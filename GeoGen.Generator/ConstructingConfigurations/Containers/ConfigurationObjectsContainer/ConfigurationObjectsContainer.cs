@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
@@ -234,7 +232,7 @@ namespace GeoGen.Generator
                     // It must be constructible, i.e. it must be already present in the
                     // container, i.e. its id must be set
                     if (passedObject.Id != null)
-                        throw InitializationException.NotConstructibleConfiguration();
+                        throw new InitializationException("The initial configuration is not logically constructible");
 
                     // If the object is loose, we're fine
                     if (passedObject is LooseConfigurationObject)
@@ -266,7 +264,7 @@ namespace GeoGen.Generator
             // If the object has id, then we have duplicate objects, since the object
             // is not supposed be initialized yet
             if (constructedObject.Id != null)
-                throw InitializationException.DuplicateObjects();
+                throw new InitializationException("The initial configuration contains duplicate objects");
 
             // Otherwise we can use the local function to validate its passed arguments
             foreach (var passedArgument in constructedObject.PassedArguments)
@@ -279,7 +277,7 @@ namespace GeoGen.Generator
 
             // If we already have this object in the container, we have a problem
             if (result != constructedObject)
-                throw InitializationException.DuplicateObjects();
+                throw new InitializationException("The initial configuration contains duplicate objects");
 
             // Otherwise everything is correct
         }

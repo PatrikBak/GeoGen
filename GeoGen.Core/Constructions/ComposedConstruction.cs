@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Utilities;
 
-namespace GeoGen.Core.Constructions
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="Construction"/> that is defined as an output of some configuration. 
     /// This is supposed to represent a complex constructions that user can define by themselves, for instance
     /// the construction that takes 3 points and outputs the orthocenter of the triangle formed by those points.
+    /// The output of a construction is defined using a <see cref="Configuration"/>. The actual 
+    /// <see cref="ConstructionArgument"/>s will be mapped to the loose objects of the configuration.
+    /// Some objects of this configuration will be then taken as the output of the construction.
     /// </summary>
-    public sealed class ComposedConstruction : Construction
+    public class ComposedConstruction : Construction
     {
-        public string Name { get; set; }
-
         #region Public properties
 
         /// <summary>
@@ -24,7 +22,7 @@ namespace GeoGen.Core.Constructions
         public Configuration ParentalConfiguration { get; }
 
         /// <summary>
-        /// Gets the constructed configuration objects that represents a configuration output. 
+        /// Gets the constructed configuration objects that represent the output of this construction.
         /// </summary>
         public List<ConstructedConfigurationObject> ConstructionOutput { get; }
 
@@ -33,12 +31,12 @@ namespace GeoGen.Core.Constructions
         #region Construction properties
 
         /// <summary>
-        /// Gets the construction signature, i.e. the unmodifiable list of construction parameters.
+        /// Gets the construction input signature, i.e. the list of construction parameters.
         /// </summary>
         public override IReadOnlyList<ConstructionParameter> ConstructionParameters { get; }
 
         /// <summary>
-        /// Gets the construction output signature, i.e. the unmodifiable list of configuration object types.
+        /// Gets the construction output signature, i.e. the list of configuration object types.
         /// </summary>
         public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
@@ -47,42 +45,21 @@ namespace GeoGen.Core.Constructions
         #region Constructor
 
         /// <summary>
-        /// Constructs a new composed construction from a given parental configuration, a set
-        /// of indices of objects that are supposed be the output of the construction signature, 
-        /// and a signature of the construction. It must be possible to pass the loose configuration
-        /// objects of the parental configuration to the signature. This may or may not be order-Dependant.
-        /// (the incenter of a triangle is order-independent, unlike an excenter). 
+        /// Default constructor.
         /// </summary>
-        public ComposedConstruction
-        (
-            Configuration parentalConfiguration,
-            IList<int> outputObjectsIndices,
-            IReadOnlyList<ConstructionParameter> constructionParameters
-        )
+        /// <param name="configuration">The configuration that represents the composed construction.</param>
+        /// <param name="indices">The indices of the outputted objects that are from the constructed objects of the given configuration.</param>
+        /// <param name="parameters">The parameters of the construction (the signature must correspond to the loose objects of the configuration).</param>
+        public ComposedConstruction(Configuration configuration, IEnumerable<int> indices, IReadOnlyList<ConstructionParameter> parameters)
         {
-            ParentalConfiguration = parentalConfiguration ?? throw new ArgumentNullException(nameof(parentalConfiguration));
+            ParentalConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            ConstructionParameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
-            if (outputObjectsIndices == null)
-                throw new ArgumentNullException(nameof(outputObjectsIndices));
+            // Find constructed objects in the configuration according to the indices enumerable
+            ConstructionOutput = indices.Select(i => configuration.ConstructedObjects[i]).ToList();
 
-            if (outputObjectsIndices.Empty())
-                throw new ArgumentException("Output object indices can't be empty.");
-
-            try
-            {
-                ConstructionOutput = outputObjectsIndices.Select(i => parentalConfiguration.ConstructedObjects[i]).ToList();
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentException("Incorrect indices, can't retrieve constructed objects.");
-            }
-
+            // Find the types of outputted objects
             OutputTypes = ConstructionOutput.Select(o => o.ObjectType).ToList();
-
-            ConstructionParameters = constructionParameters ?? throw new ArgumentNullException(nameof(constructionParameters));
-
-            if (constructionParameters.Empty())
-                throw new ArgumentException("Construction parameters can't be empty");
         }
 
         #endregion

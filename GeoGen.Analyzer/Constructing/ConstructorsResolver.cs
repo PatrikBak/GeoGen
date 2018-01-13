@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Constructions;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
@@ -12,15 +12,19 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The dictionary mapping types of predefined constructions to their 
+        /// The dictionary mapping the types of predefined constructions to their 
         /// predefined constructors.
         /// </summary>
-        private readonly Dictionary<Type, IPredefinedConstructor> _predefinedConstructors;
+        private readonly Dictionary<PredefinedConstructionType, IPredefinedConstructor> _predefinedConstructors;
 
+        /// <summary>
+        /// The dictionary mapping ids of composed constructions to their corresponding
+        /// constructors.
+        /// </summary>
         private readonly Dictionary<int, IComposedConstructor> _composedConstructors;
 
         /// <summary>
-        /// The factory for composed constructors
+        /// The factory for getting composed constructors for a given composed construction.
         /// </summary>
         private readonly IComposedConstructorFactory _factory;
 
@@ -40,7 +44,7 @@ namespace GeoGen.Analyzer
 
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 
-            _predefinedConstructors = new Dictionary<Type, IPredefinedConstructor>();
+            _predefinedConstructors = new Dictionary<PredefinedConstructionType, IPredefinedConstructor>();
             _composedConstructors = new Dictionary<int, IComposedConstructor>();
 
             foreach (var constructor in constructors)
@@ -76,7 +80,7 @@ namespace GeoGen.Analyzer
             {
                 try
                 {
-                    return _predefinedConstructors[predefinedConstruction.GetType()];
+                    return _predefinedConstructors[predefinedConstruction.Type];
                 }
                 catch (KeyNotFoundException)
                 {

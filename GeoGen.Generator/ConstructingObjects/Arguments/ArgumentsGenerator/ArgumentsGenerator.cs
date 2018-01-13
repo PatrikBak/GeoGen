@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using GeoGen.Core.Utilities;
+using GeoGen.Core;
 using GeoGen.Utilities.Combinations;
 using GeoGen.Utilities.Variations;
 

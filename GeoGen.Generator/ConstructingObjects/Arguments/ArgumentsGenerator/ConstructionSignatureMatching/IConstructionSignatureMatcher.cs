@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Core.Generator;
-using GeoGen.Core.Utilities;
+using GeoGen.Core;
 
 namespace GeoGen.Generator
 {

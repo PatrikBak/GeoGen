@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
@@ -53,7 +51,7 @@ namespace GeoGen.Generator
         /// <returns>The id.</returns>
         public int ResolveId(ConfigurationObject configurationObject)
         {
-            var id = configurationObject.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            var id = configurationObject.Id ?? throw new GeneratorException("Configuration objects id must be set.");
 
             return _realIdsToResolvedIds[id];
         }

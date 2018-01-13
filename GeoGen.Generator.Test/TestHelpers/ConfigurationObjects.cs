@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
+using GeoGen.Core;
 
 namespace GeoGen.Generator.Test.TestHelpers
 {
@@ -30,7 +29,7 @@ namespace GeoGen.Generator.Test.TestHelpers
 
         public static ConstructedConfigurationObject ConstructedObject(int constructionId, int index, List<ConstructionArgument> args, int? objectId = null)
         {
-            var construction = Constructions.ConstructionWithId(constructionId);
+            var construction = ConstructionsHelper.ConstructionWithId(constructionId);
 
             var result = new ConstructedConfigurationObject(construction, args, index);
 

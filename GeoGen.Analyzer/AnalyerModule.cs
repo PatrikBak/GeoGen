@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.Core.Constructions.PredefinedConstructions;
 
 namespace GeoGen.Analyzer
 {
@@ -33,8 +32,8 @@ namespace GeoGen.Analyzer
 
             BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, CircumcircleFromPointsConstructor>();
-            BindInGeneratorScope<IPredefinedConstructor, InteresectionFromLinesConstructor>();
-            BindInGeneratorScope<IPredefinedConstructor, InteresectionFromPointsConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, IntersectionOfLinesConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, IntersectionOfLinesFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, InternalAngelBisectorFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, LoosePointOnLineFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, MidpointFromPointsConstructor>();

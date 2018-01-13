@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Core.Configurations
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an actual geometrical object type (such as Point, Line...)
@@ -6,17 +6,17 @@
     public enum ConfigurationObjectType
     {
         /// <summary>
-        /// Geometrical point
+        /// The point type.
         /// </summary>
         Point,
 
         /// <summary>
-        /// Geometrical line
+        /// The line type.
         /// </summary>
         Line,
 
         /// <summary>
-        /// Geometrical circle
+        /// The circle type.
         /// </summary>
         Circle
     }

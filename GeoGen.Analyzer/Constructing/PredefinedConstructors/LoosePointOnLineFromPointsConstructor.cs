@@ -4,26 +4,27 @@ using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.AnalyticalGeometry.RandomObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.PredefinedConstructions;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
-    internal class LoosePointOnLineFromPointsConstructor : IPredefinedConstructor
+    internal class LoosePointOnLineFromPointsConstructor : PredefinedConstructorBase
     {
         private readonly IRandomnessProvider _provider;
-
-        public Type PredefinedConstructionType { get; } = typeof(LoosePointOnLineFromPoints);
-
+        
         public LoosePointOnLineFromPointsConstructor(IRandomnessProvider provider)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
-        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
+        /// <summary>
+        /// Constructs a given list of constructed configurations objects. This objects 
+        /// should be the result of the same construction.
+        /// </summary>
+        /// <param name="constructedObjects">The constructed objects list.</param>
+        /// <returns>The constructor output.</returns>
+        public override ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
@@ -71,7 +72,7 @@ namespace GeoGen.Analyzer
                     }
                 }
 
-                var objects = new HashSet<TheoremObject>
+                var objects = new List<TheoremObject>
                 {
                     new TheoremObject(obj1),
                     new TheoremObject(obj2),

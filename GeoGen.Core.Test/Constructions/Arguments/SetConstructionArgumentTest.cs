@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Constructions.Arguments;
 using Moq;
 using NUnit.Framework;
 
@@ -22,7 +21,7 @@ namespace GeoGen.Core.Test.Constructions.Arguments
             (
                 () =>
                 {
-                    var emptySet = new HashSet<ConstructionArgument>();
+                    var emptySet = new List<ConstructionArgument>();
                     new SetConstructionArgument(emptySet);
                 }
             );
@@ -36,7 +35,7 @@ namespace GeoGen.Core.Test.Constructions.Arguments
                 () =>
                 {
                     var mock = new Mock<ConstructionArgument>();
-                    var set = new HashSet<ConstructionArgument> {mock.Object};
+                    var set = new List<ConstructionArgument> {mock.Object};
                     new SetConstructionArgument(set);
                 }
             );

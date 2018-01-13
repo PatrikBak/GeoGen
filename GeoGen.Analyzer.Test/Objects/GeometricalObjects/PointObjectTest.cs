@@ -1,6 +1,6 @@
 ﻿using System;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
+using GeoGen.Core;
 using NUnit.Framework;
 
 namespace GeoGen.Analyzer.Test.Objects.GeometricalObjects

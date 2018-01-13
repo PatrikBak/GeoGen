@@ -1,6 +1,5 @@
 ﻿using System;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using NUnit.Framework;
 
 namespace GeoGen.Generator.Test.ConstructingConfigurations.ObjectToString.ObjectIdResolving

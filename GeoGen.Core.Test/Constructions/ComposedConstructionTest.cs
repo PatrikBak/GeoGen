@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.Parameters;
 using Moq;
 using NUnit.Framework;
 

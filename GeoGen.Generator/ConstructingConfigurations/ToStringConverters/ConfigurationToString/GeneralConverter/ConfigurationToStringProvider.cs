@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
@@ -113,7 +113,7 @@ namespace GeoGen.Generator
                 }
 
                 // Pull id of the configuration that should be the initial one
-                var id = previousConfiguration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+                var id = previousConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
                 // Cache the result
                 dictionary.Add(id, initialResult);
@@ -137,7 +137,7 @@ namespace GeoGen.Generator
             }
 
             // Pull id of the current configuration
-            var currentId = configuration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            var currentId = configuration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Cache the result
             dictionary.Add(currentId, result);
@@ -161,7 +161,7 @@ namespace GeoGen.Generator
         private string ResolveCache(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
         {
             // Pull id of the current configuration
-            var currentId = configuration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            var currentId = configuration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Get dictionary for the converter
             var dictionary = GetDictionaryForConverter(objectToString);
@@ -191,7 +191,7 @@ namespace GeoGen.Generator
             var resolverId = objectToString.Resolver.Id;
 
             // Pull id of previous configuration
-            var previousId = configuration.PreviousConfiguration.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            var previousId = configuration.PreviousConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Pull now we can return the original configuration
             return _cachedSets[resolverId][previousId];

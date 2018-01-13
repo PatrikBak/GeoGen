@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Utilities;
 
-namespace GeoGen.Core.Configurations
+namespace GeoGen.Core
 {
     /// <summary>
-    /// Represent a constructed <see cref="ConfigurationObject"/>. It's defined by a <see cref="Construction"/>,
-    /// the list of <see cref="ConstructionArgument"/>s that have been passed to the construction, and an index
-    /// (the construction could have more output objects).
+    /// Represent a constructed <see cref="ConfigurationObject"/>. It's defined by a construction
+    /// the list of <see cref="ConstructionArgument"/>s that matches the construction signature, and 
+    /// an index (the construction could have more output objects).
     /// </summary>
-    public sealed class ConstructedConfigurationObject : ConfigurationObject
+    public class ConstructedConfigurationObject : ConfigurationObject
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the construction that created this object.
+        /// Gets the construction that creates this object.
         /// </summary>
         public Construction Construction { get; }
 
@@ -44,26 +41,38 @@ namespace GeoGen.Core.Configurations
         #region Constructor
 
         /// <summary>
-        /// Constructs a new constructed configuration object. This object is defined by 
-        /// a construction, a list of passed arguments and an index that corresponds 
-        /// to the object type in the output type list of the construction. 
+        /// Default constructor.
         /// </summary>
         /// <param name="construction">The construction.</param>
-        /// <param name="arguments">The passed arguments.</param>
-        /// <param name="index">The index.</param>
+        /// <param name="arguments">The passed arguments to the construction.</param>
+        /// <param name="index">The index indicating which output of the construction this object is.</param>
         public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> arguments, int index)
         {
             Construction = construction ?? throw new ArgumentNullException(nameof(construction));
             PassedArguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
-
-            if (PassedArguments.Empty())
-                throw new ArgumentException("Passed arguments can't be empty.");
-
-            if (index < 0 || index >= Construction.OutputTypes.Count)
-                throw new ArgumentOutOfRangeException(nameof(index), "Index must be in range [0, Construction.OutputTypes.Count - 1].");
-
             Index = index;
             ObjectType = Construction.OutputTypes[index];
+        }
+
+        #endregion
+
+        #region Overridden methods
+
+        /// <summary>
+        /// Executes an action on the configuration objects that are used to define this one
+        /// (including this one). The action might get call for the same object more than once.
+        /// </summary>
+        /// <param name="action">The action to be performed on each object.</param>
+        public override void Visit(Action<ConfigurationObject> action)
+        {
+            // Call the action on this object
+            action(this);
+
+            // Visit the objects within the arguments
+            foreach (var argument in PassedArguments)
+            {
+                argument.Visit(action);
+            }
         }
 
         #endregion

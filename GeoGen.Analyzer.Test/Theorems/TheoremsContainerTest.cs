@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer.Test.TestHelpers;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Theorems;
-using GeoGen.Utilities;
+using GeoGen.Core;
 using NUnit.Framework;
 
 namespace GeoGen.Analyzer.Test.Theorems
@@ -32,11 +30,11 @@ namespace GeoGen.Analyzer.Test.Theorems
 
             var theoremObjects = new[]
             {
-                new TheoremObject(points, TheoremObjectSignature.LineGivenByPoints),
+                new TheoremObject(TheoremObjectSignature.LineGivenByPoints, points),
                 new TheoremObject(lines[0])
             };
 
-            var theorem = new Theorem(TheoremType.CollinearPoints, new HashSet<TheoremObject>(theoremObjects));
+            var theorem = new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>(theoremObjects));
 
             var container = new TheoremsContainer {theorem, theorem};
 
@@ -57,7 +55,7 @@ namespace GeoGen.Analyzer.Test.Theorems
             {
                 new[]
                 {
-                    new TheoremObject(points, TheoremObjectSignature.LineGivenByPoints),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, points),
                     new TheoremObject(lines[0])
                 },
                 new[]
@@ -75,19 +73,19 @@ namespace GeoGen.Analyzer.Test.Theorems
                 },
                 new[]
                 {
-                    new TheoremObject(points.Skip(1).ToList(), TheoremObjectSignature.LineGivenByPoints)
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, points.Skip(1).ToList())
                 },
                 new[]
                 {
-                    new TheoremObject(points.Skip(2).ToList(), TheoremObjectSignature.CircleGivenByPoints)
+                    new TheoremObject(TheoremObjectSignature.CircleGivenByPoints, points.Skip(2).ToList())
                 },
                 new[]
                 {
-                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.CircleGivenByPoints)
+                    new TheoremObject(TheoremObjectSignature.CircleGivenByPoints, points.Take(1).ToList())
                 },
                 new[]
                 {
-                    new TheoremObject(points.Take(1).ToList(), TheoremObjectSignature.LineGivenByPoints)
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, points.Take(1).ToList())
                 }
             };
 
@@ -97,7 +95,7 @@ namespace GeoGen.Analyzer.Test.Theorems
             {
                 foreach (var theoremObject in theoremObjects)
                 {
-                    var theorem = new Theorem(theoremType, theoremObject.ToSet());
+                    var theorem = new Theorem(theoremType, theoremObject.ToList());
 
                     var count = container.Count();
                     container.Add(theorem);

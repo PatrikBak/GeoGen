@@ -1,5 +1,4 @@
 ﻿using System;
-using GeoGen.Core.Constructions.Arguments;
 using NUnit.Framework;
 
 namespace GeoGen.Core.Test.Constructions.Arguments

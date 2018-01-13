@@ -2,16 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest
 {
     internal class OutputFormatter
     {
         private Dictionary<int, char> _objectIdToString;
+
+        private ConstructionsContainer _constructionsContainer;
+
+        public OutputFormatter(ConstructionsContainer constructionsContainer)
+        {
+            _constructionsContainer = constructionsContainer;
+        }
 
         public string Format(Configuration configuration)
         {
@@ -46,10 +50,7 @@ namespace GeoGen.Generator.IntegrationTest
 
         private string ConstructionToString(Construction construction)
         {
-            if (construction is PredefinedConstruction)
-                return construction.GetType().Name;
-
-            return ((ComposedConstruction) construction).Name;
+            return _constructionsContainer.GetName(construction);
         }
 
         private string ArgumentToString(ConstructionArgument argument)

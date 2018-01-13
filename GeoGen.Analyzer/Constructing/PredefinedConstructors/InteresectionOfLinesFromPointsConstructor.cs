@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.PredefinedConstructions;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
@@ -14,17 +11,15 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A constructor for the <see cref="IntersectionFromPoints"/> construction.
     /// </summary>
-    internal sealed class InteresectionFromPointsConstructor : IPredefinedConstructor
+    internal sealed class IntersectionOfLinesFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
-        /// Gets the type of this predefined construction.
+        /// Constructs a given list of constructed configurations objects. This objects 
+        /// should be the result of the same construction.
         /// </summary>
-        public Type PredefinedConstructionType { get; } = typeof(IntersectionFromPoints);
-
-        /// <summary>
-        /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
-        /// </summary>
-        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
+        /// <param name="constructedObjects">The constructed objects list.</param>
+        /// <returns>The constructor output.</returns>
+        public override ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
@@ -93,13 +88,13 @@ namespace GeoGen.Analyzer
                     return new List<IAnalyticalObject> {result};
                 }
 
-                var objects1 = new HashSet<TheoremObject>
+                var objects1 = new List<TheoremObject>
                 {
                     new TheoremObject(obj1),
                     new TheoremObject(obj2),
                     new TheoremObject(constructedObject)
                 };
-                var objects2 = new HashSet<TheoremObject>
+                var objects2 = new List<TheoremObject>
                 {
                     new TheoremObject(obj3),
                     new TheoremObject(obj4),

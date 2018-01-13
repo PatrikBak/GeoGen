@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.PredefinedConstructions;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
@@ -14,17 +11,15 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A constructor for the <see cref="MidpointFromPoints"/> construction.
     /// </summary>
-    internal sealed class MidpointFromPointsConstructor : IPredefinedConstructor
+    internal class MidpointFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
-        /// Gets the type of this predefined construction.
+        /// Constructs a given list of constructed configurations objects. This objects 
+        /// should be the result of the same construction.
         /// </summary>
-        public Type PredefinedConstructionType { get; } = typeof(MidpointFromPoints);
-
-        /// <summary>
-        /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
-        /// </summary>
-        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
+        /// <param name="constructedObjects">The constructed objects list.</param>
+        /// <returns>The constructor output.</returns>
+        public override ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
             if (constructedObjects == null)
                 throw new ArgumentNullException(nameof(constructedObjects));
@@ -62,7 +57,7 @@ namespace GeoGen.Analyzer
                     return new List<IAnalyticalObject> {result};
                 }
 
-                var objects = new HashSet<TheoremObject>
+                var objects = new List<TheoremObject>
                 {
                     new TheoremObject(obj1),
                     new TheoremObject(obj2),

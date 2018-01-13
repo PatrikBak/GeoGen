@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Utilities;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer

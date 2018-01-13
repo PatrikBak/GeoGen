@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
@@ -25,8 +22,8 @@ namespace GeoGen.Analyzer
 
         public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
         {
-            // Flatten the input objects
-            var inputObjects = Flatten(constructedObjects[0].PassedArguments);
+            // Extract the input objects
+            var inputObjects = ExtraxtInputObject(constructedObjects[0].PassedArguments);
 
             // Pull the loose objects (that should correspond to the flatten ones)
             var looseObjects = _construction.ParentalConfiguration.LooseObjects;
@@ -49,7 +46,7 @@ namespace GeoGen.Analyzer
 
                         // Take real object
                         var realObjectAnalytical = container.Get(inputObject);
-                        
+
                         // Add this object to the results list
                         result.Add(realObjectAnalytical);
                     }
@@ -91,21 +88,25 @@ namespace GeoGen.Analyzer
             };
         }
 
-        private static List<ConfigurationObject> Flatten(IEnumerable<ConstructionArgument> arguments)
+        /// <summary>
+        /// Finds all objects in the arguments and flattens them to the list.
+        /// </summary>
+        /// <param name="arguments">The arguments list.</param>
+        /// <returns>The objects list.</returns>
+        private List<ConfigurationObject> ExtraxtInputObject(IReadOnlyList<ConstructionArgument> arguments)
         {
-            return arguments.SelectMany(Flatten).ToList();
-        }
+            // Prepare the result
+            var result = new List<ConfigurationObject>();
 
-        private static IEnumerable<ConfigurationObject> Flatten(ConstructionArgument argument)
-        {
-            if (argument is ObjectConstructionArgument objectArgument)
+            // Go trough the arguments
+            foreach (var argument in arguments)
             {
-                return new[] {objectArgument.PassedObject};
+                // Visit all objects of a given one and add them to the list
+                argument.Visit(result.Add);
             }
 
-            var setArgument = (SetConstructionArgument) argument;
-
-            return setArgument.PassedArguments.SelectMany(Flatten).ToList();
+            // Return the result
+            return result;
         }
     }
 }

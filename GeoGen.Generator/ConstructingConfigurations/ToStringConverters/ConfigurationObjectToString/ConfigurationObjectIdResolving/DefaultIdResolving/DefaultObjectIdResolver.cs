@@ -1,6 +1,4 @@
-﻿using System;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
+﻿using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
@@ -36,7 +34,7 @@ namespace GeoGen.Generator
         /// <returns>The id.</returns>
         public int ResolveId(ConfigurationObject configurationObject)
         {
-            return configurationObject.Id ?? throw GeneratorException.ConfigurationIdNotSet();
+            return configurationObject.Id ?? throw new GeneratorException("Configurations id must be set.");
         }
 
         #endregion

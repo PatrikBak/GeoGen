@@ -55,6 +55,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SetOnce.cs" />
+    <Compile Include="UtilitiesModule.cs" />
     <Compile Include="DataStructures\CacheBasedContainer.cs" />
     <Compile Include="DataStructures\IToStringConverter.cs" />
     <Compile Include="Extentions\CollectionExtensions.cs" />
@@ -78,6 +80,12 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">
+      <Project>{C2A889D2-7219-4F33-9637-8DA9540C3E97}</Project>
+      <Name>GeoGen.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

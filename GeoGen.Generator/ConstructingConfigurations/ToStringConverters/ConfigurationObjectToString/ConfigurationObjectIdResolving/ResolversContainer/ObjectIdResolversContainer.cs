@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using GeoGen.Utilities.Variations;
 
@@ -62,7 +61,7 @@ namespace GeoGen.Generator
         {
             // Cast objects to ids list
             var ids = objects
-                    .Select(o => o.Id ?? throw GeneratorException.ConfigurationIdNotSet())
+                    .Select(o => o.Id ?? throw new GeneratorException("Configuration objects id must be set."))
                     .ToList();
 
             // Start from the id of the default resolver + 1 so we don't get a conflict

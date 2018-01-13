@@ -1,43 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using GeoGen.Core.Constructions;
+using System.Text.RegularExpressions;
+using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest
 {
     internal class ConstructionsContainer
     {
-        private readonly Dictionary<Type, PredefinedConstruction> _predefinedConstructions;
+        private readonly Dictionary<PredefinedConstructionType, PredefinedConstruction> _predefinedConstructions;
 
         private readonly List<ComposedConstruction> _composedConstructions;
+
+        private readonly Dictionary<int, string> _names;
 
         private int _lastId;
 
         public ConstructionsContainer()
         {
-            _predefinedConstructions = new Dictionary<Type, PredefinedConstruction>();
+            _predefinedConstructions = new Dictionary<PredefinedConstructionType, PredefinedConstruction>();
             _composedConstructions = new List<ComposedConstruction>();
+            _names = new Dictionary<int, string>();
         }
 
-        public Construction Get<T>() where T : PredefinedConstruction, new()
+        public Construction Get(PredefinedConstructionType type)
         {
-            if (_predefinedConstructions.ContainsKey(typeof(T)))
-                return _predefinedConstructions[typeof(T)];
+            if (_predefinedConstructions.ContainsKey(type))
+                return _predefinedConstructions[type];
 
-            var instance = new T {Id = _lastId++};
+            var construction = PredefinedConstructionsFactory.Get(type);
+            construction.Id = _lastId++;
+            _predefinedConstructions.Add(type, construction);
+            _names.Add(_lastId - 1, ExtractName(type));
 
-            _predefinedConstructions.Add(typeof(T), instance);
-
-            return instance;
+            return construction;
         }
 
-        public void Add(ComposedConstruction composedConstruction)
+        private string ExtractName(PredefinedConstructionType type) => Regex.Match(type.ToString(), "(.*)From.*").Groups[1].Value;
+
+        public void Add(ComposedConstruction composedConstruction, string name)
         {
             composedConstruction.Id = _lastId++;
 
             _composedConstructions.Add(composedConstruction);
+
+            _names.Add(_lastId - 1, name);
         }
 
-        public IEnumerable<Construction> Constructions => _predefinedConstructions.Values.Cast<Construction>().Concat(_composedConstructions);
+        public string GetName(Construction construction) => _names[construction.Id ?? throw new Exception()];
     }
 }

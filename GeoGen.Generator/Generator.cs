@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Analyzer;
-using GeoGen.Core.Generator;
-using GeoGen.Utilities;
+using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
@@ -73,7 +72,8 @@ namespace GeoGen.Generator
         /// <returns>The generator output enumerable.</returns>
         public IEnumerable<GeneratorOutput> Generate()
         {
-            return Enumerable.Range(0, _maximalNumberOfIterations).SelectMany(iterationIndex =>
+            return Enumerable.Range(0, _maximalNumberOfIterations)
+                    .SelectMany(iterationIndex =>
                     {
                         // From the container
                         var outputForNewLayer = _configurationsManager

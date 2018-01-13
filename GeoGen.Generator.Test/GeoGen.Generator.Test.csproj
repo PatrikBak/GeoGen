@@ -82,7 +82,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestHelpers\ConfigurationObjects.cs" />
     <Compile Include="TestHelpers\Configurations.cs" />
-    <Compile Include="TestHelpers\Constructions.cs" />
+    <Compile Include="TestHelpers\ConstructionsHelper.cs" />
     <Compile Include="TestHelpers\ToStringHelper.cs" />
     <Compile Include="TestHelpers\Utilities.cs" />
   </ItemGroup>

@@ -1,10 +1,11 @@
-﻿using GeoGen.Utilities.Combinations;
+﻿using GeoGen.Core;
+using GeoGen.Utilities.Combinations;
 using GeoGen.Utilities.Subsets;
 using GeoGen.Utilities.Variations;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
-    public class CoreModule : BaseModule
+    public class UtilitiesModule : BaseModule
     {
         public override void Load()
         {

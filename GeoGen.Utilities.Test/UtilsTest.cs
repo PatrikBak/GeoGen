@@ -1,4 +1,4 @@
-﻿using GeoGen.Core.Configurations;
+﻿using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
 

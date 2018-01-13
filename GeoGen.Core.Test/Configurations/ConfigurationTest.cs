@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Core.Configurations;
 using NUnit.Framework;
 
 namespace GeoGen.Core.Test.Configurations

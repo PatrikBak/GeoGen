@@ -2,11 +2,7 @@
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Core.Constructions.PredefinedConstructions;
+using GeoGen.Core;
 using Moq;
 using NUnit.Framework;
 
@@ -15,9 +11,19 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
     [TestFixture]
     public class ComposedConstructorTest
     {
-        private readonly MidpointFromPoints _midpoint = new MidpointFromPoints { Id = 1 };
+        private PredefinedConstruction _midpoint;
 
-        private readonly IntersectionFromPoints _intersection = new IntersectionFromPoints { Id = 2 };
+        private PredefinedConstruction _intersection;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _midpoint = PredefinedConstructionsFactory.Get(PredefinedConstructionType.MidpointFromPoints);
+            _midpoint.Id = 1;
+
+            _intersection = PredefinedConstructionsFactory.Get(PredefinedConstructionType.IntersectionOfLinesFromPoints);
+            _intersection.Id = 2;
+        }
 
         private static ComposedConstructor Constructor(ComposedConstruction construction)
         {
@@ -25,7 +31,7 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             {
                 new MidpointFromPointsConstructor(),
                 new CircumcenterFromPointsConstructor(),
-                new InteresectionFromPointsConstructor(),
+                new IntersectionOfLinesFromPointsConstructor(),
             };
 
             var factory = new Mock<IComposedConstructorFactory>();
@@ -36,28 +42,28 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             var resolver = new ConstructorsResolver(predefinedConstructors, factory.Object);
 
             factory.Setup(s => s.Create(It.IsAny<ComposedConstruction>()))
-                   .Returns<ComposedConstruction>(c => new ComposedConstructor(c, resolver, containersFactory.Object));
+                    .Returns<ComposedConstruction>(c => new ComposedConstructor(c, resolver, containersFactory.Object));
 
-            return (ComposedConstructor)resolver.Resolve(construction);
+            return (ComposedConstructor) resolver.Resolve(construction);
         }
 
         private ComposedConstruction MidpointAsComposedConstruction()
         {
             var objects = Enumerable.Range(0, 2)
-                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
-                                    .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .ToList();
 
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(objects[0]),
                 new ObjectConstructionArgument(objects[1])
             });
 
-            var argumentsList = new List<ConstructionArgument> { argument };
+            var argumentsList = new List<ConstructionArgument> {argument};
 
-            var midpoint = new ConstructedConfigurationObject(_midpoint, argumentsList, 0) { Id = 2 };
+            var midpoint = new ConstructedConfigurationObject(_midpoint, argumentsList, 0) {Id = 2};
 
-            var constructedObjects = new List<ConstructedConfigurationObject> { midpoint };
+            var constructedObjects = new List<ConstructedConfigurationObject> {midpoint};
 
             var configuration = new Configuration(objects, constructedObjects);
 
@@ -66,51 +72,51 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            return new ComposedConstruction(configuration, new List<int> { 0 }, parameters) { Id = 3 };
+            return new ComposedConstruction(configuration, new List<int> {0}, parameters) {Id = 3};
         }
 
         private ComposedConstruction CentroidUsingComposedMidpoint()
         {
             var objects = Enumerable.Range(0, 3)
-                                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
-                                    .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .ToList();
 
-            var argument1 = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument1 = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(objects[0]),
                 new ObjectConstructionArgument(objects[1])
             });
-            var argument2 = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument2 = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(objects[0]),
                 new ObjectConstructionArgument(objects[2])
             });
 
-            var argumentsList1 = new List<ConstructionArgument> { argument1 };
-            var argumentsList2 = new List<ConstructionArgument> { argument2 };
+            var argumentsList1 = new List<ConstructionArgument> {argument1};
+            var argumentsList2 = new List<ConstructionArgument> {argument2};
 
-            var midpoint1 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList1, 0) { Id = 3 };
-            var midpoint2 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList2, 0) { Id = 4 };
+            var midpoint1 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList1, 0) {Id = 3};
+            var midpoint2 = new ConstructedConfigurationObject(MidpointAsComposedConstruction(), argumentsList2, 0) {Id = 4};
 
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
-                new SetConstructionArgument(new HashSet<ConstructionArgument>
+                new SetConstructionArgument(new List<ConstructionArgument>
                 {
                     new ObjectConstructionArgument(objects[2]),
                     new ObjectConstructionArgument(midpoint1)
                 }),
-                new SetConstructionArgument(new HashSet<ConstructionArgument>
+                new SetConstructionArgument(new List<ConstructionArgument>
                 {
                     new ObjectConstructionArgument(objects[1]),
                     new ObjectConstructionArgument(midpoint2)
                 })
             });
 
-            var argumentsList = new List<ConstructionArgument> { argument };
+            var argumentsList = new List<ConstructionArgument> {argument};
 
-            var centroid = new ConstructedConfigurationObject(_intersection, argumentsList, 0) { Id = 5 };
+            var centroid = new ConstructedConfigurationObject(_intersection, argumentsList, 0) {Id = 5};
 
-            var constructedObjects = new List<ConstructedConfigurationObject> { midpoint1, midpoint2, centroid };
+            var constructedObjects = new List<ConstructedConfigurationObject> {midpoint1, midpoint2, centroid};
 
             var configuration = new Configuration(objects, constructedObjects);
 
@@ -119,7 +125,7 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            return new ComposedConstruction(configuration, new List<int> { 2 }, parameters) { Id = 4 };
+            return new ComposedConstruction(configuration, new List<int> {2}, parameters) {Id = 4};
         }
 
         [Test]
@@ -130,22 +136,22 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             var constructor = Constructor(midpoint);
 
             var looseObjects = Enumerable.Range(0, 2)
-                                         .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
-                                         .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .ToList();
 
             var container = new ObjectsContainer();
             Add(container, new Point(1, 2), looseObjects[0]);
             Add(container, new Point(2, 3), looseObjects[1]);
 
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[1])
             });
 
-            var midpointObject = new ConstructedConfigurationObject(midpoint, new ConstructionArgument[] { argument }, 0);
+            var midpointObject = new ConstructedConfigurationObject(midpoint, new ConstructionArgument[] {argument}, 0);
 
-            var result = constructor.Construct(new List<ConstructedConfigurationObject> { midpointObject });
+            var result = constructor.Construct(new List<ConstructedConfigurationObject> {midpointObject});
 
             var output = result.ConstructorFunction(container);
 
@@ -167,24 +173,24 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             var constructor = Constructor(centroid);
 
             var looseObjects = Enumerable.Range(0, 3)
-                                         .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
-                                         .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .ToList();
 
             var container = new ObjectsContainer();
             Add(container, new Point(1, 2), looseObjects[0]);
             Add(container, new Point(2, 3), looseObjects[1]);
             Add(container, new Point(7, 9), looseObjects[2]);
 
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[1]),
                 new ObjectConstructionArgument(looseObjects[2])
             });
 
-            var centroidObject = new ConstructedConfigurationObject(centroid, new ConstructionArgument[] { argument }, 0);
+            var centroidObject = new ConstructedConfigurationObject(centroid, new ConstructionArgument[] {argument}, 0);
 
-            var result = constructor.Construct(new List<ConstructedConfigurationObject> { centroidObject });
+            var result = constructor.Construct(new List<ConstructedConfigurationObject> {centroidObject});
 
             var output = result.ConstructorFunction(container);
 
@@ -199,24 +205,24 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             var constructor = Constructor(centroid);
 
             var looseObjects = Enumerable.Range(0, 3)
-                                         .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) { Id = i })
-                                         .ToList();
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .ToList();
 
             var container = new ObjectsContainer();
-            Add(container,new Point(1, 2), looseObjects[0]);
-            Add(container,new Point(2, 3), looseObjects[1]);
+            Add(container, new Point(1, 2), looseObjects[0]);
+            Add(container, new Point(2, 3), looseObjects[1]);
             Add(container, new Point(7, 8), looseObjects[2]);
 
-            var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
+            var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
                 new ObjectConstructionArgument(looseObjects[0]),
                 new ObjectConstructionArgument(looseObjects[1]),
                 new ObjectConstructionArgument(looseObjects[2])
             });
 
-            var centroidObject = new ConstructedConfigurationObject(centroid, new ConstructionArgument[] { argument }, 0);
+            var centroidObject = new ConstructedConfigurationObject(centroid, new ConstructionArgument[] {argument}, 0);
 
-            var result = constructor.Construct(new List<ConstructedConfigurationObject> { centroidObject });
+            var result = constructor.Construct(new List<ConstructedConfigurationObject> {centroidObject});
 
             var output = result.ConstructorFunction(container);
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.Core.Configurations;
-using NUnit.Framework;
-using static GeoGen.Analyzer.Test.TestHelpers.ConfigurationObjects;
+﻿using NUnit.Framework;
 
 namespace GeoGen.Analyzer.Test.Objects
 {

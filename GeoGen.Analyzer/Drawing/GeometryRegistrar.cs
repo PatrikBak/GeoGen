@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Theorems;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer

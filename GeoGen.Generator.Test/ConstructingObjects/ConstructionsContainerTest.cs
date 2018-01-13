@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions;
-using GeoGen.Core.Generator;
+using GeoGen.Core;
 using NUnit.Framework;
-using static GeoGen.Generator.Test.TestHelpers.Constructions;
+using static GeoGen.Generator.Test.TestHelpers.ConstructionsHelper;
 
 namespace GeoGen.Generator.Test.ConstructingObjects
 {

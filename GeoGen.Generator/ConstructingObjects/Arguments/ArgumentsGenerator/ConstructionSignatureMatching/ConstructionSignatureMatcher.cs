@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core.Configurations;
-using GeoGen.Core.Constructions.Arguments;
-using GeoGen.Core.Constructions.Parameters;
-using GeoGen.Core.Generator;
-using GeoGen.Core.Utilities;
-using GeoGen.Utilities;
+using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
@@ -71,7 +66,7 @@ namespace GeoGen.Generator
             var setParameter = (SetConstructionParameter) parameter;
 
             // Create a set of arguments that we're going to create
-            var argumentsSet = new HashSet<ConstructionArgument>();
+            var argumentsSet = new List<ConstructionArgument>();
 
             // For the expected number of items
             for (var i = 0; i < setParameter.NumberOfParameters; i++)
