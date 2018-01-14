@@ -29,15 +29,15 @@ namespace GeoGen.Analyzer
             var looseObjects = _construction.ParentalConfiguration.LooseObjects;
 
             // Construct the function
-            List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+            List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
             {
                 // Initialize the internal container for sub-results
                 var internalContainer = _factory.CreateContainer();
 
                 // Create constructor function
-                List<IAnalyticalObject> InternalConstructorFunction(IObjectsContainer c)
+                List<AnalyticalObject> InternalConstructorFunction(IObjectsContainer c)
                 {
-                    var result = new List<IAnalyticalObject>();
+                    var result = new List<AnalyticalObject>();
 
                     for (var i = 0; i < looseObjects.Count; i++)
                     {

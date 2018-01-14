@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.AnalyticalGeometry.RandomObjects;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 using Moq;
 using NUnit.Framework;

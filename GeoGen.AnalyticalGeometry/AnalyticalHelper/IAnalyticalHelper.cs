@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -15,15 +14,15 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="inputObjects">The input objects.</param>
         /// <returns>The set of intersections. An empty set, if there's none.</returns>
-        HashSet<Point> Intersect(IEnumerable<IAnalyticalObject> inputObjects);
+        HashSet<Point> Intersect(IEnumerable<AnalyticalObject> inputObjects);
 
         /// <summary>
         /// Checks if a given point lies on a given analytical object. The object
-        /// must not be a points.
+        /// must not be a point.
         /// </summary>
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="point">The point.</param>
         /// <returns>true, if the point lies on the object, false otherwise.</returns>
-        bool LiesOn(IAnalyticalObject analyticalObject, Point point);
+        bool LiesOn(AnalyticalObject analyticalObject, Point point);
     }
 }

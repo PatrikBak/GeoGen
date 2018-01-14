@@ -96,7 +96,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
 
-            kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            //kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
             //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
 
             var factory = kernel.Get<IGeneratorFactory>();
@@ -114,7 +114,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 4
+                MaximalNumberOfIterations = 3
             };
 
             var generator = factory.CreateGenerator(input);
@@ -130,6 +130,7 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Maximal attempts to resolve: {Wtf.MaximalNeededAttemps}");
             Console.WriteLine($"Maximal interior re-initializations: {Wtf.MaximalContainerIterations}");
 
+            Console.WriteLine(RoundedDouble.c);
             //PrintTheorems(result);
         }
 

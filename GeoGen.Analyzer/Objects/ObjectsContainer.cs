@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -18,12 +17,12 @@ namespace GeoGen.Analyzer
         /// The dictionary mapping analytical objects to their corresponding
         /// configuration objects.
         /// </summary>
-        private readonly Dictionary<IAnalyticalObject, ConfigurationObject> _objectsDictionary;
+        private readonly Dictionary<AnalyticalObject, ConfigurationObject> _objectsDictionary;
 
         /// <summary>
         /// The dictionary mapping configuration object's ids 
         /// </summary>
-        private readonly Dictionary<int, IAnalyticalObject> _idToObjects;
+        private readonly Dictionary<int, AnalyticalObject> _idToObjects;
 
         /// <summary>
         /// The dictionary mapping accepted types of analytical objects to 
@@ -40,8 +39,8 @@ namespace GeoGen.Analyzer
         /// </summary>
         public ObjectsContainer()
         {
-            _objectsDictionary = new Dictionary<IAnalyticalObject, ConfigurationObject>();
-            _idToObjects = new Dictionary<int, IAnalyticalObject>();
+            _objectsDictionary = new Dictionary<AnalyticalObject, ConfigurationObject>();
+            _idToObjects = new Dictionary<int, AnalyticalObject>();
             _correctTypes = new Dictionary<Type, ConfigurationObjectType>
             {
                 {typeof(Point), ConfigurationObjectType.Point},
@@ -63,7 +62,7 @@ namespace GeoGen.Analyzer
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The representation of an equal object.</returns>
-        private ConfigurationObject Add(IAnalyticalObject analyticalObject, ConfigurationObject configurationObject)
+        private ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
@@ -116,7 +115,7 @@ namespace GeoGen.Analyzer
 
         private readonly List<Func<bool>> _reconstructors = new List<Func<bool>>();
 
-        public List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<IAnalyticalObject>> constructor)
+        public List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<AnalyticalObject>> constructor)
         {
             var objectsList = objects.ToList();
 
@@ -169,7 +168,7 @@ namespace GeoGen.Analyzer
         /// <typeparam name="T">The type of analytical object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The analytical object.</returns>
-        public T Get<T>(ConfigurationObject configurationObject) where T : IAnalyticalObject
+        public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
@@ -196,12 +195,12 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The analytical object.</returns>
-        public IAnalyticalObject Get(ConfigurationObject configurationObject)
+        public AnalyticalObject Get(ConfigurationObject configurationObject)
         {
             if (configurationObject == null)
                 throw new ArgumentNullException(nameof(configurationObject));
 
-            return Get<IAnalyticalObject>(configurationObject);
+            return Get<AnalyticalObject>(configurationObject);
         }
 
         #endregion

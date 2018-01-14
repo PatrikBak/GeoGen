@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
@@ -37,7 +36,7 @@ namespace GeoGen.Analyzer
                         .Select(arg => arg.PassedObject)
                         .ToList();
 
-                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
@@ -53,7 +52,7 @@ namespace GeoGen.Analyzer
 
                         var perpendicularLine = line.PerpendicularLine(pointFrom);
 
-                        return new List<IAnalyticalObject> { perpendicularLine };
+                        return new List<AnalyticalObject> { perpendicularLine };
                     }
                     catch (ArgumentException)
                     {

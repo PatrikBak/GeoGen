@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
     public class WriteOnce<T>
     {

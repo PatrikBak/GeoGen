@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using Moq;
 using NUnit.Framework;
@@ -158,9 +157,9 @@ namespace GeoGen.Analyzer.Test.Constructing.ComposedConstructing
             Assert.AreEqual(new Point(1.5, 2.5), output[0]);
         }
 
-        private void Add(IObjectsContainer container, IAnalyticalObject analyticalObject, ConfigurationObject configurationObject)
+        private void Add(IObjectsContainer container, AnalyticalObject analyticalObject, ConfigurationObject configurationObject)
         {
-            List<IAnalyticalObject> Function(IObjectsContainer c) => new List<IAnalyticalObject> {analyticalObject};
+            List<AnalyticalObject> Function(IObjectsContainer c) => new List<AnalyticalObject> {analyticalObject};
 
             container.Add(new[] {configurationObject}, Function);
         }

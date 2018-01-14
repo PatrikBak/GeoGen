@@ -1,6 +1,6 @@
 using System;
 
-namespace GeoGen.AnalyticalGeometry.RandomObjects
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// Represents a needed functionality of a <see cref="Random"/> object.

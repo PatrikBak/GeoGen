@@ -1,11 +1,11 @@
 using System;
 
-namespace GeoGen.AnalyticalGeometry.RandomObjects
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// A default implementation of <see cref="IRandomObjectsProvider"/>.
     /// </summary>
-    internal sealed class RandomnessProvider : IRandomnessProvider
+    internal class RandomnessProvider : IRandomnessProvider
     {
         #region Private fields
 

@@ -97,7 +97,7 @@ namespace GeoGen.Analyzer
                 throw new ArgumentException("Duplicate objects");
 
             // Initialize the constructor function
-            List<IAnalyticalObject> ConstructorFunction(IObjectsContainer c)
+            List<AnalyticalObject> ConstructorFunction(IObjectsContainer c)
             {
                 return _constructor.Construct(looseObjectsList);
             }

@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -45,31 +43,25 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="looseObjects">The loose objects.</param>
         /// <returns>The list of analytical objects.</returns>
-        public List<IAnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
+        public List<AnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
-            if (looseObjects == null)
-                throw new ArgumentNullException(nameof(looseObjects));
+            return looseObjects.Select(looseObject =>
+            {
+                if (looseObject == null)
+                    throw new ArgumentException("Loose objects contains null value.");
 
-            return looseObjects.Select
-            (
-                looseObject =>
+                switch (looseObject.ObjectType)
                 {
-                    if (looseObject == null)
-                        throw new ArgumentException("Loose objects contains null value.");
-
-                    switch (looseObject.ObjectType)
-                    {
-                        case ConfigurationObjectType.Point:
-                            return _provider.NextRandomObject<Point>();
-                        case ConfigurationObjectType.Line:
-                            return _provider.NextRandomObject<Line>();
-                        case ConfigurationObjectType.Circle:
-                            return _provider.NextRandomObject<Circle>();
-                        default:
-                            throw new AnalyzerException("Unhandled case.");
-                    }
+                    case ConfigurationObjectType.Point:
+                        return _provider.NextRandomObject<Point>();
+                    case ConfigurationObjectType.Line:
+                        return _provider.NextRandomObject<Line>();
+                    case ConfigurationObjectType.Circle:
+                        return _provider.NextRandomObject<Circle>();
+                    default:
+                        throw new AnalyzerException("Unhandled case.");
                 }
-            ).ToList();
+            }).ToList();
         }
 
         #endregion

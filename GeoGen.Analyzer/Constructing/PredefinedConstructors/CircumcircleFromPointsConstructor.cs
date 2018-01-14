@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
@@ -43,7 +42,7 @@ namespace GeoGen.Analyzer
                 ThrowHelper.ThrowExceptionIfNotTrue(obj2.ObjectType == ConfigurationObjectType.Point);
                 ThrowHelper.ThrowExceptionIfNotTrue(obj3.ObjectType == ConfigurationObjectType.Point);
 
-                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
@@ -54,7 +53,7 @@ namespace GeoGen.Analyzer
 
                     try
                     {
-                        return new List<IAnalyticalObject> {new Circle(point1, point2, point3)};
+                        return new List<AnalyticalObject> {new Circle(point1, point2, point3)};
                     }
                     catch (ArgumentException)
                     {

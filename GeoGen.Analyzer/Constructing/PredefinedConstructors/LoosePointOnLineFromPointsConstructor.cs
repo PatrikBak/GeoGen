@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
@@ -49,7 +47,7 @@ namespace GeoGen.Analyzer
                 ThrowHelper.ThrowExceptionIfNotTrue(obj1.ObjectType == ConfigurationObjectType.Point);
                 ThrowHelper.ThrowExceptionIfNotTrue(obj2.ObjectType == ConfigurationObjectType.Point);
 
-                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
@@ -67,7 +65,7 @@ namespace GeoGen.Analyzer
 
                         if (!points.Contains(randomPoint))
                         {
-                            return new List<IAnalyticalObject> {randomPoint};
+                            return new List<AnalyticalObject> {randomPoint};
                         }
                     }
                 }

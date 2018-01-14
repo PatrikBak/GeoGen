@@ -1,20 +1,19 @@
 using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 
-namespace GeoGen.AnalyticalGeometry.RandomObjects
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// A default implementation of <see cref="IRandomObjectsProvider"/>.
     /// </summary>
-    internal sealed class RandomObjectsProvider : IRandomObjectsProvider
+    internal class RandomObjectsProvider : IRandomObjectsProvider
     {
         #region Public constants
 
         /// <summary>
         /// The maximal value of generated doubles.
         /// </summary>
-        public const double MaximalRandomValue = 10.0;
+        public const double MaximalRandomValue = 100.0;
 
         #endregion
 
@@ -24,7 +23,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// The dictionary mapping types of objects to the sets of currently
         /// generated objects of that type.
         /// </summary>
-        private readonly Dictionary<Type, HashSet<IAnalyticalObject>> _objects;
+        private readonly Dictionary<Type, HashSet<AnalyticalObject>> _objects;
 
         /// <summary>
         /// The randomness provider.
@@ -36,26 +35,26 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         #region Constructor
 
         /// <summary>
-        /// Constructs a new random objects provided that uses a given
-        /// randomness provider.
+        /// Default constructor.
         /// </summary>
         /// <param name="random">The randomness provider.</param>
         public RandomObjectsProvider(IRandomnessProvider random)
         {
             _random = random ?? throw new ArgumentNullException(nameof(random));
-            _objects = new Dictionary<Type, HashSet<IAnalyticalObject>>();
+            _objects = new Dictionary<Type, HashSet<AnalyticalObject>>();
         }
 
         #endregion
 
-        #region IRandomObjectsProvider methods
+        #region IRandomObjectsProvider implementation
 
         /// <summary>
-        /// Generates the next random object.
+        /// Generates the next random object mutually distinct from 
+        /// all previously generated ones.
         /// </summary>
         /// <typeparam name="T">The type of the object.</typeparam>
         /// <returns>The next random object.</returns>
-        public IAnalyticalObject NextRandomObject<T>() where T : IAnalyticalObject
+        public AnalyticalObject NextRandomObject<T>() where T : AnalyticalObject
         {
             // Pull the type
             var type = typeof(T);
@@ -64,7 +63,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
             var set = FindSetForType(type);
 
             // Initialize result
-            IAnalyticalObject result;
+            AnalyticalObject result;
 
             // Generate
             while (true)
@@ -86,7 +85,7 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
                 // Otherwise we continue with the random generation. 
             }
 
-            // And return the result.
+            // Return the result.
             return result;
         }
 
@@ -100,14 +99,22 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// </summary>
         /// <param name="type">The type.</param>
         /// <returns>The set.</returns>
-        private HashSet<IAnalyticalObject> FindSetForType(Type type)
+        private HashSet<AnalyticalObject> FindSetForType(Type type)
         {
+            // Check if the type isn't already present
             if (_objects.ContainsKey(type))
+            {
+                // If yes, return the set corresponding to it
                 return _objects[type];
+            }
 
-            var set = new HashSet<IAnalyticalObject>();
+            // Otherwise create a new set
+            var set = new HashSet<AnalyticalObject>();
+
+            // Register it to the dictionary
             _objects.Add(type, set);
 
+            // And return it
             return set;
         }
 
@@ -129,12 +136,26 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
         /// <returns>The random circle.</returns>
         private Circle RandomCircle()
         {
-            var center = RandomPoint();
+            // We generate in loop until we're successful
+            while (true)
+            {
+                // Generate the center
+                var center = RandomPoint();
 
-            // The radius will be in the interval (0, MaximalRandomValue]
-            var radius = MaximalRandomValue - _random.NextDouble(MaximalRandomValue);
+                // Generate the radius (it might be zero)
+                var radius = _random.NextDouble(MaximalRandomValue);
 
-            return new Circle(center, radius);
+                try
+                {
+                    // Try to construct a circle
+                    return new Circle(center, radius);
+                }
+                catch (AnalyticalException)
+                {
+                    // If it wasn't successful, then the radius is zero
+                    // and we need to try again
+                }
+            }
         }
 
         /// <summary>
@@ -150,11 +171,15 @@ namespace GeoGen.AnalyticalGeometry.RandomObjects
                 var point1 = RandomPoint();
                 var point2 = RandomPoint();
 
-                // If there are not the same
-                if (point1 != point2)
+                try
                 {
-                    // We'll free to return and construct the line
+                    // Try to construct a line
                     return new Line(point1, point2);
+                }
+                catch (AnalyticalException)
+                {
+                    // If it wasn't successful, then the points are the same
+                    // and we need to try again
                 }
             }
         }

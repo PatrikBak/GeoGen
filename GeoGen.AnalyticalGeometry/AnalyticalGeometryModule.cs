@@ -1,5 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry.RandomObjects;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -13,9 +12,9 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         public override void Load()
         {
-            BindInSingletonScope<IRandomObjectsProvider, RandomObjectsProvider>();
-            BindInSingletonScope<IAnalyticalHelper, AnalyticalHelper>();
-            BindInSingletonScope<IRandomnessProvider, RandomnessProvider>();
+            BindInGeneratorScope<IRandomObjectsProvider, RandomObjectsProvider>();
+            BindInGeneratorScope<IAnalyticalHelper, AnalyticalHelper>();
+            BindInGeneratorScope<IRandomnessProvider, RandomnessProvider>();
         }
     }
 }

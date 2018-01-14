@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
-using GeoGen.AnalyticalGeometry.RandomObjects;
 using Moq;
 using NUnit.Framework;
-using static GeoGen.AnalyticalGeometry.RandomObjects.RandomObjectsProvider;
+using static GeoGen.AnalyticalGeometry.RandomObjectsProvider;
 
 namespace GeoGen.AnalyticalGeometry.Test.RandomObjects
 {

@@ -1,5 +1,5 @@
 ﻿using System;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 using NUnit.Framework;
 

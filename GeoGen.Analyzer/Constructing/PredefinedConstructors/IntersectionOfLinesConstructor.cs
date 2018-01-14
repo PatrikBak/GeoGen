@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
@@ -40,7 +39,7 @@ namespace GeoGen.Analyzer
                 var passedLine1 = ((ObjectConstructionArgument) setArguments[0]).PassedObject;
                 var passedLine2 = ((ObjectConstructionArgument) setArguments[1]).PassedObject;
                 
-                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
@@ -52,7 +51,7 @@ namespace GeoGen.Analyzer
                     {
                         var intersection = line1.IntersectionWith(line2);
 
-                        return intersection == null ? null : new List<IAnalyticalObject> {intersection};
+                        return intersection == null ? null : new List<AnalyticalObject> {intersection};
                     }
                     catch (ArgumentException)
                     {

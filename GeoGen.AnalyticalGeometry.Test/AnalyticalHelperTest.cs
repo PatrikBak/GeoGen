@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using NUnit.Framework;
 
 namespace GeoGen.AnalyticalGeometry.Test
@@ -71,7 +70,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Input_Objects_Count_Cant_Be_At_Most_2()
         {
-            var objects = new List<IAnalyticalObject>();
+            var objects = new List<AnalyticalObject>();
 
             Assert.Throws<ArgumentException>(() => Helper().Intersect(objects));
 
@@ -83,7 +82,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Input_Objects_Cant_Contain_Null()
         {
-            var objects1 = new List<IAnalyticalObject>
+            var objects1 = new List<AnalyticalObject>
             {
                 new Circle(new Point(4, 5), 6),
                 null,
@@ -92,7 +91,7 @@ namespace GeoGen.AnalyticalGeometry.Test
 
             Assert.Throws<ArgumentException>(() => Helper().Intersect(objects1));
 
-            var objects2 = new List<IAnalyticalObject>
+            var objects2 = new List<AnalyticalObject>
             {
                 new Circle(new Point(4, 5), 6),
                 new Line(new Point(1, 5), new Point(4, 5)),
@@ -105,7 +104,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Input_Objects_Cant_Contain_Same_Objects()
         {
-            var objects1 = new List<IAnalyticalObject>
+            var objects1 = new List<AnalyticalObject>
             {
                 new Line(new Point(7, 9), new Point(8, 7)),
                 new Line(new Point(8, 7), new Point(7, 9)),
@@ -114,7 +113,7 @@ namespace GeoGen.AnalyticalGeometry.Test
 
             Assert.Throws<ArgumentException>(() => Helper().Intersect(objects1));
 
-            var objects2 = new List<IAnalyticalObject>
+            var objects2 = new List<AnalyticalObject>
             {
                 new Line(new Point(7, 9), new Point(8, 7)),
                 new Circle(new Point(4, 5), 7),
@@ -127,7 +126,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Two_Lines()
         {
-            var objects = new List<IAnalyticalObject>
+            var objects = new List<AnalyticalObject>
             {
                 new Line(new Point(1, 5), new Point(1, 3)),
                 new Line(new Point(1, 5), new Point(2, 4))
@@ -142,7 +141,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Two_Circles()
         {
-            var objects = new List<IAnalyticalObject>
+            var objects = new List<AnalyticalObject>
             {
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(7, 8)),
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(8, 7))
@@ -158,7 +157,7 @@ namespace GeoGen.AnalyticalGeometry.Test
         [Test]
         public void Test_Intersect_Line_And_Circle()
         {
-            var objects = new List<IAnalyticalObject>
+            var objects = new List<AnalyticalObject>
             {
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(7, 8)),
                 new Line(new Point(0, 0), new Point(1, 1))
@@ -178,7 +177,7 @@ namespace GeoGen.AnalyticalGeometry.Test
             var b = new Point(7, 4);
             var c = new Point(1, 77);
 
-            var objects = new List<IAnalyticalObject>
+            var objects = new List<AnalyticalObject>
             {
                 new Line(a, b.Midpoint(c)),
                 new Line(b, c.Midpoint(a)),
@@ -198,7 +197,7 @@ namespace GeoGen.AnalyticalGeometry.Test
             var b = new Point(7, 4);
             var c = new Point(1, 77);
 
-            var objects = new List<IAnalyticalObject>
+            var objects = new List<AnalyticalObject>
             {
                 new Line(b, c),
                 new Circle(a.Midpoint(b), a.DistanceTo(b) / 2),

@@ -7,14 +7,19 @@ namespace GeoGen.Utilities
     {
         public const int DoubleRoundingPrecision = 6;
 
+        public static readonly RoundedDouble Zero = new RoundedDouble(0);
+
         public double OriginalValue { get; }
 
         public double RoundedValue { get; }
 
         private readonly Lazy<int> _hashCode;
 
+        public static int c = 0;
+
         public RoundedDouble(double originalValue)
         {
+            c++;
             OriginalValue = originalValue;
             //var roundedValue = originalValue.AdjustPrecision(DoubleRoundingPrecision);
             var roundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
@@ -22,7 +27,7 @@ namespace GeoGen.Utilities
             _hashCode = new Lazy<int>(() => roundedValue.GetHashCode());
         }
 
-        public static implicit operator RoundedDouble(double value)
+        public static explicit operator RoundedDouble(double value)
         {
             return new RoundedDouble(value);
         }

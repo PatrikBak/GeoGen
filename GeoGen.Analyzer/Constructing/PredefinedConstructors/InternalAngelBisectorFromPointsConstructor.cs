@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using GeoGen.Utilities.Helpers;
 
@@ -37,7 +36,7 @@ namespace GeoGen.Analyzer
                         .Select(arg => arg.PassedObject)
                         .ToList();
 
-                List<IAnalyticalObject> ConstructorFunction(IObjectsContainer container)
+                List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)
                         throw new ArgumentNullException(nameof(container));
@@ -49,9 +48,9 @@ namespace GeoGen.Analyzer
 
                     try
                     {
-                        return new List<IAnalyticalObject> {intersection.InternalAngelBisector(point1, point2)};
+                        return new List<AnalyticalObject> {intersection.InternalAngelBisector(point1, point2)};
                     }
-                    catch (ArgumentException)
+                    catch (AnalyticalException)
                     {
                         return null;
                     }

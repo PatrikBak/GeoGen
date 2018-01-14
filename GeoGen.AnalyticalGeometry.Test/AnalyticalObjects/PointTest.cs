@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Utilities;
 using NUnit.Framework;
 
@@ -161,11 +160,11 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
             var p2 = new Point(1, 5);
             var p3 = new Point(3, -3);
 
-            RoundedDouble d1 = p1.DistanceTo(p2);
-            RoundedDouble d2 = p2.DistanceTo(p1);
+            var d1 = p1.DistanceTo(p2);
+            var d2 = p2.DistanceTo(p1);
 
-            RoundedDouble d3 = p2.DistanceTo(p3);
-            RoundedDouble d4 = p1.DistanceTo(p3);
+            var d3 = p2.DistanceTo(p3);
+            var d4 = p1.DistanceTo(p3);
 
             Assert.IsTrue(d1 == Math.Sqrt(145));
             Assert.IsTrue(d2 == d1);
@@ -177,7 +176,7 @@ namespace GeoGen.AnalyticalGeometry.Test.AnalyticalObjects
         public void Test_Distance_To_Same_Point()
         {
             var p = new Point(42, 666);
-            RoundedDouble distance = p.DistanceTo(p);
+            RoundedDouble distance = (RoundedDouble) p.DistanceTo(p);
 
             Assert.IsTrue(distance == 0);
         }

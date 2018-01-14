@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -17,7 +16,7 @@ namespace GeoGen.Analyzer
 
         private readonly IAnalyticalHelper _analyticalHelper;
 
-        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticalObject>> _objects;
+        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>> _objects;
 
         private readonly Dictionary<int, GeometricalObject> _configurationObjectIdToGeometricalObjects;
 
@@ -42,11 +41,11 @@ namespace GeoGen.Analyzer
             _circles = new HashSet<CircleObject>();
             _points = new HashSet<PointObject>();
 
-            _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticalObject>>();
+            _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>>();
 
             foreach (var objectsContainer in containersManager)
             {
-                _objects.Add(objectsContainer, new Map<GeometricalObject, IAnalyticalObject>());
+                _objects.Add(objectsContainer, new Map<GeometricalObject, AnalyticalObject>());
             }
         }
 
@@ -265,7 +264,7 @@ namespace GeoGen.Analyzer
             }
         }
 
-        public IAnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
+        public AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
         {
             if (geometricalObject == null)
                 throw new ArgumentNullException(nameof(geometricalObject));
@@ -546,7 +545,7 @@ namespace GeoGen.Analyzer
                     // If we're fine, then we mark the points as not collinear
                     collinear = false;
                 }
-                catch (ArgumentException)
+                catch (AnalyticalException)
                 {
                     // If the are collinear and they have been marked as
                     // not collinear, then we have inconsistency 

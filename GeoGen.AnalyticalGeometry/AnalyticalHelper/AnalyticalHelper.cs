@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry.AnalyticalObjects;
 using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry
@@ -19,7 +18,7 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="inputObjects">The input objects.</param>
         /// <returns>The set of intersections. An empty set, if there's none.</returns>
-        public HashSet<Point> Intersect(IEnumerable<IAnalyticalObject> inputObjects)
+        public HashSet<Point> Intersect(IEnumerable<AnalyticalObject> inputObjects)
         {
             // Enumerate input objects
             var originalObjects = inputObjects.ToList();
@@ -53,7 +52,7 @@ namespace GeoGen.AnalyticalGeometry
             // Iterate over remaining objects
             foreach (var analyticalObject in distintObjects.Skip(2))
             {
-                // Make sure that object is not null
+                // Make sure that the object is not null
                 if (analyticalObject == null)
                     throw new ArgumentException("There is a null object.");
 
@@ -71,39 +70,29 @@ namespace GeoGen.AnalyticalGeometry
 
         /// <summary>
         /// Checks if a given point lies on a given analytical object. The object
-        /// must not be a points.
+        /// must not be a point.
         /// </summary>
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="point">The point.</param>
         /// <returns>true, if the point lies on the object, false otherwise.</returns>
-        public bool LiesOn(IAnalyticalObject analyticalObject, Point point)
+        public bool LiesOn(AnalyticalObject analyticalObject, Point point)
         {
-            if (analyticalObject == null)
-                throw new ArgumentNullException(nameof(analyticalObject));
-
-            if (analyticalObject is Point)
-                throw new ArgumentException("Analytical object can't be a point");
-
             if (analyticalObject is Line line)
                 return line.Contains(point);
 
             if (analyticalObject is Circle circle)
                 return circle.Contains(point);
 
-            throw new Exception("Unhandled case");
+            throw new Exception("Unhandled analytical object.");
         }
 
-        #endregion
-
-        #region Private methods
-       
         /// <summary>
         /// Intersects two given analytical objects that are not points.
         /// </summary>
         /// <param name="o1">The first object.</param>
         /// <param name="o2">The second object.</param>
         /// <returns>The set of intersections.</returns>
-        private static HashSet<Point> Intersect(IAnalyticalObject o1, IAnalyticalObject o2)
+        private HashSet<Point> Intersect(AnalyticalObject o1, AnalyticalObject o2)
         {
             // Safely cast o1 to nullable Line and Circle
             var o1Line = o1 as Line;

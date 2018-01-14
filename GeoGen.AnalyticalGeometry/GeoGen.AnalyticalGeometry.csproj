@@ -61,12 +61,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnalyticalHelper.cs" />
-    <Compile Include="IAnalyticalObject.cs" />
+    <Compile Include="AnalyticalException.cs" />
+    <Compile Include="AnalyticalHelper\AnalyticalHelper.cs" />
+    <Compile Include="AnalyticalObjects\Base\AnalyticalObject.cs" />
+    <Compile Include="AnalyticalObjects\Base\AnalyticalObjectBase.cs" />
     <Compile Include="AnalyticalObjects\Circle.cs" />
     <Compile Include="AnalyticalObjects\Line.cs" />
     <Compile Include="AnalyticalObjects\Point.cs" />
-    <Compile Include="IAnalyticalHelper.cs" />
+    <Compile Include="AnalyticalHelper\IAnalyticalHelper.cs" />
     <Compile Include="AnalyticalGeometryModule.cs" />
     <Compile Include="RandomObjects\IRandomnessProvider.cs" />
     <Compile Include="RandomObjects\IRandomObjectsProvider.cs" />

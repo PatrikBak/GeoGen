@@ -1,18 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Utilities;
 using GeoGen.Utilities.Helpers;
 
-namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// Represents a geometrical 2D circle.
     /// </summary>
-    public class Circle : IAnalyticalObject
+    public class Circle : AnalyticalObjectBase<Circle>
     {
-        private Lazy<int> _hashCOde;
-
         #region Public properties
 
         /// <summary>
@@ -40,7 +37,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         {
             // Check if we have 3 mutually distinct points
             if (point1 == point2 || point2 == point3 || point3 == point1)
-                throw new ArgumentException("Equal points");
+                throw new AnalyticalException("Equal points");
 
             // We create the perpendicular bisectors of lines P1P2, P1P3
             var bisector1 = point1.PerpendicularBisector(point2);
@@ -50,16 +47,11 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             var center = bisector1.IntersectionWith(bisector2);
 
             // If the center is null, we have collinear points.
-            Center = center ?? throw new ArgumentException("Collinear points");
+            Center = center ?? throw new AnalyticalException("Collinear points");
 
             // Otherwise the situation is fine and radius is the distance
             // from any point to the center.
-            Radius = point1.DistanceTo(Center);
-
-            var radiusCopy = Radius;
-            var centerCopy = Center;
-
-            _hashCOde = new Lazy<int>(() => (centerCopy.GetHashCode() * 397) ^ radiusCopy.GetHashCode());
+            Radius = (RoundedDouble) point1.DistanceTo(Center);
         }
 
         /// <summary>
@@ -70,15 +62,10 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         public Circle(Point center, double radius)
         {
             Center = center;
-            Radius = radius;
+            Radius = (RoundedDouble) radius;
 
-            if (Radius <= 0)
-                throw new ArgumentOutOfRangeException(nameof(radius), "The radius must be positive.");
-
-            var radiusCopy = Radius;
-            var centerCopy = Center;
-
-            _hashCOde = new Lazy<int>(() => (centerCopy.GetHashCode() * 397) ^ radiusCopy.GetHashCode());
+            if (Radius <= RoundedDouble.Zero)
+                throw new AnalyticalException("The radius must be positive.");
         }
 
         #endregion
@@ -96,7 +83,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             var dx = point.X - Center.X;
             var dy = point.Y - Center.Y;
 
-            return (RoundedDouble) (dx * dx + dy * dy) == Radius * Radius;
+            return (RoundedDouble) (dx * dx + dy * dy - Radius * Radius) == RoundedDouble.Zero;
         }
 
         /// <summary>
@@ -108,7 +95,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         {
             // First we check if the circles aren't the equal
             if (this == otherCircle)
-                throw new ArgumentException("Equal circles");
+                throw new AnalyticalException("Equal circles");
 
             // If they're distinct and concentric, then there's no intersection
             if (Center == otherCircle.Center)
@@ -167,32 +154,6 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 
         #endregion
 
-        #region Overloaded operators
-
-        /// <summary>
-        /// Determines if two given circles are equal.
-        /// </summary>
-        /// <param name="left">The left circle.</param>
-        /// <param name="right">The right circle.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        public static bool operator ==(Circle left, Circle right)
-        {
-            return Equals(left, right);
-        }
-
-        /// <summary>
-        /// Determines if two given circles are not equal.
-        /// </summary>
-        /// <param name="left">The left circle.</param>
-        /// <param name="right">The right circle.</param>
-        /// <returns>true, if they are not equal, false otherwise.</returns>
-        public static bool operator !=(Circle left, Circle right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
-
         #region Private methods
 
         /// <summary>
@@ -223,7 +184,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = (RoundedDouble) a == 0;
+            var changingVariables = (RoundedDouble) a == RoundedDouble.Zero;
 
             // If yes, we use the helper method to do so
             if (changingVariables)
@@ -256,61 +217,37 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 
             // Now we can construct the result. We can't forget that we might
             // have changed the meaning of x and y
-            return Enumerable.Range(0, xRoots.Count).Select
-                    (
-                        i =>
-                        {
-                            var xRoot = xRoots[i];
-                            var yRoot = yRoots[i];
+            return Enumerable.Range(0, xRoots.Count).Select(i =>
+            {
+                var xRoot = xRoots[i];
+                var yRoot = yRoots[i];
 
-                            return changingVariables ? new Point(yRoot, xRoot) : new Point(xRoot, yRoot);
-                        }
-                    )
-                    .ToList();
-        }
-
-        /// <summary>
-        /// Determines if this circle is equal to a given other one.
-        /// </summary>
-        /// <param name="other">The other line.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        private bool Equals(Circle other)
-        {
-            return Center == other.Center && Radius == other.Radius;
+                return changingVariables ? new Point(yRoot, xRoot) : new Point(xRoot, yRoot);
+            }).ToList();
         }
 
         #endregion
 
-        #region Equals and HashCode
+        #region Abstract HashCode and Equals implementation
 
         /// <summary>
-        /// Determines if a given object is equal to this circle.
+        /// Calculates the hash code of the object. This method is called once per
+        /// object, unlike GetHashCode, which will reuse the result of this method.
         /// </summary>
-        /// <param name="obj">A given object.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        public override bool Equals(object obj)
+        /// <returns>The hash code.</returns>
+        protected override int CalculateHashCode()
         {
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (!(obj is Circle circle))
-                return false;
-
-            return Equals(circle);
+            return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
         }
 
         /// <summary>
-        /// Gets the hash code of the circle.
+        /// Returns if a given analytical object is equal to this one.
         /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
+        /// <param name="other">The other object.</param>
+        /// <returns>true, if the objects are equal, false otherwise.</returns>
+        protected override bool IsEqualTo(Circle other)
         {
-            return _hashCOde.Value;
-            unchecked
-            {
-                
-                //return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
-            }
+            return Center == other.Center && Radius == other.Radius;
         }
 
         #endregion

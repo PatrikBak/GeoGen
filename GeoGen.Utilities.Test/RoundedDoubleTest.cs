@@ -72,7 +72,7 @@ namespace GeoGen.Utilities.Test
         {
             var number = TestNumber(RoundedDouble.DoubleRoundingPrecision + 1);
 
-            RoundedDouble rounded = number;
+            var rounded = (RoundedDouble)number;
 
             Assert.AreEqual(number, rounded.OriginalValue);
             Assert.AreEqual(TestNumber(RoundedDouble.DoubleRoundingPrecision), rounded.RoundedValue);
@@ -98,8 +98,8 @@ namespace GeoGen.Utilities.Test
             {
                 foreach (var double2 in doubles)
                 {
-                    RoundedDouble rounded1 = double1;
-                    RoundedDouble rounded2 = double2;
+                    RoundedDouble rounded1 = (RoundedDouble)double1;
+                    RoundedDouble rounded2 = (RoundedDouble)double2;
 
                     var sum = rounded1 + rounded2;
                     var difference = rounded1 - rounded2;

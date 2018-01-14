@@ -1,16 +1,13 @@
 ﻿using System;
-using GeoGen.AnalyticalGeometry.RandomObjects;
 using GeoGen.Utilities;
 
-namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// Represents a geometrical 2D line.
     /// </summary>
-    public class Line : IAnalyticalObject
+    public class Line : AnalyticalObjectBase<Line>
     {
-        private Lazy<int> _hashCode;
-
         #region Public properties
 
         /// <summary>
@@ -41,7 +38,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         public Line(Point point1, Point point2)
         {
             if (point1 == point2)
-                throw new ArgumentException("Points can't be the same");
+                throw new AnalyticalException("Points can't be the same");
 
             // Calculate the coefficients of the direction vector
             var dx = point1.X - point2.X;
@@ -60,7 +57,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // Then the representation will be unique
 
             // If a is not zero, we want it to be positive
-            if ((RoundedDouble) a != 0)
+            if ((RoundedDouble) a != RoundedDouble.Zero)
             {
                 // If it's not positive
                 if (a < 0)
@@ -86,21 +83,10 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             // Now we can finally scale the coefficients so that A^2 + B^2 + C^2 = 1 holds true
             var scale = Math.Sqrt(a * a + b * b + c * c);
 
-            A = a / scale;
-            B = b / scale;
-            C = c / scale;
-
-            var ACopy = A;
-            var BCopy = B;
-            var CCopy = C;
-
-            _hashCode = new Lazy<int>(() =>
-            {
-                var hashCode = ACopy.GetHashCode();
-                hashCode = (hashCode * 397) ^ BCopy.GetHashCode();
-                hashCode = (hashCode * 397) ^ CCopy.GetHashCode();
-                return hashCode;
-            });
+            // And set the coefficients
+            A = (RoundedDouble) (a / scale);
+            B = (RoundedDouble) (b / scale);
+            C = (RoundedDouble) (c / scale);
         }
 
         #endregion
@@ -108,17 +94,15 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         #region Public methods
 
         /// <summary>
-        /// Construct the intersection of this line with 
-        /// another given one. If the lines are the same,
-        /// the exception will be thrown. If the lines 
-        /// are parallel, the null will be returned.
+        /// Constructs the intersection of this line with another given one. If the lines are the same,
+        /// an <see cref="AnalyticalException"/> will be thrown. If the lines are parallel, the null will be returned.
         /// </summary>
         /// <param name="otherLine">The other line.</param>
         /// <returns>The intersection, or null, if there isn't any.</returns>
         public Point IntersectionWith(Line otherLine)
         {
             if (this == otherLine)
-                throw new ArgumentException("Equal lines");
+                throw new AnalyticalException("Equal lines");
 
             // We want to solve the system
             //
@@ -149,7 +133,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDouble) delta == 0)
+            if ((RoundedDouble) delta == RoundedDouble.Zero)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -168,7 +152,7 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (RoundedDouble) (A * point.X + B * point.Y + C) == 0;
+            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
         }
 
         /// <summary>
@@ -192,87 +176,68 @@ namespace GeoGen.AnalyticalGeometry.AnalyticalObjects
             return new Line(point, otherPoint);
         }
 
+        /// <summary>
+        /// Finds a random point that lies on this line.
+        /// </summary>
+        /// <param name="provider">The randomness provider.</param>
+        /// <returns>A random point.</returns>
+        public Point RandomPointOnLine(IRandomnessProvider provider)
+        {
+            // The directional vector of this line is (-B, A). If X is 
+            // any point on this line, then X + t (-B, A) will be also
+            // a point on this line for any real 't'. We then simply take
+            // a random value for 't' (which won't yield utterly random
+            // point, but it's not a big deal).
+
+            // To find any point on the line, we try points [B, -(C+AB)/B]
+            // [A, -(C+AB)/A]. Either one of them must exist, since A or B
+            // is not zero
+
+            // Find some point on line. 
+            var pointOnLine = B != RoundedDouble.Zero
+                    // If B is not zero
+                    ? new Point(B, (-C + A * B) / B)
+                    // Otherwise A is not zero
+                    : new Point(A, -(C + A * B) / A);
+
+            // Get the random double in [0,1). The upper bound doesn't really matter
+            var randomT = provider.NextDouble(1);
+
+            // Prepare new x,y
+            var newX = pointOnLine.X + randomT * -B;
+            var newY = pointOnLine.Y + randomT * A;
+
+            // Construct the point
+            return new Point(newX, newY);
+        }
+
         #endregion
 
-        #region Overloaded operators
+        #region Abstract HashCode and Equals implementation
 
         /// <summary>
-        /// Determines if two given lines are equal.
+        /// Calculates the hash code of the object. This method is called once per
+        /// object, unlike GetHashCode, which will reuse the result of this method.
         /// </summary>
-        /// <param name="left">The left line.</param>
-        /// <param name="right">The right line.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        public static bool operator ==(Line left, Line right)
+        /// <returns>The hash code.</returns>
+        protected override int CalculateHashCode()
         {
-            return Equals(left, right);
+            var hashCode = A.GetHashCode();
+            hashCode = (hashCode * 397) ^ B.GetHashCode();
+            hashCode = (hashCode * 397) ^ C.GetHashCode();
+            return hashCode;
         }
 
         /// <summary>
-        /// Determines if two given lines are not equal.
+        /// Returns if a given analytical object is equal to this one.
         /// </summary>
-        /// <param name="left">The left line.</param>
-        /// <param name="right">The right line.</param>
-        /// <returns>true, if they are not equal, false otherwise.</returns>
-        public static bool operator !=(Line left, Line right)
-        {
-            return !Equals(left, right);
-        }
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Determines if this line is equal to a given other one.
-        /// </summary>
-        /// <param name="other">The other line.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        private bool Equals(Line other)
+        /// <param name="other">The other object.</param>
+        /// <returns>true, if the objects are equal, false otherwise.</returns>
+        protected override bool IsEqualTo(Line other)
         {
             return A == other.A && B == other.B && C == other.C;
         }
 
         #endregion
-
-        #region Equals and HashCode
-
-        /// <summary>
-        /// Determines if a given object is equal to this line.
-        /// </summary>
-        /// <param name="obj">A given object.</param>
-        /// <returns>true, if they are equal, false otherwise.</returns>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj))
-                return false;
-
-            if (!(obj is Line line))
-                return false;
-
-            return Equals(line);
-        }
-
-        /// <summary>
-        /// Gets the hash code of the line.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            return _hashCode.Value;
-            unchecked
-            {
-                //var hashCode = A.GetHashCode();
-                //hashCode = (hashCode * 397) ^ B.GetHashCode();
-                //hashCode = (hashCode * 397) ^ C.GetHashCode();
-                //return hashCode;
-            }
-        }
-
-        #endregion
-
-        public Point RandomPointOnLine(IRandomnessProvider provider)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
