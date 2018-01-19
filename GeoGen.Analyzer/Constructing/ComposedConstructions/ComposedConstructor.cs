@@ -98,14 +98,36 @@ namespace GeoGen.Analyzer
             // Prepare the result
             var result = new List<ConfigurationObject>();
 
-            // Go trough the arguments
-            foreach (var argument in arguments)
+            // Local function to extract object from an argument
+            void Extract(ConstructionArgument argument)
             {
-                // Visit all objects of a given one and add them to the list
-                argument.Visit(result.Add);
+                // If we have an object argument
+                if (argument is ObjectConstructionArgument objectArgument)
+                {
+                    // Then we simply add the internal object to the result
+                    result.Add(objectArgument.PassedObject);
+
+                    // And terminate
+                    return;
+                }
+
+                // Otherwise we have a set argument
+                var setArgument = (SetConstructionArgument) argument;
+
+                // We recursively call this function for internal arguments
+                foreach (var passedArgument in setArgument.PassedArguments)
+                {
+                    Extract(passedArgument);
+                }
             }
 
-            // Return the result
+            // Now we just call our local function for all passed arguments
+            foreach (var argument in arguments)
+            {
+                Extract(argument);
+            }
+
+            // And return the result
             return result;
         }
     }

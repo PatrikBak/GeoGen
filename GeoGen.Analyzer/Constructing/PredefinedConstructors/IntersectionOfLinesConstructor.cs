@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A constructor for the <see cref="IntersectionFromPoints"/> construction.
     /// </summary>
-    internal sealed class IntersectionOfLinesConstructor : PredefinedConstructorBase
+    internal class IntersectionOfLinesConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a given list of constructed configurations objects. This objects 
@@ -25,16 +24,10 @@ namespace GeoGen.Analyzer
 
             try
             {
-                ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
-
                 var constructedObject = constructedObjects[0];
                 var arguments = constructedObject.PassedArguments;
 
-                ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 1);
-
                 var setArguments = ((SetConstructionArgument) arguments[0]).PassedArguments.ToList();
-
-                ThrowHelper.ThrowExceptionIfNotTrue(setArguments.Count == 2);
 
                 var passedLine1 = ((ObjectConstructionArgument) setArguments[0]).PassedObject;
                 var passedLine2 = ((ObjectConstructionArgument) setArguments[1]).PassedObject;

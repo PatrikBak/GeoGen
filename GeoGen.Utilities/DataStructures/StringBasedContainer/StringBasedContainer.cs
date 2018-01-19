@@ -6,9 +6,8 @@ namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a container of distinct items that are compared based on their string versions.
-    /// These are provided by the abstract property. 
     /// </summary>
-    /// <typeparam name="T">The type of items</typeparam>
+    /// <typeparam name="T">The type of items in the container.</typeparam>
     public abstract class StringBasedContainer<T> : IEnumerable<T>
     {
         #region Protected fields
@@ -28,10 +27,9 @@ namespace GeoGen.Utilities
         #region Constructor
 
         /// <summary>
-        /// Constructs a string based container that uses a given to string converter
-        /// for converting items to string.
+        /// Default constructor.
         /// </summary>
-        /// <param name="converter">The converter.</param>
+        /// <param name="converter">The converter of items to string.</param>
         protected StringBasedContainer(IToStringConverter<T> converter)
         {
             Converter = converter ?? throw new ArgumentNullException(nameof(converter));
@@ -48,15 +46,17 @@ namespace GeoGen.Utilities
         /// <returns>true, if the container's content has changed, false otherwise </returns>
         protected bool Add(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
+            // Convert the item to string
             var stringVersion = Converter.ConvertToString(item);
 
+            // If the item with this string representation is present, return failure
             if (Items.ContainsKey(stringVersion))
                 return false;
 
+            // Otherwise add the item to the container
             Items.Add(stringVersion, item);
+
+            // Return success
             return true;
         }
 

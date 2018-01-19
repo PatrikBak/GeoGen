@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents an output of a <see cref="IObjectsConstructor"/>.
     /// </summary>
-    internal sealed class ConstructorOutput
+    internal class ConstructorOutput
     {
         /// <summary>
         /// Gets or sets the constructor function that is able to constructs

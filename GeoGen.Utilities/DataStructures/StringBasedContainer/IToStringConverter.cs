@@ -1,5 +1,9 @@
 ﻿namespace GeoGen.Utilities
 {
+    /// <summary>
+    /// Represents a converter of objects to string.
+    /// </summary>
+    /// <typeparam name="T">The type of object to be converted.</typeparam>
     public interface IToStringConverter<in T>
     {
         /// <summary>

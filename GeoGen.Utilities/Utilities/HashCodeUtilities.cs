@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GeoGen.Utilities.Helpers
+namespace GeoGen.Utilities
 {
     /// <summary>
-    /// A static helper class for hash coding.
+    /// A static helper class for calculating hash codes.
     /// </summary>
-    public static class HashCodeUtils
+    public static class HashCodeUtilities
     {
         /// <summary>
         /// Gets an order independent hash code of a given collection, using a given function 
@@ -26,7 +26,7 @@ namespace GeoGen.Utilities.Helpers
             {
                 var curHash = hashCoder(element);
 
-                if (valueCounts.TryGetValue(element, out int bitOffset))
+                if (valueCounts.TryGetValue(element, out var bitOffset))
                     valueCounts[element] = bitOffset + 1;
                 else
                     valueCounts.Add(element, bitOffset);
@@ -43,21 +43,21 @@ namespace GeoGen.Utilities.Helpers
         }
 
         /// <summary>
-        /// Gets an order dependent hash code of a given collection, using a given function 
-        /// to determine hash codes of single elements.
+        /// Gets an order dependent hash code from given objects.
         /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="enumerable">The enumerable</param>
-        /// <param name="hashCoder">The function that takes an element and returns it's hash code.</param>
+        /// <param name="objects">The objects.</param>
         /// <returns>The hash code.</returns>
-        public static int GetOrderDependentHashCode<T>(this IEnumerable<T> enumerable, Func<T, int> hashCoder)
+        public static int GetOrderDependentHashCode(params object[] objects)
         {
             var hash = 0;
 
-            foreach (var item in enumerable)
+            foreach (var item in objects)
             {
-                hash *= 251;
-                hash += hashCoder(item);
+                unchecked
+                {
+                    hash *= 37;
+                    hash += item.GetHashCode();
+                }
             }
 
             return hash;

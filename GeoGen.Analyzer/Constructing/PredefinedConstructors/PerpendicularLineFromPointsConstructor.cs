@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
@@ -22,12 +21,9 @@ namespace GeoGen.Analyzer
 
             try
             {
-                ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
-
+                
                 var constructedObject = constructedObjects[0];
                 var arguments = constructedObject.PassedArguments;
-
-                ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 2);
 
                 var rayIntersection = ((ObjectConstructionArgument)arguments[0]).PassedObject;
 

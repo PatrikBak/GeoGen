@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using GeoGen.Utilities;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -71,7 +70,7 @@ namespace GeoGen.AnalyticalGeometry
         public Point Rotate(Point center, double angleInDegrees)
         {
             // First we convert the angle to radians
-            var angleInRadians = MathUtils.ToRadians(angleInDegrees);
+            var angleInRadians = MathUtilities.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
             var cosT = Math.Cos(angleInRadians);
@@ -230,7 +229,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+            return HashCodeUtilities.GetOrderDependentHashCode(X, Y);
         }
 
         /// <summary>

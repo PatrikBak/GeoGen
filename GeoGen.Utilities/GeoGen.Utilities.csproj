@@ -55,25 +55,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SetOnce.cs" />
     <Compile Include="UtilitiesModule.cs" />
-    <Compile Include="DataStructures\CacheBasedContainer.cs" />
-    <Compile Include="DataStructures\IToStringConverter.cs" />
-    <Compile Include="Extentions\CollectionExtensions.cs" />
-    <Compile Include="Extentions\DoubleExtensions.cs" />
+    <Compile Include="DataStructures\StringBasedContainer\IToStringConverter.cs" />
+    <Compile Include="Utilities\Extentions\CollectionExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
-    <Compile Include="Extentions\EnumerableExtensions.cs" />
-    <Compile Include="Helpers\HashCodeUtils.cs" />
+    <Compile Include="Utilities\Extentions\EnumerableExtensions.cs" />
+    <Compile Include="Utilities\HashCodeUtilities.cs" />
     <Compile Include="DataStructures\Map.cs" />
-    <Compile Include="Helpers\MathUtils.cs" />
+    <Compile Include="Utilities\MathUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataStructures\RoundedDouble.cs" />
-    <Compile Include="DataStructures\StringBasedContainer.cs" />
+    <Compile Include="DataStructures\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Generators\Subsets\ISubsetsProvider.cs" />
     <Compile Include="Generators\Subsets\SubsetsProvider.cs" />
-    <Compile Include="Helpers\ThrowHelper.cs" />
-    <Compile Include="Helpers\Utils.cs" />
+    <Compile Include="Utilities\GeneralUtilities.cs" />
     <Compile Include="Generators\Variations\IVariationsProvider.cs" />
     <Compile Include="Generators\Variations\VariationsProvider.cs" />
   </ItemGroup>

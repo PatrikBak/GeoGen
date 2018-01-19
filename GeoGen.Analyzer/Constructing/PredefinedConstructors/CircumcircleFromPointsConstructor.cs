@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
@@ -22,26 +21,19 @@ namespace GeoGen.Analyzer
 
             try
             {
-                ThrowHelper.ThrowExceptionIfNotTrue(constructedObjects.Count == 1);
-
                 var constructedObject = constructedObjects[0];
                 var arguments = constructedObject.PassedArguments;
 
-                ThrowHelper.ThrowExceptionIfNotTrue(arguments.Count == 1);
-
+                
                 var setArgument = (SetConstructionArgument) arguments[0];
                 var passedPoints = setArgument.PassedArguments.ToList();
 
-                ThrowHelper.ThrowExceptionIfNotTrue(passedPoints.Count == 3);
-
+                
                 var obj1 = ((ObjectConstructionArgument) passedPoints[0]).PassedObject;
                 var obj2 = ((ObjectConstructionArgument) passedPoints[1]).PassedObject;
                 var obj3 = ((ObjectConstructionArgument) passedPoints[2]).PassedObject;
 
-                ThrowHelper.ThrowExceptionIfNotTrue(obj1.ObjectType == ConfigurationObjectType.Point);
-                ThrowHelper.ThrowExceptionIfNotTrue(obj2.ObjectType == ConfigurationObjectType.Point);
-                ThrowHelper.ThrowExceptionIfNotTrue(obj3.ObjectType == ConfigurationObjectType.Point);
-
+                
                 List<AnalyticalObject> ConstructorFunction(IObjectsContainer container)
                 {
                     if (container == null)

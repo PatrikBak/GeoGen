@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -21,6 +22,11 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
+            var hash1 = HashCodeUtilities.GetOrderDependentHashCode((IEnumerable)(new List<int> { 1, 2, 3 }));
+            var hash2 = HashCodeUtilities.GetOrderDependentHashCode(1, 2, 3);
+
+            Console.WriteLine(hash1 == hash2);
+
             //var objects = new List<LooseConfigurationObject>
             //{
             //    new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1},
@@ -129,8 +135,6 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Registration inconsistencies: {Wtf.Inconsistencies}");
             Console.WriteLine($"Maximal attempts to resolve: {Wtf.MaximalNeededAttemps}");
             Console.WriteLine($"Maximal interior re-initializations: {Wtf.MaximalContainerIterations}");
-
-            Console.WriteLine(RoundedDouble.c);
             //PrintTheorems(result);
         }
 

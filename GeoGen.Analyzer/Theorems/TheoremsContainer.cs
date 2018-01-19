@@ -5,11 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using GeoGen.Core;
 using GeoGen.Utilities;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
-    internal sealed class TheoremsContainer : ITheoremsContainer
+    internal  class TheoremsContainer : ITheoremsContainer
     {
         private class TheoremObjectComparer : IEqualityComparer<TheoremObject>
         {
@@ -47,7 +46,7 @@ namespace GeoGen.Analyzer
                         .GetOrderIndependentHashCode(o => o.Id ?? throw new AnalyzerException("Id must be set"));
 
                 // Get order-dependent hash code of these two values
-                return new[] {typeHash, objectsHash}.GetOrderDependentHashCode(i => i);
+                return HashCodeUtilities.GetOrderDependentHashCode(typeHash, objectsHash);
             }
         }
 
@@ -71,15 +70,15 @@ namespace GeoGen.Analyzer
             }
         }
 
-        private readonly IDictionary<TheoremType, CacheBasedContainer<Theorem>> _theoremsDictionary;
+        private readonly IDictionary<TheoremType, HashSet<Theorem>> _theoremsDictionary;
 
         public TheoremsContainer()
         {
-            _theoremsDictionary = new Dictionary<TheoremType, CacheBasedContainer<Theorem>>();
+            _theoremsDictionary = new Dictionary<TheoremType, HashSet<Theorem>>();
 
             foreach (var value in Enum.GetValues(typeof(TheoremType)))
             {
-                _theoremsDictionary.Add((TheoremType) value, new CacheBasedContainer<Theorem>(TheoremEqualityComparer.Instance));
+                _theoremsDictionary.Add((TheoremType) value, new HashSet<Theorem>(TheoremEqualityComparer.Instance));
             }
         }
 

@@ -1,12 +1,12 @@
-﻿namespace GeoGen.Utilities.Helpers
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
-    /// General C# utilities
+    /// A static helper class for general C# utilities
     /// </summary>
-    public static class Utils
+    public static class GeneralUtilities
     {
         /// <summary>
-        /// Swaps the value of two elements.
+        /// Swaps the values of two elements, given by its references.
         /// </summary>
         /// <param name="o1">The reference of the first element.</param>
         /// <param name="o2">The reference of the second element.</param>

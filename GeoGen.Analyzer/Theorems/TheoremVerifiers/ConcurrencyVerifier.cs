@@ -4,7 +4,6 @@ using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
-using GeoGen.Utilities.Subsets;
 
 namespace GeoGen.Analyzer
 {
@@ -14,16 +13,19 @@ namespace GeoGen.Analyzer
         public static int Inconsistencies;
         public static int MaximalNeededAttemps;
         public static int MaximalContainerIterations;
+        public static int Count;
 
         public static void Reset()
         {
             Possibilities = 0;
             Inconsistencies = 0;
             MaximalNeededAttemps = 0;
+            Count = 0;
+            MaximalContainerIterations = 0;
         }
     }
 
-    internal sealed class ConcurrencyVerifier : ITheoremVerifier
+    internal  class ConcurrencyVerifier : ITheoremVerifier
     {
         public TheoremType TheoremType { get; } = TheoremType.ConcurrentObjects;
 

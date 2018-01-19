@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Utilities;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -189,8 +188,8 @@ namespace GeoGen.AnalyticalGeometry
             // If yes, we use the helper method to do so
             if (changingVariables)
             {
-                Utils.Swap(ref a, ref b);
-                Utils.Swap(ref m, ref n);
+                GeneralUtilities.Swap(ref a, ref b);
+                GeneralUtilities.Swap(ref m, ref n);
             }
 
             // Now we're sure that a != 0. (1) gives x = (-c - by) / a;
@@ -206,7 +205,7 @@ namespace GeoGen.AnalyticalGeometry
             var cCoef = (c / a + m) * (c / a + m) + n * n - r * r;
 
             // Let the helper method solve the quadratic equation for y.
-            var yRoots = MathUtils.SolveQuadraticEquation(aCoef, bCoef, cCoef);
+            var yRoots = MathUtilities.SolveQuadraticEquation(aCoef, bCoef, cCoef);
 
             // If there are no solutions, we won't have any intersection
             if (yRoots.Empty())
@@ -237,7 +236,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return (Center.GetHashCode() * 397) ^ Radius.GetHashCode();
+            return HashCodeUtilities.GetOrderDependentHashCode(Radius, Center);
         }
 
         /// <summary>

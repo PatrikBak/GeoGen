@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
 
 namespace GeoGen.Utilities.Test
@@ -146,8 +145,8 @@ namespace GeoGen.Utilities.Test
         [Test]
         public void Test_Equal_And_Hash_Code_Tangens()
         {
-            var a1 = MathUtils.ToRadians(23);
-            var a2 = MathUtils.ToRadians(111);
+            var a1 = MathUtilities.ToRadians(23);
+            var a2 = MathUtilities.ToRadians(111);
 
             var double1 = (RoundedDouble) Math.Tan(a1 + a2);
             var tan1 = Math.Tan(a1);

@@ -6,7 +6,7 @@ using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
-    internal sealed class TheoremsVerifier : ITheoremsVerifier
+    internal  class TheoremsVerifier : ITheoremsVerifier
     {
         private readonly ITheoremVerifier[] _verifiers;
 

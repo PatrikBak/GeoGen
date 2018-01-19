@@ -11,7 +11,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainersManager"/>.
     /// </summary>
-    internal sealed class ObjectsContainersManager : IObjectsContainersManager
+    internal  class ObjectsContainersManager : IObjectsContainersManager
     {
         #region Public constants 
 
@@ -148,7 +148,7 @@ namespace GeoGen.Analyzer
                     }
 
                     sw.Stop();
-                    Console.WriteLine(sw.ElapsedMilliseconds);
+                    Wtf.Count++;
                 }
             }
         }

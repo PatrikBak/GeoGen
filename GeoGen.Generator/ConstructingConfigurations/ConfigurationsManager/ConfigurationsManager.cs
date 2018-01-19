@@ -130,7 +130,7 @@ namespace GeoGen.Generator
             _configurationsResolver.ResolveInitialConfiguration(configurationWrapper);
 
             // Set this configuration as a current layer
-            CurrentLayer.SetItems(configurationWrapper.SingleItemAsEnumerable());
+            CurrentLayer.SetItems(configurationWrapper.AsEnumerable());
         }
 
         #endregion

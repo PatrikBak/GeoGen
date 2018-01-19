@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
 
 namespace GeoGen.Utilities.Test
@@ -21,7 +20,7 @@ namespace GeoGen.Utilities.Test
 
             foreach (var coefficient in coefficients)
             {
-                var solutions = MathUtils.SolveQuadraticEquation(coefficient.Item1, coefficient.Item2, coefficient.Item3);
+                var solutions = MathUtilities.SolveQuadraticEquation(coefficient.Item1, coefficient.Item2, coefficient.Item3);
                 Assert.IsEmpty(solutions);
             }
         }
@@ -46,7 +45,7 @@ namespace GeoGen.Utilities.Test
             for (var i = 0; i < coefficients.Count; i++)
             {
                 var tuple = coefficients[i];
-                var solutions = MathUtils.SolveQuadraticEquation(tuple.Item1, tuple.Item2, tuple.Item3);
+                var solutions = MathUtilities.SolveQuadraticEquation(tuple.Item1, tuple.Item2, tuple.Item3);
                 Assert.AreEqual(1, solutions.Count);
                 Assert.AreEqual(solutions[0], roots[i]);
             }
@@ -72,7 +71,7 @@ namespace GeoGen.Utilities.Test
             for (var i = 0; i < coefficients.Count; i++)
             {
                 var current = coefficients[i];
-                var solutions = MathUtils.SolveQuadraticEquation(current.Item1, current.Item2, current.Item3);
+                var solutions = MathUtilities.SolveQuadraticEquation(current.Item1, current.Item2, current.Item3);
                 Assert.AreEqual(2, solutions.Count);
                 Assert.IsTrue(solutions.Contains(roots[i].Item1));
                 Assert.IsTrue(solutions.Contains(roots[i].Item2));
@@ -92,18 +91,18 @@ namespace GeoGen.Utilities.Test
 
             foreach (var coefficient in coefficients)
             {
-                Assert.Throws<ArithmeticException>(() => MathUtils.SolveQuadraticEquation(0, coefficient.Item1, coefficient.Item2));
+                Assert.Throws<ArithmeticException>(() => MathUtilities.SolveQuadraticEquation(0, coefficient.Item1, coefficient.Item2));
             }
         }
 
         [Test]
         public void Test_To_Radians()
         {
-            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtils.ToRadians(0)));
-            Assert.AreEqual((RoundedDouble)(Math.Sqrt(2) / 2), (RoundedDouble)Math.Sin(MathUtils.ToRadians(45)));
-            Assert.AreEqual((RoundedDouble)1, (RoundedDouble)Math.Sin(MathUtils.ToRadians(90)));
-            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtils.ToRadians(180)));
-            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtils.ToRadians(360)));
+            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtilities.ToRadians(0)));
+            Assert.AreEqual((RoundedDouble)(Math.Sqrt(2) / 2), (RoundedDouble)Math.Sin(MathUtilities.ToRadians(45)));
+            Assert.AreEqual((RoundedDouble)1, (RoundedDouble)Math.Sin(MathUtilities.ToRadians(90)));
+            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtilities.ToRadians(180)));
+            Assert.AreEqual((RoundedDouble)0, (RoundedDouble)Math.Sin(MathUtilities.ToRadians(360)));
         }
     }
 }

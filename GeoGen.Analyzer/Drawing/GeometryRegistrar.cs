@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IGeometryRegistrar"/>.
     /// </summary>
-    internal sealed class GeometryRegistrar : IGeometryRegistrar
+    internal class GeometryRegistrar : IGeometryRegistrar
     {
         private readonly IConstructorsResolver _resolver;
 

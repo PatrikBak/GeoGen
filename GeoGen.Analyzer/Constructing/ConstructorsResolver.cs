@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IConstructorsResolver"/>.
     /// </summary>
-    internal sealed class ConstructorsResolver : IConstructorsResolver
+    internal class ConstructorsResolver : IConstructorsResolver
     {
         #region Private fields
 

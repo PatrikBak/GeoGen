@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Utilities
 {
@@ -9,27 +8,24 @@ namespace GeoGen.Utilities
     public static class CollectionExtensions
     {
         /// <summary>
-        /// Sets new items to the collection.
+        /// Sets given items as the items of a given collection.
         /// </summary>
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collection.</param>
         /// <param name="newItems">The new items to be set.</param>
         public static void SetItems<T>(this ICollection<T> collection, IEnumerable<T> newItems)
         {
-            if (collection == null)
-                throw new ArgumentNullException(nameof(collection));
-
-            if (newItems == null)
-                throw new ArgumentNullException(nameof(newItems));
-
+            // Clear the collection
             collection.Clear();
 
+            // If the collection is list, the most efficient way is to use the AddRange method
             if (collection is List<T> list)
             {
                 list.AddRange(newItems);
                 return;
             }
 
+            // Otherwise we add all items by one
             foreach (var item in newItems)
             {
                 collection.Add(item);

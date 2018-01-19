@@ -8,7 +8,7 @@ using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {
-    internal sealed class ContextualContainer : IContextualContainer
+    internal class ContextualContainer : IContextualContainer
     {
         #region Private fields
 

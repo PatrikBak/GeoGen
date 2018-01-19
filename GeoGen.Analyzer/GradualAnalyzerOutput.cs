@@ -6,7 +6,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents an output from the analyzer.
     /// </summary>
-    public sealed class GradualAnalyzerOutput
+    public class GradualAnalyzerOutput
     {
         /// <summary>
         /// Gets or sets if the analyzed configuration is correctly constructible. 

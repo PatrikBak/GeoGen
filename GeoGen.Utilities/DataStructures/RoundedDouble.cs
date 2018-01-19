@@ -3,29 +3,59 @@ using System.Globalization;
 
 namespace GeoGen.Utilities
 {
-    public class RoundedDouble
+    /// <summary>
+    /// Represents a <see cref="double"/> structure that holds its rounded value which 
+    /// is used while comparing two rounded doubles.
+    /// </summary>
+    public struct RoundedDouble
     {
+        #region Public constants
+
+        /// <summary>
+        /// The number of decimal places to which the double is rounded.
+        /// </summary>
         public const int DoubleRoundingPrecision = 6;
 
+        #endregion
+
+        #region Public static fields
+
+        /// <summary>
+        /// The constant representing the value 0.
+        /// </summary>
         public static readonly RoundedDouble Zero = new RoundedDouble(0);
 
+        #endregion
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the original value of the double number.
+        /// </summary>
         public double OriginalValue { get; }
 
+        /// <summary>
+        /// Gets the rounded value of the double number.
+        /// </summary>
         public double RoundedValue { get; }
 
-        private readonly Lazy<int> _hashCode;
+        #endregion
 
-        public static int c = 0;
+        #region Constructor
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="originalValue">The original double value.</param>
         public RoundedDouble(double originalValue)
         {
-            c++;
             OriginalValue = originalValue;
-            //var roundedValue = originalValue.AdjustPrecision(DoubleRoundingPrecision);
-            var roundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
-            RoundedValue = roundedValue;
-            _hashCode = new Lazy<int>(() => roundedValue.GetHashCode());
+            RoundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
         }
+
+        #endregion
+
+        #region Conversion operators
 
         public static explicit operator RoundedDouble(double value)
         {
@@ -36,6 +66,10 @@ namespace GeoGen.Utilities
         {
             return value.OriginalValue;
         }
+
+        #endregion
+
+        #region Arithmetic operators
 
         public static double operator +(RoundedDouble double1, RoundedDouble double2)
         {
@@ -56,6 +90,10 @@ namespace GeoGen.Utilities
         {
             return double1.OriginalValue / double2.OriginalValue;
         }
+
+        #endregion
+
+        #region Comparison operators
 
         public static bool operator >(RoundedDouble double1, RoundedDouble double2)
         {
@@ -84,14 +122,29 @@ namespace GeoGen.Utilities
 
         public static bool operator !=(RoundedDouble left, RoundedDouble right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
 
+        #endregion
+
+        #region Equals and hash code
+
+        /// <summary>
+        /// Finds out if a given rounded double is equal to this one,
+        /// by comparing its rounded values.
+        /// </summary>
+        /// <param name="other">The other double.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
         public bool Equals(RoundedDouble other)
         {
             return RoundedValue.Equals(other.RoundedValue);
         }
 
+        /// <summary>
+        /// Finds out if a given object is equal to this rounded double.
+        /// </summary>
+        /// <param name="obj">The object</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
         public override bool Equals(object obj)
         {
             if (obj is null)
@@ -100,15 +153,29 @@ namespace GeoGen.Utilities
             return obj is RoundedDouble d && Equals(d);
         }
 
+        /// <summary>
+        /// Gets the hash code using the rounded value.
+        /// </summary>
+        /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
-            //return _hashCode.Value;
             return RoundedValue.GetHashCode();
         }
 
+        #endregion
+
+        #region To string
+
+        /// <summary>
+        /// Converts a given rounded double to string, using its rounded value and 
+        /// the invariant culture info. 
+        /// </summary>
+        /// <returns>The string representation of the double.</returns>
         public override string ToString()
         {
             return RoundedValue.ToString(CultureInfo.InvariantCulture);
         }
+
+        #endregion
     }
 }

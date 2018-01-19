@@ -4,7 +4,7 @@ using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
-    internal sealed class PointObject : GeometricalObject
+    internal  class PointObject : GeometricalObject
     {
         public HashSet<LineObject> Lines { get; } = new HashSet<LineObject>();
 

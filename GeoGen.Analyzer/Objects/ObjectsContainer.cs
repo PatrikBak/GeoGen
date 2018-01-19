@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainer"/>.
     /// </summary>
-    internal sealed class ObjectsContainer : IObjectsContainer
+    internal  class ObjectsContainer : IObjectsContainer
     {
         #region Private fields
 

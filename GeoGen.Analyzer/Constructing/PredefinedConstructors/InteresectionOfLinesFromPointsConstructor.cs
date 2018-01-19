@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
-using GeoGen.Utilities.Helpers;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A constructor for the <see cref="IntersectionFromPoints"/> construction.
     /// </summary>
-    internal sealed class IntersectionOfLinesFromPointsConstructor : PredefinedConstructorBase
+    internal class IntersectionOfLinesFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a given list of constructed configurations objects. This objects 

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core;
 using GeoGen.Utilities;
-using GeoGen.Utilities.Variations;
 
 namespace GeoGen.Generator
 {

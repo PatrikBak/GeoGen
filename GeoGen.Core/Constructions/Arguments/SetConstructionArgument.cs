@@ -34,23 +34,5 @@ namespace GeoGen.Core
         }
 
         #endregion
-
-        #region Overridden methods
-
-        /// <summary>
-        /// Executes an action on the configuration objects that are contained.
-        /// inside the argument.
-        /// </summary>
-        /// <param name="action">The action to be performed on each object.</param>
-        public override void Visit(Action<ConfigurationObject> action)
-        {
-            // Visit all internal arguments
-            foreach (var argument in PassedArguments)
-            {
-                argument.Visit(action);
-            }
-        }
-
-        #endregion
     }
 }

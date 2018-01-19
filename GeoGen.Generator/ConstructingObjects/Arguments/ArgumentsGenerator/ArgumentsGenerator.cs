@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GeoGen.Core;
-using GeoGen.Utilities.Combinations;
-using GeoGen.Utilities.Variations;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {

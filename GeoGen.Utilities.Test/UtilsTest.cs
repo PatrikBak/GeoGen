@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.Utilities.Helpers;
 using NUnit.Framework;
 
 namespace GeoGen.Utilities.Test
@@ -12,7 +11,7 @@ namespace GeoGen.Utilities.Test
         {
             var i = 1;
             var j = 2;
-            Utils.Swap(ref i, ref j);
+            GeneralUtilities.Swap(ref i, ref j);
 
             Assert.AreEqual(2, i);
             Assert.AreEqual(1, j);
@@ -23,7 +22,7 @@ namespace GeoGen.Utilities.Test
         {
             var o1 = (LooseConfigurationObject) null;
             var o2 = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            Utils.Swap(ref o1, ref o2);
+            GeneralUtilities.Swap(ref o1, ref o2);
 
             Assert.NotNull(o1);
             Assert.IsNull(o2);

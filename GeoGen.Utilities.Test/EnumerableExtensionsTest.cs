@@ -25,7 +25,7 @@ namespace GeoGen.Utilities.Test
         [Test]
         public void Test_Single_Item_As_Enumerable()
         {
-            var enumerable = 1.SingleItemAsEnumerable();
+            var enumerable = 1.AsEnumerable();
             Assert.NotNull(enumerable);
 
             var list = enumerable.ToList();
@@ -87,14 +87,14 @@ namespace GeoGen.Utilities.Test
             Assert.AreSame(comparer, set.Comparer);
         }
 
-        [Test]
-        public void Test_Concat_Item()
-        {
-            var list = new[] {1, 2, 3}.ConcatItem(4).ToList();
+        //[Test]
+        //public void Test_Concat_Item()
+        //{
+        //    var list = new[] {1, 2, 3}.ConcatItem(4).ToList();
 
-            Assert.AreEqual(4, list.Count);
-            Assert.AreEqual(3, list[2]);
-            Assert.AreEqual(4, list[3]);
-        }
+        //    Assert.AreEqual(4, list.Count);
+        //    Assert.AreEqual(3, list[2]);
+        //    Assert.AreEqual(4, list[3]);
+        //}
     }
 }

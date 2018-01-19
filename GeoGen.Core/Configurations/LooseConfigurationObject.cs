@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="ConfigurationObject"/> that is meant to be a general independent object
@@ -27,21 +25,6 @@ namespace GeoGen.Core
         public LooseConfigurationObject(ConfigurationObjectType objectType)
         {
             ObjectType = objectType;
-        }
-
-        #endregion
-
-        #region Overridden methods
-
-        /// <summary>
-        /// Executes an action on the configuration objects that are used to define this one
-        /// (including this one). The action might get call for the same object more than once.
-        /// </summary>
-        /// <param name="action">The action to be performed on each object.</param>
-        public override void Visit(Action<ConfigurationObject> action)
-        {
-            // Call the action on this object
-            action(this);
         }
 
         #endregion

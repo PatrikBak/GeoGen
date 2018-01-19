@@ -222,10 +222,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            var hashCode = A.GetHashCode();
-            hashCode = (hashCode * 397) ^ B.GetHashCode();
-            hashCode = (hashCode * 397) ^ C.GetHashCode();
-            return hashCode;
+            return HashCodeUtilities.GetOrderDependentHashCode(A, B, C);
         }
 
         /// <summary>

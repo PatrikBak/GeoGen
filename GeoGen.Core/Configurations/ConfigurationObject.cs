@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an object of a <see cref="Configuration"/>. 
@@ -24,17 +22,6 @@ namespace GeoGen.Core
         /// Gets the actual geometrical type of this object (such as Point, Line...)
         /// </summary>
         public abstract ConfigurationObjectType ObjectType { get; }
-
-        #endregion
-
-        #region Abstract methods
-
-        /// <summary>
-        /// Executes an action on the configuration objects that are used to define this one
-        /// (including this one). The action might get call for the same object more than once.
-        /// </summary>
-        /// <param name="action">The action to be performed on each object.</param>
-        public abstract void Visit(Action<ConfigurationObject> action);
 
         #endregion
     }
