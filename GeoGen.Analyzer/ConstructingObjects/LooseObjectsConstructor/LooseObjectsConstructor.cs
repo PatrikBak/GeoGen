@@ -9,14 +9,14 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="ILooseObjectsConstructor"/> that uses 
     /// <see cref="IRandomObjectsProvider"/> to construct mutually distinct objects
-    /// with no other conditions.
+    /// with no other conditions (this should be improved later).
     /// </summary>
     internal class LooseObjectsConstructor : ILooseObjectsConstructor
     {
         #region Private fields
 
         /// <summary>
-        /// The random objects provider.
+        /// The provided of random distinct objects.
         /// </summary>
         private readonly IRandomObjectsProvider _provider;
 
@@ -25,10 +25,9 @@ namespace GeoGen.Analyzer
         #region Constructor
 
         /// <summary>
-        /// Constructs a new loose objects constructor that uses a given
-        /// random objects provider.
+        /// Default constructor.
         /// </summary>
-        /// <param name="provider">The random objects provider.</param>
+        /// <param name="provider">The provider of random distinct objects.</param>
         public LooseObjectsConstructor(IRandomObjectsProvider provider)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
@@ -45,11 +44,10 @@ namespace GeoGen.Analyzer
         /// <returns>The list of analytical objects.</returns>
         public List<AnalyticalObject> Construct(IEnumerable<LooseConfigurationObject> looseObjects)
         {
+            // Construct all objects one by one
             return looseObjects.Select(looseObject =>
             {
-                if (looseObject == null)
-                    throw new ArgumentException("Loose objects contains null value.");
-
+                // According to the type find the right random object
                 switch (looseObject.ObjectType)
                 {
                     case ConfigurationObjectType.Point:
@@ -59,7 +57,7 @@ namespace GeoGen.Analyzer
                     case ConfigurationObjectType.Circle:
                         return _provider.NextRandomObject<Circle>();
                     default:
-                        throw new AnalyzerException("Unhandled case.");
+                        throw new AnalyzerException("Unhandled type of object.");
                 }
             }).ToList();
         }

@@ -24,7 +24,7 @@ namespace GeoGen.Analyzer
         private readonly Dictionary<int, IComposedConstructor> _composedConstructors;
 
         /// <summary>
-        /// The factory for getting composed constructors for a given composed construction.
+        /// The factory for creating composed constructors for a given composed construction.
         /// </summary>
         private readonly IComposedConstructorFactory _factory;
 
@@ -33,31 +33,20 @@ namespace GeoGen.Analyzer
         #region Constructor
 
         /// <summary>
-        /// Constructs a new constructors resolver with provided predefined
-        /// constructors.
+        /// Default constructor
         /// </summary>
         /// <param name="constructors">The predefined constructors array.</param>
-        public ConstructorsResolver(IPredefinedConstructor[] constructors, IComposedConstructorFactory factory)
+        /// <param name="factory">The factory for creating composed constructors.</param>
+        public ConstructorsResolver(IEnumerable<IPredefinedConstructor> constructors, IComposedConstructorFactory factory)
         {
-            if (constructors == null)
-                throw new ArgumentNullException(nameof(constructors));
-
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-
             _predefinedConstructors = new Dictionary<PredefinedConstructionType, IPredefinedConstructor>();
             _composedConstructors = new Dictionary<int, IComposedConstructor>();
 
+            // Register all predefined constructors
             foreach (var constructor in constructors)
             {
-                if (constructor == null)
-                    throw new ArgumentException("Constructors can't contain null objects");
-
-                var type = constructor.PredefinedConstructionType;
-
-                if (_predefinedConstructors.ContainsKey(type))
-                    throw new ArgumentException("Duplicate constructors");
-
-                _predefinedConstructors.Add(type, constructor);
+                _predefinedConstructors.Add(constructor.Type, constructor);
             }
         }
 
@@ -73,32 +62,37 @@ namespace GeoGen.Analyzer
         /// <returns>The constructor.</returns>
         public IObjectsConstructor Resolve(Construction construction)
         {
-            if (construction == null)
-                throw new ArgumentNullException(nameof(construction));
-
+            // For predefined construction
             if (construction is PredefinedConstruction predefinedConstruction)
             {
                 try
                 {
+                    // We simply look into the dictionary
                     return _predefinedConstructors[predefinedConstruction.Type];
                 }
                 catch (KeyNotFoundException)
                 {
-                    throw new AnalyzerException("Unresolvable predefined constructor.");
+                    throw new AnalyzerException($"Unresolvable predefined constructor of type {predefinedConstruction.Type}.");
                 }
             }
 
+            // Otherwise we have a composed construction
             var composedConstruction = (ComposedConstruction) construction;
 
+            // We pull its id
             var id = composedConstruction.Id ?? throw new AnalyzerException("Id must be set");
 
+            // Look for it in the dictionary
             if (_composedConstructors.ContainsKey(id))
                 return _composedConstructors[id];
 
+            // If it's not there, we let the factory create the constructor
             var constructor = _factory.Create(composedConstruction);
 
+            // Update the dictionary
             _composedConstructors.Add(id, constructor);
 
+            // And return it
             return constructor;
         }
 

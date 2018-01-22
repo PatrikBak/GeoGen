@@ -11,15 +11,14 @@ namespace GeoGen.Analyzer
     internal class ConstructorOutput
     {
         /// <summary>
-        /// Gets or sets the constructor function that is able to constructs
-        /// an object using a <see cref="IObjectsContainer"/> container.
+        /// Gets or sets the constructor function that constructs analytical objects
+        /// object using an <see cref="IObjectsContainer"/> container.
         /// </summary>
         public Func<IObjectsContainer, List<AnalyticalObject>> ConstructorFunction { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of default theorems that comes with
-        /// a construction.
+        /// Gets or sets the function that creates the list of default theorems.
         /// </summary>
-        public List<Theorem> Theorems { get; set; }
+        public Func<List<Theorem>> DefaultTheoremsFunction { get; set; }
     }
 }

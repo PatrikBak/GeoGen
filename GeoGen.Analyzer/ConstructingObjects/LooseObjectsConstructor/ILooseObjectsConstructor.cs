@@ -5,10 +5,7 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represent a simple constructor of loose configuration objects.
-    ///
-    /// TODO: Consider implementing this with some conditions (such as points should not be collinear)
-    /// 
+    /// Represent a constructor of loose configuration objects.
     /// </summary>
     internal interface ILooseObjectsConstructor
     {

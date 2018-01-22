@@ -26,6 +26,13 @@ namespace GeoGen.Core
         /// </summary>
         public List<ConstructedConfigurationObject> ConstructionOutput { get; }
 
+        /// <summary>
+        /// Gets or sets the function that takes the list of constructed objects (that are created with
+        /// this construction) and construct the list of default theorems that holds true for them 
+        /// (usually combined with the input objects from the arguments passed to them).
+        /// </summary>
+        public Func<List<ConstructedConfigurationObject>, List<Theorem>> DefaultTheoresFuncton { get; set; }
+
         #endregion
 
         #region Construction properties

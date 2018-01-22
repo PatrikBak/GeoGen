@@ -9,23 +9,14 @@ namespace GeoGen.Analyzer
     /// A base implementation of <see cref="IPredefinedConstructor"/> that infers the
     /// type of the construction from a name that should be in the form "{type}Constructor".
     /// </summary>
-    internal abstract class PredefinedConstructorBase : IPredefinedConstructor
+    internal abstract class PredefinedConstructorBase : ObjectsConstructorBase, IPredefinedConstructor
     {
         #region IPredefinedConstructor properties
-        
-        /// <summary>
-        /// Gets the type of predefined construction that this constructor performs.
-        /// </summary>
-        public PredefinedConstructionType PredefinedConstructionType { get; }
-
-        #endregion
-
-        #region IPredefinedConstructor methods
 
         /// <summary>
-        /// Gets the type of predefined construction that this constructor performs.
+        /// Gets the type of the predefined construction that this constructor performs.
         /// </summary>
-        public abstract ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects);
+        public PredefinedConstructionType Type { get; }
 
         #endregion
 
@@ -37,7 +28,7 @@ namespace GeoGen.Analyzer
         protected PredefinedConstructorBase()
         {
             // Set the compulsory construction type
-            PredefinedConstructionType = FindTypeFromClassName();
+            Type = FindTypeFromClassName();
         }
 
         #endregion
@@ -60,7 +51,7 @@ namespace GeoGen.Analyzer
             // Do the matching
             var match = regex.Match(className);
 
-            // If we failed, we want to throw an exception
+            // If we failed, we want to make the developer aware
             if (!match.Success)
                 throw new Exception($"The class {className} doesn't match the name pattern '{{type}}Constructor'");
 
@@ -70,13 +61,13 @@ namespace GeoGen.Analyzer
             // Try to parse (without ignoring the cases)
             var parsingSuccessful = Enum.TryParse(typeName, false, out PredefinedConstructionType result);
 
-            // If the parsing failed, we want to thrown an exception
+            // If the parsing failed, we want to make the developer aware
             if (!parsingSuccessful)
-                throw new Exception($"Unable to parse the {typeName} (inferred from the {className}) into a value of {nameof(PredefinedConstructionType)}.");
+                throw new Exception($"Unable to parse the {typeName} (inferred from the {className}) into a value of {nameof(Type)}.");
 
             // Otherwise we're fine
             return result;
-        } 
+        }
 
         #endregion
     }

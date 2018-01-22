@@ -4,13 +4,13 @@ namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an <see cref="IObjectsConstructor"/> of a <see cref="PredefinedConstruction"/>
-    /// of some type.
+    /// of some <see cref="PredefinedConstructionType"/>.
     /// </summary>
     internal interface IPredefinedConstructor : IObjectsConstructor
     {
         /// <summary>
-        /// Gets the type of predefined construction that this constructor performs.
+        /// Gets the type of the predefined construction that this constructor performs.
         /// </summary>
-        PredefinedConstructionType PredefinedConstructionType { get; }
+        PredefinedConstructionType Type { get; }
     }
 }

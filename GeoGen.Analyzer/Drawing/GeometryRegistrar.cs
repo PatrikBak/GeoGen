@@ -126,7 +126,7 @@ namespace GeoGen.Analyzer
             }
 
             // Set the theorems
-            theorems = constructorOutput.Theorems;
+            theorems = constructorOutput.DefaultTheoremsFunction();
 
             // If we can't construct it, we return unconstructible result
             if (!canBeConstructed ?? throw new AnalyzerException("Impossible"))
