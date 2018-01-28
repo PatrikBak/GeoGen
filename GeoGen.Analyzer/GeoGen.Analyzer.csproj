@@ -50,6 +50,12 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\IOutputValidator.cs" />
+    <Compile Include="TheoremsAnalysis\TheoremsValidator\ITheoremsValidator.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\OutputValidator.cs" />
+    <Compile Include="TheoremsAnalysis\TheoremsAnalyzer.cs" />
+    <Compile Include="TheoremsAnalysis\TheoremsValidator\TheoremsValidator.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\ComposedConstructor.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\IComposedConstructor.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\IComposedConstructorFactory.cs" />
@@ -61,46 +67,46 @@
     <Compile Include="ConstructingObjects\PredefinedConstructors\InternalAngelBisectorFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\LoosePointOnLineFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\PerpendicularLineFromPointsConstructor.cs" />
-    <Compile Include="Drawing\GeometryRegistrar.cs" />
-    <Compile Include="Drawing\IGeometryRegistrar.cs" />
-    <Compile Include="Drawing\RegistrationResult.cs" />
-    <Compile Include="GradualAnalyzerOutput.cs" />
+    <Compile Include="TheoremsAnalysis\ITheoremsAnalyzer.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\ContextualContainerFactory.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\IContextualContainerFactory.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\NeedlessObjectsAnalyzer\INeedlessObjectsAnalyzer.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\NeedlessObjectsAnalyzer\NeedlessObjectsAnalyzer.cs" />
+    <Compile Include="ManagingObjects\GeometryRegistrar\GeometryRegistrar.cs" />
+    <Compile Include="ManagingObjects\GeometryRegistrar\IGeometryRegistrar.cs" />
+    <Compile Include="ManagingObjects\GeometryRegistrar\RegistrationResult.cs" />
     <Compile Include="ConstructingObjects\ConstructorOutput.cs" />
     <Compile Include="ConstructingObjects\ConstructorsResolver\ConstructorsResolver.cs" />
     <Compile Include="ConstructingObjects\LooseObjectsConstructor\ILooseObjectsConstructor.cs" />
     <Compile Include="ConstructingObjects\IObjectsConstructor.cs" />
     <Compile Include="ConstructingObjects\IPredefinedConstructor.cs" />
     <Compile Include="ConstructingObjects\LooseObjectsConstructor\LooseObjectsConstructor.cs" />
-    <Compile Include="InconsistentContainersException.cs" />
+    <Compile Include="ManagingObjects\ContainersInconsistencies\IInconsistenciesTracker.cs" />
+    <Compile Include="ManagingObjects\ContainersInconsistencies\InconsistentContainersException.cs" />
     <Compile Include="AnalyerModule.cs" />
-    <Compile Include="Theorems\ITheoremConstructor.cs" />
-    <Compile Include="Theorems\ITheoremsVerifier.cs" />
-    <Compile Include="Objects\GeometricalObjects\CircleObject.cs" />
-    <Compile Include="Objects\GeometricalObjects\Container\ContextualContainer.cs" />
-    <Compile Include="Objects\GeometricalObjects\GeometricalObject.cs" />
-    <Compile Include="Objects\GeometricalObjects\LineObject.cs" />
-    <Compile Include="Objects\GeometricalObjects\PointObject.cs" />
-    <Compile Include="Objects\IObjectsContainersManager.cs" />
-    <Compile Include="Objects\ObjectsContainersManager.cs" />
-    <Compile Include="Theorems\TheoremConstructor.cs" />
-    <Compile Include="Theorems\TheoremsContainer.cs" />
-    <Compile Include="Theorems\TheoremsVerifier.cs" />
-    <Compile Include="Theorems\ITheoremsContainer.cs" />
+    <Compile Include="TheoremsAnalysis\Constructor\ITheoremConstructor.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\CircleObject.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\ContextualContainer.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\GeometricalObject.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\LineObject.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\PointObject.cs" />
+    <Compile Include="ManagingObjects\IObjectsContainersManager.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersManager.cs" />
+    <Compile Include="TheoremsAnalysis\Constructor\TheoremConstructor.cs" />
+    <Compile Include="TheoremsAnalysis\Container\TheoremsContainer.cs" />
+    <Compile Include="TheoremsAnalysis\Container\ITheoremsContainer.cs" />
     <Compile Include="ConstructingObjects\ConstructorsResolver\IConstructorsResolver.cs" />
-    <Compile Include="Objects\IObjectsContainerFactory.cs" />
-    <Compile Include="Objects\ObjectsContainer.cs" />
-    <Compile Include="Objects\IObjectsContainer.cs" />
-    <Compile Include="GradualAnalyzer.cs" />
-    <Compile Include="IGradualAnalyzer.cs" />
+    <Compile Include="ManagingObjects\IObjectsContainerFactory.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainer.cs" />
+    <Compile Include="ManagingObjects\IObjectsContainer.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\InteresectionOfLinesFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\MidpointFromPointsConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Theorems\ITheoremVerifier.cs" />
-    <Compile Include="Theorems\TheoremVerifiers\CollinearityVerifier.cs" />
-    <Compile Include="Theorems\TheoremVerifiers\ConcurrencyVerifier.cs" />
-    <Compile Include="Objects\GeometricalObjects\Container\IContextualContainer.cs" />
-    <Compile Include="Theorems\VerifierInput.cs" />
-    <Compile Include="Theorems\VerifierOutput.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\Base\ITheoremVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\CollinearityVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\ConcurrencyVerifier.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\IContextualContainer.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\Base\VerifierOutput.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">
@@ -120,5 +126,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

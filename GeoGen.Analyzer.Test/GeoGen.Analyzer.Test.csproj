@@ -57,10 +57,8 @@
     <Compile Include="Constructing\PredefinedConstructors\IntersectionConstructorTest.cs" />
     <Compile Include="Constructing\PredefinedConstructors\MidpointConstructorTest.cs" />
     <Compile Include="GradualAnalyzerTest.cs" />
+    <Compile Include="NeedlessObjectsAnalyzerTest.cs" />
     <Compile Include="Objects\Container\ContextualContainerTest.cs" />
-    <Compile Include="Objects\GeometricalObjects\CircleObjectTest.cs" />
-    <Compile Include="Objects\GeometricalObjects\LineObjectTest.cs" />
-    <Compile Include="Objects\GeometricalObjects\PointObjectTest.cs" />
     <Compile Include="Objects\GeometryRegistrarTest.cs" />
     <Compile Include="Objects\ObjectsContainersFactoryTest.cs" />
     <Compile Include="Objects\ObjectsContainersManagerTest.cs" />

@@ -8,8 +8,6 @@ namespace GeoGen.Utilities
     /// </summary>
     public class Combinator : ICombinator
     {
-        #region ICombinator implementation
-
         /// <summary>
         /// Generates all possible combinations of elements provided in the possibilities map. This method should
         /// work in a lazy way. For example: For { a, [1, 2] }, { b, [2, 3] } it will generate 4 dictionaries:
@@ -81,7 +79,5 @@ namespace GeoGen.Utilities
                 }
             }
         }
-
-        #endregion
     }
 }

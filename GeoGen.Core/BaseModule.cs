@@ -15,18 +15,18 @@ namespace GeoGen.Core
     /// </summary>
     public abstract class BaseModule : NinjectModule
     {
-        #region Private constants
+        #region Protected constants
 
         /// <summary>
         /// The identifier name of the generator NInject scope.
         /// </summary>
-        private const string GeneratorScopeName = "Generator";
+        protected const string GeneratorScopeName = "Generator";
 
         /// <summary>
         /// The name of the parameter holding the generator input, passed to the
         /// Create method of the <see cref="IGeneratorFactory"/> interface.
         /// </summary>
-        private const string GeneratorInputParameterName = "generatorInput";
+        protected const string GeneratorInputParameterName = "generatorInput";
 
         #endregion
 

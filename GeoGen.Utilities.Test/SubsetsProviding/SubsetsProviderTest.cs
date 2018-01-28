@@ -18,29 +18,6 @@ namespace GeoGen.Utilities.Test.SubsetsProviding
             return Enumerable.Range(5, count).ToList();
         }
 
-        [Test]
-        public void Test_List_Cant_Be_Null()
-        {
-            Assert.Throws<ArgumentNullException>(() => new SubsetsProvider().GetSubsets<int>(null, 1));
-        }
-
-        [TestCase(-666)]
-        [TestCase(-42)]
-        [TestCase(-1)]
-        public void Test_Elements_Number_Must_Be_NonNegative(int number)
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider().GetSubsets(Elements(1), number));
-        }
-
-        [TestCase(6)]
-        [TestCase(7)]
-        [TestCase(42)]
-        [TestCase(666)]
-        public void Test_Elements_Number_Must_Be_At_Most_List_Count(int number)
-        {
-            Assert.Throws<ArgumentOutOfRangeException>(() => new SubsetsProvider().GetSubsets(Elements(5), number));
-        }
-
         [TestCase(0, 0, 1)]
         [TestCase(1, 0, 1)]
         [TestCase(10, 0, 1)]

@@ -8,8 +8,6 @@ namespace GeoGen.Utilities
     /// </summary>
     public class VariationsProvider : IVariationsProvider
     {
-        #region IVariationsProvider implementation
-
         /// <summary>
         /// Generates all possible variations of a given list. For example: For the list {1, 2, 3} all 
         /// the variations with 2 elements are: {1, 2}, {1, 3}, {2, 1}, {2, 3}, {3, 1}, {3, 2}.
@@ -57,7 +55,5 @@ namespace GeoGen.Utilities
                 GeneralUtilities.Swap(ref listCopy[i], ref listCopy[index]);
             }
         }
-
-        #endregion
     }
 }

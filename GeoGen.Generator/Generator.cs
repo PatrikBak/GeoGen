@@ -10,7 +10,7 @@ namespace GeoGen.Generator
     /// A default implementation of <see cref="IGenerator"/>. The generator
     /// uses an <see cref="IConfigurationsManager"/> for performing the gradual
     /// constructing, an <see cref="IObjectsConstructor"/> for constructing
-    /// new output for each configuration, and an <see cref="IGradualAnalyzer"/>
+    /// new output for each configuration, and an <see cref="ITheoremsAnalyzer"/>
     /// for performing the actual analysis of theorems.
     /// </summary>
     internal class Generator : IGenerator
@@ -28,14 +28,14 @@ namespace GeoGen.Generator
         private readonly IObjectsConstructor _objectsConstructor;
 
         /// <summary>
-        /// The gradual analyzer that performs the actual theorems finding.
+        /// The analyzer that performs the actual theorems finding.
         /// </summary>
-        private readonly IGradualAnalyzer _gradualAnalyzer;
+        private readonly ITheoremsAnalyzer _analyzer;
 
         /// <summary>
         /// The maximal number of iterations that are supposed to be performed.
         /// </summary>
-        private readonly int _maximalNumberOfIterations;
+        private readonly int _iterations;
 
         #endregion
 
@@ -44,22 +44,16 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="configurationsManager">The manager of generated configurations.</param>
-        /// <param name="objectsConstructor">The constructor of new objects to configurations.</param>
-        /// <param name="gradualAnalyzer">The analyzer of generated configurations.</param>
-        /// <param name="maximalNumberOfIterations">The maximal number of iterations to be performed.</param>
-        public Generator
-        (
-            IConfigurationsManager configurationsManager,
-            IObjectsConstructor objectsConstructor,
-            IGradualAnalyzer gradualAnalyzer,
-            int maximalNumberOfIterations
-        )
+        /// <param name="manager">The manager of generated configurations.</param>
+        /// <param name="constructor">The constructor of new objects to configurations.</param>
+        /// <param name="analyzer">The analyzer of generated configurations.</param>
+        /// <param name="iterations">The number of iterations to be performed.</param>
+        public Generator(IConfigurationsManager manager, IObjectsConstructor constructor, ITheoremsAnalyzer analyzer, int iterations)
         {
-            _configurationsManager = configurationsManager ?? throw new ArgumentNullException(nameof(configurationsManager));
-            _gradualAnalyzer = gradualAnalyzer ?? throw new ArgumentNullException(nameof(gradualAnalyzer));
-            _objectsConstructor = objectsConstructor ?? throw new ArgumentNullException(nameof(objectsConstructor));
-            _maximalNumberOfIterations = maximalNumberOfIterations;
+            _configurationsManager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
+            _objectsConstructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _iterations = iterations;
         }
 
         #endregion
@@ -72,7 +66,7 @@ namespace GeoGen.Generator
         /// <returns>The generator output enumerable.</returns>
         public IEnumerable<GeneratorOutput> Generate()
         {
-            return Enumerable.Range(0, _maximalNumberOfIterations)
+            return Enumerable.Range(0, _iterations)
                     .SelectMany(iterationIndex =>
                     {
                         // From the container
@@ -87,18 +81,12 @@ namespace GeoGen.Generator
                     })
                     .Select(configurationWrapper =>
                     {
-                        // Pull old objects
-                        var oldObjects = configurationWrapper.PreviousConfiguration.WrappedConfiguration.ObjectsMap.AllObjects;
-
-                        // Pull new objects
-                        var newObjects = configurationWrapper.LastAddedObjects;
-
-                        // Call the analyzer
-                        var theorems = _gradualAnalyzer.Analyze(oldObjects, newObjects);
-
                         // Unwrap configuration
                         var unwrappedConfiguration = configurationWrapper.WrappedConfiguration;
 
+                        // Call the analyzer
+                        var theorems = _analyzer.Analyze(unwrappedConfiguration);
+                        
                         // Return the output
                         return new GeneratorOutput
                         {

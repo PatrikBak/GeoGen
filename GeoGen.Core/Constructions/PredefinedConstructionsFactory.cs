@@ -195,7 +195,7 @@ namespace GeoGen.Core
             };
 
             // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
+            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Line};
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLineFromPoints, parameters, outputTypes);

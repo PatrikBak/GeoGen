@@ -231,7 +231,7 @@ namespace GeoGen.Generator
 
                     // It must be constructible, i.e. it must be already present in the
                     // container, i.e. its id must be set
-                    if (passedObject.Id != null)
+                    if (passedObject.Id == null)
                         throw new InitializationException("The initial configuration is not logically constructible");
 
                     // If the object is loose, we're fine

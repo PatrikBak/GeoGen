@@ -9,6 +9,7 @@ using GeoGen.Core;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Planning.Bindings.Resolvers;
+using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.Generator.IntegrationTest
 {
@@ -22,11 +23,6 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
-            var hash1 = HashCodeUtilities.GetOrderDependentHashCode((IEnumerable)(new List<int> { 1, 2, 3 }));
-            var hash2 = HashCodeUtilities.GetOrderDependentHashCode(1, 2, 3);
-
-            Console.WriteLine(hash1 == hash2);
-
             //var objects = new List<LooseConfigurationObject>
             //{
             //    new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1},
@@ -101,8 +97,10 @@ namespace GeoGen.Generator.IntegrationTest
             );
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
+            kernel.Settings.AllowNullInjection = true;
+            kernel.Bind<IInconsistenciesTracker>().ToMethod(c => null);
 
-            //kernel.Rebind<IGradualAnalyzer>().ToConstant(new DummyGradualAnalyzer());
+            //kernel.Rebind<ITheoremsAnalyzer>().ToConstant(new DummyTheoremsAnalyzer());
             //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
 
             var factory = kernel.Get<IGeneratorFactory>();
@@ -120,7 +118,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 3
+                MaximalNumberOfIterations = 1
             };
 
             var generator = factory.CreateGenerator(input);
@@ -132,10 +130,8 @@ namespace GeoGen.Generator.IntegrationTest
 
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
-            Console.WriteLine($"Registration inconsistencies: {Wtf.Inconsistencies}");
-            Console.WriteLine($"Maximal attempts to resolve: {Wtf.MaximalNeededAttemps}");
-            Console.WriteLine($"Maximal interior re-initializations: {Wtf.MaximalContainerIterations}");
-            //PrintTheorems(result);
+            Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
+            PrintTheorems(result);
         }
 
         private static List<Construction> Constructions()
@@ -144,18 +140,23 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 _composedConstructions.AddCentroidFromPoints(),
                 _composedConstructions.AddIncenterFromPoints(),
-                //_constructionsContainer.Get(MidpointFromPoints),
-                //_constructionsContainer.Get(IntersectionOfLinesFromPoints),
+                _constructionsContainer.Get(MidpointFromPoints),
+                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
                 //_constructionsContainer.Get(IntersectionOfLines),
                 //_constructionsContainer.Get(PerpendicularLineFromPoints),
-                //_constructionsContainer.Get(InternalAngelBisectorFromPoints),
+                //_constructionsContainer.Get(InternalAngelBisectorFromPoints)
             };
         }
 
         private static List<ConstructedConfigurationObject> ConstructedObjects(List<LooseConfigurationObject> points)
         {
+            var o = _constructorHelper.CreateCircumcenter(points[0], points[1], points[2]);
+            var m1 = _constructorHelper.CreateMidpoint(points[0], o);
+            var m2 = _constructorHelper.CreateMidpoint(points[1], o);
+
             return new List<ConstructedConfigurationObject>
             {
+                o, m1, m2
             };
         }
 
@@ -168,7 +169,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var i = 1;
 
-            foreach (var generatorOutput in result)
+            foreach (var generatorOutput in result.Where(t => t.Theorems.Any()))
             {
                 Console.Clear();
                 Console.WriteLine($"{i++}.");
@@ -179,15 +180,6 @@ namespace GeoGen.Generator.IntegrationTest
                 Console.WriteLine(formatter.Format(generatorOutput.Theorems));
                 Console.ReadKey(true);
             }
-
-            //var s = $"{string.Join(", ", result.Select(o => o.Theorems.Count))}";
-
-            //if (s != "1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1")
-            //{
-            //    Console.WriteLine("Still inconsistency..");
-            //    Console.WriteLine("Old s: 1, 3, 8, 2, 4, 4, 2, 3, 2, 1, 1, 2, 1, 1");
-            //    Console.WriteLine($"New s: {s}");
-            //}
         }
     }
 }

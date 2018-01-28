@@ -8,8 +8,6 @@ namespace GeoGen.Utilities
     /// </summary>
     public class SubsetsProvider : ISubsetsProvider
     {
-        #region ISubsetsProvider implementation
-
         /// <summary>
         /// Generates all possible subsets of elements from a given list, with
         /// a given number of elements.
@@ -20,6 +18,10 @@ namespace GeoGen.Utilities
         /// <returns>The enumerable of all possible subsets.</returns>
         public IEnumerable<IEnumerable<T>> GetSubsets<T>(IReadOnlyList<T> list, int numberOfElements)
         {
+            // No element means exactly one (an empty) subset
+            if (numberOfElements == 0)
+                return new List<IEnumerable<T>> {Enumerable.Empty<T>()};
+
             // Call the internal method to generate the combinations of indices.
             return Combinations(list.Count, numberOfElements)
                     // Select each one to the combination of elements.
@@ -30,12 +32,12 @@ namespace GeoGen.Utilities
         /// Generates all possible combinations of numbers [1,2,...,n] that have
         /// exactly 'k' elements. Its count should be (n choose k).
         /// </summary>
-        /// <param name="n">The total number of elements.</param>
-        /// <param name="k">The number of elements within a single combination.</param>
-        /// <returns></returns>
+        /// <param name="n">The number of elements within a single combination.</param>
+        /// <param name="k">The total number of elements.</param>
+        /// <returns>The combinations.</returns>
         private IEnumerable<int[]> Combinations(int n, int k)
         {
-            var result = new int[n];
+            var result = new int[k];
             var stack = new Stack<int>();
             stack.Push(1);
 
@@ -44,12 +46,12 @@ namespace GeoGen.Utilities
                 var index = stack.Count - 1;
                 var value = stack.Pop();
 
-                while (value <= k)
+                while (value <= n)
                 {
                     result[index++] = value++;
                     stack.Push(value);
 
-                    if (index != n)
+                    if (index != k)
                         continue;
 
                     yield return result;
@@ -57,7 +59,5 @@ namespace GeoGen.Utilities
                 }
             }
         }
-
-        #endregion
     }
 }

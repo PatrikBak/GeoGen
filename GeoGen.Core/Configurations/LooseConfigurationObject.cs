@@ -13,7 +13,7 @@
         /// Gets the actual geometrical type of this object (such as Point, Line...)
         /// </summary>
         public override ConfigurationObjectType ObjectType { get; }
-        
+
         #endregion
 
         #region Constructor

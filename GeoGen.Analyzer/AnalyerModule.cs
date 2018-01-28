@@ -12,14 +12,16 @@ namespace GeoGen.Analyzer
         /// </summary>
         public override void Load()
         {
-            BindInGeneratorScope<IGradualAnalyzer, GradualAnalyzer>();
+            BindInGeneratorScope<ITheoremsAnalyzer, TheoremsAnalyzer>();
+            BindInGeneratorScope<ITheoremsValidator, TheoremsValidator>();
+            BindInGeneratorScope<IOutputValidator, OutputValidator>();
+            BindInGeneratorScope<INeedlessObjectsAnalyzer, NeedlessObjectsAnalyzer>();
             BindInGeneratorScope<ITheoremConstructor, TheoremConstructor>();
-            BindInGeneratorScope<ITheoremsVerifier, TheoremsVerifier>();
             BindInGeneratorScope<ITheoremsContainer, TheoremsContainer>();
             BindInGeneratorScope<ILooseObjectsConstructor, LooseObjectsConstructor>();
             BindInGeneratorScope<IConstructorsResolver, ConstructorsResolver>();
             BindInTransietScope<IComposedConstructor, ComposedConstructor>();
-            BindInGeneratorScope<IContextualContainer, ContextualContainer>();
+            BindInGeneratorScope<IContextualContainerFactory, ContextualContainerFactory>();
             BindFactoryInGeneratorScope<IComposedConstructorFactory>();
             BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjects);
             BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>();

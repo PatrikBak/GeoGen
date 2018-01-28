@@ -1,4 +1,8 @@
 ﻿using GeoGen.Core;
+using Ninject;
+using Ninject.Activation;
+using Ninject.Extensions.ContextPreservation;
+using Ninject.Extensions.NamedScope;
 
 namespace GeoGen.Generator
 {
@@ -13,7 +17,7 @@ namespace GeoGen.Generator
         public override void Load()
         {
             // General code
-            BindDefiningGeneratorScope<IGenerator, Generator>("maximalNumberOfIterations", input => input.MaximalNumberOfIterations);
+            BindDefiningGeneratorScope<IGenerator, Generator>("iterations", input => input.MaximalNumberOfIterations);
             BindFactoryInSingletonScope<IGeneratorFactory>();
 
             // Constructing objects
@@ -42,7 +46,10 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IFullObjectToStringConvertersFactory, FullObjectToStringConvertersFactory>();
             BindFactoryInGeneratorScope<IAutocacheFullObjectToStringConverterFactory>();
             BindInTransietScope<IAutocacheFullObjectToStringConverter, AutocacheFullObjectToStringConverter>();
-            BindInGeneratorScope<ILooseObjectsHolder, ConfigurationObjectsContainer>("initialConfiguration", input => input.InitialConfiguration);
+
+            // Execute specific binding of ILooseObjectsHolder to the same class as IConfigurationObjectsContainer
+            var binding = Bind<ILooseObjectsHolder>().ToMethod(context => context.ContextPreservingGet<IConfigurationObjectsContainer>());
+            binding.InNamedScope(GeneratorScopeName);
         }
     }
 }

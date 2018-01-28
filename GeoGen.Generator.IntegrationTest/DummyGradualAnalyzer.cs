@@ -4,11 +4,11 @@ using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest
 {
-    internal class DummyGradualAnalyzer : IGradualAnalyzer
+    internal class DummyTheoremsAnalyzer : ITheoremsAnalyzer
     {
-        public List<Theorem> Analyze(IReadOnlyList<ConfigurationObject> oldObjects, IReadOnlyList<ConstructedConfigurationObject> newObjects)
+        public List<Theorem> Analyze(Configuration configuration)
         {
-            return new List<Theorem> {null};
+            return new List<Theorem>();
         }
     }
 }
