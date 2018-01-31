@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using GeoGen.Core;
 
@@ -33,6 +34,11 @@ namespace GeoGen.Generator.IntegrationTest
             _names.Add(_lastId - 1, ExtractName(type));
 
             return construction;
+        }
+
+        public Construction Get(string name)
+        {
+            return _composedConstructions.First(c => GetName(c) == name);
         }
 
         private string ExtractName(PredefinedConstructionType type) => Regex.Match(type.ToString(), "(.*)From.*").Groups[1].Value;

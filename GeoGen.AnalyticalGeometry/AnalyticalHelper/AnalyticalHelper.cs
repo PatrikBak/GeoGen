@@ -10,8 +10,6 @@ namespace GeoGen.AnalyticalGeometry
     /// </summary>
     public class AnalyticalHelper : IAnalyticalHelper
     {
-        #region IAnalyticalHelper implementation
-
         /// <summary>
         /// Finds all intersections of given analytical objects. They must not
         /// contain <see cref="Point"/>s and duplicate objects.
@@ -20,46 +18,19 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The set of intersections. An empty set, if there's none.</returns>
         public HashSet<Point> Intersect(IEnumerable<AnalyticalObject> inputObjects)
         {
-            // Enumerate input objects
-            var originalObjects = inputObjects.ToList();
-
             // Enumerate distinct objects
-            var distintObjects = originalObjects.Distinct().ToList();
-
-            // Make sure we have don't have duplicates
-            if (originalObjects.Count != distintObjects.Count)
-                throw new ArgumentException("Duplicate objects");
-
-            // Check if we have enough objects
-            if (distintObjects.Count <= 1)
-                throw new ArgumentException("There must be at least two distinct objects to intersect.");
+            var objectsList = inputObjects.ToList();
 
             // Pull first two objects
-            var first = distintObjects[0];
-            var second = distintObjects[1];
-
-            // Make sure we don't have null objects
-            if (first == null || second == null)
-                throw new ArgumentException("There is a null object.");
-
-            // Make sure we don't have points
-            if (first is Point || second is Point)
-                throw new ArgumentException("Analytical object can't be a point");
+            var first = objectsList[0];
+            var second = objectsList[1];
 
             // Intersect them
             var points = Intersect(first, second);
 
-            // Iterate over remaining objects
-            foreach (var analyticalObject in distintObjects.Skip(2))
+            // We iterate over remaining objects
+            foreach (var analyticalObject in objectsList.Skip(2))
             {
-                // Make sure that the object is not null
-                if (analyticalObject == null)
-                    throw new ArgumentException("There is a null object.");
-
-                // Make sure that object is not a point
-                if (analyticalObject is Point)
-                    throw new ArgumentException("Analytical object can't be a point");
-
                 // From current intersections remove the ones that doesn't lie on this object
                 points.RemoveWhere(point => !LiesOn(analyticalObject, point));
             }
@@ -143,7 +114,5 @@ namespace GeoGen.AnalyticalGeometry
             // And finally intersect the circle and the line
             return circle.IntersectWith(line).ToSet();
         }
-
-        #endregion
     }
 }

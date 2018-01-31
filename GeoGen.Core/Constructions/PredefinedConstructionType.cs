@@ -32,6 +32,11 @@
         IntersectionOfLines,
 
         /// <summary>
+        /// The intersection of two lines constructed from a line and 2 points (signature L, {P,P}).
+        /// </summary>
+        IntersectionOfLinesFromLineAndPoints,
+
+        /// <summary>
         /// The loose (random) points lying on a line constructed from 2 points (signature {P, P}).
         /// </summary>
         LoosePointOnLineFromPoints,

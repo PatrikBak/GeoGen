@@ -35,6 +35,7 @@ namespace GeoGen.Analyzer
             BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, CircumcircleFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, IntersectionOfLinesConstructor>();
+            BindInGeneratorScope<IPredefinedConstructor, IntersectionOfLinesFromLineAndPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, IntersectionOfLinesFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, InternalAngelBisectorFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, LoosePointOnLineFromPointsConstructor>();

@@ -30,7 +30,7 @@ namespace GeoGen.Analyzer
 
             try
             {
-                // Construct the line (this might throw an AnalyticalException
+                // Construct the line (this might throw an AnalyticalException)
                 var line = new Line(linePoint1, linePoint2);
 
                 // Construct the result

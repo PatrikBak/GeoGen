@@ -44,6 +44,13 @@ namespace GeoGen.Analyzer
         AnalyticalObject Get(ConfigurationObject configurationObject);
 
         /// <summary>
+        /// Gets the configuration object that corresponds to a given analytical object.
+        /// </summary>
+        /// <param name="analyticalObject">The analytical object.</param>
+        /// <returns>The configuration objects, if there's an appropriate one; null otherwise.</returns>
+        ConfigurationObject Get(AnalyticalObject analyticalObject);
+
+        /// <summary>
         /// Reconstructs all objects in the container. In general, it might happen that
         /// the reconstruction fails (not all objects will be constructible). This method
         /// will try to perform the reconstruction until it's successful. 

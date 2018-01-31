@@ -37,6 +37,7 @@ namespace GeoGen.Analyzer
         protected DefinableByPoints(int id, ConfigurationObject configurationObject)
                 : base(id, configurationObject)
         {
+            Points = new HashSet<PointObject>();
         }
 
         /// <summary>

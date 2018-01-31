@@ -9,10 +9,10 @@ namespace GeoGen.Analyzer
     internal interface IContextualContainerFactory
     {
         /// <summary>
-        /// Creates a new contextual container filled with given configuration objects.
+        /// Creates a new contextual container that represents a given configuration.
         /// </summary>
-        /// <param name="objects">The objects.</param>
+        /// <param name="configuration">The configuration.</param>
         /// <returns>The container.</returns>
-        IContextualContainer Create(IEnumerable<ConfigurationObject> objects);
+        IContextualContainer Create(Configuration configuration);
     }
 }

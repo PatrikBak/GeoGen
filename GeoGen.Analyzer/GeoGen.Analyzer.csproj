@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor - Copy.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\IOutputValidator.cs" />
     <Compile Include="TheoremsAnalysis\TheoremsValidator\ITheoremsValidator.cs" />

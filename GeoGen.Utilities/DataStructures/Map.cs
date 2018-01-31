@@ -77,6 +77,15 @@ namespace GeoGen.Utilities
         {
             return _rightToLeft.ContainsKey(t2);
         }
+            
+        /// <summary>
+        /// Clears the content of the map.
+        /// </summary>
+        public void Clear()
+        {
+            _leftToRight.Clear();
+            _rightToLeft.Clear();
+        }
 
         #endregion
     }

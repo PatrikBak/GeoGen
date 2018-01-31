@@ -44,14 +44,14 @@ namespace GeoGen.Analyzer
         #region IContextualContainerFactory implementation
 
         /// <summary>
-        /// Creates a new contextual container filled with given configuration objects.
+        /// Creates a new contextual container that represents a given configuration.
         /// </summary>
-        /// <param name="objects">The objects.</param>
+        /// <param name="configuration">The configuration.</param>
         /// <returns>The container.</returns>
-        public IContextualContainer Create(IEnumerable<ConfigurationObject> objects)
+        public IContextualContainer Create(Configuration configuration)
         {
             // Let the manager safely create the container's instance
-            return _manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(objects, _manager, _helper));
+            return _manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(configuration, _manager, _helper));
         } 
 
         #endregion

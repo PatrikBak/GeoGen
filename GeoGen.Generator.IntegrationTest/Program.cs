@@ -23,67 +23,6 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
-            //var objects = new List<LooseConfigurationObject>
-            //{
-            //    new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 1},
-            //    new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 2},
-            //    new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3}
-            //};
-
-            //var argument = new SetConstructionArgument(new HashSet<ConstructionArgument>
-            //{
-            //    new SetConstructionArgument(new HashSet<ConstructionArgument>
-            //    {
-            //        new ObjectConstructionArgument(objects[1]),
-            //        new ObjectConstructionArgument(objects[0])
-            //    }),
-            //    new SetConstructionArgument(new HashSet<ConstructionArgument>
-            //    {
-            //        new ObjectConstructionArgument(objects[3]),
-            //        new ObjectConstructionArgument(objects[2])
-            //    })
-            //});
-
-            //var sb = new StringBuilder();
-
-            //void Action(ConstructionArgument o)
-            //{
-            //    if (o is ObjectConstructionArgument)
-            //    {
-
-            //    }
-            //}
-
-            //var t = new Tree
-            //{
-            //    Left = new Tree
-            //    {
-            //        Left = new Tree
-            //        {
-            //            Left = null,
-            //            Right = new Tree()
-
-            //        },
-            //        Right = new Tree
-            //        {
-            //            Left = null,
-            //            Right = null
-            //        }
-            //    },
-            //    Right = new Tree
-            //    {
-            //        Left = new Tree(),
-            //        Right = new Tree()
-            //    }
-            //};
-
-            //foreach (var i in t.Preorder1())
-            //{
-            //    //Console.WriteLine(i);
-            //}
-
-            //Console.WriteLine($"\n{Tree._calls}");
-
             _constructionsContainer = new ConstructionsContainer();
             _composedConstructions = new ComposedConstructions(_constructionsContainer);
             _constructorHelper = new ConstructorHelper(_constructionsContainer);
@@ -118,7 +57,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 1
+                MaximalNumberOfIterations = 3
             };
 
             var generator = factory.CreateGenerator(input);
@@ -131,18 +70,19 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
             Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
-            PrintTheorems(result);
+            //PrintTheorems(result);
         }
 
         private static List<Construction> Constructions()
         {
             return new List<Construction>
             {
-                _composedConstructions.AddCentroidFromPoints(),
                 _composedConstructions.AddIncenterFromPoints(),
+                //_constructionsContainer.Get(IntersectionOfLinesFromPoints),
                 _constructionsContainer.Get(MidpointFromPoints),
-                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
+                //_constructionsContainer.Get(CircumcenterFromPoints),
                 //_constructionsContainer.Get(IntersectionOfLines),
+                //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
                 //_constructionsContainer.Get(PerpendicularLineFromPoints),
                 //_constructionsContainer.Get(InternalAngelBisectorFromPoints)
             };
@@ -150,13 +90,15 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static List<ConstructedConfigurationObject> ConstructedObjects(List<LooseConfigurationObject> points)
         {
+            _composedConstructions.AddIncenterFromPoints();
+
             var o = _constructorHelper.CreateCircumcenter(points[0], points[1], points[2]);
-            var m1 = _constructorHelper.CreateMidpoint(points[0], o);
-            var m2 = _constructorHelper.CreateMidpoint(points[1], o);
+            var i = _constructorHelper.CreateIncenter(points[0], points[1], points[2]);
+            //var p = _constructorHelper.CreateIntersection(o, i, points[0], points[1]);
 
             return new List<ConstructedConfigurationObject>
             {
-                o, m1, m2
+                o//, i, //p
             };
         }
 

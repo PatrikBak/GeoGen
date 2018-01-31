@@ -27,6 +27,8 @@ namespace GeoGen.Core
                     return InternalAngleBisectorFromPoints();
                 case PredefinedConstructionType.IntersectionOfLinesFromPoints:
                     return IntersectionOfLinesFromPoints();
+                case PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints:
+                    return IntersectionOfLinesFromLineAndPoints();
                 case PredefinedConstructionType.IntersectionOfLines:
                     return IntersectionOfLines();
                 case PredefinedConstructionType.LoosePointOnLineFromPoints:
@@ -122,6 +124,29 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromPoints, parameters, outputTypes);
+        }
+
+        /// <summary>
+        /// Creates a non-identified intersection of lines construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction IntersectionOfLinesFromLineAndPoints()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Line),
+                new SetConstructionParameter
+                (
+                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2
+                )
+            };
+
+            // Create the output types
+            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints, parameters, outputTypes);
         }
 
         /// <summary>

@@ -60,5 +60,20 @@ namespace GeoGen.Generator.IntegrationTest
 
             return new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList, 0);
         }
+
+        public ConstructedConfigurationObject CreateIncenter(params ConfigurationObject[] objects)
+        {
+            var argumentsList = new List<ConstructionArgument>
+            {
+                new SetConstructionArgument(new List<ConstructionArgument>
+                {
+                    new ObjectConstructionArgument(objects[0]),
+                    new ObjectConstructionArgument(objects[1]),
+                    new ObjectConstructionArgument(objects[2])
+                })
+            };
+
+            return new ConstructedConfigurationObject(_container.Get("Incenter"), argumentsList, 0);
+        }
     }
 }

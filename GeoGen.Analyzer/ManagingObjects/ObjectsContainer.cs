@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {
@@ -14,10 +15,10 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The dictionary mapping analytical objects to their corresponding
+        /// The map mapping analytical objects with their corresponding
         /// configuration objects.
         /// </summary>
-        private readonly Dictionary<AnalyticalObject, ConfigurationObject> _objectsDictionary;
+        private readonly Map<AnalyticalObject, ConfigurationObject> _objectsMap;
 
         /// <summary>
         /// The dictionary mapping configuration object's ids 
@@ -53,7 +54,7 @@ namespace GeoGen.Analyzer
         public ObjectsContainer(IInconsistenciesTracker tracker = null)
         {
             _tracker = tracker;
-            _objectsDictionary = new Dictionary<AnalyticalObject, ConfigurationObject>();
+            _objectsMap = new Map<AnalyticalObject, ConfigurationObject>();
             _idToObjects = new Dictionary<int, AnalyticalObject>();
             _correctTypes = new Dictionary<Type, ConfigurationObjectType>
             {
@@ -165,6 +166,21 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
+        /// Gets the configuration object that corresponds to a given analytical object.
+        /// </summary>
+        /// <param name="analyticalObject">The analytical object.</param>
+        /// <returns>The configuration objects, if there's an appropriate one; null otherwise.</returns>
+        public ConfigurationObject Get(AnalyticalObject analyticalObject)
+        {
+            // If the object is in the map, return the corresponding object
+            if (_objectsMap.ContainsLeft(analyticalObject))
+                return _objectsMap.GetRight(analyticalObject);
+
+            // Otherwise return null
+            return null;
+        }
+
+        /// <summary>
         /// Reconstructs all objects in the container. In general, it might happen that
         /// the reconstruction fails (not all objects will be constructible). This method
         /// will try to perform the reconstruction until it's successful. 
@@ -176,7 +192,7 @@ namespace GeoGen.Analyzer
             {
                 // Clear the dictionaries that hold all objects
                 _idToObjects.Clear();
-                _objectsDictionary.Clear();
+                _objectsMap.Clear();
 
                 // Prepare a variable that indicates whether the reconstruction 
                 // was successful
@@ -221,11 +237,11 @@ namespace GeoGen.Analyzer
                 throw new AnalyzerException("Can't add objects of wrong types to the container.");
 
             // If the object is in the dictionary, return its configuration object version
-            if (_objectsDictionary.ContainsKey(analyticalObject))
-                return _objectsDictionary[analyticalObject];
+            if (_objectsMap.ContainsLeft(analyticalObject))
+                return _objectsMap.GetRight(analyticalObject);
 
             // Otherwise add the object to the dictionary
-            _objectsDictionary.Add(analyticalObject, configurationObject);
+            _objectsMap.Add(analyticalObject, configurationObject);
 
             // Pull id
             var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");

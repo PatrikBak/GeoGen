@@ -25,7 +25,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// The service to which is delegated the actual theorem creating
         /// </summary>
-        private readonly ITheoremsValidator _validator; 
+        private readonly ITheoremsValidator _validator;
 
         #endregion
 
@@ -47,7 +47,7 @@ namespace GeoGen.Analyzer
         #endregion
 
         #region ITheoremsAnalyzer implementation
-        
+
         /// <summary>
         /// Performs theorem analysis for a given configuration.
         /// </summary>
@@ -55,15 +55,15 @@ namespace GeoGen.Analyzer
         /// <returns>The list of theorems that hold true in the configuration.</returns>
         public List<Theorem> Analyze(Configuration configuration)
         {
-            // Create contextual container holding the configuration objects
-            var container = _factory.Create(configuration.ObjectsMap.AllObjects);
+            // Create contextual container holding the configuration
+            var container = _factory.Create(configuration);
 
             // Merge output of all verifiers
             var verifiersOutput = _verifiers.SelectMany(v => v.GetOutput(container));
 
             // Let the validator find out which of these outputs is an actual theorem
             return _validator.ValidateTheorems(configuration, verifiersOutput).ToList();
-        } 
+        }
 
         #endregion
     }
