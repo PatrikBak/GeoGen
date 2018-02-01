@@ -15,7 +15,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
     {
         private static IObjectsContainersManager _containers;
 
-        private static ConcurrencyVerifier Verifier() => new ConcurrencyVerifier(new AnalyticalHelper(), new SubsetsProvider());
+        private static ConcurrencyVerifier Verifier() => new ConcurrencyVerifier(new AnalyticalHelper(), _containers, new SubsetsProvider());
 
         private static ContextualContainer Container(Configuration configuration, params List<AnalyticalObject>[] objects)
         {
@@ -82,7 +82,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 }
             };
 
-            var correctOutputs = Verifier().GetOutput(Container(configuration, analyticalObjects))
+            var container = Container(configuration, analyticalObjects);
+
+            var correctOutputs = Verifier().GetOutput(container)
                     .Where(output => _containers.All(c => output.VerifierFunction(c)))
                     .ToList();
 
@@ -126,7 +128,9 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 }
             };
 
-            var correctOutputs = Verifier().GetOutput(Container(configuration, analyticalObjects))
+            var container = Container(configuration, analyticalObjects);
+
+            var correctOutputs = Verifier().GetOutput(container)
                     .Where(output => _containers.All(c => output.VerifierFunction(c)))
                     .ToList();
 

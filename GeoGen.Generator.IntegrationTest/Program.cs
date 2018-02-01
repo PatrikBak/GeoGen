@@ -37,7 +37,8 @@ namespace GeoGen.Generator.IntegrationTest
 
             kernel.Components.RemoveAll<IMissingBindingResolver>();
             kernel.Settings.AllowNullInjection = true;
-            kernel.Bind<IInconsistenciesTracker>().ToMethod(c => null);
+            var tracker = new ConsoleInconsistenciesTracker();
+            kernel.Bind<IInconsistenciesTracker>().ToConstant(tracker);
 
             //kernel.Rebind<ITheoremsAnalyzer>().ToConstant(new DummyTheoremsAnalyzer());
             //kernel.Rebind<IGeometryRegistrar>().ToConstant(new DummyGeometryRegistrar());
@@ -70,6 +71,9 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
             Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
+            Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
+            Console.WriteLine($"Inconsistencies: {tracker.Inconsistencies}");
+            Console.WriteLine($"Failed attempts to reconstruct: {tracker.AttemptsToReconstruct}");
             //PrintTheorems(result);
         }
 
@@ -77,10 +81,10 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-                _composedConstructions.AddIncenterFromPoints(),
+                //_composedConstructions.AddIncenterFromPoints(),
                 //_constructionsContainer.Get(IntersectionOfLinesFromPoints),
                 _constructionsContainer.Get(MidpointFromPoints),
-                //_constructionsContainer.Get(CircumcenterFromPoints),
+                _constructionsContainer.Get(CircumcenterFromPoints),
                 //_constructionsContainer.Get(IntersectionOfLines),
                 //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
                 //_constructionsContainer.Get(PerpendicularLineFromPoints),

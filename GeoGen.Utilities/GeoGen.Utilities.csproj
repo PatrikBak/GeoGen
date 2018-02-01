@@ -60,6 +60,7 @@
     <Compile Include="Utilities\Extentions\CollectionExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
+    <Compile Include="Utilities\Extentions\DictionaryExtensions.cs" />
     <Compile Include="Utilities\Extentions\EnumerableExtensions.cs" />
     <Compile Include="Utilities\HashCodeUtilities.cs" />
     <Compile Include="DataStructures\Map.cs" />

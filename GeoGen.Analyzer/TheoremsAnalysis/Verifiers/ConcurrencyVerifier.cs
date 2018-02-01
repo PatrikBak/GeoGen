@@ -14,11 +14,14 @@ namespace GeoGen.Analyzer
     {
         private readonly IAnalyticalHelper _helper;
 
+        private readonly IObjectsContainersManager _manager;
+
         private readonly ISubsetsProvider _provider;
 
-        public ConcurrencyVerifier(IAnalyticalHelper helper, ISubsetsProvider provider)
+        public ConcurrencyVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager, ISubsetsProvider provider)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
@@ -36,50 +39,93 @@ namespace GeoGen.Analyzer
                     .Concat(container.GetGeometricalObjects<CircleObject>())
                     .ToList();
 
-            foreach (var objects in _provider.GetSubsets(linesAndCircles, 3))
+            // Prepare dictionary mapping points to the objects that they lie on
+            var dictionary = new Dictionary<Point, HashSet<GeometricalObject>>();
+
+            // Pull first container
+            var firstContainer = _manager.First();
+
+            // Iterate over lines and circles to get all unordered pairs
+            for (var i = 0; i < linesAndCircles.Count; i++)
             {
-                // Enumerate involved objects
-                var involdedObjects = objects.ToList();
-
-                // Verify if the intersection can't be determined without
-                // constructing actual intersections
-                // if (!IsWorthAnalalyzing(involdedObjects)) continue;
-
-                // Declare the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                for (var j = i + 1; j < linesAndCircles.Count; j++)
                 {
-                    // Find analytical versions of our objects
-                    var analyticalObjects = involdedObjects.Select(obj => container.GetAnalyticalObject(obj, objectsContainer));
+                    // Pull their analytical version
+                    var analytical1 = container.GetAnalyticalObject(linesAndCircles[i], firstContainer);
+                    var analytical2 = container.GetAnalyticalObject(linesAndCircles[j], firstContainer);
 
                     // Intersect them
-                    var newIntersections = _helper.Intersect(analyticalObjects);
+                    var intersections = _helper.Intersect(new List<AnalyticalObject> {analytical1, analytical2});
 
-                    // If there is no intersection, we're done
-                    if (newIntersections.Empty())
-                        return false;
+                    // We pick the intersections that are not presents in the configuration
+                    var newIntesections = intersections.Where(intersection => !IsPointInContainer(container, firstContainer, intersection));
 
-                    // Otherwise the output is correct if there is an intersection
-                    // that is not in the configuration
-                    return newIntersections.Any(intersection =>
+                    // Add register all of them to the dictionary
+                    foreach (var newIntesection in newIntesections)
                     {
-                        // For a given point, find the configuration object version in the container
-                        var configurationObject = objectsContainer.Get(intersection);
+                        // Pull the set of passing objects
+                        var passingObjects = dictionary.GetOrAdd(newIntesection, () => new HashSet<GeometricalObject>());
 
-                        // If fine if it doesn't exist (it's null) or if it's not in our configuration
-                        // (i.e. in the contextual container)
-                        return configurationObject == null || !container.Contains(configurationObject);
-                    });
+                        // Add our lines/circles to it
+                        passingObjects.Add(linesAndCircles[i]);
+                        passingObjects.Add(linesAndCircles[j]);
+                    }
                 }
-
-                // Construct the output
-                yield return new VerifierOutput
-                {
-                    Type = TheoremType.ConcurrentObjects,
-                    InvoldedObjects = involdedObjects,
-                    AlwaysTrue = false,
-                    VerifierFunction = Verify
-                };
             }
+
+            // After constructing the intersections for one container, we may want to have a look at 
+            // the ones that have at least 3 passing objects and construct verifier outputs for them
+            foreach (var geometricalObjects in dictionary.Values.Where(objects => objects.Count >= 3))
+            {
+                // For these intersection we look at all 3-elements subsets (there are not gonna be many of them)
+                foreach (var subset in _provider.GetSubsets(geometricalObjects.ToList(), 3))
+                {
+                    // We enumerate the subset
+                    var involvedObjects = subset.ToList();
+
+                    // Construct the verifier function
+                    bool Verify(IObjectsContainer objectsContainer)
+                    {
+                        // If the container is the first one, we're sure the objects are fine
+                        if (ReferenceEquals(firstContainer, objectsContainer))
+                            return true;
+
+                        // Otherwise we find analytical versions of our objects
+                        var analyticalObjects = involvedObjects.Select(obj => container.GetAnalyticalObject(obj, objectsContainer));
+
+                        // Intersect them
+                        var newIntersections = _helper.Intersect(analyticalObjects);
+
+                        // The output is correct if there is an intersection that is not in the configuration
+                        return newIntersections.Any(intersection => !IsPointInContainer(container, objectsContainer, intersection));
+                    }
+
+                    // Construct the output
+                    yield return new VerifierOutput
+                    {
+                        Type = TheoremType.ConcurrentObjects,
+                        InvoldedObjects = involvedObjects,
+                        AlwaysTrue = false,
+                        VerifierFunction = Verify
+                    };
+                }
+            }
+        }
+
+        /// <summary>
+        /// Finds out if a given point is presents in the contextual container. 
+        /// </summary>
+        /// <param name="contextualContainer">The contextual container.</param>
+        /// <param name="objectsContainer">The objects container for finding the configuration version of the point.</param>
+        /// <param name="point">The point.</param>
+        /// <returns>true, if the intersection is one of the contextual container's points; false otherwise.</returns>
+        private bool IsPointInContainer(IContextualContainer contextualContainer, IObjectsContainer objectsContainer, Point point)
+        {
+            // For a given point, find the configuration object version in the container
+            var configurationObject = objectsContainer.Get(point);
+
+            // It's present if it's not null and the contextual container actually contains it
+            return configurationObject != null && contextualContainer.Contains(configurationObject);
         }
 
         /// <summary>

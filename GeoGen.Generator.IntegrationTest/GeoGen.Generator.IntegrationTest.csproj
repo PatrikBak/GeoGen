@@ -63,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComposedConstructions.cs" />
+    <Compile Include="ConsoleInconsistenciesTracker.cs" />
     <Compile Include="ConstructionsContainer.cs" />
     <Compile Include="ConstructorHelper.cs" />
     <Compile Include="DummyGeometryRegistrar.cs" />
