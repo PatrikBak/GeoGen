@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using GeoGen.Core;
+using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {
@@ -59,7 +60,7 @@ namespace GeoGen.Analyzer
 
             // Otherwise the theorem is true if and only if is true in all containers
             // and doesn't contain needless objects
-            return _manager.All(output.VerifierFunction) && !ContainsNeedlessObjects();
+            return _manager.AtLeast(10, output.VerifierFunction) && !ContainsNeedlessObjects();
         }
 
         #endregion

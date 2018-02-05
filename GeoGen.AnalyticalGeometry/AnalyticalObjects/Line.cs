@@ -13,17 +13,17 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the A coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble A { get; }
+        public RoundedDecimal A { get; }
 
         /// <summary>
         /// Gets the B coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble B { get; }
+        public RoundedDecimal B { get; }
 
         /// <summary>
         /// Gets the C coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble C { get; }
+        public RoundedDecimal C { get; }
 
         #endregion
 
@@ -57,7 +57,7 @@ namespace GeoGen.AnalyticalGeometry
             // Then the representation will be unique
 
             // If a is not zero, we want it to be positive
-            if ((RoundedDouble) a != RoundedDouble.Zero)
+            if ((RoundedDecimal) a != RoundedDecimal.Zero)
             {
                 // If it's not positive
                 if (a < 0)
@@ -81,12 +81,12 @@ namespace GeoGen.AnalyticalGeometry
             }
 
             // Now we can finally scale the coefficients so that A^2 + B^2 + C^2 = 1 holds true
-            var scale = Math.Sqrt(a * a + b * b + c * c);
+            var scale = DecimalMath.Sqrt(a * a + b * b + c * c);
 
             // And set the coefficients
-            A = (RoundedDouble) (a / scale);
-            B = (RoundedDouble) (b / scale);
-            C = (RoundedDouble) (c / scale);
+            A = (RoundedDecimal) (a / scale);
+            B = (RoundedDecimal) (b / scale);
+            C = (RoundedDecimal) (c / scale);
         }
 
         #endregion
@@ -133,7 +133,7 @@ namespace GeoGen.AnalyticalGeometry
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDouble) delta == RoundedDouble.Zero)
+            if ((RoundedDecimal) delta == RoundedDecimal.Zero)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -152,7 +152,7 @@ namespace GeoGen.AnalyticalGeometry
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
+            return (RoundedDecimal) (A * point.X + B * point.Y + C) == RoundedDecimal.Zero;
         }
 
         /// <summary>
@@ -194,14 +194,14 @@ namespace GeoGen.AnalyticalGeometry
             // is not zero
 
             // Find some point on line. 
-            var pointOnLine = B != RoundedDouble.Zero
+            var pointOnLine = B != RoundedDecimal.Zero
                     // If B is not zero
                     ? new Point(B, (-C + A * B) / B)
                     // Otherwise A is not zero
                     : new Point(A, -(C + A * B) / A);
 
             // Get the random double in [0,1). The upper bound doesn't really matter
-            var randomT = provider.NextDouble(1);
+            var randomT = (decimal)provider.NextDouble(1);
 
             // Prepare new x,y
             var newX = pointOnLine.X + randomT * -B;
@@ -233,6 +233,15 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Line other)
         {
             return A == other.A && B == other.B && C == other.C;
+        }
+
+        #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"{A.OriginalValue}x + {B.OriginalValue}y + {C.OriginalValue} = 0";
         }
 
         #endregion

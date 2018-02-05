@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer
         /// <param name="involvedObjects">The list of objects that this theorem is about.</param>
         /// <param name="type">The type of the theorem.</param>
         /// <returns>The theorem.</returns>
-        public Theorem Construct(List<GeometricalObject> involvedObjects, TheoremType type)
+        public Theorem Construct(IEnumerable<GeometricalObject> involvedObjects, TheoremType type)
         {
             // Cast all involved objects to the theorem objects
             var theoremObjects = involvedObjects

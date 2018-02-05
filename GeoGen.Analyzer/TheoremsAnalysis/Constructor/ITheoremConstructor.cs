@@ -11,9 +11,9 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Constructs a theorem.
         /// </summary>
-        /// <param name="involvedObjects">The list of objects that this theorem is about.</param>
+        /// <param name="involvedObjects">The enumerable of objects that this theorem is about.</param>
         /// <param name="type">The type of the theorem.</param>
         /// <returns>The theorem.</returns>
-        Theorem Construct(List<GeometricalObject> involvedObjects, TheoremType type);
+        Theorem Construct(IEnumerable<GeometricalObject> involvedObjects, TheoremType type);
     }
 }

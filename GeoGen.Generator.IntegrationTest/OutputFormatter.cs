@@ -77,9 +77,13 @@ namespace GeoGen.Generator.IntegrationTest
             return stringBuilder.ToString();
         }
 
-        private string ConvertToString(Theorem theorem)
+        public string ConvertToString(Theorem theorem)
         {
-            return $"{theorem.Type}: {string.Join(", ", theorem.InvolvedObjects.Select(ObjectToString))}";
+            var list = theorem.InvolvedObjects.Select(ObjectToString).ToList();
+
+            list.Sort();
+
+            return $"{theorem.Type}: {string.Join(", ", list)}";
         }
 
         private string ObjectToString(TheoremObject theoremObject)
@@ -91,7 +95,11 @@ namespace GeoGen.Generator.IntegrationTest
 
             var isLine = theoremObject.Type == TheoremObjectSignature.LineGivenByPoints;
 
-            return $"{(isLine ? "[" : "(")}{string.Join(", ", theoremObject.InternalObjects.Select(ObjectToStringById))}{(isLine ? "]" : ")")}";
+            var list = theoremObject.InternalObjects.Select(ObjectToStringById).ToList();
+
+            list.Sort();
+
+            return $"{(isLine ? "[" : "(")}{string.Join(", ",list)}{(isLine ? "]" : ")")}";
         }
 
         private string ObjectToStringById(ConfigurationObject configurationObject)

@@ -5,7 +5,7 @@ namespace GeoGen.AnalyticalGeometry
     /// <summary>
     /// A default implementation of <see cref="IRandomObjectsProvider"/>.
     /// </summary>
-    internal class RandomnessProvider : IRandomnessProvider
+    public class RandomnessProvider : IRandomnessProvider
     {
         #region Private fields
 

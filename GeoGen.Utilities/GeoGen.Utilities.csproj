@@ -57,6 +57,8 @@
   <ItemGroup>
     <Compile Include="UtilitiesModule.cs" />
     <Compile Include="DataStructures\StringBasedContainer\IToStringConverter.cs" />
+    <Compile Include="Utilities\Comparers\SetComparer.cs" />
+    <Compile Include="Utilities\DecimalMath.cs" />
     <Compile Include="Utilities\Extentions\CollectionExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
@@ -66,7 +68,7 @@
     <Compile Include="DataStructures\Map.cs" />
     <Compile Include="Utilities\MathUtilities.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataStructures\RoundedDouble.cs" />
+    <Compile Include="DataStructures\RoundedDecimal.cs" />
     <Compile Include="DataStructures\StringBasedContainer\StringBasedContainer.cs" />
     <Compile Include="Generators\Subsets\ISubsetsProvider.cs" />
     <Compile Include="Generators\Subsets\SubsetsProvider.cs" />

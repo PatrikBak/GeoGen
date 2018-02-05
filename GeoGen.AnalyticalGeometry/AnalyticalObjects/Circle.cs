@@ -19,7 +19,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the radius of the circle.
         /// </summary>
-        public RoundedDouble Radius { get; }
+        public RoundedDecimal Radius { get; }
 
         #endregion
 
@@ -50,7 +50,7 @@ namespace GeoGen.AnalyticalGeometry
 
             // Otherwise the situation is fine and radius is the distance
             // from any point to the center.
-            Radius = (RoundedDouble) point1.DistanceTo(Center);
+            Radius = (RoundedDecimal) point1.DistanceTo(Center);
         }
 
         /// <summary>
@@ -58,12 +58,12 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="center">The center.</param>
         /// <param name="radius">The radius.</param>
-        public Circle(Point center, double radius)
+        public Circle(Point center, decimal radius)
         {
             Center = center;
-            Radius = (RoundedDouble) radius;
+            Radius = (RoundedDecimal) radius;
 
-            if (Radius <= RoundedDouble.Zero)
+            if (Radius <= RoundedDecimal.Zero)
                 throw new AnalyticalException("The radius must be positive.");
         }
 
@@ -82,7 +82,7 @@ namespace GeoGen.AnalyticalGeometry
             var dx = point.X - Center.X;
             var dy = point.Y - Center.Y;
 
-            return (RoundedDouble) (dx * dx + dy * dy - Radius * Radius) == RoundedDouble.Zero;
+            return (RoundedDecimal) (dx * dx + dy * dy - Radius * Radius) == RoundedDecimal.Zero;
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="b">The b coefficient.</param>
         /// <param name="c">The c coefficient.</param>
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        private List<Point> IntersectWithLine(double a, double b, double c)
+        private List<Point> IntersectWithLine(decimal a, decimal b, decimal c)
         {
             // Pull the parameters of the equation of the circle
             var m = Center.X;
@@ -183,7 +183,7 @@ namespace GeoGen.AnalyticalGeometry
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = (RoundedDouble) a == RoundedDouble.Zero;
+            var changingVariables = (RoundedDecimal) a == RoundedDecimal.Zero;
 
             // If yes, we use the helper method to do so
             if (changingVariables)
@@ -247,6 +247,15 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Circle other)
         {
             return Center == other.Center && Radius == other.Radius;
+        }
+
+        #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"Center=[{Center}], Radius={Radius.OriginalValue}";
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Utilities
 {
@@ -77,7 +78,7 @@ namespace GeoGen.Utilities
         {
             return _rightToLeft.ContainsKey(t2);
         }
-            
+
         /// <summary>
         /// Clears the content of the map.
         /// </summary>

@@ -30,7 +30,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 for (var i = 0; i < allObjects.Count; i++)
                 {
                     var iCopy = i;
-                    result.Add(new[] {allObjects[i]}, c => new List<AnalyticalObject> {analyticalObjects[iCopy]});
+                    result.Add(new[] { allObjects[i] }, c => new List<AnalyticalObject> { analyticalObjects[iCopy] });
                 }
 
                 return result;
@@ -68,16 +68,16 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                     new Point(-1, -1),
                     new Point(7, -1),
                     new Point(3, -1),
-                    new Point(4, 1.5),
-                    new Point(0, 1.5)
+                    new Point(4, 1.5m),
+                    new Point(0, 1.5m)
                 },
                 new List<AnalyticalObject>
                 {
                     new Point(0, 5),
                     new Point(-2, -1),
                     new Point(7, -1),
-                    new Point(2.5, -1),
-                    new Point(3.5, 2),
+                    new Point(2.5m, -1),
+                    new Point(3.5m, 2),
                     new Point(-1, 2)
                 }
             };
@@ -114,17 +114,17 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                     new Point(3, -3),
                     new Point(8, -3),
                     new Line(new Point(7, -1), new Point(3, -3)),
-                    new Line(new Point(3.5, -1.5), new Point(8, -3)),
-                    new Circle(new Point(7, -1), new Point(3.5, -1.5), new Point(5, 3))
+                    new Line(new Point(3.5m, -1.5m), new Point(8, -3)),
+                    new Circle(new Point(7, -1), new Point(3.5m, -1.5m), new Point(5, 3))
                 },
                 new List<AnalyticalObject>
                 {
                     new Point(7, 5),
                     new Point(3, -3),
                     new Point(11, -3),
-                    new Line(new Point(9.4, 0.2), new Point(3, -3)),
-                    new Line(new Point(4.6, 0.2), new Point(11, -3)),
-                    new Circle(new Point(7, 5), new Point(9.4, 0.2), new Point(4.6, 0.2))
+                    new Line(new Point(9.4m, 0.2m), new Point(3, -3)),
+                    new Line(new Point(4.6m, 0.2m), new Point(11, -3)),
+                    new Circle(new Point(7, 5), new Point(9.4m, 0.2m), new Point(4.6m, 0.2m))
                 }
             };
 

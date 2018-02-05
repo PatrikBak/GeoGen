@@ -29,8 +29,8 @@ namespace GeoGen.Analyzer
         public bool AlwaysTrue { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of geometrical objects that this theorem is about.
+        /// Gets or sets the enumerable of geometrical objects that this theorem is about.
         /// </summary>
-        public List<GeometricalObject> InvoldedObjects { get; set; }
+        public IEnumerable<GeometricalObject> InvoldedObjects { get; set; }
     }
 }

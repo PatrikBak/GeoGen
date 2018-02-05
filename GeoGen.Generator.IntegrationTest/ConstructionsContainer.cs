@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using GeoGen.Analyzer;
 using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest
 {
-    internal class ConstructionsContainer
+    internal class ConstructionsContainer : IHelp
     {
         private readonly Dictionary<PredefinedConstructionType, PredefinedConstruction> _predefinedConstructions;
 

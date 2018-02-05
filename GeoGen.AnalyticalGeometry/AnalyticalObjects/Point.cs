@@ -14,12 +14,12 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the X coordinate.
         /// </summary>
-        public RoundedDouble X { get; }
+        public RoundedDecimal X { get; }
 
         /// <summary>
         /// Gets the Y coordinate.
         /// </summary>
-        public RoundedDouble Y { get; }
+        public RoundedDecimal Y { get; }
 
         #endregion
 
@@ -30,10 +30,10 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
-        public Point(double x, double y)
+        public Point(decimal x, decimal y)
         {
-            X = (RoundedDouble) x;
-            Y = (RoundedDouble) y;
+            X = (RoundedDecimal) x;
+            Y = (RoundedDecimal) y;
         }
 
         #endregion
@@ -67,14 +67,14 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="center">The center of the rotation.</param>
         /// <param name="angleInDegrees">The given angle in degrees.</param>
         /// <returns>The rotated point.</returns>
-        public Point Rotate(Point center, double angleInDegrees)
+        public Point Rotate(Point center, decimal angleInDegrees)
         {
             // First we convert the angle to radians
             var angleInRadians = MathUtilities.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
-            var cosT = Math.Cos(angleInRadians);
-            var sinT = Math.Sin(angleInRadians);
+            var cosT = DecimalMath.Cos(angleInRadians);
+            var sinT = DecimalMath.Sin(angleInRadians);
 
             // The general rotation matrix in 2D is 
             // 
@@ -111,12 +111,12 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="otherPoint">The other point.</param>
         /// <returns>The distance to the other point.</returns>
-        public double DistanceTo(Point otherPoint)
+        public decimal DistanceTo(Point otherPoint)
         {
             var dx = X - otherPoint.X;
             var dy = Y - otherPoint.Y;
 
-            return Math.Sqrt(dx * dx + dy * dy);
+            return DecimalMath.Sqrt(dx * dx + dy * dy);
         }
 
         /// <summary>
@@ -180,7 +180,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point">The point.</param>
         /// <param name="factor">The factor.</param>
         /// <returns>The scaled point.</returns>
-        public static Point operator /(Point point, double factor)
+        public static Point operator /(Point point, decimal factor)
         {
             return new Point(point.X / factor, point.Y / factor);
         }
@@ -191,7 +191,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point">The point.</param>
         /// <param name="factor">The factor.</param>
         /// <returns>The scaled point.</returns>
-        public static Point operator *(Point point, double factor)
+        public static Point operator *(Point point, decimal factor)
         {
             return new Point(point.X * factor, point.Y * factor);
         }
@@ -240,6 +240,15 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Point other)
         {
             return X == other.X && Y == other.Y;
+        }
+
+        #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"X={X.OriginalValue}, Y={Y.OriginalValue}";
         }
 
         #endregion

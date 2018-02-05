@@ -16,7 +16,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// The default number of container that this manager manages.
         /// </summary>
-        public const int NumberOfContainers = 8;
+        public const int NumberOfContainers = 10;
 
         #endregion
 

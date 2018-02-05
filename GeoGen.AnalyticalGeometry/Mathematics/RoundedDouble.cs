@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace GeoGen.Utilities
+namespace GeoGen.AnalyticalGeometry.Mathematics
 {
     /// <summary>
     /// Represents a <see cref="double"/> structure that holds its rounded value which 
@@ -14,7 +14,7 @@ namespace GeoGen.Utilities
         /// <summary>
         /// The number of decimal places to which the double is rounded.
         /// </summary>
-        public const int DoubleRoundingPrecision = 5;
+        public const int DoubleRoundingPrecision = 6;
 
         #endregion
 
@@ -32,12 +32,12 @@ namespace GeoGen.Utilities
         /// <summary>
         /// Gets the original value of the double number.
         /// </summary>
-        public double OriginalValue { get; }
+        public decimal OriginalValue { get; }
 
         /// <summary>
         /// Gets the rounded value of the double number.
         /// </summary>
-        public double RoundedValue { get; }
+        public decimal RoundedValue { get; }
 
         #endregion
 
@@ -47,22 +47,22 @@ namespace GeoGen.Utilities
         /// Default constructor.
         /// </summary>
         /// <param name="originalValue">The original double value.</param>
-        public RoundedDouble(double originalValue)
+        public RoundedDouble(decimal originalValue)
         {
             OriginalValue = originalValue;
-            RoundedValue = Math.Round(originalValue, DoubleRoundingPrecision);
+            RoundedValue = decimal.Round(originalValue, DoubleRoundingPrecision);
         }
 
         #endregion
 
         #region Conversion operators
 
-        public static explicit operator RoundedDouble(double value)
+        public static explicit operator RoundedDouble(decimal value)
         {
             return new RoundedDouble(value);
         }
 
-        public static implicit operator double(RoundedDouble value)
+        public static implicit operator decimal(RoundedDouble value)
         {
             return value.OriginalValue;
         }
@@ -71,22 +71,22 @@ namespace GeoGen.Utilities
 
         #region Arithmetic operators
 
-        public static double operator +(RoundedDouble double1, RoundedDouble double2)
+        public static decimal operator +(RoundedDouble double1, RoundedDouble double2)
         {
             return double1.OriginalValue + double2.OriginalValue;
         }
 
-        public static double operator -(RoundedDouble double1, RoundedDouble double2)
+        public static decimal operator -(RoundedDouble double1, RoundedDouble double2)
         {
             return double1.OriginalValue - double2.OriginalValue;
         }
 
-        public static double operator *(RoundedDouble double1, RoundedDouble double2)
+        public static decimal operator *(RoundedDouble double1, RoundedDouble double2)
         {
             return double1.OriginalValue * double2.OriginalValue;
         }
 
-        public static double operator /(RoundedDouble double1, RoundedDouble double2)
+        public static decimal operator /(RoundedDouble double1, RoundedDouble double2)
         {
             return double1.OriginalValue / double2.OriginalValue;
         }
@@ -173,7 +173,7 @@ namespace GeoGen.Utilities
         /// <returns>The string representation of the double.</returns>
         public override string ToString()
         {
-            return RoundedValue.ToString(CultureInfo.InvariantCulture);
+            return RoundedValue.ToString();
         }
 
         #endregion
