@@ -41,17 +41,12 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="toStringProvider">The configuration to string provider used to find the configuration with the least string form.</param>
+        /// <param name="provider">The configuration to string provider used to find the configuration with the least string form.</param>
         /// <param name="factory">The factory to get the full object to string converters for the configuration converter.</param>
         /// <param name="container">The containers of all ids resolvers to be passed to the converters factory.</param>
-        public MinimalFormResolver
-        (
-            IConfigurationToStringProvider toStringProvider,
-            IFullObjectToStringConvertersFactory factory,
-            IObjectIdResolversContainer container
-        )
+        public MinimalFormResolver(IConfigurationToStringProvider provider, IFullObjectToStringConvertersFactory factory, IObjectIdResolversContainer container)
         {
-            _toStringProvider = toStringProvider ?? throw new ArgumentNullException(nameof(toStringProvider));
+            _toStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             _container = container ?? throw new ArgumentNullException(nameof(container));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }

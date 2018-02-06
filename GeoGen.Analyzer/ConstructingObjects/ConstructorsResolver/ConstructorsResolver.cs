@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer

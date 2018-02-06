@@ -102,7 +102,7 @@ namespace GeoGen.Core
         /// this one with a given one.
         /// </summary>
         /// <param name="map">A given objects map.</param>
-        /// <returns></returns>
+        /// <returns>The merged map.</returns>
         public ConfigurationObjectsMap Merge(ConfigurationObjectsMap map)
         {
             return new ConfigurationObjectsMap(AllObjects.Concat(map.AllObjects));

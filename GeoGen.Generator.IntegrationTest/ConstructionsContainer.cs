@@ -7,7 +7,7 @@ using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest
 {
-    internal class ConstructionsContainer : IHelp
+    internal class ConstructionsContainer
     {
         private readonly Dictionary<PredefinedConstructionType, PredefinedConstruction> _predefinedConstructions;
 

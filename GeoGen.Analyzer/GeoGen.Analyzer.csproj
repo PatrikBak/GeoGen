@@ -50,6 +50,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnalyzerException.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor - Copy.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\IOutputValidator.cs" />
@@ -65,7 +66,7 @@
     <Compile Include="ConstructingObjects\PredefinedConstructors\CircumcircleFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\CircumcenterFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor.cs" />
-    <Compile Include="ConstructingObjects\PredefinedConstructors\InternalAngelBisectorFromPointsConstructor.cs" />
+    <Compile Include="ConstructingObjects\PredefinedConstructors\InternalAngleBisectorFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\LoosePointOnLineFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\PerpendicularLineFromPointsConstructor.cs" />
     <Compile Include="TheoremsAnalysis\ITheoremsAnalyzer.cs" />

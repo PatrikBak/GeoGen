@@ -96,8 +96,8 @@ namespace GeoGen.Generator.IntegrationTest
                 })
             };
             
-            var line1 = new ConstructedConfigurationObject(_container.Get(InternalAngelBisectorFromPoints), arguments1, 0) {Id = 3};
-            var line2 = new ConstructedConfigurationObject(_container.Get(InternalAngelBisectorFromPoints), arguments2, 0) {Id = 4};
+            var line1 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments1, 0) {Id = 3};
+            var line2 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments2, 0) {Id = 4};
 
             var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {

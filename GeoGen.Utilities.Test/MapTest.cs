@@ -32,8 +32,8 @@ namespace GeoGen.Utilities.Test
         public void Test_Contains_Object_Cant_Be_Null()
         {
             var map = new Map<string, string>();
-            Assert.Throws<ArgumentNullException>(() => map.ContainsLeft(null));
-            Assert.Throws<ArgumentNullException>(() => map.ContainsRight(null));
+            Assert.Throws<ArgumentNullException>(() => map.ContainsLeftKey(null));
+            Assert.Throws<ArgumentNullException>(() => map.ContainsRightKey(null));
         }
 
         [Test]
@@ -43,21 +43,21 @@ namespace GeoGen.Utilities.Test
             map.Add("12", "3");
             map.Add("A", "b");
 
-            Assert.IsTrue(map.ContainsLeft("12"));
-            Assert.IsTrue(map.ContainsLeft("A"));
-            Assert.IsFalse(map.ContainsLeft("a"));
+            Assert.IsTrue(map.ContainsLeftKey("12"));
+            Assert.IsTrue(map.ContainsLeftKey("A"));
+            Assert.IsFalse(map.ContainsLeftKey("a"));
 
-            Assert.IsTrue(map.ContainsRight("3"));
-            Assert.IsTrue(map.ContainsRight("b"));
-            Assert.IsFalse(map.ContainsRight("B"));
+            Assert.IsTrue(map.ContainsRightKey("3"));
+            Assert.IsTrue(map.ContainsRightKey("b"));
+            Assert.IsFalse(map.ContainsRightKey("B"));
         }
 
         [Test]
         public void Test_Get_Object_Cant_Be_Null()
         {
             var map = new Map<string, string>();
-            Assert.Throws<ArgumentNullException>(() => map.GetLeft(null));
-            Assert.Throws<ArgumentNullException>(() => map.GetRight(null));
+            Assert.Throws<ArgumentNullException>(() => map.GetLeftValue(null));
+            Assert.Throws<ArgumentNullException>(() => map.GetRightValue(null));
         }
 
         [Test]
@@ -66,8 +66,8 @@ namespace GeoGen.Utilities.Test
             var map = new Map<string, int>();
             map.Add("a", 1);
 
-            Assert.Throws<KeyNotFoundException>(() => map.GetLeft(2));
-            Assert.Throws<KeyNotFoundException>(() => map.GetRight("b"));
+            Assert.Throws<KeyNotFoundException>(() => map.GetLeftValue(2));
+            Assert.Throws<KeyNotFoundException>(() => map.GetRightValue("b"));
         }
 
         [Test]
@@ -77,10 +77,10 @@ namespace GeoGen.Utilities.Test
             map.Add("a", 1);
             map.Add("x", 2);
 
-            Assert.AreEqual("a", map.GetLeft(1));
-            Assert.AreEqual(1, map.GetRight("a"));
-            Assert.AreEqual("x", map.GetLeft(2));
-            Assert.AreEqual(2, map.GetRight("x"));
+            Assert.AreEqual("a", map.GetLeftValue(1));
+            Assert.AreEqual(1, map.GetRightValue("a"));
+            Assert.AreEqual("x", map.GetLeftValue(2));
+            Assert.AreEqual(2, map.GetRightValue("x"));
         }
     }
 }

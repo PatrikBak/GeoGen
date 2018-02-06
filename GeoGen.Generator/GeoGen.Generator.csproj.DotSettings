@@ -16,6 +16,22 @@
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ccontainers_005Cconfigurationobjectscontainer/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ccontainers_005Cconfigurationscontainer/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentsgenerator/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentsgenerator_005Cconstructionsignaturematching/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentslistcontainer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentslisttostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentslisttostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cargumentslisttostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cargumentstostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentsgenerator/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentsgenerator_005Cconstructionsignaturematching/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentslistcontainer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentslisttostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentslisttostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Carguments_005Cargumentslisttostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cconfigurationobjecttostring/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=constructingconfigurations_005Ctostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving_005Cdefaultidresolving/@EntryIndexedValue">True</s:Boolean>
@@ -74,4 +90,31 @@
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverts_005Cconfigurationtostring/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverts_005Cobjecttostring/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=handlingconfiguratios_005Ctostringconverts_005Cobjecttostring_005Cobjectidresolving/@EntryIndexedValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=objects/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=objects/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentsgenerator/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentsgenerator_005Cconstructionsignaturematching/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentslistcontainer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentslisttostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentslisttostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cargumentslisttostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cargumentstostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving_005Cdefaultidresolving/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving_005Cdictionaryidresolving/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cconfigurationobjectidresolving_005Cresolverscontainer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cdefaultconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cfullconverters/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cfullconverters_005Cautocachefullconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cfullconverters_005Cdefaultfullconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cfullconverters_005Cfullconvertersfactory/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cidresolvers/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cidresolvers_005Cdefaultidresolving/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cidresolvers_005Cdictionaryidresolving/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationobjecttostring_005Cidresolvers_005Cresolverscontainer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationtostring/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationtostring_005Cfullconverter/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/CodeInspection/NamespaceProvider/NamespaceFoldersToSkip/=tostringconverters_005Cconfigurationtostring_005Cgeneralconverter/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>

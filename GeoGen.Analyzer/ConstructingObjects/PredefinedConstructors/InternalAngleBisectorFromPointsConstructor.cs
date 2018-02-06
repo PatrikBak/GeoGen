@@ -7,9 +7,9 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.InternalAngelBisectorFromPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.InternalAngleBisectorFromPoints"/>>.
     /// </summary>
-    internal class InternalAngelBisectorFromPointsConstructor : PredefinedConstructorBase
+    internal class InternalAngleBisectorFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
@@ -31,7 +31,7 @@ namespace GeoGen.Analyzer
             try
             {
                 // Try to create the internal bisector
-                return new List<AnalyticalObject> {intersection.InternalAngelBisector(point1, point2)};
+                return new List<AnalyticalObject> {intersection.InternalAngleBisector(point1, point2)};
             }
             catch (AnalyticalException)
             {

@@ -17,9 +17,9 @@
         CircumcircleFromPoints,
 
         /// <summary>
-        /// The internal angel bisector constructed from 3 points (signature P, {P, P}).
+        /// The internal angle bisector constructed from 3 points (signature P, {P, P}).
         /// </summary>
-        InternalAngelBisectorFromPoints,
+        InternalAngleBisectorFromPoints,
 
         /// <summary>
         /// The intersection of two lines constructed from 4 points (signature {{P, P}, {P, P}}).

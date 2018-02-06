@@ -12,29 +12,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class ConcurrencyVerifier : ITheoremVerifier
     {
-        private class SetHolder
-        {
-            public HashSet<GeometricalObject> Objects { get; }
-
-            public HashSet<IObjectsContainer> Containers { get; }
-
-            public SetHolder(IEnumerable<GeometricalObject> objects)
-            {
-                Objects = new HashSet<GeometricalObject>(objects);
-                Containers = new HashSet<IObjectsContainer>();
-            }
-
-            public override int GetHashCode()
-            {
-                return SetComparer<GeometricalObject>.Instance.GetHashCode(Objects);
-            }
-
-            public override bool Equals(object obj)
-            {
-                return SetComparer<GeometricalObject>.Instance.Equals(Objects, ((SetHolder) obj).Objects);
-            }
-        }
-
         private readonly IAnalyticalHelper _helper;
 
         private readonly IObjectsContainersManager _manager;
@@ -62,97 +39,72 @@ namespace GeoGen.Analyzer
                     .Concat(container.GetGeometricalObjects<CircleObject>())
                     .ToList();
 
-            // Prepare dictionary mapping points to the objects that they lie on for all containers
-            var dictionary = new Dictionary<IObjectsContainer, Dictionary<Point, HashSet<GeometricalObject>>>();
+            // Prepare dictionary mapping points to the objects that they lie on
+            var dictionary = new Dictionary<Point, HashSet<GeometricalObject>>();
 
-            // For all containers 
-            foreach (var objectsContainer in _manager)
+            // Pull first container
+            var firstContainer = _manager.First();
+
+            // Iterate over lines and circles to get all unordered pairs
+            for (var i = 0; i < linesAndCircles.Count; i++)
             {
-                // Prepare new dictionary for this container
-                var intersectionToObjects = new Dictionary<Point, HashSet<GeometricalObject>>();
-
-                // Add it to the main dictionary
-                dictionary.Add(objectsContainer, intersectionToObjects);
-
-                // Iterate over lines and circles to get all unordered pairs
-                for (var i = 0; i < linesAndCircles.Count; i++)
+                for (var j = i + 1; j < linesAndCircles.Count; j++)
                 {
-                    for (var j = i + 1; j < linesAndCircles.Count; j++)
+                    // Pull their analytical version
+                    var analytical1 = container.GetAnalyticalObject(linesAndCircles[i], firstContainer);
+                    var analytical2 = container.GetAnalyticalObject(linesAndCircles[j], firstContainer);
+
+                    // Intersect them
+                    var intersections = _helper.Intersect(new List<AnalyticalObject> {analytical1, analytical2});
+
+                    // We pick the intersections that are not presents in the configuration
+                    var newIntesections = intersections.Where(intersection => !IsPointInContainer(container, firstContainer, intersection));
+
+                    // Add register all of them to the dictionary
+                    foreach (var newIntesection in newIntesections)
                     {
-                        // Pull their analytical version
-                        var analytical1 = container.GetAnalyticalObject(linesAndCircles[i], objectsContainer);
-                        var analytical2 = container.GetAnalyticalObject(linesAndCircles[j], objectsContainer);
+                        // Pull the set of passing objects
+                        var passingObjects = dictionary.GetOrAdd(newIntesection, () => new HashSet<GeometricalObject>());
 
-                        // Intersect them
-                        var intersections = _helper.Intersect(new List<AnalyticalObject> {analytical1, analytical2})
-                                // And take those that aren't in our configuration
-                                .Where(intersection => !IsPointInContainer(container, objectsContainer, intersection));
-
-                        // Register all these intersections to the dictionary
-                        foreach (var newIntesection in intersections)
-                        {
-                            // Pull the set of passing objects
-                            var passingObjects = intersectionToObjects.GetOrAdd(newIntesection, () => new HashSet<GeometricalObject>());
-
-                            // Add our lines/circles to it
-                            passingObjects.Add(linesAndCircles[i]);
-                            passingObjects.Add(linesAndCircles[j]);
-                        }
+                        // Add our lines/circles to it
+                        passingObjects.Add(linesAndCircles[i]);
+                        passingObjects.Add(linesAndCircles[j]);
                     }
                 }
             }
 
-            // Prepare the dictionary that holds our set holders. In this dictionary,
-            // the instances are mapped to the equal ones so we can have a function AddOrGet,
-            // which a normal HashSet doesn't provide 
-            var setHolders = new Dictionary<SetHolder, SetHolder>();
-
-            // Iterate over all pairs container - intersections
-            foreach (var pair in dictionary)
+            // After constructing the intersections for one container, we may want to have a look at 
+            // the ones that have at least 3 passing objects and construct verifier outputs for them
+            foreach (var geometricalObjects in dictionary.Values.Where(objects => objects.Count >= 3))
             {
-                // Pull container
-                var currentContainer = pair.Key;
-
-                // Pull sets of intersections
-                var setsOfIntersections = pair.Value.Values;
-
-                // Go through all of them
-                foreach (var objects in setsOfIntersections)
+                // For these intersection we look at all 3-elements subsets (there are not gonna be many of them)
+                foreach (var subset in _provider.GetSubsets(geometricalObjects.ToList(), 3))
                 {
-                    // Skip the ones with fewer than 3 elements
-                    if (objects.Count < 3)
-                        continue;
+                    // We enumerate the subset
+                    var involvedObjects = subset.ToList();
 
-                    // Create all triples for the other ones
-                    foreach (var triple in _provider.GetSubsets(objects.ToList(), 3))
-                    {
-                        // Create a set holder for it
-                        var setHolder = new SetHolder(triple);
-
-                        // Add or get it from the dictionary
-                        var holderFromDictionary = setHolders.GetOrAdd(setHolder, () => setHolder);
-
-                        // Mark the container
-                        holderFromDictionary.Containers.Add(currentContainer);
-                    }
-                }
-
-                // Now are all interesting things are calculated in the holders set
-                foreach (var holder in setHolders.Keys)
-                {
-                    // We can easily construct the verifier function
+                    // Construct the verifier function
                     bool Verify(IObjectsContainer objectsContainer)
                     {
-                        // Because now the objects are correct if and only if
-                        // the given container is registered to the holder
-                        return holder.Containers.Contains(objectsContainer);
+                        // If the container is the first one, we're sure the objects are fine
+                        if (ReferenceEquals(firstContainer, objectsContainer))
+                            return true;
+
+                        // Otherwise we find analytical versions of our objects
+                        var analyticalObjects = involvedObjects.Select(obj => container.GetAnalyticalObject(obj, objectsContainer));
+
+                        // Intersect them
+                        var newIntersections = _helper.Intersect(analyticalObjects);
+
+                        // The output is correct if there is an intersection that is not in the configuration
+                        return newIntersections.Any(intersection => !IsPointInContainer(container, objectsContainer, intersection));
                     }
 
-                    // And construct the output
+                    // Construct the output
                     yield return new VerifierOutput
                     {
                         Type = TheoremType.ConcurrentObjects,
-                        InvoldedObjects = holder.Objects,
+                        InvoldedObjects = involvedObjects,
                         AlwaysTrue = false,
                         VerifierFunction = Verify
                     };
@@ -232,3 +184,4 @@ namespace GeoGen.Analyzer
         }
     }
 }
+

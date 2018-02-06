@@ -1,23 +1,23 @@
 ﻿using System;
 
-namespace GeoGen.Core
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents an exception that is thrown when something wrong
-    /// happens in the analyzer module. 
+    /// happens in the generator module. 
     /// </summary>
-    public class AnalyzerException : Exception
+    public class GeneratorException : Exception
     {
-        public AnalyzerException()
+        public GeneratorException()
         {
         }
 
-        public AnalyzerException(string message)
+        public GeneratorException(string message)
                 : base(message)
         {
         }
 
-        public AnalyzerException(string message, Exception innerException)
+        public GeneratorException(string message, Exception innerException)
                 : base(message, innerException)
         {
         }

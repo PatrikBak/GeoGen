@@ -29,7 +29,7 @@ namespace GeoGen.Generator
         /// Default constructor.
         /// </summary>
         /// <param name="converter">The default converter.</param>
-        /// <param name="factory"></param>
+        /// <param name="factory">The factory for creating auto-cache converters.</param>
         public FullObjectToStringConvertersFactory(IDefaultFullObjectToStringConverter converter, IAutocacheFullObjectToStringConverterFactory factory)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));

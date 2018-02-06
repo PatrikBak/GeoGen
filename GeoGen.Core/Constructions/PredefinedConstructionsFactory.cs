@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace GeoGen.Core
 {
@@ -17,29 +18,15 @@ namespace GeoGen.Core
         /// <returns>The construction</returns>
         public static PredefinedConstruction Get(PredefinedConstructionType type)
         {
-            switch (type)
-            {
-                case PredefinedConstructionType.CircumcenterFromPoints:
-                    return CircumcenterFromPoints();
-                case PredefinedConstructionType.CircumcircleFromPoints:
-                    return CircumcircleFromPoints();
-                case PredefinedConstructionType.InternalAngelBisectorFromPoints:
-                    return InternalAngleBisectorFromPoints();
-                case PredefinedConstructionType.IntersectionOfLinesFromPoints:
-                    return IntersectionOfLinesFromPoints();
-                case PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints:
-                    return IntersectionOfLinesFromLineAndPoints();
-                case PredefinedConstructionType.IntersectionOfLines:
-                    return IntersectionOfLines();
-                case PredefinedConstructionType.LoosePointOnLineFromPoints:
-                    return LoosePointOnLineFromPoints();
-                case PredefinedConstructionType.MidpointFromPoints:
-                    return MidpointFromPoints();
-                case PredefinedConstructionType.PerpendicularLineFromPoints:
-                    return PerpendicularLineFromPoints();
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
+            // Find the method info for the method handling our predefined type
+            var methodInfo = typeof(PredefinedConstructionsFactory).GetMethod(type.ToString(), BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Check if it's not null
+            if (methodInfo == null)
+                throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
+
+            // Otherwise we invoke it and return the casted result
+            return (PredefinedConstruction) methodInfo.Invoke(null, null);
         }
 
         #endregion
@@ -101,7 +88,7 @@ namespace GeoGen.Core
             var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Line};
 
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.InternalAngelBisectorFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisectorFromPoints, parameters, outputTypes);
         }
 
         /// <summary>

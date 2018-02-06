@@ -44,7 +44,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="key">The T2 key.</param>
         /// <returns>The corresponding T1 item.</returns>
-        public T1 GetLeft(T2 key)
+        public T1 GetLeftValue(T2 key)
         {
             return _rightToLeft[key];
         }
@@ -54,7 +54,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="key">The T1 key.</param>
         /// <returns>The corresponding T2 item.</returns>
-        public T2 GetRight(T1 key)
+        public T2 GetRightValue(T1 key)
         {
             return _leftToRight[key];
         }
@@ -64,7 +64,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="t1">The T1 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsLeft(T1 t1)
+        public bool ContainsLeftKey(T1 t1)
         {
             return _leftToRight.ContainsKey(t1);
         }
@@ -74,7 +74,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="t2">The T2 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsRight(T2 t2)
+        public bool ContainsRightKey(T2 t2)
         {
             return _rightToLeft.ContainsKey(t2);
         }

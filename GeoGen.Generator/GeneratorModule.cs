@@ -47,7 +47,7 @@ namespace GeoGen.Generator
             BindFactoryInGeneratorScope<IAutocacheFullObjectToStringConverterFactory>();
             BindInTransietScope<IAutocacheFullObjectToStringConverter, AutocacheFullObjectToStringConverter>();
 
-            // Execute specific binding of ILooseObjectsHolder to the same class as IConfigurationObjectsContainer
+            // Execute the specific binding of ILooseObjectsHolder to the same class as IConfigurationObjectsContainer
             var binding = Bind<ILooseObjectsHolder>().ToMethod(context => context.ContextPreservingGet<IConfigurationObjectsContainer>());
             binding.InNamedScope(GeneratorScopeName);
         }

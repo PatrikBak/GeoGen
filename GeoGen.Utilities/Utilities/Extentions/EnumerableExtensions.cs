@@ -54,37 +54,5 @@ namespace GeoGen.Utilities
         {
             return new HashSet<T>(enumerable, equalityComparer);
         }
-
-        /// <summary>
-        /// Finds out if at least a given number of elements matches a given predicate.
-        /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="count">The number of needed elements.</param>
-        /// <param name="predicate">The predicate.</param>
-        /// <returns>true, if there are at least 'count' number of elements that match the predicate; false otherwise</returns>
-        public static bool AtLeast<T>(this IEnumerable<T> enumerable, int count, Func<T, bool> predicate)
-        {
-            // Prepare variable for keeping track of already found good elements
-            var matches = 0;
-
-            // Enumerate
-            foreach (var element in enumerable)
-            {
-                // If element is not fine, we skip it
-                if (!predicate(element))
-                    continue;
-
-                // If it's good, we update the count
-                matches++;
-
-                // If we have enough elements, we might return
-                if (matches == count)
-                    return true;
-            }
-
-            // Otherwise we didn't find enough good elements
-            return false;
-        }
     }
 }

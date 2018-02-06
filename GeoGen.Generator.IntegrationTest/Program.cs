@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -26,6 +27,13 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
+            var l= Enum.GetValues(typeof(PredefinedConstructionType)).Cast<PredefinedConstructionType>()
+                    .Select(t => PredefinedConstructionsFactory.Get(t))
+                    .ToList();
+
+            Console.WriteLine(2.5m);
+            Console.WriteLine(2.5m.ToString(CultureInfo.InvariantCulture));
+
             //var m1 = new HashSet<int> {1, 2, 3};
             //var m2 = new HashSet<int> {1, 3, 2};
 
@@ -268,7 +276,7 @@ namespace GeoGen.Generator.IntegrationTest
                 //_constructionsContainer.Get(IntersectionOfLines),
                 //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
                 //_constructionsContainer.Get(PerpendicularLineFromPoints),
-                //_constructionsContainer.Get(InternalAngelBisectorFromPoints)
+                //_constructionsContainer.Get(InternalAngleBisectorFromPoints)
             };
         }
 

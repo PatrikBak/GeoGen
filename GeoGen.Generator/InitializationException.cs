@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Core
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a type of a <see cref="GeneratorException"/> that is thrown

@@ -58,8 +58,8 @@ namespace GeoGen.Analyzer
                 // Get random point
                 var randomPoint = line.RandomPointOnLine(_provider);
 
-                // Check if it's correct, i.e. distinct from out two points
-                if (point1 != randomPoint && point2 != randomPoint)
+                // Check if it's correct, i.e. distinct from out all points from the container
+                if (!container.Contains(randomPoint))
                 {
                     // If yes, return it
                     return new List<AnalyticalObject> {randomPoint};

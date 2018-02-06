@@ -56,5 +56,12 @@ namespace GeoGen.Analyzer
         /// will try to perform the reconstruction until it's successful. 
         /// </summary>
         void Reconstruct();
+
+        /// <summary>
+        /// Finds out if a given analytical object is present if the container.
+        /// </summary>
+        /// <param name="analyticalObject">The analytical object.</param>
+        /// <returns>true, if the object is present in the container; false otherwise.</returns>
+        bool Contains(AnalyticalObject analyticalObject);
     }
 }

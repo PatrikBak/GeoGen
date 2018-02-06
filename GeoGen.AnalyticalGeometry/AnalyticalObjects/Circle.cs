@@ -117,14 +117,14 @@ namespace GeoGen.AnalyticalGeometry
             // 1 --> m1^2 - m2^2 + n1^2 - n2^2 + r2^2 - r1^2
 
             // Pull the parameters of this circle
-            var m1 = Center.X;
-            var n1 = Center.Y;
-            var r1 = Radius;
+            var m1 = Center.X.OriginalValue;
+            var n1 = Center.Y.OriginalValue;
+            var r1 = Radius.OriginalValue;
 
             // Pull the parameters of the other circle
-            var m2 = otherCircle.Center.X;
-            var n2 = otherCircle.Center.Y;
-            var r2 = otherCircle.Radius;
+            var m2 = otherCircle.Center.X.OriginalValue;
+            var n2 = otherCircle.Center.Y.OriginalValue;
+            var r2 = otherCircle.Radius.OriginalValue;
 
             // Create coefficients
             var aCoef = 2 * (m2 - m1);
@@ -167,9 +167,9 @@ namespace GeoGen.AnalyticalGeometry
         private List<Point> IntersectWithLine(decimal a, decimal b, decimal c)
         {
             // Pull the parameters of the equation of the circle
-            var m = Center.X;
-            var n = Center.Y;
-            var r = Radius;
+            var m = Center.X.OriginalValue;
+            var n = Center.Y.OriginalValue;
+            var r = Radius.OriginalValue;
 
             // We're solving the system:
             //
@@ -205,7 +205,7 @@ namespace GeoGen.AnalyticalGeometry
             var cCoef = (c / a + m) * (c / a + m) + n * n - r * r;
 
             // Let the helper method solve the quadratic equation for y.
-            var yRoots = MathUtilities.SolveQuadraticEquation(aCoef, bCoef, cCoef);
+            var yRoots = MathematicalHelpers.SolveQuadraticEquation(aCoef, bCoef, cCoef);
 
             // If there are no solutions, we won't have any intersection
             if (yRoots.Empty())
@@ -247,15 +247,6 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Circle other)
         {
             return Center == other.Center && Radius == other.Radius;
-        }
-
-        #endregion
-
-        #region To String
-
-        public override string ToString()
-        {
-            return $"Center=[{Center}], Radius={Radius.OriginalValue}";
         }
 
         #endregion

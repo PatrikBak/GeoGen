@@ -66,7 +66,9 @@ namespace GeoGen.Generator
         /// <returns>The generator output enumerable.</returns>
         public IEnumerable<GeneratorOutput> Generate()
         {
+            // Executed the needed number of iterations
             return Enumerable.Range(0, _iterations)
+                    // In each create many configurations
                     .SelectMany(iterationIndex =>
                     {
                         // From the container

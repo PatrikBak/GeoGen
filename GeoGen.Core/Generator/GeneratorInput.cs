@@ -3,7 +3,7 @@
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents an input for a <see cref="IGenerator"/>.
+    /// Represents an input for a generator.
     /// </summary>
     public class GeneratorInput
     {

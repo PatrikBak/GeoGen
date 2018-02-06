@@ -1,28 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using GeoGen.Utilities;
 
-namespace GeoGen.Utilities
+namespace GeoGen.AnalyticalGeometry
 {
     /// <summary>
     /// A static helper class for math functions.
     /// </summary>
-    public static class MathUtilities
+    public static class MathematicalHelpers
     {
-        public static decimal Sqrt(decimal x)
-        {
-            if (x < 0) throw new OverflowException("Cannot calculate square root from a negative number");
-
-            decimal current = (decimal)Math.Sqrt((double)x), previous;
-            do
-            {
-                previous = current;
-                if (previous == 0.0M) return 0;
-                current = (previous + x / previous) / 2;
-            }
-            while (Math.Abs(previous - current) > 0);
-            return current;
-        }
-
         /// <summary>
         /// Solves a given quadratic equation. This method internally uses <see cref="RoundedDecimal"/>s.
         /// </summary>
@@ -58,11 +43,11 @@ namespace GeoGen.Utilities
         /// <summary>
         /// Converts a given angle to radius. 
         /// </summary>
-        /// <param name="angleInDegrees">The angel in degrees.</param>
-        /// <returns>The angel in radians.</returns>
+        /// <param name="angleInDegrees">The angle in degrees.</param>
+        /// <returns>The angle in radians.</returns>
         public static decimal ToRadians(decimal angleInDegrees)
         {
-            return angleInDegrees * (DecimalMath.PI / 180);
+            return angleInDegrees * (DecimalMath.Pi / 180);
         }
     }
 }

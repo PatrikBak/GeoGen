@@ -10,8 +10,6 @@ namespace GeoGen.Generator
     /// </summary>
     internal class ConstructionSignatureMatcher : IConstructionSignatureMatcher
     {
-        #region IConstructionSignatureMatcher implementation
-
         /// <summary>
         /// Constructs construction arguments that match the given construction parameters. 
         /// The objects that are actually passed to as the arguments are given in a 
@@ -81,7 +79,5 @@ namespace GeoGen.Generator
             // And finally construct and return the set construction argument
             return new SetConstructionArgument(argumentsSet);
         }
-
-        #endregion
     }
 }

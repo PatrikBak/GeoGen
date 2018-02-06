@@ -70,7 +70,7 @@ namespace GeoGen.AnalyticalGeometry
         public Point Rotate(Point center, decimal angleInDegrees)
         {
             // First we convert the angle to radians
-            var angleInRadians = MathUtilities.ToRadians(angleInDegrees);
+            var angleInRadians = MathematicalHelpers.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
             var cosT = DecimalMath.Cos(angleInRadians);
@@ -84,8 +84,8 @@ namespace GeoGen.AnalyticalGeometry
             // To use this we first need to translate the point to the origin
 
             // Calculate the coordinates of the translated point
-            var dx = X - center.X;
-            var dy = Y - center.Y;
+            var dx = X.OriginalValue - center.X.OriginalValue;
+            var dy = Y.OriginalValue - center.Y.OriginalValue;
 
             // Now we use the matrix
             var newX = cosT * dx - sinT * dy;
@@ -113,20 +113,20 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The distance to the other point.</returns>
         public decimal DistanceTo(Point otherPoint)
         {
-            var dx = X - otherPoint.X;
-            var dy = Y - otherPoint.Y;
+            var dx = X.OriginalValue - otherPoint.X.OriginalValue;
+            var dy = Y.OriginalValue - otherPoint.Y.OriginalValue;
 
             return DecimalMath.Sqrt(dx * dx + dy * dy);
         }
 
         /// <summary>
-        /// Constructs the internal angle bisector of the angel given by [ray1Point][this][ray2Point]
+        /// Constructs the internal angle bisector of the angle given by [ray1Point][this][ray2Point]
         /// (or equivalently [ray2Point][this][ray1Point]).
         /// </summary>
         /// <param name="ray1Point">The first point on the ray starting from this point.</param>
         /// <param name="ray2Point">The second point on the ray starting from this point.</param>
         /// <returns>The internal angle bisector.</returns>
-        public Line InternalAngelBisector(Point ray1Point, Point ray2Point)
+        public Line InternalAngleBisector(Point ray1Point, Point ray2Point)
         {
             // First we create the circle with center in [this] and radius
             // equal to distance between dist and first ray point
@@ -152,7 +152,7 @@ namespace GeoGen.AnalyticalGeometry
             // C = one of intersections
             //
             // The intersection must logically exist
-            var correctIntersection = intersections.First(intersection => (intersection.X - X) / (ray2Point.X - X) >= 0);
+            var correctIntersection = intersections.First(i => (RoundedDecimal)((i.X - X) / (ray2Point.X - X)) >= RoundedDecimal.Zero);
 
             // Now we just return the perpendicular bisector of the line 
             // connecting the first ray point with this correct intersection
@@ -240,15 +240,6 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Point other)
         {
             return X == other.X && Y == other.Y;
-        }
-
-        #endregion
-
-        #region To String
-
-        public override string ToString()
-        {
-            return $"X={X.OriginalValue}, Y={Y.OriginalValue}";
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using GeoGen.Core;
 
-namespace GeoGen.Core
+namespace GeoGen.Generator
 {
     /// <summary>
     /// A basic interface for the generator module that executes the generation

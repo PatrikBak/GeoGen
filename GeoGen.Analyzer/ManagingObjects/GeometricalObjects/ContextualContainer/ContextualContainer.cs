@@ -134,7 +134,7 @@ namespace GeoGen.Analyzer
         public AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
         {
             // Find the right map and pull the analytical object from it
-            return _objects[objectsContainer].GetRight(geometricalObject);
+            return _objects[objectsContainer].GetRightValue(geometricalObject);
         }
 
         /// <summary>
@@ -225,7 +225,7 @@ namespace GeoGen.Analyzer
                 var map = _objects[container];
 
                 // If the map doesn't contain the analytical object
-                if (!map.ContainsRight(analyticalObject))
+                if (!map.ContainsRightKey(analyticalObject))
                 {
                     // And the result is not set yet
                     if (result != null)
@@ -239,7 +239,7 @@ namespace GeoGen.Analyzer
                 }
 
                 // But if it exists in the container, we pull it's geometrical version.
-                var geometricalObject = map.GetLeft(analyticalObject);
+                var geometricalObject = map.GetLeftValue(analyticalObject);
 
                 // If the result has been already set to something else
                 if (result != null && !ReferenceEquals(result, geometricalObject))
@@ -259,7 +259,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Adds a given geometrical object to the objects dictionary.
         /// </summary>
-        /// <param name="geometricalObject"></param>
+        /// <param name="geometricalObject">The geometrical object.</param>
         private void AddToObjectsDictionary(GeometricalObject geometricalObject)
         {
             // Loop over pairs [container, map]
@@ -374,8 +374,8 @@ namespace GeoGen.Analyzer
                 var objects = _objects[container];
 
                 // Find the analytical representations of the points in the map
-                var p1 = (Point) objects.GetRight(point1);
-                var p2 = (Point) objects.GetRight(point2);
+                var p1 = (Point) objects.GetRightValue(point1);
+                var p2 = (Point) objects.GetRightValue(point2);
 
                 // Construct the analytical line
                 var analyticalLine = new Line(p1, p2);
@@ -384,10 +384,10 @@ namespace GeoGen.Analyzer
                 containersMap.Add(container, analyticalLine);
 
                 // If the line is present in the map
-                if (objects.ContainsRight(analyticalLine))
+                if (objects.ContainsRightKey(analyticalLine))
                 {
                     // Then pull the geometrical line
-                    var newResult = objects.GetLeft(analyticalLine);
+                    var newResult = objects.GetLeftValue(analyticalLine);
 
                     // If the current result hasn't been set and is distinct
                     // from the pulled line, then we have an inconsistency
@@ -456,9 +456,9 @@ namespace GeoGen.Analyzer
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
 
-                var p1 = (Point) objects.GetRight(point1);
-                var p2 = (Point) objects.GetRight(point2);
-                var p3 = (Point) objects.GetRight(point3);
+                var p1 = (Point) objects.GetRightValue(point1);
+                var p2 = (Point) objects.GetRightValue(point2);
+                var p3 = (Point) objects.GetRightValue(point3);
 
                 // Prepare the analytical circle.
                 Circle analyticalCircle;
@@ -496,10 +496,10 @@ namespace GeoGen.Analyzer
                 containersMap.Add(container, analyticalCircle);
 
                 // If the circle is present in the map
-                if (objects.ContainsRight(analyticalCircle))
+                if (objects.ContainsRightKey(analyticalCircle))
                 {
                     // Then we can pull the geometrical circle 
-                    var newResult = objects.GetLeft(analyticalCircle);
+                    var newResult = objects.GetLeftValue(analyticalCircle);
 
                     // If the current result hasn't been set and is distinct
                     // from the pulled circle, then we have an inconsistency
@@ -601,7 +601,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="pointObject">The point object.</param>
         /// <param name="geometricalObject">The geometrical object.</param>
-        /// <returns></returns>
+        /// <returns>true, if the point is on the line/circle; false otherwise.</returns>
         private bool IsPointOnLineOrCircle(PointObject pointObject, GeometricalObject geometricalObject)
         {
             // Initialize variable holding result
@@ -611,8 +611,8 @@ namespace GeoGen.Analyzer
             foreach (var container in _containersManager)
             {
                 // Pull analytical representations of the objects
-                var point = (Point) _objects[container].GetRight(pointObject);
-                var analyticalObject = _objects[container].GetRight(geometricalObject);
+                var point = (Point) _objects[container].GetRightValue(pointObject);
+                var analyticalObject = _objects[container].GetRightValue(geometricalObject);
 
                 // Let the helper decide if the point lies on the object
                 var liesOn = _analyticalHelper.LiesOn(analyticalObject, point);

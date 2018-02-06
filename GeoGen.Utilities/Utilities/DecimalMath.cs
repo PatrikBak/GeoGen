@@ -8,12 +8,14 @@ namespace GeoGen.Utilities
 {
     public static class DecimalMath
     {
-        public static readonly decimal PI = 3.14159265358979323846264338327950288419716939937510M;
-        public static readonly decimal PIx2 = 6.28318530717958647692528676655900576839433879875021M;
+        public static readonly decimal Pi = 3.14159265358979323846264338327950288419716939937510M;
+        public static readonly decimal PiTimes2 = 6.28318530717958647692528676655900576839433879875021M;
+        public static readonly decimal PiHalf = 1.570796326794896619231321691639751442098584699687552910487M;
+
         public static readonly decimal E = 2.7182818284590452353602874713526624977572470936999595749M;
-        public static readonly decimal PIdiv2 = 1.570796326794896619231321691639751442098584699687552910487M;
         public static readonly decimal Einv = 0.3678794411714423215955237701614608674458111310317678M;
         public static readonly decimal LOG2 = 0.693147180559945309417232121458176568075500134360255254120M;
+
         public static readonly decimal Zero = 0.0M;
         public static readonly decimal One = 1.0M;
 
@@ -107,22 +109,22 @@ namespace GeoGen.Utilities
 
         public static decimal Cos(decimal x)
         {
-            while (x > PIx2)
+            while (x > PiTimes2)
             {
-                x -= PIx2;
+                x -= PiTimes2;
             }
-            while (x < -PIx2)
+            while (x < -PiTimes2)
             {
-                x += PIx2;
+                x += PiTimes2;
             }
             // now x in (-2pi,2pi)
-            if (x >= PI && x <= PIx2)
+            if (x >= Pi && x <= PiTimes2)
             {
-                return -Cos(x - PI);
+                return -Cos(x - Pi);
             }
-            if (x >= -PIx2 && x <= -PI)
+            if (x >= -PiTimes2 && x <= -Pi)
             {
-                return -Cos(x + PI);
+                return -Cos(x + Pi);
             }
             x = x * x;
             //y=1-x/2!+x^2/4!-x^3/6!...
@@ -205,7 +207,7 @@ namespace GeoGen.Utilities
                 throw new ArgumentException("x must be in [-1,1]");
             }
             if (x == Zero) return 0;
-            if (x == One) return PIdiv2;
+            if (x == One) return PiHalf;
             decimal y = 0;
             decimal result = x;
             decimal cachedResult;
@@ -225,7 +227,7 @@ namespace GeoGen.Utilities
 
         public static decimal Acos(decimal x)
         {
-            return PIdiv2 - Asin(x);
+            return PiHalf - Asin(x);
         }
     }
 }

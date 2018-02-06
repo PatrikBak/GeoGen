@@ -8,15 +8,6 @@ namespace GeoGen.AnalyticalGeometry
     /// </summary>
     public class RandomObjectsProvider : IRandomObjectsProvider
     {
-        #region Public constants
-
-        /// <summary>
-        /// The maximal value of generated doubles.
-        /// </summary>
-        public const double MaximalRandomValue = 1;
-
-        #endregion
-
         #region Private fields
 
         /// <summary>
@@ -124,8 +115,8 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The random point.</returns>
         private Point RandomPoint()
         {
-            var x = (decimal)_random.NextDouble(MaximalRandomValue);
-            var y = (decimal)_random.NextDouble(MaximalRandomValue);
+            var x = _random.NextDecimal();
+            var y = _random.NextDecimal();
 
             return new Point(x, y);
         }
@@ -143,7 +134,7 @@ namespace GeoGen.AnalyticalGeometry
                 var center = RandomPoint();
 
                 // Generate the radius (it might be zero)
-                var radius = (decimal)_random.NextDouble(MaximalRandomValue);
+                var radius = _random.NextDecimal();
 
                 try
                 {

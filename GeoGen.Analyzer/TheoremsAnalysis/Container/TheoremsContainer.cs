@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 

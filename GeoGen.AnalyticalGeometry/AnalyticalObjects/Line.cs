@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CodeDom;
+using System.Text;
 using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry
@@ -41,8 +43,8 @@ namespace GeoGen.AnalyticalGeometry
                 throw new AnalyticalException("Points can't be the same");
 
             // Calculate the coefficients of the direction vector
-            var dx = point1.X - point2.X;
-            var dy = point1.Y - point2.Y;
+            var dx = point1.X.OriginalValue - point2.X.OriginalValue;
+            var dy = point1.Y.OriginalValue - point2.Y.OriginalValue;
 
             // The pair (a,b) should be the normal vector, which is (dy, -dx)
             var a = dy;
@@ -56,11 +58,14 @@ namespace GeoGen.AnalyticalGeometry
             // want to have A^2 + B^2 + C^2 = 1 and A > 0 if A != 0 or B > 0 otherwise.
             // Then the representation will be unique
 
+            // Round a
+            var roundedA = (RoundedDecimal) a;
+
             // If a is not zero, we want it to be positive
-            if ((RoundedDecimal) a != RoundedDecimal.Zero)
+            if (roundedA != RoundedDecimal.Zero)
             {
                 // If it's not positive
-                if (a < 0)
+                if (roundedA < RoundedDecimal.Zero)
                 {
                     // We multiply the whole equation by -1
                     a = -a;
@@ -72,7 +77,7 @@ namespace GeoGen.AnalyticalGeometry
             else
             {
                 // If b is negative
-                if (b < 0)
+                if ((RoundedDecimal)b < RoundedDecimal.Zero)
                 {
                     // We multiply the whole equation by -1
                     b = -b;
@@ -120,13 +125,13 @@ namespace GeoGen.AnalyticalGeometry
             // x (a2b1 - a1b2) + c2b1 - c1b2 = 0
 
             // Pull the coefficients
-            var a1 = A;
-            var b1 = B;
-            var c1 = C;
+            var a1 = A.OriginalValue;
+            var b1 = B.OriginalValue;
+            var c1 = C.OriginalValue;
 
-            var a2 = otherLine.A;
-            var b2 = otherLine.B;
-            var c2 = otherLine.C;
+            var a2 = otherLine.A.OriginalValue;
+            var b2 = otherLine.B.OriginalValue;
+            var c2 = otherLine.C.OriginalValue;
 
             // Calculate the common delta from the last 2 equations
             var delta = a2 * b1 - a1 * b2;
@@ -200,12 +205,12 @@ namespace GeoGen.AnalyticalGeometry
                     // Otherwise A is not zero
                     : new Point(A, -(C + A * B) / A);
 
-            // Get the random double in [0,1). The upper bound doesn't really matter
-            var randomT = (decimal)provider.NextDouble(1);
+            // Get a random decimal in [0,1). The upper bound doesn't really matter
+            var randomT = provider.NextDecimal();
 
             // Prepare new x,y
-            var newX = pointOnLine.X + randomT * -B;
-            var newY = pointOnLine.Y + randomT * A;
+            var newX = pointOnLine.X.OriginalValue + randomT * -B;
+            var newY = pointOnLine.Y.OriginalValue + randomT * A;
 
             // Construct the point
             return new Point(newX, newY);
@@ -233,15 +238,6 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Line other)
         {
             return A == other.A && B == other.B && C == other.C;
-        }
-
-        #endregion
-
-        #region To String
-
-        public override string ToString()
-        {
-            return $"{A.OriginalValue}x + {B.OriginalValue}y + {C.OriginalValue} = 0";
         }
 
         #endregion

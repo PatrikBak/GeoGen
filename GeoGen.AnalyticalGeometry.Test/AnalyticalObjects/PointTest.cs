@@ -292,15 +292,15 @@
 //        }
 
 //        [Test]
-//        public void Test_Internal_Angel_Bisector_With_Intencter()
+//        public void Test_Internal_Angle_Bisector_With_Intencter()
 //        {
 //            var a = new Point(1, 3);
 //            var b = new Point(2, 5);
 //            var c = new Point(7, 7);
 
-//            var alfa = a.InternalAngelBisector(b, c);
-//            var betta = b.InternalAngelBisector(a, c);
-//            var gamma = c.InternalAngelBisector(a, b);
+//            var alfa = a.InternalAngleBisector(b, c);
+//            var betta = b.InternalAngleBisector(a, c);
+//            var gamma = c.InternalAngleBisector(a, b);
 
 //            Assert.IsTrue(alfa.Contains(a));
 //            Assert.IsTrue(betta.Contains(b));
@@ -316,13 +316,13 @@
 //        }
 
 //        [Test]
-//        public void Test_Internal_Angel_Bisector_With__Svrcek_Point()
+//        public void Test_Internal_Angle_Bisector_With__Svrcek_Point()
 //        {
 //            var a = new Point(1, 3);
 //            var b = new Point(2, 5);
 //            var c = new Point(7, 7);
 
-//            var alfa = a.InternalAngelBisector(b, c);
+//            var alfa = a.InternalAngleBisector(b, c);
 //            var bcBisector = b.PerpendicularBisector(c);
 //            var circumCircle = new Circle(a, b, c);
 //            var intersection = alfa.IntersectionWith(bcBisector);

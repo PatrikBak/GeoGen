@@ -1,4 +1,5 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.AnalyticalGeometry;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
