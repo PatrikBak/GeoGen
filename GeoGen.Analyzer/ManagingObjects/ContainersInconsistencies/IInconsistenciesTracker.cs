@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Analyzer
+﻿namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a tracker of inconsistencies between <see cref="IObjectsContainer"/>.

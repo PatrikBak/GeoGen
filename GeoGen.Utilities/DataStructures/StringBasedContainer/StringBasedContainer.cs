@@ -62,13 +62,21 @@ namespace GeoGen.Utilities
 
         #endregion
 
-        #region IEnumerable methods
+        #region IEnumerable implementation
 
+        /// <summary>
+        /// Gets a generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             return Items.Values.GetEnumerator();
         }
 
+        /// <summary>
+        /// Gets a non-generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

@@ -1,7 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry;
-using GeoGen.Core;
-
-namespace GeoGen.Analyzer
+﻿namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an exception that is thrown when there is an inconsistency between 

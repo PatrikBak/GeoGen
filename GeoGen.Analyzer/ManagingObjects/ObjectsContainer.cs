@@ -186,6 +186,16 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
+        /// Finds out if a given analytical object is present if the container.
+        /// </summary>
+        /// <param name="analyticalObject">The analytical object.</param>
+        /// <returns>true, if the object is present in the container; false otherwise.</returns>
+        public bool Contains(AnalyticalObject analyticalObject)
+        {
+            return _objectsDictionary.ContainsLeftKey(analyticalObject);
+        }
+
+        /// <summary>
         /// Reconstructs all objects in the container. In general, it might happen that
         /// the reconstruction fails (not all objects will be constructible). This method
         /// will try to perform the reconstruction until it's successful. 
@@ -251,24 +261,15 @@ namespace GeoGen.Analyzer
             // Otherwise add the object to the dictionary
             _objectsDictionary.Add(analyticalObject, id);
 
-            // Update the configuration objects dictionary as well
-            _configurationObjects.Add(id, configurationObject);
+            // Update the configuration objects dictionary as well, if needed
+            if (!_configurationObjects.ContainsKey(id))
+                _configurationObjects.Add(id, configurationObject);
 
             // And also add it to the id to object dictionary
             _idToObjects.Add(id, analyticalObject);
 
             // And return the object that was passed
             return configurationObject;
-        }
-
-        /// <summary>
-        /// Finds out if a given analytical object is present if the container.
-        /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
-        /// <returns>true, if the object is present in the container; false otherwise.</returns>
-        public bool Contains(AnalyticalObject analyticalObject)
-        {
-            return _objectsDictionary.ContainsLeftKey(analyticalObject);
         }
 
         #endregion

@@ -52,12 +52,11 @@
   <ItemGroup>
     <Compile Include="AnalyzerException.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor - Copy.cs" />
+    <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\ContexualContainerQuery.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
-    <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\IOutputValidator.cs" />
-    <Compile Include="TheoremsAnalysis\TheoremsValidator\ITheoremsValidator.cs" />
-    <Compile Include="TheoremsAnalysis\Verifiers\Base\OutputValidator\OutputValidator.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\OutputValidator\IOutputValidator.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\OutputValidator\OutputValidator.cs" />
     <Compile Include="TheoremsAnalysis\TheoremsAnalyzer.cs" />
-    <Compile Include="TheoremsAnalysis\TheoremsValidator\TheoremsValidator.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\ComposedConstructor.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\IComposedConstructor.cs" />
     <Compile Include="ConstructingObjects\ComposedConstructor\IComposedConstructorFactory.cs" />

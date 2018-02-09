@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer;
 using GeoGen.Core;
-using GeoGen.Generator.IntegrationTest;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Planning.Bindings.Resolvers;
@@ -27,55 +24,10 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
-            var l= Enum.GetValues(typeof(PredefinedConstructionType)).Cast<PredefinedConstructionType>()
-                    .Select(t => PredefinedConstructionsFactory.Get(t))
-                    .ToList();
-
-            Console.WriteLine(2.5m);
-            Console.WriteLine(2.5m.ToString(CultureInfo.InvariantCulture));
-
-            //var m1 = new HashSet<int> {1, 2, 3};
-            //var m2 = new HashSet<int> {1, 3, 2};
-
-            //var m = new HashSet<HashSet<int>>(new SetComparer<int>()) {m1, m2};
-            //Console.WriteLine(m.Count);
-
-            //while (true)
+            //for (var j = 0; j < 50; j++)
             //{
-            //    _constructionsContainer = new ConstructionsContainer();
-            //    _composedConstructions = new ComposedConstructions(_constructionsContainer);
-            //    _constructorHelper = new ConstructorHelper(_constructionsContainer);
-            //    _composedConstructions.AddIncenterFromPoints();
-            //    var f = new OutputFormatter(_constructionsContainer);
-            //    var x = new IWantToKnow(_constructionsContainer, t => f.ConvertToString(t));
-            //    f.Format(x._configuration);
-
-            //    try
-            //    {
-            //        //c.Clear();
-            //        var d = 0;
-
-            //        foreach (var theorem in x.Play())
-            //        {
-            //            d++;
-            //            var s = f.ConvertToString(theorem);
-
-            //            //c.Add(s);
-            //            //Console.WriteLine($"{x.i}. {s}");
-            //        }
-
-            //        if (d == 1)
-            //        {
-            //           // Console.WriteLine(c.First());
-            //        }
-            //    }
-            //    catch (Exception)
-            //    {
-            //        //Console.WriteLine("Inconsistency");
-            //    }
-            //}
-            while (true)
-            {
+//            while (true)
+                //          {
                 _constructionsContainer = new ConstructionsContainer();
                 _composedConstructions = new ComposedConstructions(_constructionsContainer);
                 _constructorHelper = new ConstructorHelper(_constructionsContainer);
@@ -121,73 +73,74 @@ namespace GeoGen.Generator.IntegrationTest
                 var result = generator.Generate().ToList();
                 stopwatch.Stop();
 
-                Console.WriteLine("Starting the first attempt..");
-                Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
-                Console.WriteLine($"Generated: {result.Count}");
-                Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
+                //Console.WriteLine("Starting the first attempt..");
+                //Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
+                //Console.WriteLine($"Generated: {result.Count}");
+                //Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
                 Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
-                Console.WriteLine($"Inconsistencies: {tracker.Inconsistencies}");
-                Console.WriteLine($"Failed attempts to reconstruct: {tracker.AttemptsToReconstruct}");
+                //Console.WriteLine($"Inconsistencies: {tracker.Inconsistencies}");
+                //Console.WriteLine($"Failed attempts to reconstruct: {tracker.AttemptsToReconstruct}");
+           // }
 
-                Console.WriteLine("Starting the second attempt..");
-                var otherResult = factory.CreateGenerator(input).Generate().ToList();
-                Console.WriteLine("Done");
+            //Console.WriteLine("Starting the second attempt..");
+                //var otherResult = factory.CreateGenerator(input).Generate().ToList();
+                //Console.WriteLine("Done");
 
-                var formatter = new OutputFormatter(_constructionsContainer);
+                //var formatter = new OutputFormatter(_constructionsContainer);
 
-                var counter = 0;
+                //var counter = 0;
 
-                for (var i = 0; i < result.Count; i++)
-                {
-                    var first = result[i];
-                    var second = otherResult[i];
+                //for (var i = 0; i < result.Count; i++)
+                //{
+                //    var first = result[i];
+                //    var second = otherResult[i];
 
-                    string CastTheorem(Theorem theorem)
-                    {
-                        return formatter.ConvertToString(theorem);
-                    }
+                //    string CastTheorem(Theorem theorem)
+                //    {
+                //        return formatter.ConvertToString(theorem);
+                //    }
 
-                    var c1 = formatter.Format(first.Configuration);
-                    var c2 = formatter.Format(second.Configuration);
+                //    var c1 = formatter.Format(first.Configuration);
+                //    var c2 = formatter.Format(second.Configuration);
 
-                    if (c1 != c2)
-                    {
-                        Console.WriteLine();
-                    }
+                //    if (c1 != c2)
+                //    {
+                //        Console.WriteLine();
+                //    }
 
-                    var firstSet = first.Theorems.Select(CastTheorem).ToSet();
+                //    var firstSet = first.Theorems.Select(CastTheorem).ToSet();
 
-                    var secondSet = second.Theorems.Select(CastTheorem).ToSet();
+                //    var secondSet = second.Theorems.Select(CastTheorem).ToSet();
 
-                    var set = Differences(firstSet, secondSet);
+                //    var set = Differences(firstSet, secondSet);
 
-                    if (set.Empty())
-                        continue;
+                //    if (set.Empty())
+                //        continue;
 
-                    if (set.Count == 13)
-                    {
-                        Console.WriteLine("Magical 13");
-                        continue;
-                    }
+                //    if (set.Count == 13)
+                //    {
+                //        Console.WriteLine("Magical 13");
+                //        continue;
+                //    }
 
-                    Console.WriteLine(i);
+                //    Console.WriteLine(i);
 
-                    Console.WriteLine($"{++counter}. In configuration: ");
-                    Console.WriteLine("-------------------\n");
-                    Console.WriteLine(formatter.Format(first.Configuration));
-                    Console.WriteLine("-------------------\n");
-                    Console.WriteLine("Theorems generated exactly in one of two runs:");
-                    Console.WriteLine("-------------------\n");
+                //    Console.WriteLine($"{++counter}. In configuration: ");
+                //    Console.WriteLine("-------------------\n");
+                //    Console.WriteLine(formatter.Format(first.Configuration));
+                //    Console.WriteLine("-------------------\n");
+                //    Console.WriteLine("Theorems generated exactly in one of two runs:");
+                //    Console.WriteLine("-------------------\n");
 
-                    foreach (var s in set)
-                    {
-                        Console.WriteLine(s);
-                    }
+                //    foreach (var s in set)
+                //    {
+                //        Console.WriteLine(s);
+                //    }
 
-                    Console.WriteLine();
-                    Console.ReadKey();
-                }
-            }
+                //    Console.WriteLine();
+                //    Console.ReadKey();
+                //}
+    //        }
 
             //var theoremsOriginal = TryLoadTheorems();
             //var theorems = ConvertTheormes(result);
@@ -269,9 +222,9 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-                _composedConstructions.AddIncenterFromPoints(),
+                //_composedConstructions.AddIncenterFromPoints(),
                 _constructionsContainer.Get(IntersectionOfLinesFromPoints),
-                //_constructionsContainer.Get(MidpointFromPoints),
+                _constructionsContainer.Get(MidpointFromPoints),
                 //_constructionsContainer.Get(CircumcenterFromPoints),
                 //_constructionsContainer.Get(IntersectionOfLines),
                 //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
@@ -290,7 +243,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             return new List<ConstructedConfigurationObject>
             {
-                //o //, i, //p
+                //o , i, //p
             };
         }
 

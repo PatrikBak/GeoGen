@@ -12,18 +12,43 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class ConcurrencyVerifier : ITheoremVerifier
     {
+        #region Private fields
+
+        /// <summary>
+        /// The helper of intersecting analytical objects.
+        /// </summary>
         private readonly IAnalyticalHelper _helper;
 
+        /// <summary>
+        /// The manager of all objects containers.
+        /// </summary>
         private readonly IObjectsContainersManager _manager;
 
+        /// <summary>
+        /// The generator of subsets of given length.
+        /// </summary>
         private readonly ISubsetsProvider _provider;
 
+        #endregion
+
+        #region Constructor
+        
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="helper">The analytical helper.</param>
+        /// <param name="manager">The manager for containers.</param>
+        /// <param name="provider">The subsets generator.</param>
         public ConcurrencyVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager, ISubsetsProvider provider)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
+
+        #endregion
+
+        #region ITheoremVerifier implementation
 
         /// <summary>
         /// Gets the enumerable of verifier outputs that pulls objects from
@@ -33,11 +58,24 @@ namespace GeoGen.Analyzer
         /// <returns>The outputs.</returns>
         public IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
         {
-            // Merge all lines and circles
-            var linesAndCircles = container.GetGeometricalObjects<LineObject>()
-                    .Cast<GeometricalObject>()
-                    .Concat(container.GetGeometricalObjects<CircleObject>())
-                    .ToList();
+            // Find all new lines / circles. At least one of them must be included
+            // in a new theorem
+            var newLinesCircles = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            {
+                Type = ContexualContainerQuery.ObjectsType.New,
+                IncludePoints = false,
+                IncludeLines = true,
+                IncludeCirces = true
+            }).ToList();
+
+            // Find all lines / circles. These will be combined with the new ones
+            var allLinesCircles = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            {
+                Type = ContexualContainerQuery.ObjectsType.All,
+                IncludePoints = false,
+                IncludeLines = true,
+                IncludeCirces = true
+            }).ToList();
 
             // Prepare dictionary mapping points to the objects that they lie on
             var dictionary = new Dictionary<Point, HashSet<GeometricalObject>>();
@@ -45,17 +83,21 @@ namespace GeoGen.Analyzer
             // Pull first container
             var firstContainer = _manager.First();
 
-            // Iterate over lines and circles to get all unordered pairs
-            for (var i = 0; i < linesAndCircles.Count; i++)
+            // Iterate over lines and circles to get all pairs
+            foreach (var lineOrCircle1 in newLinesCircles)
             {
-                for (var j = i + 1; j < linesAndCircles.Count; j++)
+                foreach (var lineOrCircle2 in allLinesCircles)
                 {
+                    // If they are equal, we skip them
+                    if (Equals(lineOrCircle1, lineOrCircle2))
+                        continue;
+
                     // Pull their analytical version
-                    var analytical1 = container.GetAnalyticalObject(linesAndCircles[i], firstContainer);
-                    var analytical2 = container.GetAnalyticalObject(linesAndCircles[j], firstContainer);
+                    var analytical1 = container.GetAnalyticalObject(lineOrCircle1, firstContainer);
+                    var analytical2 = container.GetAnalyticalObject(lineOrCircle2, firstContainer);
 
                     // Intersect them
-                    var intersections = _helper.Intersect(new List<AnalyticalObject> {analytical1, analytical2});
+                    var intersections = _helper.Intersect(new List<AnalyticalObject> { analytical1, analytical2 });
 
                     // We pick the intersections that are not presents in the configuration
                     var newIntesections = intersections.Where(intersection => !IsPointInContainer(container, firstContainer, intersection));
@@ -67,8 +109,8 @@ namespace GeoGen.Analyzer
                         var passingObjects = dictionary.GetOrAdd(newIntesection, () => new HashSet<GeometricalObject>());
 
                         // Add our lines/circles to it
-                        passingObjects.Add(linesAndCircles[i]);
-                        passingObjects.Add(linesAndCircles[j]);
+                        passingObjects.Add(lineOrCircle1);
+                        passingObjects.Add(lineOrCircle2);
                     }
                 }
             }
@@ -118,7 +160,7 @@ namespace GeoGen.Analyzer
         /// <param name="contextualContainer">The contextual container.</param>
         /// <param name="objectsContainer">The objects container for finding the configuration version of the point.</param>
         /// <param name="point">The point.</param>
-        /// <returns>true, if the intersection is one of the contextual container's points; false otherwise.</returns>
+        /// <returns>true, if the point is one of the contextual container's points; false otherwise.</returns>
         private bool IsPointInContainer(IContextualContainer contextualContainer, IObjectsContainer objectsContainer, Point point)
         {
             // For a given point, find the configuration object version in the container
@@ -128,60 +170,6 @@ namespace GeoGen.Analyzer
             return configurationObject != null && contextualContainer.Contains(configurationObject);
         }
 
-        /// <summary>
-        /// Finds out if the intersection(s) of given objects couldn't be found
-        /// in the points that they pass through.
-        /// </summary>
-        /// <param name="involvedObjects">The involved objects.</param>
-        /// <returns>true, </returns>
-        private bool IsWorthAnalalyzing(List<GeometricalObject> involvedObjects)
-        {
-            // Prepare set holding the common points
-            HashSet<PointObject> commonPoints = null;
-
-            // Prepare variable indicating the number of lines that we're intersection
-            var numberOfLines = 0;
-
-            // Iterate over objects
-            foreach (var geometricalObject in involvedObjects)
-            {
-                // If we have a line, mark it
-                if (geometricalObject is LineObject)
-                    numberOfLines++;
-
-                // We're sure the objects holds points...
-                var currentPoints = ((DefinableByPoints) geometricalObject).Points;
-
-                // If our points are not set
-                if (commonPoints == null)
-                {
-                    // Construct them
-                    commonPoints = new HashSet<PointObject>(currentPoints);
-
-                    // And continue
-                    continue;
-                }
-
-                // Otherwise remove the ones that are not between the current ones
-                commonPoints.RemoveWhere(currentPoints.Contains);
-
-                // If we have no common points, we can terminate directly
-                return true;
-            }
-
-            // If there is no common point, then finding the intersections is worth testing
-            if (commonPoints.Empty())
-                return true;
-
-            // If there is at least one of them  and we are intersecting 
-            // at least 2 lines, than we know the intersection
-            if (numberOfLines >= 2)
-                return false;
-
-            // Otherwise we might have two intersections. The intersections are worth testing
-            // if we don't have two of them
-            return commonPoints.Count != 2;
-        }
+        #endregion
     }
 }
-

@@ -1,6 +1,4 @@
 ﻿using GeoGen.Core;
-using Ninject;
-using Ninject.Activation;
 using Ninject.Extensions.ContextPreservation;
 using Ninject.Extensions.NamedScope;
 

@@ -13,7 +13,6 @@ namespace GeoGen.Analyzer
         public override void Load()
         {
             BindInGeneratorScope<ITheoremsAnalyzer, TheoremsAnalyzer>();
-            BindInGeneratorScope<ITheoremsValidator, TheoremsValidator>();
             BindInGeneratorScope<IOutputValidator, OutputValidator>();
             BindInGeneratorScope<INeedlessObjectsAnalyzer, NeedlessObjectsAnalyzer>();
             BindInGeneratorScope<ITheoremConstructor, TheoremConstructor>();

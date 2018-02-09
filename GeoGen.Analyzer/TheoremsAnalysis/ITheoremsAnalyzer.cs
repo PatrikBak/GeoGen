@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     public interface ITheoremsAnalyzer
     {
         /// <summary>
-        /// Performs theorem analysis for a given configuration.
+        /// Performs the theorem analysis for a given configuration.
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The list of theorems that hold true in the configuration.</returns>

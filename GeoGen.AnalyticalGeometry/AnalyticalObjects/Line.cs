@@ -1,7 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Text;
-using GeoGen.Utilities;
+﻿using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry
 {

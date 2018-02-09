@@ -11,11 +11,13 @@ namespace GeoGen.Analyzer
     internal interface IContextualContainer
     {
         /// <summary>
-        /// Gets the geometrical objects of given type from the container.s
+        /// Gets the geometrical objects matching a given query and casts them
+        /// to a given type.
         /// </summary>
         /// <typeparam name="T">The type of objects.</typeparam>
+        /// <param name="query">The contextual container query.</param>
         /// <returns>The objects.</returns>
-        IEnumerable<T> GetGeometricalObjects<T>() where T : GeometricalObject;
+        IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject;
 
         /// <summary>
         /// Gets the analytical representation of a given geometrical object

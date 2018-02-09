@@ -1,6 +1,4 @@
-﻿using GeoGen.Core;
-
-namespace GeoGen.Generator
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a service that takes care of resolving a given <see cref="ConstructorOutput"/>,

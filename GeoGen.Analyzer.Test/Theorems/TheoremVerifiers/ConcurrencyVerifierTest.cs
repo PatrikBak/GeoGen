@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using Moq;
 using NUnit.Framework;
-using static GeoGen.Analyzer.Test.TestHelpers.Utilities;
 
 namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
 {
@@ -30,7 +28,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 for (var i = 0; i < allObjects.Count; i++)
                 {
                     var iCopy = i;
-                    result.Add(new[] { allObjects[i] }, c => new List<AnalyticalObject> { analyticalObjects[iCopy] });
+                    result.Add(new[] {allObjects[i]}, c => new List<AnalyticalObject> {analyticalObjects[iCopy]});
                 }
 
                 return result;
@@ -45,6 +43,15 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
             return new ContextualContainer(configuration, _containers, helper);
         }
 
+        private static ConstructedConfigurationObject Wrap(ConfigurationObjectType type, int id)
+        {
+            var constructionMock = new Mock<Construction>();
+            constructionMock.Setup(s => s.OutputTypes).Returns(new List<ConfigurationObjectType> {type});
+            var construction = constructionMock.Object;
+
+            return new ConstructedConfigurationObject(construction, new ConstructionArgument[0], 0) {Id = id};
+        }
+
         [Test]
         public void Test_Medians_Are_Concurrent()
         {
@@ -55,10 +62,11 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 3},
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 4},
                 new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 5},
-                new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = 6}
             };
 
-            var configuration = new Configuration(looseObjects, new List<ConstructedConfigurationObject>());
+            var constructedObject = Wrap(ConfigurationObjectType.Point, 6);
+
+            var configuration = new Configuration(looseObjects, new List<ConstructedConfigurationObject> {constructedObject});
 
             var analyticalObjects = new[]
             {

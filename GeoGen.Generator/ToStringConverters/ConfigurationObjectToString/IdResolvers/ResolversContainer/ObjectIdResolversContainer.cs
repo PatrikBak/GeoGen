@@ -99,13 +99,21 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IEnumerable methods
+        #region IEnumerable implementation
 
+        /// <summary>
+        /// Gets a generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         public IEnumerator<IObjectIdResolver> GetEnumerator()
         {
             return _resolvers.GetEnumerator();
         }
 
+        /// <summary>
+        /// Gets a non-generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();

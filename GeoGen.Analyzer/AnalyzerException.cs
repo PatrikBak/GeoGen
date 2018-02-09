@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.AnalyticalGeometry
+namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents an exception that is thrown when something wrong

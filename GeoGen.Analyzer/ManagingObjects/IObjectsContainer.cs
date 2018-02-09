@@ -51,17 +51,17 @@ namespace GeoGen.Analyzer
         ConfigurationObject Get(AnalyticalObject analyticalObject);
 
         /// <summary>
-        /// Reconstructs all objects in the container. In general, it might happen that
-        /// the reconstruction fails (not all objects will be constructible). This method
-        /// will try to perform the reconstruction until it's successful. 
-        /// </summary>
-        void Reconstruct();
-
-        /// <summary>
         /// Finds out if a given analytical object is present if the container.
         /// </summary>
         /// <param name="analyticalObject">The analytical object.</param>
         /// <returns>true, if the object is present in the container; false otherwise.</returns>
         bool Contains(AnalyticalObject analyticalObject);
+
+        /// <summary>
+        /// Reconstructs all objects in the container. In general, it might happen that
+        /// the reconstruction fails (not all objects will be constructible). This method
+        /// will try to perform the reconstruction until it's successful. 
+        /// </summary>
+        void Reconstruct();
     }
 }

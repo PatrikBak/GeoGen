@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using GeoGen.Core;
-using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {

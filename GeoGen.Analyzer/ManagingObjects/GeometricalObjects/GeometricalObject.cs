@@ -1,5 +1,4 @@
-﻿using System;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {

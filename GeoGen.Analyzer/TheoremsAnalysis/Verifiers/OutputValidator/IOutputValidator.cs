@@ -3,8 +3,8 @@
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a validator that says if a given verifier output should
-    /// be converted into a theorem.
+    /// Represents a validator that says if a given verifier output represents
+    /// a correct theorem that should hold true.
     /// </summary>
     internal interface IOutputValidator
     {

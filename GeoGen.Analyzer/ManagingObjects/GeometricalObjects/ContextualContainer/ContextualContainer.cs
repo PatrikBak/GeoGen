@@ -31,19 +31,34 @@ namespace GeoGen.Analyzer
         private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>> _objects;
 
         /// <summary>
-        /// The set of all line objects in the container.
+        /// The set of all old points in the container.
         /// </summary>
-        private readonly HashSet<LineObject> _allLines;
+        private readonly HashSet<PointObject> _oldPoints;
 
         /// <summary>
-        /// The set of all circle objects in the container.
+        /// The set of all old lines in the container.
         /// </summary>
-        private readonly HashSet<CircleObject> _allCircles;
+        private readonly HashSet<LineObject> _oldLines;
 
         /// <summary>
-        /// The set of all point objects in the container.
+        /// The set of all old circles in the container.
         /// </summary>
-        private readonly HashSet<PointObject> _allPoints;
+        private readonly HashSet<CircleObject> _oldCircles;
+
+        /// <summary>
+        /// The set of all new points in the container.
+        /// </summary>
+        private readonly HashSet<PointObject> _newPoints;
+
+        /// <summary>
+        /// The set of all new lines in the container.
+        /// </summary>
+        private readonly HashSet<LineObject> _newLines;
+
+        /// <summary>
+        /// The set of all new circles in the container.
+        /// </summary>
+        private readonly HashSet<CircleObject> _newCircles;
 
         /// <summary>
         /// The id of the last identified geometrical object by the container.
@@ -54,6 +69,25 @@ namespace GeoGen.Analyzer
         /// The set of ids of configuration objects that are present in the container.
         /// </summary>
         private readonly HashSet<int> _ids;
+
+        #endregion
+
+        #region Private properties
+
+        /// <summary>
+        /// All line objects in the container.
+        /// </summary>
+        private IEnumerable<LineObject> AllLines => _oldLines.Concat(_newLines);
+
+        /// <summary>
+        /// All circle objects in the container.
+        /// </summary>
+        private IEnumerable<CircleObject> AllCircles => _oldCircles.Concat(_newCircles);
+
+        /// <summary>
+        /// All point objects in the container.
+        /// </summary>
+        private IEnumerable<PointObject> AllPoints => _oldPoints.Concat(_newPoints);
 
         #endregion
 
@@ -69,9 +103,12 @@ namespace GeoGen.Analyzer
         {
             _containersManager = manager ?? throw new ArgumentNullException(nameof(manager));
             _analyticalHelper = helper ?? throw new ArgumentNullException(nameof(helper));
-            _allLines = new HashSet<LineObject>();
-            _allCircles = new HashSet<CircleObject>();
-            _allPoints = new HashSet<PointObject>();
+            _oldLines = new HashSet<LineObject>();
+            _newLines = new HashSet<LineObject>();
+            _oldPoints = new HashSet<PointObject>();
+            _newPoints = new HashSet<PointObject>();
+            _oldCircles = new HashSet<CircleObject>();
+            _newCircles = new HashSet<CircleObject>();
             _ids = new HashSet<int>();
             _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>>();
 
@@ -81,11 +118,8 @@ namespace GeoGen.Analyzer
                 _objects.Add(objectsContainer, new Map<GeometricalObject, AnalyticalObject>());
             }
 
-            // Add all objects to the container
-            foreach (var configurationObject in configuration.ObjectsMap.AllObjects)
-            {
-                Add(configurationObject);
-            }
+            // Add all objects
+            AddAll(configuration);
         }
 
         #endregion
@@ -93,35 +127,73 @@ namespace GeoGen.Analyzer
         #region IContextualContainer implementation
 
         /// <summary>
-        /// Gets the geometrical objects of given type from the container.s
+        /// Gets the geometrical objects matching a given query and casts them
+        /// to a given type.
         /// </summary>
         /// <typeparam name="T">The type of objects.</typeparam>
+        /// <param name="query">The contextual container query.</param>
         /// <returns>The objects.</returns>
-        public IEnumerable<T> GetGeometricalObjects<T>() where T : GeometricalObject
+        public IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject
         {
-            // If we're requested for points
-            if (typeof(T) == typeof(PointObject))
+            // Prepare result
+            var result = Enumerable.Empty<GeometricalObject>();
+
+            // If we should include points
+            if (query.IncludePoints)
             {
-                // Return them casted
-                return _allPoints.Cast<T>();
+                // Then we decide by the objects type
+                switch (query.Type)
+                {
+                    case ContexualContainerQuery.ObjectsType.New:
+                        result = result.Concat(_newPoints);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.Old:
+                        result = result.Concat(_oldPoints);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.All:
+                        result = result.Concat(AllPoints);
+                        break;
+                }
             }
 
-            // If we're requested for lines
-            if (typeof(T) == typeof(LineObject))
+            // If we should include lines
+            if (query.IncludeLines)
             {
-                // Return them casted
-                return _allLines.Cast<T>();
+                // Then we decide by the objects type
+                switch (query.Type)
+                {
+                    case ContexualContainerQuery.ObjectsType.New:
+                        result = result.Concat(_newLines);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.Old:
+                        result = result.Concat(_oldLines);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.All:
+                        result = result.Concat(AllLines);
+                        break;
+                }
             }
 
-            // If we're requested for circles
-            if (typeof(T) == typeof(CircleObject))
+            // If we should include circles
+            if (query.IncludeCirces)
             {
-                // Return them casted
-                return _allCircles.Cast<T>();
+                // Then we decide by the objects type
+                switch (query.Type)
+                {
+                    case ContexualContainerQuery.ObjectsType.New:
+                        result = result.Concat(_newCircles);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.Old:
+                        result = result.Concat(_oldCircles);
+                        break;
+                    case ContexualContainerQuery.ObjectsType.All:
+                        result = result.Concat(AllCircles);
+                        break;
+                }
             }
 
-            // This shouldn't really happen
-            throw new AnalyticalException("Invalid requested type of geometrical object");
+            // Return casted result
+            return result.Cast<T>();
         }
 
         /// <summary>
@@ -149,13 +221,48 @@ namespace GeoGen.Analyzer
 
         #endregion
 
-        #region Private methods
+        #region Adding new objects
+
+        /// <summary>
+        /// Adds all objects from a configuration to the container.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        private void AddAll(Configuration configuration)
+        {
+            // First we add all loose objects
+            foreach (var looseObject in configuration.LooseObjects)
+            {
+                // Loose objects are never new (we assume there is at least one constructed object)
+                Add(looseObject, false);
+            }
+
+            // Now we enumerate groups of constructed objects
+            var constructedObjectsGroups = configuration.GroupConstructedObjects().ToList();
+
+            // Now we can enumerate them using index
+            for (var i = 0; i < constructedObjectsGroups.Count; i++)
+            {
+                // Pull group
+                var group = constructedObjectsGroups[i];
+
+                // Iterate over grouped objects
+                foreach (var configurationObject in group)
+                {
+                    // Objects are new if and only if they belong to the last group
+                    var isNew = i == constructedObjectsGroups.Count - 1;
+
+                    // Which this knowledge we delegate adding further
+                    Add(configurationObject, isNew);
+                }
+            }
+        }
 
         /// <summary>
         /// Adds a given object and all objects that it implicitly creates (lines / circles)
         /// </summary>
         /// <param name="configurationObject">The object.</param>
-        private void Add(ConfigurationObject configurationObject)
+        /// <param name="isNew">Indicates if this object should be added to particular new or old objects set.</param>
+        private void Add(ConfigurationObject configurationObject, bool isNew)
         {
             // Pull id
             var id = configurationObject.Id ?? throw new AnalyticalException("Id must be set");
@@ -194,14 +301,14 @@ namespace GeoGen.Analyzer
             if (configurationObject.ObjectType == ConfigurationObjectType.Point)
             {
                 // Let the helper method add it as the point
-                AddPoint((PointObject) geometricalObject);
+                AddPoint((PointObject) geometricalObject, isNew);
 
                 // And terminate
                 return;
             }
 
             // Otherwise it's line or circle, we let the helper method add it
-            AddLineOrCircle(geometricalObject);
+            AddLineOrCircle(geometricalObject, isNew);
         }
 
         /// <summary>
@@ -288,12 +395,13 @@ namespace GeoGen.Analyzer
         /// that contain this point.
         /// </summary>
         /// <param name="pointObject">The point object.</param>
-        private void AddPoint(PointObject pointObject)
+        /// <param name="isNew">Indicates if this point should be added to the new points set or to the old points set.</param>
+        private void AddPoint(PointObject pointObject, bool isNew)
         {
             #region Update existing lines and circles that contain this point
 
             // Iterate over all lines
-            foreach (var lineObject in _allLines)
+            foreach (var lineObject in AllLines)
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, lineObject))
@@ -307,7 +415,7 @@ namespace GeoGen.Analyzer
             }
 
             // Iterate over all circles
-            foreach (var circleObject in _allCircles)
+            foreach (var circleObject in AllCircles)
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, circleObject))
@@ -325,14 +433,14 @@ namespace GeoGen.Analyzer
             #region Create new lines and circles from this point and others
 
             // Enumerate all the points
-            var points = _allPoints.ToList();
+            var points = AllPoints.ToList();
 
             // Now we construct all lines that pass through our point
             // So we iterate over all the points (that don't contain this point yet0
             foreach (var point in points)
             {
                 // Resolve line
-                ResolveLine(pointObject, point);
+                ResolveLine(pointObject, point, isNew);
             }
 
             // Now we construct all circles that pass through our point
@@ -343,14 +451,14 @@ namespace GeoGen.Analyzer
                 for (var j = i + 1; j < points.Count; j++)
                 {
                     // Resolve circle
-                    ResolveCircle(pointObject, points[i], points[j]);
+                    ResolveCircle(pointObject, points[i], points[j], isNew);
                 }
             }
 
             #endregion
 
-            // Add the point to the points set
-            _allPoints.Add(pointObject);
+            // Add the point to the particular points set
+            (isNew ? _newPoints : _oldPoints).Add(pointObject);
         }
 
         /// <summary>
@@ -359,7 +467,8 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
-        private void ResolveLine(PointObject point1, PointObject point2)
+        /// <param name="isNew">Indicates if a new line should be added to the new lines set or to the old lines set.</param>
+        private void ResolveLine(PointObject point1, PointObject point2, bool isNew)
         {
             // Initialize map that caches created analytical representations of this line
             var containersMap = new Dictionary<IObjectsContainer, Line>();
@@ -409,8 +518,8 @@ namespace GeoGen.Analyzer
             // Otherwise we need to create a new line that contains these two points
             result = new LineObject(_geometricalObjectsNextId++, point1, point2);
 
-            // We can immediately add the line to the lines set 
-            _allLines.Add(result);
+            // We can immediately add the line to the particular lines set 
+            (isNew ? _newLines : _oldLines).Add(result);
 
             // And register this line to the points (the other registration has been done 
             // by the constructor of LineObject)
@@ -439,7 +548,8 @@ namespace GeoGen.Analyzer
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
         /// <param name="point3">The third point.</param>
-        private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3)
+        /// <param name="isNew">Indicates if a new circle should be added to the new circles set or to the old circles set.</param>
+        private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3, bool isNew)
         {
             // Initialize map that caches creates analytical representations of this line
             var containersMap = new Dictionary<IObjectsContainer, Circle>();
@@ -528,8 +638,8 @@ namespace GeoGen.Analyzer
             // Otherwise we can create a new circle object with these points
             result = new CircleObject(_geometricalObjectsNextId++, point3, point1, point2);
 
-            // We can add it to the circles set
-            _allCircles.Add(result);
+            // We can add it to the particular circles set
+            (isNew ? _newCircles : _oldCircles).Add(result);
 
             // And register this line to the points
             point1.Circles.Add(result);
@@ -555,14 +665,15 @@ namespace GeoGen.Analyzer
         /// Adds a given geometrical object, that is either a line or a circle, to the container.
         /// </summary>
         /// <param name="geometricalObject">The geometrical object.</param>
-        private void AddLineOrCircle(GeometricalObject geometricalObject)
+        /// <param name="isNew">Indicates if the object should be added to the particular new or old objects set.</param>
+        private void AddLineOrCircle(GeometricalObject geometricalObject, bool isNew)
         {
             // Try to cast object to line and circle
             var line = geometricalObject as LineObject;
             var circle = geometricalObject as CircleObject;
 
             // Iterate over points 
-            foreach (var pointObject in _allPoints)
+            foreach (var pointObject in AllPoints)
             {
                 // If the given points lies on the line / circle, we want
                 // to mark it
@@ -591,9 +702,9 @@ namespace GeoGen.Analyzer
 
             // Finally we add objects to the particular set.
             if (line != null)
-                _allLines.Add(line);
+                (isNew ? _newLines : _oldLines).Add(line);
             else if (circle != null)
-                _allCircles.Add(circle);
+                (isNew ? _newCircles : _oldCircles).Add(circle);
         }
 
         /// <summary>

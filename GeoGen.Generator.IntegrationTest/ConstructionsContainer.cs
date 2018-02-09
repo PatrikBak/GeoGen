@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using GeoGen.Analyzer;
 using GeoGen.Core;
 
 namespace GeoGen.Generator.IntegrationTest

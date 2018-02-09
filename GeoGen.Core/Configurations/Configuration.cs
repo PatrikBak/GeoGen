@@ -73,9 +73,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Groups constructed objects into lists so that each list represents
         /// the output of a single construction. If we use only constructions with
-        /// one output, then each list will have the size 1. The enumeration is lazy and
-        /// returns always the same list with different objects (so in order to use the list
-        /// after enumeration it's necessary to copy it).
+        /// one output, then each list will have the size 1. 
         /// </summary>
         /// <returns>The enumerable of grouped constructed objects.</returns>
         public IEnumerable<List<ConstructedConfigurationObject>> GroupConstructedObjects()
@@ -98,7 +96,7 @@ namespace GeoGen.Core
                     continue;
 
                 // Yield the result
-                yield return currentObjects;
+                yield return new List<ConstructedConfigurationObject>(currentObjects);
 
                 // Clean it and therefore prepare for new objects
                 currentObjects.Clear();

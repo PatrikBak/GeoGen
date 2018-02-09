@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core;
-using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.CollinearPoints"/>.
+    /// An <see cref="ITheoremVerifier"/> for the type <see cref="TheoremType.CollinearPoints"/>.
     /// </summary>
     internal class CollinearityVerifier : ITheoremVerifier
     {
@@ -19,29 +17,28 @@ namespace GeoGen.Analyzer
         /// <returns>The outputs.</returns>
         public IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
         {
-            // Get all non-physical lines
-            var lineObjects = container.GetGeometricalObjects<LineObject>().ToList();
-
-            // Iterate over lines
-            foreach (var lineObject in lineObjects)
-            {
-                // Take points that lie on this line (there should be at least one)
-                var containingPoints = lineObject.Points;
-
-                // If there are less than 3 points, skip
-                if (containingPoints.Count < 3)
-                    continue;
-
-                // Otherwise we have an always-true type of a collinearity
-                // (that is true in all containers)
-                yield return new VerifierOutput
-                {
-                    Type = TheoremType.CollinearPoints,
-                    VerifierFunction = null,
-                    AlwaysTrue = true,
-                    InvoldedObjects = containingPoints.Cast<GeometricalObject>().ToList()
-                };
-            }
+            // Now we first pull new points
+            return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+                    {
+                        Type = ContexualContainerQuery.ObjectsType.New,
+                        IncludePoints = true,
+                        IncludeLines = false,
+                        IncludeCirces = false
+                    })
+                    // And find lines that they lie on
+                    .SelectMany(point => point.Lines)
+                    // Take only distinct ones
+                    .Distinct()
+                    // And only those that contain at least 3 points
+                    .Where(line => line.Points.Count >= 3)
+                    // Each of these lines represents a new theorem correct in all containers
+                    .Select(line => new VerifierOutput
+                    {
+                        Type = TheoremType.CollinearPoints,
+                        VerifierFunction = null,
+                        AlwaysTrue = true,
+                        InvoldedObjects = line.Points
+                    });
         }
     }
 }

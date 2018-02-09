@@ -1,5 +1,4 @@
-﻿using System;
-using GeoGen.Analyzer;
+﻿using GeoGen.Analyzer;
 
 namespace GeoGen.Generator.IntegrationTest
 {

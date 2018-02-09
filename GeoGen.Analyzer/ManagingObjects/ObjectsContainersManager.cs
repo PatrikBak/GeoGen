@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -138,11 +137,19 @@ namespace GeoGen.Analyzer
 
         #region IEnumerable implementation
 
+        /// <summary>
+        /// Gets a generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         public IEnumerator<IObjectsContainer> GetEnumerator()
         {
             return _containers.GetEnumerator();
         }
 
+        /// <summary>
+        /// Gets a non-generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
