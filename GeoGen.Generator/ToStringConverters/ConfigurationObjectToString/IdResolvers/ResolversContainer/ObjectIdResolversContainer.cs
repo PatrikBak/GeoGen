@@ -37,15 +37,15 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="holder">The holder of identified loose objects.</param>
+        /// <param name="looseObjects">The identified loose objects.</param>
         /// <param name="provider">The variations (permutations) generator.</param>
         /// <param name="resolver">The default (identical) id resolver.</param>
-        public ObjectIdResolversContainer(ILooseObjectsHolder holder, IVariationsProvider provider, IDefaultObjectIdResolver resolver)
+        public ObjectIdResolversContainer(LooseObjectsHolder looseObjects, IVariationsProvider provider, IDefaultObjectIdResolver resolver)
         {
             _variationsProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _resolvers = new List<IObjectIdResolver>();
-            Initialize(holder?.LooseObjects ?? throw new ArgumentNullException(nameof(holder)));
+            Initialize(looseObjects.LooseObjects);
         }
 
         #endregion

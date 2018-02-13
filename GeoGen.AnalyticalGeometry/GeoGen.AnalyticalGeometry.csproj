@@ -70,12 +70,14 @@
     <Compile Include="AnalyticalObjects\Point.cs" />
     <Compile Include="AnalyticalHelper\IAnalyticalHelper.cs" />
     <Compile Include="AnalyticalGeometryModule.cs" />
+    <Compile Include="Constructors\ITriangleConstructor.cs" />
+    <Compile Include="Constructors\TriangleConstructor.cs" />
     <Compile Include="Mathematics\MathematicalHelpers.cs" />
-    <Compile Include="Randomness\IRandomnessProvider.cs" />
-    <Compile Include="Randomness\IRandomObjectsProvider.cs" />
+    <Compile Include="Constructors\Randomness\IRandomnessProvider.cs" />
+    <Compile Include="Constructors\Randomness\IRandomObjectsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Randomness\RandomnessProvider.cs" />
-    <Compile Include="Randomness\RandomObjectsProvider.cs" />
+    <Compile Include="Constructors\Randomness\RandomnessProvider.cs" />
+    <Compile Include="Constructors\Randomness\RandomObjectsProvider.cs" />
     <Compile Include="Mathematics\RoundedDecimal.cs" />
   </ItemGroup>
   <ItemGroup>

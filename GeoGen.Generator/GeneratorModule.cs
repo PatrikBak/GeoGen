@@ -1,6 +1,4 @@
 ﻿using GeoGen.Core;
-using Ninject.Extensions.ContextPreservation;
-using Ninject.Extensions.NamedScope;
 
 namespace GeoGen.Generator
 {
@@ -34,7 +32,7 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IConfigurationObjectsContainer, ConfigurationObjectsContainer>("initialConfiguration", input => input.InitialConfiguration);
             BindInGeneratorScope<IConfigurationConstructor, ConfigurationConstructor>();
             BindInGeneratorScope<IMinimalFormResolver, MinimalFormResolver>();
-            BindInGeneratorScope<IObjectIdResolversContainer, ObjectIdResolversContainer>();
+            BindInGeneratorScope<IObjectIdResolversContainer, ObjectIdResolversContainer>("looseObjects", input => input.InitialConfiguration.LooseObjectsHolder);
             BindInGeneratorScope<IConfigurationToStringProvider, ConfigurationToStringProvider>();
             BindInGeneratorScope<IArgumentsListToStringProvider, ArgumentsListToStringProvider>();
             BindInGeneratorScope<IDefaultFullObjectToStringConverter, DefaultFullObjectToStringConverter>();
@@ -44,10 +42,6 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IFullObjectToStringConvertersFactory, FullObjectToStringConvertersFactory>();
             BindFactoryInGeneratorScope<IAutocacheFullObjectToStringConverterFactory>();
             BindInTransietScope<IAutocacheFullObjectToStringConverter, AutocacheFullObjectToStringConverter>();
-
-            // Execute the specific binding of ILooseObjectsHolder to the same class as IConfigurationObjectsContainer
-            var binding = Bind<ILooseObjectsHolder>().ToMethod(context => context.ContextPreservingGet<IConfigurationObjectsContainer>());
-            binding.InNamedScope(GeneratorScopeName);
         }
     }
 }

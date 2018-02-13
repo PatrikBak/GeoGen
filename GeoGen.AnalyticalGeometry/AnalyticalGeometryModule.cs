@@ -15,6 +15,7 @@ namespace GeoGen.AnalyticalGeometry
             BindInGeneratorScope<IRandomObjectsProvider, RandomObjectsProvider>();
             BindInGeneratorScope<IAnalyticalHelper, AnalyticalHelper>();
             BindInGeneratorScope<IRandomnessProvider, RandomnessProvider>();
+            BindInGeneratorScope<ITriangleConstructor, TriangleConstructor>();
         }
     }
 }

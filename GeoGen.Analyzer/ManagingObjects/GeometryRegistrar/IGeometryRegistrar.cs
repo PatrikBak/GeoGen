@@ -5,7 +5,7 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a service that takes cares actual construction of <see cref="ConstructedConfigurationObject"/>s
+    /// Represents a service that takes care of an actual construction of <see cref="ConstructedConfigurationObject"/>s
     /// into <see cref="AnalyticalObject"/>s. 
     /// </summary>
     public interface IGeometryRegistrar

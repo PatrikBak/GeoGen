@@ -45,13 +45,13 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="looseObjects">The identified loose objects that are used to initialize the containers.</param>
+        /// <param name="looseObjects">The loose objects that are used to initialize the containers.</param>
         /// <param name="factory">The factory for creating an empty objects containers.</param>
         /// <param name="constructor">The constructor for initializing the containers with the loose objects.</param>
         /// <param name="tracker">The tracker for marking occurrences of a <see cref="InconsistentContainersException"/>.</param>
         public ObjectsContainersManager
         (
-            IEnumerable<LooseConfigurationObject> looseObjects,
+            LooseObjectsHolder looseObjects,
             IObjectsContainerFactory factory,
             ILooseObjectsConstructor constructor,
             IInconsistenciesTracker tracker = null
@@ -77,10 +77,10 @@ namespace GeoGen.Analyzer
         /// Initializes all containers with given loose objects.
         /// </summary>
         /// <param name="looseObjects">The loose objects.</param>
-        private void Initialize(IEnumerable<LooseConfigurationObject> looseObjects)
+        private void Initialize(LooseObjectsHolder looseObjects)
         {
             // Enumerate the loose objects
-            var looseObjectsList = looseObjects.ToList();
+            var looseObjectsList = looseObjects.LooseObjects;
 
             // Find their ids (which must exist)
             var ids = looseObjectsList.Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set"))
@@ -95,7 +95,7 @@ namespace GeoGen.Analyzer
             foreach (var container in _containers)
             {
                 // Add the objects to the container using the loose objects constructor
-                container.Add(looseObjectsList, c => _constructor.Construct(looseObjectsList));
+                container.Add(looseObjectsList, c => _constructor.Construct(looseObjects));
             }
         }
 

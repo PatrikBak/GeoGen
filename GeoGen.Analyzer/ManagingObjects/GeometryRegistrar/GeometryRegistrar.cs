@@ -40,7 +40,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="resolver">The resolver to find the right constructions for constructions.</param>
+        /// <param name="resolver">The resolver to find the right constructors for constructions.</param>
         /// <param name="container">The container for keeping default theorems.</param>
         /// <param name="manager">The manager of all objects container where we register the objects.</param>
         public GeometryRegistrar(IConstructorsResolver resolver, ITheoremsContainer container, IObjectsContainersManager manager)

@@ -7,10 +7,8 @@ namespace GeoGen.Generator
     /// Represents a container for <see cref="ConfigurationObject"/>. It's 
     /// supposed to take care of having each object exactly once. It implements
     /// the <see cref="IEnumerable{T}"/> interface, where T is <see cref="ConfigurationObject"/>.
-    /// Also, it serves as a holder for loose objects (i.e. it implement the 
-    /// <see cref="ILooseObjectsHolder"/> interface).
     /// </summary>
-    internal interface IConfigurationObjectsContainer : IEnumerable<ConfigurationObject>, ILooseObjectsHolder
+    internal interface IConfigurationObjectsContainer : IEnumerable<ConfigurationObject>
     {
         /// <summary>
         /// Adds a given constructed configuration object to the container. 

@@ -28,9 +28,25 @@ namespace GeoGen.Core
         #region Public properties
 
         /// <summary>
+        /// Gets the loose configuration objects wrapped in a holder.
+        /// </summary>
+        public LooseObjectsHolder LooseObjectsHolder { get; }
+
+        /// <summary>
         /// Gets the list of loose configuration objects within this configuration.
         /// </summary>
-        public IReadOnlyList<LooseConfigurationObject> LooseObjects { get; }
+        public IReadOnlyList<LooseConfigurationObject> LooseObjects => LooseObjectsHolder.LooseObjects;
+
+        /// <summary>
+        /// Gets or sets the layout of the loose objects of the configuration. This value doesn't have
+        /// to be set, then loose objects are constructed randomly. But if it's set, it
+        /// must logically correspond to the loose objects property. 
+        /// </summary>
+        public LooseObjectsLayout? LooseObjectsLayout
+        {
+            get => LooseObjectsHolder.Layout;
+            set => LooseObjectsHolder.Layout = value;
+        }
 
         /// <summary>
         /// Gets the list of constructed configuration objects within this configuration. 
@@ -45,22 +61,33 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Constructor
+        #region Constructors
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         /// <param name="looseObjects">The list of loose configuration objects.</param>
         /// <param name="constructedObjects">The list of constructed configuration objects.</param>
-        public Configuration(IReadOnlyList<LooseConfigurationObject> looseObjects, IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
+        /// <param name="layout">The layout of loose objects.</param>
+        public Configuration(IReadOnlyList<LooseConfigurationObject> looseObjects, IReadOnlyList<ConstructedConfigurationObject> constructedObjects, LooseObjectsLayout? layout = null)
+                : this(new LooseObjectsHolder(looseObjects, layout), constructedObjects)
         {
-            LooseObjects = looseObjects ?? throw new ArgumentNullException(nameof(looseObjects));
+        }
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="looseObjectsHolder">The loose objects holder.</param>
+        /// <param name="constructedObjects">The constructed objects.</param>
+        public Configuration(LooseObjectsHolder looseObjectsHolder, IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
+        {
+            LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
 
             // Prepare the initializer
             _objectsMapInitialzer = new Lazy<ConfigurationObjectsMap>(() =>
             {
-                var allObjects = looseObjects.Cast<ConfigurationObject>().Concat(constructedObjects);
+                var allObjects = looseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects);
 
                 return new ConfigurationObjectsMap(allObjects);
             });
@@ -101,6 +128,22 @@ namespace GeoGen.Core
                 // Clean it and therefore prepare for new objects
                 currentObjects.Clear();
             }
+        }
+
+        /// <summary>
+        /// Creates a configuration with the same loose objects and its layout, and the
+        /// constructed object that consist from the current constructed objects and
+        /// given new objects.
+        /// </summary>
+        /// <param name="newObjects">The new objects list.</param>
+        /// <returns>The new configuration.</returns>
+        public Configuration Derive(List<ConstructedConfigurationObject> newObjects)
+        {
+            // Prepare new constructed objects
+            var constructedObjects = ConstructedObjects.ToList().Concat(newObjects).ToList();
+
+            // Return a new configuration
+            return new Configuration(LooseObjectsHolder, constructedObjects);
         }
 
         #endregion

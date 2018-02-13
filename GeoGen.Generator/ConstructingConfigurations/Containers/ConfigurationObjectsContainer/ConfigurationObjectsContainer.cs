@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core;
 using GeoGen.Utilities;
@@ -24,16 +23,6 @@ namespace GeoGen.Generator
         /// for manual caching.
         /// </summary>
         private readonly IDefaultFullObjectToStringConverter _converter;
-
-        #endregion
-
-        #region IConfigurationObjectsContainer properties
-
-        /// <summary>
-        /// Gets the identified loose objects that are common for a single
-        /// generation process. 
-        /// </summary>
-        public IEnumerable<LooseConfigurationObject> LooseObjects { get; private set; }
 
         #endregion
 
@@ -114,19 +103,9 @@ namespace GeoGen.Generator
             // Null ids of all objects and arguments in the configuration
             NullIds(configuration);
 
-            // Assign the loose objects property
-            LooseObjects = configuration.LooseObjects;
-
             // First we initialize the loose objects. 
-            for (var i = 0; i < configuration.LooseObjects.Count; i++)
+            foreach (var looseObject in configuration.LooseObjects)
             {
-                // Get new id and increase the counter
-                var looseObject = configuration.LooseObjects[i];
-
-                // Assign the id, starting from one (the number of items in the container
-                // will always be the greatest id)
-                looseObject.Id = i + 1;
-
                 // Get the string version of the object
                 var stringVersion = Converter.ConvertToString(looseObject);
 
@@ -152,13 +131,17 @@ namespace GeoGen.Generator
         /// </summary>
         private static void NullIds(Configuration configuration)
         {
-            // Create enumerable for all objects
-            var objects = configuration.LooseObjects
-                    .Cast<ConfigurationObject>()
-                    .Concat(configuration.ConstructedObjects);
+            // Local function that nulls an object, if it's not a loose object
+            void Null(ConfigurationObject configurationObject)
+            {
+                if(configurationObject is LooseConfigurationObject)
+                    return;
+
+                configurationObject.Id = null;
+            }
 
             // Null id to all of them
-            foreach (var configurationObject in objects)
+            foreach (var configurationObject in configuration.ConstructedObjects)
             {
                 configurationObject.Id = null;
             }
@@ -173,7 +156,7 @@ namespace GeoGen.Generator
                     var passedObject = objectArgument.PassedObject;
 
                     // Null it's id
-                    passedObject.Id = null;
+                    Null(passedObject);
 
                     // If the object is loose, we can't do anything else
                     if (passedObject is LooseConfigurationObject)

@@ -22,7 +22,7 @@ namespace GeoGen.Analyzer
             BindInTransietScope<IComposedConstructor, ComposedConstructor>();
             BindInGeneratorScope<IContextualContainerFactory, ContextualContainerFactory>();
             BindFactoryInGeneratorScope<IComposedConstructorFactory>();
-            BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjects);
+            BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjectsHolder);
             BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>();
             BindInTransietScope<IObjectsContainer, ObjectsContainer>();
 

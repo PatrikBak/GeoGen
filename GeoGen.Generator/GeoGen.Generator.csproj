@@ -51,7 +51,6 @@
     <Reference Include="System.Deployment" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConstructingConfigurations\Containers\ConfigurationObjectsContainer\ILooseObjectsHolder.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\DictionaryIdResolving\IDictionaryObjectIdResolver.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\ResolversContainer\ObjectIdResolversContainer.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\FullConverters\AutocacheFullConverter\IAutocacheFullObjectToStringConverter.cs" />

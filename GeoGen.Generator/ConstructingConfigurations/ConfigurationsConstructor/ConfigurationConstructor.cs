@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using GeoGen.Core;
 
 namespace GeoGen.Generator
@@ -52,14 +51,8 @@ namespace GeoGen.Generator
             // Pull original configuration
             var originalConfiguration = constructorOutput.OriginalConfiguration.WrappedConfiguration;
 
-            // Merge original constructed objects with the new ones
-            var allConstructedObjects = originalConfiguration
-                    .ConstructedObjects
-                    .Concat(constructorOutput.ConstructedObjects)
-                    .ToList();
-
-            // Create the new configuration
-            var newConfiguration = new Configuration(originalConfiguration.LooseObjects, allConstructedObjects);
+            // Derive a new configuration
+            var newConfiguration = originalConfiguration.Derive(constructorOutput.ConstructedObjects);
 
             // Create the new wrapper. The resolver to the minimal form will be found and set later
             var wrapper = new ConfigurationWrapper
