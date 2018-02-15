@@ -26,19 +26,21 @@ namespace GeoGen.Analyzer
             var point1 = container.Get<Point>(flattenedObjects[1]);
             var point2 = container.Get<Point>(flattenedObjects[2]);
 
-            try
-            {
-                // Try to make an intersection
-                var intersection = line.IntersectionWith(new Line(point1, point2));
+            // Create the other line
+            var otherLine = new Line(point1, point2);
 
-                // If it doesn't exist, return null; otherwise return the wrapped intersection
-                return intersection == null ? null : new List<AnalyticalObject> {intersection};
-            }
-            catch (AnalyticalException)
+            // If the lines are the same
+            if (line == otherLine)
             {
-                // If the lines are equal, return null
+                // Then the construction is not possible
                 return null;
             }
+
+            // Otherwise we make their intersection
+            var intersection = line.IntersectionWith(otherLine);
+
+            // If it doesn't exist, return null; otherwise return the wrapped intersection
+            return intersection == null ? null : new List<AnalyticalObject> {intersection};
         }
 
         /// <summary>

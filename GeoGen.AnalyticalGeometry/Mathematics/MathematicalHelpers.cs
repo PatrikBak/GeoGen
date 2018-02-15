@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using GeoGen.Utilities;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -9,27 +9,27 @@ namespace GeoGen.AnalyticalGeometry
     public static class MathematicalHelpers
     {
         /// <summary>
-        /// Solves a given quadratic equation. This method internally uses <see cref="RoundedDecimal"/>s.
+        /// Solves a given quadratic equation. This method internally uses <see cref="RoundedDouble"/>s.
         /// </summary>
         /// <param name="a">The a coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <param name="b">The b coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <param name="c">The c coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <returns>The list of solutions. If there is no solution, an empty list.</returns>
-        public static List<decimal> SolveQuadraticEquation(decimal a, decimal b, decimal c)
+        public static List<double> SolveQuadraticEquation(double a, double b, double c)
         {
             // Calculate and round the discriminant
-            var d = (RoundedDecimal) (b * b - 4 * a * c);
+            var d = (RoundedDouble) (b * b - 4 * a * c);
 
             // If it less than zero, then we have no solutions
-            if (d < RoundedDecimal.Zero)
-                return new List<decimal>();
+            if (d < RoundedDouble.Zero)
+                return new List<double>();
 
             // If it's exactly zero, then we have exactly one solution
-            if (d == RoundedDecimal.Zero)
-                return new List<decimal> {-b / (2 * a)};
+            if (d == RoundedDouble.Zero)
+                return new List<double> {-b / (2 * a)};
 
             // Otherwise we have 2 solution. Let's calculate sqrt(d).
-            var squareRoot = DecimalMath.Sqrt(d);
+            var squareRoot = Math.Sqrt(d);
 
             // The solutions are then give by the formula (-b +- sqrt(d)) / (2a)
             // This can be easily concluded using the completion to square.
@@ -37,7 +37,7 @@ namespace GeoGen.AnalyticalGeometry
             var root2 = (-b + squareRoot) / (2 * a);
 
             // Finally we wrap the solutions as list.
-            return new List<decimal> {root1, root2};
+            return new List<double> {root1, root2};
         }
 
         /// <summary>
@@ -45,9 +45,9 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="angleInDegrees">The angle in degrees.</param>
         /// <returns>The angle in radians.</returns>
-        public static decimal ToRadians(decimal angleInDegrees)
+        public static double ToRadians(double angleInDegrees)
         {
-            return angleInDegrees * (DecimalMath.Pi / 180);
+            return angleInDegrees * Math.PI / 180;
         }
     }
 }

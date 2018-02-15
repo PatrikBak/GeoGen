@@ -26,19 +26,11 @@ namespace GeoGen.Analyzer
             // Pull the point from which we erect the perpendicular like
             var pointFrom = container.Get<Point>(flattenedObjects[0]);
 
-            try
-            {
-                // Construct the line (this might throw an AnalyticalException)
-                var line = new Line(linePoint1, linePoint2);
+            // Construct the line
+            var line = new Line(linePoint1, linePoint2);
 
-                // Construct the result
-                return new List<AnalyticalObject> {line.PerpendicularLine(pointFrom)};
-            }
-            catch (AnalyticalException)
-            {
-                // Return null in case the construction has failed
-                return null;
-            }
+            // Construct the result
+            return new List<AnalyticalObject> {line.PerpendicularLine(pointFrom)};
         }
 
         /// <summary>

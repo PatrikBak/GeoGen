@@ -14,12 +14,12 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the X coordinate.
         /// </summary>
-        public RoundedDecimal X { get; }
+        public RoundedDouble X { get; }
 
         /// <summary>
         /// Gets the Y coordinate.
         /// </summary>
-        public RoundedDecimal Y { get; }
+        public RoundedDouble Y { get; }
 
         #endregion
 
@@ -30,10 +30,10 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
-        public Point(decimal x, decimal y)
+        public Point(double x, double y)
         {
-            X = (RoundedDecimal) x;
-            Y = (RoundedDecimal) y;
+            X = (RoundedDouble) x;
+            Y = (RoundedDouble) y;
         }
 
         #endregion
@@ -67,14 +67,14 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="center">The center of the rotation.</param>
         /// <param name="angleInDegrees">The given angle in degrees.</param>
         /// <returns>The rotated point.</returns>
-        public Point Rotate(Point center, decimal angleInDegrees)
+        public Point Rotate(Point center, double angleInDegrees)
         {
             // First we convert the angle to radians
             var angleInRadians = MathematicalHelpers.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
-            var cosT = DecimalMath.Cos(angleInRadians);
-            var sinT = DecimalMath.Sin(angleInRadians);
+            var cosT = Math.Cos(angleInRadians);
+            var sinT = Math.Sin(angleInRadians);
 
             // The general rotation matrix in 2D is 
             // 
@@ -111,17 +111,18 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="otherPoint">The other point.</param>
         /// <returns>The distance to the other point.</returns>
-        public decimal DistanceTo(Point otherPoint)
+        public double DistanceTo(Point otherPoint)
         {
             var dx = X.OriginalValue - otherPoint.X.OriginalValue;
             var dy = Y.OriginalValue - otherPoint.Y.OriginalValue;
 
-            return DecimalMath.Sqrt(dx * dx + dy * dy);
+            return Math.Sqrt(dx * dx + dy * dy);
         }
 
         /// <summary>
         /// Constructs the internal angle bisector of the angle given by [ray1Point][this][ray2Point]
-        /// (or equivalently [ray2Point][this][ray1Point]).
+        /// (or equivalently [ray2Point][this][ray1Point]). All three points
+        /// must be distinct and not collinear. 
         /// </summary>
         /// <param name="ray1Point">The first point on the ray starting from this point.</param>
         /// <param name="ray2Point">The second point on the ray starting from this point.</param>
@@ -142,58 +143,44 @@ namespace GeoGen.AnalyticalGeometry
             // the one lying on the ray from [this] to the second point
 
             // Generally, if we have a point C that lies on the line AB, then
-            // there exists a real number 't' such that t = (C-A)/(B-A).
+            // there exists a real number 't' such that t(B-A) = (C-A)/(B-A).
             // Point C then lies on the ray AB if and only if t >= 0 (if t=0, then C=A)
-            // Since we know that C lies on AB, we just need to calculate the expression
-            // for let's say x-coordinates. In our case: 
+            // Since we know that C lies on AB, so we can choose whether to calculate
+            // the t from X, or from Y coordinates. However, one of these differences
+            // could be 0, hence we have to put the non-zero one. At least one of them
+            // must be non zero (cause points C, A are distinct).
             //
             // A = [this]
             // B = ray2Point
             // C = one of intersections
             //
             // The intersection must logically exist
-            var correctIntersection = intersections.First(i => (RoundedDecimal)((i.X - X) / (ray2Point.X - X)) >= RoundedDecimal.Zero);
+            var correctIntersection = intersections.First(i =>
+            {
+                // Calculate the X coordinate of the vector (C-A)
+                var dx1 = ray2Point.X - X;
+
+                // If it's not zero
+                if ((RoundedDouble) dx1 != RoundedDouble.Zero)
+                {
+                    // Then we calculate the X coordinate of the vector B-A
+                    var dx2 = i.X - X;
+
+                    // And return if the corresponding t, that is equal to dx1 / dx2, is at least zero
+                    return (RoundedDouble) (dx1 / dx2) >= RoundedDouble.Zero;
+                }
+
+                // Otherwise dx1 is zero and we have to use the Y differences. Calculate them
+                var dy1 = ray2Point.Y - Y;
+                var dy2 = i.Y - Y;
+
+                // And return if their ration is at least zero...
+                return (RoundedDouble) (dy1 / dy2) >= RoundedDouble.Zero;
+            });
 
             // Now we just return the perpendicular bisector of the line 
             // connecting the first ray point with this correct intersection
             return ray1Point.PerpendicularBisector(correctIntersection);
-        }
-
-        #endregion
-
-        #region Overloaded operators
-
-        /// <summary>
-        /// Adds up two points by adding their corresponding coordinates.
-        /// </summary>
-        /// <param name="point1">The first point.</param>
-        /// <param name="point2">The second point.</param>
-        /// <returns>The sum of the points.</returns>
-        public static Point operator +(Point point1, Point point2)
-        {
-            return new Point(point1.X + point2.X, point1.Y + point2.Y);
-        }
-
-        /// <summary>
-        /// Scales a point by dividing the coordinates by a given factor.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <param name="factor">The factor.</param>
-        /// <returns>The scaled point.</returns>
-        public static Point operator /(Point point, decimal factor)
-        {
-            return new Point(point.X / factor, point.Y / factor);
-        }
-
-        /// <summary>
-        /// Scales a point by multiplying the coordinates by a given factor.
-        /// </summary>
-        /// <param name="point">The point.</param>
-        /// <param name="factor">The factor.</param>
-        /// <returns>The scaled point.</returns>
-        public static Point operator *(Point point, decimal factor)
-        {
-            return new Point(point.X * factor, point.Y * factor);
         }
 
         /// <summary>
@@ -220,6 +207,43 @@ namespace GeoGen.AnalyticalGeometry
 
         #endregion
 
+        #region Overloaded operators
+
+        /// <summary>
+        /// Adds up two points by adding their corresponding coordinates.
+        /// </summary>
+        /// <param name="point1">The first point.</param>
+        /// <param name="point2">The second point.</param>
+        /// <returns>The sum of the points.</returns>
+        public static Point operator +(Point point1, Point point2)
+        {
+            return new Point(point1.X + point2.X, point1.Y + point2.Y);
+        }
+
+        /// <summary>
+        /// Scales a point by dividing the coordinates by a given factor.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="factor">The factor.</param>
+        /// <returns>The scaled point.</returns>
+        public static Point operator /(Point point, double factor)
+        {
+            return new Point(point.X / factor, point.Y / factor);
+        }
+
+        /// <summary>
+        /// Scales a point by multiplying the coordinates by a given factor.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        /// <param name="factor">The factor.</param>
+        /// <returns>The scaled point.</returns>
+        public static Point operator *(Point point, double factor)
+        {
+            return new Point(point.X * factor, point.Y * factor);
+        }
+
+        #endregion
+
         #region Abstract HashCode and Equals implementation
 
         /// <summary>
@@ -240,6 +264,15 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Point other)
         {
             return X == other.X && Y == other.Y;
+        }
+
+        #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
         }
 
         #endregion

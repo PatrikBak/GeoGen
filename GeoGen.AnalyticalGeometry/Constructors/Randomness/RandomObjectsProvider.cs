@@ -115,8 +115,8 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The random point.</returns>
         private Point RandomPoint()
         {
-            var x = _random.NextDecimal();
-            var y = _random.NextDecimal();
+            var x = _random.NextDouble();
+            var y = _random.NextDouble();
 
             return new Point(x, y);
         }
@@ -134,7 +134,7 @@ namespace GeoGen.AnalyticalGeometry
                 var center = RandomPoint();
 
                 // Generate the radius (it might be zero)
-                var radius = _random.NextDecimal();
+                var radius = _random.NextDouble();
 
                 try
                 {

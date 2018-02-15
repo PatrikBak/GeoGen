@@ -11,8 +11,8 @@ namespace GeoGen.AnalyticalGeometry.Test
         {
             // Create a randomness provider that always returns a midpoint of any interval
             var randomMock = new Mock<IRandomnessProvider>();
-            randomMock.Setup(s => s.NextDecimal(It.IsAny<decimal>(), It.IsAny<decimal>()))
-                    .Returns<decimal, decimal>((min, max) => (min + max) / 2);
+            randomMock.Setup(s => s.NextDouble(It.IsAny<double>(), It.IsAny<double>()))
+                    .Returns<double, double>((min, max) => (min + max) / 2);
 
             // Create the constructor
             return new TriangleConstructor(randomMock.Object);
@@ -25,7 +25,7 @@ namespace GeoGen.AnalyticalGeometry.Test
             // Alpha should be in the interval (60-d, 90+d), i.e. it will be the middle 75
             // Beta should be in the interval ((180+d-A)/2, A-d), i.e. it will be the middle 61,875
             // According to GeoGebra, the point C should be around
-            var result = new Point(0.333909581513415m, 1.246167523342127m);
+            var result = new Point(0.333909581513415, 1.246167523342127);
 
             // Lets find the actual points
             var points = Constructor().NextScaleneAcuteAngedTriangle().Cast<Point>().ToList();

@@ -54,7 +54,21 @@ namespace GeoGen.AnalyticalGeometry
             if (analyticalObject is Circle circle)
                 return circle.Contains(point);
 
-            throw new Exception("Unhandled analytical object.");
+            throw new Exception("Passed analytical object can't be a point.");
+        }
+
+        /// <summary>
+        /// Finds out if given points are collinear.
+        /// </summary>
+        /// <param name="points">The points.</param>
+        /// <returns>true if all points are collinear; false otherwise.</returns>
+        public bool AreCollinear(params Point[] points)
+        {
+            // Take two points and construct the line
+            var line = new Line(points[0], points[1]);
+
+            // Return if all other points lie on this line
+            return points.Skip(2).All(line.Contains);
         }
 
         /// <summary>
@@ -101,7 +115,7 @@ namespace GeoGen.AnalyticalGeometry
             else if (o2Line != null)
                 line = o2Line;
             else
-                throw new Exception("Unhandled analytical object");
+                throw new Exception("Passed analytical object can't be a point.");
 
             // Find the circle.
             if (o1Circle != null)
@@ -109,7 +123,7 @@ namespace GeoGen.AnalyticalGeometry
             else if (o2Circle != null)
                 circle = o2Circle;
             else
-                throw new Exception("Unhandled analytical object");
+                throw new Exception("Passed analytical object can't be a point.");
 
             // And finally intersect the circle and the line
             return circle.IntersectWith(line).ToSet();

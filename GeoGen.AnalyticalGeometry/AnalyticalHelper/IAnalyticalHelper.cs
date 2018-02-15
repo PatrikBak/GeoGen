@@ -24,5 +24,12 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point">The point.</param>
         /// <returns>true, if the point lies on the object, false otherwise.</returns>
         bool LiesOn(AnalyticalObject analyticalObject, Point point);
+
+        /// <summary>
+        /// Finds out if given points are collinear.
+        /// </summary>
+        /// <param name="points">The points.</param>
+        /// <returns>true if all points are collinear; false otherwise.</returns>
+        bool AreCollinear(params Point[] points);
     }
 }

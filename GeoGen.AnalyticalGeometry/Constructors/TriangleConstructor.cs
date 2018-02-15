@@ -9,10 +9,16 @@ namespace GeoGen.AnalyticalGeometry
     /// </summary>
     internal class TriangleConstructor : ITriangleConstructor
     {
+        #region Private fields
+
         /// <summary>
-        /// The generator of random decimals.
+        /// The generator of random doubles.
         /// </summary>
         private readonly IRandomnessProvider _random;
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Default constructor.
@@ -22,6 +28,10 @@ namespace GeoGen.AnalyticalGeometry
         {
             _random = random ?? throw new ArgumentNullException(nameof(random));
         }
+
+        #endregion
+
+        #region ITriangleConstructor implementation
 
         /// <summary>
         /// Constructs a random scalene acute-angled triangle.
@@ -44,11 +54,11 @@ namespace GeoGen.AnalyticalGeometry
             // <B from the interval ((180+d-A)/2, A-d), that we will get a wanted result (simple math).
             // In order be able to generate A, we need to have d from the interval (0,15). I'm not
             // sure about the best value, so I put the middle one :)
-            const decimal d = 7.5m;
+            const double d = 7.5;
 
             // Let us generate angles according to our formulas
-            var alpha = _random.NextDecimal(60 + d, 90 - d);
-            var beta = _random.NextDecimal((180 + d - alpha) / 2, alpha - d);
+            var alpha = _random.NextDouble(60 + d, 90 - d);
+            var beta = _random.NextDouble((180 + d - alpha) / 2, alpha - d);
 
             // Now we need to construct a triangle with these angles (and our starting points A, B)
             // A simple way to achieve this is to use tangents. Let C = (x, y). Then the vector
@@ -69,8 +79,8 @@ namespace GeoGen.AnalyticalGeometry
             // Therefore we may happily generate the point C
 
             // First calculate tangents
-            var tanAlpha = DecimalMath.Tan(MathematicalHelpers.ToRadians(alpha));
-            var tan180MinusBeta = DecimalMath.Tan(MathematicalHelpers.ToRadians(180 - beta));
+            var tanAlpha = Math.Tan(MathematicalHelpers.ToRadians(alpha));
+            var tan180MinusBeta = Math.Tan(MathematicalHelpers.ToRadians(180 - beta));
 
             // Then calculate coordinates
             var x = tan180MinusBeta / (tan180MinusBeta - tanAlpha);
@@ -82,5 +92,7 @@ namespace GeoGen.AnalyticalGeometry
             // And return all of them
             return new List<AnalyticalObject> {a, b, c};
         }
+
+        #endregion
     }
 }

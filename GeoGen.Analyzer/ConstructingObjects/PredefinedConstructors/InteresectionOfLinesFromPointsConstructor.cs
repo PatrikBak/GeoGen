@@ -25,32 +25,19 @@ namespace GeoGen.Analyzer
             var point3 = container.Get<Point>(flattenedObjects[2]);
             var point4 = container.Get<Point>(flattenedObjects[3]);
 
-            try
-            {
-                // Create the set of our points
-                var points = new HashSet<Point> {point1, point2, point3, point4};
+            // Create lines. 
+            var line1 = new Line(point1, point2);
+            var line2 = new Line(point3, point4);
 
-                // Create lines. This might throw an AnalyticalException if the points are same 
-                var line1 = new Line(point1, point2);
-                var line2 = new Line(point3, point4);
+            // Intersect them
+            var intersection = line1.IntersectionWith(line2);
 
-                // If the lines are fine, intersect them
-                var result = line1.IntersectionWith(line2);
-
-                // If there is no intersection, or the intersection is the same as some 
-                // of our points (which is not allowed because of the contract of this constructor)
-                if (result == null || points.Contains(result))
-                    return null;
-
-                // Otherwise the point is correct, we can return it wrapped in a list
-                return new List<AnalyticalObject> {result};
-            }
-            catch (AnalyticalException)
-            {
-                // If we got here, then we have either equal points, or equal lines
-                // In that case, the construction has failed
+            // If there is no intersection, return null
+            if (intersection == null)
                 return null;
-            }
+
+            // Otherwise return in wrapped in the list
+            return new List<AnalyticalObject> {intersection};
         }
 
         /// <summary>

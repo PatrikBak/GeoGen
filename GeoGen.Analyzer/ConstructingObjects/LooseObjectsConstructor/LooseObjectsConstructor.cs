@@ -75,7 +75,7 @@ namespace GeoGen.Analyzer
                     return _constructor.NextScaleneAcuteAngedTriangle();
                 default:
                     // No other layouts are supporter yet :/
-                    throw new AnalyticalException($"Unsupported loose objects layout: {looseObjects.Layout}");
+                    throw new AnalyzerException($"Unsupported loose objects layout: {looseObjects.Layout}");
             }
         }
 

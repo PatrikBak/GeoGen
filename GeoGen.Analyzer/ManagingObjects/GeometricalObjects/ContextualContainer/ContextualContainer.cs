@@ -216,7 +216,7 @@ namespace GeoGen.Analyzer
         /// <returns>true, if the containers contains the object; false otherwise.</returns>
         public bool Contains(ConfigurationObject configurationObject)
         {
-            return _ids.Contains(configurationObject.Id ?? throw new AnalyticalException("Id must be set"));
+            return _ids.Contains(configurationObject.Id ?? throw new AnalyzerException("Id must be set"));
         }
 
         #endregion
@@ -265,7 +265,7 @@ namespace GeoGen.Analyzer
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
             // Pull id
-            var id = configurationObject.Id ?? throw new AnalyticalException("Id must be set");
+            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
 
             // Add id to the ids set
             _ids.Add(id);
@@ -541,14 +541,6 @@ namespace GeoGen.Analyzer
             }
         }
 
-        /// <summary>
-        /// Tries to construct a new geometrical circle using given two three. The order
-        /// of the points is not important.
-        /// </summary>
-        /// <param name="point1">The first point.</param>
-        /// <param name="point2">The second point.</param>
-        /// <param name="point3">The third point.</param>
-        /// <param name="isNew">Indicates if a new circle should be added to the new circles set or to the old circles set.</param>
         private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3, bool isNew)
         {
             // Initialize map that caches creates analytical representations of this line
@@ -566,9 +558,9 @@ namespace GeoGen.Analyzer
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
 
-                var p1 = (Point) objects.GetRightValue(point1);
-                var p2 = (Point) objects.GetRightValue(point2);
-                var p3 = (Point) objects.GetRightValue(point3);
+                var p1 = (Point)objects.GetRightValue(point1);
+                var p2 = (Point)objects.GetRightValue(point2);
+                var p3 = (Point)objects.GetRightValue(point3);
 
                 // Prepare the analytical circle.
                 Circle analyticalCircle;
@@ -587,7 +579,7 @@ namespace GeoGen.Analyzer
                     // If we're fine, then we mark the points as not collinear
                     collinear = false;
                 }
-                catch (AnalyticalException)
+                catch (Exception)
                 {
                     // If the are collinear and they have been marked as
                     // not collinear, then we have inconsistency 
@@ -617,7 +609,7 @@ namespace GeoGen.Analyzer
                         throw new InconsistentContainersException();
 
                     // Otherwise we can update the result
-                    result = (CircleObject) newResult;
+                    result = (CircleObject)newResult;
                 }
             }
 

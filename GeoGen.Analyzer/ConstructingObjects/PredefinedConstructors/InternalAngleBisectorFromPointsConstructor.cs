@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 
@@ -9,6 +10,30 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class InternalAngleBisectorFromPointsConstructor : PredefinedConstructorBase
     {
+        #region Private fields
+
+        /// <summary>
+        /// The helper for determining collinearity.
+        /// </summary>
+        private IAnalyticalHelper _analyticalHelper;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="analyticalHelper">The helper for determining collinearity.</param>
+        public InternalAngleBisectorFromPointsConstructor(IAnalyticalHelper analyticalHelper)
+        {
+            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
+        }
+
+        #endregion
+
+        #region PredefinedConstructorBase implementation
+
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
@@ -26,16 +51,16 @@ namespace GeoGen.Analyzer
             // Pull the rays intersection
             var intersection = container.Get<Point>(flattenedObjects[0]);
 
-            try
+            // Check if our points are collinear
+            if (_analyticalHelper.AreCollinear(point1, point2, intersection))
             {
-                // Try to create the internal bisector
-                return new List<AnalyticalObject> {intersection.InternalAngleBisector(point1, point2)};
-            }
-            catch (AnalyticalException)
-            {
-                // If it's not successful, return null
+                // If yes, we don't want to perform the construction (because 
+                // then it's theoretically equivalent to the perpendicular line construction
                 return null;
             }
+
+            // Otherwise we can create the internal bisector and wrap it.
+            return new List<AnalyticalObject> {intersection.InternalAngleBisector(point1, point2)};
         }
 
         /// <summary>
@@ -49,5 +74,7 @@ namespace GeoGen.Analyzer
         {
             return new List<Theorem>();
         }
+
+        #endregion
     }
 }

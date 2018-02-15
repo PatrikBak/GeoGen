@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
@@ -118,7 +119,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(2, 2),
                     new Line(new Point(4, 4), new Point(5, 5)),
                     new Point(3, 3),
-                    new Circle(new Point(-2, 1), DecimalMath.Sqrt(5))
+                    new Circle(new Point(-2, 1), Math.Sqrt(5))
                 },
                 new List<AnalyticalObject>
                 {
@@ -127,7 +128,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(0, 3),
                     new Line(new Point(0, 5), new Point(0, 6)),
                     new Point(0, 4),
-                    new Circle(new Point(-1, 0), DecimalMath.Sqrt(2))
+                    new Circle(new Point(-1, 0), Math.Sqrt(2))
                 }
             };
 
@@ -191,9 +192,9 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(0, 0),
                     new Point(0, 1),
                     new Point(3, 5),
-                    new Point(1.5m, 3),
-                    new Point(1.5m, 2.5m),
-                    new Point(0, 0.5m),
+                    new Point(1.5, 3),
+                    new Point(1.5, 2.5),
+                    new Point(0, 0.5),
                     new Point(1, 2)
                 },
                 new List<AnalyticalObject>
@@ -201,10 +202,10 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(0, 2),
                     new Point(2, 1),
                     new Point(3, 2),
-                    new Point(2.5m, 1.5m),
-                    new Point(1.5m, 2),
-                    new Point(1, 1.5m),
-                    new Point(5.0m / 3, 5.0m / 3)
+                    new Point(2.5, 1.5),
+                    new Point(1.5, 2),
+                    new Point(1, 1.5),
+                    new Point(5.0 / 3, 5.0 / 3)
                 }
             };
 
@@ -273,8 +274,8 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(3, 3),
                     new Point(-1, 3),
                     new Point(0, 1),
-                    new Point(6.0m / 13, 61.0m / 13),
-                    new Point(-0.4m, 4.2m)
+                    new Point(6.0 / 13, 61.0 / 13),
+                    new Point(-0.4, 4.2)
                 },
                 new List<AnalyticalObject>
                 {
@@ -285,7 +286,7 @@ namespace GeoGen.Analyzer.Test.Objects.Container
                     new Point(3, 2),
                     new Point(-1, 2),
                     new Point(0, 1),
-                    new Point(-1.2m, 3.4m),
+                    new Point(-1.2, 3.4),
                     new Point(2, 5)
                 }
             };

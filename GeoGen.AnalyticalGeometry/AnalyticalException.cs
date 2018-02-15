@@ -6,7 +6,7 @@ namespace GeoGen.AnalyticalGeometry
     /// Represents an exception that is thrown when geometrically illogical things 
     /// are passed as arguments (for example, constructing a circle from three collinear points).
     /// </summary>
-    public class AnalyticalException : Exception
+    internal class AnalyticalException : Exception
     {
         public AnalyticalException()
         {

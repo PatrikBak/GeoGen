@@ -26,7 +26,7 @@ namespace GeoGen.Analyzer
             // Try to make an intersection
             var intersection = line1.IntersectionWith(line2);
 
-            // If it's null, return null; otherwise return the intersection
+            // If it's null, return null; otherwise return the wrapped intersection
             return intersection == null ? null : new List<AnalyticalObject> {intersection};
         }
 

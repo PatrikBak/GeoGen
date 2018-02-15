@@ -1,4 +1,5 @@
-﻿using GeoGen.Utilities;
+﻿using System;
+using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticalGeometry
 {
@@ -12,17 +13,17 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the A coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDecimal A { get; }
+        public RoundedDouble A { get; }
 
         /// <summary>
         /// Gets the B coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDecimal B { get; }
+        public RoundedDouble B { get; }
 
         /// <summary>
         /// Gets the C coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDecimal C { get; }
+        public RoundedDouble C { get; }
 
         #endregion
 
@@ -36,9 +37,6 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point2">The second point.</param>
         public Line(Point point1, Point point2)
         {
-            if (point1 == point2)
-                throw new AnalyticalException("Points can't be the same");
-
             // Calculate the coefficients of the direction vector
             var dx = point1.X.OriginalValue - point2.X.OriginalValue;
             var dy = point1.Y.OriginalValue - point2.Y.OriginalValue;
@@ -56,13 +54,13 @@ namespace GeoGen.AnalyticalGeometry
             // Then the representation will be unique
 
             // Round a
-            var roundedA = (RoundedDecimal) a;
+            var roundedA = (RoundedDouble) a;
 
             // If a is not zero, we want it to be positive
-            if (roundedA != RoundedDecimal.Zero)
+            if (roundedA != RoundedDouble.Zero)
             {
                 // If it's not positive
-                if (roundedA < RoundedDecimal.Zero)
+                if (roundedA < RoundedDouble.Zero)
                 {
                     // We multiply the whole equation by -1
                     a = -a;
@@ -74,7 +72,7 @@ namespace GeoGen.AnalyticalGeometry
             else
             {
                 // If b is negative
-                if ((RoundedDecimal)b < RoundedDecimal.Zero)
+                if ((RoundedDouble)b < RoundedDouble.Zero)
                 {
                     // We multiply the whole equation by -1
                     b = -b;
@@ -83,12 +81,12 @@ namespace GeoGen.AnalyticalGeometry
             }
 
             // Now we can finally scale the coefficients so that A^2 + B^2 + C^2 = 1 holds true
-            var scale = DecimalMath.Sqrt(a * a + b * b + c * c);
+            var scale = Math.Sqrt(a * a + b * b + c * c);
 
             // And set the coefficients
-            A = (RoundedDecimal) (a / scale);
-            B = (RoundedDecimal) (b / scale);
-            C = (RoundedDecimal) (c / scale);
+            A = (RoundedDouble) (a / scale);
+            B = (RoundedDouble) (b / scale);
+            C = (RoundedDouble) (c / scale);
         }
 
         #endregion
@@ -96,16 +94,13 @@ namespace GeoGen.AnalyticalGeometry
         #region Public methods
 
         /// <summary>
-        /// Constructs the intersection of this line with another given one. If the lines are the same,
-        /// an <see cref="AnalyticalException"/> will be thrown. If the lines are parallel, the null will be returned.
+        /// Constructs the intersection of this line with another given one. These
+        /// lines can't be the same. If the lines are parallel, the null will be returned.
         /// </summary>
         /// <param name="otherLine">The other line.</param>
         /// <returns>The intersection, or null, if there isn't any.</returns>
         public Point IntersectionWith(Line otherLine)
         {
-            if (this == otherLine)
-                throw new AnalyticalException("Equal lines");
-
             // We want to solve the system
             //
             // a1x + b1y + c1 = 0     (1)
@@ -135,7 +130,7 @@ namespace GeoGen.AnalyticalGeometry
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDecimal) delta == RoundedDecimal.Zero)
+            if ((RoundedDouble) delta == RoundedDouble.Zero)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -154,7 +149,7 @@ namespace GeoGen.AnalyticalGeometry
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (RoundedDecimal) (A * point.X + B * point.Y + C) == RoundedDecimal.Zero;
+            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
         }
 
         /// <summary>
@@ -196,14 +191,14 @@ namespace GeoGen.AnalyticalGeometry
             // is not zero
 
             // Find some point on line. 
-            var pointOnLine = B != RoundedDecimal.Zero
+            var pointOnLine = B != RoundedDouble.Zero
                     // If B is not zero
                     ? new Point(B, (-C + A * B) / B)
                     // Otherwise A is not zero
                     : new Point(A, -(C + A * B) / A);
 
-            // Get a random decimal in [0,1). The upper bound doesn't really matter
-            var randomT = provider.NextDecimal();
+            // Get a random double in [0,1). The upper bound doesn't really matter
+            var randomT = provider.NextDouble();
 
             // Prepare new x,y
             var newX = pointOnLine.X.OriginalValue + randomT * -B;

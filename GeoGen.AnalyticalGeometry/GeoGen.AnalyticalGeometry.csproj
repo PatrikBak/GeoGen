@@ -78,7 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructors\Randomness\RandomnessProvider.cs" />
     <Compile Include="Constructors\Randomness\RandomObjectsProvider.cs" />
-    <Compile Include="Mathematics\RoundedDecimal.cs" />
+    <Compile Include="Mathematics\RoundedDouble.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">

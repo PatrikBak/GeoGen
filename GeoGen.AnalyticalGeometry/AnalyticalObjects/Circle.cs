@@ -19,7 +19,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Gets the radius of the circle.
         /// </summary>
-        public RoundedDecimal Radius { get; }
+        public RoundedDouble Radius { get; }
 
         #endregion
 
@@ -34,10 +34,6 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point3">The third point.</param>
         public Circle(Point point1, Point point2, Point point3)
         {
-            // Check if we have 3 mutually distinct points
-            if (point1 == point2 || point2 == point3 || point3 == point1)
-                throw new AnalyticalException("Equal points");
-
             // We create the perpendicular bisectors of lines P1P2, P1P3
             var bisector1 = point1.PerpendicularBisector(point2);
             var bisector2 = point1.PerpendicularBisector(point3);
@@ -50,7 +46,7 @@ namespace GeoGen.AnalyticalGeometry
 
             // Otherwise the situation is fine and radius is the distance
             // from any point to the center.
-            Radius = (RoundedDecimal) point1.DistanceTo(Center);
+            Radius = (RoundedDouble) point1.DistanceTo(Center);
         }
 
         /// <summary>
@@ -58,13 +54,10 @@ namespace GeoGen.AnalyticalGeometry
         /// </summary>
         /// <param name="center">The center.</param>
         /// <param name="radius">The radius.</param>
-        public Circle(Point center, decimal radius)
+        public Circle(Point center, double radius)
         {
             Center = center;
-            Radius = (RoundedDecimal) radius;
-
-            if (Radius <= RoundedDecimal.Zero)
-                throw new AnalyticalException("The radius must be positive.");
+            Radius = (RoundedDouble) radius;
         }
 
         #endregion
@@ -82,7 +75,7 @@ namespace GeoGen.AnalyticalGeometry
             var dx = point.X - Center.X;
             var dy = point.Y - Center.Y;
 
-            return (RoundedDecimal) (dx * dx + dy * dy - Radius * Radius) == RoundedDecimal.Zero;
+            return (RoundedDouble) (dx * dx + dy * dy - Radius * Radius) == RoundedDouble.Zero;
         }
 
         /// <summary>
@@ -92,10 +85,6 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
         public List<Point> IntersectWith(Circle otherCircle)
         {
-            // First we check if the circles aren't the equal
-            if (this == otherCircle)
-                throw new AnalyticalException("Equal circles");
-
             // If they're distinct and concentric, then there's no intersection
             if (Center == otherCircle.Center)
                 return new List<Point>();
@@ -164,7 +153,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="b">The b coefficient.</param>
         /// <param name="c">The c coefficient.</param>
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        private List<Point> IntersectWithLine(decimal a, decimal b, decimal c)
+        private List<Point> IntersectWithLine(double a, double b, double c)
         {
             // Pull the parameters of the equation of the circle
             var m = Center.X.OriginalValue;
@@ -183,7 +172,7 @@ namespace GeoGen.AnalyticalGeometry
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = (RoundedDecimal) a == RoundedDecimal.Zero;
+            var changingVariables = (RoundedDouble) a == RoundedDouble.Zero;
 
             // If yes, we use the helper method to do so
             if (changingVariables)
