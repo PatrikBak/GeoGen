@@ -108,6 +108,7 @@
     <Compile Include="TheoremsAnalysis\Verifiers\ConcurrencyVerifier.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\IContextualContainer.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\VerifierOutput.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\ParallelityVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">

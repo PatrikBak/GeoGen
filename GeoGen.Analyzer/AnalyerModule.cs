@@ -28,8 +28,9 @@ namespace GeoGen.Analyzer
 
             BindFactoryInGeneratorScope<IObjectsContainerFactory>();
 
-            BindInGeneratorScope<ITheoremVerifier, ConcurrencyVerifier>();
-            BindInGeneratorScope<ITheoremVerifier, CollinearityVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, ConcurrencyVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, CollinearityVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, ParallelityVerifier>();
 
             BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, CircumcircleFromPointsConstructor>();

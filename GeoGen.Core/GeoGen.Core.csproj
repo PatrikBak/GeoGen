@@ -61,6 +61,7 @@
   <ItemGroup>
     <Compile Include="Configurations\Configuration.cs" />
     <Compile Include="Configurations\ConfigurationObject.cs" />
+    <Compile Include="Configurations\ConfigurationObjectsEqualityComparer.cs" />
     <Compile Include="Configurations\ConfigurationObjectType.cs" />
     <Compile Include="Configurations\ConstructedConfigurationObject.cs" />
     <Compile Include="Configurations\LooseConfigurationObject.cs" />
@@ -78,9 +79,12 @@
     <Compile Include="Generator\GeneratorInput.cs" />
     <Compile Include="BaseModule.cs" />
     <Compile Include="Generator\GeneratorOutput.cs" />
-    <Compile Include="LooseObjectsHolder.cs" />
+    <Compile Include="GeoGenException.cs" />
+    <Compile Include="Configurations\LooseObjectsHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
+    <Compile Include="Theorems\TheoremEqualityComparer.cs" />
+    <Compile Include="Theorems\TheoremObjectEqualityComparer.cs" />
     <Compile Include="Theorems\TheoremObjectSignature.cs" />
     <Compile Include="Theorems\Theorem.cs" />
     <Compile Include="Theorems\TheoremObject.cs" />
@@ -90,6 +94,12 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj">
+      <Project>{98202cf2-d348-4ad7-8888-4281b0229dab}</Project>
+      <Name>GeoGen.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

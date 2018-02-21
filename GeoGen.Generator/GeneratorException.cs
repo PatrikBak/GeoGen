@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Core;
+using System;
 
 namespace GeoGen.Generator
 {
@@ -6,7 +7,7 @@ namespace GeoGen.Generator
     /// Represents an exception that is thrown when something wrong
     /// happens in the generator module. 
     /// </summary>
-    public class GeneratorException : Exception
+    public class GeneratorException : GeoGenException
     {
         public GeneratorException()
         {

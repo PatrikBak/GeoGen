@@ -144,15 +144,15 @@ namespace GeoGen.Core
 
                 // Make sure there is any
                 if (inputParameters.Count == 0)
-                    throw new Exception($"No parameter with the name {GeneratorInputParameterName}");
+                    throw new GeoGenException($"No parameter with the name {GeneratorInputParameterName}");
 
                 // Check if there is exactly one
                 if (inputParameters.Count != 1)
-                    throw new Exception($"There is more than one parameter with the name {GeneratorInputParameterName}");
+                    throw new GeoGenException($"There is more than one parameter with the name {GeneratorInputParameterName}");
 
                 // Make sure that its value type is the type of GeneratorInput
                 if (!(inputParameters[0].GetValue(context, target) is GeneratorInput input))
-                    throw new Exception($"The parameter with the name {GeneratorInputParameterName} should be an instance of {nameof(GeneratorInput)}.");
+                    throw new GeoGenException($"The parameter with the name {GeneratorInputParameterName} should be an instance of {nameof(GeneratorInput)}.");
 
                 // Perform the callback function to obtain the result
                 return argumentValue(input);

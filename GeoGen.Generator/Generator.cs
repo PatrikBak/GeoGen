@@ -88,7 +88,7 @@ namespace GeoGen.Generator
 
                         // Call the analyzer
                         var theorems = _analyzer.Analyze(unwrappedConfiguration);
-                        
+
                         // Return the output
                         return new GeneratorOutput
                         {

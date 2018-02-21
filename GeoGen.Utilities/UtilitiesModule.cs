@@ -1,20 +1,20 @@
-﻿using GeoGen.Core;
+﻿using Ninject.Modules;
 
 namespace GeoGen.Utilities
 {
     /// <summary>
     /// A NInject module that binds things from the Utilities module.
     /// </summary>
-    public class UtilitiesModule : BaseModule
+    public class UtilitiesModule : NinjectModule
     {
         /// <summary>
         /// Loads all bindings.
         /// </summary>
         public override void Load()
         {
-            BindInSingletonScope<ICombinator, Combinator>();
-            BindInSingletonScope<IVariationsProvider, VariationsProvider>();
-            BindInSingletonScope<ISubsetsProvider, SubsetsProvider>();
+            Bind<ICombinator>().To<Combinator>().InSingletonScope();
+            Bind<IVariationsProvider>().To<VariationsProvider>().InSingletonScope();
+            Bind<ISubsetsProvider>().To<SubsetsProvider>().InSingletonScope();
         }
     }
 }

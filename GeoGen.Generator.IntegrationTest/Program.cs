@@ -77,14 +77,15 @@ namespace GeoGen.Generator.IntegrationTest
                 //if(theoremCounts.Add(st)) Console.WriteLine(st);
                 //if(configurationsCount.Add(result.Count)) Console.WriteLine(result.Count);
 
-                //Console.WriteLine("Starting the first attempt..");
-                //Console.WriteLine($"First elapsed: {stopwatch.ElapsedMilliseconds}");
-                //Console.WriteLine($"Generated: {result.Count}");
-                //Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
-                //Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
-                //Console.WriteLine($"Inconsistencies: {tracker.Inconsistencies}");
-                //Console.WriteLine($"Failed attempts to reconstruct: {tracker.AttemptsToReconstruct}");
-                //Console.WriteLine($"-------------------------------------------------");
+                Console.WriteLine($"First elapsed: {stopwatch.ElapsedMilliseconds}");
+                Console.WriteLine($"Generated: {result.Count}");
+                Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
+                Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
+                Console.WriteLine($"Inconsistencies: {tracker.Inconsistencies}");
+                Console.WriteLine($"Failed attempts to reconstruct: {tracker.AttemptsToReconstruct}");
+                Console.WriteLine($"-------------------------------------------------");
+
+                PrintTheorems(result);
 
                 //Console.WriteLine("Starting the second attempt..");
                 //stopwatch.Start();
