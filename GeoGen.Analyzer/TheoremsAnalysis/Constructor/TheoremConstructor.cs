@@ -50,7 +50,7 @@ namespace GeoGen.Analyzer
             var points = objectWithPoints.Points;
 
             // And pull their configuration versions
-            var involedObjects = points.Select(p => p.ConfigurationObject).ToList();
+            var involedObjects = points.Select(p => p.ConfigurationObject).ToArray();
 
             // Determine the right signature of the theorem object (according to whether
             // it is a line or a circle)

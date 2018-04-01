@@ -79,6 +79,17 @@ namespace GeoGen.Generator.IntegrationTest
 
         public string ConvertToString(Theorem theorem)
         {
+            if (theorem.Type == TheoremType.EqualLineSegments)
+            {
+                var firstTwo = theorem.InvolvedObjects.Take(2).Select(ObjectToString).ToList();
+                firstTwo.Sort();
+
+                var secondTwo = theorem.InvolvedObjects.Skip(2).Select(ObjectToString).ToList();
+                secondTwo.Sort();
+
+                return $"{theorem.Type}: [{string.Join(", ", firstTwo)}] [{string.Join(", ", secondTwo)}]";
+            }
+
             var list = theorem.InvolvedObjects.Select(ObjectToString).ToList();
 
             list.Sort();

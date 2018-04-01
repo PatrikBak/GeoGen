@@ -25,12 +25,17 @@ namespace GeoGen.Analyzer
             BindInGeneratorScope<IObjectsContainersManager, ObjectsContainersManager>("looseObjects", input => input.InitialConfiguration.LooseObjectsHolder);
             BindInGeneratorScope<IGeometryRegistrar, GeometryRegistrar>();
             BindInTransietScope<IObjectsContainer, ObjectsContainer>();
-
             BindFactoryInGeneratorScope<IObjectsContainerFactory>();
 
-            //BindInGeneratorScope<ITheoremVerifier, ConcurrencyVerifier>();
-            //BindInGeneratorScope<ITheoremVerifier, CollinearityVerifier>();
-            //BindInGeneratorScope<ITheoremVerifier, ParallelityVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, CollinearPointsVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, ConcurrentObjectsVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, ConcyclicPointsVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, EqualAngelsVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, EqualLineSegmentsVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, LineTangentToCircleVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, ParallelLinesVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, PerpendicularLinesVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, TangentCirclesVerifier>();
 
             BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
             BindInGeneratorScope<IPredefinedConstructor, CircumcircleFromPointsConstructor>();

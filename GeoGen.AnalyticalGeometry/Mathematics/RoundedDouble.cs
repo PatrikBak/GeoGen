@@ -14,7 +14,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// The number of decimal places to which the double is rounded.
         /// </summary>
-        public const int RoundingPrecision = 6;
+        public const int RoundingPrecision = 10;
 
         #endregion
 

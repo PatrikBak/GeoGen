@@ -1,4 +1,5 @@
 ﻿using GeoGen.Analyzer;
+using System;
 
 namespace GeoGen.Generator.IntegrationTest
 {
@@ -11,6 +12,8 @@ namespace GeoGen.Generator.IntegrationTest
         public void OnUnsuccessfulAttemptToReconstructContainer()
         {
             AttemptsToReconstruct++;
+
+            Console.WriteLine(AttemptsToReconstruct);
         }
 
         public void MarkInconsistency()

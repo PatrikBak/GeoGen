@@ -13,7 +13,7 @@ namespace GeoGen.Analyzer.Test.Theorems.TheoremVerifiers
     {
         private static IObjectsContainersManager _containers;
 
-        private static ConcurrencyVerifier Verifier() => new ConcurrencyVerifier(new AnalyticalHelper(), _containers, new SubsetsProvider());
+        private static ConcurrentObjectsVerifier Verifier() => new ConcurrentObjectsVerifier(new AnalyticalHelper(), _containers, new SubsetsProvider());
 
         private static ContextualContainer Container(Configuration configuration, params List<AnalyticalObject>[] objects)
         {

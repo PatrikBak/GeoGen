@@ -28,8 +28,19 @@ namespace GeoGen.Core
         /// Default constructor.
         /// </summary>
         /// <param name="type">The signature type that this object has.</param>
+        /// <param name="objects">The objects that define this theorem object.</param>
+        public TheoremObject(TheoremObjectSignature type, params ConfigurationObject[] objects)
+        {
+            Type = type;
+            InternalObjects = objects ?? throw new ArgumentNullException(nameof(objects));
+        }
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="type">The signature type that this object has.</param>
         /// <param name="objects">The list of objects that define this theorem object.</param>
-        public TheoremObject(TheoremObjectSignature type, IReadOnlyList<ConfigurationObject> objects)
+        public TheoremObject(TheoremObjectSignature type, List<ConfigurationObject> objects)
         {
             Type = type;
             InternalObjects = objects ?? throw new ArgumentNullException(nameof(objects));

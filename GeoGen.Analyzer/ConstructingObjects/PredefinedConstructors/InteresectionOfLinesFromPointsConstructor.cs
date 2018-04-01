@@ -29,6 +29,10 @@ namespace GeoGen.Analyzer
             var line1 = new Line(point1, point2);
             var line2 = new Line(point3, point4);
 
+            // Check if lines are equal
+            if (line1 == line2)
+                return null;
+
             // Intersect them
             var intersection = line1.IntersectionWith(line2);
 

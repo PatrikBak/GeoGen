@@ -123,10 +123,7 @@ namespace GeoGen.Core
             var parameters = new List<ConstructionParameter>
             {
                 new ObjectConstructionParameter(ConfigurationObjectType.Line),
-                new SetConstructionParameter
-                (
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2
-                )
+                new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
             // Create the output types

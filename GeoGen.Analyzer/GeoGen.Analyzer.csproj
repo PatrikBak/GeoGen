@@ -51,9 +51,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyzerException.cs" />
-    <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor - Copy.cs" />
+    <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor.cs" />
+    <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesFromLineAndPointsConstructor.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\ContexualContainerQuery.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\Base\TheoremVerifierBase.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\CollinearPointsVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\ConcurrentObjectsVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\ConcyclicPointsVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\EqualAngelsVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\EqualLineSegmentsVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\LineTangentToCircleVerifier.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\OutputValidator\IOutputValidator.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\OutputValidator\OutputValidator.cs" />
     <Compile Include="TheoremsAnalysis\TheoremsAnalyzer.cs" />
@@ -64,7 +72,6 @@
     <Compile Include="ConstructingObjects\PredefinedConstructorBase.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\CircumcircleFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\CircumcenterFromPointsConstructor.cs" />
-    <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\InternalAngleBisectorFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\LoosePointOnLineFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\PerpendicularLineFromPointsConstructor.cs" />
@@ -104,11 +111,11 @@
     <Compile Include="ConstructingObjects\PredefinedConstructors\MidpointFromPointsConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\ITheoremVerifier.cs" />
-    <Compile Include="TheoremsAnalysis\Verifiers\CollinearityVerifier.cs" />
-    <Compile Include="TheoremsAnalysis\Verifiers\ConcurrencyVerifier.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\IContextualContainer.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\VerifierOutput.cs" />
-    <Compile Include="TheoremsAnalysis\Verifiers\ParallelityVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\ParallelLinesVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\PerpendicularLinesVerifier.cs" />
+    <Compile Include="TheoremsAnalysis\Verifiers\TangentCirclesVerifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticalGeometry\GeoGen.AnalyticalGeometry.csproj">

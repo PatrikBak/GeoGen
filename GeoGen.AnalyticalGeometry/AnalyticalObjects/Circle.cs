@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Utilities;
 
@@ -76,6 +77,16 @@ namespace GeoGen.AnalyticalGeometry
             var dy = point.Y - Center.Y;
 
             return (RoundedDouble) (dx * dx + dy * dy - Radius * Radius) == RoundedDouble.Zero;
+        }
+
+        /// <summary>
+        /// Finds out if a given circle is tangent to this circle.
+        /// </summary>
+        /// <param name="otherCircle">The other circle.</param>
+        /// <returns>true, if they are tangent to each other; false otherwise.</returns>
+        public bool IsTangentTo(Circle otherCircle)
+        {
+            return IntersectWith(otherCircle).Count == 1;
         }
 
         /// <summary>
@@ -236,6 +247,15 @@ namespace GeoGen.AnalyticalGeometry
         protected override bool IsEqualTo(Circle other)
         {
             return Center == other.Center && Radius == other.Radius;
+        }
+
+        #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"(x - {Center.X})^2 + (y - {Center.Y})^2 = {Radius}^2";
         }
 
         #endregion

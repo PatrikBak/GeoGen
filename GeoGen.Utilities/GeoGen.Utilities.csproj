@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="UtilitiesModule.cs" />
     <Compile Include="DataStructures\StringBasedContainer\IToStringConverter.cs" />
+    <Compile Include="Utilities\EnumUtilities.cs" />
     <Compile Include="Utilities\Extentions\CollectionExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Utilities\GeneralUtilities.cs" />
     <Compile Include="Generators\Variations\IVariationsProvider.cs" />
     <Compile Include="Generators\Variations\VariationsProvider.cs" />
+    <Compile Include="Utilities\SetComparer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

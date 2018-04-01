@@ -8,16 +8,11 @@ using GeoGen.Utilities;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.ConcurrentObjects"/>.
+    /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.PerpendicularLines"/>.
     /// </summary>
-    internal class ParallelityVerifier : ITheoremVerifier
+    internal class PerpendicularLinesVerifier : TheoremVerifierBase
     {
         #region Private fields
-
-        /// <summary>
-        /// The helper for intersecting analytical objects.
-        /// </summary>
-        private readonly IAnalyticalHelper _helper;
 
         /// <summary>
         /// The manager of all objects containers.
@@ -27,15 +22,13 @@ namespace GeoGen.Analyzer
         #endregion
 
         #region Constructor
-        
+
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="helper">The analytical helper.</param>
         /// <param name="manager">The manager for containers.</param>
-        public ParallelityVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager)
+        public PerpendicularLinesVerifier(IObjectsContainersManager manager)
         {
-            _helper = helper ?? throw new ArgumentNullException(nameof(helper));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
         }
 
@@ -49,7 +42,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="container">The container.</param>
         /// <returns>The outputs.</returns>
-        public IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
         {
             // Find all new lines. At least one of them must be included in a new theorem
             var newLines = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
@@ -69,7 +62,7 @@ namespace GeoGen.Analyzer
                 IncludeCirces = false
             }).ToList();
 
-            // Prepare set of all pairs of parallel lines in the first container
+            // Prepare set of all pairs of perpendicular lines in the first container
             var lines = new HashSet<Tuple<GeometricalObject, GeometricalObject>>();
 
             // Pull first container
@@ -85,14 +78,11 @@ namespace GeoGen.Analyzer
                         continue;
 
                     // Pull their analytical version
-                    var analytical1 = container.GetAnalyticalObject(line1, firstContainer);
-                    var analytical2 = container.GetAnalyticalObject(line2, firstContainer);
+                    var analytical1 = (Line)container.GetAnalyticalObject(line1, firstContainer);
+                    var analytical2 = (Line)container.GetAnalyticalObject(line2, firstContainer);
 
-                    // Intersect them
-                    var intersections = _helper.Intersect(new List<AnalyticalObject> { analytical1, analytical2 });
-
-                    // If there is an intersection, skip them
-                    if (intersections.Any())
+                    // If the lines are not perpendicular, skip 
+                    if (!analytical1.IsPerpendicularTo(analytical2))
                         continue;
 
                     // We find the line with the smaller id
@@ -119,19 +109,17 @@ namespace GeoGen.Analyzer
                         return true;
 
                     // Otherwise we find analytical versions of our lines
-                    var analyticalObjects = involvedObjects.Select(obj => container.GetAnalyticalObject(obj, objectsContainer));
+                    var analytical1 = (Line)container.GetAnalyticalObject(involvedObjects[0], firstContainer);
+                    var analytical2 = (Line)container.GetAnalyticalObject(involvedObjects[1], firstContainer);
 
-                    // Intersect them
-                    var intersections = _helper.Intersect(analyticalObjects);
-
-                    // The output is correct if there is no intersection
-                    return intersections.Empty();
+                    // And return if they are parallel
+                    return analytical1.IsPerpendicularTo(analytical2);
                 }
 
                 // Construct the output
                 yield return new VerifierOutput
                 {
-                    Type = TheoremType.ConcurrentObjects,
+                    Type = Type,
                     InvoldedObjects = involvedObjects,
                     AlwaysTrue = false,
                     VerifierFunction = Verify

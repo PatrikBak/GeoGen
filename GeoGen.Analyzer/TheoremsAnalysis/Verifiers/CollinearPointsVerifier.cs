@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for the type <see cref="TheoremType.CollinearPoints"/>.
     /// </summary>
-    internal class CollinearityVerifier : ITheoremVerifier
+    internal class CollinearPointsVerifier : TheoremVerifierBase
     {
         /// <summary>
         /// Gets the enumerable of verifier outputs that pulls objects from
@@ -15,7 +15,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="container">The container.</param>
         /// <returns>The outputs.</returns>
-        public IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
         {
             // Now we first pull new points
             return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
@@ -34,7 +34,7 @@ namespace GeoGen.Analyzer
                     // Each of these lines represents a new theorem correct in all containers
                     .Select(line => new VerifierOutput
                     {
-                        Type = TheoremType.CollinearPoints,
+                        Type = Type,
                         VerifierFunction = null,
                         AlwaysTrue = true,
                         InvoldedObjects = line.Points

@@ -5,9 +5,9 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.IntersectionOfLines"/>>.
     /// </summary>
-    internal class IntersectionOfLinesFromLineAndPointsConstructor : PredefinedConstructorBase
+    internal class IntersectionOfLinesConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
@@ -19,27 +19,14 @@ namespace GeoGen.Analyzer
         /// <returns>The list of constructed analytical objects.</returns>
         protected override List<AnalyticalObject> Construct(List<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
-            // Pull passed line
-            var line = container.Get<Line>(flattenedObjects[0]);
+            // Pull passed lines
+            var line1 = container.Get<Line>(flattenedObjects[0]);
+            var line2 = container.Get<Line>(flattenedObjects[1]);
 
-            // And passed points
-            var point1 = container.Get<Point>(flattenedObjects[1]);
-            var point2 = container.Get<Point>(flattenedObjects[2]);
+            // Try to make an intersection
+            var intersection = line1.IntersectionWith(line2);
 
-            // Create the other line
-            var otherLine = new Line(point1, point2);
-
-            // If the lines are the same
-            if (line == otherLine)
-            {
-                // Then the construction is not possible
-                return null;
-            }
-
-            // Otherwise we make their intersection
-            var intersection = line.IntersectionWith(otherLine);
-
-            // If it doesn't exist, return null; otherwise return the wrapped intersection
+            // If it's null, return null; otherwise return the wrapped intersection
             return intersection == null ? null : new List<AnalyticalObject> {intersection};
         }
 

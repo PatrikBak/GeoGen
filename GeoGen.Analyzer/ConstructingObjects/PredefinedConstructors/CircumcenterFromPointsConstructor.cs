@@ -66,7 +66,30 @@ namespace GeoGen.Analyzer
         /// <returns>The list of default theorems.</returns>
         protected override List<Theorem> FindDefaultTheorms(List<ConstructedConfigurationObject> input, List<ConfigurationObject> flattenedObjects)
         {
-            return new List<Theorem>();
+            return new List<Theorem>
+            {
+                new Theorem(TheoremType.EqualLineSegments, new List<TheoremObject>
+                {
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[0]),
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[1])
+                }),
+                new Theorem(TheoremType.EqualLineSegments, new List<TheoremObject>
+                {
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[0]),
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[2])
+                }),
+                new Theorem(TheoremType.EqualLineSegments, new List<TheoremObject>
+                {
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[1]),
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[2])
+                }),
+            };
         }
 
         #endregion

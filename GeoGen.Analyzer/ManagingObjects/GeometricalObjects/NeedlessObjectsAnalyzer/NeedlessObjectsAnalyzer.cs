@@ -65,7 +65,7 @@ namespace GeoGen.Analyzer
 
             // Prepare dictionary for combinator, mapping id of geometrical object
             // to the options list
-            var dictionaryForCombiner = geometricalObjects.ToDictionary(o => o.Id, FindAllOptions);
+            var dictionaryForCombiner = geometricalObjects.Distinct().ToDictionary(o => o.Id, FindAllOptions);
 
             // Let the combiner combine all possible definitions 
             foreach (var option in _combinator.Combine(dictionaryForCombiner))

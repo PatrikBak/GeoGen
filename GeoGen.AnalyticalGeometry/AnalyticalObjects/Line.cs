@@ -37,6 +37,10 @@ namespace GeoGen.AnalyticalGeometry
         /// <param name="point2">The second point.</param>
         public Line(Point point1, Point point2)
         {
+            // Check if points are not equal
+            if(point1 == point2)
+                throw new AnalyticalException("An attempt to construct a line from two equal points.");
+
             // Calculate the coefficients of the direction vector
             var dx = point1.X.OriginalValue - point2.X.OriginalValue;
             var dy = point1.Y.OriginalValue - point2.Y.OriginalValue;
@@ -101,6 +105,10 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>The intersection, or null, if there isn't any.</returns>
         public Point IntersectionWith(Line otherLine)
         {
+            // Check if they are equal
+            if(this == otherLine)
+                throw new AnalyticalException("Equal lines cannot be interested.");
+
             // We want to solve the system
             //
             // a1x + b1y + c1 = 0     (1)
@@ -142,14 +150,29 @@ namespace GeoGen.AnalyticalGeometry
         }
 
         /// <summary>
-        /// Determines if a given point lies on this line.
+        /// Finds a random point that lies on this line.
         /// </summary>
-        /// <param name="point">The given point.</param>
-        /// <returns>true, if the point lies on the line, false otherwise.</returns>
-        public bool Contains(Point point)
+        /// <param name="provider">The randomness provider.</param>
+        /// <returns>A random point.</returns>
+        public Point RandomPointOnLine(IRandomnessProvider provider)
         {
-            // We simply check if the point's coordinates meets the equation
-            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
+            return null;
+        }
+
+        /// <summary>
+        /// Finds a point that lines on this line. This point might not be
+        /// random, i.e. it might be deterministic for the same line.
+        /// </summary>
+        /// <returns>The point.</returns>
+        public Point PointOnLine()
+        {
+            // Either A or B is not zero. We need to meet the equation Ax + By + C =0.
+            // So we try to take x=0, if B is not 0; or y=0 otherwise.
+            return B != RoundedDouble.Zero
+                    // If B is not zero, return this point
+                    ? new Point(B, (-C + A * B) / B)
+                    // Otherwise A is not zero and return
+                    : new Point(A, -(C + A * B) / A);
         }
 
         /// <summary>
@@ -174,38 +197,81 @@ namespace GeoGen.AnalyticalGeometry
         }
 
         /// <summary>
-        /// Finds a random point that lies on this line.
+        /// Calculates the angle between this line and a given one. 
+        /// The lines should be distinct.
         /// </summary>
-        /// <param name="provider">The randomness provider.</param>
-        /// <returns>A random point.</returns>
-        public Point RandomPointOnLine(IRandomnessProvider provider)
+        /// <param name="otherLine">The angle between lines.</param>
+        /// <returns>The angle between the lines, in radians (0 for parallel lines). The value will in the interval [0, PI/2].</returns>
+        public double AngleBetween(Line otherLine)
         {
-            // The directional vector of this line is (-B, A). If X is 
-            // any point on this line, then X + t (-B, A) will be also
-            // a point on this line for any real 't'. We then simply take
-            // a random value for 't' (which won't yield utterly random
-            // point, but it's not a big deal).
+            // Local function to find out the oriented angle between x-axis and a line
+            double Angle(Line line)
+            {
+                // If A==0, then the line is verticular and thus the angle is PI/2. 
+                if (line.A == RoundedDouble.Zero)
+                    return 0;
 
-            // To find any point on the line, we try points [B, -(C+AB)/B]
-            // [A, -(C+AB)/A]. Either one of them must exist, since A or B
-            // is not zero
+                // Otherwise we calculate the scope of the line. The directional vector of the line is (-B, A).
+                var scope = (RoundedDouble)Math.Atan(-line.A / line.B);
 
-            // Find some point on line. 
-            var pointOnLine = B != RoundedDouble.Zero
-                    // If B is not zero
-                    ? new Point(B, (-C + A * B) / B)
-                    // Otherwise A is not zero
-                    : new Point(A, -(C + A * B) / A);
+                // If the scope is less than zero, we'll normalize it to the interval [0, pi].
+                if (scope < RoundedDouble.Zero)
+                    return scope + Math.PI;
 
-            // Get a random double in [0,1). The upper bound doesn't really matter
-            var randomT = provider.NextDouble();
+                // And return it
+                return scope;
+            }
 
-            // Prepare new x,y
-            var newX = pointOnLine.X.OriginalValue + randomT * -B;
-            var newY = pointOnLine.Y.OriginalValue + randomT * A;
+            // Now we calculate the relative angles for our two lines and return their absolute difference
+            var difference =  (RoundedDouble)Math.Abs(Angle(this) - Angle(otherLine));
 
-            // Construct the point
-            return new Point(newX, newY);
+            // If the difference happens to be at least PI/2, we want to normalize it to the interval [0,PI/2].
+            if (difference >= Math.PI / 2)
+                return Math.PI - difference;
+            
+            // And return the result
+            return difference;
+        }
+
+        /// <summary>
+        /// Determines if a given point lies on this line.
+        /// </summary>
+        /// <param name="point">The given point.</param>
+        /// <returns>true, if the point lies on the line, false otherwise.</returns>
+        public bool Contains(Point point)
+        {
+            // We simply check if the point's coordinates meets the equation
+            return (RoundedDouble)(A * point.X + B * point.Y + C) == RoundedDouble.Zero;
+        }
+
+        /// <summary>
+        /// Finds out if a given line is parallel to this one.
+        /// </summary>
+        /// <param name="otherLine">The line.</param>
+        /// <returns>true, if the lines are parallel; false otherwise.s</returns>
+        public bool IsParallelTo(Line otherLine)
+        {
+            return this == otherLine || IntersectionWith(otherLine) == null;
+        }
+
+        /// <summary>
+        /// Finds out if a given line is perpendicular to this one.
+        /// </summary>
+        /// <param name="otherLine"></param>
+        /// <returns></returns>
+        public bool IsPerpendicularTo(Line otherLine)
+        {
+            // We construct some perpendicular line to this one
+            // and check if it is parallel to the given line
+
+            // First we need a some point on line
+            var pointOnThisLine = PointOnLine();
+
+            // Then we construct a perpendicular line at this point
+            var perpendicularLine = PerpendicularLine(pointOnThisLine);
+
+            // And return if this line is parallel to the given one
+            return perpendicularLine.IsParallelTo(otherLine);
         }
 
         #endregion

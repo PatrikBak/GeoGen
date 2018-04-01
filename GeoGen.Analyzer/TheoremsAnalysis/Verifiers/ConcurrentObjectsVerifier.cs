@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.ConcurrentObjects"/>.
     /// </summary>
-    internal class ConcurrencyVerifier : ITheoremVerifier
+    internal class ConcurrentObjectsVerifier : TheoremVerifierBase
     {
         #region Private fields
 
@@ -39,7 +39,7 @@ namespace GeoGen.Analyzer
         /// <param name="helper">The analytical helper.</param>
         /// <param name="manager">The manager for containers.</param>
         /// <param name="provider">The subsets generator.</param>
-        public ConcurrencyVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager, ISubsetsProvider provider)
+        public ConcurrentObjectsVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager, ISubsetsProvider provider)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
@@ -56,7 +56,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="container">The container.</param>
         /// <returns>The outputs.</returns>
-        public IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
         {
             // Find all new lines / circles. At least one of them must be included
             // in a new theorem
@@ -145,7 +145,7 @@ namespace GeoGen.Analyzer
                     // Construct the output
                     yield return new VerifierOutput
                     {
-                        Type = TheoremType.ConcurrentObjects,
+                        Type = Type,
                         InvoldedObjects = involvedObjects,
                         AlwaysTrue = false,
                         VerifierFunction = Verify
