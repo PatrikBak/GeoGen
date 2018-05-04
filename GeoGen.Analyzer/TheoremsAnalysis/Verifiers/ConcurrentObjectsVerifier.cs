@@ -20,11 +20,6 @@ namespace GeoGen.Analyzer
         private readonly IAnalyticalHelper _helper;
 
         /// <summary>
-        /// The manager of all objects containers.
-        /// </summary>
-        private readonly IObjectsContainersManager _manager;
-
-        /// <summary>
         /// The generator of subsets of given length.
         /// </summary>
         private readonly ISubsetsProvider _provider;
@@ -37,12 +32,10 @@ namespace GeoGen.Analyzer
         /// Default constructor.
         /// </summary>
         /// <param name="helper">The analytical helper.</param>
-        /// <param name="manager">The manager for containers.</param>
         /// <param name="provider">The subsets generator.</param>
-        public ConcurrentObjectsVerifier(IAnalyticalHelper helper, IObjectsContainersManager manager, ISubsetsProvider provider)
+        public ConcurrentObjectsVerifier(IAnalyticalHelper helper, ISubsetsProvider provider)
         {
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
@@ -81,7 +74,7 @@ namespace GeoGen.Analyzer
             var dictionary = new Dictionary<Point, HashSet<GeometricalObject>>();
 
             // Pull first container
-            var firstContainer = _manager.First();
+            var firstContainer = container.Manager.First();
 
             // Iterate over lines and circles to get all pairs
             foreach (var lineOrCircle1 in newLinesCircles)

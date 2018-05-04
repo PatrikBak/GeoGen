@@ -1,28 +1,24 @@
-﻿using GeoGen.AnalyticalGeometry;
+﻿using System.Collections.Generic;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a result of a registration of <see cref="ConstructedConfigurationObject"/>s
-    /// into containers holding <see cref="AnalyticalObject"/>s.
-    /// </summary>
-    public enum RegistrationResult
+    /// Represents a result returned by a <see cref="IGeometryRegistrar"/>.
+    /// </summary>s
+    public class RegistrationResult
     {
         /// <summary>
-        /// The objects are constructible and there are no analytical duplicates of them
+        /// Gets of sets the list of duplicate object, where each duplicate is represented as a tuple
+        /// containing the new object and the older object. The new objects should be a subset of 
+        /// objects gotten in a single construction.
         /// </summary>
-        Ok,
+        public IReadOnlyList<(ConfigurationObject newerObject, ConfigurationObject olderObject)> Duplicates { get; set; }
 
         /// <summary>
-        /// The objects are constructible, but there already is an analytical object that is equal to
-        /// some of them.
+        /// Gets or sets the list of unconstructible configuration objects. This objects should be the result
+        /// of a single construction.
         /// </summary>
-        Duplicates,
-
-        /// <summary>
-        /// The objects are not constructible by a provided construction
-        /// </summary>
-        Unconstructible
+        public IReadOnlyList<ConfigurationObject> UnconstructibleObjects { get; set; }
     }
 }

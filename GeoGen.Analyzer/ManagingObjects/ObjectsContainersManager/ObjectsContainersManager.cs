@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
@@ -23,11 +22,6 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The loose objects constructor.
-        /// </summary>
-        private readonly ILooseObjectsConstructor _constructor;
-
-        /// <summary>
         /// The list of all objects containers.
         /// </summary>
         private readonly List<IObjectsContainer> _containers;
@@ -45,58 +39,16 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="looseObjects">The loose objects that are used to initialize the containers.</param>
         /// <param name="factory">The factory for creating an empty objects containers.</param>
-        /// <param name="constructor">The constructor for initializing the containers with the loose objects.</param>
         /// <param name="tracker">The tracker for marking occurrences of a <see cref="InconsistentContainersException"/>.</param>
-        public ObjectsContainersManager
-        (
-            LooseObjectsHolder looseObjects,
-            IObjectsContainerFactory factory,
-            ILooseObjectsConstructor constructor,
-            IInconsistenciesTracker tracker = null
-        )
+        public ObjectsContainersManager(IObjectsContainerFactory factory, IInconsistenciesTracker tracker = null)
         {
-            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _tracker = tracker;
 
             // Create the default number of containers
             _containers = Enumerable.Range(0, NumberOfContainers)
-                    .Select(i => factory.CreateContainer())
+                    .Select(i => factory?.CreateContainer() ?? throw new ArgumentNullException(nameof(factory)))
                     .ToList();
-
-            // Initialize all of them with the passed loose objects
-            Initialize(looseObjects);
-        }
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Initializes all containers with given loose objects.
-        /// </summary>
-        /// <param name="looseObjects">The loose objects.</param>
-        private void Initialize(LooseObjectsHolder looseObjects)
-        {
-            // Enumerate the loose objects
-            var looseObjectsList = looseObjects.LooseObjects;
-
-            // Find their ids (which must exist)
-            var ids = looseObjectsList.Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set"))
-                    .Distinct()
-                    .ToList();
-
-            // Check if there are objects with duplicate ids.
-            if (ids.Count != looseObjectsList.Count)
-                throw new ArgumentException("Duplicate objects");
-
-            // Add loose objects to all containers
-            foreach (var container in _containers)
-            {
-                // Add the objects to the container using the loose objects constructor
-                container.Add(looseObjectsList, c => _constructor.Construct(looseObjects));
-            }
         }
 
         #endregion

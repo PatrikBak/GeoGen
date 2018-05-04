@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeoGen.Analyzer</RootNamespace>
     <AssemblyName>GeoGen.Analyzer</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,7 +32,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.2.0\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
     <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
       <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
@@ -48,6 +49,10 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple">
+      <HintPath>..\packages\System.ValueTuple.4.4.0\lib\net47\System.ValueTuple.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyzerException.cs" />
@@ -55,6 +60,10 @@
     <Compile Include="ConstructingObjects\PredefinedConstructors\IntersectionOfLinesFromLineAndPointsConstructor.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\ContextualContainer\ContexualContainerQuery.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\DefinableByPoints.cs" />
+    <Compile Include="ManagingObjects\GeometryRegistrar\RegistrationResult.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersMapper\IObjectContainersMapper.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersManager\IObjectsContainersManagerFactory.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersMapper\ObjectContainersMapper.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\Base\TheoremVerifierBase.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\CollinearPointsVerifier.cs" />
     <Compile Include="TheoremsAnalysis\Verifiers\ConcurrentObjectsVerifier.cs" />
@@ -82,7 +91,6 @@
     <Compile Include="ManagingObjects\GeometricalObjects\NeedlessObjectsAnalyzer\NeedlessObjectsAnalyzer.cs" />
     <Compile Include="ManagingObjects\GeometryRegistrar\GeometryRegistrar.cs" />
     <Compile Include="ManagingObjects\GeometryRegistrar\IGeometryRegistrar.cs" />
-    <Compile Include="ManagingObjects\GeometryRegistrar\RegistrationResult.cs" />
     <Compile Include="ConstructingObjects\ConstructorOutput.cs" />
     <Compile Include="ConstructingObjects\ConstructorsResolver\ConstructorsResolver.cs" />
     <Compile Include="ConstructingObjects\LooseObjectsConstructor\ILooseObjectsConstructor.cs" />
@@ -98,15 +106,15 @@
     <Compile Include="ManagingObjects\GeometricalObjects\GeometricalObject.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\LineObject.cs" />
     <Compile Include="ManagingObjects\GeometricalObjects\PointObject.cs" />
-    <Compile Include="ManagingObjects\IObjectsContainersManager.cs" />
-    <Compile Include="ManagingObjects\ObjectsContainersManager.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersManager\IObjectsContainersManager.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainersManager\ObjectsContainersManager.cs" />
     <Compile Include="TheoremsAnalysis\Constructor\TheoremConstructor.cs" />
     <Compile Include="TheoremsAnalysis\Container\TheoremsContainer.cs" />
     <Compile Include="TheoremsAnalysis\Container\ITheoremsContainer.cs" />
     <Compile Include="ConstructingObjects\ConstructorsResolver\IConstructorsResolver.cs" />
-    <Compile Include="ManagingObjects\IObjectsContainerFactory.cs" />
-    <Compile Include="ManagingObjects\ObjectsContainer.cs" />
-    <Compile Include="ManagingObjects\IObjectsContainer.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainer\IObjectsContainerFactory.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainer\ObjectsContainer.cs" />
+    <Compile Include="ManagingObjects\ObjectsContainer\IObjectsContainer.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\InteresectionOfLinesFromPointsConstructor.cs" />
     <Compile Include="ConstructingObjects\PredefinedConstructors\MidpointFromPointsConstructor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

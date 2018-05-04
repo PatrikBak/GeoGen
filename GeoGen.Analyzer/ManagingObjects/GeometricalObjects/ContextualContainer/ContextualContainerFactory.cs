@@ -7,16 +7,16 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Default implementation of <see cref="IContextualContainerFactory"/> that uses 
     /// <see cref="IObjectsContainersManager"/> to safely handle possible inconsistencies.
+    /// This factory creates instances of <see cref="ContextualContainer"/>.
     /// </summary>
     internal class ContextualContainerFactory : IContextualContainerFactory
     {
         #region Private fields
 
         /// <summary>
-        /// The containers manager to be passed to the constructor and to
-        /// safely handle possible inconsistencies while creating a container.
+        /// The mapper of configurations to their containers managers.
         /// </summary>
-        private readonly IObjectsContainersManager _manager;
+        private readonly IObjectContainersMapper _mapper;
 
         /// <summary>
         /// The analytical helper to be passed to the container's constructor.
@@ -30,11 +30,11 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="manager">The object manager that safely creates the container.</param>
+        /// <param name="mapper">The mapper used to find containers managers for configurations.</param>
         /// <param name="helper">The analytical helper to be passed to the container.</param>
-        public ContextualContainerFactory(IObjectsContainersManager manager, IAnalyticalHelper helper)
+        public ContextualContainerFactory(IObjectContainersMapper mapper, IAnalyticalHelper helper)
         {
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _helper = helper ?? throw new ArgumentNullException(nameof(helper));
         }
 
@@ -49,8 +49,11 @@ namespace GeoGen.Analyzer
         /// <returns>The container.</returns>
         public IContextualContainer Create(Configuration configuration)
         {
+            // Pull the right containers manager for this configuration
+            var manager = _mapper.Get(configuration);
+
             // Let the manager safely create the container's instance
-            return _manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(configuration, _manager, _helper));
+            return manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(configuration, manager, _helper));
         } 
 
         #endregion

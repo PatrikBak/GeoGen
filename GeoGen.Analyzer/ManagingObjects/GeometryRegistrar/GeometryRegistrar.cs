@@ -6,32 +6,32 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A default implementation of <see cref="IGeometryRegistrar"/>.
+    /// A default implementation of <see cref="IGeometryRegistrar"/>. 
     /// </summary>
     internal class GeometryRegistrar : IGeometryRegistrar
     {
         #region Private fields
 
         /// <summary>
-        /// The resolver for getting constructors.
+        /// The constructor of loose objects.
+        /// </summary>
+        private readonly ILooseObjectsConstructor _constructor;
+
+        /// <summary>
+        /// The resolver for finding constructors.
         /// </summary>
         private readonly IConstructorsResolver _resolver;
 
         /// <summary>
-        /// The container for keeping default theorems.
+        /// The container for keeping default (trivial) theorems.
         /// </summary>
-        private readonly ITheoremsContainer _theoremsContainer;
+        private readonly ITheoremsContainer _container;
 
         /// <summary>
-        /// The manager of all containers.
+        /// The mapper that maps configurations to their geometrical representations
+        /// wrapped inside a <see cref="IObjectsContainersManager"/>.
         /// </summary>
-        private readonly IObjectsContainersManager _containers;
-
-        /// <summary>
-        /// The dictionary mapping ids of resolved constructed objects to their 
-        /// registration results.
-        /// </summary>
-        private readonly Dictionary<int, RegistrationResult> _cachedResults;
+        private readonly IObjectContainersMapper _mapper;
 
         #endregion
 
@@ -40,15 +40,16 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="resolver">The resolver to find the right constructors for constructions.</param>
+        /// <param name="resolver">The resolver for finding the right constructors.</param>
+        /// <param name="constructor">The constructor of loose objects.</param>
         /// <param name="container">The container for keeping default theorems.</param>
-        /// <param name="manager">The manager of all objects container where we register the objects.</param>
-        public GeometryRegistrar(IConstructorsResolver resolver, ITheoremsContainer container, IObjectsContainersManager manager)
+        /// <param name="mapper">The manager of all objects container where we register the objects.</param>
+        public GeometryRegistrar(IConstructorsResolver resolver, ILooseObjectsConstructor constructor, ITheoremsContainer container, IObjectContainersMapper mapper)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _theoremsContainer = container ?? throw new ArgumentNullException(nameof(container));
-            _containers = manager ?? throw new ArgumentNullException(nameof(manager));
-            _cachedResults = new Dictionary<int, RegistrationResult>();
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _container = container ?? throw new ArgumentNullException(nameof(container));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         #endregion
@@ -56,62 +57,72 @@ namespace GeoGen.Analyzer
         #region IGeometryRegistrar implementation
 
         /// <summary>
-        /// Registers given objects into all objects containers. The objects must be the result of a single
-        /// construction.
+        /// Registers a given configuration to the actual geometrical system
+        /// and returns if it is contructible and if it doesn't contain
+        /// duplicate objects.
         /// </summary>
-        /// <param name="constructedObjects">The objects to be constructed.</param>
-        /// <returns>The result of the registration.</returns>
-        public RegistrationResult Register(List<ConstructedConfigurationObject> constructedObjects)
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The registration result.</returns>
+        public RegistrationResult Register(Configuration configuration)
         {
-            // Check if objects haven't been already registered 
-            var cachedResult = FindCachedRegistrationResult(constructedObjects);
+            // Create the manager for the configuration
+            var manager = _mapper.Create(configuration);
 
-            // If it's not null, we can directly return it
-            if (cachedResult != null)
-                return cachedResult.Value;
+            // Prepare theorems list. It will be filled by the RegisterObjects method
+            var theorems = new List<Theorem>();
 
-            // Otherwise we need to register them. First prepare
-            // a list holding default theorems
-            List<Theorem> defaultTheorems = null;
-
-            // Prepare function that performs the actual registration
-            RegistrationResult RegistrationFunction() => RegisterObjects(constructedObjects, out defaultTheorems);
-
-            // Execute the registration (with auto-resolving of inconsistencies)
-            var result = _containers.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
-
-            // Cache the result using all ids
-            foreach (var configurationObject in constructedObjects)
+            // First we construct loose objects to all containers
+            foreach (var container in manager)
             {
-                // Pull id
-                var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
+                // Objects are constructed using the injected loose objects constructed
+                container.Add(configuration.LooseObjects, c => _constructor.Construct(configuration.LooseObjectsHolder));
+            }
+            
+            // Then we group the constructed objects into constructible groups 
+            foreach (var constructedObjects in configuration.GroupConstructedObjects())
+            {
+                // Prepare a function that performs the actual registration of them
+                RegistrationResult RegistrationFunction() => RegisterObjects(constructedObjects, theorems, manager);
 
-                // Cache the result for the object
-                _cachedResults.Add(id, result);
+                // Safely execute the registration (with auto-resolving of inconsistencies)
+                var result = manager.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
+
+                // Find out if the result is correct
+                var correctResult = result.UnconstructibleObjects == null && result.Duplicates == null;
+
+                // If it's not, we may directly return this result. We don't care if the other objects
+                // are constructible. That is not a big deal, because if this service is during during
+                // the standard generation process, then the configuration shouldn't have more than one
+                // incorrect group of constructed objects.
+                if (!correctResult)
+                    return result;
             }
 
-            // If the result is not ok, we can directly return it
-            if (result != RegistrationResult.Ok)
-                return result;
-
-            // Otherwise we have to register the default theorems
-            foreach (var theorem in defaultTheorems)
+            // If we got here, then all the objects have been registered correctly
+            
+            // We may add the default theorems
+            foreach (var theorem in theorems)
             {
-                _theoremsContainer.Add(theorem);
+                _container.Add(theorem);
             }
 
-            // And finally we can return the result (which should be OK in this case)
-            return result;
+            // And finally return the OK result
+            return new RegistrationResult
+            {
+                UnconstructibleObjects = null,
+                Duplicates = null
+            };
         }
 
         /// <summary>
         /// Performs the actual registration of given objects into all objects containers and
-        /// also sets the default theorem in case when the registration result is OK.
+        /// also fill the default theorems list in case when the registration result is OK.
         /// </summary>
-        /// <param name="objects">The objects to be constructed.</param>
+        /// <param name="objects">The objects to be constructed, the result of a single construction.</param>
         /// <param name="theorems">The default theorems list.</param>
+        /// <param name="manager">The manager of all objects containers to be considered.</param>
         /// <returns>The result of the registration.</returns>
-        private RegistrationResult RegisterObjects(List<ConstructedConfigurationObject> objects, out List<Theorem> theorems)
+        private RegistrationResult RegisterObjects(List<ConstructedConfigurationObject> objects, List<Theorem> theorems, IObjectsContainersManager manager)
         {
             // Initialize a variable indicating if the construction is possible
             bool? canBeConstructed = null;
@@ -122,10 +133,10 @@ namespace GeoGen.Analyzer
             // Perform the construction
             var constructorOutput = _resolver.Resolve(objects[0].Construction).Construct(objects);
 
-            // Add objects to all containers
-            foreach (var container in _containers)
+            // Add the objects to all containers
+            foreach (var container in manager)
             {
-                // Add objects
+                // Add the objects
                 var containerResult = container.Add(objects, constructorOutput.ConstructorFunction);
 
                 // If they are null, that means the construction failed in this container
@@ -156,56 +167,46 @@ namespace GeoGen.Analyzer
             }
 
             // If we can't construct it
-            if (!canBeConstructed ?? throw new AnalyzerException("Impossible"))
+            if (!canBeConstructed.Value)
             {
-                // Then we don't need to evaluate the theorems
-                theorems = null;
-
-                // And return unconstructible result
-                return RegistrationResult.Unconstructible;
+                // Return corresponding result
+                return new RegistrationResult
+                {
+                    UnconstructibleObjects = objects,
+                    Duplicates = null
+                };
             }
 
-            // If there are duplicates
-            if (!duplicates.SequenceEqual(objects))
-            {
-                // Then we don't need to evaluate the theorems as well
-                theorems = null;
+            // Prepare duplicates list (might be empty)
+            // Take all needed indices
+            var duplicatesList = Enumerable.Range(0, duplicates.Count)
+                    // Take only those that represent non-matching objects
+                    .Where(i => duplicates[i] != objects[i])
+                    // Cast these objects to a tuple
+                    .Select(i => ((ConfigurationObject)objects[i], duplicates[i]))
+                    // And enumerate to a list
+                    .ToList();
 
-                // And we return the duplicates result
-                return RegistrationResult.Duplicates;
+            // If there is any duplicate
+            if (duplicatesList.Any())
+            {
+                // Return corresponding result
+                return new RegistrationResult
+                {
+                    UnconstructibleObjects = null,
+                    Duplicates = duplicatesList
+                };
             }
             
-            // Otherwise we evaluate the theorems
-            theorems = constructorOutput.DefaultTheoremsFunction();
+            // Otherwise we evaluate the theorms and add them to the prepares list
+            theorems.AddRange(constructorOutput.DefaultTheoremsFunction());
             
             // And return the ok result
-            return RegistrationResult.Ok;
-        }
-
-        /// <summary>
-        /// Finds our whether the objects haven been already registered.
-        /// </summary>
-        /// <param name="objects">The objects.</param>
-        /// <returns>The cashed result, if there is any; otherwise null</returns>
-        private RegistrationResult? FindCachedRegistrationResult(List<ConstructedConfigurationObject> objects)
-        {
-            // Find object ids
-            var ids = objects.Select(obj => obj.Id ?? throw new AnalyzerException("Id must be set")).ToList();
-
-            // Find the number of resolved ids
-            var resolvedIds = ids.Count(id => _cachedResults.Keys.Contains(id));
-
-            // If they match, then we're sure that objects have been resolved
-            // and we pull the result using id of one of them
-            if (resolvedIds == objects.Count)
-                return _cachedResults[ids[0]];
-
-            // If there is no resolved id, return null
-            if (resolvedIds == 0)
-                return null;
-
-            // Otherwise there is an internal problem...
-            throw new AnalyzerException("Some objects from the same construction are present and other are not.");
+            return new RegistrationResult
+            {
+                UnconstructibleObjects = null,
+                Duplicates = null
+            };
         }
 
         #endregion

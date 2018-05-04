@@ -3,23 +3,24 @@
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents a constructor of configuration wrappers from a given
-    /// initial <see cref="Configuration"/>, or from a <see cref="ConstructorOutput"/>.
+    /// Represents a constructor of <see cref="ConfigurationWrapper"/>.
     /// </summary>
     internal interface IConfigurationConstructor
     {
         /// <summary>
-        /// Constructs a configuration wrapper from a given constructor output.
+        /// Constructs a configuration wrapper from a new configuration to be wrapped 
+        /// and the construction that was extended.
         /// </summary>
-        /// <param name="constructorOutput">The constructor output.</param>
-        /// <returns>The wrapper of the new configuration.</returns>
-        ConfigurationWrapper ConstructWrapper(ConstructorOutput constructorOutput);
+        /// <param name="newConfiguration">The configuration to be wrapped.</param>
+        /// <param name="oldConfiguration">The old configuration that was extended.</param>
+        /// <returns>The wrapper of the configuration.</returns>
+        ConfigurationWrapper ConstructWrapper(Configuration newConfiguration, ConfigurationWrapper oldConfiguration);
 
         /// <summary>
         /// Constructs a configuration wrapper from a given initial configuration.
         /// </summary>
         /// <param name="initialConfiguration">The initial configuration.</param>
-        /// <returns>The wrapper of the initial configuration.</returns>
+        /// <returns>The wrapper of the configuration.</returns>
         ConfigurationWrapper ConstructInitialWrapper(Configuration initialConfiguration);
     }
 }

@@ -85,7 +85,7 @@ namespace GeoGen.Analyzer
                     .Where(output => _outputValidator.Validate(configuration, output))
                     // Cast all of them to an actual theorem object
                     .Select(output => _constructor.Construct(output.InvoldedObjects, output.Type))
-                    // That only those that are not present in the container of default theorems
+                    // Take only those that are not present in the container of default theorems
                     .Where(theorem => !_container.Contains(theorem))
                     // Enumerate to list
                     .ToList();

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
@@ -11,23 +10,9 @@ namespace GeoGen.Generator
     internal class ConfigurationWrapper
     {
         /// <summary>
-        /// Gets or sets the id of the wrapper. The sole purpose of the id is 
-        /// to have a fast way to look up the previous configuration in the dictionary.
-        /// It shouldn't be used to decide whether two configurations are formally equal (or symmetric).
-        /// However, all created wrappers should have non-null id.
-        /// </summary>
-        public int? Id { get; set; }
-
-        /// <summary>
         /// Gets or sets the actual configuration that this class wraps.
         /// </summary>
         public Configuration WrappedConfiguration { get; set; }
-
-        /// <summary>
-        /// Gets or sets the list of constructed configuration objects 
-        /// that are the last added objects to this configuration.
-        /// </summary>
-        public IReadOnlyList<ConstructedConfigurationObject> LastAddedObjects { get; set; }
 
         /// <summary>
         /// Gets or sets the resolver to minimal form. It should be null for the initial

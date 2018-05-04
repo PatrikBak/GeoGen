@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GeoGen.Core;
 
 namespace GeoGen.Generator
@@ -19,11 +18,6 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly IMinimalFormResolver _minimalFormResolver;
 
-        /// <summary>
-        /// The current id prepared to be set to a <see cref="ConfigurationWrapper"/>.
-        /// </summary>
-        private int _currentId;
-
         #endregion
 
         #region Constructor
@@ -42,25 +36,19 @@ namespace GeoGen.Generator
         #region IConfigurationConstructor methods
 
         /// <summary>
-        /// Constructs a configuration wrapper from a given constructor output.
+        /// Constructs a configuration wrapper from a new configuration to be wrapped 
+        /// and the construction that was extended.
         /// </summary>
-        /// <param name="constructorOutput">The constructor output.</param>
-        /// <returns>The wrapper of the new configuration.</returns>
-        public ConfigurationWrapper ConstructWrapper(ConstructorOutput constructorOutput)
+        /// <param name="newConfiguration">The configuration to be wrapped.</param>
+        /// <param name="oldConfiguration">The old configuration that was extended.</param>
+        /// <returns>The wrapper of the configuration.</returns>
+        public ConfigurationWrapper ConstructWrapper(Configuration newConfiguration, ConfigurationWrapper oldConfiguration)
         {
-            // Pull original configuration
-            var originalConfiguration = constructorOutput.OriginalConfiguration.WrappedConfiguration;
-
-            // Derive a new configuration
-            var newConfiguration = originalConfiguration.Derive(constructorOutput.ConstructedObjects);
-
             // Create the new wrapper. The resolver to the minimal form will be found and set later
             var wrapper = new ConfigurationWrapper
             {
-                Id = _currentId++,
                 WrappedConfiguration = newConfiguration,
-                PreviousConfiguration = constructorOutput.OriginalConfiguration,
-                LastAddedObjects = constructorOutput.ConstructedObjects,
+                PreviousConfiguration = oldConfiguration,
             };
 
             // Let the resolver find its resolver to minimal form
@@ -77,14 +65,12 @@ namespace GeoGen.Generator
         /// Constructs a configuration wrapper from a given initial configuration.
         /// </summary>
         /// <param name="initialConfiguration">The initial configuration.</param>
-        /// <returns>The wrapper of the initial configuration.</returns>
+        /// <returns>The wrapper of the configuration.</returns>
         public ConfigurationWrapper ConstructInitialWrapper(Configuration initialConfiguration)
         {
             return new ConfigurationWrapper
             {
-                Id = _currentId++,
                 WrappedConfiguration = initialConfiguration,
-                LastAddedObjects = new List<ConstructedConfigurationObject>(),
                 PreviousConfiguration = null,
                 ResolverToMinimalForm = null
             };

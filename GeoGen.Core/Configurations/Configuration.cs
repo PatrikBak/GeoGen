@@ -16,6 +16,16 @@ namespace GeoGen.Core
     /// </summary>
     public class Configuration
     {
+        #region Public properties
+
+        /// <summary>
+        /// Gets or sets the id of this configuration. The id is used by
+        /// some generator and analyzer services to perform caching. 
+        /// </summary>
+        public int? Id { get; set; }
+
+        #endregion
+
         #region Private fields
 
         /// <summary>
@@ -55,6 +65,11 @@ namespace GeoGen.Core
         public IReadOnlyList<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         /// <summary>
+        /// Gets the list of the last added objects to the configuration.
+        /// </summary>
+        public IReadOnlyList<ConstructedConfigurationObject> LastAddedObjects { get; }
+
+        /// <summary>
         /// Gets the configuration objects map of this configuration.
         /// </summary>
         public ConfigurationObjectsMap ObjectsMap => _objectsMapInitialzer.Value;
@@ -91,6 +106,9 @@ namespace GeoGen.Core
 
                 return new ConfigurationObjectsMap(allObjects);
             });
+
+            // Set the last added objects
+            LastAddedObjects = GroupConstructedObjects().LastOrDefault();
         }
 
         #endregion

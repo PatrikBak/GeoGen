@@ -12,28 +12,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class TangentCirclesVerifier : TheoremVerifierBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The manager of all objects containers.
-        /// </summary>
-        private readonly IObjectsContainersManager _manager;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="manager">The manager for containers.</param>
-        public TangentCirclesVerifier(IObjectsContainersManager manager)
-        {
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
-        }
-
-        #endregion
-
         #region ITheoremVerifier implementation
 
         /// <summary>
@@ -66,7 +44,7 @@ namespace GeoGen.Analyzer
             var circles = new HashSet<Tuple<GeometricalObject, GeometricalObject>>();
 
             // Pull first container
-            var firstContainer = _manager.First();
+            var firstContainer = container.Manager.First();
 
             // Iterate over lines to get all pairs
             foreach (var circle1 in newLines)

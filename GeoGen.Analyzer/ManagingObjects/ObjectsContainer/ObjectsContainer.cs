@@ -25,11 +25,6 @@ namespace GeoGen.Analyzer
         private readonly Dictionary<int, ConfigurationObject> _configurationObjects;
 
         /// <summary>
-        /// The dictionary mapping configuration object's ids 
-        /// </summary>
-        private readonly Dictionary<int, AnalyticalObject> _idToObjects;
-
-        /// <summary>
         /// The dictionary mapping accepted types of analytical objects to 
         /// their corresponding configuration object types.
         /// </summary>
@@ -60,7 +55,6 @@ namespace GeoGen.Analyzer
             _tracker = tracker;
             _objectsDictionary = new Map<AnalyticalObject, int>();
             _configurationObjects = new Dictionary<int, ConfigurationObject>();
-            _idToObjects = new Dictionary<int, AnalyticalObject>();
             _correctTypes = new Dictionary<Type, ConfigurationObjectType>
             {
                 {typeof(Point), ConfigurationObjectType.Point},
@@ -96,16 +90,16 @@ namespace GeoGen.Analyzer
             List<ConfigurationObject> Construct()
             {
                 // Perform construction to obtain the analytical objects
-                var analytical = constructor(this);
+                var analyticalObjects = constructor(this);
 
                 // If there are null, the construction has failed
-                if (analytical is null)
+                if (analyticalObjects is null)
                     return null;
 
                 // Otherwise add all gotten objects and return the results of the Add method
                 // (that returns either the same object, if the analytical object is not present, or 
                 // the configuration object corresponding to the duplicate version of the analytical object)
-                return objectsList.Select((o, i) => Add(analytical[i], o)).ToList();
+                return objectsList.Select((o, i) => Add(analyticalObjects[i], o)).ToList();
             }
 
             // Prepare local function that finds out if a given result of the Construct 
@@ -144,7 +138,7 @@ namespace GeoGen.Analyzer
             try
             {
                 // Try to get the result from the dictionary. This might throw an KeyNotFoundException
-                var result = _idToObjects[id];
+                var result = _objectsDictionary.GetLeftValue(id);
 
                 // Try to cast the result to the requested type
                 if (!(result is T castedResult))
@@ -206,7 +200,6 @@ namespace GeoGen.Analyzer
             while (true)
             {
                 // Clear the dictionaries that hold all objects
-                _idToObjects.Clear();
                 _objectsDictionary.Clear();
 
                 // Prepare a variable that indicates whether the reconstruction 
@@ -264,10 +257,7 @@ namespace GeoGen.Analyzer
             // Update the configuration objects dictionary as well, if needed
             if (!_configurationObjects.ContainsKey(id))
                 _configurationObjects.Add(id, configurationObject);
-
-            // And also add it to the id to object dictionary
-            _idToObjects.Add(id, analyticalObject);
-
+            
             // And return the object that was passed
             return configurationObject;
         }

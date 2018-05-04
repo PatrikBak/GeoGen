@@ -11,6 +11,12 @@ namespace GeoGen.Analyzer
     internal interface IContextualContainer
     {
         /// <summary>
+        /// Gets the objects container manager that holds all the  representations of 
+        /// the objects inside this container.
+        /// </summary>
+        IObjectsContainersManager Manager { get; }
+
+        /// <summary>
         /// Gets the geometrical objects matching a given query and casts them
         /// to a given type.
         /// </summary>

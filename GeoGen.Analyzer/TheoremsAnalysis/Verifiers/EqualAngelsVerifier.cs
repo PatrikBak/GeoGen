@@ -15,11 +15,6 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The manager of all objects containers.
-        /// </summary>
-        private readonly IObjectsContainersManager _manager;
-
-        /// <summary>
         /// The generator of subsets of given length.
         /// </summary>
         private readonly ISubsetsProvider _provider;
@@ -31,11 +26,9 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="manager">The manager for containers.</param>
         /// <param name="provider">The subsets generator.</param>
-        public EqualAnglesVerifier(IObjectsContainersManager manager, ISubsetsProvider provider)
+        public EqualAnglesVerifier(ISubsetsProvider provider)
         {
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
@@ -75,7 +68,7 @@ namespace GeoGen.Analyzer
             var distancesMap = new Dictionary<RoundedDouble, HashSet<HashSet<PointObject>>>();
 
             // Pull first container
-            var firstContainer = _manager.First();
+            var firstContainer = container.Manager.First();
 
             // Iterate over poins to get all pairs (with at least one being a new one)
             foreach (var point1 in newPoints)

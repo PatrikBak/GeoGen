@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a manager of all available <see cref="IObjectsContainer"/>s. 
+    /// Represents a manager of more <see cref="IObjectsContainer"/>s. 
     /// It takes care of resolving possible inconsistencies (see the documentation of 
     /// <see cref="InconsistentContainersException"/>).
     /// </summary>

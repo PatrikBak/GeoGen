@@ -3,7 +3,7 @@
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A factory for creating <see cref="IContextualContainer"/> from given objects.
+    /// A factory for creating <see cref="IContextualContainer"/> containing given objects.
     /// </summary>
     internal interface IContextualContainerFactory
     {

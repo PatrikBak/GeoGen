@@ -1,5 +1,5 @@
-﻿using GeoGen.Analyzer;
-using System;
+﻿using System;
+using GeoGen.Analyzer;
 
 namespace GeoGen.Generator.IntegrationTest
 {
@@ -12,13 +12,13 @@ namespace GeoGen.Generator.IntegrationTest
         public void OnUnsuccessfulAttemptToReconstructContainer()
         {
             AttemptsToReconstruct++;
-
-            Console.WriteLine(AttemptsToReconstruct);
+            Console.WriteLine($"Marked failed attempt to reconstruct: {AttemptsToReconstruct}");
         }
 
         public void MarkInconsistency()
         {
             Inconsistencies++;
+            Console.WriteLine($"Marked inconsistency: {Inconsistencies}");
         }
     }
 }

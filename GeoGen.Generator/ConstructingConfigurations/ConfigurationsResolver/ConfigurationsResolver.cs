@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Castle.Core.Internal;
 using GeoGen.Analyzer;
 using GeoGen.Core;
 using GeoGen.Utilities;
@@ -18,7 +19,7 @@ namespace GeoGen.Generator
         #region Private fields
 
         /// <summary>
-        /// The geometry registrar used to register new objects.
+        /// The geometry registrar used to register new configurations.
         /// </summary>
         private readonly IGeometryRegistrar _registrar;
 
@@ -28,12 +29,10 @@ namespace GeoGen.Generator
         private readonly IConfigurationObjectsContainer _container;
 
         /// <summary>
-        /// The set containing ids of forbidden objects. These objects are either
-        /// unconstructible, or there already is a geometrically equal version 
-        /// of them. Such objects should not appear in a configuration that is
-        /// further analyzed.
+        /// The set containing ids of unconstructible objects. Any configuration containing
+        /// such objects should be resolved as incorrect.
         /// </summary>
-        private readonly HashSet<int> _forbiddenObjectsIds;
+        private readonly HashSet<int> _unconstructibleIds;
 
         #endregion
 
@@ -42,13 +41,13 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="registrar">The registrar for registering new objects to the real geometrical world.</param>
+        /// <param name="registrar">The registrar for registering new configurations.</param>
         /// <param name="container">The container for identifying new objects.</param>
         public ConfigurationsResolver(IGeometryRegistrar registrar, IConfigurationObjectsContainer container)
         {
             _registrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
             _container = container ?? throw new ArgumentNullException(nameof(container));
-            _forbiddenObjectsIds = new HashSet<int>();
+            _unconstructibleIds = new HashSet<int>();
         }
 
         #endregion
@@ -56,26 +55,107 @@ namespace GeoGen.Generator
         #region IConfigurationResolver implementation
 
         /// <summary>
-        /// Resolves a given constructor output.
+        /// Resolves a given configuration.
         /// </summary>
-        /// <param name="output">The constructor output.</param>
-        /// <returns>true, if the output was resolved as correct, false otherwise</returns>
-        public bool ResolveNewOutput(ConstructorOutput output)
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>true, if the configuration was resolved as correct, false otherwise</returns>
+        public bool ResolveNewConfiguration(Configuration configuration)
         {
-            // Let the helper method construct new objects and find out if some 
-            // of them aren't forbidden or duplicate
-            var newObjects = ConstructNewObjects(output, out var correctObjects);
-
-            // If the new objects aren't correct, return failure
-            if (!correctObjects)
+            // First check if the new objects of the configuration are correct
+            if (!AreNewObjectsCorrect(configuration))
+                // If they're not, return failure
                 return false;
 
-            // Otherwise re-assign the output (we need to do this because the interior
-            // objects might have changed, because the original ones had no ids whereas
-            // these have been identified by the container)
-            output.ConstructedObjects = newObjects;
+            // At this point, we're sure that the new configuration is formally correct.
+            // Now we find out if it's geometrically correct. Let's call the registrar
+            var registrationResult = _registrar.Register(configuration);
 
-            // And return success
+            // Find out if there is an uncontructible object
+            var anyUnconstructibleObject = !registrationResult.UnconstructibleObjects.IsNullOrEmpty();
+
+            // Find out if there are any duplicates
+            var anyDuplicates = !registrationResult.Duplicates.IsNullOrEmpty();
+
+            // Find out if the configuration is correct, i.e. constructible and without duplicates
+            var isCorrect = !anyDuplicates && !anyUnconstructibleObject;
+
+            // If the configuration is correct, we're fine
+            if (isCorrect)
+                return true;
+
+            // Otherwise it's not correct...There are either unconstructible objects, or duplicates
+
+            // If there are unconstructible objects..
+            if (anyUnconstructibleObject)
+            {
+                // Then we want to remember their ids
+                foreach (var unconstructibleObject in registrationResult.UnconstructibleObjects)
+                {
+                    _unconstructibleIds.Add(unconstructibleObject.Id.Value);
+                }
+            }
+
+            // If there are duplicates...
+            if (anyDuplicates)
+            {
+                // TODO: Do something about it
+            }
+
+            // Return failure
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the new objects of the configuration are correct. They'll get 
+        /// identified on go. 
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>true, if the new objects are correct; false otheriwse.</returns>
+        private bool AreNewObjectsCorrect(Configuration configuration)
+        {
+            // Pull ids of initial constructed objects and cast them to set. 
+            // The ids of new objects shouldn't be present in the set.
+            var initialIds = configuration
+                    // Pull constructed objects                            
+                    .ConstructedObjects
+                    // Initial objects are identitfied                            
+                    .Where(obj => obj.Id != null)
+                    // Cast them to their ids
+                    .Select(obj => obj.Id.Value)
+                    // And then wrap to a sets
+                    .ToSet();
+
+            // Determine if there are no duplicates and all new objects are not forbidden
+            foreach (var constructedObject in configuration.LastAddedObjects)
+            {
+                // Add the object to the container
+                var containerResult = _container.Add(constructedObject);
+
+                // Pull the id
+                var id = containerResult.Id ?? throw new GeneratorException("The configuration objects container was supposed to set the id.");
+
+                // Set the id of the object
+                constructedObject.Id = id;
+
+                // If the object is currently in the configuration
+                if (initialIds.Contains(id))
+                {
+                    // Return failure
+                    return false;
+                }
+
+                // Find out if it's forbidden or unconstructible
+                var isIncorrect = _unconstructibleIds.Contains(id);
+
+                // If the object with this id is incorrect
+                if (isIncorrect)
+                {
+                    // We want to resolve it as incorrect
+                    return false;
+                }
+            }
+
+            // If we got here, then all objects are fine
             return true;
         }
 
@@ -85,133 +165,26 @@ namespace GeoGen.Generator
         /// will be thrown.
         /// </summary>
         /// <param name="configuration">The initial configuration.</param>
-        public void ResolveInitialConfiguration(ConfigurationWrapper configuration)
+        public void ResolveInitialConfiguration(Configuration configuration)
         {
-            // Iterate over all grouped constructed objects
-            foreach (var constructedObjects in configuration.WrappedConfiguration.GroupConstructedObjects())
-            {
-                // Let the helper method do the registration
-                var registrationResult = Register(constructedObjects);
+            // Call the service to register the configuration
+            var registrationResult = _registrar.Register(configuration);
 
-                // Switch over the result. Only Ok result is acceptable for 
-                // the initial configuration.
-                switch (registrationResult)
-                {
-                    case RegistrationResult.Unconstructible:
-                        throw new InitializationException("Initial configuration contains unconstructible objects.");
-                    case RegistrationResult.Duplicates:
-                        throw new InitializationException("Initial configuration contains duplicates.");
-                }
-            }
-        }
+            // Find out if there is an uncontructible object
+            var anyUnconstructibleObject = !registrationResult.UnconstructibleObjects.IsNullOrEmpty();
 
-        /// <summary>
-        /// Constructs new objects from a given output and determines if they
-        /// are correct (i.e. there are no duplicates or forbidden objects).
-        /// </summary>
-        /// <param name="output">The constructor output.</param>
-        /// <param name="correctObjects">The correct objects flag.</param>
-        /// <returns>The list of new constructed objects.</returns>
-        private List<ConstructedConfigurationObject> ConstructNewObjects(ConstructorOutput output, out bool correctObjects)
-        {
-            // Initialize result
-            var result = new List<ConstructedConfigurationObject>();
+            // Handle possible unconstructible objects
+            if (anyUnconstructibleObject)
+                throw new InitializationException("Initial configuration contains unconstructible objects.");
 
-            // Pull ids of initial constructed objects and cast them to set. 
-            // The ids of new objects shouldn't be present in the set.
-            var initialIds = output
-                    .OriginalConfiguration
-                    .WrappedConfiguration
-                    .ConstructedObjects
-                    .Select(obj => obj.Id ?? throw new GeneratorException("Configuration objects id must be set."))
-                    .ToSet();
+            // Find out if there are any duplicates
+            var anyDuplicates = !registrationResult.Duplicates.IsNullOrEmpty();
 
-            // Determine if there are no duplicates and all objects are not forbidden
-            foreach (var constructedObject in output.ConstructedObjects)
-            {
-                // Add the object to the container
-                var containerResult = _container.Add(constructedObject);
+            // Handle possible duplicates
+            if (anyDuplicates)
+                throw new InitializationException("Initial configuration contains duplicates.");
 
-                // Pull the id
-                var id = containerResult.Id ?? throw new GeneratorException("Configuration objects id must be set.");
-
-                // If the object is currently in the configuration
-                if (initialIds.Contains(id))
-                {
-                    // Set the flag indicating that there is an incorrect object
-                    correctObjects = false;
-
-                    // Terminate
-                    return null;
-                }
-
-                // Find out if it's forbidden or unconstructible
-                var isIncorrect = _forbiddenObjectsIds.Contains(id);
-
-                // If the object with this id is incorrect
-                if (isIncorrect)
-                {
-                    // Set the flag indicating that there is an incorrect object
-                    correctObjects = false;
-
-                    // Terminate
-                    return null;
-                }
-
-                // Otherwise we add the result to the result list
-                result.Add(containerResult);
-            }
-
-            // At this point, we're sure that the new configuration is formally correct.
-            // Now we find out if it's geometrically correct. Let the helper method do the job.
-            var isCorrectAfterRegistration = Register(result) == RegistrationResult.Ok;
-
-            // If the object is incorrect
-            if (!isCorrectAfterRegistration)
-            {
-                // Set the flag indicating that there is an incorrect object
-                correctObjects = false;
-
-                // Terminate
-                return null;
-            }
-
-            // If we got here, then we have only correct objects
-            correctObjects = true;
-
-            // Therefore we can return the objects
-            return result;
-        }
-
-        /// <summary>
-        /// Registers given objects from a single constructor output to the 
-        /// <see cref="IGeometryRegistrar"/> and handles it's result.
-        /// </summary>
-        /// <param name="constructedObjects">The constructed objects.</param>
-        /// <returns>The registration result.</returns>
-        private RegistrationResult Register(List<ConstructedConfigurationObject> constructedObjects)
-        {
-            // Call the registrar
-            var result = _registrar.Register(constructedObjects);
-
-            // Find out if objects are correct
-            var correct = result == RegistrationResult.Ok;
-
-            // If the objects are correctly drawable, return immediately
-            if (correct)
-                return result;
-
-            // Otherwise pull ids
-            var ids = constructedObjects.Select(o => o.Id ?? throw new GeneratorException("Configuration objects id must be set."));
-
-            // Update the forbidden ids set
-            foreach (var id in ids)
-            {
-                _forbiddenObjectsIds.Add(id);
-            }
-
-            // And return the result
-            return result;
+            // Otherwise we're fine
         }
 
         #endregion

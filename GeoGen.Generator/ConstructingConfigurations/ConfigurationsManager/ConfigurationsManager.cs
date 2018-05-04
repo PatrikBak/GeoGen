@@ -30,6 +30,12 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly IConfigurationsResolver _configurationsResolver;
 
+        /// <summary>
+        /// The id of the identified configuration. We need to idenfitify configuration
+        /// because the IConfigrationResolver needs it.
+        /// </summary>
+        private int _currentConfigurationId;
+
         #endregion
 
         #region IConfigurationsManager properties
@@ -81,16 +87,22 @@ namespace GeoGen.Generator
             // Iterate over all constructor outputs
             foreach (var currentOutput in output)
             {
-                // Let the resolver resolve the output and find out if it's correct
-                var isCorrect = _configurationsResolver.ResolveNewOutput(currentOutput);
+                // Derive the new configuration
+                var newConfiguration = currentOutput.OriginalConfiguration.WrappedConfiguration.Derive(currentOutput.ConstructedObjects);
+
+                // Set it's id
+                newConfiguration.Id = _currentConfigurationId++;
+
+                // Let the resolver resolve the configuration and find out if it's correct
+                var isCorrect = _configurationsResolver.ResolveNewConfiguration(newConfiguration);
 
                 // If it's not, skip it
                 if (!isCorrect)
                     continue;
 
                 // Let the constructor create a new wrapper
-                var configuration = _configurationConstructor.ConstructWrapper(currentOutput);
-
+                var configuration = _configurationConstructor.ConstructWrapper(newConfiguration, currentOutput.OriginalConfiguration);
+                
                 // Add the configuration to the container.
                 if (!_configurationsContainer.Add(configuration))
                 {
@@ -123,11 +135,14 @@ namespace GeoGen.Generator
         /// <param name="initialConfiguration">The initial configuration.</param>
         private void Initialize(Configuration initialConfiguration)
         {
-            // Let the constructor construct wrapper for the initial configuration.
-            var configurationWrapper = _configurationConstructor.ConstructInitialWrapper(initialConfiguration);
+            // Set the id of the configuration
+            initialConfiguration.Id = _currentConfigurationId++;
 
             // Let the resolver resolve the initial configuration
-            _configurationsResolver.ResolveInitialConfiguration(configurationWrapper);
+            _configurationsResolver.ResolveInitialConfiguration(initialConfiguration);
+
+            // Let the constructor construct wrapper for the initial configuration.
+            var configurationWrapper = _configurationConstructor.ConstructInitialWrapper(initialConfiguration);
 
             // Set this configuration as a current layer
             CurrentLayer.SetItems(configurationWrapper.AsEnumerable());

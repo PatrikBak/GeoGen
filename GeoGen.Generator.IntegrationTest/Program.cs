@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Analyzer;
 using GeoGen.Core;
@@ -23,8 +22,6 @@ namespace GeoGen.Generator.IntegrationTest
 
         private static void Main()
         {
-            //while (true)
-            //{
             _constructionsContainer = new ConstructionsContainer();
             _composedConstructions = new ComposedConstructions(_constructionsContainer);
             _constructorHelper = new ConstructorHelper(_constructionsContainer);
@@ -67,8 +64,7 @@ namespace GeoGen.Generator.IntegrationTest
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            var result = generator.Generate()
-                    .ToList();
+            var result = generator.Generate().ToList();
             stopwatch.Stop();
 
             //var st = result.Sum(output => output.Theorems.Count);
@@ -176,19 +172,14 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-                //_composedConstructions.AddIncenterFromPoints(),
-                //_constructionsContainer.Get(IntersectionOfLinesFromPoints),
-                //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
-                //_constructionsContainer.Get(IntersectionOfLines),
+                _composedConstructions.AddIncenterFromPoints(),
+                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
+                _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
+                _constructionsContainer.Get(IntersectionOfLines),
                 _constructionsContainer.Get(MidpointFromPoints),
                 _constructionsContainer.Get(CircumcenterFromPoints),
-                //_constructionsContainer.Get(PerpendicularLineFromPoints),
-                //_constructionsContainer.Get(InternalAngleBisectorFromPoints),
-                //_composedConstructions.AddIncenterFromPoints()
-                //_constructionsContainer.Get(IntersectionOfLines),
-                //_constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
-                //_constructionsContainer.Get(PerpendicularLineFromPoints),
-                //_constructionsContainer.Get(InternalAngleBisectorFromPoints)
+                _constructionsContainer.Get(PerpendicularLineFromPoints),
+                _constructionsContainer.Get(InternalAngleBisectorFromPoints),
             };
         }
 

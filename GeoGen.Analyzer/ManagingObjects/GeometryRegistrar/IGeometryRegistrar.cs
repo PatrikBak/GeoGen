@@ -1,21 +1,21 @@
-﻿using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a service that takes care of an actual construction of <see cref="ConstructedConfigurationObject"/>s
-    /// into <see cref="AnalyticalObject"/>s. 
+    /// Represents a service that takes care of constructing a configuration.
+    /// It finds out if the configuration is constructible and if it doesn't
+    /// contain duplicate objects.
     /// </summary>
     public interface IGeometryRegistrar
     {
         /// <summary>
-        /// Registers given objects into all objects containers. The objects must be the result of a single
-        /// construction.
+        /// Registers a given configuration to the actual geometrical system
+        /// and returns if it is contructible and if it doesn't contain
+        /// duplicate objects.
         /// </summary>
-        /// <param name="constructedObjects">The objects to be constructed.</param>
-        /// <returns>The result of the registration.</returns>
-        RegistrationResult Register(List<ConstructedConfigurationObject> constructedObjects);
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The registration result.</returns>
+        RegistrationResult Register(Configuration configuration);
     }
 }

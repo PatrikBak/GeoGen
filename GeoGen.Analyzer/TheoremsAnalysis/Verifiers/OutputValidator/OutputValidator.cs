@@ -12,9 +12,9 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The manager holding all objects containers.
+        /// The mapper that finds the containers manager for a configuration.
         /// </summary>
-        private readonly IObjectsContainersManager _manager;
+        private readonly IObjectContainersMapper _mapper;
 
         /// <summary>
         /// The analyzer whether given output would represent a correct theorem
@@ -29,11 +29,11 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="manager">The manager of objects containers.</param>
-        /// <param name="analyzer">The analyzer that makes sure that there are no needless objects.</param>
-        public OutputValidator(IObjectsContainersManager manager, INeedlessObjectsAnalyzer analyzer)
+        /// <param name="mapper">The manager of all objects containers managers.</param>
+        /// <param name="analyzer">The analyzer that makes sure that there are no needless objects in theorems.</param>
+        public OutputValidator(IObjectContainersMapper mapper, INeedlessObjectsAnalyzer analyzer)
         {
-            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
         }
 
@@ -41,7 +41,7 @@ namespace GeoGen.Analyzer
 
         #region IOutputValidator implementation
 
-        /// <summary>
+        /// <summary>s
         /// Finds out if a given verifier output represents a true and acceptable
         /// theorem for a configuration.
         /// </summary>
@@ -53,13 +53,15 @@ namespace GeoGen.Analyzer
             // Local function that calls the needless objects analyzer
             bool ContainsNeedlessObjects() => _analyzer.ContainsNeedlessObjects(configuration, output.InvoldedObjects);
 
-            // If the output is always true, then its fine if and if only if doesn't contain needless objects
+            // If the output is always true, then it's fine if and if only if it doesn't contain needless objects
             if (output.AlwaysTrue)
                 return !ContainsNeedlessObjects();
 
-            // Otherwise the theorem is true if and only if is true in all containers
-            // and doesn't contain needless objects
-            return _manager.All(output.VerifierFunction) && !ContainsNeedlessObjects();
+            // Otherwise we first find the containers manager
+            var manager = _mapper.Get(configuration);
+
+            // The theorem is true if and only if is true in all containers and doesn't contain needless objects
+            return manager.All(output.VerifierFunction) && !ContainsNeedlessObjects();
         }
 
         #endregion

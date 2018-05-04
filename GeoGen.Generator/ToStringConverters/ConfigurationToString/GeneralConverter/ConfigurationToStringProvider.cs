@@ -112,7 +112,7 @@ namespace GeoGen.Generator
                 }
 
                 // Pull id of the configuration that should be the initial one
-                var id = previousConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
+                var id = previousConfiguration.WrappedConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
                 // Cache the result
                 dictionary.Add(id, initialResult);
@@ -126,7 +126,7 @@ namespace GeoGen.Generator
             var result = new SortedSet<string>(originalConfigurationSet);
 
             // Add the new objects to the new set
-            foreach (var newObject in configuration.LastAddedObjects)
+            foreach (var newObject in configuration.WrappedConfiguration.LastAddedObjects)
             {
                 // Convert object to string
                 var stringValue = objectToString.ConvertToString(newObject);
@@ -136,7 +136,7 @@ namespace GeoGen.Generator
             }
 
             // Pull id of the current configuration
-            var currentId = configuration.Id ?? throw new GeneratorException("Configurations id must be set.");
+            var currentId = configuration.WrappedConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Cache the result
             dictionary.Add(currentId, result);
@@ -160,7 +160,7 @@ namespace GeoGen.Generator
         private string ResolveCache(ConfigurationWrapper configuration, IObjectToStringConverter objectToString)
         {
             // Pull id of the current configuration
-            var currentId = configuration.Id ?? throw new GeneratorException("Configurations id must be set.");
+            var currentId = configuration.WrappedConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Get dictionary for the converter
             var dictionary = GetDictionaryForConverter(objectToString);
@@ -190,7 +190,7 @@ namespace GeoGen.Generator
             var resolverId = objectToString.Resolver.Id;
 
             // Pull id of previous configuration
-            var previousId = configuration.PreviousConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
+            var previousId = configuration.PreviousConfiguration.WrappedConfiguration.Id ?? throw new GeneratorException("Configurations id must be set.");
 
             // Pull now we can return the original configuration
             return _cachedSets[resolverId][previousId];

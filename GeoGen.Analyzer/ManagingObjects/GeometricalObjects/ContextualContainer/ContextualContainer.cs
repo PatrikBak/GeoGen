@@ -15,11 +15,6 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The containers manager holding all object containers.
-        /// </summary>
-        private readonly IObjectsContainersManager _containersManager;
-
-        /// <summary>
         /// The analytical helper for intersecting objects and determining collinearities.
         /// </summary>
         private readonly IAnalyticalHelper _analyticalHelper;
@@ -71,7 +66,7 @@ namespace GeoGen.Analyzer
         private readonly HashSet<int> _ids;
 
         #endregion
-
+        
         #region Private properties
 
         /// <summary>
@@ -91,6 +86,16 @@ namespace GeoGen.Analyzer
 
         #endregion
 
+        #region IContectualContainer properties
+
+        /// <summary>
+        /// Gets the objects container manager that holds all the  representations of 
+        /// the objects inside this container.
+        /// </summary>
+        public IObjectsContainersManager Manager { get; }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -101,7 +106,7 @@ namespace GeoGen.Analyzer
         /// <param name="helper">The analytical helper for figuring our collinearities and concurrencies.</param>
         public ContextualContainer(Configuration configuration, IObjectsContainersManager manager, IAnalyticalHelper helper)
         {
-            _containersManager = manager ?? throw new ArgumentNullException(nameof(manager));
+            Manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _analyticalHelper = helper ?? throw new ArgumentNullException(nameof(helper));
             _oldLines = new HashSet<LineObject>();
             _newLines = new HashSet<LineObject>();
@@ -125,7 +130,7 @@ namespace GeoGen.Analyzer
         #endregion
 
         #region IContextualContainer implementation
-
+        
         /// <summary>
         /// Gets the geometrical objects matching a given query and casts them
         /// to a given type.
@@ -322,7 +327,7 @@ namespace GeoGen.Analyzer
             GeometricalObject result = null;
 
             // We loop over containers
-            foreach (var container in _containersManager)
+            foreach (var container in Manager)
             {
                 // Pull the analytical representation of this object. It must exist,
                 // which is a part of the contract of this class
@@ -477,7 +482,7 @@ namespace GeoGen.Analyzer
             LineObject result = null;
 
             // Iterate over containers
-            foreach (var container in _containersManager)
+            foreach (var container in Manager)
             {
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
@@ -553,7 +558,7 @@ namespace GeoGen.Analyzer
             bool? collinear = null;
 
             // Iterate over containers
-            foreach (var container in _containersManager)
+            foreach (var container in Manager)
             {
                 // Pull the map between geometrical and analytical objects
                 var objects = _objects[container];
@@ -711,7 +716,7 @@ namespace GeoGen.Analyzer
             bool? result = null;
 
             // Iterate over containers
-            foreach (var container in _containersManager)
+            foreach (var container in Manager)
             {
                 // Pull analytical representations of the objects
                 var point = (Point) _objects[container].GetRightValue(pointObject);
