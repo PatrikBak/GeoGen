@@ -18,7 +18,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="constructedObjects">The constructed objects list.</param>
         /// <returns>The constructor output.</returns>
-        public ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects)
+        public ConstructorOutput Construct(IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
         {
             // First pull the flatened objects
             var flattenedObjects = constructedObjects[0].PassedArguments.FlattenedList;
@@ -53,12 +53,6 @@ namespace GeoGen.Analyzer
         /// <param name="flattenedObjects">The flattened argument objects.</param>
         /// <returns>The list of default theorems.</returns>
         protected abstract List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects);
-
-        #endregion
-
-        #region Private helpers
-
-        
 
         #endregion
     }

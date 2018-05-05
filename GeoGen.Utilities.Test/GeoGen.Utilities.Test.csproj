@@ -62,8 +62,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CacheBasedContainerTest.cs" />
-    <Compile Include="CollectionExtensionsTest.cs" />
     <Compile Include="Combinations\CombinatorTest.cs" />
     <Compile Include="EnumerableExtensionsTest.cs" />
     <Compile Include="HashCodeUtilitiesTest.cs" />
@@ -71,8 +69,6 @@
     <Compile Include="MathUtilsTest.cs" />
     <Compile Include="RoundedDoubleTest.cs" />
     <Compile Include="SubsetsProviding\SubsetsProviderTest.cs" />
-    <Compile Include="ThrowHelperTest.cs" />
-    <Compile Include="UtilsTest.cs" />
     <Compile Include="VariationsProviding\VariationsProviderTest.cs" />
   </ItemGroup>
   <ItemGroup>

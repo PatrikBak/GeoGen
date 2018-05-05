@@ -24,7 +24,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the constructed configuration objects that represent the output of this construction.
         /// </summary>
-        public List<ConstructedConfigurationObject> ConstructionOutput { get; }
+        public IReadOnlyList<ConstructedConfigurationObject> ConstructionOutput { get; }
 
         /// <summary>
         /// Gets or sets the function that takes the list of constructed objects (that are created with

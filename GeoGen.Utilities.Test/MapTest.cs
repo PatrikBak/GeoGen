@@ -61,16 +61,6 @@ namespace GeoGen.Utilities.Test
         }
 
         [Test]
-        public void Test_Get_Key_Must_Exist()
-        {
-            var map = new Map<string, int>();
-            map.Add("a", 1);
-
-            Assert.Throws<KeyNotFoundException>(() => map.GetLeftValue(2));
-            Assert.Throws<KeyNotFoundException>(() => map.GetRightValue("b"));
-        }
-
-        [Test]
         public void Test_Get_With_Correct_Key()
         {
             var map = new Map<string, int>();

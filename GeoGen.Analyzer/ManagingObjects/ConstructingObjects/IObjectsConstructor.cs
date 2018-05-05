@@ -15,6 +15,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="constructedObjects">The constructed objects list.</param>
         /// <returns>The constructor output.</returns>
-        ConstructorOutput Construct(List<ConstructedConfigurationObject> constructedObjects);
+        ConstructorOutput Construct(IReadOnlyList<ConstructedConfigurationObject> constructedObjects);
     }
 }
