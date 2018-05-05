@@ -71,6 +71,7 @@
     <Compile Include="Configurations\ConstructedConfigurationObject.cs" />
     <Compile Include="Configurations\LooseConfigurationObject.cs" />
     <Compile Include="Configurations\LooseObjectsLayout.cs" />
+    <Compile Include="Constructions\Arguments\Arguments.cs" />
     <Compile Include="Constructions\Arguments\SetConstructionArgument.cs" />
     <Compile Include="Constructions\Arguments\ObjectConstructionArgument.cs" />
     <Compile Include="Constructions\ComposedConstruction.cs" />

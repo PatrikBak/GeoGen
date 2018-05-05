@@ -4,8 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents a converter of a list of <see cref="ConstructionParameter"/>s to a 
-    /// list of <see cref="ConstructionArgument"/>s. 
+    /// Represents a converter of a list of <see cref="ConstructionParameter"/>s to <see cref="Arguments"/>.
     /// </summary>
     internal interface IConstructionSignatureMatcher
     {
@@ -17,6 +16,6 @@ namespace GeoGen.Generator
         /// <param name="parameters">The parameters list.</param>
         /// <param name="map">The configuration objects map.</param>
         /// <returns>The created arguments.</returns>
-        List<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectsMap map);
+        Arguments Match(IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectsMap map);
     }
 }

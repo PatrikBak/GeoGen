@@ -6,11 +6,11 @@ using GeoGen.Core;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="IObjectsConstructor"/>.
-    /// It uses a given <see cref="IConstructionsContainer"/> that contains
-    /// all constructions to be performed on given configurations. The 
-    /// arguments for new <see cref="ConstructedConfigurationObject"/>s
-    /// are generated using a provided <see cref="IArgumentsGenerator"/>.
+    /// A default implementation of <see cref="IObjectsConstructor"/>. It uses a given 
+    /// <see cref="IConstructionsContainer"/> that contains all constructions to be 
+    /// performed on given configurations. The arguments for new 
+    /// <see cref="ConstructedConfigurationObject"/>s are generated using 
+    /// an injected <see cref="IArgumentsGenerator"/>.
     /// </summary>
     internal class ObjectsConstructor : IObjectsConstructor
     {
@@ -64,7 +64,7 @@ namespace GeoGen.Generator
                 // Unwrap construction
                 var unwrapedConstruction = constructionWrapper.WrappedConstruction;
 
-                // Cast each arguments list to a new constructor output
+                // Cast each arguments to a new constructor output
                 var newOutput = generatedArguments.Select(arguments =>
                 {
                     // Construct the needed number of objects

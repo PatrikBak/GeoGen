@@ -12,9 +12,9 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="provider">The converter of arguments list to string.</param>
+        /// <param name="provider">The converter of arguments to string.</param>
         /// <param name="resolver">The object id resolver used by this converter.</param>
-        public AutocacheFullObjectToStringConverter(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
+        public AutocacheFullObjectToStringConverter(IArgumentsToStringProvider provider, IObjectIdResolver resolver)
                 : base(provider, resolver)
         {
         }

@@ -17,7 +17,7 @@ namespace GeoGen.Analyzer
         /// <param name="flattenedObjects">The flattened argument objects.</param>
         /// <param name="container">The objects container.</param>
         /// <returns>The list of constructed analytical objects.</returns>
-        protected override List<AnalyticalObject> Construct(List<ConfigurationObject> flattenedObjects, IObjectsContainer container)
+        protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
             // Pull passed lines
             var line1 = container.Get<Line>(flattenedObjects[0]);
@@ -37,7 +37,7 @@ namespace GeoGen.Analyzer
         /// <param name="input">The constructed objects.</param>
         /// <param name="flattenedObjects">The flattened argument objects.</param>
         /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(List<ConstructedConfigurationObject> input, List<ConfigurationObject> flattenedObjects)
+        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
         {
             return new List<Theorem>();
         }

@@ -18,9 +18,9 @@ namespace GeoGen.Generator
 
             // Constructing objects
             BindInGeneratorScope<IArgumentsGenerator, ArgumentsGenerator>();
-            BindFactoryInGeneratorScope<IArgumentsListContainerFactory>();
-            BindInTransietScope<IArgumentsListContainer, ArgumentsListContainer>();
-            BindInGeneratorScope<IDefaultArgumentsListToStringConverter, DefaultArgumentsListToStringConverter>();
+            BindFactoryInGeneratorScope<IArgumentsContainerFactory>();
+            BindInTransietScope<IArgumentsContainer, ArgumentsContainer>();
+            BindInGeneratorScope<IDefaultArgumentsToStringConverter, DefaultArgumentsToStringConverter>();
             BindInGeneratorScope<IDefaultObjectToStringConverter, DefaultObjectToStringConverter>();
             BindInGeneratorScope<IDefaultObjectIdResolver, DefaultObjectIdResolver>();
             BindInGeneratorScope<IConstructionSignatureMatcher, ConstructionSignatureMatcher>();
@@ -34,7 +34,7 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IMinimalFormResolver, MinimalFormResolver>();
             BindInGeneratorScope<IObjectIdResolversContainer, ObjectIdResolversContainer>("looseObjects", input => input.InitialConfiguration.LooseObjectsHolder);
             BindInGeneratorScope<IConfigurationToStringProvider, ConfigurationToStringProvider>();
-            BindInGeneratorScope<IArgumentsListToStringProvider, ArgumentsListToStringProvider>();
+            BindInGeneratorScope<IArgumentsToStringProvider, ArgumentsToStringProvider>();
             BindInGeneratorScope<IDefaultFullObjectToStringConverter, DefaultFullObjectToStringConverter>();
             BindInGeneratorScope<IConfigurationsContainer, ConfigurationsContainer>();
             BindInGeneratorScope<IConfigurationsResolver, ConfigurationsResolver>();

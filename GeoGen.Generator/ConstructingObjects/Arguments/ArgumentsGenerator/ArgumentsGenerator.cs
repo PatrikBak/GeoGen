@@ -19,10 +19,9 @@ namespace GeoGen.Generator
         private readonly IConstructionSignatureMatcher _signatureMatcher;
 
         /// <summary>
-        /// The factory for creating an empty arguments list container
-        /// that will be returned.
+        /// The factory for creating an empty arguments container that will be returned.
         /// </summary>
-        private readonly IArgumentsListContainerFactory _argumentsListContainerFactory;
+        private readonly IArgumentsContainerFactory _argumentsContainerFactory;
 
         /// <summary>
         /// The variations provider used to create all possible variations
@@ -50,19 +49,19 @@ namespace GeoGen.Generator
         /// <param name="combinator">The combinator.</param>
         /// <param name="signatureMatcher">The construction signature matcher.</param>
         /// <param name="variationsProvider">The variations provider.</param>
-        /// <param name="argumentsListContainerFactory">The arguments list container factory.</param>
+        /// <param name="argumentsContainerFactory">The arguments container factory.</param>
         public ArgumentsGenerator
         (
             ICombinator combinator,
             IConstructionSignatureMatcher signatureMatcher,
             IVariationsProvider variationsProvider,
-            IArgumentsListContainerFactory argumentsListContainerFactory
+            IArgumentsContainerFactory argumentsContainerFactory
         )
         {
             _combinator = combinator ?? throw new ArgumentNullException(nameof(combinator));
             _signatureMatcher = signatureMatcher ?? throw new ArgumentNullException(nameof(signatureMatcher));
             _variationsProvider = variationsProvider ?? throw new ArgumentNullException(nameof(variationsProvider));
-            _argumentsListContainerFactory = argumentsListContainerFactory ?? throw new ArgumentNullException(nameof(argumentsListContainerFactory));
+            _argumentsContainerFactory = argumentsContainerFactory ?? throw new ArgumentNullException(nameof(argumentsContainerFactory));
         }
 
         #endregion
@@ -76,13 +75,13 @@ namespace GeoGen.Generator
         /// <param name="configuration">The wrapped configuration.</param>
         /// <param name="construction">The wrapped construction.</param>
         /// <returns>The container of resulting arguments.</returns>
-        public IArgumentsListContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
+        public IArgumentsContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction)
         {
             // First we check if we can even perform the construction. Whether there are enough
             // objects to do so. If not, we return an empty container.
             if (!CanWePerformConstruction(configuration, construction))
             {
-                return _argumentsListContainerFactory.CreateContainer();
+                return _argumentsContainerFactory.CreateContainer();
             }
 
             // We create an enumerable for getting all dictionaries for the combinator.
@@ -109,7 +108,7 @@ namespace GeoGen.Generator
                     );
 
             // Let the factory create the resulting container
-            var result = _argumentsListContainerFactory.CreateContainer();
+            var result = _argumentsContainerFactory.CreateContainer();
 
             // We let the combinator do it's job, which basically means, to create
             // the cartesian product of all possible variations of objects of each type.
@@ -126,7 +125,7 @@ namespace GeoGen.Generator
                 // Let the matcher match the parameters to obtain arguments
                 var arguments = _signatureMatcher.Match(parameters, map);
 
-                // Add arguments to the container
+                // Add the arguments to the container
                 result.Add(arguments);
             }
 

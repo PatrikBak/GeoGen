@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="IArgumentsListToStringProvider"/>.
-    /// It converts a given list by converting individual arguments and then joining
+    /// A default implementation of <see cref="IArgumentsToStringProvider"/>.
+    /// It converts given arguments by converting individual arguments and then joining
     /// them by a separator. The individual arguments are converted like this: 
     /// Object arguments are simply converted according to provided <see cref="IObjectToStringConverter"/>.
     /// Set arguments are converted by converting individual arguments and then sorting the results
     /// to obtain the unique result. 
     /// </summary>
-    internal class ArgumentsListToStringProvider : IArgumentsListToStringProvider
+    internal class ArgumentsToStringProvider : IArgumentsToStringProvider
     {
         #region Private constants
 
@@ -31,13 +30,12 @@ namespace GeoGen.Generator
         #region IArgumentsToStringProvider implementation
 
         /// <summary>
-        /// Converts a given list of construction arguments to string, using
-        /// a given configuration object to string provider.
+        /// Converts given arguments to string, using a given configuration object to string provider.
         /// </summary>
-        /// <param name="arguments">The arguments list.</param>
+        /// <param name="arguments">The arguments.</param>
         /// <param name="objectToString">The configuration object to string converter.</param>
-        /// <returns>The string representation of the list.</returns>
-        public string ConvertToString(IReadOnlyList<ConstructionArgument> arguments, IObjectToStringConverter objectToString)
+        /// <returns>The string representation the arguments.</returns>
+        public string ConvertToString(Arguments arguments, IObjectToStringConverter objectToString)
         {
             // We convert individual arguments to string
             var argumentsStrings = arguments.Select(args => ArgumentToString(args, objectToString));

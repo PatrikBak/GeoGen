@@ -31,7 +31,7 @@ namespace GeoGen.Core
         /// this construction) and construct the list of default theorems that holds true for them 
         /// (usually combined with the input objects from the arguments passed to them).
         /// </summary>
-        public Func<List<ConstructedConfigurationObject>, List<Theorem>> DefaultTheoresFuncton { get; set; }
+        public Func<IReadOnlyList<ConstructedConfigurationObject>, List<Theorem>> DefaultTheoresFuncton { get; set; }
 
         #endregion
 

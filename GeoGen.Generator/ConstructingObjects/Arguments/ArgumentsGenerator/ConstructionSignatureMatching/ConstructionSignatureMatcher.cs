@@ -18,7 +18,7 @@ namespace GeoGen.Generator
         /// <param name="parameters">The parameters list.</param>
         /// <param name="map">The configuration objects map.</param>
         /// <returns>The created arguments.</returns>
-        public List<ConstructionArgument> Match(IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectsMap map)
+        public Arguments Match(IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectsMap map)
         {
             // Create a dictionary mapping object types to the current index of the object of that type
             // that will be passed to the next arguments. Initially, these indices are 0.
@@ -37,8 +37,11 @@ namespace GeoGen.Generator
                 }
             }
 
-            // Cast each parameter to the argument using the private function
-            return parameters.Select(parameter => CreateArgument(parameter, Next)).ToList();
+            // Cast each parameter to the argument using the private function and enumerate them to a list
+            var argumentsList = parameters.Select(parameter => CreateArgument(parameter, Next)).ToList();
+
+            // Construct the output
+            return new Arguments(argumentsList);
         }
 
         /// <summary>

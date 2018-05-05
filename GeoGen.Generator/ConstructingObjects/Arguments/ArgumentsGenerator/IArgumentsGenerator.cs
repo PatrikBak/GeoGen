@@ -12,6 +12,6 @@
         /// <param name="configuration">The wrapped configuration.</param>
         /// <param name="construction">The wrapped construction.</param>
         /// <returns>The container of resulting arguments.</returns>
-        IArgumentsListContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
+        IArgumentsContainer GenerateArguments(ConfigurationWrapper configuration, ConstructionWrapper construction);
     }
 }

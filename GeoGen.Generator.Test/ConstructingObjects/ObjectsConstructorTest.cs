@@ -1,96 +1,96 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GeoGen.Core;
-using GeoGen.Generator.Test.TestHelpers;
-using Moq;
-using NUnit.Framework;
-using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
-using static GeoGen.Generator.Test.TestHelpers.Utilities;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using GeoGen.Core;
+//using GeoGen.Generator.Test.TestHelpers;
+//using Moq;
+//using NUnit.Framework;
+//using static GeoGen.Generator.Test.TestHelpers.ConfigurationObjects;
+//using static GeoGen.Generator.Test.TestHelpers.Utilities;
 
-namespace GeoGen.Generator.Test.ConstructingObjects
-{
-    [TestFixture]
-    public class ObjectsConstructorTest
-    {
-        private static IArgumentsListContainer ArgumentsListContainer(IEnumerable<ConfigurationObject> objects)
-        {
-            var argsList = objects
-                    .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
-                    .Cast<IReadOnlyList<ConstructionArgument>>()
-                    .ToList();
+//namespace GeoGen.Generator.Test.ConstructingObjects
+//{
+//    [TestFixture]
+//    public class ObjectsConstructorTest
+//    {
+//        private static IArgumentsContainer ArgumentsListContainer(IEnumerable<ConfigurationObject> objects)
+//        {
+//            var argsList = objects
+//                    .Select(obj => new List<ConstructionArgument> {new ObjectConstructionArgument(obj)})
+//                    .Cast<IReadOnlyList<ConstructionArgument>>()
+//                    .ToList();
 
-            var mock = new Mock<IArgumentsListContainer>();
-            mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
+//            var mock = new Mock<IArgumentsContainer>();
+//            mock.Setup(s => s.GetEnumerator()).Returns(() => argsList.GetEnumerator());
             
-            return mock.Object;
-        }
+//            return mock.Object;
+//        }
 
-        private static IConstructionsContainer ConstructionsContainer(int count, int outputCount)
-        {
-            var constructions = ConstructionsHelper.ConstructionWrappers(count, outputCount);
-            var mock = new Mock<IConstructionsContainer>();
-            mock.Setup(c => c.GetEnumerator()).Returns(constructions.GetEnumerator());
+//        private static IConstructionsContainer ConstructionsContainer(int count, int outputCount)
+//        {
+//            var constructions = ConstructionsHelper.ConstructionWrappers(count, outputCount);
+//            var mock = new Mock<IConstructionsContainer>();
+//            mock.Setup(c => c.GetEnumerator()).Returns(constructions.GetEnumerator());
 
-            return mock.Object;
-        }
+//            return mock.Object;
+//        }
 
-        private static IArgumentsGenerator ArgumentsGenerator(List<LooseConfigurationObject> objects)
-        {
-            var mock = new Mock<IArgumentsGenerator>();
-            mock.Setup(g => g.GenerateArguments(It.IsAny<ConfigurationWrapper>(), It.IsAny<ConstructionWrapper>()))
-                    .Returns(() => ArgumentsListContainer(objects));
+//        private static IArgumentsGenerator ArgumentsGenerator(List<LooseConfigurationObject> objects)
+//        {
+//            var mock = new Mock<IArgumentsGenerator>();
+//            mock.Setup(g => g.GenerateArguments(It.IsAny<ConfigurationWrapper>(), It.IsAny<ConstructionWrapper>()))
+//                    .Returns(() => ArgumentsListContainer(objects));
 
-            return mock.Object;
-        }
+//            return mock.Object;
+//        }
 
-        [Test]
-        public void Test_Constructor_Constructions_Container_Cant_Be_Null()
-        {
-            var generator = SimpleMock<IArgumentsGenerator>();
+//        [Test]
+//        public void Test_Constructor_Constructions_Container_Cant_Be_Null()
+//        {
+//            var generator = SimpleMock<IArgumentsGenerator>();
 
-            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(null, generator));
-        }
+//            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(null, generator));
+//        }
 
-        [Test]
-        public void Test_Constructor_Arguments_Generator_Cant_Be_Null()
-        {
-            var container = SimpleMock<IConstructionsContainer>();
+//        [Test]
+//        public void Test_Constructor_Arguments_Generator_Cant_Be_Null()
+//        {
+//            var container = SimpleMock<IConstructionsContainer>();
 
-            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(container, null));
-        }
+//            Assert.Throws<ArgumentNullException>(() => new ObjectsConstructor(container, null));
+//        }
 
-        [Test]
-        public void Test_Configuration_Wrapper_Not_Cant_Be_Null()
-        {
-            var container = SimpleMock<IConstructionsContainer>();
-            var generator = SimpleMock<IArgumentsGenerator>();
+//        [Test]
+//        public void Test_Configuration_Wrapper_Not_Cant_Be_Null()
+//        {
+//            var container = SimpleMock<IConstructionsContainer>();
+//            var generator = SimpleMock<IArgumentsGenerator>();
 
-            Assert.Throws<ArgumentNullException>
-            (
-                () => new ObjectsConstructor(container, generator).GenerateOutput(null)
-            );
-        }
+//            Assert.Throws<ArgumentNullException>
+//            (
+//                () => new ObjectsConstructor(container, generator).GenerateOutput(null)
+//            );
+//        }
 
-        [TestCase(1, 2, 3, 6)]
-        [TestCase(2, 7, 4, 56)]
-        [TestCase(8, 1, 3, 24)]
-        [TestCase(42, 4, 666, 111888)]
-        [TestCase(42, 4, 1, 168)]
-        [TestCase(0, 0, 666, 0)]
-        [TestCase(0, 1, 666, 0)]
-        [TestCase(1, 0, 1, 0)]
-        public void Test_Constructions_Count(int constructions, int arguments, int perConstruction, int expected)
-        {
-            var objects = Objects(arguments, ConfigurationObjectType.Point).ToList();
-            var container = ConstructionsContainer(constructions, perConstruction);
-            var argumentsGenerator = ArgumentsGenerator(objects);
-            var wrapper = new ConfigurationWrapper();
-            var testConstructor = new ObjectsConstructor(container, argumentsGenerator);
+//        [TestCase(1, 2, 3, 6)]
+//        [TestCase(2, 7, 4, 56)]
+//        [TestCase(8, 1, 3, 24)]
+//        [TestCase(42, 4, 666, 111888)]
+//        [TestCase(42, 4, 1, 168)]
+//        [TestCase(0, 0, 666, 0)]
+//        [TestCase(0, 1, 666, 0)]
+//        [TestCase(1, 0, 1, 0)]
+//        public void Test_Constructions_Count(int constructions, int arguments, int perConstruction, int expected)
+//        {
+//            var objects = Objects(arguments, ConfigurationObjectType.Point).ToList();
+//            var container = ConstructionsContainer(constructions, perConstruction);
+//            var argumentsGenerator = ArgumentsGenerator(objects);
+//            var wrapper = new ConfigurationWrapper();
+//            var testConstructor = new ObjectsConstructor(container, argumentsGenerator);
 
-            var result = testConstructor.GenerateOutput(wrapper).Sum(output => output.ConstructedObjects.Count);
+//            var result = testConstructor.GenerateOutput(wrapper).Sum(output => output.ConstructedObjects.Count);
 
-            Assert.AreEqual(expected, result);
-        }
-    }
-}
+//            Assert.AreEqual(expected, result);
+//        }
+//    }
+//}

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -9,21 +8,21 @@ namespace GeoGen.Generator
     /// A default implementation of <see cref="IDefaultFullObjectToStringConverter"/>.
     /// This class works as an adapter for <see cref="StringBasedContainer{T}"/>, since
     /// it implements the <see cref="IObjectToStringConverter"/> interface. It's adapting
-    /// more general <see cref="IArgumentsListToStringProvider"/> interface that requires
-    /// <see cref="IObjectToStringConverter"/> in order to convert an arguments list to string.
+    /// more general <see cref="IArgumentsToStringProvider"/> interface that requires
+    /// <see cref="IObjectToStringConverter"/> in order to convert an arguments to string.
     /// This conversion uses a <see cref="IDefaultObjectIdResolver"/> (hence the name default).
     ///</summary>
-    internal class DefaultArgumentsListToStringConverter : IDefaultArgumentsListToStringConverter
+    internal class DefaultArgumentsToStringConverter : IDefaultArgumentsToStringConverter
     {
         #region Private fields
 
         /// <summary>
-        /// The general arguments list to string provider that does the actual conversion.
+        /// The general arguments to string provider that does the actual conversion.
         /// </summary>
-        private readonly IArgumentsListToStringProvider _argumentsToString;
+        private readonly IArgumentsToStringProvider _argumentsToString;
 
         /// <summary>
-        /// The default object to string converter that is passed to the arguments list to string provider.
+        /// The default object to string converter that is passed to the general arguments to string provider.
         /// </summary>
         private readonly IDefaultObjectToStringConverter _objectToString;
 
@@ -34,9 +33,9 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="argumentsToString">The general arguments list to string provider.</param>
+        /// <param name="argumentsToString">The general arguments to string provider.</param>
         /// <param name="objectToString">The default object to string provider.</param>
-        public DefaultArgumentsListToStringConverter(IArgumentsListToStringProvider argumentsToString, IDefaultObjectToStringConverter objectToString)
+        public DefaultArgumentsToStringConverter(IArgumentsToStringProvider argumentsToString, IDefaultObjectToStringConverter objectToString)
         {
             _argumentsToString = argumentsToString ?? throw new ArgumentNullException(nameof(argumentsToString));
             _objectToString = objectToString ?? throw new ArgumentNullException(nameof(objectToString));
@@ -51,8 +50,9 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="item">The item.</param>
         /// <returns>The string representation.</returns>
-        public string ConvertToString(IReadOnlyList<ConstructionArgument> item)
+        public string ConvertToString(Arguments item)
         {
+            // Call the general converter using a provided object to string converter
             return _argumentsToString.ConvertToString(item, _objectToString);
         }
 

@@ -21,9 +21,9 @@ namespace GeoGen.Generator
         #region Private fields
 
         /// <summary>
-        /// The converter of arguments list to string.
+        /// The converter of arguments to string.
         /// </summary>
-        private readonly IArgumentsListToStringProvider _argumentsListToStringProvider;
+        private readonly IArgumentsToStringProvider _argumentsToStringProvider;
 
         #endregion
 
@@ -41,11 +41,11 @@ namespace GeoGen.Generator
         /// <summary>
         /// Default constructor.
         /// </summary>
-        /// <param name="provider">The converter of arguments list to string.</param>
+        /// <param name="provider">The converter of arguments to string.</param>
         /// <param name="resolver">The object id resolver used by this converter.</param>
-        protected FullObjectToStringConverterBase(IArgumentsListToStringProvider provider, IObjectIdResolver resolver)
+        protected FullObjectToStringConverterBase(IArgumentsToStringProvider provider, IObjectIdResolver resolver)
         {
-            _argumentsListToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
+            _argumentsToStringProvider = provider ?? throw new ArgumentNullException(nameof(provider));
             Resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         }
 
@@ -79,7 +79,7 @@ namespace GeoGen.Generator
 
             // We find arguments string. This might cause recursive calls of this function,
             // because we're passing this object as an object to string provider. 
-            var argumentsString = _argumentsListToStringProvider.ConvertToString(passedArgs, this);
+            var argumentsString = _argumentsToStringProvider.ConvertToString(passedArgs, this);
 
             // Construct the beginning of the result
             var result = $"{contructedObject.Construction.Id}{argumentsString}";
