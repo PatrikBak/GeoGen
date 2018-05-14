@@ -62,11 +62,11 @@
     <Compile Include="UtilitiesModule.cs" />
     <Compile Include="DataStructures\StringBasedContainer\IToStringConverter.cs" />
     <Compile Include="Utilities\EnumUtilities.cs" />
-    <Compile Include="Utilities\Extentions\CollectionExtensions.cs" />
+    <Compile Include="Extentions\CollectionExtensions.cs" />
     <Compile Include="Generators\Combinations\Combinator.cs" />
     <Compile Include="Generators\Combinations\ICombinator.cs" />
-    <Compile Include="Utilities\Extentions\DictionaryExtensions.cs" />
-    <Compile Include="Utilities\Extentions\EnumerableExtensions.cs" />
+    <Compile Include="Extentions\DictionaryExtensions.cs" />
+    <Compile Include="Extentions\EnumerableExtensions.cs" />
     <Compile Include="Utilities\HashCodeUtilities.cs" />
     <Compile Include="DataStructures\Map.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

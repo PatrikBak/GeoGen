@@ -63,8 +63,7 @@ namespace GeoGen.Analyzer
             // Find the number of objects in the configuration
             var numberOfObjects = configuration.ConstructedObjects.Count + configuration.LooseObjects.Count;
 
-            // Prepare dictionary for combinator, mapping id of geometrical object
-            // to the options list
+            // Prepare dictionary for combinator, mapping id of geometrical object to the options list
             var dictionaryForCombiner = geometricalObjects.Distinct().ToDictionary(o => o.Id, FindAllOptions);
 
             // Let the combiner combine all possible definitions 
@@ -73,14 +72,13 @@ namespace GeoGen.Analyzer
                 // Find the number of used objects in this option
                 var neededObjects = option.Values.SelectMany(set => set).Distinct().Count();
 
-                // If it's the same as the number of all objects in the
-                // configuration, then we have the winner
-                if (neededObjects == numberOfObjects)
-                    return false;
+                // If there is a needless object, then we have a problem..
+                if (neededObjects != numberOfObjects)
+                    return true;
             }
 
-            // Otherwise in any case, there is at least one unused object.
-            return true;
+            // Otherwise there is no needless object in any of the definitions
+            return false;
         }
 
         /// <summary>
@@ -96,7 +94,7 @@ namespace GeoGen.Analyzer
             if (geometricalObject.ConfigurationObject != null)
             {
                 // Let the helper method find the ids set
-                yield return FindIdsOfNeededObjecs(geometricalObject.ConfigurationObject);
+                yield return FindIdsOfInternalObjects(geometricalObject.ConfigurationObject);
             }
 
             // If we have a point
@@ -107,15 +105,15 @@ namespace GeoGen.Analyzer
             }
 
             // Otherwise we have a line or circle. In every case, the object is definable by points
-            var objectWithPoints = (DefinableByPoints) geometricalObject;
+            var objectWithPoints = (DefinableByPoints)geometricalObject;
 
             // Pull the points
             var points = objectWithPoints.Points.ToList();
 
             // Generate all possible pairs/triples of points (according to the type of the object)
             var definitions = _subsetsProvider.GetSubsets(points, objectWithPoints.NumberOfNeededPoints)
-                    // And cast each set of points to the ids set needed to define them
-                    .Select(option => option.SelectMany(p => FindIdsOfNeededObjecs(p.ConfigurationObject)).ToSet());
+                    // For each of them find ids of the objects needed to define all the pairs
+                    .Select(option => option.SelectMany(p => FindIdsOfInternalObjects(p.ConfigurationObject)).ToSet());
 
             // Now we just enumerate the definitions
             foreach (var definition in definitions)
@@ -129,7 +127,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The ids set.</returns>
-        private HashSet<int> FindIdsOfNeededObjecs(ConfigurationObject configurationObject)
+        private HashSet<int> FindIdsOfInternalObjects(ConfigurationObject configurationObject)
         {
             // Pull id of the object
             var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
@@ -138,8 +136,8 @@ namespace GeoGen.Analyzer
             if (_cache.ContainsKey(id))
                 return _cache[id];
 
-            // If it's not there, we have to prepare a new one (with the objects id)
-            var ids = new HashSet<int> {id};
+            // If it's not there, we have to prepare a new one (and add the current id to its)
+            var ids = new HashSet<int> { id };
 
             // And cache it
             _cache.Add(id, ids);
@@ -149,35 +147,19 @@ namespace GeoGen.Analyzer
                 return ids;
 
             // Otherwise we have a constructed object
-            var contructedObject = (ConstructedConfigurationObject) configurationObject;
+            var contructedObject = (ConstructedConfigurationObject)configurationObject;
 
-            // Let's prepare a local function to find ids of internal objects of an argument
-            HashSet<int> HandleArgument(ConstructionArgument argument)
+            // We call this function recursively on the internal objects gotten from the flatenned arguments
+            foreach (var internalObject in contructedObject.PassedArguments.FlattenedList)
             {
-                // If the argument is an objects argument
-                if (argument is ObjectConstructionArgument objectArgument)
-                {
-                    // Then we call the upper method for its internal object
-                    return FindIdsOfNeededObjecs(objectArgument.PassedObject);
-                }
+                // Call this function
+                var neededIds = FindIdsOfInternalObjects(internalObject);
 
-                // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument) argument;
-
-                // We call this function for internal arguments and merge the results
-                return setArgument.PassedArguments.SelectMany(HandleArgument).ToSet();
+                // Merge the sets
+                ids.Add(neededIds);
             }
 
-            // Now we simply merge the results from the arguments
-            var argumentsIds = contructedObject.PassedArguments.SelectMany(HandleArgument);
-
-            // Add it all to our ids set
-            foreach (var idFromArgument in argumentsIds)
-            {
-                ids.Add(idFromArgument);
-            }
-
-            // And return it
+            // And return the ids set
             return ids;
         }
 

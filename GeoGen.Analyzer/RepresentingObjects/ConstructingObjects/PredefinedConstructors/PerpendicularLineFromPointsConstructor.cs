@@ -5,9 +5,9 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.MidpointFromPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.PerpendicularLineFromPoints"/>>.
     /// </summary>
-    internal class MidpointFromPointsConstructor : PredefinedConstructorBase
+    internal class PerpendicularLineFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
@@ -19,12 +19,18 @@ namespace GeoGen.Analyzer
         /// <returns>The list of constructed analytical objects.</returns>
         protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
-            // Pull points
-            var point1 = container.Get<Point>(flattenedObjects[0]);
-            var point2 = container.Get<Point>(flattenedObjects[1]);
+            // Pull line points
+            var linePoint1 = container.Get<Point>(flattenedObjects[1]);
+            var linePoint2 = container.Get<Point>(flattenedObjects[2]);
+
+            // Pull the point from which we erect the perpendicular like
+            var pointFrom = container.Get<Point>(flattenedObjects[0]);
+
+            // Construct the line
+            var line = new Line(linePoint1, linePoint2);
 
             // Construct the result
-            return new List<AnalyticalObject> {point1.Midpoint(point2)};
+            return new List<AnalyticalObject> {line.PerpendicularLine(pointFrom)};
         }
 
         /// <summary>
@@ -38,11 +44,9 @@ namespace GeoGen.Analyzer
         {
             return new List<Theorem>
             {
-                // The midpoint is collinear with the two points
-                new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>
+                new Theorem(TheoremType.PerpendicularLines, new List<TheoremObject>
                 {
-                    new TheoremObject(flattenedObjects[0]),
-                    new TheoremObject(flattenedObjects[1]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[1], flattenedObjects[2]),
                     new TheoremObject(input[0])
                 })
             };

@@ -91,7 +91,7 @@ namespace GeoGen.Analyzer
                 var correctResult = result.UnconstructibleObjects == null && result.Duplicates == null;
 
                 // If it's not, we may directly return this result. We don't care if the other objects
-                // are constructible. That is not a big deal, because if this service is during during
+                // are constructible. That is not a big deal, because if this service is running during
                 // the standard generation process, then the configuration shouldn't have more than one
                 // incorrect group of constructed objects.
                 if (!correctResult)

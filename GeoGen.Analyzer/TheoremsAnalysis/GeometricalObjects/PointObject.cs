@@ -12,33 +12,29 @@ namespace GeoGen.Analyzer
     {
         #region Public properties
 
+        /// <summary>
+        /// Gets the set of lines passing through this point.
+        /// </summary>
         public HashSet<LineObject> Lines { get; } = new HashSet<LineObject>();
 
+        /// <summary>
+        /// Gets the set of circles passing through this point.
+        /// </summary>
         public HashSet<CircleObject> Circles { get; } = new HashSet<CircleObject>();
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="id">The id of this point.</param>
+        /// <param name="configurationObject">The configuration object wrapped by this point.</param>
         public PointObject(int id, ConfigurationObject configurationObject)
                 : base(id, configurationObject)
         {
         }
-
-        #endregion
-
-        #region Public methods
-
-        public IEnumerable<GeometricalObject> ObjectsThatContainThisPoint(Type type)
-        {
-            if (type == typeof(LineObject))
-                return Lines;
-
-            if (type == typeof(CircleObject))
-                return Circles;
-
-            throw new AnalyzerException($"Can't return objects for type: {type}");
-        } 
 
         #endregion
     }

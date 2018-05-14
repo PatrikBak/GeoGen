@@ -15,11 +15,6 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The analytical helper for intersecting objects and determining collinearities.
-        /// </summary>
-        private readonly IAnalyticalHelper _analyticalHelper;
-
-        /// <summary>
         /// The dictionary mapping objects container to the map between geometrical objects
         /// and analytical objects (from that container).
         /// </summary>
@@ -103,11 +98,9 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configuration">The configuration to be represented by this container.</param>
         /// <param name="manager">The manager holding all objects containers.</param>
-        /// <param name="helper">The analytical helper for figuring our collinearities and concurrencies.</param>
-        public ContextualContainer(Configuration configuration, IObjectsContainersManager manager, IAnalyticalHelper helper)
+        public ContextualContainer(Configuration configuration, IObjectsContainersManager manager)
         {
             Manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _analyticalHelper = helper ?? throw new ArgumentNullException(nameof(helper));
             _oldLines = new HashSet<LineObject>();
             _newLines = new HashSet<LineObject>();
             _oldPoints = new HashSet<PointObject>();
@@ -202,26 +195,16 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Gets the analytical representation of a given geometrical object
-        /// in a given objects container.
+        /// Gets the analytical representation of a given geometrical object in a given objects container.
         /// </summary>
+        /// /// <typeparam name="T">The wanted type of the analytical object.</typeparam>
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytical object.</returns>
-        public AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer)
+        public T GetAnalyticalObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticalObject
         {
             // Find the right map and pull the analytical object from it
-            return _objects[objectsContainer].GetRightValue(geometricalObject);
-        }
-
-        /// <summary>
-        /// Finds out if a given object is present in the container.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>true, if the containers contains the object; false otherwise.</returns>
-        public bool Contains(ConfigurationObject configurationObject)
-        {
-            return _ids.Contains(configurationObject.Id ?? throw new AnalyzerException("Id must be set"));
+            return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
         }
 
         #endregion
@@ -546,6 +529,14 @@ namespace GeoGen.Analyzer
             }
         }
 
+        /// <summary>
+        /// Tries to construct a new geometrical circle using given three points. The order
+        /// of the points is not important.
+        /// </summary>
+        /// <param name="point1">The first point.</param>
+        /// <param name="point2">The second point.</param>
+        /// <param name="point3">The third point.</param>
+        /// <param name="isNew">Indicates if a new circle should be added to the new circles set or to the old circles set.</param>
         private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3, bool isNew)
         {
             // Initialize map that caches creates analytical representations of this line
@@ -723,7 +714,7 @@ namespace GeoGen.Analyzer
                 var analyticalObject = _objects[container].GetRightValue(geometricalObject);
 
                 // Let the helper decide if the point lies on the object
-                var liesOn = _analyticalHelper.LiesOn(analyticalObject, point);
+                var liesOn = AnalyticalHelpers.LiesOn(analyticalObject, point);
 
                 // If the result has been set and it differs from the currently 
                 // found value, then we have inconsistency

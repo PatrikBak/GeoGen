@@ -12,18 +12,15 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class TangentCirclesVerifier : TheoremVerifierBase
     {
-        #region ITheoremVerifier implementation
-
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
         {
             // Find all new circles. At least one of them must be included in a new theorem
-            var newLines = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
                 Type = ContexualContainerQuery.ObjectsType.New,
                 IncludePoints = false,
@@ -31,80 +28,59 @@ namespace GeoGen.Analyzer
                 IncludeCirces = true
             }).ToList();
 
-            // Find all circles. These will be combined with the new ones
-            var allLines = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            // Find all old circles.
+            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludePoints = false,
                 IncludeLines = false,
                 IncludeCirces = true
             }).ToList();
 
-            // Prepare set of all pairs of perpendicular lines in the first container
-            var circles = new HashSet<Tuple<GeometricalObject, GeometricalObject>>();
-
-            // Pull first container
-            var firstContainer = container.Manager.First();
-
-            // Iterate over lines to get all pairs
-            foreach (var circle1 in newLines)
+            // A local function for combinining all the circles so that at least one of them is new
+            IEnumerable<(CircleObject circle1, CircleObject circle2)> CombineCircles()
             {
-                foreach (var circle2 in allLines)
+                // First combine the new circles with themselves
+                for (var i = 0; i < newCircles.Count; i++)
                 {
-                    // If they are equal, we skip them
-                    if (Equals(circle1, circle2))
-                        continue;
+                    for (var j = i + 1; j < newCircles.Count; j++)
+                    {
+                        yield return (newCircles[i], newCircles[j]);
+                    }
+                }
 
-                    // Pull their analytical version
-                    var analytical1 = (Circle)container.GetAnalyticalObject(circle1, firstContainer);
-                    var analytical2 = (Circle)container.GetAnalyticalObject(circle2, firstContainer);
-
-                    // If the lines are not perpendicular, skip 
-                    if (!analytical1.IsTangentTo(analytical2))
-                        continue;
-
-                    // We find the line with the smaller id
-                    var withSmallerId = circle1.Id < circle2.Id ? circle1 : circle2;
-                    var withLargerId = withSmallerId == circle1 ? circle2 : circle1;
-
-                    // And add this pair of lines to the lines set
-                    circles.Add(new Tuple<GeometricalObject, GeometricalObject>(withSmallerId, withLargerId));
+                // Now combine new circles with old ones
+                foreach (var newCircle in newCircles)
+                {
+                    foreach (var oldCircle in oldCircles)
+                    {
+                        yield return (newCircle, oldCircle);
+                    }
                 }
             }
 
-            // After finding the lines paralellel in the first container, we want to have
-            // a look to the others. We go through the lines set
-            foreach (var pair in circles)
+            // Now execute the local function to find all potential pairs of circles
+            foreach (var (circle1, circle2) in CombineCircles())
             {
-                // Construct involved objects
-                var involvedObjects = pair.Item1.AsEnumerable().Concat(pair.Item2.AsEnumerable()).ToList();
-
                 // Construct the verifier function
                 bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // If the container is the first one, we're sure the lines are fine
-                    if (ReferenceEquals(firstContainer, objectsContainer))
-                        return true;
+                    // Pull analytical circles representing each one
+                    var analyticalCircle1 = container.GetAnalyticalObject<Circle>(circle1, objectsContainer);
+                    var analyticalCircle2 = container.GetAnalyticalObject<Circle>(circle2, objectsContainer);
 
-                    // Otherwise we find analytical versions of our lines
-                    var analytical1 = (Circle)container.GetAnalyticalObject(involvedObjects[0], firstContainer);
-                    var analytical2 = (Circle)container.GetAnalyticalObject(involvedObjects[1], firstContainer);
-
-                    // And return if they are parallel
-                    return analytical1.IsTangentTo(analytical2);
+                    // Return if there are tangent to each other
+                    return analyticalCircle1.IsTangentTo(analyticalCircle2);
                 }
 
                 // Construct the output
-                yield return new VerifierOutput
+                yield return new PotentialTheorem
                 {
-                    Type = Type,
-                    InvoldedObjects = involvedObjects,
-                    AlwaysTrue = false,
+                    TheoremType = Type,
+                    InvolvedObjects = new[] { circle1, circle2 },
                     VerifierFunction = Verify
                 };
             }
         }
-
-        #endregion
     }
 }

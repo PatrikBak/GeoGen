@@ -36,6 +36,17 @@ namespace GeoGen.Core
             InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
         }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="type">The theorem type.</param>
+        /// <param name="involvedObjects">The involved objects list.</param>
+        public Theorem(TheoremType type, TheoremObject theoremObject, params TheoremObject[] involvedObjects)
+        {
+            Type = type;
+            InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
+        }
+
         #endregion
     }
 }

@@ -1,12 +1,14 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A base implementation of <see cref="ITheoremVerifier"/> that infers the
-    /// type of the theorem from a name that should be in the form "{type}Verifier".
+    /// A base implementation of <see cref="ITheoremVerifier"/> that takes care
+    /// of verifying theorems of a single type. This type is inferred from a class name 
+    /// that should be in the form "{type}Verifier".
     /// </summary>
     internal abstract class TheoremVerifierBase : ITheoremVerifier
     {
@@ -46,12 +48,11 @@ namespace GeoGen.Analyzer
         #region Abstract methods
 
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        public abstract IEnumerable<VerifierOutput> GetOutput(IContextualContainer container);
+        public abstract IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container);
 
         #endregion
     }

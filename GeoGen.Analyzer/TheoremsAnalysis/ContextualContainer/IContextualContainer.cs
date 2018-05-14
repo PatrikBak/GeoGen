@@ -26,19 +26,12 @@ namespace GeoGen.Analyzer
         IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject;
 
         /// <summary>
-        /// Gets the analytical representation of a given geometrical object
-        /// in a given objects container.
+        /// Gets the analytical representation of a given geometrical object in a given objects container.
         /// </summary>
+        /// /// <typeparam name="T">The wanted type of the analytical object.</typeparam>
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytical object.</returns>
-        AnalyticalObject GetAnalyticalObject(GeometricalObject geometricalObject, IObjectsContainer objectsContainer);
-
-        /// <summary>
-        /// Finds out if a given object is present in the container.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>true, if the containers contains the object; false otherwise.</returns>
-        bool Contains(ConfigurationObject configurationObject);
+        T GetAnalyticalObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticalObject;
     }
 }

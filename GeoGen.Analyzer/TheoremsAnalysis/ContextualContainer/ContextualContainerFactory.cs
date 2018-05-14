@@ -18,11 +18,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly IObjectContainersMapper _mapper;
 
-        /// <summary>
-        /// The analytical helper to be passed to the container's constructor.
-        /// </summary>
-        private readonly IAnalyticalHelper _helper;
-
         #endregion
 
         #region Constructor
@@ -31,11 +26,9 @@ namespace GeoGen.Analyzer
         /// Default constructor.
         /// </summary>
         /// <param name="mapper">The mapper used to find containers managers for configurations.</param>
-        /// <param name="helper">The analytical helper to be passed to the container.</param>
-        public ContextualContainerFactory(IObjectContainersMapper mapper, IAnalyticalHelper helper)
+        public ContextualContainerFactory(IObjectContainersMapper mapper)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _helper = helper ?? throw new ArgumentNullException(nameof(helper));
         }
 
         #endregion
@@ -53,7 +46,7 @@ namespace GeoGen.Analyzer
             var manager = _mapper.Get(configuration);
 
             // Let the manager safely create the container's instance
-            return manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(configuration, manager, _helper));
+            return manager.ExecuteAndResolvePossibleIncosistencies(() => new ContextualContainer(configuration, manager));
         } 
 
         #endregion

@@ -10,30 +10,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class CircumcenterFromPointsConstructor : PredefinedConstructorBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The helper for determining collinearity.
-        /// </summary>
-        private IAnalyticalHelper _analyticalHelper;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="analyticalHelper">The helper for determining collinearity.</param>
-        public CircumcenterFromPointsConstructor(IAnalyticalHelper analyticalHelper)
-        {
-            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
-        }
-
-        #endregion
-
-        #region PredefinedConstructorBase implementation
-
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
@@ -50,11 +26,11 @@ namespace GeoGen.Analyzer
             var point3 = container.Get<Point>(flattenedObjects[2]);
 
             // If points are collinear, the construction can't be done
-            if (_analyticalHelper.AreCollinear(point1, point2, point3))
+            if (AnalyticalHelpers.AreCollinear(point1, point2, point3))
                 return null;
 
             // Otherwise construct the circle and take its center
-            return new List<AnalyticalObject> {new Circle(point1, point2, point3).Center};
+            return new List<AnalyticalObject> { new Circle(point1, point2, point3).Center };
         }
 
         /// <summary>
@@ -89,9 +65,28 @@ namespace GeoGen.Analyzer
                     new TheoremObject(input[0]),
                     new TheoremObject(flattenedObjects[2])
                 }),
+                new Theorem(TheoremType.EqualAngles, new List<TheoremObject>
+                {
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[0], flattenedObjects[1]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[0]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[0], flattenedObjects[1]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[1]),
+                }),
+                new Theorem(TheoremType.EqualAngles, new List<TheoremObject>
+                {
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[1], flattenedObjects[2]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[1]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[1], flattenedObjects[2]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[2]),
+                }),
+                new Theorem(TheoremType.EqualAngles, new List<TheoremObject>
+                {
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[2], flattenedObjects[0]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[2]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[2], flattenedObjects[0]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, input[0], flattenedObjects[0]),
+                }),
             };
         }
-
-        #endregion
     }
 }

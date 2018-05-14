@@ -41,6 +41,11 @@ namespace GeoGen.Analyzer
 
         #region Equals and hash code
 
+        /// <summary>
+        /// Finds out if an object is equal to this geometrical object.
+        /// </summary>
+        /// <param name="obj">The object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
         public override bool Equals(object obj)
         {
             if (obj is null)
@@ -55,6 +60,10 @@ namespace GeoGen.Analyzer
             return ((GeometricalObject) obj).Id == Id;
         }
 
+        /// <summary>
+        /// Gets the hash code if this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
             return Id;

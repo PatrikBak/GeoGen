@@ -72,7 +72,7 @@ namespace GeoGen.Generator.IntegrationTest
             ////if(theoremCounts.Add(st)) Console.WriteLine(st);
             ////if(configurationsCount.Add(result.Count)) Console.WriteLine(result.Count);
 
-            Console.WriteLine($"First elapsed: {stopwatch.ElapsedMilliseconds}");
+            Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
             Console.WriteLine($"Generated: {result.Count}");
             Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
             Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
@@ -143,7 +143,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 if (firstSet.Contains(s) && secondSet.Contains(s))
                     continue;
-                
+
                 result.Add(s);
             }
 
@@ -172,14 +172,14 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-                _composedConstructions.AddIncenterFromPoints(),
-                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
-                _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
-                _constructionsContainer.Get(IntersectionOfLines),
+               // _composedConstructions.AddIncenterFromPoints(),
+               // _constructionsContainer.Get(IntersectionOfLinesFromPoints),
+               // _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
+               // _constructionsContainer.Get(IntersectionOfLines),
                 _constructionsContainer.Get(MidpointFromPoints),
                 _constructionsContainer.Get(CircumcenterFromPoints),
-                _constructionsContainer.Get(PerpendicularLineFromPoints),
-                _constructionsContainer.Get(InternalAngleBisectorFromPoints),
+               // _constructionsContainer.Get(PerpendicularLineFromPoints),
+               // _constructionsContainer.Get(InternalAngleBisectorFromPoints),
             };
         }
 
@@ -193,7 +193,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             return new List<ConstructedConfigurationObject>
             {
-              //  o
+                //  o
             };
         }
 
@@ -208,18 +208,14 @@ namespace GeoGen.Generator.IntegrationTest
 
             foreach (var generatorOutput in result.Where(t => t.Theorems.Any()))
             {
-                //i++;
-                //if (i == 71)
-                {
-                    Console.Clear();
-                    Console.WriteLine($"{i++}.");
-                    Console.WriteLine("-------------------\n");
-                    Console.WriteLine(formatter.Format(generatorOutput.Configuration));
-                    Console.WriteLine("-------------------\n");
-                    Console.WriteLine("Theorems:");
-                    Console.WriteLine(formatter.Format(generatorOutput.Theorems));
-                    Console.ReadKey(true);
-                }
+                Console.Clear();
+                Console.WriteLine($"{i++}.");
+                Console.WriteLine("-------------------\n");
+                Console.WriteLine(formatter.Format(generatorOutput.Configuration));
+                Console.WriteLine("-------------------\n");
+                Console.WriteLine("Theorems:");
+                Console.WriteLine(formatter.Format(generatorOutput.Theorems));
+                Console.ReadKey(true);
             }
         }
     }

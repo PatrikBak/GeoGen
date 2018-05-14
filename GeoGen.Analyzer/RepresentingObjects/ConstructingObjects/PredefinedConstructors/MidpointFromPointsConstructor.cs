@@ -1,39 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.CircumcircleFromPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.MidpointFromPoints"/>>.
     /// </summary>
-    internal class CircumcircleFromPointsConstructor : PredefinedConstructorBase
+    internal class MidpointFromPointsConstructor : PredefinedConstructorBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The helper for determining collinearity.
-        /// </summary>
-        private IAnalyticalHelper _analyticalHelper;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="analyticalHelper">The helper for determining collinearity.</param>
-        public CircumcircleFromPointsConstructor(IAnalyticalHelper analyticalHelper)
-        {
-            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
-        }
-
-        #endregion
-
-        #region PredefinedConstructorBase implementation
-
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
@@ -44,17 +19,12 @@ namespace GeoGen.Analyzer
         /// <returns>The list of constructed analytical objects.</returns>
         protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
-            // Pull points from the container
+            // Pull points
             var point1 = container.Get<Point>(flattenedObjects[0]);
             var point2 = container.Get<Point>(flattenedObjects[1]);
-            var point3 = container.Get<Point>(flattenedObjects[2]);
 
-            // If points are collinear, the construction can't be done
-            if (_analyticalHelper.AreCollinear(point1, point2, point3))
-                return null;
-
-            // Otherwise construct the circle
-            return new List<AnalyticalObject> {new Circle(point1, point2, point3)};
+            // Construct the result
+            return new List<AnalyticalObject> {point1.Midpoint(point2)};
         }
 
         /// <summary>
@@ -66,9 +36,24 @@ namespace GeoGen.Analyzer
         /// <returns>The list of default theorems.</returns>
         protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
         {
-            return new List<Theorem>();
+            return new List<Theorem>
+            {
+                // The midpoint is collinear with the two points
+                new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>
+                {
+                    new TheoremObject(flattenedObjects[0]),
+                    new TheoremObject(flattenedObjects[1]),
+                    new TheoremObject(input[0])
+                }),
+                // The midpoint is equally distanced from both of its endpoints
+                new Theorem(TheoremType.EqualLineSegments, new List<TheoremObject>
+                {
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[0]),
+                    new TheoremObject(input[0]),
+                    new TheoremObject(flattenedObjects[1])
+                }),
+            };
         }
-
-        #endregion
     }
 }

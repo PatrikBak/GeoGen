@@ -106,7 +106,7 @@ namespace GeoGen.AnalyticalGeometry
         public Point IntersectionWith(Line otherLine)
         {
             // Check if they are equal
-            if(this == otherLine)
+            if (this == otherLine)
                 throw new AnalyticalException("Equal lines cannot be interested.");
 
             // We want to solve the system
@@ -138,7 +138,7 @@ namespace GeoGen.AnalyticalGeometry
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDouble) delta == RoundedDouble.Zero)
+            if ((RoundedDouble)delta == RoundedDouble.Zero)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -251,6 +251,7 @@ namespace GeoGen.AnalyticalGeometry
         /// <returns>true, if the lines are parallel; false otherwise.s</returns>
         public bool IsParallelTo(Line otherLine)
         {
+            // We simply check if these lines aren't equal and if there is no intersection between them
             return this == otherLine || IntersectionWith(otherLine) == null;
         }
 

@@ -15,7 +15,7 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The generator of subsets of given length.
+        /// The generator of subsets of given size.
         /// </summary>
         private readonly ISubsetsProvider _provider;
 
@@ -37,12 +37,11 @@ namespace GeoGen.Analyzer
         #region ITheoremVerifier implementation
 
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
         {
             // Find new points. 
             var newPoints = container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
@@ -53,94 +52,99 @@ namespace GeoGen.Analyzer
                 IncludeCirces = false
             }).ToList();
 
-            // Find all points. 
-            var allPoints = container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            // Find old points. 
+            var oldPoints = container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludePoints = true,
                 IncludeLines = false,
                 IncludeCirces = false
             }).ToList();
 
-            // Prepare map that maps distances between point tuples to the sets of 
-            // line segments with this distance with regards to the first container,
-            // represented as a set of two points
-            var distancesMap = new Dictionary<RoundedDouble, HashSet<HashSet<PointObject>>>();
-
-            // Pull first container
-            var firstContainer = container.Manager.First();
-
-            // Iterate over poins to get all pairs (with at least one being a new one)
-            foreach (var point1 in newPoints)
+            // Local function to enumerate all line segments containing at least one new point
+            IEnumerable<(PointObject point1, PointObject point2)> LineSegments()
             {
-                foreach (var point2 in allPoints)
+                // First combine the new points with themselves
+                for (var i = 0; i < newPoints.Count; i++)
                 {
-                    // If they are equal, we skip them
-                    if (Equals(point1, point2))
-                        continue;
+                    for (var j = i + 1; j < newPoints.Count; j++)
+                    {
+                        yield return (newPoints[i], newPoints[j]);
+                    }
+                }
 
-                    // Pull their analytical version
-                    var analytical1 = (Point)container.GetAnalyticalObject(point1, firstContainer);
-                    var analytical2 = (Point)container.GetAnalyticalObject(point2, firstContainer);
-
-                    // Calculate their distance and round it.
-                    var distance = (RoundedDouble)analytical1.DistanceTo(analytical2);
-
-                    // Prepare the pair of them
-                    var pair = new HashSet<PointObject> { point1, point2 };
-
-                    // Find the right set where this pair should be added acorrding to the distance
-                    var set = distancesMap.GetOrAdd(distance, () => new HashSet<HashSet<PointObject>>(SetComparer<PointObject>.Instance));
-
-                    // Add the pair to the set
-                    set.Add(pair);
+                // Now combine new points with old ones
+                foreach (var newPoint in newPoints)
+                {
+                    foreach (var oldPoint in oldPoints)
+                    {
+                        yield return (newPoint, oldPoint);
+                    }
                 }
             }
 
-            // We pull the values (i.e. the sets of line segments)
-            // where there are at least two with the same distance
-            var interestingSets = distancesMap.Values.Where(set => set.Count >= 2);
-
-            // And for each of them
-            foreach (var lineSegment in interestingSets)
+            // Local function that calculates the distance between two points
+            // with respect to a passed container
+            RoundedDouble DistanceBetween((PointObject point1, PointObject point2) lineSegment, IObjectsContainer objectsContainer)
             {
-                // We have a given set of line segments. We want to find
-                // all pair of their elements (so we can verify them against
-                // all containers, not just the first one)
-                foreach (var lineSegmentsPair in _provider.GetSubsets(lineSegment.ToList(), 2))
-                {
-                    // So far let's have involved objects as four points...
-                    var involvedObjects = lineSegmentsPair.SelectMany(set => set).ToList();
+                // Pull analytial versions of this points
+                var analyticalPoint1 = container.GetAnalyticalObject<Point>(lineSegment.point1, objectsContainer);
+                var analyticalPoint2 = container.GetAnalyticalObject<Point>(lineSegment.point2, objectsContainer);
 
-                    // We may construct the verifier function now
-                    // Construct the verifier function
+                // Return their distance
+                return (RoundedDouble)analyticalPoint1.DistanceTo(analyticalPoint2);
+            }
+
+            // Prepare a dictionary mapping line segments lengths to lists of line segments with this length
+            // This is enumerator with respect to some of the containers. 
+            var distancesMap = new Dictionary<RoundedDouble, List<(PointObject point1, PointObject point2)>>();
+
+            // Pull the first container acorrding to which we're going to fill the map
+            var firstContainer = container.Manager.First();
+
+            // Enumerate all valid line segments using our local function
+            foreach (var lineSegment in LineSegments())
+            {
+                // Find their distance in the first container
+                var distance = DistanceBetween(lineSegment, firstContainer);
+
+                // Find the right list of line segments with this distance
+                var listOfSegments = distancesMap.GetOrAdd(distance, () => new List<(PointObject point1, PointObject point2)>());
+
+                // Add the line segment to the list
+                listOfSegments.Add(lineSegment);
+            }
+
+            // Now we're interested only in those lists that have at least 2 elements (i.e. 
+            // there are at least two line segments with the same length). We will take into
+            // account onle those ones with respect to the other containers
+            var lineSegmentsLists = distancesMap.Values.Where(list => list.Count >= 2);
+            
+            // For each of them
+            foreach (var lineSegments in lineSegmentsLists)
+            {
+                // We'll take all pairs of these lines segments...
+                foreach (var pairOfLineSegments in _provider.GetSubsets(lineSegments, 2))
+                {
+                    // Enumerate the pair
+                    var pair = pairOfLineSegments.ToArray();
+
+                    // Construct the verifier function 
                     bool Verify(IObjectsContainer objectsContainer)
                     {
                         // If the container is the first one, we're sure the objects are fine
                         if (ReferenceEquals(firstContainer, objectsContainer))
                             return true;
 
-                        // Otherwise we find analytical versions of our objects and cast them to points
-                        var analyticalObjects = involvedObjects
-                            .Select(obj => container.GetAnalyticalObject(obj, objectsContainer))
-                            .Cast<Point>()
-                            .ToList();
-
-                        // We're fine if the rounded distance between the first two is the same as 
-                        // the rounded distance between the other two
-                        var firstDistance = (RoundedDouble)analyticalObjects[0].DistanceTo(analyticalObjects[1]);
-                        var secondDistance = (RoundedDouble)analyticalObjects[2].DistanceTo(analyticalObjects[3]);
-
-                        // Return if they are the same
-                        return firstDistance == secondDistance;
+                        // Otherwise we check if their sizes are equal in this container
+                        return DistanceBetween(pair[0], objectsContainer) == DistanceBetween(pair[1], objectsContainer);
                     }
 
                     // Construct the output
-                    yield return new VerifierOutput
+                    yield return new PotentialTheorem
                     {
-                        Type = Type,
-                        InvoldedObjects = involvedObjects,
-                        AlwaysTrue = false,
+                        TheoremType = Type,
+                        InvolvedObjects = new [] { pair[0].point1, pair[0].point2, pair[1].point1, pair[1].point2 },
                         VerifierFunction = Verify
                     };
                 }

@@ -5,9 +5,11 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A default implementation of <see cref="IOutputValidator"/>.
+    /// A default implementation of <see cref="IPotentialTheoremValidator"/>. This
+    /// implementation uses the strategy where we want a theorem to be true in all
+    /// the containers that are used to represent a given configuration.
     /// </summary>
-    internal class OutputValidator : IOutputValidator
+    internal class PotentialTheoremValidator : IPotentialTheoremValidator
     {
         #region Private fields
 
@@ -31,7 +33,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="mapper">The manager of all objects containers managers.</param>
         /// <param name="analyzer">The analyzer that makes sure that there are no needless objects in theorems.</param>
-        public OutputValidator(IObjectContainersMapper mapper, INeedlessObjectsAnalyzer analyzer)
+        public PotentialTheoremValidator(IObjectContainersMapper mapper, INeedlessObjectsAnalyzer analyzer)
         {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
@@ -41,27 +43,28 @@ namespace GeoGen.Analyzer
 
         #region IOutputValidator implementation
 
-        /// <summary>s
-        /// Finds out if a given verifier output represents a true and acceptable
-        /// theorem for a configuration.
+        /// <summary>
+        /// Finds out if a given potential theorem represents a real theorem
+        /// that holds true in a given configuration. 
         /// </summary>
         /// <param name="configuration">The configuration.</param>
-        /// <param name="output">The output.</param>
-        /// <returns>true, if the output represents a correct acceptable theorem; false otherwise.</returns>
-        public bool Validate(Configuration configuration, VerifierOutput output)
+        /// <param name="theorem">The theorem.</param>
+        /// <returns>true, if the theoem is right; false otherwise.</returns>
+        public bool Validate(Configuration configuration, PotentialTheorem theorem)
         {
             // Local function that calls the needless objects analyzer
-            bool ContainsNeedlessObjects() => _analyzer.ContainsNeedlessObjects(configuration, output.InvoldedObjects);
+            bool ContainsNeedlessObjects() => _analyzer.ContainsNeedlessObjects(configuration, theorem.InvolvedObjects);
 
-            // If the output is always true, then it's fine if and if only if it doesn't contain needless objects
-            if (output.AlwaysTrue)
+            // If the verifier function is not specified, then it means the theorem should be 
+            // true in all the containers. So it's valid if and only if it doesn't contain needless objects
+            if (theorem.VerifierFunction == null)
                 return !ContainsNeedlessObjects();
 
             // Otherwise we first find the containers manager
             var manager = _mapper.Get(configuration);
 
             // The theorem is true if and only if is true in all containers and doesn't contain needless objects
-            return manager.All(output.VerifierFunction) && !ContainsNeedlessObjects();
+            return manager.All(theorem.VerifierFunction) && !ContainsNeedlessObjects();
         }
 
         #endregion

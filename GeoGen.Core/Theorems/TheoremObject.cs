@@ -53,7 +53,7 @@ namespace GeoGen.Core
         public TheoremObject(ConfigurationObject configurationObject)
         {
             Type = TheoremObjectSignature.SingleObject;
-            InternalObjects = new List<ConfigurationObject> {configurationObject};
+            InternalObjects = new List<ConfigurationObject> { configurationObject };
         }
 
         #endregion

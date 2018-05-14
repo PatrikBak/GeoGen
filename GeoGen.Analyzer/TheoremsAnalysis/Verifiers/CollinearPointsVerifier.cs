@@ -10,12 +10,11 @@ namespace GeoGen.Analyzer
     internal class CollinearPointsVerifier : TheoremVerifierBase
     {
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
         {
             // Now we first pull new points
             return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
@@ -31,13 +30,13 @@ namespace GeoGen.Analyzer
                     .Distinct()
                     // And only those that contain at least 3 points
                     .Where(line => line.Points.Count >= 3)
-                    // Each of these lines represents a new theorem correct in all containers
-                    .Select(line => new VerifierOutput
+                    // Each of these lines represents a new theorem correct in all the containers 
+                    // (thus we don't set the verifier function)
+                    .Select(line => new PotentialTheorem
                     {
-                        Type = Type,
-                        VerifierFunction = null,
-                        AlwaysTrue = true,
-                        InvoldedObjects = line.Points
+                        TheoremType = Type,
+                        InvolvedObjects = line.Points,
+                        VerifierFunction = null
                     });
         }
     }

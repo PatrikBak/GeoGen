@@ -52,7 +52,16 @@ namespace GeoGen.Analyzer
         /// <returns>The list of default theorems.</returns>
         protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
         {
-            return new List<Theorem>();
+            return new List<Theorem>
+            {
+                // The intersection is collinear with first two points
+                new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>
+                {
+                    new TheoremObject(flattenedObjects[1]),
+                    new TheoremObject(flattenedObjects[2]),
+                    new TheoremObject(input[0])
+                })
+            };
         }
     }
 }

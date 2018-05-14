@@ -3,16 +3,15 @@
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a verifier of a theorem of a single type.
+    /// Represents a verifier that generates <see cref="PotentialTheorem"/>s.
     /// </summary>
     internal interface ITheoremVerifier
     {
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        IEnumerable<VerifierOutput> GetOutput(IContextualContainer container);
+        IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container);
     }
 }

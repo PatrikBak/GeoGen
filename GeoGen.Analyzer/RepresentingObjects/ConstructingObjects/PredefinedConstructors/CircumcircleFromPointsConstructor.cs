@@ -1,13 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using GeoGen.AnalyticalGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.PerpendicularLineFromPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.CircumcircleFromPoints"/>>.
     /// </summary>
-    internal class PerpendicularLineFromPointsConstructor : PredefinedConstructorBase
+    internal class CircumcircleFromPointsConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
@@ -19,18 +20,17 @@ namespace GeoGen.Analyzer
         /// <returns>The list of constructed analytical objects.</returns>
         protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
-            // Pull line points
-            var linePoint1 = container.Get<Point>(flattenedObjects[1]);
-            var linePoint2 = container.Get<Point>(flattenedObjects[2]);
+            // Pull points from the container
+            var point1 = container.Get<Point>(flattenedObjects[0]);
+            var point2 = container.Get<Point>(flattenedObjects[1]);
+            var point3 = container.Get<Point>(flattenedObjects[2]);
 
-            // Pull the point from which we erect the perpendicular like
-            var pointFrom = container.Get<Point>(flattenedObjects[0]);
+            // If points are collinear, the construction can't be done
+            if (AnalyticalHelpers.AreCollinear(point1, point2, point3))
+                return null;
 
-            // Construct the line
-            var line = new Line(linePoint1, linePoint2);
-
-            // Construct the result
-            return new List<AnalyticalObject> {line.PerpendicularLine(pointFrom)};
+            // Otherwise construct the circle
+            return new List<AnalyticalObject> {new Circle(point1, point2, point3)};
         }
 
         /// <summary>

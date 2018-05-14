@@ -81,11 +81,21 @@ namespace GeoGen.AnalyticalGeometry
         /// <summary>
         /// Finds out if a given circle is tangent to this circle.
         /// </summary>
-        /// <param name="otherCircle">The other circle.</param>
+        /// <param name="line">The other circle.</param>
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Circle otherCircle)
         {
             return IntersectWith(otherCircle).Count == 1;
+        }
+
+        /// <summary>
+        /// Finds out if a given line is tangent to this circle.
+        /// </summary>
+        /// <param name="line">The line.</param>
+        /// <returns>true, if they are tangent to each other; false otherwise.</returns>
+        public bool IsTangentTo(Line line)
+        {
+            return IntersectWith(line).Count == 1;
         }
 
         /// <summary>

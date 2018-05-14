@@ -18,7 +18,7 @@
 
             /// <summary>
             /// Objects that were added to the container while adding objects distinct 
-            /// from the last group of constructed objects.
+            /// from the ones contained in the last group of constructed objects.
             /// </summary>
             Old,
 

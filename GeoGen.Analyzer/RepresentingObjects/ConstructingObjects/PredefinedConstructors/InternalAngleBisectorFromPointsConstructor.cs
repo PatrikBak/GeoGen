@@ -10,30 +10,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class InternalAngleBisectorFromPointsConstructor : PredefinedConstructorBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The helper for determining collinearity.
-        /// </summary>
-        private IAnalyticalHelper _analyticalHelper;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="analyticalHelper">The helper for determining collinearity.</param>
-        public InternalAngleBisectorFromPointsConstructor(IAnalyticalHelper analyticalHelper)
-        {
-            _analyticalHelper = analyticalHelper ?? throw new ArgumentNullException(nameof(analyticalHelper));
-        }
-
-        #endregion
-
-        #region PredefinedConstructorBase implementation
-
         /// <summary>
         /// Constructs a list of analytical objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
@@ -52,7 +28,7 @@ namespace GeoGen.Analyzer
             var intersection = container.Get<Point>(flattenedObjects[0]);
 
             // Check if our points are collinear
-            if (_analyticalHelper.AreCollinear(point1, point2, intersection))
+            if (AnalyticalHelpers.AreCollinear(point1, point2, intersection))
             {
                 // If yes, we don't want to perform the construction (because 
                 // then it's theoretically equivalent to the perpendicular line construction
@@ -60,7 +36,7 @@ namespace GeoGen.Analyzer
             }
 
             // Otherwise we can create the internal bisector and wrap it.
-            return new List<AnalyticalObject> {intersection.InternalAngleBisector(point1, point2)};
+            return new List<AnalyticalObject> { intersection.InternalAngleBisector(point1, point2) };
         }
 
         /// <summary>
@@ -72,9 +48,16 @@ namespace GeoGen.Analyzer
         /// <returns>The list of default theorems.</returns>
         protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
         {
-            return new List<Theorem>();
+            return new List<Theorem>
+            {
+                new Theorem(TheoremType.EqualAngles, new List<TheoremObject>
+                {
+                    new TheoremObject(input[0]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[0], flattenedObjects[1]),
+                    new TheoremObject(input[0]),
+                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[0], flattenedObjects[2])
+                })
+            };
         }
-
-        #endregion
     }
 }

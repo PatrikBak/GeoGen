@@ -23,28 +23,28 @@ namespace GeoGen.Analyzer.Test.TestHelpers
             );
         }
 
-        public static void PrintVerifiersOutput(IEnumerable<VerifierOutput> correctOutputs)
+        public static void PrintVerifiersOutput(IEnumerable<PotentialTheorem> correctOutputs)
         {
             foreach (var verifierOutput in correctOutputs)
             {
-                foreach (var o in verifierOutput.InvoldedObjects)
-                {
-                    HashSet<PointObject> points;
+                ////foreach (var o in verifierOutput.InvoldedObjects)
+                //{
+                //    HashSet<PointObject> points;
 
-                    if (o is LineObject line)
-                        points = line.Points;
-                    else if (o is CircleObject circle)
-                        points = circle.Points;
-                    else
-                        throw new Exception();
+                //    if (o is LineObject line)
+                //        points = line.Points;
+                //    else if (o is CircleObject circle)
+                //        points = circle.Points;
+                //    else
+                //        throw new Exception();
 
-                    if (o.ConfigurationObject != null)
-                    {
-                        Console.Write($"{o.ConfigurationObject.ObjectType} with id = {o.ConfigurationObject.Id} and points: ");
-                    }
+                //    if (o.ConfigurationObject != null)
+                //    {
+                //        Console.Write($"{o.ConfigurationObject.ObjectType} with id = {o.ConfigurationObject.Id} and points: ");
+                //    }
 
-                    Console.WriteLine(string.Join(", ", points.Select(p => p.ConfigurationObject.Id)));
-                }
+                //    Console.WriteLine(string.Join(", ", points.Select(p => p.ConfigurationObject.Id)));
+                //}
                 Console.WriteLine();
             }
         }

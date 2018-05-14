@@ -12,36 +12,15 @@ namespace GeoGen.Analyzer
     /// </summary>
     internal class LineTangentToCircleVerifier : TheoremVerifierBase
     {
-        #region ITheoremVerifier implementation
-
         /// <summary>
-        /// Gets the enumerable of verifier outputs that pulls objects from
-        /// a given contextual container (that represents the configuration)
+        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
-        /// <param name="container">The container.</param>
+        /// <param name="container">The container from which we get the geometrical objects.</param>
         /// <returns>The outputs.</returns>
-        public override IEnumerable<VerifierOutput> GetOutput(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
         {
-            // Find new lines. 
-            var newLines = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
-            {
-                Type = ContexualContainerQuery.ObjectsType.New,
-                IncludePoints = false,
-                IncludeLines = true,
-                IncludeCirces = false
-            }).ToList();
-
-            // Find all lines. 
-            var allLines = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
-            {
-                Type = ContexualContainerQuery.ObjectsType.All,
-                IncludePoints = false,
-                IncludeLines = true,
-                IncludeCirces = false
-            }).ToList();
-
-            // Find new circes. 
-            var newCircles = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            // Find all new circles. 
+            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
                 Type = ContexualContainerQuery.ObjectsType.New,
                 IncludePoints = false,
@@ -49,8 +28,8 @@ namespace GeoGen.Analyzer
                 IncludeCirces = true
             }).ToList();
 
-            // Find all circles. 
-            var allCircles = container.GetGeometricalObjects<GeometricalObject>(new ContexualContainerQuery
+            // Find all circles.
+            var allCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
                 Type = ContexualContainerQuery.ObjectsType.All,
                 IncludePoints = false,
@@ -58,71 +37,69 @@ namespace GeoGen.Analyzer
                 IncludeCirces = true
             }).ToList();
 
-            // Prepare set of all pairs of perpendicular lines in the first container
-            var circles = new HashSet<Tuple<GeometricalObject, GeometricalObject>>();
-
-            // Pull first container
-            var firstContainer = container.Manager.First();
-
-            // Iterate over lines to get all pairs
-            foreach (var circle1 in newCircles)
+            // Find all new lines. 
+            var newLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
             {
-                foreach (var circle2 in allCircles)
+                Type = ContexualContainerQuery.ObjectsType.New,
+                IncludePoints = false,
+                IncludeLines = true,
+                IncludeCirces = false
+            }).ToList();
+
+            // Find all lines.
+            var allLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            {
+                Type = ContexualContainerQuery.ObjectsType.All,
+                IncludePoints = false,
+                IncludeLines = true,
+                IncludeCirces = false
+            }).ToList();
+
+            // A local function for combinining pairs consisting of one line and one circle
+            // where at least one of them is new
+            IEnumerable<(LineObject line, CircleObject circle)> CombineLineAndCircle()
+            {
+                // First combine the new lines with all circles
+                foreach (var newLine in newLines)
                 {
-                    // If they are equal, we skip them
-                    if (Equals(circle1, circle2))
-                        continue;
+                    foreach (var circle in allCircles)
+                    {
+                        yield return (newLine, circle);
+                    }
+                }
 
-                    // Pull their analytical version
-                    var analytical1 = (Circle)container.GetAnalyticalObject(circle1, firstContainer);
-                    var analytical2 = (Circle)container.GetAnalyticalObject(circle2, firstContainer);
-
-                    // If the lines are not perpendicular, skip 
-                    if (!analytical1.IsTangentTo(analytical2))
-                        continue;
-
-                    // We find the line with the smaller id
-                    var withSmallerId = circle1.Id < circle2.Id ? circle1 : circle2;
-                    var withLargerId = withSmallerId == circle1 ? circle2 : circle1;
-
-                    // And add this pair of lines to the lines set
-                    circles.Add(new Tuple<GeometricalObject, GeometricalObject>(withSmallerId, withLargerId));
+                // First combine the new circles with all lines
+                foreach (var newCircle in newCircles)
+                {
+                    foreach (var line in allLines)
+                    {
+                        yield return (line, newCircle);
+                    }
                 }
             }
 
-            // After finding the lines paralellel in the first container, we want to have
-            // a look to the others. We go through the lines set
-            foreach (var pair in circles)
+            // Now execute the local function to find all potential pairs of lines and circles
+            foreach (var (line, circle) in CombineLineAndCircle())
             {
-                // Construct involved objects
-                var involvedObjects = pair.Item1.AsEnumerable().Concat(pair.Item2.AsEnumerable()).ToList();
-
                 // Construct the verifier function
                 bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // If the container is the first one, we're sure the lines are fine
-                    if (ReferenceEquals(firstContainer, objectsContainer))
-                        return true;
+                    // Pull analytical circles representing each one
+                    var analyticalLine = container.GetAnalyticalObject<Line>(line, objectsContainer);
+                    var analyticalCircle = container.GetAnalyticalObject<Circle>(circle, objectsContainer);
 
-                    // Otherwise we find analytical versions of our lines
-                    var analytical1 = (Circle)container.GetAnalyticalObject(involvedObjects[0], firstContainer);
-                    var analytical2 = (Circle)container.GetAnalyticalObject(involvedObjects[1], firstContainer);
-
-                    // And return if they are parallel
-                    return analytical1.IsTangentTo(analytical2);
+                    // Return if there are tangent to each other
+                    return analyticalCircle.IsTangentTo(analyticalLine);
                 }
 
                 // Construct the output
-                yield return new VerifierOutput
+                yield return new PotentialTheorem
                 {
-                    Type = Type,
-                    InvoldedObjects = involvedObjects,
-                    AlwaysTrue = false,
+                    TheoremType = Type,
+                    InvolvedObjects = new GeometricalObject[] { line, circle },
                     VerifierFunction = Verify
                 };
             }
         }
-
-        #endregion
     }
 }

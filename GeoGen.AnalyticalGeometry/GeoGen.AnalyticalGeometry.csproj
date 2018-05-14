@@ -67,23 +67,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalyticalException.cs" />
-    <Compile Include="AnalyticalHelper\AnalyticalHelper.cs" />
     <Compile Include="AnalyticalObjects\Base\AnalyticalObject.cs" />
     <Compile Include="AnalyticalObjects\Base\AnalyticalObjectBase.cs" />
     <Compile Include="AnalyticalObjects\Circle.cs" />
     <Compile Include="AnalyticalObjects\Line.cs" />
     <Compile Include="AnalyticalObjects\Point.cs" />
-    <Compile Include="AnalyticalHelper\IAnalyticalHelper.cs" />
     <Compile Include="AnalyticalGeometryModule.cs" />
     <Compile Include="Constructors\ITriangleConstructor.cs" />
     <Compile Include="Constructors\TriangleConstructor.cs" />
-    <Compile Include="Mathematics\MathematicalHelpers.cs" />
-    <Compile Include="Constructors\Randomness\IRandomnessProvider.cs" />
-    <Compile Include="Constructors\Randomness\IRandomObjectsProvider.cs" />
+    <Compile Include="Helpers\AnalyticalHelpers.cs" />
+    <Compile Include="Helpers\MathematicalHelpers.cs" />
+    <Compile Include="Randomness\IRandomnessProvider.cs" />
+    <Compile Include="Randomness\IRandomObjectsProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Constructors\Randomness\RandomnessProvider.cs" />
-    <Compile Include="Constructors\Randomness\RandomObjectsProvider.cs" />
-    <Compile Include="Mathematics\RoundedDouble.cs" />
+    <Compile Include="Randomness\RandomnessProvider.cs" />
+    <Compile Include="Randomness\RandomObjectsProvider.cs" />
+    <Compile Include="NumbersRepresentations\RoundedDouble.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj">

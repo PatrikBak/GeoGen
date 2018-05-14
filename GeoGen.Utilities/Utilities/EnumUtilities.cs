@@ -18,8 +18,7 @@ namespace GeoGen.Utilities
         /// <param name="type">The class type.</param>
         /// <param name="classNamePrefix">The expected prefix on the class name.</param>
         /// <returns>The parsed value.</returns>
-        public static T ParseEnumValueFromClassName<T>(Type type, string classNamePrefix)
-            where T : struct, IConvertible
+        public static T ParseEnumValueFromClassName<T>(Type type, string classNamePrefix) where T : struct, IConvertible
         {
             // There is no generic restriction for enum types built-in, so we must check this manually.
             if (!typeof(T).IsEnum)

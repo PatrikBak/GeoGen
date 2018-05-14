@@ -13,7 +13,6 @@ namespace GeoGen.AnalyticalGeometry
         public override void Load()
         {
             BindInGeneratorScope<IRandomObjectsProvider, RandomObjectsProvider>();
-            BindInGeneratorScope<IAnalyticalHelper, AnalyticalHelper>();
             BindInGeneratorScope<IRandomnessProvider, RandomnessProvider>();
             BindInGeneratorScope<ITriangleConstructor, TriangleConstructor>();
         }
