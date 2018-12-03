@@ -173,19 +173,19 @@ namespace GeoGen.Generator.IntegrationTest
             return new List<Construction>
             {
                // _composedConstructions.AddIncenterFromPoints(),
-               // _constructionsContainer.Get(IntersectionOfLinesFromPoints),
-               // _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
-               // _constructionsContainer.Get(IntersectionOfLines),
+                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
+                _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
+                _constructionsContainer.Get(IntersectionOfLines),
                 _constructionsContainer.Get(MidpointFromPoints),
                 _constructionsContainer.Get(CircumcenterFromPoints),
-               // _constructionsContainer.Get(PerpendicularLineFromPoints),
-               // _constructionsContainer.Get(InternalAngleBisectorFromPoints),
+                _constructionsContainer.Get(PerpendicularLineFromPoints),
+                _constructionsContainer.Get(InternalAngleBisectorFromPoints),
             };
         }
 
         private static List<ConstructedConfigurationObject> ConstructedObjects(List<LooseConfigurationObject> points)
         {
-            _composedConstructions.AddIncenterFromPoints();
+            //_composedConstructions.AddIncenterFromPoints();
 
             //var o = _constructorHelper.CreateCircumcenter(points[0], points[1], points[2]);
             //var i = _constructorHelper.CreateIncenter(points[0], points[1], points[2]);

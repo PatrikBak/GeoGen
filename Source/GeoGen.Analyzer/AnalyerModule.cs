@@ -31,11 +31,11 @@ namespace GeoGen.Analyzer
             BindInGeneratorScope<ITheoremVerifier, CollinearPointsVerifier>();
             BindInGeneratorScope<ITheoremVerifier, ConcurrentObjectsVerifier>();
             BindInGeneratorScope<ITheoremVerifier, ConcyclicPointsVerifier>();
-            //BindInGeneratorScope<ITheoremVerifier, EqualAngelsVerifier>();
+            //BindInGeneratorScope<ITheoremVerifier, EqualAnglesVerifier>();
             BindInGeneratorScope<ITheoremVerifier, EqualLineSegmentsVerifier>();
-            //BindInGeneratorScope<ITheoremVerifier, LineTangentToCircleVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, LineTangentToCircleVerifier>();
             BindInGeneratorScope<ITheoremVerifier, ParallelLinesVerifier>();
-            //BindInGeneratorScope<ITheoremVerifier, PerpendicularLinesVerifier>();
+            BindInGeneratorScope<ITheoremVerifier, PerpendicularLinesVerifier>();
             BindInGeneratorScope<ITheoremVerifier, TangentCirclesVerifier>();
 
             BindInGeneratorScope<IPredefinedConstructor, CircumcenterFromPointsConstructor>();
