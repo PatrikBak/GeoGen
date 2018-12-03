@@ -14,12 +14,12 @@ Design and implement software that is able to generate planar geometry olympiad 
 
 ## Links
 
-[Presentation](../blob/master/Resources/School/presentation.pdf)  
-[Extended assignment]()
+[Presentation](https://github.com/PatrikBak/GeoGen/blob/master/Resources/School/presentation.pdf)  
+[Extended assignment](https://github.com/PatrikBak/GeoGen/blob/master/Resources/School/extended_assignment.pdf)
 
 ## References
 
-1. Grozdev, S., & Dekov, D. (2015). A Survey of Mathematics Discovered by Computers. International Journal of Computer Discovered Mathematics, 3-20. [link](https://www.researchgate.net/profile/Sava_Grozdev/publication/306426026_A_Survey_of_Mathematics_Discovered_by_Computers/links/57bda90f08aeaf647bcb513a/A-Survey-of-Mathematics-Discovered-by-Computers.pdf)
+1. Grozdev, S., & Dekov, D. (2015). A Survey of Mathematics Discovered by Computers. International Journal of Computer Discovered Mathematics, 3-20. [link](https://www.researchgate.net/publication/306426026_A_Survey_of_Mathematics_Discovered_by_Computers)
 
 2. Alvin, C., Gulwani, S., Majumdar, R., & Mukhopadhyay, S. (2014, July). Synthesis of Geometry Proof Problems. In AAAI (pp. 245-252). [link](http://www.aaai.org/ocs/index.php/AAAI/AAAI14/paper/viewFile/8617/8427)
 
