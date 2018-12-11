@@ -51,9 +51,7 @@ namespace GeoGen.Generator
         /// <returns>The id.</returns>
         public int ResolveId(ConfigurationObject configurationObject)
         {
-            var id = configurationObject.Id ?? throw new GeneratorException("Configuration objects id must be set.");
-
-            return _realIdsToResolvedIds[id];
+            return _realIdsToResolvedIds[configurationObject.Id];
         }
 
         #endregion

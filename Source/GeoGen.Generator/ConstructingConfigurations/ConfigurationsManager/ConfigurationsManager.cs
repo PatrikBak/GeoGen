@@ -8,12 +8,12 @@ namespace GeoGen.Generator
     /// <summary>
     /// A default implementation of <see cref="IConfigurationsManager"/>. This class uses
     /// an <see cref="IConfigurationConstructor"/> for creating configuration wrappers,
-    /// an <see cref="IConfigurationsResolver"/> for resolving and validating them and
+    /// an <see cref="IConfigurationsValidator"/> for validating them.
     /// an <see cref="IConfigurationsContainer"/> for recognizing equal configurations.
     /// </summary>
     internal class ConfigurationsManager : IConfigurationsManager
     {
-        #region Private fields
+        #region Dependencies
 
         /// <summary>
         /// The configuration constructor used to create <see cref="ConfigurationWrapper"/>s
@@ -26,13 +26,16 @@ namespace GeoGen.Generator
         private readonly IConfigurationsContainer _configurationsContainer;
 
         /// <summary>
-        /// The configurations resolver for resolving and identifying the new objects.
+        /// The validator for the configurations.
         /// </summary>
-        private readonly IConfigurationsResolver _configurationsResolver;
+        private readonly IConfigurationsValidator _configurationsValidator;
+
+        #endregion
+
+        #region Private fields
 
         /// <summary>
-        /// The id of the identified configuration. We need to idenfitify configuration
-        /// because the IConfigrationResolver needs it.
+        /// The id of the identified configuration. 
         /// </summary>
         private int _currentConfigurationId;
 
@@ -55,18 +58,18 @@ namespace GeoGen.Generator
         /// <param name="initialConfiguration">The initial configuration.</param>
         /// <param name="configurationConstructor">The constructor of configuration wrappers.</param>
         /// <param name="configurationsContainer">The container for recognizing equal configurations.</param>
-        /// <param name="configurationsResolver">The resolvers of new objects.</param>
+        /// <param name="configurationsValidator">The validator of new configurations.</param>
         public ConfigurationsManager
         (
             Configuration initialConfiguration,
             IConfigurationConstructor configurationConstructor,
             IConfigurationsContainer configurationsContainer,
-            IConfigurationsResolver configurationsResolver
+            IConfigurationsValidator configurationsValidator
         )
         {
             _configurationConstructor = configurationConstructor ?? throw new ArgumentNullException(nameof(configurationConstructor));
             _configurationsContainer = configurationsContainer ?? throw new ArgumentNullException(nameof(configurationsContainer));
-            _configurationsResolver = configurationsResolver ?? throw new ArgumentNullException(nameof(configurationsResolver));
+            _configurationsValidator = configurationsValidator ?? throw new ArgumentNullException(nameof(configurationsValidator));
             Initialize(initialConfiguration);
         }
 
@@ -93,8 +96,8 @@ namespace GeoGen.Generator
                 // Set it's id
                 newConfiguration.Id = _currentConfigurationId++;
 
-                // Let the resolver resolve the configuration and find out if it's correct
-                var isCorrect = _configurationsResolver.ResolveNewConfiguration(newConfiguration);
+                // Validate the configuration
+                var isCorrect = _configurationsValidator.Validate(newConfiguration);
 
                 // If it's not, skip it
                 if (!isCorrect)
@@ -138,8 +141,11 @@ namespace GeoGen.Generator
             // Set the id of the configuration
             initialConfiguration.Id = _currentConfigurationId++;
 
-            // Let the resolver resolve the initial configuration
-            _configurationsResolver.ResolveInitialConfiguration(initialConfiguration);
+            // Validate the initial one 
+            if (!_configurationsValidator.Validate(initialConfiguration))
+            {
+                throw new InitializationException("The initial configuration is invalid");
+            }
 
             // Let the constructor construct wrapper for the initial configuration.
             var configurationWrapper = _configurationConstructor.ConstructInitialWrapper(initialConfiguration);

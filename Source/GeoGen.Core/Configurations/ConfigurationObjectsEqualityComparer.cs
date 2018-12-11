@@ -27,7 +27,7 @@ namespace GeoGen.Core
         /// <returns>true, if they are equal; false otherwise.</returns>
         public bool Equals(ConfigurationObject x, ConfigurationObject y)
         {
-            return (x.Id ?? throw NullId()) == (y.Id ?? throw NullId());
+            return x.Id == y.Id;
         }
 
         /// <summary>
@@ -37,18 +37,8 @@ namespace GeoGen.Core
         /// <returns>The hash code.</returns>
         public int GetHashCode(ConfigurationObject obj)
         {
-            return obj.Id?.GetHashCode() ?? throw NullId();
+            return obj.Id.GetHashCode();
         } 
-
-        #endregion
-
-        #region Private helpers
-
-        /// <summary>
-        /// Returns a GeoGen exception with a message indiciating that a configuration object has a null id.
-        /// </summary>
-        /// <returns>The exception.</returns>
-        private GeoGenException NullId() => new GeoGenException("Configuration object can't have null id"); 
 
         #endregion
     }

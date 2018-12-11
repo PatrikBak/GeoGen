@@ -252,8 +252,8 @@ namespace GeoGen.Analyzer
         /// <param name="isNew">Indicates if this object should be added to particular new or old objects set.</param>
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
-            // Pull id
-            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
+            // Pull the id
+            var id = configurationObject.Id;
 
             // Add id to the ids set
             _ids.Add(id);

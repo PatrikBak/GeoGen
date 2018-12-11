@@ -14,6 +14,6 @@ namespace GeoGen.Generator
         /// Starts the generation process and lazily returns the output.
         /// </summary>
         /// <returns>The generator output enumerable.</returns>
-        IEnumerable<GeneratorOutput> Generate();
+        IEnumerable<GeneratorOutput> Generate(int numberOfIterations);
     }
 }

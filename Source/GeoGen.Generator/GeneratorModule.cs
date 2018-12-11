@@ -13,7 +13,7 @@ namespace GeoGen.Generator
         public override void Load()
         {
             // General code
-            BindDefiningGeneratorScope<IGenerator, Generator>("iterations", input => input.MaximalNumberOfIterations);
+            BindDefiningGeneratorScope<IGenerator, Generator>("initialConfiguration", input => input.InitialConfiguration);
             BindFactoryInSingletonScope<IGeneratorFactory>();
 
             // Constructing objects
@@ -37,7 +37,7 @@ namespace GeoGen.Generator
             BindInGeneratorScope<IArgumentsToStringProvider, ArgumentsToStringProvider>();
             BindInGeneratorScope<IDefaultFullObjectToStringConverter, DefaultFullObjectToStringConverter>();
             BindInGeneratorScope<IConfigurationsContainer, ConfigurationsContainer>();
-            BindInGeneratorScope<IConfigurationsResolver, ConfigurationsResolver>();
+            BindInGeneratorScope<IConfigurationsValidator, ConfigurationsResolver>();
             BindInGeneratorScope<IFullConfigurationToStringConverter, FullConfigurationToStringConverter>();
             BindInGeneratorScope<IFullObjectToStringConvertersFactory, FullObjectToStringConvertersFactory>();
             BindFactoryInGeneratorScope<IAutocacheFullObjectToStringConverterFactory>();

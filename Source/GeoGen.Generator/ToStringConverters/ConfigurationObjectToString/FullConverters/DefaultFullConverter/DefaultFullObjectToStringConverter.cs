@@ -33,7 +33,7 @@ namespace GeoGen.Generator
         protected override string ResolveCachedValue(ConfigurationObject configurationObject)
         {
             // If the objects doesn't have an id, we can't have it cached
-            if (!configurationObject.Id.HasValue)
+            if (!configurationObject.HasId)
             {
                 return string.Empty;
             }
@@ -42,7 +42,7 @@ namespace GeoGen.Generator
             {
                 // We assume that we must have cached all objects (if not, this will cause 
                 // KeyNotFound exception, so we'll hit the catch block)
-                return Cache[configurationObject.Id.Value];
+                return Cache[configurationObject.Id];
             }
             catch (KeyNotFoundException)
             {

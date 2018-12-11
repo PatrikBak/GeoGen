@@ -11,13 +11,13 @@ namespace GeoGen.Generator
     internal interface IConfigurationObjectsContainer : IEnumerable<ConfigurationObject>
     {
         /// <summary>
-        /// Adds a given constructed configuration object to the container. 
-        /// The current id of the object will be ignored. If an equal version 
-        /// of the object is present in the container, it will return the instance of 
-        /// this internal object. Otherwise it will return this object with set id.
+        /// Adds a given configuration object to the container. The object must not be identified 
+        /// while it's being added. If an equal version of the object is present in the container, 
+        /// the object won't be added and the <paramref name="equalObject"/> will be set to that
+        /// equal object. Otherwise the <paramref name="equalObject"/> will be set to null.
         /// </summary>
-        /// <param name="constructedObject">The constructed configuration object.</param>
-        /// <returns>The equal identified version of the constructed configuration object.</returns>
-        ConstructedConfigurationObject Add(ConstructedConfigurationObject constructedObject);
+        /// <param name="configurationObject">The configuration object to be added.</param>
+        /// <param name="equalObject">Either the equal version of the passed object from the container (if there's any), or null.</param>
+        void Add(ConfigurationObject configurationObject, out ConfigurationObject equalObject);
     }
 }

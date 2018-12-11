@@ -31,7 +31,7 @@ namespace GeoGen.Generator
         protected override string ResolveCachedValue(ConfigurationObject configurationObject)
         {
             // We must have an id
-            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
+            var id = configurationObject.Id;
 
             // Then we might or might have cached this object.
             return Cache.ContainsKey(id) ? Cache[id] : string.Empty;
@@ -45,7 +45,7 @@ namespace GeoGen.Generator
         protected override void HandleResult(ConfigurationObject configurationObject, string result)
         {
             // We must have an id
-            var id = configurationObject.Id ?? throw new GeneratorException("Id must be set");
+            var id = configurationObject.Id;
 
             // Then we can cache the object
             Cache.Add(id, result);

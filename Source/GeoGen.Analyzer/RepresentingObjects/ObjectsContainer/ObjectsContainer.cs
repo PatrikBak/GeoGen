@@ -132,8 +132,8 @@ namespace GeoGen.Analyzer
         /// <returns>The analytical object.</returns>
         public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject
         {
-            // Pull id
-            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set.");
+            // Pull the id
+            var id = configurationObject.Id;
 
             try
             {
@@ -248,8 +248,8 @@ namespace GeoGen.Analyzer
             if (_objectsDictionary.ContainsLeftKey(analyticalObject))
                 return _configurationObjects[_objectsDictionary.GetRightValue(analyticalObject)];
 
-            // Pull id
-            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
+            // Pull the id
+            var id = configurationObject.Id;
 
             // Otherwise add the object to the dictionary
             _objectsDictionary.Add(analyticalObject, id);

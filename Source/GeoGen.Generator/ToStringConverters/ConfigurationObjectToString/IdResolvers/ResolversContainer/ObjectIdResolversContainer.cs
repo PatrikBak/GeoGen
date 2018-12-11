@@ -59,9 +59,7 @@ namespace GeoGen.Generator
         private void Initialize(IEnumerable<LooseConfigurationObject> objects)
         {
             // Cast objects to ids list
-            var ids = objects
-                    .Select(o => o.Id ?? throw new GeneratorException("Configuration objects id must be set."))
-                    .ToList();
+            var ids = objects.Select(o => o.Id).ToList();
 
             // Start from the id of the default resolver + 1 so we don't get a conflict
             var variationsCounter = _resolver.Id + 1;

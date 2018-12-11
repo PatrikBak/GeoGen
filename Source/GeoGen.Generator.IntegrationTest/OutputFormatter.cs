@@ -115,14 +115,14 @@ namespace GeoGen.Generator.IntegrationTest
 
         private string ObjectToStringById(ConfigurationObject configurationObject)
         {
-            return _objectIdToString[configurationObject.Id ?? throw new Exception()].ToString();
+            return _objectIdToString[configurationObject.Id].ToString();
         }
 
         private void Register(IEnumerable<ConfigurationObject> objects)
         {
             foreach (var configurationObject in objects)
             {
-                var id = configurationObject.Id ?? throw new Exception();
+                var id = configurationObject.Id;
 
                 if (_objectIdToString.ContainsKey(id))
                     continue;

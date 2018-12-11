@@ -129,8 +129,8 @@ namespace GeoGen.Analyzer
         /// <returns>The ids set.</returns>
         private HashSet<int> FindIdsOfInternalObjects(ConfigurationObject configurationObject)
         {
-            // Pull id of the object
-            var id = configurationObject.Id ?? throw new AnalyzerException("Id must be set");
+            // Pull the id of the object
+            var id = configurationObject.Id;
 
             // Look up the id in the cache
             if (_cache.ContainsKey(id))

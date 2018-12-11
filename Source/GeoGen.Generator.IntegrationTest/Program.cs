@@ -57,14 +57,13 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 3
             };
 
             var generator = factory.CreateGenerator(input);
             var stopwatch = new Stopwatch();
 
             stopwatch.Start();
-            var result = generator.Generate().ToList();
+            var result = generator.Generate(3).ToList();
             stopwatch.Stop();
 
             //var st = result.Sum(output => output.Theorems.Count);

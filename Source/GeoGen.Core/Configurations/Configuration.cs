@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -73,6 +74,21 @@ namespace GeoGen.Core
         /// Gets the configuration objects map of this configuration.
         /// </summary>
         public ConfigurationObjectsMap ObjectsMap => _objectsMapInitialzer.Value;
+
+        /// <summary>
+        /// Gets the number of objects of this configuration
+        /// </summary>
+        public int NumberOfObjects => LooseObjects.Count + ConstructedObjects.Count;
+
+        /// <summary>
+        /// Creates a set of the ids of the objects of this configuration.
+        /// </summary>
+        /// <returns></returns>
+        public HashSet<int> ObjectsIds()
+        {
+            // Cast all objects to the set of their ids
+            return ObjectsMap.AllObjects.Select(obj => obj.Id).ToSet();
+        }
 
         #endregion
 

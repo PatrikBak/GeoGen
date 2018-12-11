@@ -56,6 +56,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructingConfigurations\Containers\ConfigurationObjectsIdentifier\IConfigurationObjectsIdentifier.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\DictionaryIdResolving\IDictionaryObjectIdResolver.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\ResolversContainer\ObjectIdResolversContainer.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\FullConverters\AutocacheFullConverter\IAutocacheFullObjectToStringConverter.cs" />
@@ -63,8 +64,8 @@
     <Compile Include="ToStringConverters\ConfigurationObjectToString\FullConverters\IFullObjectToStringConverter.cs" />
     <Compile Include="ToStringConverters\ArgumentsToString\DefaultConverter\DefaultArgumentsToStringConverter.cs" />
     <Compile Include="ToStringConverters\ArgumentsToString\DefaultConverter\IDefaultArgumentsToStringConverter.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationsResolver\ConfigurationsResolver.cs" />
-    <Compile Include="ConstructingConfigurations\ConfigurationsResolver\IConfigurationsResolver.cs" />
+    <Compile Include="ConstructingConfigurations\ConfigurationsValidator\ConfigurationsValidator.cs" />
+    <Compile Include="ConstructingConfigurations\ConfigurationsValidator\IConfigurationsValidator.cs" />
     <Compile Include="ConstructingConfigurations\Containers\ConfigurationsContainer\ConfigurationsContainer.cs" />
     <Compile Include="ToStringConverters\ConfigurationToString\FullConverter\FullConfigurationToStringConverter.cs" />
     <Compile Include="ConstructingConfigurations\Containers\ConfigurationsContainer\IConfigurationsContainer.cs" />

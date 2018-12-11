@@ -5,14 +5,31 @@
     /// </summary>
     public abstract class ConfigurationObject
     {
+        #region Private fields
+
+        /// <summary>
+        /// The backing field for the <see cref="Id"/> property.
+        /// </summary>
+        private int? _id;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the id of this configuration object. The id should be
-        /// unique solely during the generation process. It will be reseted every time
-        /// the process starts over.
+        /// Gets or sets the id of this configuration object. The id should be set only once.
+        /// Setting it more than once, or accesing it when it's not set, causes a <see cref="GeoGenException"/>. 
         /// </summary>
-        public int? Id { get; set; }
+        public int Id
+        {
+            get => _id ?? throw new GeoGenException("The id of this object hasn't been set yet.");
+            set => _id = !_id.HasValue ? value : throw new GeoGenException("The id of this object has been already set and cannot be changed.");
+        }
+        
+        /// <summary>
+        /// Indicates if this object is identified, i.e. if the <see cref="Id"/> property has been set.
+        /// </summary>
+        public bool HasId => _id.HasValue;
 
         #endregion
 

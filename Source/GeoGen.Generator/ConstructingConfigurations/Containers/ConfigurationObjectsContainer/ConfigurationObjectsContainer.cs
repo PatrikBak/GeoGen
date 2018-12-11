@@ -50,42 +50,40 @@ namespace GeoGen.Generator
         #region IConfigurationObjectsContainer methods
 
         /// <summary>
-        /// Adds a given constructed configuration object to the container. 
-        /// The current id of the object will be ignored. If an equal version 
-        /// of the object is present in the container, it will return the instance of 
-        /// this internal object. Otherwise it will return this object with set id.
+        /// Adds a given configuration object to the container. The object must not be identified 
+        /// while it's being added. If an equal version of the object is present in the container, 
+        /// the object won't be added and the <paramref name="equalObject"/> will be set to that
+        /// equal object. Otherwise the <paramref name="equalObject"/> will be set to null.
         /// </summary>
-        /// <param name="constructedObject">The constructed configuration object.</param>
-        /// <returns>The equal identified version of the constructed configuration object.</returns>
-        public ConstructedConfigurationObject Add(ConstructedConfigurationObject constructedObject)
+        /// <param name="configurationObject">The configuration object to be added.</param>
+        /// <param name="equalObject">Either the equal version of the passed object from the container (if there's any), or null.</param>
+        public void Add(ConfigurationObject configurationObject, out ConfigurationObject equalObject)
         {
-            // Null the id
-            constructedObject.Id = null;
-
             // Convert the object to string
-            var stringRepresentation = _converter.ConvertToString(constructedObject);
+            var stringRepresentation = _converter.ConvertToString(configurationObject);
 
             // If we have it cached, we can return it directly 
             if (Items.ContainsKey(stringRepresentation))
             {
-                return (ConstructedConfigurationObject) Items[stringRepresentation];
+                // Set the equal object
+                equalObject = Items[stringRepresentation];
+
+                // Terminate
+                return;
             }
 
-            // Otherwise we have a new object. Prepare the new id.
-            var newId = Items.Count + 1;
-
             // Assign the id to the object
-            constructedObject.Id = newId;
+            configurationObject.Id = Items.Count + 1;
 
             // Add the object to the container 
-            Items.Add(stringRepresentation, constructedObject);
+            Items.Add(stringRepresentation, configurationObject);
 
             // Cache the gotten string version (it couldn't have happened during
-            // the conversion because we hadn't had the yet)
-            _converter.CacheObject(newId, stringRepresentation);
+            // the conversion because we hadn't had the id yet)
+            _converter.CacheObject(configurationObject.Id, stringRepresentation);
 
-            // Return the object
-            return constructedObject;
+            // Set the equal object
+            equalObject = null;            
         }
 
         #endregion
@@ -100,9 +98,6 @@ namespace GeoGen.Generator
         /// <param name="configuration">The configuration.</param>
         private void Initialize(Configuration configuration)
         {
-            // Null ids of all objects and arguments in the configuration
-            NullIds(configuration);
-
             // First we initialize the loose objects. 
             foreach (var looseObject in configuration.LooseObjects)
             {
@@ -113,85 +108,11 @@ namespace GeoGen.Generator
                 Items.Add(stringVersion, looseObject);
             }
 
-            // Now we initial the constructed objects
-            var constructedObjects = configuration.ConstructedObjects;
-
-            // Initialize all of them
-            foreach (var constructedObject in constructedObjects)
+            // Now initialize the constructed objects
+            foreach (var constructedObject in configuration.ConstructedObjects)
             {
                 // Call the other method to do the job
                 InitializeConstructedObject(constructedObject);
-            }
-        }
-
-        /// <summary>
-        /// Null all the ids of the configurations objects present in a
-        /// given configuration directly, or within arguments of constructed
-        /// objects of the configuration.
-        /// </summary>
-        private static void NullIds(Configuration configuration)
-        {
-            // Local function that nulls an object, if it's not a loose object
-            void Null(ConfigurationObject configurationObject)
-            {
-                if(configurationObject is LooseConfigurationObject)
-                    return;
-
-                configurationObject.Id = null;
-            }
-
-            // Null id to all of them
-            foreach (var configurationObject in configuration.ConstructedObjects)
-            {
-                configurationObject.Id = null;
-            }
-
-            // Local recursive function to null the interior of a given argument
-            void NullIdsOfIteriorObjects(ConstructionArgument argument)
-            {
-                // If we have an object argument
-                if (argument is ObjectConstructionArgument objectArgument)
-                {
-                    // We can pull the object
-                    var passedObject = objectArgument.PassedObject;
-
-                    // Null it's id
-                    Null(passedObject);
-
-                    // If the object is loose, we can't do anything else
-                    if (passedObject is LooseConfigurationObject)
-                        return;
-
-                    // Otherwise the object is constructed and therefore we can pull passed arguments
-                    var args = ((ConstructedConfigurationObject) passedObject).PassedArguments;
-
-                    // And recursively null all of them
-                    foreach (var constructionArgument in args)
-                    {
-                        NullIdsOfIteriorObjects(constructionArgument);
-                    }
-
-                    // And terminate
-                    return;
-                }
-
-                // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument) argument;
-
-                // And we simply recursively null ids of all passed arguments
-                foreach (var passedArgument in setArgument.PassedArguments)
-                {
-                    NullIdsOfIteriorObjects(passedArgument);
-                }
-            }
-
-            // First we merge all arguments from all configuration objects
-            var allArguments = configuration.ConstructedObjects.SelectMany(obj => obj.PassedArguments);
-
-            // And call the local nulling function for each of them
-            foreach (var argument in allArguments)
-            {
-                NullIdsOfIteriorObjects(argument);
             }
         }
 
@@ -211,11 +132,6 @@ namespace GeoGen.Generator
                 {
                     // Then we call pull the passed object
                     var passedObject = objArgument.PassedObject;
-
-                    // It must be constructible, i.e. it must be already present in the
-                    // container, i.e. its id must be set
-                    if (passedObject.Id == null)
-                        throw new InitializationException("The initial configuration is not logically constructible");
 
                     // If the object is loose, we're fine
                     if (passedObject is LooseConfigurationObject)
@@ -244,11 +160,6 @@ namespace GeoGen.Generator
                 }
             }
 
-            // If the object has id, then we have duplicate objects, since the object
-            // is not supposed be initialized yet
-            if (constructedObject.Id != null)
-                throw new InitializationException("The initial configuration contains duplicate objects");
-
             // Otherwise we can use the local function to validate its passed arguments
             foreach (var passedArgument in constructedObject.PassedArguments)
             {
@@ -256,10 +167,10 @@ namespace GeoGen.Generator
             }
 
             // If there are fine, we can freely add the object to the container
-            var result = Add(constructedObject);
+            Add(constructedObject, out var equalObject);
 
             // If we already have this object in the container, we have a problem
-            if (result != constructedObject)
+            if (equalObject != null)
                 throw new InitializationException("The initial configuration contains duplicate objects");
 
             // Otherwise everything is correct

@@ -85,7 +85,7 @@
     <Compile Include="Generator\GeneratorInput.cs" />
     <Compile Include="BaseModule.cs" />
     <Compile Include="Generator\GeneratorOutput.cs" />
-    <Compile Include="GeoGenException.cs" />
+    <Compile Include="Exceptions\GeoGenException.cs" />
     <Compile Include="Configurations\LooseObjectsHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Constructions\Parameters\SetConstructionParameter.cs" />
