@@ -17,7 +17,7 @@ namespace GeoGen.Generator.IntegrationTest
         public ComposedConstruction AddCentroidFromPoints()
         {
             var objects = Enumerable.Range(0, 3)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point))
                     .ToList();
 
             var argument1 = new SetConstructionArgument(new List<ConstructionArgument>
@@ -64,9 +64,9 @@ namespace GeoGen.Generator.IntegrationTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters);
+            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters, "Centroid");
 
-            _container.Add(result, "Centroid");
+            _container.Add(result);
 
             return result;
         }
@@ -74,7 +74,7 @@ namespace GeoGen.Generator.IntegrationTest
         public ComposedConstruction AddIncenterFromPoints()
         {
             var objects = Enumerable.Range(0, 3)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point) {Id = i})
+                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point))
                     .ToList();
 
             var arguments1 = new List<ConstructionArgument>
@@ -118,9 +118,9 @@ namespace GeoGen.Generator.IntegrationTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters);
+            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters, "Incenter");
 
-            _container.Add(result, "Incenter");
+            _container.Add(result);
 
             return result;
         }

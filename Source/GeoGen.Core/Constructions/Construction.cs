@@ -32,6 +32,11 @@ namespace GeoGen.Core
         /// </summary>
         public abstract IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
+        /// <summary>
+        /// Gets the name of the construction.
+        /// </summary>
+        public abstract string Name { get; }
+
         #endregion
     }
 }

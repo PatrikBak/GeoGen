@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Castle.Core.Internal;
 using GeoGen.Analyzer;
@@ -73,9 +74,17 @@ namespace GeoGen.Generator
             if (objectIds.Any(_unconstructibleIds.Contains))
                 return false;
 
+
+            Test.a1++;
+            var sw = new Stopwatch();
+            sw.Start();
+
             // At this point, we're sure that the new configuration is formally correct.
             // Now we find out if it's geometrically correct. Let's call the registrar
             var registrationResult = _registrar.Register(configuration);
+
+            sw.Stop();
+            Test.t1 += sw.ElapsedMilliseconds;
 
             // Find out if there is an uncontructible object
             var anyUnconstructibleObject = !registrationResult.UnconstructibleObjects.IsNullOrEmpty();

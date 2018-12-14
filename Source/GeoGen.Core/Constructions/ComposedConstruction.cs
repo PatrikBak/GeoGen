@@ -47,6 +47,11 @@ namespace GeoGen.Core
         /// </summary>
         public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
+        /// <summary>
+        /// Gets the name of the construction. 
+        /// </summary>
+        public override string Name { get; }
+
         #endregion
 
         #region Constructor
@@ -57,10 +62,12 @@ namespace GeoGen.Core
         /// <param name="configuration">The configuration that represents the composed construction.</param>
         /// <param name="indices">The indices of the outputted objects that are from the constructed objects of the given configuration.</param>
         /// <param name="parameters">The parameters of the construction (the signature must correspond to the loose objects of the configuration).</param>
-        public ComposedConstruction(Configuration configuration, IEnumerable<int> indices, IReadOnlyList<ConstructionParameter> parameters)
+        /// <param name="name">The name of the construction.</param>
+        public ComposedConstruction(Configuration configuration, IEnumerable<int> indices, IReadOnlyList<ConstructionParameter> parameters, string name)
         {
             ParentalConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             ConstructionParameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
 
             // Find constructed objects in the configuration according to the indices enumerable
             ConstructionOutput = indices.Select(i => configuration.ConstructedObjects[i]).ToList();

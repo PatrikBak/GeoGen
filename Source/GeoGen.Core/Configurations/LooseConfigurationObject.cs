@@ -1,4 +1,7 @@
-﻿namespace GeoGen.Core
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="ConfigurationObject"/> that is meant to be a general independent object
@@ -26,6 +29,28 @@
         {
             ObjectType = objectType;
         }
+
+        #endregion
+
+        #region Public abstract methods overrides
+
+        /// <summary>
+        /// Enumerates the objects that are internally used to create this object. The order of this objects
+        /// should match the order in which we can gradually construct them.
+        /// </summary>
+        /// <returns>A lazy enumerable of the internal objects.</returns>
+        public override IEnumerable<ConfigurationObject> InternalObjects() => Enumerable.Empty<ConfigurationObject>();
+
+        #endregion
+
+        #region Protected abstract methods overrides
+
+        /// <summary>
+        /// Converts the object to a string using already set names of the objects.
+        /// </summary>
+        /// <param name="objectToStringMap"></param>
+        /// <returns>A human-readable string representation of the object.</returns>
+        protected override string ToString(IReadOnlyDictionary<ConfigurationObject, string> objectToStringMap) => ObjectType.ToString();
 
         #endregion
     }

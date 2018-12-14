@@ -56,7 +56,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConstructingConfigurations\Containers\ConfigurationObjectsIdentifier\IConfigurationObjectsIdentifier.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\DictionaryIdResolving\IDictionaryObjectIdResolver.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\IdResolvers\ResolversContainer\ObjectIdResolversContainer.cs" />
     <Compile Include="ToStringConverters\ConfigurationObjectToString\FullConverters\AutocacheFullConverter\IAutocacheFullObjectToStringConverter.cs" />

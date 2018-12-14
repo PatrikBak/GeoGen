@@ -66,6 +66,11 @@ namespace GeoGen.Generator.IntegrationTest
             var result = generator.Generate(3).ToList();
             stopwatch.Stop();
 
+            Console.WriteLine($"Validation was called {Test.a1} times and took {Test.t1} time, average = {1.0 * Test.t1 / Test.a1}");
+            Console.WriteLine($"Construction was called {Test.a2} times and took {Test.t2} time, average = {1.0 * Test.t2 / Test.a2}");
+
+
+
             //var st = result.Sum(output => output.Theorems.Count);
             //Console.WriteLine(st);
             ////if(theoremCounts.Add(st)) Console.WriteLine(st);
@@ -171,7 +176,8 @@ namespace GeoGen.Generator.IntegrationTest
         {
             return new List<Construction>
             {
-               // _composedConstructions.AddIncenterFromPoints(),
+                _composedConstructions.AddIncenterFromPoints(),
+                _composedConstructions.AddCentroidFromPoints(),
                 _constructionsContainer.Get(IntersectionOfLinesFromPoints),
                 _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
                 _constructionsContainer.Get(IntersectionOfLines),
@@ -193,6 +199,7 @@ namespace GeoGen.Generator.IntegrationTest
             return new List<ConstructedConfigurationObject>
             {
                 //  o
+                //i
             };
         }
 

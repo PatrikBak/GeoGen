@@ -118,8 +118,10 @@ namespace GeoGen.Core
             // Prepare the initializer
             _objectsMapInitialzer = new Lazy<ConfigurationObjectsMap>(() =>
             {
+                // Find all objects
                 var allObjects = looseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects);
 
+                // And use the map constructor 
                 return new ConfigurationObjectsMap(allObjects);
             });
 

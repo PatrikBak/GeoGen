@@ -16,6 +16,7 @@ using System.Runtime.InteropServices;
 
 // Make assemblies internal methods and classes visible to the test assembly
 [assembly: InternalsVisibleTo("GeoGen.Generator.Test")]
+[assembly: InternalsVisibleTo("GeoGen.TestHelpers")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
 
 // Setting ComVisible to false makes the types in this assembly not visible

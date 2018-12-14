@@ -43,13 +43,13 @@ namespace GeoGen.Generator.IntegrationTest
 
         private string ExtractName(PredefinedConstructionType type) => Regex.Match(type.ToString(), "(.*)From.*").Groups[1].Value;
 
-        public void Add(ComposedConstruction composedConstruction, string name)
+        public void Add(ComposedConstruction composedConstruction)
         {
             composedConstruction.Id = _lastId++;
 
             _composedConstructions.Add(composedConstruction);
 
-            _names.Add(_lastId - 1, name);
+            _names.Add(_lastId - 1, composedConstruction.Name);
         }
 
         public string GetName(Construction construction) => _names[construction.Id ?? throw new Exception()];

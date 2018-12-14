@@ -79,7 +79,7 @@ namespace GeoGen.Generator
                 // Convert a given configuration to string using the gotten converter
                 var stringVersion = _toStringProvider.ConvertToString(configuration, converter);
 
-                // If it's the first conversion or we have a smaller string
+                // If it's the first conversion or we have a smaller string...
                 if (result == null || string.CompareOrdinal(minimalString, stringVersion) < 0)
                 {
                     // Then the current result is the resolver

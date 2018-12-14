@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GeoGen.Core;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {
@@ -25,17 +26,7 @@ namespace GeoGen.Generator
             var indices = map.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
 
             // A local function to pull the next object of a given type from the map
-            ConfigurationObject Next(ConfigurationObjectType type)
-            {
-                try
-                {
-                    return map[type][indices[type]++];
-                }
-                catch (Exception)
-                {
-                    throw new GeneratorException("Cannot do the matching, there are too few objects.");
-                }
-            }
+            ConfigurationObject Next(ConfigurationObjectType type) => map[type][indices[type]++];
 
             // Cast each parameter to the argument using the private function and enumerate them to a list
             var argumentsList = parameters.Select(parameter => CreateArgument(parameter, Next)).ToList();
@@ -45,15 +36,14 @@ namespace GeoGen.Generator
         }
 
         /// <summary>
-        /// Creates a new construction argument that matches a given construction parameter,
-        /// and pulls objects using a given selector function.
+        /// Creates a new construction argument that matches a given construction parameter.
         /// </summary>
         /// <param name="parameter">The construction parameter.</param>
-        /// <param name="nextObjectOfType">The next object of type selector.</param>
+        /// <param name="nextObjectOfType">The selector for the next object of a given type.</param>
         /// <returns>The construction argument.</returns>
         private ConstructionArgument CreateArgument(ConstructionParameter parameter, Func<ConfigurationObjectType, ConfigurationObject> nextObjectOfType)
         {
-            // If the parameter is object construction parameter
+            // If the parameter is an object construction parameter...
             if (parameter is ObjectConstructionParameter objectParameter)
             {
                 // Then we simply ask for the next object of the expected type
@@ -66,21 +56,21 @@ namespace GeoGen.Generator
             // Otherwise we have a set construction parameter
             var setParameter = (SetConstructionParameter) parameter;
 
-            // Create a set of arguments that we're going to create
-            var argumentsSet = new List<ConstructionArgument>();
+            // Create arguments list that we're going to fill
+            var arguments = new List<ConstructionArgument>();
 
-            // For the expected number of items
-            for (var i = 0; i < setParameter.NumberOfParameters; i++)
+            // For the expected number of times...
+            GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () =>
             {
                 // Recursively call this function to obtain a new argument
                 var newArgument = CreateArgument(setParameter.TypeOfParameters, nextObjectOfType);
 
-                // And update the resulting set
-                argumentsSet.Add(newArgument);
-            }
+                // And update the current list
+                arguments.Add(newArgument);
+            });
 
-            // And finally construct and return the set construction argument
-            return new SetConstructionArgument(argumentsSet);
+            // Finally construct and return the set construction argument
+            return new SetConstructionArgument(arguments);
         }
     }
 }

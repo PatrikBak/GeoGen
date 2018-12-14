@@ -31,6 +31,11 @@ namespace GeoGen.Core
         /// </summary>
         public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
 
+        /// <summary>
+        /// Gets the name of the construction.
+        /// </summary>
+        public override string Name => Type.ToString();
+
         #endregion
 
         #region Constructor

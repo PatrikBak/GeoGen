@@ -1,10 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {
+    public class Test
+    {
+        public static int a1;
+        public static int a2;
+        public static long t1;
+        public static long t2;
+    }
+
     /// <summary>
     /// A default implementation of <see cref="IConfigurationsManager"/>. This class uses
     /// an <see cref="IConfigurationConstructor"/> for creating configuration wrappers,
@@ -103,9 +112,14 @@ namespace GeoGen.Generator
                 if (!isCorrect)
                     continue;
 
+                Test.a2++;
+                var sw = new Stopwatch();
+                sw.Start();
                 // Let the constructor create a new wrapper
                 var configuration = _configurationConstructor.ConstructWrapper(newConfiguration, currentOutput.OriginalConfiguration);
-                
+                sw.Stop();
+                Test.t2 += sw.ElapsedMilliseconds; 
+
                 // Add the configuration to the container.
                 if (!_configurationsContainer.Add(configuration))
                 {

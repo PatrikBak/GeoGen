@@ -1,11 +1,13 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represent a constructed <see cref="ConfigurationObject"/>. It's defined by a <see cref="Construction"/>,
-    /// <see cref="Arguments"/> that match the construction signature, and an index (the construction could have more output objects).
+    /// Represent a <see cref="ConfigurationObject"/> that is composed of a <see cref="Core.Construction"/>, 
+    /// and <see cref="Arguments"/> that hold actual configuration objects from which this one is constructed.
     /// </summary>
     public class ConstructedConfigurationObject : ConfigurationObject
     {
@@ -62,6 +64,37 @@ namespace GeoGen.Core
         public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> arguments, int index = 0)
                 : this(construction, new Arguments(arguments), index)
         {
+        }
+
+        #endregion
+
+        #region Public abstract methods overrides
+
+        /// <summary>
+        /// Enumerates the objects that are internally used to create this object. The order of this objects
+        /// should match the order in which we can gradually construct them.
+        /// </summary>
+        /// <returns>A lazy enumerable of the internal objects.</returns>
+        public override IEnumerable<ConfigurationObject> InternalObjects() => PassedArguments.FlattenedList.SelectMany(obj => obj.AsEnumerable().Concat(obj.InternalObjects())).Distinct().Reverse();
+
+        #endregion
+
+        #region Protected abstract methods overrides
+
+        /// <summary>
+        /// Converts the object to a string using already set names of the objects.
+        /// </summary>
+        /// <param name="objectToStringMap"></param>
+        /// <returns>A human-readable string representation of the object.</returns>
+        protected override string ToString(IReadOnlyDictionary<ConfigurationObject, string> objectToStringMap)
+        {
+            // Compose the final string
+            return $"{Construction.Name}({string.Join(",", PassedArguments.FlattenedList.Select(obj => objectToStringMap[obj]))})";
+        }
+
+        public override string ToString()
+        {
+            return "Test";
         }
 
         #endregion

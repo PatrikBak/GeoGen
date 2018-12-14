@@ -1,13 +1,12 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a list of <see cref="ConstructionArgument"/> that should be passed 
-    /// to a <see cref="Construction"/> to create a <see cref="ConstructedConfigurationObject"/>.
-    /// It holds the flattened list of interior objects of the arguments that are evaluated lazily.
+    /// Represents a list of <see cref="ConstructionArgument"/> that are used to create <see cref="ConstructedConfigurationObject"/>s. 
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>
     {
@@ -22,7 +21,7 @@ namespace GeoGen.Core
         /// Gets the list of configuration objects that are obtained within the arguments
         /// in the order that we get if we recursively search through them from left to right. 
         /// For example: With { {A,B}, {C,D} } we might get A,B,C,D; or D,C,B,A. The order of objects
-        /// witin a set and sets itself is not deterministic. This list is lazily evaluated.
+        /// within a set  itself is not deterministic. This list is lazily evaluated.
         /// </summary>
         public IReadOnlyList<ConfigurationObject> FlattenedList => _flattenedListInitializer.Value;
 
@@ -54,7 +53,7 @@ namespace GeoGen.Core
         #region Private methods
 
         /// <summary>
-        /// Finds all objects in the arguments and flattens them to the list.
+        /// Finds all objects in the arguments and flattens them to a list.
         /// </summary>
         /// <returns>The objects list.</returns>
         private List<ConfigurationObject> ExtraxtInputObject()
@@ -62,7 +61,7 @@ namespace GeoGen.Core
             // Prepare the result
             var result = new List<ConfigurationObject>();
 
-            // Local function to extract object from an argument
+            // Local function to extract objects from an argument
             void Extract(ConstructionArgument argument)
             {
                 // If we have an object argument
@@ -79,17 +78,11 @@ namespace GeoGen.Core
                 var setArgument = (SetConstructionArgument)argument;
 
                 // We recursively call this function for internal arguments
-                foreach (var passedArgument in setArgument.PassedArguments)
-                {
-                    Extract(passedArgument);
-                }
+                setArgument.PassedArguments.ForEach(Extract);
             }
 
             // Now we just call our local function for all arguments
-            foreach (var argument in ArgumentsList)
-            {
-                Extract(argument);
-            }
+            ArgumentsList.ForEach(Extract);
 
             // And return the result
             return result;
