@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -10,15 +10,15 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IContextualContainer"/>.
     /// </summary>
-    internal class ContextualContainer : IContextualContainer
+    public class ContextualContainer : IContextualContainer
     {
         #region Private fields
 
         /// <summary>
         /// The dictionary mapping objects container to the map between geometrical objects
-        /// and analytical objects (from that container).
+        /// and analytic objects (from that container).
         /// </summary>
-        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>> _objects;
+        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects;
 
         /// <summary>
         /// The set of all old points in the container.
@@ -108,12 +108,12 @@ namespace GeoGen.Analyzer
             _oldCircles = new HashSet<CircleObject>();
             _newCircles = new HashSet<CircleObject>();
             _ids = new HashSet<int>();
-            _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticalObject>>();
+            _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
 
             // Initialize the objects dictionary
             foreach (var objectsContainer in manager)
             {
-                _objects.Add(objectsContainer, new Map<GeometricalObject, AnalyticalObject>());
+                _objects.Add(objectsContainer, new Map<GeometricalObject, AnalyticObject>());
             }
 
             // Add all objects
@@ -195,15 +195,15 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Gets the analytical representation of a given geometrical object in a given objects container.
+        /// Gets the analytic representation of a given geometrical object in a given objects container.
         /// </summary>
-        /// /// <typeparam name="T">The wanted type of the analytical object.</typeparam>
+        /// /// <typeparam name="T">The wanted type of the analytic object.</typeparam>
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
-        /// <returns>The analytical object.</returns>
-        public T GetAnalyticalObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticalObject
+        /// <returns>The analytic object.</returns>
+        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject
         {
-            // Find the right map and pull the analytical object from it
+            // Find the right map and pull the analytic object from it
             return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
         }
 
@@ -312,15 +312,15 @@ namespace GeoGen.Analyzer
             // We loop over containers
             foreach (var container in Manager)
             {
-                // Pull the analytical representation of this object. It must exist,
+                // Pull the analytic representation of this object. It must exist,
                 // which is a part of the contract of this class
-                var analyticalObject = container.Get(configurationObject);
+                var analyticObject = container.Get(configurationObject);
 
                 // Pull the map for this container
                 var map = _objects[container];
 
-                // If the map doesn't contain the analytical object
-                if (!map.ContainsRightKey(analyticalObject))
+                // If the map doesn't contain the analytic object
+                if (!map.ContainsRightKey(analyticObject))
                 {
                     // And the result is not set yet
                     if (result != null)
@@ -334,7 +334,7 @@ namespace GeoGen.Analyzer
                 }
 
                 // But if it exists in the container, we pull it's geometrical version.
-                var geometricalObject = map.GetLeftValue(analyticalObject);
+                var geometricalObject = map.GetLeftValue(analyticObject);
 
                 // If the result has been already set to something else
                 if (result != null && !ReferenceEquals(result, geometricalObject))
@@ -369,11 +369,11 @@ namespace GeoGen.Analyzer
                 // Pull the configuration object representing this object
                 var configurationPoint = geometricalObject.ConfigurationObject;
 
-                // Find the analytical version of this object 
-                var analyticalObject = container.Get(configurationPoint);
+                // Find the analytic version of this object 
+                var analyticObject = container.Get(configurationPoint);
 
                 // Add these objects to the map
-                map.Add(geometricalObject, analyticalObject);
+                map.Add(geometricalObject, analyticObject);
             }
         }
 
@@ -458,7 +458,7 @@ namespace GeoGen.Analyzer
         /// <param name="isNew">Indicates if a new line should be added to the new lines set or to the old lines set.</param>
         private void ResolveLine(PointObject point1, PointObject point2, bool isNew)
         {
-            // Initialize map that caches created analytical representations of this line
+            // Initialize map that caches created analytic representations of this line
             var containersMap = new Dictionary<IObjectsContainer, Line>();
 
             // Initialize the resulting line object (that is going to be attempted to find)
@@ -467,24 +467,24 @@ namespace GeoGen.Analyzer
             // Iterate over containers
             foreach (var container in Manager)
             {
-                // Pull the map between geometrical and analytical objects
+                // Pull the map between geometrical and analytic objects
                 var objects = _objects[container];
 
-                // Find the analytical representations of the points in the map
+                // Find the analytic representations of the points in the map
                 var p1 = (Point) objects.GetRightValue(point1);
                 var p2 = (Point) objects.GetRightValue(point2);
 
-                // Construct the analytical line
-                var analyticalLine = new Line(p1, p2);
+                // Construct the analytic line
+                var analyticLine = new Line(p1, p2);
 
                 // Cache the result
-                containersMap.Add(container, analyticalLine);
+                containersMap.Add(container, analyticLine);
 
                 // If the line is present in the map
-                if (objects.ContainsRightKey(analyticalLine))
+                if (objects.ContainsRightKey(analyticLine))
                 {
                     // Then pull the geometrical line
-                    var newResult = objects.GetLeftValue(analyticalLine);
+                    var newResult = objects.GetLeftValue(analyticLine);
 
                     // If the current result hasn't been set and is distinct
                     // from the pulled line, then we have an inconsistency
@@ -514,7 +514,7 @@ namespace GeoGen.Analyzer
             point1.Lines.Add(result);
             point2.Lines.Add(result);
 
-            // And finally we can use the cached analytical versions of the line
+            // And finally we can use the cached analytic versions of the line
             // to update the objects dictionary. We iterate over the cache dictionary
             foreach (var pair in containersMap)
             {
@@ -539,7 +539,7 @@ namespace GeoGen.Analyzer
         /// <param name="isNew">Indicates if a new circle should be added to the new circles set or to the old circles set.</param>
         private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3, bool isNew)
         {
-            // Initialize map that caches creates analytical representations of this line
+            // Initialize map that caches creates analytic representations of this line
             var containersMap = new Dictionary<IObjectsContainer, Circle>();
 
             // Initialize the resulting circle
@@ -551,21 +551,21 @@ namespace GeoGen.Analyzer
             // Iterate over containers
             foreach (var container in Manager)
             {
-                // Pull the map between geometrical and analytical objects
+                // Pull the map between geometrical and analytic objects
                 var objects = _objects[container];
 
                 var p1 = (Point)objects.GetRightValue(point1);
                 var p2 = (Point)objects.GetRightValue(point2);
                 var p3 = (Point)objects.GetRightValue(point3);
 
-                // Prepare the analytical circle.
-                Circle analyticalCircle;
+                // Prepare the analytic circle.
+                Circle analyticCircle;
 
                 try
                 {
                     // Try to invoke the constructor. It may throw and argument exception
                     // if the provided points are collinear
-                    analyticalCircle = new Circle(p1, p2, p3);
+                    analyticCircle = new Circle(p1, p2, p3);
 
                     // Otherwise they're not collinear
                     // If it's been marked that they are, then we have inconsistency
@@ -590,14 +590,14 @@ namespace GeoGen.Analyzer
                 }
 
                 // If we're here, then the points are not collinear and we have their
-                // analytical representation. We can cache it.
-                containersMap.Add(container, analyticalCircle);
+                // analytic representation. We can cache it.
+                containersMap.Add(container, analyticCircle);
 
                 // If the circle is present in the map
-                if (objects.ContainsRightKey(analyticalCircle))
+                if (objects.ContainsRightKey(analyticCircle))
                 {
                     // Then we can pull the geometrical circle 
-                    var newResult = objects.GetLeftValue(analyticalCircle);
+                    var newResult = objects.GetLeftValue(analyticCircle);
 
                     // If the current result hasn't been set and is distinct
                     // from the pulled circle, then we have an inconsistency
@@ -634,7 +634,7 @@ namespace GeoGen.Analyzer
             point2.Circles.Add(result);
             point3.Circles.Add(result);
 
-            // And finally we can use the cached analytical versions of the circle
+            // And finally we can use the cached analytic versions of the circle
             // So we iterate over the cache dictionary
             foreach (var pair in containersMap)
             {
@@ -709,12 +709,12 @@ namespace GeoGen.Analyzer
             // Iterate over containers
             foreach (var container in Manager)
             {
-                // Pull analytical representations of the objects
+                // Pull analytic representations of the objects
                 var point = (Point) _objects[container].GetRightValue(pointObject);
-                var analyticalObject = _objects[container].GetRightValue(geometricalObject);
+                var analyticObject = _objects[container].GetRightValue(geometricalObject);
 
                 // Let the helper decide if the point lies on the object
-                var liesOn = AnalyticalHelpers.LiesOn(analyticalObject, point);
+                var liesOn = AnalyticHelpers.LiesOn(analyticObject, point);
 
                 // If the result has been set and it differs from the currently 
                 // found value, then we have inconsistency

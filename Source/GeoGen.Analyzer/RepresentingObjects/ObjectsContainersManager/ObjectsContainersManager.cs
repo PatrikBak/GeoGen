@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainersManager"/>.
     /// </summary>
-    internal class ObjectsContainersManager : IObjectsContainersManager
+    public class ObjectsContainersManager : IObjectsContainersManager
     {
         #region Public constants 
 
@@ -19,7 +19,7 @@ namespace GeoGen.Analyzer
 
         #endregion
 
-        #region Private fields
+        #region Dependencies
 
         /// <summary>
         /// The list of all objects containers.
@@ -76,7 +76,7 @@ namespace GeoGen.Analyzer
                     // If an inconsistency occurs, mark it
                     _tracker?.MarkInconsistency();
 
-                    // And reconstruct all containers
+                    // And reconstruct all the containers
                     foreach (var container in _containers)
                     {
                         container.Reconstruct();

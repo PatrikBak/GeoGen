@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.LineTangentToCircle"/>.
     /// </summary>
-    internal class LineTangentToCircleVerifier : TheoremVerifierBase
+    public class LineTangentToCircleVerifier : TheoremVerifierBase
     {
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
@@ -84,12 +84,12 @@ namespace GeoGen.Analyzer
                 // Construct the verifier function
                 bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // Pull analytical circles representing each one
-                    var analyticalLine = container.GetAnalyticalObject<Line>(line, objectsContainer);
-                    var analyticalCircle = container.GetAnalyticalObject<Circle>(circle, objectsContainer);
+                    // Pull analytic circles representing each one
+                    var analyticLine = container.GetAnalyticObject<Line>(line, objectsContainer);
+                    var analyticCircle = container.GetAnalyticObject<Circle>(circle, objectsContainer);
 
                     // Return if there are tangent to each other
-                    return analyticalCircle.IsTangentTo(analyticalLine);
+                    return analyticCircle.IsTangentTo(analyticLine);
                 }
 
                 // Construct the output

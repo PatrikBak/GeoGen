@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// in a single configuration. The main goal is to have a line or a circle
     /// that know all configuration points that it contains.
     /// </summary>
-    internal abstract class GeometricalObject
+    public abstract class GeometricalObject
     {
         #region Public properties
 

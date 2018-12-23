@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a query that can be performed on a <see cref="IContextualContainer"/>.
     /// </summary>
-    internal class ContexualContainerQuery
+    public class ContexualContainerQuery
     {
         /// <summary>
         /// Represents a type of geometrical objects that we're looking for.

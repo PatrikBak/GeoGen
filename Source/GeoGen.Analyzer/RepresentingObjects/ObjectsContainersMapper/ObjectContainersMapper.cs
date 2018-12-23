@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IObjectContainersMapper"/>.
     /// </summary>
-    internal class ObjectContainersMapper : IObjectContainersMapper
+    public class ObjectContainersMapper : IObjectContainersMapper
     {
         #region Private fields
 
@@ -46,13 +46,10 @@ namespace GeoGen.Analyzer
         /// <returns>The manager.</returns>
         public IObjectsContainersManager Get(Configuration configuration)
         {
-            // Pull id
-            var id = configuration.Id ?? throw new AnalyzerException("The id of the configuration must be set");
-
             try
             {
                 // Try return the result
-                return _configurationIdToManagers[id];
+                return _configurationIdToManagers[configuration.Id];
             }
             catch (KeyNotFoundException)
             {
@@ -67,16 +64,13 @@ namespace GeoGen.Analyzer
         /// <returns>The manager.</returns>
         public IObjectsContainersManager Create(Configuration configuration)
         {
-            // Pull id
-            var id = configuration.Id ?? throw new AnalyzerException("The id of the configuration must be set");
-
             try
             {
                 // Create a new manager
                 var manager = _factory.Create();
 
                 // Try to add the id and the new manager
-                _configurationIdToManagers.Add(id, manager);
+                _configurationIdToManagers.Add(configuration.Id, manager);
 
                 // Return the manager
                 return manager;

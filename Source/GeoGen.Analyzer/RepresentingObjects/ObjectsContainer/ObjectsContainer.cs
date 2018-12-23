@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -10,14 +10,14 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IObjectsContainer"/>.
     /// </summary>
-    internal class ObjectsContainer : IObjectsContainer
+    public class ObjectsContainer : IObjectsContainer
     {
         #region Private fields
 
         /// <summary>
-        /// The map mapping analytical objects with the ids of corresponding configuration objects.
+        /// The map mapping analytic objects with the ids of corresponding configuration objects.
         /// </summary>
-        private readonly Map<AnalyticalObject, int> _objectsDictionary;
+        private readonly Map<AnalyticObject, int> _objectsDictionary;
 
         /// <summary>
         /// The dictionary mapping ids of configuration objects to objects itself.
@@ -25,7 +25,7 @@ namespace GeoGen.Analyzer
         private readonly Dictionary<int, ConfigurationObject> _configurationObjects;
 
         /// <summary>
-        /// The dictionary mapping accepted types of analytical objects to 
+        /// The dictionary mapping accepted types of analytic objects to 
         /// their corresponding configuration object types.
         /// </summary>
         private readonly IReadOnlyDictionary<Type, ConfigurationObjectType> _correctTypes;
@@ -53,7 +53,7 @@ namespace GeoGen.Analyzer
         public ObjectsContainer(IInconsistenciesTracker tracker = null)
         {
             _tracker = tracker;
-            _objectsDictionary = new Map<AnalyticalObject, int>();
+            _objectsDictionary = new Map<AnalyticObject, int>();
             _configurationObjects = new Dictionary<int, ConfigurationObject>();
             _correctTypes = new Dictionary<Type, ConfigurationObjectType>
             {
@@ -74,14 +74,14 @@ namespace GeoGen.Analyzer
         /// returns either null, when the construction can't be performed, or a list
         /// of configuration objects. In this list, every configuration objects
         /// corresponds to the object in the provided objects enumerable. If the 
-        /// analytical version of the object is already present in the container, 
+        /// analytic version of the object is already present in the container, 
         /// then these objects will be the same, otherwise the object in the list will
         /// be the one that representation the duplicate object.
         /// </summary>
-        /// <param name="objects">The analytical objects to be constructed.</param>
+        /// <param name="objects">The analytic objects to be constructed.</param>
         /// <param name="constructor">The function that performs the construction.</param>
         /// <returns>null, if the construction failed; or the representation of equal objects from the container.</returns>
-        public List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<AnalyticalObject>> constructor)
+        public List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<AnalyticObject>> constructor)
         {
             // Enumerate the objects
             var objectsList = objects.ToList();
@@ -89,17 +89,17 @@ namespace GeoGen.Analyzer
             // Prepare local function that performs the construction and returns the output
             List<ConfigurationObject> Construct()
             {
-                // Perform construction to obtain the analytical objects
-                var analyticalObjects = constructor(this);
+                // Perform construction to obtain the analytic objects
+                var analyticObjects = constructor(this);
 
                 // If there are null, the construction has failed
-                if (analyticalObjects is null)
+                if (analyticObjects is null)
                     return null;
 
                 // Otherwise add all gotten objects and return the results of the Add method
-                // (that returns either the same object, if the analytical object is not present, or 
-                // the configuration object corresponding to the duplicate version of the analytical object)
-                return objectsList.Select((o, i) => Add(analyticalObjects[i], o)).ToList();
+                // (that returns either the same object, if the analytic object is not present, or 
+                // the configuration object corresponding to the duplicate version of the analytic object)
+                return objectsList.Select((o, i) => Add(analyticObjects[i], o)).ToList();
             }
 
             // Prepare local function that finds out if a given result of the Construct 
@@ -125,12 +125,12 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Gets the analytical representation of a given configuration object. 
+        /// Gets the analytic representation of a given configuration object. 
         /// </summary>
-        /// <typeparam name="T">The type of analytical object.</typeparam>
+        /// <typeparam name="T">The type of analytic object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytical object.</returns>
-        public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject
+        /// <returns>The analytic object.</returns>
+        public T Get<T>(ConfigurationObject configurationObject) where T : AnalyticObject
         {
             // Pull the id
             var id = configurationObject.Id;
@@ -142,7 +142,7 @@ namespace GeoGen.Analyzer
 
                 // Try to cast the result to the requested type
                 if (!(result is T castedResult))
-                    throw new AnalyzerException("Incorrect asked type of the analytical object.");
+                    throw new AnalyzerException("Incorrect asked type of the analytic object.");
 
                 // And return it
                 return castedResult;
@@ -154,39 +154,39 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Gets the analytical representation of a given configuration object. 
+        /// Gets the analytic representation of a given configuration object. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytical object.</returns>
-        public AnalyticalObject Get(ConfigurationObject configurationObject)
+        /// <returns>The analytic object.</returns>
+        public AnalyticObject Get(ConfigurationObject configurationObject)
         {
             // Little hack to utilize the other Get method
-            return Get<AnalyticalObject>(configurationObject);
+            return Get<AnalyticObject>(configurationObject);
         }
 
         /// <summary>
-        /// Gets the configuration object that corresponds to a given analytical object.
+        /// Gets the configuration object that corresponds to a given analytic object.
         /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
+        /// <param name="analyticObject">The analytic object.</param>
         /// <returns>The configuration objects, if there's an appropriate one; null otherwise.</returns>
-        public ConfigurationObject Get(AnalyticalObject analyticalObject)
+        public ConfigurationObject Get(AnalyticObject analyticObject)
         {
             // If the object is in the map, return the corresponding object
-            if (_objectsDictionary.ContainsLeftKey(analyticalObject))
-                return _configurationObjects[_objectsDictionary.GetRightValue(analyticalObject)];
+            if (_objectsDictionary.ContainsLeftKey(analyticObject))
+                return _configurationObjects[_objectsDictionary.GetRightValue(analyticObject)];
 
             // Otherwise return null
             return null;
         }
 
         /// <summary>
-        /// Finds out if a given analytical object is present if the container.
+        /// Finds out if a given analytic object is present if the container.
         /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
+        /// <param name="analyticObject">The analytic object.</param>
         /// <returns>true, if the object is present in the container; false otherwise.</returns>
-        public bool Contains(AnalyticalObject analyticalObject)
+        public bool Contains(AnalyticObject analyticObject)
         {
-            return _objectsDictionary.ContainsLeftKey(analyticalObject);
+            return _objectsDictionary.ContainsLeftKey(analyticObject);
         }
 
         /// <summary>
@@ -230,29 +230,29 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Adds a given object to the container. If the analytical version 
+        /// Adds a given object to the container. If the analytic version 
         /// of the object is already present in the container, then it will return
         /// the instance the <see cref="ConfigurationObject"/> that represents the 
         /// given object. If the object is new, it will return the original object.
         /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
+        /// <param name="analyticObject">The analytic object.</param>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The representation of an equal object.</returns>
-        private ConfigurationObject Add(AnalyticalObject analyticalObject, ConfigurationObject configurationObject)
+        private ConfigurationObject Add(AnalyticObject analyticObject, ConfigurationObject configurationObject)
         {
             // Check if the types of objects correspond. This could save us some time while finding an error like this
-            if (_correctTypes[analyticalObject.GetType()] != configurationObject.ObjectType)
+            if (_correctTypes[analyticObject.GetType()] != configurationObject.ObjectType)
                 throw new AnalyzerException("Can't add objects of wrong types to the container.");
 
             // If the object is in the dictionary, return its configuration object version
-            if (_objectsDictionary.ContainsLeftKey(analyticalObject))
-                return _configurationObjects[_objectsDictionary.GetRightValue(analyticalObject)];
+            if (_objectsDictionary.ContainsLeftKey(analyticObject))
+                return _configurationObjects[_objectsDictionary.GetRightValue(analyticObject)];
 
             // Pull the id
             var id = configurationObject.Id;
 
             // Otherwise add the object to the dictionary
-            _objectsDictionary.Add(analyticalObject, id);
+            _objectsDictionary.Add(analyticObject, id);
 
             // Update the configuration objects dictionary as well, if needed
             if (!_configurationObjects.ContainsKey(id))

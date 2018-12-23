@@ -15,18 +15,8 @@ namespace GeoGen.Core
     /// is important when the configuration defines a <see cref="ComposedConstruction"/>. 
     /// All objects are supposed to be mutually distinct.
     /// </summary>
-    public class Configuration
+    public class Configuration : IdentifiedObject
     {
-        #region Public properties
-
-        /// <summary>
-        /// Gets or sets the id of this configuration. The id is used by
-        /// some generator and analyzer services to perform caching. 
-        /// </summary>
-        public int? Id { get; set; }
-
-        #endregion
-
         #region Private fields
 
         /// <summary>

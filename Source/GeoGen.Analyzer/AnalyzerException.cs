@@ -6,7 +6,7 @@ namespace GeoGen.Analyzer
     /// Represents an exception that is thrown when something wrong
     /// happens in the analyzer module. 
     /// </summary>
-    internal class AnalyzerException : Exception
+    public class AnalyzerException : Exception
     {
         public AnalyzerException()
         {

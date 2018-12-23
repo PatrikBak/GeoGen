@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// Represents a geometrical point that is aware of all lines and circles
     /// that it belongs to.
     /// </summary>
-    internal class PointObject : GeometricalObject
+    public class PointObject : GeometricalObject
     {
         #region Public properties
 

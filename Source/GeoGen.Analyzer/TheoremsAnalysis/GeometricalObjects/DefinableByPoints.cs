@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// Represents a <see cref="GeometricalObject"/> that can be defined by 
     /// <see cref="PointObject"/>s.
     /// </summary>
-    internal abstract class DefinableByPoints : GeometricalObject
+    public abstract class DefinableByPoints : GeometricalObject
     {
         #region Public properties
 

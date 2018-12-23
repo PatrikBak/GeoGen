@@ -1,4 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry;
+﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.EqualAngles"/>.
     /// </summary>
-    internal class EqualAnglesVerifier : TheoremVerifierBase
+    public class EqualAnglesVerifier : TheoremVerifierBase
     {
         #region Private fields
 
@@ -88,11 +88,11 @@ namespace GeoGen.Analyzer
             RoundedDouble AngleBetween((LineObject line1, LineObject line2) lines, IObjectsContainer objectsContainer)
             {
                 // Pull analytial versions of these lines
-                var analyticalLine1 = container.GetAnalyticalObject<Line>(lines.line1, objectsContainer);
-                var analyticalLine2 = container.GetAnalyticalObject<Line>(lines.line2, objectsContainer);
+                var analyticLine1 = container.GetAnalyticObject<Line>(lines.line1, objectsContainer);
+                var analyticLine2 = container.GetAnalyticObject<Line>(lines.line2, objectsContainer);
 
                 // Return their distance
-                return (RoundedDouble)analyticalLine1.AngleBetween(analyticalLine2);
+                return (RoundedDouble)analyticLine1.AngleBetween(analyticLine2);
             }
 
             // Prepare a dictionary mapping angles to lists of pairs of lines forming an angel of this size

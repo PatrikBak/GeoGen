@@ -1,14 +1,14 @@
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a container that holds <see cref="GeometricalObject"/>s. This container
-    /// is responsible for creating them and mapping them to <see cref="AnalyticalObject"/>s.
+    /// is responsible for creating them and mapping them to <see cref="AnalyticObject"/>s.
     /// </summary>
-    internal interface IContextualContainer
+    public interface IContextualContainer
     {
         /// <summary>
         /// Gets the objects container manager that holds all the  representations of 
@@ -26,12 +26,12 @@ namespace GeoGen.Analyzer
         IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject;
 
         /// <summary>
-        /// Gets the analytical representation of a given geometrical object in a given objects container.
+        /// Gets the analytic representation of a given geometrical object in a given objects container.
         /// </summary>
-        /// /// <typeparam name="T">The wanted type of the analytical object.</typeparam>
+        /// /// <typeparam name="T">The wanted type of the analytic object.</typeparam>
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
-        /// <returns>The analytical object.</returns>
-        T GetAnalyticalObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticalObject;
+        /// <returns>The analytic object.</returns>
+        T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject;
     }
 }

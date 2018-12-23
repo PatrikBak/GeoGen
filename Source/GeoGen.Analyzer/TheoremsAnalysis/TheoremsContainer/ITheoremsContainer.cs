@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// Represents a simple container that is able to recognize equal theorems. It is currently used
     /// as a container of default theorems provided by object constructors.
     /// </summary>
-    internal interface ITheoremsContainer : IEnumerable<Theorem>
+    public interface ITheoremsContainer : IEnumerable<Theorem>
     {
         /// <summary>
         /// Adds a given theorem to the container.

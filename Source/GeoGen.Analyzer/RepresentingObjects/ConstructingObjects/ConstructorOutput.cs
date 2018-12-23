@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -8,13 +8,13 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents an output of a <see cref="IObjectsConstructor"/>.
     /// </summary>
-    internal class ConstructorOutput
+    public class ConstructorOutput
     {
         /// <summary>
-        /// Gets or sets the constructor function that constructs analytical objects
+        /// Gets or sets the constructor function that constructs analytic objects
         /// object using an <see cref="IObjectsContainer"/> container.
         /// </summary>
-        public Func<IObjectsContainer, List<AnalyticalObject>> ConstructorFunction { get; set; }
+        public Func<IObjectsContainer, List<AnalyticObject>> ConstructorFunction { get; set; }
 
         /// <summary>
         /// Gets or sets the function that creates the list of default theorems.

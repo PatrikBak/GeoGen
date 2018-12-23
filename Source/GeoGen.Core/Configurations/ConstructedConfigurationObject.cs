@@ -92,11 +92,6 @@ namespace GeoGen.Core
             return $"{Construction.Name}({string.Join(",", PassedArguments.FlattenedList.Select(obj => objectToStringMap[obj]))})";
         }
 
-        public override string ToString()
-        {
-            return "Test";
-        }
-
         #endregion
     }
 }

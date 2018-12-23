@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Default implementation of <see cref="INeedlessObjectsAnalyzer"/>.
     /// </summary>
-    internal class NeedlessObjectsAnalyzer : INeedlessObjectsAnalyzer
+    public class NeedlessObjectsAnalyzer : INeedlessObjectsAnalyzer
     {
         #region Private fields
 

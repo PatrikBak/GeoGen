@@ -1,5 +1,5 @@
 ﻿using System;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// <see cref="IObjectsContainersManager"/> to safely handle possible inconsistencies.
     /// This factory creates instances of <see cref="ContextualContainer"/>.
     /// </summary>
-    internal class ContextualContainerFactory : IContextualContainerFactory
+    public class ContextualContainerFactory : IContextualContainerFactory
     {
         #region Private fields
 

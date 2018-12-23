@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.ConcurrentObjects"/>.
     /// </summary>
-    internal class ConcurrentObjectsVerifier : TheoremVerifierBase
+    public class ConcurrentObjectsVerifier : TheoremVerifierBase
     {
         #region Private fields
 
@@ -88,11 +88,11 @@ namespace GeoGen.Analyzer
             HashSet<Point> FindNewIntersections((GeometricalObject object1, GeometricalObject object2) objects, IObjectsContainer objectsContainer)
             {
                 // Pull analytial versions of these objects
-                var analyticalObject1 = container.GetAnalyticalObject<AnalyticalObject>(objects.object1, objectsContainer);
-                var analyticalObject2 = container.GetAnalyticalObject<AnalyticalObject>(objects.object2, objectsContainer);
+                var analyticObject1 = container.GetAnalyticObject<AnalyticObject>(objects.object1, objectsContainer);
+                var analyticObject2 = container.GetAnalyticObject<AnalyticObject>(objects.object2, objectsContainer);
 
                 // Let the helper method intersect them
-                return AnalyticalHelpers.Intersect(analyticalObject1, analyticalObject2)
+                return AnalyticHelpers.Intersect(analyticObject1, analyticObject2)
                     // And pick the ones that are not in the container
                     .Where(point => !objectsContainer.Contains(point))
                     // And cast the result to the set
@@ -144,11 +144,11 @@ namespace GeoGen.Analyzer
                         if (ReferenceEquals(firstContainer, objectsContainer))
                             return true;
 
-                        // Cast the objects to their analytical versions
-                        var analyticalObjects = involvedObjects.Select(lineOrCircle => container.GetAnalyticalObject<AnalyticalObject>(lineOrCircle, objectsContainer));
+                        // Cast the objects to their analytic versions
+                        var analyticObjects = involvedObjects.Select(lineOrCircle => container.GetAnalyticObject<AnalyticObject>(lineOrCircle, objectsContainer));
 
                         // Let the helper function intersection them
-                        var intersections = AnalyticalHelpers.Intersect(analyticalObjects);
+                        var intersections = AnalyticHelpers.Intersect(analyticObjects);
 
                         // Return true if and only if there is an intersection
                         return intersections.Any();                            

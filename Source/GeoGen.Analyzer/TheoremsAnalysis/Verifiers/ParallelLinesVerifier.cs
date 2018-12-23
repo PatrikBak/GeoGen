@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.ParallelLines"/>.
     /// </summary>
-    internal class ParallelLinesVerifier : TheoremVerifierBase
+    public class ParallelLinesVerifier : TheoremVerifierBase
     {
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
@@ -65,12 +65,12 @@ namespace GeoGen.Analyzer
                 // Construct the verifier function
                 bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // Pull analytical lines representing each one
-                    var analyticalLine1 = container.GetAnalyticalObject<Line>(line1, objectsContainer);
-                    var analyticalLine2 = container.GetAnalyticalObject<Line>(line2, objectsContainer);
+                    // Pull analytic lines representing each one
+                    var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
+                    var analyticLine2 = container.GetAnalyticObject<Line>(line2, objectsContainer);
 
                     // Return if there are parallel
-                    return analyticalLine1.IsParallelTo(analyticalLine2);
+                    return analyticLine1.IsParallelTo(analyticLine2);
                 }
 
                 // Construct the output

@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for the type <see cref="TheoremType.ConcyclicPoints"/>.
     /// </summary>
-    internal class ConcyclicPointsVerifier : TheoremVerifierBase
+    public class ConcyclicPointsVerifier : TheoremVerifierBase
     {
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.

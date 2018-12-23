@@ -1,4 +1,4 @@
-﻿using GeoGen.AnalyticalGeometry;
+﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.EqualLineSegments"/>.
     /// </summary>
-    internal class EqualLineSegmentsVerifier : TheoremVerifierBase
+    public class EqualLineSegmentsVerifier : TheoremVerifierBase
     {
         #region Private fields
 
@@ -88,11 +88,11 @@ namespace GeoGen.Analyzer
             RoundedDouble DistanceBetween((PointObject point1, PointObject point2) lineSegment, IObjectsContainer objectsContainer)
             {
                 // Pull analytial versions of this points
-                var analyticalPoint1 = container.GetAnalyticalObject<Point>(lineSegment.point1, objectsContainer);
-                var analyticalPoint2 = container.GetAnalyticalObject<Point>(lineSegment.point2, objectsContainer);
+                var analyticPoint1 = container.GetAnalyticObject<Point>(lineSegment.point1, objectsContainer);
+                var analyticPoint2 = container.GetAnalyticObject<Point>(lineSegment.point2, objectsContainer);
 
                 // Return their distance
-                return (RoundedDouble)analyticalPoint1.DistanceTo(analyticalPoint2);
+                return (RoundedDouble)analyticPoint1.DistanceTo(analyticPoint2);
             }
 
             // Prepare a dictionary mapping line segments lengths to lists of line segments with this length

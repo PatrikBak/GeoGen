@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// of verifying theorems of a single type. This type is inferred from a class name 
     /// that should be in the form "{type}Verifier".
     /// </summary>
-    internal abstract class TheoremVerifierBase : ITheoremVerifier
+    public abstract class TheoremVerifierBase : ITheoremVerifier
     {
         #region ITheoremVerifier properties
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -7,17 +7,17 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.IntersectionOfLines"/>>.
     /// </summary>
-    internal class IntersectionOfLinesConstructor : PredefinedConstructorBase
+    public class IntersectionOfLinesConstructor : PredefinedConstructorBase
     {
         /// <summary>
-        /// Constructs a list of analytical objects from a given list of 
+        /// Constructs a list of analytic objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
-        /// obtain the actual analytical versions of these objects.
+        /// obtain the actual analytic versions of these objects.
         /// </summary>
         /// <param name="flattenedObjects">The flattened argument objects.</param>
         /// <param name="container">The objects container.</param>
-        /// <returns>The list of constructed analytical objects.</returns>
-        protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
+        /// <returns>The list of constructed analytic objects.</returns>
+        protected override List<AnalyticObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
             // Pull passed lines
             var line1 = container.Get<Line>(flattenedObjects[0]);
@@ -27,7 +27,7 @@ namespace GeoGen.Analyzer
             var intersection = line1.IntersectionWith(line2);
 
             // If it's null, return null; otherwise return the wrapped intersection
-            return intersection == null ? null : new List<AnalyticalObject> {intersection};
+            return intersection == null ? null : new List<AnalyticObject> {intersection};
         }
 
         /// <summary>

@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents a verifier that generates <see cref="PotentialTheorem"/>s.
     /// </summary>
-    internal interface ITheoremVerifier
+    public interface ITheoremVerifier
     {
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.

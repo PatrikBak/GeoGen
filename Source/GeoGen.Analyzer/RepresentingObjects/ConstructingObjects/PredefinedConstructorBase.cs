@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// A base implementation of <see cref="IPredefinedConstructor"/> that infers the
     /// type of the construction from a name that should be in the form "{type}Constructor".
     /// </summary>
-    internal abstract class PredefinedConstructorBase : ObjectsConstructorBase, IPredefinedConstructor
+    public abstract class PredefinedConstructorBase : ObjectsConstructorBase, IPredefinedConstructor
     {
         #region IPredefinedConstructor properties
 

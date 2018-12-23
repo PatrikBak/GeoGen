@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents a geometrical line that is aware of the points on it.
     /// </summary>
-    internal class LineObject : DefinableByPoints
+    public class LineObject : DefinableByPoints
     {
         #region DefineableByPoints properties
 

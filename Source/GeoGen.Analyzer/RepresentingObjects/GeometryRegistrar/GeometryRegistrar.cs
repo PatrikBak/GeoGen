@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="IGeometryRegistrar"/>. 
     /// </summary>
-    internal class GeometryRegistrar : IGeometryRegistrar
+    public class GeometryRegistrar : IGeometryRegistrar
     {
         #region Private fields
 

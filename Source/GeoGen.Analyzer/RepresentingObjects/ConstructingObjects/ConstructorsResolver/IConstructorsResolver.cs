@@ -6,7 +6,7 @@ namespace GeoGen.Analyzer
     /// Represents a service that is able to find the right
     /// <see cref="IObjectsConstructor"/> for a given construction.
     /// </summary>
-    internal interface IConstructorsResolver
+    public interface IConstructorsResolver
     {
         /// <summary>
         /// Find the corresponding <see cref="IObjectsConstructor"/> for 

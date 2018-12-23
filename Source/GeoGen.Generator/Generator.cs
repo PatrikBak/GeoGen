@@ -1,128 +1,151 @@
-﻿using System;
+﻿using GeoGen.Analyzer;
+using GeoGen.Core;
+using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Analyzer;
-using GeoGen.Core;
 
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="IGenerator"/>. The generator
-    /// uses an <see cref="IConfigurationsManager"/> for performing the gradual
-    /// constructing, an <see cref="IObjectsConstructor"/> for constructing
-    /// new output for each configuration, and an <see cref="ITheoremsAnalyzer"/>
-    /// for performing the actual analysis of theorems.
+    /// The default implemention of <see cref="IGenerator"/>.
     /// </summary>
-    internal class Generator : IGenerator
+    public class Generator : IGenerator
     {
-        #region Private fields
+        #region Dependencies
 
         /// <summary>
-        /// The manager used for the gradual generation of configurations.
+        /// The constructor of new objects that should be added to configurations.
         /// </summary>
-        private readonly IConfigurationsManager _configurationsManager;
+        private readonly IObjectsGenerator _constructor;
 
         /// <summary>
-        /// The constructor of new <see cref="ConstructorOutput"/>s for each configuration.
+        /// The validator of newnly generated configurations.
         /// </summary>
-        private readonly IObjectsConstructor _objectsConstructor;
+        private readonly IConfigurationsValidator _validator;
 
         /// <summary>
-        /// The analyzer that performs the actual theorems finding.
+        /// The analyzer of theorems in the generated configurations.
         /// </summary>
         private readonly ITheoremsAnalyzer _analyzer;
 
+        #endregion
+
+        #region Private fields
+
         /// <summary>
-        /// The container of all the generated objects.
+        /// The configurations that are to be extended
         /// </summary>
-        private IConfigurationObjectsContainer _container;
+        private List<GeneratedConfiguration> _currentLayer;
+
+        /// <summary>
+        /// The id that is prepared for a new configuration.
+        /// </summary>
+        private int _currentConfigurationId;
+
+        /// <summary>
+        /// The input for the generator.
+        /// </summary>
+        private readonly GeneratorInput _input;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="Generator"/> class.
         /// </summary>
-        /// <param name="manager">The manager of generated configurations.</param>
-        /// <param name="constructor">The constructor of new objects to configurations.</param>
-        /// <param name="container">The container of all the generated objects.</param>
-        /// <param name="analyzer">The analyzer of generated configurations.</param>
-        /// <param name="iterations">The number of iterations to be performed.</param>
-        public Generator(IConfigurationsManager manager, IObjectsConstructor constructor, IConfigurationObjectsContainer container, ITheoremsAnalyzer analyzer)
+        /// <param name="input">The input for the generator.</param>
+        /// <param name="generator">The generator of new objects that should be added to configurations.</param>
+        /// <param name="validator">The validator of newnly generated configurations.</param>
+        /// <param name="analyzer">The analyzer of theorems in the generated configurations.</param>
+        public Generator(GeneratorInput input, IObjectsGenerator generator, IConfigurationsValidator validator, ITheoremsAnalyzer analyzer)
         {
-            _configurationsManager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _container = container ?? throw new ArgumentNullException(nameof(container));
+            _input = input ?? throw new ArgumentNullException(nameof(input));
+            _constructor = generator ?? throw new ArgumentNullException(nameof(generator));
+            _validator = validator ?? throw new ArgumentNullException(nameof(validator));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-            _objectsConstructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
         }
 
         #endregion
 
-        #region IGenerator methods
+        #region IGenerator implementation
 
         /// <summary>
         /// Starts the generation process and lazily returns the output.
         /// </summary>
         /// <returns>The generator output enumerable.</returns>
-        public IEnumerable<GeneratorOutput> Generate(int numberOfIterations)
+        public IEnumerable<GeneratorOutput> Generate()
         {
-            // Add initial objects
+            #region Initialization
 
-            // Executed the needed number of iterations
-            return Enumerable.Range(0, numberOfIterations)
-                    // In each create many configurations
-                    .SelectMany(iterationIndex =>
-                    {
-                        // From the container
-                        var outputForNewLayer = _configurationsManager
-                                // Take the current layer
-                                .CurrentLayer
-                                // Construct outputs from each of them
-                                .SelectMany(configuration => _objectsConstructor.GenerateOutput(configuration))
-                                // Make sure the objects are identified 
-                                .Select(output =>
-                                {
-                                    // Go through all the constructed objects
-                                    for (var i = 0; i < output.ConstructedObjects.Count; i++)
-                                    {
-                                        // Add the current one
-                                        _container.Add(output.ConstructedObjects[i], out var equalObject);
+            // Create the first configuration
+            var firstConfiguration = new GeneratedConfiguration(_input.InitialConfiguration);
 
-                                        // If there is an equal object...
-                                        if (equalObject != null)
-                                        {
-                                            // Reset the position in the output
-                                            // This step makes sure that equal objects won't be used with
-                                            // more than one instance. The objects that we will 'rewrite' 
-                                            // shouldn't be used elsewhere and thus will be eventually 
-                                            // eaten by the garbage collector
-                                            output.ConstructedObjects[i] = (ConstructedConfigurationObject) equalObject;
-                                        }
-                                    }
+            // Make sure it's valid
+            if (!_validator.Validate(firstConfiguration))
+                throw new GeneratorException("The first configuration is not valid");
 
-                                    // Return the output
-                                    return output;
-                                });
+            // Create the first layer
+            _currentLayer = new List<GeneratedConfiguration> { firstConfiguration };
 
-                        // Return the enumerable for creating the new layer
-                        return _configurationsManager.AddLayer(outputForNewLayer);
-                    })
-                    .Select(configurationWrapper =>
-                    {
-                        // Unwrap configuration
-                        var unwrappedConfiguration = configurationWrapper.WrappedConfiguration;
+            #endregion
 
-                        // Call the analyzer
-                        var theorems = _analyzer.Analyze(unwrappedConfiguration);
+            #region Algorithm
 
-                        // Return the output
-                        return new GeneratorOutput
+            // Executed the requested number of iterations
+            for (var iterationIndex = 0; iterationIndex < _input.MaximalNumberOfIterations; iterationIndex++)
+            {
+                // In each iteration we inicialize a list for new configurations that will be extended
+                // in the next iteration. We're gonna fill it with our the configurations generated
+                // from the current layer
+                var generatedConfigurations = new List<GeneratedConfiguration>();
+
+                // Prepare the enumerable that performs the algorithm that takes a configuration
+                // and extends it with new new objects. Each configuration will be projected into one or more generator outputs
+                var generatedOutputEnumerable = _currentLayer.SelectMany(currentConfiguration =>
+                {
+                    // For a given configuration we take all possible constructed objects
+                    return _constructor.ConstructPossibleObjects(currentConfiguration)
+                        // Project each option into a generator output, if it turns out to be 
+                        // a valid one, or null, if not. We ignore the null ones
+                        .SelectNotNull(newObjects =>
                         {
-                            Configuration = unwrappedConfiguration,
-                            Theorems = theorems
-                        };
-                    });
+                            // Construct the new generated configuration
+                            var generatedConfiguration = new GeneratedConfiguration(currentConfiguration, newObjects);
+
+                            // Validate it. If it's not valid...
+                            if (!_validator.Validate(generatedConfiguration))
+                                // Return null and make it ignored because of the 'SelectNotNull' method
+                                return null;
+
+                            // Otherwise it's valid...Make sure it's added to the generated list
+                            generatedConfigurations.Add(generatedConfiguration);
+
+                            // Construct the output
+                            return new GeneratorOutput
+                            {
+                                // Set the configuration
+                                Configuration = generatedConfiguration,
+
+                                // Find theorems
+                                Theorems = _analyzer.Analyze(generatedConfiguration)
+                            };
+                        });
+                });
+
+                // Perform the generation and lazily return the output
+                // This generation will gradully fill the 'generatedConfigurations' list
+                foreach (var output in generatedOutputEnumerable)
+                    yield return output;
+
+                // At this point the next layer is prepared
+                // We can set our generated configurations to be the new layer
+                _currentLayer = new List<GeneratedConfiguration>(generatedConfigurations);
+
+            }
+
+            #endregion
         }
 
         #endregion

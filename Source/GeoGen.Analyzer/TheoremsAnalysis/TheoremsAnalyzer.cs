@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="ITheoremsAnalyzer"/>.
     /// </summary>
-    internal class TheoremsAnalyzer : ITheoremsAnalyzer
+    public class TheoremsAnalyzer : ITheoremsAnalyzer
     {
         #region Private fields
 

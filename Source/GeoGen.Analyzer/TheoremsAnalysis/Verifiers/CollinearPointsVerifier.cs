@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// An <see cref="ITheoremVerifier"/> for the type <see cref="TheoremType.CollinearPoints"/>.
     /// </summary>
-    internal class CollinearPointsVerifier : TheoremVerifierBase
+    public class CollinearPointsVerifier : TheoremVerifierBase
     {
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.

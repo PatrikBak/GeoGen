@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// is valid theorem in a given <see cref="Configuration"/>. It is supposed to
     /// be used for the theorems that use objects from the coniguration.
     /// </summary>
-    internal interface IPotentialTheoremValidator
+    public interface IPotentialTheoremValidator
     {
         /// <summary>
         /// Finds out if a given potential theorem represents a real theorem

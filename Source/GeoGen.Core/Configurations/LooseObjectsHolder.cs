@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Core
@@ -32,17 +33,7 @@ namespace GeoGen.Core
         /// <param name="layout">The loose objects layout.</param>
         public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout? layout = null)
         {
-            // Set loose objects
-            LooseObjects = looseObjects.Select((looseObject, index) =>
-            {
-                // Identify object with the index
-                looseObject.Id = index;
-
-                // Return it.
-                return looseObject;
-            }).ToList();
-
-            // Set layout
+            LooseObjects = looseObjects?.ToList() ?? throw new ArgumentNullException(nameof(looseObjects));
             Layout = layout;
         }
 

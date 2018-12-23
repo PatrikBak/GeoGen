@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -11,7 +11,7 @@ namespace GeoGen.Analyzer
     /// <see cref="IRandomObjectsProvider"/> to construct mutually distinct objects
     /// with no other conditions (this should be improved later).
     /// </summary>
-    internal class LooseObjectsConstructor : ILooseObjectsConstructor
+    public class LooseObjectsConstructor : ILooseObjectsConstructor
     {
         #region Private fields
 
@@ -48,8 +48,8 @@ namespace GeoGen.Analyzer
         /// Constructs given loose objects.
         /// </summary>
         /// <param name="looseObjects">The loose objects.</param>
-        /// <returns>The list of analytical objects.</returns>
-        public List<AnalyticalObject> Construct(LooseObjectsHolder looseObjects)
+        /// <returns>The list of analytic objects.</returns>
+        public List<AnalyticObject> Construct(LooseObjectsHolder looseObjects)
         {
             switch (looseObjects.Layout)
             {

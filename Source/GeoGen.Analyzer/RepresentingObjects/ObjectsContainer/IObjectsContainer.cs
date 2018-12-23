@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a container that handles mapping of <see cref="ConfigurationObject"/>
-    /// to their analytical representations, i.e. <see cref="AnalyticalObject"/>s.
+    /// to their analytic representations, i.e. <see cref="AnalyticObject"/>s.
     /// It's able to reconstruct all objects in the container.
     /// </summary>
-    internal interface IObjectsContainer
+    public interface IObjectsContainer
     {
         /// <summary>
         /// Adds given objects to the container. The analytic versions of these objects
@@ -19,43 +19,43 @@ namespace GeoGen.Analyzer
         /// returns either null, when the construction can't be performed, or a list
         /// of configuration objects. In this list, every configuration objects
         /// corresponds to the object in the provided objects list. If the 
-        /// analytical version of the object is already present in the container, 
+        /// analytic version of the object is already present in the container, 
         /// then these objects will be the same, otherwise the object in the list will
         /// be the one that representation the duplicate object.
         /// </summary>
-        /// <param name="objects">The analytical objects to be constructed.</param>
+        /// <param name="objects">The analytic objects to be constructed.</param>
         /// <param name="constructor">The function that performs the construction.</param>
         /// <returns>null, if the construction failed; or the representation of equal objects from the container.</returns>
-        List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<AnalyticalObject>> constructor);
+        List<ConfigurationObject> Add(IEnumerable<ConfigurationObject> objects, Func<IObjectsContainer, List<AnalyticObject>> constructor);
 
         /// <summary>
-        /// Gets the analytical representation of a given configuration object. 
+        /// Gets the analytic representation of a given configuration object. 
         /// </summary>
-        /// <typeparam name="T">The type of analytical object.</typeparam>
+        /// <typeparam name="T">The type of analytic object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytical object.</returns>
-        T Get<T>(ConfigurationObject configurationObject) where T : AnalyticalObject;
+        /// <returns>The analytic object.</returns>
+        T Get<T>(ConfigurationObject configurationObject) where T : AnalyticObject;
 
         /// <summary>
-        /// Gets the analytical representation of a given configuration object. 
+        /// Gets the analytic representation of a given configuration object. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytical object.</returns>
-        AnalyticalObject Get(ConfigurationObject configurationObject);
+        /// <returns>The analytic object.</returns>
+        AnalyticObject Get(ConfigurationObject configurationObject);
 
         /// <summary>
-        /// Gets the configuration object that corresponds to a given analytical object.
+        /// Gets the configuration object that corresponds to a given analytic object.
         /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
+        /// <param name="analyticObject">The analytic object.</param>
         /// <returns>The configuration objects, if there's an appropriate one; null otherwise.</returns>
-        ConfigurationObject Get(AnalyticalObject analyticalObject);
+        ConfigurationObject Get(AnalyticObject analyticObject);
 
         /// <summary>
-        /// Finds out if a given analytical object is present if the container.
+        /// Finds out if a given analytic object is present if the container.
         /// </summary>
-        /// <param name="analyticalObject">The analytical object.</param>
+        /// <param name="analyticObject">The analytic object.</param>
         /// <returns>true, if the object is present in the container; false otherwise.</returns>
-        bool Contains(AnalyticalObject analyticalObject);
+        bool Contains(AnalyticObject analyticObject);
 
         /// <summary>
         /// Reconstructs all objects in the container. In general, it might happen that

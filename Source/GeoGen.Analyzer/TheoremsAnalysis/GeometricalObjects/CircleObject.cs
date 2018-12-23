@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// Represents a geometrical circle that is aware of the points on it.
     /// </summary>
-    internal class CircleObject : DefinableByPoints
+    public class CircleObject : DefinableByPoints
     {
         #region DefineableByPoints properties
 

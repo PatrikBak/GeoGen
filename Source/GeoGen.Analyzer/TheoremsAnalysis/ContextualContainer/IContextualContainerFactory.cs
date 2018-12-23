@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A factory for creating <see cref="IContextualContainer"/> containing given objects.
     /// </summary>
-    internal interface IContextualContainerFactory
+    public interface IContextualContainerFactory
     {
         /// <summary>
         /// Creates a new contextual container that represents a given configuration.

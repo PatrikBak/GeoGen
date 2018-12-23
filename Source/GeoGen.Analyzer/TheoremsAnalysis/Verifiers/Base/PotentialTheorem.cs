@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// Represents a wrapper for potential theorem that might hold a true. This 
     /// class represents an output from <see cref="ITheoremVerifier"/>.
     /// </summary>
-    internal class PotentialTheorem
+    public class PotentialTheorem
     {
         /// <summary>
         /// Gets or sets the type of this possible theorem.

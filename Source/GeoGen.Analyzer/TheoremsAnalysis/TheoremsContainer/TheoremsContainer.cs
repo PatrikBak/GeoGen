@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// <summary>
     /// A default implementation of <see cref="ITheoremsContainer"/>.
     /// </summary>
-    internal class TheoremsContainer : ITheoremsContainer
+    public class TheoremsContainer : ITheoremsContainer
     {
         #region Private fields
 

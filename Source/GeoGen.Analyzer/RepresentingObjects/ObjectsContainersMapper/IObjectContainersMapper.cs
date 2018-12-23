@@ -6,7 +6,7 @@ namespace GeoGen.Analyzer
     /// Represents a service that takes care of mapping <see cref="Configuration"/>s
     /// to their actual geometrical representations wrapped inside <see cref="IObjectsContainersManager"/>s.
     /// </summary>
-    internal interface IObjectContainersMapper
+    public interface IObjectContainersMapper
     {
         /// <summary>
         /// Gets the manager corresponding to a given configuration.

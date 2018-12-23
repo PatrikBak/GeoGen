@@ -7,7 +7,7 @@ namespace GeoGen.Analyzer
     /// Represents a general constructor of lists <see cref="ConstructedConfigurationObject"/>s
     /// that are created with the same <see cref="Construction"/> and the same <see cref="ConstructionArgument"/>s.
     /// </summary>
-    internal interface IObjectsConstructor
+    public interface IObjectsConstructor
     {
         /// <summary>
         /// Constructs a given list of constructed configurations objects. These objects 

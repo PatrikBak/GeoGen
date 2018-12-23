@@ -7,7 +7,7 @@
     /// other. The other cases of inconsistency might be: two objects are not duplicates
     /// in all containers, three points are not collinear in all containers, etc. 
     /// </summary>
-    internal class InconsistentContainersException : AnalyzerException
+    public class InconsistentContainersException : AnalyzerException
     {
     }
 }

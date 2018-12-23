@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticalGeometry;
+using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 
 namespace GeoGen.Analyzer
@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// A default implementation of <see cref="IComposedConstructor"/> that uses 
     /// <see cref="ObjectsConstructorBase"/>.
     /// </summary>
-    internal class ComposedConstructor : ObjectsConstructorBase, IComposedConstructor
+    public class ComposedConstructor : ObjectsConstructorBase, IComposedConstructor
     {
         #region Private fields
 
@@ -53,14 +53,14 @@ namespace GeoGen.Analyzer
         #region ObjectsConstructorBase methods
 
         /// <summary>
-        /// Constructs a list of analytical objects from a given list of 
+        /// Constructs a list of analytic objects from a given list of 
         /// flattened objects from the arguments and a container that is used to 
-        /// obtain the actual analytical versions of these objects.
+        /// obtain the actual analytic versions of these objects.
         /// </summary>
         /// <param name="flattenedObjects">The flattened argument objects.</param>
         /// <param name="container">The objects container.</param>
-        /// <returns>The list of constructed analytical objects.</returns>
-        protected override List<AnalyticalObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
+        /// <returns>The list of constructed analytic objects.</returns>
+        protected override List<AnalyticObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
             // Pull the loose objects (that should correspond to the flatten ones)
             var looseObjects = _construction.ParentalConfiguration.LooseObjects;
@@ -69,10 +69,10 @@ namespace GeoGen.Analyzer
             var internalContainer = _factory.CreateContainer();
 
             // Create constructor function
-            List<AnalyticalObject> InternalConstructorFunction(IObjectsContainer c)
+            List<AnalyticObject> InternalConstructorFunction(IObjectsContainer c)
             {
                 // Prepare result
-                var result = new List<AnalyticalObject>();
+                var result = new List<AnalyticObject>();
 
                 // Map loose objects to the flattened objects
                 for (var i = 0; i < looseObjects.Count; i++)
@@ -81,10 +81,10 @@ namespace GeoGen.Analyzer
                     var inputObject = flattenedObjects[i];
 
                     // Take real object
-                    var realObjectAnalytical = container.Get(inputObject);
+                    var realObjectAnalytic = container.Get(inputObject);
 
                     // Add this object to the results list
-                    result.Add(realObjectAnalytical);
+                    result.Add(realObjectAnalytic);
                 }
 
                 return result;

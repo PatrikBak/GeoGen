@@ -9,7 +9,7 @@ namespace GeoGen.Analyzer
     /// implementation uses the strategy where we want a theorem to be true in all
     /// the containers that are used to represent a given configuration.
     /// </summary>
-    internal class PotentialTheoremValidator : IPotentialTheoremValidator
+    public class PotentialTheoremValidator : IPotentialTheoremValidator
     {
         #region Private fields
 

@@ -8,7 +8,7 @@ namespace GeoGen.Analyzer
     /// It takes care of resolving possible inconsistencies (see the documentation of 
     /// <see cref="InconsistentContainersException"/>).
     /// </summary>
-    internal interface IObjectsContainersManager : IEnumerable<IObjectsContainer>
+    public interface IObjectsContainersManager : IEnumerable<IObjectsContainer>
     {
         /// <summary>
         /// Performs a given function and handles the <see cref="InconsistentContainersException"/>.

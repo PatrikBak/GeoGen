@@ -10,7 +10,7 @@ namespace GeoGen.Analyzer
     /// geometrical objects should represent a theorem and we want that the
     /// theorem uses all objects from the configuration.
     /// </summary>
-    internal interface INeedlessObjectsAnalyzer
+    public interface INeedlessObjectsAnalyzer
     {
         /// <summary>
         /// Finds out if a given configuration contains needless objects that are not
