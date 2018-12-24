@@ -1,59 +1,60 @@
-﻿using System;
-using GeoGen.Core;
-using GeoGen.Utilities;
+﻿using GeoGen.Core;
+using System;
 
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A default implementation of <see cref="IDefaultFullObjectToStringConverter"/>.
-    /// This class works as an adapter for <see cref="StringBasedContainer{T}"/>, since
-    /// it implements the <see cref="IObjectToStringConverter"/> interface. It's adapting
-    /// more general <see cref="IArgumentsToStringProvider"/> interface that requires
-    /// <see cref="IObjectToStringConverter"/> in order to convert an arguments to string.
-    /// This conversion uses a <see cref="IDefaultObjectIdResolver"/> (hence the name default).
-    ///</summary>
+    /// Represents a <see cref="IToStringConverter{T}"/>, where 'T' is <see cref="Arguments"/>.
+    /// It converts arguments to a string using <see cref="IGeneralArgumentsToStringConverter"/> in a way
+    /// that every object is converted to its id. The main use-case for this is the following:
+    /// When we need to find out if some arguments (for example {1;2} and {2;3}) are equal, 
+    /// and we're sure the objects they're composed of have distinct ids, then we just need to convert
+    /// each object into the string representing its ids.
+    /// </summary>
     public class DefaultArgumentsToStringConverter : IToStringConverter<Arguments>
     {
+        #region Dependencies
+
+        /// <summary>
+        /// The general arguments to string provider to which the actual conversion is delegated.
+        /// </summary>
+        private readonly IGeneralArgumentsToStringConverter _argumentsToString;
+
+        #endregion
+
         #region Private fields
 
         /// <summary>
-        /// The general arguments to string provider that does the actual conversion.
+        /// The single instance of the to string converter that is used to convert the internal object of arguments, each to its id.
         /// </summary>
-        private readonly IArgumentsToStringProvider _argumentsToString;
-
-        /// <summary>
-        /// The default object to string converter that is passed to the general arguments to string provider.
-        /// </summary>
-        private readonly DefaultObjectToStringConverter _objectToString;
+        private readonly IToStringConverter<ConfigurationObject> _converter = new FuncToStringConverter<ConfigurationObject>(obj => obj.Id.ToString());
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="DefaultArgumentsToStringConverter"/> class.
         /// </summary>
-        /// <param name="argumentsToString">The general arguments to string provider.</param>
-        /// <param name="objectToString">The default object to string provider.</param>
-        public DefaultArgumentsToStringConverter(IArgumentsToStringProvider argumentsToString, DefaultObjectToStringConverter objectToString)
+        /// <param name="argumentsToString">The general arguments to string provider to which the actual conversion is delegated.</param>
+        public DefaultArgumentsToStringConverter(IGeneralArgumentsToStringConverter argumentsToString)
         {
             _argumentsToString = argumentsToString ?? throw new ArgumentNullException(nameof(argumentsToString));
-            _objectToString = objectToString ?? throw new ArgumentNullException(nameof(objectToString));
         }
 
         #endregion
 
-        #region IObjectToString implementation
+        #region IToStringConverter implementation
 
         /// <summary>
-        /// Converts a given item to string.
+        /// Converts given arguments to a string.
         /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>The string representation.</returns>
-        public string ConvertToString(Arguments item)
+        /// <param name="arguments">The arguments to be converted.</param>
+        /// <returns>A string representation of the arguments.</returns>
+        public string ConvertToString(Arguments arguments)
         {
-            // Call the general converter using a provided object to string converter
-            return _argumentsToString.ConvertToString(item, _objectToString);
+            // Call the general converter using the object to string converter that converts an object to its id
+            return _argumentsToString.ConvertToString(arguments, _converter);
         }
 
         #endregion

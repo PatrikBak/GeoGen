@@ -34,11 +34,14 @@ namespace GeoGen.Core
         public StringBasedContainer(IToStringConverter<T> converter, IEnumerable<T> initialObjects = null)
         {
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
+
+            // Add all the initial objects ignoring their equal versions
+            initialObjects?.ForEach(obj => Add(obj, out var _));
         }
 
         #endregion
 
-        #region IContainer implemenetation
+        #region IContainer implementation
 
         /// <summary>
         /// Adds a given item to the container. If an equal version of the item is present 

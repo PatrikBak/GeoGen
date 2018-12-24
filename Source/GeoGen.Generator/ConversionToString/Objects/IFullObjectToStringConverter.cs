@@ -1,18 +1,24 @@
 ﻿using GeoGen.Core;
-using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents an <see cref="IObjectToStringConverter"/> that converts an object to a string
-    /// using only ids of loose objects. This is useful for comparing configuration
-    /// objects when they don't have their ids yet (<see cref="IDefaultFullObjectToStringConverter"/>,
-    /// or when we need to resolve symmetric configuration by using this type of conversion
-    /// (for more information, see the documentation of <see cref="IMinimalFormResolver"/> and
-    /// its implementation). In that case, the objects already have their ids and we can use
-    /// <see cref="IAutocacheFullObjectToStringConverter"/>.
+    /// Represents a converter of a <see cref="ConfigurationObject"/> to a string which converts
+    /// an object to a string using only ids of the loose objects it internally consist of. This 
+    /// converter allows to specify a custom <see cref="LooseObjectIdsRemapping"/> to be used 
+    /// during the conversion. If the original ids should be used, then the constant value 
+    /// <see cref="LooseObjectIdsRemapping.NoRemapping"/> should be passed. It should fulfill
+    /// the invariant that for any remapping two objects are equal if and only if their string 
+    /// versions (with respect to the current remapping) are equal.
     /// </summary>
-    public interface IFullObjectToStringConverter : IToStringConverter<ConfigurationObject>
+    public interface IFullObjectToStringConverter
     {
+        /// <summary>
+        /// Converts a given configuration object to a string using a given remapping of loose object ids during the conversion.
+        /// </summary>
+        /// <param name="configurationObject">The object to be converted.</param>
+        /// <param name="remapping">The remapping of loose object ids to be used during the conversion.</param>
+        /// <returns>A string representation of the object.</returns>
+        string ConvertToString(ConfigurationObject configurationObject, LooseObjectIdsRemapping remapping);
     }
 }

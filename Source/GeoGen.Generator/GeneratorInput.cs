@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Core;
+using System.Collections.Generic;
 
-namespace GeoGen.Core
+namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents an input for a generator.

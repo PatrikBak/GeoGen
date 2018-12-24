@@ -25,14 +25,15 @@ namespace GeoGen.Core
         /// Initializes a new instance of the <see cref="StringBasedContainer{T}"/> class.
         /// </summary>
         /// <param name="converter">The converter of items to string.</param>
-        public AutoIdentifyingStringBasedContainer(IToStringConverter<T> converter)
-            : base(converter)
+        /// <param name="initialItems">The initial items that should be added to the container.</param>
+        public AutoIdentifyingStringBasedContainer(IToStringConverter<T> converter, IEnumerable<T> initialItems = null)
+            : base(converter, initialItems)
         {
         }
 
         #endregion
 
-        #region Overriden methods
+        #region Overridden methods
 
         /// <summary>
         /// Adds a given item to the container and identifies it with next available id.

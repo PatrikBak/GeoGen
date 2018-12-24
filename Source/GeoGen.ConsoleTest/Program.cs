@@ -38,6 +38,7 @@ namespace GeoGen.Generator.IntegrationTest
             _kernel.Bind<ConstructorHelper>().ToSelf().InSingletonScope();
 
             _kernel.Bind<IInconsistenciesTracker>().ToConstant(new ConsoleInconsistenciesTracker());
+            //_kernel.Rebind<ITheoremsAnalyzer>().To<DummyTheoremsAnalyzer>();
         }
 
         private static void Main()
@@ -57,7 +58,7 @@ namespace GeoGen.Generator.IntegrationTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 2
+                MaximalNumberOfIterations = 3
             };
 
             var generator = _kernel.Get<IGeneratorFactory>().CreateGenerator(input);
@@ -74,7 +75,7 @@ namespace GeoGen.Generator.IntegrationTest
             Console.WriteLine($"Inconsistencies: {_tracker.Inconsistencies}");
             Console.WriteLine($"Failed attempts to reconstruct: {_tracker.AttemptsToReconstruct}");
             Console.WriteLine($"-------------------------------------------------");
-            //Console.ReadKey();
+            Console.ReadKey();
 
             PrintTheorems(result);
         }

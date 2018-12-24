@@ -29,22 +29,19 @@ namespace GeoGen.Runner
             kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConstructionSignatureMatcher>().To<ConstructionSignatureMatcher>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsGenerator>().To<ObjectsGenerator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IConfigurationToStringProvider>().To<ConfigurationToStringProvider>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IArgumentsToStringProvider>().To<ArgumentsToStringProvider>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IGeneralConfigurationToStringProvider>().To<GeneralConfigurationToStringProvider>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConfigurationsValidator>().To<ConfigurationsValidator>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<FullConfigurationToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
-            kernel.Bind<DefaultObjectToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IFullObjectToStringConverter, FullObjectToStringConverter>().To<FullObjectToStringConverter>().InNamedScope(GeneratorScopeName);
 
             // Transient objects
             kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
-            kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>();
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
 
             // Ninject factories
             kernel.Bind<IArgumentsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IFullObjectToStringConverterFactory>().ToFactory().InNamedScope(GeneratorScopeName);
 
             // Bindings with dynamic constructors arguments
             kernel.Bind<IGenerator>()
@@ -52,8 +49,8 @@ namespace GeoGen.Runner
                 .WithConstructorArgument("input", context => context.Kernel.Get<GeneratorInput>())
                 .DefinesNamedScope(GeneratorScopeName);
 
-            kernel.Bind<IFullObjectToStringConvertersContainer>()
-                .To<FullObjectToStringConvertersContainer>()
+            kernel.Bind<FullConfigurationToStringConverter>()
+                .ToSelf()
                 .InNamedScope(GeneratorScopeName)
                 .WithConstructorArgument("looseObjectsHolder", context => context.Kernel.Get<GeneratorInput>().InitialConfiguration.LooseObjectsHolder);
 
@@ -132,7 +129,7 @@ namespace GeoGen.Runner
 
             #endregion
 
-            // Return the kernel for chaning
+            // Return the kernel for chaining
             return kernel;
         }
     }

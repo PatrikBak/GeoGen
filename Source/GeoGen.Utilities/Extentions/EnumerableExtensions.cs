@@ -124,6 +124,17 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
+        /// Converts an enumerable to a <see cref="SortedSet{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The type of elements.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>The sorted set of the enumerable's items.</returns>
+        public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> enumerable)
+        {
+            return new SortedSet<T>(enumerable);
+        }
+
+        /// <summary>
         /// Converts an enumerable to a <see cref="HashSet{T}"/> using a custom equality comparer.
         /// </summary>
         /// <typeparam name="T">The type of elements.</typeparam>
