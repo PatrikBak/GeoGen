@@ -6,7 +6,7 @@ namespace GeoGen.Generator
     /// Represents a converter of <see cref="GeneratedConfiguration"/> to a string that uses a custom
     /// <see cref="IToStringConverter{T}"/>, where 'T' is <see cref="ConfigurationObject"/>.
     /// </summary>
-    public interface IGeneralConfigurationToStringProvider
+    public interface IGeneralConfigurationToStringConverter
     {
         /// <summary>
         /// Converts a given configuration to a string, using a given configuration object to string converter.

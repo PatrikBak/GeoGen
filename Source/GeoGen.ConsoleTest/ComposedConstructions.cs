@@ -3,7 +3,7 @@ using System.Linq;
 using GeoGen.Core;
 using static GeoGen.Core.PredefinedConstructionType;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class ComposedConstructions
     {
@@ -34,8 +34,8 @@ namespace GeoGen.Generator.IntegrationTest
             var argumentsList1 = new List<ConstructionArgument> {argument1};
             var argumentsList2 = new List<ConstructionArgument> {argument2};
 
-            var midpoint1 = new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList1, 0) {Id = 3};
-            var midpoint2 = new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList2, 0) {Id = 4};
+            var midpoint1 = new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList1) {Id = 3};
+            var midpoint2 = new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList2) {Id = 4};
 
             var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
@@ -53,7 +53,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var argumentsList = new List<ConstructionArgument> {argument};
 
-            var centroid = new ConstructedConfigurationObject(_container.Get(IntersectionOfLinesFromPoints), argumentsList, 0) {Id = 5};
+            var centroid = new ConstructedConfigurationObject(_container.Get(IntersectionOfLinesFromPoints), argumentsList) {Id = 5};
 
             var constructedObjects = new List<ConstructedConfigurationObject> {midpoint1, midpoint2, centroid};
 
@@ -64,7 +64,7 @@ namespace GeoGen.Generator.IntegrationTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters, "Centroid");
+            var result = new ComposedConstruction(configuration, 2, parameters, "Centroid");
 
             _container.Add(result);
 
@@ -96,8 +96,8 @@ namespace GeoGen.Generator.IntegrationTest
                 })
             };
             
-            var line1 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments1, 0) {Id = 3};
-            var line2 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments2, 0) {Id = 4};
+            var line1 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments1) {Id = 3};
+            var line2 = new ConstructedConfigurationObject(_container.Get(InternalAngleBisectorFromPoints), arguments2) {Id = 4};
 
             var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
@@ -107,7 +107,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var argumentsList = new List<ConstructionArgument> {argument};
 
-            var incenter = new ConstructedConfigurationObject(_container.Get(IntersectionOfLines), argumentsList, 0) {Id = 5};
+            var incenter = new ConstructedConfigurationObject(_container.Get(IntersectionOfLines), argumentsList) {Id = 5};
 
             var constructedObjects = new List<ConstructedConfigurationObject> {line1, line2, incenter};
 
@@ -118,7 +118,7 @@ namespace GeoGen.Generator.IntegrationTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, new List<int> {2}, parameters, "Incenter");
+            var result = new ComposedConstruction(configuration, 2, parameters, "Incenter");
 
             _container.Add(result);
 

@@ -19,11 +19,6 @@ namespace GeoGen.Core
         public Construction Construction { get; }
 
         /// <summary>
-        /// Gets the index of this object in the construction output list.
-        /// </summary>
-        public int Index { get; }
-
-        /// <summary>
         /// Gets the arguments that have been passed to the construction. 
         /// </summary>
         public Arguments PassedArguments { get; }
@@ -46,24 +41,22 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="construction">The construction.</param>
         /// <param name="arguments">The passed arguments to the construction.</param>
-        /// <param name="index">The index indicating which output of the construction this object is, the default vaulue is 0.</param>
-        public ConstructedConfigurationObject(Construction construction, Arguments arguments, int index = 0)
+        public ConstructedConfigurationObject(Construction construction, Arguments arguments)
         {
             Construction = construction ?? throw new ArgumentNullException(nameof(construction));
             PassedArguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
-            Index = index;
-            ObjectType = Construction.OutputTypes[index];
+            ObjectType = Construction.OutputType;
         }
 
-        /// <summary>
-        /// Default constructor that uses an arguments list.
-        /// </summary>
-        /// <param name="construction">The construction.</param>
-        /// <param name="arguments">The passed arguments to the construction.</param>
-        /// <param name="index">The index indicating which output of the construction this object is, the default value is 0.</param>
-        public ConstructedConfigurationObject(Construction construction, IReadOnlyList<ConstructionArgument> arguments, int index = 0)
-                : this(construction, new Arguments(arguments), index)
+        public ConstructedConfigurationObject(Construction construction, List<ConstructionArgument> argumentsList)
+            : this(construction, new Arguments(argumentsList))
         {
+        }
+
+        public ConstructedConfigurationObject(Construction construction, Arguments arguments, int id) 
+            : this(construction, arguments)
+        {
+            Id = id;
         }
 
         #endregion

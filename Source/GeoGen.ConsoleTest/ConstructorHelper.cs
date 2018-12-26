@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using GeoGen.Core;
+﻿using GeoGen.Core;
+using System.Collections.Generic;
 using static GeoGen.Core.PredefinedConstructionType;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class ConstructorHelper
     {
@@ -24,7 +24,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var argumentsList = new List<ConstructionArgument> {argument};
 
-            return new ConstructedConfigurationObject(_container.Get(CircumcenterFromPoints), argumentsList, 0);
+            return new ConstructedConfigurationObject(_container.Get(CircumcenterFromPoints), argumentsList);
         }
 
         public ConstructedConfigurationObject CreateIntersection(params ConfigurationObject[] objects)
@@ -45,7 +45,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var argumentsList = new List<ConstructionArgument> {argument};
 
-            return new ConstructedConfigurationObject(_container.Get(IntersectionOfLinesFromPoints), argumentsList, 0);
+            return new ConstructedConfigurationObject(_container.Get(IntersectionOfLinesFromPoints), argumentsList);
         }
 
         public ConstructedConfigurationObject CreateMidpoint(params ConfigurationObject[] objects)
@@ -58,7 +58,7 @@ namespace GeoGen.Generator.IntegrationTest
 
             var argumentsList = new List<ConstructionArgument> {argument};
 
-            return new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList, 0);
+            return new ConstructedConfigurationObject(_container.Get(MidpointFromPoints), argumentsList);
         }
 
         public ConstructedConfigurationObject CreateIncenter(params ConfigurationObject[] objects)
@@ -73,7 +73,7 @@ namespace GeoGen.Generator.IntegrationTest
                 })
             };
 
-            return new ConstructedConfigurationObject(_container.Get("Incenter"), argumentsList, 0);
+            return new ConstructedConfigurationObject(_container.Get("Incenter"), argumentsList);
         }
     }
 }

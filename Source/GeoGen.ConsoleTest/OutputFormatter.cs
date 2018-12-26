@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using GeoGen.Core;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class OutputFormatter
     {

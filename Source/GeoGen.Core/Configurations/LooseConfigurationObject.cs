@@ -50,7 +50,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="objectToStringMap"></param>
         /// <returns>A human-readable string representation of the object.</returns>
-        protected override string ToString(IReadOnlyDictionary<ConfigurationObject, string> objectToStringMap) => ObjectType.ToString();
+        protected override string ToString(IReadOnlyDictionary<ConfigurationObject, string> objectToStringMap) => $"{ObjectType}[{Id}]";
 
         #endregion
     }

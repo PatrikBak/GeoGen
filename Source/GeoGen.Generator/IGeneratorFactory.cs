@@ -1,9 +1,7 @@
-﻿using GeoGen.Core;
-
-namespace GeoGen.Generator
+﻿namespace GeoGen.Generator
 {
     /// <summary>
-    /// A factory for creating an <see cref="IGenerator"/> from a generator input.
+    /// A factory for creating a <see cref="Generator"/> for a given <see cref="GeneratorInput"/>.
     /// </summary>
     public interface IGeneratorFactory
     {
@@ -12,6 +10,6 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
         /// <returns>The generator.</returns>
-        IGenerator CreateGenerator(GeneratorInput generatorInput);
+        Generator CreateGenerator(GeneratorInput generatorInput);
     }
 }

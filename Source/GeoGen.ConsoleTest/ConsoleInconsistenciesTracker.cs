@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoGen.Analyzer;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class ConsoleInconsistenciesTracker : IInconsistenciesTracker
     {

@@ -29,7 +29,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the construction output signature, i.e. the list of configuration object types.
         /// </summary>
-        public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
+        public override ConfigurationObjectType OutputType { get; }
 
         /// <summary>
         /// Gets the name of the construction.
@@ -46,11 +46,11 @@ namespace GeoGen.Core
         /// <param name="type">The type of the construction.</param>
         /// <param name="parameters">The parameters representing the signature of the construction.</param>
         /// <param name="outputTypes">The output types of the construction.</param>
-        public PredefinedConstruction(PredefinedConstructionType type, IReadOnlyList<ConstructionParameter> parameters, IReadOnlyList<ConfigurationObjectType> outputTypes)
+        public PredefinedConstruction(PredefinedConstructionType type, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType)
         {
             Type = type;
             ConstructionParameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            OutputTypes = outputTypes ?? throw new ArgumentNullException(nameof(outputTypes));
+            OutputType = outputType;
         }
 
         #endregion

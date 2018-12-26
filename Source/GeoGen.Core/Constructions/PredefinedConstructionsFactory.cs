@@ -44,12 +44,8 @@ namespace GeoGen.Core
             {
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
-
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.CircumcenterFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.CircumcenterFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -64,11 +60,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Circle};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.CircumcircleFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.CircumcircleFromPoints, parameters, ConfigurationObjectType.Circle);
         }
 
         /// <summary>
@@ -84,11 +77,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Line};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisectorFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisectorFromPoints, parameters, ConfigurationObjectType.Line);
         }
 
         /// <summary>
@@ -106,11 +96,8 @@ namespace GeoGen.Core
                 )
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -126,11 +113,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -145,11 +129,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Line), 2)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -164,11 +145,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.LoosePointOnLineFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.LoosePointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -182,12 +160,9 @@ namespace GeoGen.Core
             {
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
-
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Point};
-
+            
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.MidpointFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.MidpointFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -203,11 +178,8 @@ namespace GeoGen.Core
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
 
-            // Create the output types
-            var outputTypes = new List<ConfigurationObjectType> {ConfigurationObjectType.Line};
-
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLineFromPoints, parameters, outputTypes);
+            return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLineFromPoints, parameters, ConfigurationObjectType.Line);
         }
 
         #endregion

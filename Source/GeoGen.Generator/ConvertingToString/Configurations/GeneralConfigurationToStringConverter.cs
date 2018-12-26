@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// The default implementation of <see cref="IGeneralConfigurationToStringProvider"/>. 
+    /// The default implementation of <see cref="IGeneralConfigurationToStringConverter"/>. 
     /// From the outside the conversion appears to work like this: We convert all the 
     /// constructed objects using the passed <see cref="IToStringConverter{T}"/>, where 'T'
     /// is <see cref="ConfigurationObject"/>, then sort them lexicographically, and join them 
@@ -19,11 +19,11 @@ namespace GeoGen.Generator
     /// The sorted sets remembers the lexicographical order of these strings. When 
     /// we need to convert a configuration that has a previous one, then we won't convert
     /// all the objects, and then sort them, but we will copy the sorted set representing
-    /// the objects of the previous configuration, and insert the new objects to it.
+    /// the objects of the previous configuration, and insert the new object to it.
     /// This algorithm is practically faster for long-running generations than the naive one.
     /// </para>
     /// </summary>
-    public class GeneralConfigurationToStringProvider : IGeneralConfigurationToStringProvider
+    public class GeneralConfigurationToStringConverter : IGeneralConfigurationToStringConverter
     {
         #region Private constants
 
@@ -74,8 +74,11 @@ namespace GeoGen.Generator
                 // Get the set representing the previous configuration. This is O(n)
                 result = new SortedSet<string>(configurationsCache[configuration.PreviousConfiguration]);
 
-                // Convert the new objects and add them to the set. Adding each object is O(log n) 
-                configuration.LastAddedObjects.Select(objectToString.ConvertToString).ForEach(converted => result.Add(converted));
+                // Convert the new object
+                var newObjectsString = objectToString.ConvertToString(configuration.ConstructedObjects.Last());
+
+                // Add it to the set. Adding an object is O(log n) 
+                result.Add(newObjectsString);
             }
 
             // Cache the result

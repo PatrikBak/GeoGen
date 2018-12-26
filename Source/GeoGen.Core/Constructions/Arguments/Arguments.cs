@@ -23,16 +23,7 @@ namespace GeoGen.Core
         /// For example: With { {A,B}, {C,D} } we might get A,B,C,D; or D,C,B,A. The order of objects
         /// within a set  itself is not deterministic. This list is lazily evaluated.
         /// </summary>
-        public IReadOnlyList<ConfigurationObject> FlattenedList => _flattenedListInitializer.Value;
-
-        #endregion
-
-        #region Private fields
-
-        /// <summary>
-        /// The lazy evaluator of flattened arguments.
-        /// </summary>
-        private readonly Lazy<IReadOnlyList<ConfigurationObject>> _flattenedListInitializer;
+        public IReadOnlyList<ConfigurationObject> FlattenedList { get; }
 
         #endregion
 
@@ -45,7 +36,7 @@ namespace GeoGen.Core
         public Arguments(IReadOnlyList<ConstructionArgument> argumentsList)
         {
             ArgumentsList = argumentsList ?? throw new ArgumentNullException(nameof(argumentsList));
-            _flattenedListInitializer = new Lazy<IReadOnlyList<ConfigurationObject>>(ExtraxtInputObject);
+            FlattenedList = ExtraxtInputObject();
         }
 
         #endregion
@@ -75,7 +66,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument)argument;
+                var setArgument = (SetConstructionArgument) argument;
 
                 // We recursively call this function for internal arguments
                 setArgument.PassedArguments.ForEach(Extract);
@@ -91,7 +82,7 @@ namespace GeoGen.Core
         #endregion
 
         #region IEnumerable implementation
-        
+
         /// <summary>
         /// Gets a generic enumerator.
         /// </summary>
@@ -108,7 +99,7 @@ namespace GeoGen.Core
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        } 
+        }
 
         #endregion
     }

@@ -114,7 +114,7 @@ namespace GeoGen.Analyzer
             }
 
             // Return the result
-            return _construction.ConstructionOutput.Select(internalContainer.Get).ToList();
+            return new List<ConstructedConfigurationObject> { _construction.ConstructionOutput }.Select(internalContainer.Get).ToList();
         }
 
         /// <summary>

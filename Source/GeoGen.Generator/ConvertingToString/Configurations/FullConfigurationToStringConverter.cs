@@ -23,7 +23,7 @@ namespace GeoGen.Generator
     /// This is what indeed happens, but it is not implementing by creating new configurations. Instead, we
     /// convert the same configuration using different <see cref="LooseObjectIdsRemapping"/>s. For each of
     /// these mappings we have a single <see cref="IToStringConverter{T}"/> that is used together with a 
-    /// <see cref="IGeneralConfigurationToStringProvider"/>.
+    /// <see cref="IGeneralConfigurationToStringConverter"/>.
     /// </para> 
     /// </summary>
     public class FullConfigurationToStringConverter : IToStringConverter<GeneratedConfiguration>
@@ -33,7 +33,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The generic provider to which the actual conversion is delegated.
         /// </summary>
-        private readonly IGeneralConfigurationToStringProvider _configurationToString;
+        private readonly IGeneralConfigurationToStringConverter _configurationToString;
 
         #endregion
 
@@ -53,11 +53,10 @@ namespace GeoGen.Generator
         /// <summary>
         /// Initializes a new instance of the <see cref="FullConfigurationToStringConverter"/> converter.
         /// </summary>
-        /// <param name="looseObjectsHolder">The loose objects used in this generation.</param>
-        /// <param name="variationsProvider">The variations provider used to generate all possible orders of the loose objects.</param>
+        /// <param name="looseObjects">The loose objects of every configuration used in this generation.</param>
         /// <param name="configurationToString">The generic provider to which the actual conversion is delegated.</param>
         /// <param name="objectToString">The full object to string converter which is used together with the configuration to string converter.</param>
-        public FullConfigurationToStringConverter(LooseObjectsHolder looseObjectsHolder, IVariationsProvider variationsProvider, IGeneralConfigurationToStringProvider configurationToString, IFullObjectToStringConverter objectToString)
+        public FullConfigurationToStringConverter(IReadOnlyList<LooseConfigurationObject> looseObjects, IGeneralConfigurationToStringConverter configurationToString, IFullObjectToStringConverter objectToString)
         {
             _configurationToString = configurationToString ?? throw new ArgumentNullException(nameof(configurationToString));
 
@@ -66,13 +65,13 @@ namespace GeoGen.Generator
             _converters = new Lazy<List<FuncToStringConverter<ConfigurationObject>>>(() =>
             {
                 // We take all the permutations of the loose objects
-                return variationsProvider.GetVariations(looseObjectsHolder.LooseObjects, looseObjectsHolder.LooseObjects.Count)
+                return looseObjects.Permutations()
                         // Cast each of them to the dictionary mapping those loose objects
                         // that are mapped to some id different then theirs
                         .Select(permutation =>
                         {
                             // Each permutation is first casted to the tuple of itself and id of the object to which this object is mapped
-                            return permutation.Select((looseObject, index) => (looseObject, id : looseObjectsHolder.LooseObjects[index].Id))
+                            return permutation.Select((looseObject, index) => (looseObject, id : looseObjects[index].Id))
                                     // Then we exclude the ones that are mapped to itself
                                     .Where(pair => pair.looseObject.Id != pair.id)
                                     // And wrap the remaining ones to a dictionary
@@ -91,7 +90,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region  IToStringConverter implementation
+        #region IToStringConverter implementation
 
         /// <summary>
         /// Converts a given configuration to a string.

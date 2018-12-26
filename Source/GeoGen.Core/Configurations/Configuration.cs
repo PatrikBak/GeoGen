@@ -17,15 +17,6 @@ namespace GeoGen.Core
     /// </summary>
     public class Configuration : IdentifiedObject
     {
-        #region Private fields
-
-        /// <summary>
-        /// The lazy objects map initializer.
-        /// </summary>
-        private readonly Lazy<ConfigurationObjectsMap> _objectsMapInitialzer;
-
-        #endregion
-
         #region Public properties
 
         /// <summary>
@@ -56,14 +47,9 @@ namespace GeoGen.Core
         public IReadOnlyList<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         /// <summary>
-        /// Gets the list of the last added objects to the configuration.
-        /// </summary>
-        public IReadOnlyList<ConstructedConfigurationObject> LastAddedObjects { get; }
-
-        /// <summary>
         /// Gets the configuration objects map of this configuration.
         /// </summary>
-        public ConfigurationObjectsMap ObjectsMap => _objectsMapInitialzer.Value;
+        public ConfigurationObjectsMap ObjectsMap { get; }
 
         /// <summary>
         /// Gets the number of objects of this configuration
@@ -104,74 +90,18 @@ namespace GeoGen.Core
         {
             LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
-
-            // Prepare the initializer
-            _objectsMapInitialzer = new Lazy<ConfigurationObjectsMap>(() =>
-            {
-                // Find all objects
-                var allObjects = looseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects);
-
-                // And use the map constructor 
-                return new ConfigurationObjectsMap(allObjects);
-            });
-
-            // Set the last added objects
-            LastAddedObjects = GroupConstructedObjects().LastOrDefault();
+            ObjectsMap = new ConfigurationObjectsMap(looseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
         }
 
         #endregion
 
-        #region Public methods
-
         /// <summary>
-        /// Groups constructed objects into lists so that each list represents
-        /// the output of a single construction. If we use only constructions with
-        /// one output, then each list will have the size 1. 
+        /// This method will be removed soon.
         /// </summary>
-        /// <returns>The enumerable of grouped constructed objects.</returns>
+        /// <returns></returns>
         public IEnumerable<List<ConstructedConfigurationObject>> GroupConstructedObjects()
         {
-            // Prepare the result
-            var currentObjects = new List<ConstructedConfigurationObject>();
-
-            // Local function to find out if the current list has the needed number
-            // of objects (according to the expected number of construction outputs).
-            bool ShouldBeYielded() => currentObjects.Count == currentObjects[0].Construction.OutputTypes.Count;
-
-            // Group objects
-            foreach (var constructedObject in ConstructedObjects)
-            {
-                // Add the object to the list
-                currentObjects.Add(constructedObject);
-
-                // Call local function to find out if we have enough objects
-                if (!ShouldBeYielded())
-                    continue;
-
-                // Yield the result
-                yield return new List<ConstructedConfigurationObject>(currentObjects);
-
-                // Clean it and therefore prepare for new objects
-                currentObjects.Clear();
-            }
+            return ConstructedObjects.Select(o => new List<ConstructedConfigurationObject> { o });
         }
-
-        /// <summary>
-        /// Creates a configuration with the same loose objects and its layout, and the
-        /// constructed object that consist from the current constructed objects and
-        /// given new objects.
-        /// </summary>
-        /// <param name="newObjects">The new objects list.</param>
-        /// <returns>The new configuration.</returns>
-        public Configuration Derive(List<ConstructedConfigurationObject> newObjects)
-        {
-            // Prepare new constructed objects
-            var constructedObjects = ConstructedObjects.ToList().Concat(newObjects).ToList();
-
-            // Return a new configuration
-            return new Configuration(LooseObjectsHolder, constructedObjects);
-        }
-
-        #endregion
     }
 }

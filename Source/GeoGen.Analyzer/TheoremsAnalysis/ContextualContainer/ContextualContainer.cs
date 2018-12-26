@@ -217,32 +217,11 @@ namespace GeoGen.Analyzer
         /// <param name="configuration">The configuration.</param>
         private void AddAll(Configuration configuration)
         {
-            // First we add all loose objects
-            foreach (var looseObject in configuration.LooseObjects)
-            {
-                // Loose objects are never new (we assume there is at least one constructed object)
-                Add(looseObject, false);
-            }
+            // Add loose objects
+            configuration.LooseObjects.ForEach(obj => Add(obj, isNew: false));
 
-            // Now we enumerate groups of constructed objects
-            var constructedObjectsGroups = configuration.GroupConstructedObjects().ToList();
-
-            // Now we can enumerate them using index
-            for (var i = 0; i < constructedObjectsGroups.Count; i++)
-            {
-                // Pull group
-                var group = constructedObjectsGroups[i];
-
-                // Iterate over grouped objects
-                foreach (var configurationObject in group)
-                {
-                    // Objects are new if and only if they belong to the last group
-                    var isNew = i == constructedObjectsGroups.Count - 1;
-
-                    // Which this knowledge we delegate adding further
-                    Add(configurationObject, isNew);
-                }
-            }
+            // Add constructed objects
+            configuration.ConstructedObjects.ForEach(obj => Add(obj, isNew: obj == configuration.ConstructedObjects.Last()));
         }
 
         /// <summary>

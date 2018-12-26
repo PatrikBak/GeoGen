@@ -17,11 +17,13 @@ namespace GeoGen.Utilities
         /// <typeparam name="TResult">The type of the value returned by selector.</typeparam>
         /// <param name="enumerable">The enumerable</param>
         /// <param name="selector">The transform function to apply to each element.</param>
-        /// <returns>The projected enumerable contaning non-null elements only.</returns>
+        /// <returns>The projected enumerable containing non-null elements only.</returns>
         public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> enumerable, Func<TSource, TResult> selector)
         {
             return enumerable.Select(selector).Where(item => item != null);
         }
+
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> enumerable) => enumerable.SelectMany(_ => _);
 
         /// <summary>
         /// Invokes a given action for each element in the enumerable.
@@ -40,7 +42,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The type of the elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <param name="action">The action to invoke, with two paremeters: The element and its index.</param>
+        /// <param name="action">The action to invoke, with two parameters: The element and its index.</param>
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T, int> action)
         {
             if (enumerable == null)
@@ -160,6 +162,143 @@ namespace GeoGen.Utilities
         {
             // Cast each item to a (item, index) tuple and then use the .NET ToDictionary method
             return enumerable.Select((item, index) => (item, index)).ToDictionary(pair => keySelector(pair.item, pair.index), pair => valueSelector(pair.item, pair.index));
+        }
+
+        /// <summary>
+        /// Generates all possible variations with a given size of the elements of
+        /// a given enumerable. For example: For the list [1, 2, 3] all the variations
+        /// with 2 elements are: [1, 2],  [1, 3], [2, 1], [2, 3], [3, 1], [3, 2]. 
+        /// The generation process is lazy. No particular order is guaranteed. The 
+        /// enumerable will be enumerated once in the process. The resulting array will 
+        /// change every iteration (for efficiency), so if the result needs to be stored,
+        /// it needs to be cloned first.
+        /// </summary>
+        /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="numberOfElement">The number of elements in each variation.</param>
+        /// <returns>A lazy enumerable of all possible variations.</returns>
+        public static IEnumerable<T[]> Variations<T>(this IEnumerable<T> enumerable, int numberOfElements)
+        {
+            // Enumerate the enumerable to an array so we can swap its elements
+            var items = enumerable.ToArray();
+
+            // Prepare the result that will be returned whenever it's ready
+            var result = new T[numberOfElements];
+
+            // Local function that performs the generation algorithm.
+            // The idea of the algorithm is the following: Assume that 
+            // the items of our array from the interval [0, startIndex-1]
+            // represent our variation (or no items for startIndex=0).
+            // Then we need to pick the next element, which can be any
+            // element from the interval [startIndex, items.Length-1]. 
+            // After we pick one (at the index 'i'), we then swap 
+            // the elements at 'startIndex' and 'i' so that the sub-array
+            // [0, startIndex] is our variation. Then we recursively call 
+            // the algorithm for 'startIndex+1'. We do this until we have
+            // the requested number of elements
+            IEnumerable<T[]> Generate(int startIndex)
+            {
+                // If we have enough elements...
+                if (startIndex == numberOfElements)
+                {
+                    // Lazily return the result
+                    yield return result;
+                }
+                // Otherwise...
+                else
+                {
+                    // We decide which of the elements from the interval [startIndex, items.Length-1] we're going to add
+                    // to our variation (which already has its elements at the indices at the interval [0, startIndex-1]
+                    for (var i = startIndex; i < items.Length; i++)
+                    {
+                        // If we've decided for the i-th element. First we set the result so it reflects the interval [0, startIndex]
+                        result[startIndex] = items[i];
+
+                        // Then we make sure that the interval [0, startIndex] represents our current variation
+                        GeneralUtilities.Swap(ref items[i], ref items[startIndex]);
+
+                        // Perform recursive search for variations for the rest of the sequence
+                        foreach (var variation in Generate(startIndex + 1))
+                            yield return variation;
+
+                        // And revert the swapping we did
+                        GeneralUtilities.Swap(ref items[i], ref items[startIndex]);
+                    }
+                }
+            }
+
+            // Execute the generated process from the beginning
+            return Generate(0);
+        }
+
+        /// <summary>
+        /// Generates all possible permutations of the elements of a given enumerable. 
+        /// For example: For the list [1, 2, 3] all the permutations are [1, 2, 3],  
+        /// [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]. The generation process 
+        /// is lazy. No particular order is guaranteed. The enumerable will be enumerated 
+        /// once in the process. The resulting array will change every iteration (for
+        /// efficiency), so if the result needs to be stored, it needs to be cloned first.
+        /// </summary>
+        /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>A lazy enumerable of all possible permutations.</returns>
+        public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> enumerable)
+        {
+            // Enumerate the enumerable
+            var array = enumerable.ToArray();
+
+            // Permutations are variations of all the elements
+            return array.Variations(array.Length);
+        }
+
+        /// <summary>
+        /// Generates all possible combinations of the elements from the enumerables, where
+        /// each enumerable with its position represents the set of possible options at this position.
+        /// For example, for three options lists [2,3], [3], [5,4] all the results will be 
+        /// [2,3,5], [2,3,4], [3,3,5], [3,3,4]. The resulting array will change every iteration 
+        /// (for efficiency), so if the result needs to be stored, it needs to be cloned first.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>A lazy enumerable of all possible combinations of elements.</returns>
+        public static IEnumerable<T[]> Combine<T>(this IEnumerable<IEnumerable<T>> enumerable)
+        {
+            // Enumerate the options
+            var optionsArray = enumerable.ToArray();
+
+            // Prepare the resulting array that will be returned whenever it's ready
+            var result = new T[optionsArray.Length];
+
+            // Local function that performs the generation. It assumes we've already decided
+            // for some elements from the options at the indices from the interval [0, optionsIndex-1],
+            // then it decides for some element from the option enumerable at 'optionsIndex', 
+            // and then recursively decide for the other ones
+            IEnumerable<T[]> Generate(int optionsIndex)
+            {
+                // If we've been through all the option enumerables...
+                if (optionsIndex == optionsArray.Length)
+                {
+                    // Then we lazily return the result
+                    yield return result;
+                }
+                // Otherwise...
+                else
+                {
+                    // We decide which of the elements of the current option's enumerable we're going to pick
+                    foreach (var item in optionsArray[optionsIndex])
+                    {
+                        // If we've decided for some item, we first mark it in the result
+                        result[optionsIndex] = item;
+
+                        // And recursively examine the other option enumerables
+                        foreach (var option in Generate(optionsIndex + 1))
+                            yield return option;
+                    }
+                }
+            }
+
+            // Execute the algorithm from the beginning
+            return Generate(0);
         }
     }
 }

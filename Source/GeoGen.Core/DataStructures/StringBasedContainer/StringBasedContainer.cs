@@ -31,12 +31,9 @@ namespace GeoGen.Core
         /// Initializes a new instance of the <see cref="StringBasedContainer{T}"/> class.
         /// </summary>
         /// <param name="converter">The converter of items to string.</param>
-        public StringBasedContainer(IToStringConverter<T> converter, IEnumerable<T> initialObjects = null)
+        public StringBasedContainer(IToStringConverter<T> converter)
         {
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
-
-            // Add all the initial objects ignoring their equal versions
-            initialObjects?.ForEach(obj => Add(obj, out var _));
         }
 
         #endregion

@@ -1,12 +1,11 @@
-﻿using GeoGen.Core;
-using GeoGen.Generator;
+﻿using GeoGen.Generator;
 using Ninject;
 using System;
 
 namespace GeoGen.Runner
 {
     /// <summary>
-    /// A default implementation of <see cref="IGeneratorFactory"/> that uses the NInject resolution root.
+    /// The default implementation of <see cref="IGeneratorFactory"/> that uses NInject.
     /// </summary>
     internal class GeneratorFactory : IGeneratorFactory
     {
@@ -48,16 +47,16 @@ namespace GeoGen.Runner
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
         /// <returns>The generator.</returns>
-        public IGenerator CreateGenerator(GeneratorInput generatorInput)
+        public Generator.Generator CreateGenerator(GeneratorInput generatorInput)
         {
-            // Make sure two different threads won't manipulate the container
+            // Make sure two different threads won't manipulate the container at the same time
             lock (_lock)
             {
                 // Bind the input, so it can be accessed in the run-time construction arguments resolution
                 var inputBinding = _kernel.Bind<GeneratorInput>().ToConstant(generatorInput);
 
                 // Get the generator
-                var generator = _kernel.Get<IGenerator>();
+                var generator = _kernel.Get<Generator.Generator>();
 
                 // Release the input so it can be bound again later
                 _kernel.Unbind<GeneratorInput>();

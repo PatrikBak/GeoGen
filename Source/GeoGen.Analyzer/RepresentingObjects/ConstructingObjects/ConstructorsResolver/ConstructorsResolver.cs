@@ -80,7 +80,7 @@ namespace GeoGen.Analyzer
             var composedConstruction = (ComposedConstruction) construction;
 
             // We pull its id
-            var id = composedConstruction.Id ?? throw new AnalyzerException("Id must be set");
+            var id = composedConstruction.Id;
 
             // Look for it in the dictionary
             if (_composedConstructors.ContainsKey(id))

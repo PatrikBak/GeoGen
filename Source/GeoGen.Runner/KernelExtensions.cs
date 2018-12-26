@@ -1,10 +1,10 @@
-﻿using Ninject;
-using GeoGen.Generator;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Analyzer;
 using GeoGen.Core;
+using GeoGen.Generator;
+using Ninject;
 using Ninject.Extensions.Factory;
 using Ninject.Extensions.NamedScope;
-using GeoGen.AnalyticGeometry;
-using GeoGen.Analyzer;
 
 namespace GeoGen.Runner
 {
@@ -26,15 +26,14 @@ namespace GeoGen.Runner
             #region Generator
 
             // Singletons per one generation
-            kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IConstructionSignatureMatcher>().To<ConstructionSignatureMatcher>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IObjectsGenerator>().To<ObjectsGenerator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IGeneralConfigurationToStringProvider>().To<GeneralConfigurationToStringProvider>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConfigurationsValidator>().To<ConfigurationsValidator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
             kernel.Bind<IFullObjectToStringConverter, FullObjectToStringConverter>().To<FullObjectToStringConverter>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
 
             // Transient objects
             kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
@@ -43,26 +42,16 @@ namespace GeoGen.Runner
             // Ninject factories
             kernel.Bind<IArgumentsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
 
-            // Bindings with dynamic constructors arguments
-            kernel.Bind<IGenerator>()
-                .To<Generator.Generator>()
+            // Bindings with dynamic constructor arguments
+            kernel.Bind<Generator.Generator>()
+                .ToSelf()
                 .WithConstructorArgument("input", context => context.Kernel.Get<GeneratorInput>())
                 .DefinesNamedScope(GeneratorScopeName);
 
             kernel.Bind<FullConfigurationToStringConverter>()
                 .ToSelf()
                 .InNamedScope(GeneratorScopeName)
-                .WithConstructorArgument("looseObjectsHolder", context => context.Kernel.Get<GeneratorInput>().InitialConfiguration.LooseObjectsHolder);
-
-            kernel.Bind<IConstructionsContainer>()
-                .To<ConstructionsContainer>()
-                .InNamedScope(GeneratorScopeName)
-                .WithConstructorArgument("constructions", context => context.Kernel.Get<GeneratorInput>().Constructions);                
-
-            kernel.Bind<IContainer<ConfigurationObject>>()
-                .To<ConfigurationObjectsContainer>()
-                .InNamedScope(GeneratorScopeName)
-                .WithConstructorArgument("initialConfiguration", context => context.Kernel.Get<GeneratorInput>().InitialConfiguration);
+                .WithConstructorArgument("looseObjects", context => context.Kernel.Get<GeneratorInput>().InitialConfiguration.LooseObjectsHolder.LooseObjects);
 
             #endregion
 
@@ -124,7 +113,6 @@ namespace GeoGen.Runner
             #region Core
 
             kernel.Bind<ICombinator>().To<Combinator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IVariationsProvider>().To<VariationsProvider>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ISubsetsProvider>().To<SubsetsProvider>().InNamedScope(GeneratorScopeName);
 
             #endregion

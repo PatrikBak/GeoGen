@@ -2,7 +2,7 @@
 using GeoGen.Analyzer;
 using GeoGen.Core;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class DummyTheoremsAnalyzer : ITheoremsAnalyzer
     {

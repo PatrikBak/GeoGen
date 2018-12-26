@@ -40,10 +40,13 @@ namespace GeoGen.Core
             // First we need to get the object that this object is composed of
             var allObjects = InternalObjects().ToList();
 
+            // Find the last letter
+            var lastLetter = 'A' + allObjects.Count - 1;
+
             // Now we prepare the naming dictionary. We're goning to name all objects
             var namingDictionary = allObjects
                 // They're ordered, we can give them the names, starting with A
-                .Select((obj, index) => (configurationObject: obj, name: (char) ('A' + index)))
+                .Select((obj, index) => (configurationObject: obj, name: (char) (lastLetter - index)))
                 // And wrap these names to a dictionary that we're going to use to convert each one to string
                 .ToDictionary(pair => pair.configurationObject, pair => pair.name.ToString());
 

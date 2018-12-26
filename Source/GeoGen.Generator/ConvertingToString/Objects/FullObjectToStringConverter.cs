@@ -96,12 +96,8 @@ namespace GeoGen.Generator
             // Now we construct the arguments string with the found converter
             var argumentsString = _argumentsToString.ConvertToString(contructedObject.PassedArguments, converter);
 
-            // Construct the beginning of the result
+            // Construct the result
             var result = $"{contructedObject.Construction.Id}{argumentsString}";
-
-            // If the object doesn't have the default index (which is 0), then we have to include it to the result
-            if (contructedObject.Index != 0)
-                result += $"[{contructedObject.Index}]";
 
             // Cache the result
             cache.Add(contructedObject, result);

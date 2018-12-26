@@ -24,7 +24,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the constructed configuration objects that represent the output of this construction.
         /// </summary>
-        public IReadOnlyList<ConstructedConfigurationObject> ConstructionOutput { get; }
+        public ConstructedConfigurationObject ConstructionOutput { get; }
 
         /// <summary>
         /// Gets or sets the function that takes the list of constructed objects (that are created with
@@ -45,7 +45,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the construction output signature, i.e. the list of configuration object types.
         /// </summary>
-        public override IReadOnlyList<ConfigurationObjectType> OutputTypes { get; }
+        public override ConfigurationObjectType OutputType { get; }
 
         /// <summary>
         /// Gets the name of the construction. 
@@ -63,17 +63,17 @@ namespace GeoGen.Core
         /// <param name="indices">The indices of the outputted objects that are from the constructed objects of the given configuration.</param>
         /// <param name="parameters">The parameters of the construction (the signature must correspond to the loose objects of the configuration).</param>
         /// <param name="name">The name of the construction.</param>
-        public ComposedConstruction(Configuration configuration, IEnumerable<int> indices, IReadOnlyList<ConstructionParameter> parameters, string name)
+        public ComposedConstruction(Configuration configuration, int index, IReadOnlyList<ConstructionParameter> parameters, string name)
         {
             ParentalConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             ConstructionParameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
             Name = name ?? throw new ArgumentNullException(nameof(name));
 
             // Find constructed objects in the configuration according to the indices enumerable
-            ConstructionOutput = indices.Select(i => configuration.ConstructedObjects[i]).ToList();
+            ConstructionOutput = configuration.ConstructedObjects[index];
 
             // Find the types of outputted objects
-            OutputTypes = ConstructionOutput.Select(o => o.ObjectType).ToList();
+            OutputType = ConstructionOutput.ObjectType;
         }
 
         #endregion

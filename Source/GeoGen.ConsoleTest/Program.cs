@@ -1,18 +1,18 @@
 ﻿using GeoGen.Analyzer;
 using GeoGen.Core;
+using GeoGen.Generator;
 using GeoGen.Runner;
 using Ninject;
-using Ninject.Extensions.Factory;
 using Ninject.Extensions.ContextPreservation;
+using Ninject.Extensions.Factory;
 using Ninject.Planning.Bindings.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using static GeoGen.Core.PredefinedConstructionType;
-using Ninject.Modules;
 
-namespace GeoGen.Generator.IntegrationTest
+namespace GeoGen.ConsoleTest
 {
     public class Program
     {
@@ -38,6 +38,8 @@ namespace GeoGen.Generator.IntegrationTest
             _kernel.Bind<ConstructorHelper>().ToSelf().InSingletonScope();
 
             _kernel.Bind<IInconsistenciesTracker>().ToConstant(new ConsoleInconsistenciesTracker());
+            _kernel.Bind<IEqualObjectsTracer>().ToConstant(new ConsoleEqualObjectsTracer());
+            _kernel.Bind<IInconstructibleObjectsTracer>().ToConstant(new ConsoleInconstructibleObjectsTracer());
             //_kernel.Rebind<ITheoremsAnalyzer>().To<DummyTheoremsAnalyzer>();
         }
 

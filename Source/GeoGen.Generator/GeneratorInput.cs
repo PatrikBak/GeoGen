@@ -4,18 +4,19 @@ using System.Collections.Generic;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents an input for a generator.
+    /// Represents an input for the <see cref="Generator"/>.
     /// </summary>
     public class GeneratorInput
     {
         /// <summary>
-        /// Gets or sets the initial configuration from which the generation process starts.
+        /// Gets or sets the initial configuration from which the generation process starts. The configuration
+        /// shouldn't be identified, nor its internal objects should or constructions should.
         /// </summary>
         public Configuration InitialConfiguration { get; set; }
 
         /// <summary>
-        /// Gets or sets the constructions collection that are supposed to be used to extend the initial configuration
-        /// and further configurations as well.
+        /// Gets or sets the constructions that are supposed to be used to extend the configurations, including the initial one.
+        /// The constructions must have distinct names and cannot be identified.
         /// </summary>
         public ICollection<Construction> Constructions { get; set; }
 
