@@ -110,13 +110,6 @@ namespace GeoGen.Runner
 
             #endregion
 
-            #region Core
-
-            kernel.Bind<ICombinator>().To<Combinator>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ISubsetsProvider>().To<SubsetsProvider>().InNamedScope(GeneratorScopeName);
-
-            #endregion
-
             // Return the kernel for chaining
             return kernel;
         }

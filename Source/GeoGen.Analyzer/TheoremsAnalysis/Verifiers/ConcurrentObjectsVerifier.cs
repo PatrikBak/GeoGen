@@ -12,30 +12,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     public class ConcurrentObjectsVerifier : TheoremVerifierBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The generator of subsets of given length.
-        /// </summary>
-        private readonly ISubsetsProvider _provider;
-
-        #endregion
-
-        #region Constructor
-        
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="provider">The subsets generator.</param>
-        public ConcurrentObjectsVerifier(ISubsetsProvider provider)
-        {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-        }
-
-        #endregion
-
-        #region ITheoremVerifier implementation
-
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
@@ -132,7 +108,7 @@ namespace GeoGen.Analyzer
             foreach (var objectList in objectsLists)
             {
                 // We'll take all triples of these objects
-                foreach (var triple in _provider.GetSubsets(objectList, 3))
+                foreach (var triple in objectList.Subsets(3))
                 {
                     // Enumerate involved objects
                     var involvedObjects = triple.ToArray();
@@ -164,7 +140,5 @@ namespace GeoGen.Analyzer
                 }
             }
         }
-
-        #endregion
     }
 }

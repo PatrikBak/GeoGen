@@ -14,38 +14,10 @@ namespace GeoGen.Analyzer
         #region Private fields
 
         /// <summary>
-        /// The combinator used to combine all possible definitions of 
-        /// our geometrical objects.
-        /// </summary>
-        private readonly ICombinator _combinator;
-
-        /// <summary>
-        /// The subsets generator used to find all pair / triples of points
-        /// to define a line or a circle
-        /// </summary>
-        private readonly ISubsetsProvider _subsetsProvider;
-
-        /// <summary>
         /// The dictionary mapping ids of objects to the set of
         /// ids of objects that are needed to define this object.
         /// </summary>
-        private readonly Dictionary<int, HashSet<int>> _cache;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="combinator">The combinator used to generate all combinations of definitions of objects.</param>
-        /// <param name="subsetsProvider">The subsets provided for generating pair and triples of points to define lines / circles.</param>
-        public NeedlessObjectsAnalyzer(ICombinator combinator, ISubsetsProvider subsetsProvider)
-        {
-            _combinator = combinator ?? throw new ArgumentNullException(nameof(combinator));
-            _subsetsProvider = subsetsProvider ?? throw new ArgumentNullException(nameof(subsetsProvider));
-            _cache = new Dictionary<int, HashSet<int>>();
-        }
+        private readonly Dictionary<int, HashSet<int>> _cache = new Dictionary<int, HashSet<int>>();
 
         #endregion
 
@@ -64,13 +36,13 @@ namespace GeoGen.Analyzer
             var numberOfObjects = configuration.ConstructedObjects.Count + configuration.LooseObjects.Count;
 
             // Prepare dictionary for combinator, mapping id of geometrical object to the options list
-            var dictionaryForCombiner = geometricalObjects.Distinct().ToDictionary(o => o.Id, FindAllOptions);
+            var dictionaryForCombiner = geometricalObjects.Distinct().Select(FindAllOptions).Combine();
 
             // Let the combiner combine all possible definitions 
-            foreach (var option in _combinator.Combine(dictionaryForCombiner))
+            foreach (var option in dictionaryForCombiner)
             {
                 // Find the number of used objects in this option
-                var neededObjects = option.Values.SelectMany(set => set).Distinct().Count();
+                var neededObjects = option.SelectMany(set => set).Distinct().Count();
 
                 // If there is a needless object, then we have a problem..
                 if (neededObjects != numberOfObjects)
@@ -111,7 +83,7 @@ namespace GeoGen.Analyzer
             var points = objectWithPoints.Points.ToList();
 
             // Generate all possible pairs/triples of points (according to the type of the object)
-            var definitions = _subsetsProvider.GetSubsets(points, objectWithPoints.NumberOfNeededPoints)
+            var definitions = points.Subsets(objectWithPoints.NumberOfNeededPoints)
                     // For each of them find ids of the objects needed to define all the pairs
                     .Select(option => option.SelectMany(p => FindIdsOfInternalObjects(p.ConfigurationObject)).ToSet());
 

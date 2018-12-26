@@ -26,10 +26,7 @@ namespace GeoGen.Utilities
             }
 
             // Otherwise we add all items by one
-            foreach (var item in newItems)
-            {
-                collection.Add(item);
-            }
+            newItems.ForEach(collection.Add);
         }
 
         /// <summary>
@@ -38,13 +35,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collection.</param>
         /// <param name="items">The items to be added.</param>
-        public static void Add<T>(this ICollection<T> collection, params T[] items)
-        {
-            foreach (var item in items)
-            {
-                collection.Add(item);
-            }
-        }
+        public static void Add<T>(this ICollection<T> collection, params T[] items) => items.ForEach(collection.Add);
 
         /// <summary>
         /// Adds given items to the collection.
@@ -52,12 +43,6 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collections.</param>
         /// <param name="items">The items to be added.</param>
-        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items)
-        {
-            foreach (var item in items)
-            {
-                collection.Add(item);
-            }
-        }
+        public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items) => items.ForEach(collection.Add);
     }
 }

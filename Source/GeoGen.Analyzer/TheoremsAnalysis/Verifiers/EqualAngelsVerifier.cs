@@ -12,30 +12,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     public class EqualAnglesVerifier : TheoremVerifierBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The generator of subsets of given size.
-        /// </summary>
-        private readonly ISubsetsProvider _provider;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="provider">The subsets generator.</param>
-        public EqualAnglesVerifier(ISubsetsProvider provider)
-        {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-        }
-
-        #endregion
-
-        #region ITheoremVerifier implementation
-
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
@@ -92,7 +68,7 @@ namespace GeoGen.Analyzer
                 var analyticLine2 = container.GetAnalyticObject<Line>(lines.line2, objectsContainer);
 
                 // Return their distance
-                return (RoundedDouble)analyticLine1.AngleBetween(analyticLine2);
+                return (RoundedDouble) analyticLine1.AngleBetween(analyticLine2);
             }
 
             // Prepare a dictionary mapping angles to lists of pairs of lines forming an angel of this size
@@ -124,7 +100,7 @@ namespace GeoGen.Analyzer
             foreach (var pairOfLines in pairsOfLinesLists)
             {
                 // We'll take all pairs of these pairs
-                foreach (var pairOfPairOfLines in _provider.GetSubsets(pairOfLines, 2))
+                foreach (var pairOfPairOfLines in pairOfLines.Subsets(2))
                 {
                     // Enumerate the pair
                     var pair = pairOfPairOfLines.ToArray();
@@ -150,7 +126,5 @@ namespace GeoGen.Analyzer
                 }
             }
         }
-        
-        #endregion
     }
 }

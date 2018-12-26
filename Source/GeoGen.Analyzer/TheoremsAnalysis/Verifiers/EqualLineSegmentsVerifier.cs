@@ -12,30 +12,6 @@ namespace GeoGen.Analyzer
     /// </summary>
     public class EqualLineSegmentsVerifier : TheoremVerifierBase
     {
-        #region Private fields
-
-        /// <summary>
-        /// The generator of subsets of given size.
-        /// </summary>
-        private readonly ISubsetsProvider _provider;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="provider">The subsets generator.</param>
-        public EqualLineSegmentsVerifier(ISubsetsProvider provider)
-        {
-            _provider = provider ?? throw new ArgumentNullException(nameof(provider));
-        }
-
-        #endregion
-
-        #region ITheoremVerifier implementation
-
         /// <summary>
         /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
         /// </summary>
@@ -124,7 +100,7 @@ namespace GeoGen.Analyzer
             foreach (var lineSegments in lineSegmentsLists)
             {
                 // We'll take all pairs of these lines segments...
-                foreach (var pairOfLineSegments in _provider.GetSubsets(lineSegments, 2))
+                foreach (var pairOfLineSegments in lineSegments.Subsets(2))
                 {
                     // Enumerate the pair
                     var pair = pairOfLineSegments.ToArray();
@@ -150,7 +126,5 @@ namespace GeoGen.Analyzer
                 }
             }
         }
-
-        #endregion
     }
 }

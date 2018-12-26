@@ -25,6 +25,8 @@ namespace GeoGen.Utilities
 
         public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> enumerable) => enumerable.SelectMany(_ => _);
 
+        public static IEnumerable<T> Concat<T>(this IEnumerable<T> enumerable, params T[] items) => enumerable.Concat((IEnumerable<T>) items);
+
         /// <summary>
         /// Invokes a given action for each element in the enumerable.
         /// </summary>
@@ -176,7 +178,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="numberOfElement">The number of elements in each variation.</param>
-        /// <returns>A lazy enumerable of all possible variations.</returns>
+        /// <returns>A lazy enumerable of all possible variations with a given size.</returns>
         public static IEnumerable<T[]> Variations<T>(this IEnumerable<T> enumerable, int numberOfElements)
         {
             // Enumerate the enumerable to an array so we can swap its elements
@@ -232,7 +234,7 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Generates all possible permutations of the elements of a given enumerable. 
+        /// Generates all possible permutations from the elements of a given enumerable. 
         /// For example: For the list [1, 2, 3] all the permutations are [1, 2, 3],  
         /// [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]. The generation process 
         /// is lazy. No particular order is guaranteed. The enumerable will be enumerated 
@@ -252,7 +254,7 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Generates all possible combinations of the elements from the enumerables, where
+        /// Generates all possible combinations from the elements from the enumerables, where
         /// each enumerable with its position represents the set of possible options at this position.
         /// For example, for three options lists [2,3], [3], [5,4] all the results will be 
         /// [2,3,5], [2,3,4], [3,3,5], [3,3,4]. The resulting array will change every iteration 
@@ -299,6 +301,58 @@ namespace GeoGen.Utilities
 
             // Execute the algorithm from the beginning
             return Generate(0);
+        }
+
+        /// <summary>
+        /// Generates all possible subsets from the elements of a given enumerable 
+        /// with a given size. For example: For the list [1, 2, 3, 4] all the subset
+        /// of size 2 are [1,2], [1,3], [1,4], [2,3], [2,4], [3,4]. The generation process 
+        /// is lazy. No particular order is guaranteed. The enumerable will be enumerated 
+        /// once in the process. 
+        /// </summary>
+        /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>A lazy enumerable of all possible subsets with a given size.</returns>
+        public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> enumerable, int numberOfElements)
+        {
+            // Enumerate the items to an array
+            var items = enumerable.ToArray();
+
+            // Local function that performs a simple recursive algorithm that returns all the
+            // from the elements with indices from the interval [startIndex, items.Length-1] 
+            // with the requested size
+            IEnumerable<IEnumerable<T>> Generate(int startIndex, int requestedNumberOfElements)
+            {
+                // Our available elements have indices from the interval [startIndex, items.Length-1],
+                // i.e. there are 'item.Length - startIndex' of them. If we're requesting more...
+                if (items.Length - startIndex < requestedNumberOfElements)
+                {
+                    // We can break
+                    yield break;
+                }
+                // Otherwise if we're requesting 0 elements
+                else if (requestedNumberOfElements == 0)
+                {
+                    // Them we simply return an empty set
+                    yield return Enumerable.Empty<T>();
+                }
+                // Otherwise...
+                else
+                {
+                    // We first assume the element at the 'startIndex' is in the subset. Then we need to 
+                    // request one fewer elements from the remaining ones and include this one as well
+                    foreach (var subset in Generate(startIndex + 1, requestedNumberOfElements - 1))
+                        yield return subset.Concat(items[startIndex]);
+
+                    // Now we assume we're not including the element at the 'startIndex'. Then we ask
+                    // the same number of elements 
+                    foreach (var subset in Generate(startIndex + 1, requestedNumberOfElements))
+                        yield return subset;
+                }
+            }
+
+            // Execute the algorithm from the beginning
+            return Generate(0, numberOfElements);
         }
     }
 }
