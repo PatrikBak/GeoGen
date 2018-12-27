@@ -31,9 +31,10 @@ namespace GeoGen.Runner
             kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IFullObjectToStringConverter, FullObjectToStringConverter>().To<FullObjectToStringConverter>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
 
             // Transient objects
             kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
@@ -42,12 +43,13 @@ namespace GeoGen.Runner
             // Ninject factories
             kernel.Bind<IArgumentsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
 
-            // Bindings with dynamic constructor arguments
+            // Bind Generator that needs its dynamic input
             kernel.Bind<Generator.Generator>()
                 .ToSelf()
                 .WithConstructorArgument("input", context => context.Kernel.Get<GeneratorInput>())
                 .DefinesNamedScope(GeneratorScopeName);
 
+            // Bind the full converter that needs loose objects from the initial configuration
             kernel.Bind<FullConfigurationToStringConverter>()
                 .ToSelf()
                 .InNamedScope(GeneratorScopeName)
@@ -89,14 +91,14 @@ namespace GeoGen.Runner
             kernel.Bind<ITheoremVerifier>().To<PerpendicularLinesVerifier>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ITheoremVerifier>().To<TangentCirclesVerifier>().InNamedScope(GeneratorScopeName);
 
-            // Predefines constructors
+            // Predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CircumcenterFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<CircumcircleFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesFromLineAndPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorFromPointsConstructor>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IPredefinedConstructor>().To<LoosePointOnLineFromPointsConstructor>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPredefinedConstructor>().To<RandomPointOnLineFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<MidpointFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineFromPointsConstructor>().InNamedScope(GeneratorScopeName);
 

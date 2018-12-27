@@ -10,7 +10,7 @@ namespace GeoGen.Core
         #region Public properties
 
         /// <summary>
-        /// Gets the object that this argument wraps.
+        /// Gets the configuration object that is passed as an argument.
         /// </summary>
         public ConfigurationObject PassedObject { get; }
 
@@ -19,9 +19,9 @@ namespace GeoGen.Core
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="ObjectConstructionArgument"/> class.
         /// </summary>
-        /// <param name="passedObject">The passed configuration object.</param>
+        /// <param name="passedObject">The configuration object that is passed as an argument.</param>
         public ObjectConstructionArgument(ConfigurationObject passedObject)
         {
             PassedObject = passedObject ?? throw new ArgumentNullException(nameof(passedObject));

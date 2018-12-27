@@ -3,30 +3,30 @@
 namespace GeoGen.Utilities
 {
     /// <summary>
-    /// Extension methods for <see cref="ICollection{T}"/>
+    /// Extension methods for <see cref="ICollection{T}"/>.
     /// </summary>
     public static class CollectionExtensions
     {
         /// <summary>
-        /// Sets given items as the items of a given collection.
+        /// Sets given items to be the content of the collection.
         /// </summary>
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collection.</param>
-        /// <param name="newItems">The new items to be set.</param>
-        public static void SetItems<T>(this ICollection<T> collection, IEnumerable<T> newItems)
+        /// <param name="items">The items that should be the content of the collection.</param>
+        public static void SetItems<T>(this ICollection<T> collection, IEnumerable<T> items)
         {
             // Clear the collection
             collection.Clear();
 
-            // If the collection is list, the most efficient way is to use the AddRange method
+            // If the collection is a list, then the most efficient way is to use the AddRange method
             if (collection is List<T> list)
             {
-                list.AddRange(newItems);
+                list.AddRange(items);
                 return;
             }
 
-            // Otherwise we add all items by one
-            newItems.ForEach(collection.Add);
+            // Otherwise we add all the items by one
+            items.ForEach(collection.Add);
         }
 
         /// <summary>

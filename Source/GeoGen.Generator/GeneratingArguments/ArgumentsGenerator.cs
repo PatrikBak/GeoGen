@@ -72,7 +72,7 @@ namespace GeoGen.Generator
                     // means putting more arrays (of objects of different types) into a single one
                     .Select(arrays => new ConfigurationObjectsMap(arrays.Flatten()))
                     // After we have the map, we'll use the private method to create the corresponding arguments 
-                    .Select(objectsToUse => Match(objectsToUse, construction.ConstructionParameters));
+                    .Select(objectsToUse => Match(objectsToUse, construction.Parameters));
 
             // Let the factory create an empty container where we will be adding the generated arguments
             var generatedArguments = _argumentsContainerFactory.CreateContainer();
@@ -144,7 +144,7 @@ namespace GeoGen.Generator
                 {
                     // Then we simply ask for the next object of the expected type
                     // and increase the index for the next expected object of this type
-                    var nextObject = objectsMap[objectParameter.ExpectedType][indices[objectParameter.ExpectedType]++];
+                    var nextObject = objectsMap[objectParameter.ObjectType][indices[objectParameter.ObjectType]++];
 
                     // And return the object argument wrapping this object
                     return new ObjectConstructionArgument(nextObject);

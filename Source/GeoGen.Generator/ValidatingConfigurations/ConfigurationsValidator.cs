@@ -84,10 +84,10 @@ namespace GeoGen.Generator
             #region Object ids based validation
 
             // Let's find the object ids
-            var objectIds = configuration.ObjectsIds();
+            var objectIds = configuration.ObjectsMap.AllObjects.Select(obj => obj.Id).ToSet();
 
             // Check if there is no duplicate, i.e. the number of ids is equal to the number of objects
-            if (configuration.NumberOfObjects != objectIds.Count)
+            if (configuration.ObjectsMap.AllObjects.Count != objectIds.Count)
                 return false;
 
             // Check if there is any id that has been marked as inconstructible

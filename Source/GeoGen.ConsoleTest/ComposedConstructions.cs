@@ -64,7 +64,7 @@ namespace GeoGen.ConsoleTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, 2, parameters, "Centroid");
+            var result = new ComposedConstruction("Centroid", configuration, parameters);
 
             _container.Add(result);
 
@@ -118,7 +118,7 @@ namespace GeoGen.ConsoleTest
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
             };
 
-            var result = new ComposedConstruction(configuration, 2, parameters, "Incenter");
+            var result = new ComposedConstruction("Incenter", configuration, parameters);
 
             _container.Add(result);
 

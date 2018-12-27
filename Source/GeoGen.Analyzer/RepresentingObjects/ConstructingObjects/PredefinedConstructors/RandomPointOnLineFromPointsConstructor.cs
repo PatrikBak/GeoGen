@@ -6,9 +6,9 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.LoosePointOnLineFromPoints"/>>.
+    /// An <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.RandomPointOnLineFromPoints"/>>.
     /// </summary>
-    public class LoosePointOnLineFromPointsConstructor : PredefinedConstructorBase
+    public class RandomPointOnLineFromPointsConstructor : PredefinedConstructorBase
     {
         #region Private fields
 
@@ -25,7 +25,7 @@ namespace GeoGen.Analyzer
         /// Default constructor.
         /// </summary>
         /// <param name="provider">The randomness provided.</param>
-        public LoosePointOnLineFromPointsConstructor(IRandomnessProvider provider)
+        public RandomPointOnLineFromPointsConstructor(IRandomnessProvider provider)
         {
             _provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }

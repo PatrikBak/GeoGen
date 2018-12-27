@@ -1,6 +1,5 @@
-﻿using System;
-using GeoGen.AnalyticGeometry;
-using GeoGen.Core;
+﻿using GeoGen.Core;
+using System;
 
 namespace GeoGen.Analyzer
 {

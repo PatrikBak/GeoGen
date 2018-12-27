@@ -1,8 +1,7 @@
 ﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a type of a construction which constructor is implemented
-    /// directly in the code.
+    /// Represents a type of a construction whose constructor is implemented directly in the code.
     /// </summary>
     public enum PredefinedConstructionType
     {
@@ -12,7 +11,7 @@
         CircumcenterFromPoints,
 
         /// <summary>
-        /// The circumcircle of a triangle constructed from 3 points (signature {P, P, P}).
+        /// The circumcircle constructed from 3 points (signature {P, P, P}).
         /// </summary>
         CircumcircleFromPoints,
 
@@ -22,7 +21,7 @@
         InternalAngleBisectorFromPoints,
 
         /// <summary>
-        /// The intersection of two lines constructed from 4 points (signature {{P, P}, {P, P}}).
+        /// The intersection of the two lines constructed from 4 points (signature {{P, P}, {P, P}}).
         /// </summary>
         IntersectionOfLinesFromPoints,
 
@@ -32,17 +31,17 @@
         IntersectionOfLines,
 
         /// <summary>
-        /// The intersection of two lines constructed from a line and 2 points (signature L, {P,P}).
+        /// The intersection of the two lines constructed from a line and 2 points (signature L, {P, P}).
         /// </summary>
         IntersectionOfLinesFromLineAndPoints,
 
         /// <summary>
-        /// The loose (random) points lying on a line constructed from 2 points (signature {P, P}).
+        /// A random points lying on the line constructed from 2 points (signature {P, P}).
         /// </summary>
-        LoosePointOnLineFromPoints,
+        RandomPointOnLineFromPoints,
 
         /// <summary>
-        /// The midpoint of a line segment constructed from 2 points (signature {P, P}).
+        /// The midpoint of the line segment constructed from 2 points (signature {P, P}).
         /// </summary>
         MidpointFromPoints,
 

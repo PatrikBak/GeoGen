@@ -218,7 +218,7 @@ namespace GeoGen.Analyzer
         private void AddAll(Configuration configuration)
         {
             // Add loose objects
-            configuration.LooseObjects.ForEach(obj => Add(obj, isNew: false));
+            configuration.LooseObjectsHolder.LooseObjects.ForEach(obj => Add(obj, isNew: false));
 
             // Add constructed objects
             configuration.ConstructedObjects.ForEach(obj => Add(obj, isNew: obj == configuration.ConstructedObjects.Last()));

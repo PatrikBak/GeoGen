@@ -6,14 +6,15 @@ using System.Collections.Generic;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a list of <see cref="ConstructionArgument"/> that are used to create <see cref="ConstructedConfigurationObject"/>s. 
+    /// Represents a list of <see cref="ConstructionArgument"/> that is directly 
+    /// part of the definition of <see cref="ConstructedConfigurationObject"/>s. 
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the arguments list wraped by this object.
+        /// Gets the list of individual arguments.
         /// </summary>
         public IReadOnlyList<ConstructionArgument> ArgumentsList { get; }
 
@@ -21,7 +22,7 @@ namespace GeoGen.Core
         /// Gets the list of configuration objects that are obtained within the arguments
         /// in the order that we get if we recursively search through them from left to right. 
         /// For example: With { {A,B}, {C,D} } we might get A,B,C,D; or D,C,B,A. The order of objects
-        /// within a set  itself is not deterministic. This list is lazily evaluated.
+        /// within a set itself is not deterministic.
         /// </summary>
         public IReadOnlyList<ConfigurationObject> FlattenedList { get; }
 
@@ -30,9 +31,9 @@ namespace GeoGen.Core
         #region Constructor
 
         /// <summary>
-        /// Constructs arguments wrapping a given arguments list. 
+        /// Initializes a new instance of the <see cref="Arguments"/> wrapping a given arguments list.
         /// </summary>
-        /// <param name="argumentsList">The arguments list.</param>
+        /// <param name="argumentsList">The list of individual arguments.</param>
         public Arguments(IReadOnlyList<ConstructionArgument> argumentsList)
         {
             ArgumentsList = argumentsList ?? throw new ArgumentNullException(nameof(argumentsList));
@@ -44,9 +45,9 @@ namespace GeoGen.Core
         #region Private methods
 
         /// <summary>
-        /// Finds all objects in the arguments and flattens them to a list.
+        /// Finds all the objects in the arguments and flattens them to a list.
         /// </summary>
-        /// <returns>The objects list.</returns>
+        /// <returns>A list containing the flattened objects.</returns>
         private List<ConfigurationObject> ExtraxtInputObject()
         {
             // Prepare the result
@@ -68,11 +69,11 @@ namespace GeoGen.Core
                 // Otherwise we have a set argument
                 var setArgument = (SetConstructionArgument) argument;
 
-                // We recursively call this function for internal arguments
+                // We recursively call this function for its internal arguments
                 setArgument.PassedArguments.ForEach(Extract);
             }
 
-            // Now we just call our local function for all arguments
+            // Now we just call our local function for all the arguments
             ArgumentsList.ForEach(Extract);
 
             // And return the result
@@ -87,19 +88,13 @@ namespace GeoGen.Core
         /// Gets a generic enumerator.
         /// </summary>
         /// <returns>The generic enumerator.</returns>
-        public IEnumerator<ConstructionArgument> GetEnumerator()
-        {
-            return ArgumentsList.GetEnumerator();
-        }
+        public IEnumerator<ConstructionArgument> GetEnumerator() => ArgumentsList.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
         /// </summary>
         /// <returns>The non-generic enumerator.</returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

@@ -3,10 +3,10 @@
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents an object that can be identified once, not necessarily during its construction, and then the its id cannot be changed.
-    /// It overrides the hash code and equal methods so the id is used for comparison if there is any.
+    /// Represents an object that can be identified once, not necessarily during its construction, and then its id cannot be changed.
+    /// It overrides the hash code and equal methods so that it uses its id (that must be set at the time).
     /// </summary>
-    public abstract class IdentifiedObject //: IEquatable<IdentifiedObject>
+    public abstract class IdentifiedObject : IEquatable<IdentifiedObject>
     {
         #region Private fields
 
@@ -16,17 +16,17 @@ namespace GeoGen.Core
         private int? _id;
 
         #endregion
-               
+
         #region Public properties
 
         /// <summary>
-        /// Gets or sets the id of this configuration object. The id should be set only once.
-        /// Setting it more than once, or accesing it when it's not set, causes a <see cref="GeoGenException"/>. 
+        /// Gets or sets the id of this object. The id should be set only once.
+        /// Setting it more than once, or accessing it when it's not set, causes a <see cref="GeoGenException"/>. 
         /// </summary>
         public int Id
         {
-            get => _id ?? throw new InvalidOperationException("The id hasn't been set yet.");
-            set => _id = !_id.HasValue ? value : throw new InvalidOperationException("The id of this object has been already set and cannot be changed.");
+            get => _id ?? throw new GeoGenException("The id hasn't been set yet.");
+            set => _id = !_id.HasValue ? value : throw new GeoGenException("The id has been already set and cannot be changed.");
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace GeoGen.Core
         /// <returns>true, if they are equal; false otherwise.</returns>
         public override bool Equals(object otherObject)
         {
-            // Do the null and type check and then call the other Equals method
+            // Do the null and then the type check and then call the other Equals method
             return otherObject != null && otherObject is IdentifiedObject identifiedObject && Equals(identifiedObject);
         }
 

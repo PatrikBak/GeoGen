@@ -1,12 +1,11 @@
-﻿using GeoGen.Utilities;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a container of distinct items that are compared based on their string versions.
+    /// Represents a <see cref="IContainer{T}"/> of distinct items that are compared based on their string versions.
     /// </summary>
     /// <typeparam name="T">The type of items in the container.</typeparam>
     public class StringBasedContainer<T> : IContainer<T>
@@ -14,12 +13,12 @@ namespace GeoGen.Core
         #region Private fields
 
         /// <summary>
-        /// The dictionary mapping string versions of items to items itself.
+        /// The dictionary mapping the string versions of items to the items itself.
         /// </summary>
         private readonly Dictionary<string, T> _items = new Dictionary<string, T>();
 
         /// <summary>
-        /// The converter of items to string.
+        /// The converter of items to a string.
         /// </summary>
         private readonly IToStringConverter<T> _converter;
 
@@ -30,7 +29,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="StringBasedContainer{T}"/> class.
         /// </summary>
-        /// <param name="converter">The converter of items to string.</param>
+        /// <param name="converter">The converter of items to a string.</param>
         public StringBasedContainer(IToStringConverter<T> converter)
         {
             _converter = converter ?? throw new ArgumentNullException(nameof(converter));
@@ -48,9 +47,9 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="item">The item to be added.</param>
         /// <param name="equalItem">Either the equal version of the passed item from the container (if there's any), or the default value of the type <typeparamref name="T"/>.</param>
-        public virtual void Add(T item, out T equalItem)
+        public void Add(T item, out T equalItem)
         {
-            // Convert the object to string
+            // Convert the object to a string
             var stringRepresentation = _converter.ConvertToString(item);
 
             // If we have it cached, we can return it directly 
@@ -63,7 +62,7 @@ namespace GeoGen.Core
                 return;
             }
 
-            // Add the item to the container 
+            // Otherwise add the item to the container 
             _items.Add(stringRepresentation, item);
 
             // Set that there is no equal item
@@ -78,19 +77,13 @@ namespace GeoGen.Core
         /// Gets a generic enumerator.
         /// </summary>
         /// <returns>The enumerator.</returns>
-        public IEnumerator<T> GetEnumerator()
-        {
-            return _items.Values.GetEnumerator();
-        }
+        public IEnumerator<T> GetEnumerator() => _items.Values.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
         /// </summary>
         /// <returns>The enumerator.</returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

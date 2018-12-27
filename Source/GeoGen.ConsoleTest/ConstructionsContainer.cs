@@ -14,8 +14,6 @@ namespace GeoGen.ConsoleTest
 
         private readonly List<(Construction, string)> _names;
 
-        private int _lastId;
-
         public ConstructionsContainer()
         {
             _predefinedConstructions = new Dictionary<PredefinedConstructionType, PredefinedConstruction>();

@@ -33,7 +33,7 @@ namespace GeoGen.Analyzer
         public bool ContainsNeedlessObjects(Configuration configuration, IEnumerable<GeometricalObject> geometricalObjects)
         {
             // Find the number of objects in the configuration
-            var numberOfObjects = configuration.ConstructedObjects.Count + configuration.LooseObjects.Count;
+            var numberOfObjects = configuration.ConstructedObjects.Count + configuration.LooseObjectsHolder.LooseObjects.Count;
 
             // Prepare dictionary for combinator, mapping id of geometrical object to the options list
             var dictionaryForCombiner = geometricalObjects.Distinct().Select(FindAllOptions).Combine();

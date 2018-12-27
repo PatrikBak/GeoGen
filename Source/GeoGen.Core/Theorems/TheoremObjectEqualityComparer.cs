@@ -19,15 +19,6 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Private properties
-
-        /// <summary>
-        /// A shortcut to access the configuration objects comparer that uses ids.
-        /// </summary>
-        private IEqualityComparer<ConfigurationObject> ObjectsComparer => ConfigurationObjectsEqualityComparer.Instance;
-
-        #endregion
-
         #region IEqualityComparer implementation
 
         /// <summary>
@@ -43,7 +34,7 @@ namespace GeoGen.Core
                 return false;
 
             // We convert both objects to these sets and compare them as sets
-            return x.InternalObjects.ToSet(ObjectsComparer).SetEquals(y.InternalObjects.ToSet(ObjectsComparer));
+            return x.InternalObjects.ToSet().SetEquals(y.InternalObjects.ToSet());
         }
 
         /// <summary>
@@ -57,7 +48,7 @@ namespace GeoGen.Core
             var typeHash = obj.Type.GetHashCode();
 
             // Get the order-independent hash code of involved objects using their ids
-            var objectsHash = obj.InternalObjects.GetOrderIndependentHashCode(ObjectsComparer.GetHashCode);
+            var objectsHash = obj.InternalObjects.GetOrderIndependentHashCode(o => o.GetHashCode());
 
             // Get order-dependent hash code of these two values
             return HashCodeUtilities.GetOrderDependentHashCode(typeHash, objectsHash);

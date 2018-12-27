@@ -9,6 +9,7 @@ using Ninject.Planning.Bindings.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using static GeoGen.Core.PredefinedConstructionType;
 

@@ -6,8 +6,8 @@ namespace GeoGen.Core
     /// Represents a data structure that acts like a <see cref="Dictionary{TKey,TValue}"/>,
     /// but in both ways (i.e. you can get TKey items from TValues).
     /// </summary>
-    /// <typeparam name="T1">The value of first items.</typeparam>
-    /// <typeparam name="T2">The value of second items.</typeparam>
+    /// <typeparam name="T1">The type of first items.</typeparam>
+    /// <typeparam name="T2">The type of second items.</typeparam>
     public class Map<T1, T2>
     {
         #region Private fields

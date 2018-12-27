@@ -20,7 +20,7 @@ namespace GeoGen.ConsoleTest
         public string Format(Configuration configuration)
         {
             _objectIdToString = new Dictionary<int, char>();
-            var looseObjects = configuration.LooseObjects;
+            var looseObjects = configuration.LooseObjectsHolder.LooseObjects;
             Register(looseObjects);
             Register(configuration.ConstructedObjects);
 

@@ -45,7 +45,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IGeneralConfigurationToStringProvider implementation
+        #region IGeneralConfigurationToStringConverter implementation
 
         /// <summary>
         /// Converts a given configuration to a string, using a given configuration object to string converter.

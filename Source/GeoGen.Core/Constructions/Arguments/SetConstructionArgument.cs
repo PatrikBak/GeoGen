@@ -4,19 +4,17 @@ using System.Collections.Generic;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a set of <see cref="ConstructionArgument"/>. The type of passed arguments 
-    /// might be a <see cref="ObjectConstructionArgument"/>, or another set of arguments.
-    /// It's size is not supposed to be 1, since it's either an <see cref="ObjectConstructionArgument"/>, 
-    /// or a set within a set (which doesn't make sense in our context). The use-case for this are 
-    /// constructions like Midpoint (with the signature {P, P}), or Intersection (with the signature { {P, P}, {P, P} }),
-    /// where curly braces represents a set and P represents a point. 
+    /// Represents a set of <see cref="ConstructionArgument"/>s. The use-cases 
+    /// for this are constructions like Midpoint (with the signature {P, P}), 
+    /// or Intersection (with the signature { {P, P}, {P, P} }), where curly 
+    /// brackets represents a set and P represents a point. 
     /// </summary>
     public class SetConstructionArgument : ConstructionArgument
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the list containing all passed arguments.
+        /// Gets the list containing all the passed arguments.
         /// </summary>
         public IReadOnlyList<ConstructionArgument> PassedArguments { get; }
 
@@ -25,9 +23,9 @@ namespace GeoGen.Core
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="SetConstructionArgument"/> class.
         /// </summary>
-        /// <param name="passedArguments">The passed arguments</param>
+        /// <param name="passedArguments">The list containing all the passed arguments.</param>
         public SetConstructionArgument(IReadOnlyList<ConstructionArgument> passedArguments)
         {
             PassedArguments = passedArguments ?? throw new ArgumentNullException(nameof(passedArguments));

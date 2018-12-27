@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 namespace GeoGen.Utilities
 {
     /// <summary>
-    /// Utilities for manipulation with <see cref="Enum"/> types.
+    /// Static utilities for <see cref="Enum"/> types.
     /// </summary>
     public static class EnumUtilities
     {
@@ -16,7 +16,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The enum type.</typeparam>
         /// <param name="type">The class type.</param>
-        /// <param name="classNamePrefix">The expected prefix on the class name.</param>
+        /// <param name="classNamePrefix">The expected prefix of the class name.</param>
         /// <returns>The parsed value.</returns>
         public static T ParseEnumValueFromClassName<T>(Type type, string classNamePrefix) where T : struct, Enum
         {
@@ -37,11 +37,11 @@ namespace GeoGen.Utilities
             var typeName = match.Groups[1].Value;
 
             // Try to parse (without ignoring the cases)
-            var parsingSuccessful = Enum.TryParse(typeName, false, out T result);
+            var parsingSuccessful = Enum.TryParse(typeName, ignoreCase: false, out T result);
 
             // If the parsing failed, we want to make the developer aware
             if (!parsingSuccessful)
-                throw new Exception($"Unable to parse the {typeName} (inferred from the {className}) into a value of {nameof(Type)}.");
+                throw new Exception($"Unable to parse the name '{typeName}' (inferred from the {className}) into a value of {typeof(T)}.");
 
             // Otherwise we're fine
             return result;

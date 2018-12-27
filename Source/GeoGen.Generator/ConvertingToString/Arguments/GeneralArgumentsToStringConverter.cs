@@ -28,7 +28,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region IArgumentsToStringProvider implementation
+        #region IGeneralArgumentsToStringConverter implementation
 
         /// <summary>
         /// Converts given arguments to a string, using a given configuration object to string converter.

@@ -63,7 +63,7 @@ namespace GeoGen.Analyzer
         protected override List<AnalyticObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container)
         {
             // Pull the loose objects (that should correspond to the flatten ones)
-            var looseObjects = _construction.ParentalConfiguration.LooseObjects;
+            var looseObjects = _construction.Configuration.LooseObjectsHolder.LooseObjects;
 
             // Initialize the internal container for sub-results
             var internalContainer = _factory.CreateContainer();
@@ -94,7 +94,7 @@ namespace GeoGen.Analyzer
             internalContainer.Add(looseObjects, InternalConstructorFunction);
 
             // Initialize the constructed objects
-            foreach (var internalConstructedObjects in _construction.ParentalConfiguration.GroupConstructedObjects())
+            foreach (var internalConstructedObjects in _construction.Configuration.GroupConstructedObjects())
             {
                 // Find the constructor
                 var constructor = _resolver.Resolve(internalConstructedObjects[0].Construction);
@@ -127,7 +127,7 @@ namespace GeoGen.Analyzer
         protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
         {
             // Invoke the function from the constructor, or return an empty list, if it's not set
-            return _construction.DefaultTheoresFuncton?.Invoke(input) ?? new List<Theorem>();
+            return new List<Theorem>();
         }
 
         #endregion

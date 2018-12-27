@@ -75,7 +75,7 @@ namespace GeoGen.Analyzer
             foreach (var container in manager)
             {
                 // Objects are constructed using the injected loose objects constructed
-                container.Add(configuration.LooseObjects, c => _constructor.Construct(configuration.LooseObjectsHolder));
+                container.Add(configuration.LooseObjectsHolder.LooseObjects, c => _constructor.Construct(configuration.LooseObjectsHolder));
             }
             
             // Then we group the constructed objects into constructible groups 

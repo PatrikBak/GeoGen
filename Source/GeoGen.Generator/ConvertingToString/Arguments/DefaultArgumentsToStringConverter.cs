@@ -16,7 +16,7 @@ namespace GeoGen.Generator
         #region Dependencies
 
         /// <summary>
-        /// The general arguments to string provider to which the actual conversion is delegated.
+        /// The general arguments to string converter to which the actual conversion is delegated.
         /// </summary>
         private readonly IGeneralArgumentsToStringConverter _argumentsToString;
 
@@ -36,7 +36,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultArgumentsToStringConverter"/> class.
         /// </summary>
-        /// <param name="argumentsToString">The general arguments to string provider to which the actual conversion is delegated.</param>
+        /// <param name="argumentsToString">The general arguments to string converter to which the actual conversion is delegated.</param>
         public DefaultArgumentsToStringConverter(IGeneralArgumentsToStringConverter argumentsToString)
         {
             _argumentsToString = argumentsToString ?? throw new ArgumentNullException(nameof(argumentsToString));

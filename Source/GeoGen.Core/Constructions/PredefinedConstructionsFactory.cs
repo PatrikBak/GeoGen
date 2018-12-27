@@ -5,7 +5,7 @@ using System.Reflection;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// A factory for creating predefined constructions.
+    /// The static factory for creating <see cref="PredefinedConstruction"/>s.
     /// </summary>
     public static class PredefinedConstructionsFactory
     {
@@ -26,7 +26,7 @@ namespace GeoGen.Core
                 throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
 
             // Otherwise we invoke it and return the casted result
-            return (PredefinedConstruction) methodInfo.Invoke(null, null);
+            return (PredefinedConstruction) methodInfo.Invoke(obj: null, parameters: null);
         }
 
         #endregion
@@ -34,7 +34,7 @@ namespace GeoGen.Core
         #region Constructions
 
         /// <summary>
-        /// Creates a non-identified circumcenter construction.
+        /// Creates a circumcenter construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction CircumcenterFromPoints()
@@ -49,7 +49,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified circumcircle construction.
+        /// Creates a circumcircle construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction CircumcircleFromPoints()
@@ -65,7 +65,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified internal angle bisector construction.
+        /// Creates an internal angle bisector construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction InternalAngleBisectorFromPoints()
@@ -82,7 +82,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified intersection of lines construction.
+        /// Creates an intersection of lines construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction IntersectionOfLinesFromPoints()
@@ -101,7 +101,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified intersection of lines construction.
+        /// Creates an intersection of lines construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction IntersectionOfLinesFromLineAndPoints()
@@ -118,7 +118,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified intersection of lines construction.
+        /// Creates an intersection of lines construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction IntersectionOfLines()
@@ -134,10 +134,10 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified loose point of a line construction.
+        /// Creates a loose point of a line construction.
         /// </summary>
         /// <returns>The construction.</returns>
-        private static PredefinedConstruction LoosePointOnLineFromPoints()
+        private static PredefinedConstruction RandomPointOnLineFromPoints()
         {
             // Create the parameters
             var parameters = new List<ConstructionParameter>
@@ -146,11 +146,11 @@ namespace GeoGen.Core
             };
 
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.LoosePointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
-        /// Creates a non-identified midpoint of a line segment construction.
+        /// Creates a midpoint of a line segment construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction MidpointFromPoints()
@@ -166,7 +166,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a non-identified perpendicular line construction.
+        /// Creates a perpendicular line construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction PerpendicularLineFromPoints()

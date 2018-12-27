@@ -11,20 +11,20 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
-        /// Projects each element of a sequence into a new form, excluding null elements.
+        /// Flattens the enumerable of enumerables into a single enumerable.
         /// </summary>
-        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
-        /// <typeparam name="TResult">The type of the value returned by selector.</typeparam>
-        /// <param name="enumerable">The enumerable</param>
-        /// <param name="selector">The transform function to apply to each element.</param>
-        /// <returns>The projected enumerable containing non-null elements only.</returns>
-        public static IEnumerable<TResult> SelectNotNull<TSource, TResult>(this IEnumerable<TSource> enumerable, Func<TSource, TResult> selector)
-        {
-            return enumerable.Select(selector).Where(item => item != null);
-        }
-
+        /// <typeparam name="T">The type of the elements.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>The enumerable containing all the inner enumerable items.</returns>
         public static IEnumerable<T> Flatten<T>(this IEnumerable<IEnumerable<T>> enumerable) => enumerable.SelectMany(_ => _);
 
+        /// <summary>
+        /// Concatenates given elements at the end of the enumerable.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="items">The items to be concatenated.</param>
+        /// <returns>The enumerable with the concatenated items.</returns>
         public static IEnumerable<T> Concat<T>(this IEnumerable<T> enumerable, params T[] items) => enumerable.Concat((IEnumerable<T>) items);
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace GeoGen.Utilities
         /// <param name="action">The action to invoke.</param>
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
         {
-            // Invoke the method that uses even index and ignores it
+            // Invoke the method that uses even index and ignore it
             enumerable.ForEach((element, index) => action(element));
         }
 
@@ -47,12 +47,6 @@ namespace GeoGen.Utilities
         /// <param name="action">The action to invoke, with two parameters: The element and its index.</param>
         public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T, int> action)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
             // Prepare a counter
             var counter = 0;
 
@@ -75,12 +69,6 @@ namespace GeoGen.Utilities
         /// <param name="action">The action to invoke.</param>
         public static void ForEach(this IEnumerable enumerable, Action<object> action)
         {
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
-
             // For each element...
             foreach (var element in enumerable)
             {
@@ -94,7 +82,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <returns>true, if the enumerable is empty; false otherwise</returns>
+        /// <returns>true, if the enumerable is empty; false otherwise.</returns>
         public static bool IsEmpty<T>(this IEnumerable<T> enumerable) => !enumerable.Any();
 
         /// <summary>
@@ -102,7 +90,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <returns>true, if the enumerable is null or empty; false otherwise</returns>
+        /// <returns>true, if the enumerable is null or empty; false otherwise.</returns>
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable) => enumerable == null || enumerable.IsEmpty();
 
         /// <summary>
@@ -122,10 +110,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <returns>The hash set of the enumerable's items.</returns>
-        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable)
-        {
-            return new HashSet<T>(enumerable);
-        }
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable) => new HashSet<T>(enumerable);
 
         /// <summary>
         /// Converts an enumerable to a <see cref="SortedSet{T}"/>.
@@ -133,10 +118,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <returns>The sorted set of the enumerable's items.</returns>
-        public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> enumerable)
-        {
-            return new SortedSet<T>(enumerable);
-        }
+        public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> enumerable) => new SortedSet<T>(enumerable);
 
         /// <summary>
         /// Converts an enumerable to a <see cref="HashSet{T}"/> using a custom equality comparer.
@@ -153,8 +135,8 @@ namespace GeoGen.Utilities
         /// <summary>
         /// Converts an enumerable to a <see cref="Dictionary{TKey, TValue}"/> using a custom key selector and a custom value selector.
         /// </summary>
-        /// <typeparam name="TKey">The type of the keys for the dictionary.</typeparam>
-        /// <typeparam name="TValue">The type of the values for the dictionary.</typeparam>
+        /// <typeparam name="TKey">The type of keys of the dictionary.</typeparam>
+        /// <typeparam name="TValue">The type of values of the dictionary.</typeparam>
         /// <typeparam name="TSource">The type of the enumerable source items.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="keySelector">The key selector accepting the source item and its enumeration index as parameters.</param>

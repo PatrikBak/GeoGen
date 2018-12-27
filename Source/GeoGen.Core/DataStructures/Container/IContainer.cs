@@ -3,9 +3,9 @@
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a container of distinct items that is able to find the equal version of item, if there is any.
+    /// Represents a container of distinct items that is able to find the equal version of an item, if there is any.
     /// </summary>
-    /// <typeparam name="T">The type of the items in the container.</typeparam>
+    /// <typeparam name="T">The type of items in the container.</typeparam>
     public interface IContainer<T> : IEnumerable<T>
     {
         /// <summary>

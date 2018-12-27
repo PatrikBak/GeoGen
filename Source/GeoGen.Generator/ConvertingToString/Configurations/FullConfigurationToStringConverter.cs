@@ -31,7 +31,7 @@ namespace GeoGen.Generator
         #region Dependencies
 
         /// <summary>
-        /// The generic provider to which the actual conversion is delegated.
+        /// The generic configuration to string converter to which the actual conversion is delegated.
         /// </summary>
         private readonly IGeneralConfigurationToStringConverter _configurationToString;
 
@@ -54,7 +54,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="FullConfigurationToStringConverter"/> converter.
         /// </summary>
         /// <param name="looseObjects">The loose objects of every configuration used in this generation.</param>
-        /// <param name="configurationToString">The generic provider to which the actual conversion is delegated.</param>
+        /// <param name="configurationToString">The generic configuration to string converter to which the actual conversion is delegated.</param>
         /// <param name="objectToString">The full object to string converter which is used together with the configuration to string converter.</param>
         public FullConfigurationToStringConverter(IReadOnlyList<LooseConfigurationObject> looseObjects, IGeneralConfigurationToStringConverter configurationToString, IFullObjectToStringConverter objectToString)
         {

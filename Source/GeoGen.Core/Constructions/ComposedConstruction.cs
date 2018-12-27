@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,74 +7,65 @@ namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="Construction"/> that is defined as an output of some configuration. 
-    /// This is supposed to represent a complex constructions that user can define by themselves, for instance
-    /// the construction that takes 3 points and outputs the orthocenter of the triangle formed by those points.
-    /// The output of a construction is defined using a <see cref="Configuration"/>. The actual 
-    /// <see cref="ConstructionArgument"/>s will be mapped to the loose objects of the configuration.
-    /// Some objects of this configuration will be then taken as the output of the construction.
+    /// This is supposed to represent a complex constructions that can defined dynamically, unlike
+    /// <see cref="PredefinedConstruction"/>. An example of such a construction could be the centroid
+    /// of a triangle, which can be defined using <see cref="PredefinedConstructionType.MidpointFromPoints"/>
+    /// and <see cref="PredefinedConstructionType.IntersectionOfLinesFromPoints"/>. The output of 
+    /// such a construction is the last object in the list of constructed objects of the configuration
+    /// that defines it. From this type the output type of the construction is inferred.
     /// </summary>
     public class ComposedConstruction : Construction
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the parental configuration of the construction.
+        /// Gets the configuration that defines this composed construction.
         /// </summary>
-        public Configuration ParentalConfiguration { get; }
+        public Configuration Configuration { get; }
 
         /// <summary>
-        /// Gets the constructed configuration objects that represent the output of this construction.
+        /// Gets the constructed configuration object that represents the output of this construction.
+        /// It is the last object of the configuration that defines this composed construction.
         /// </summary>
-        public ConstructedConfigurationObject ConstructionOutput { get; }
-
-        /// <summary>
-        /// Gets or sets the function that takes the list of constructed objects (that are created with
-        /// this construction) and construct the list of default theorems that holds true for them 
-        /// (usually combined with the input objects from the arguments passed to them).
-        /// </summary>
-        public Func<IReadOnlyList<ConstructedConfigurationObject>, List<Theorem>> DefaultTheoresFuncton { get; set; }
-
-        #endregion
-
-        #region Construction properties
-
-        /// <summary>
-        /// Gets the construction input signature, i.e. the list of construction parameters.
-        /// </summary>
-        public override IReadOnlyList<ConstructionParameter> ConstructionParameters { get; }
-
-        /// <summary>
-        /// Gets the construction output signature, i.e. the list of configuration object types.
-        /// </summary>
-        public override ConfigurationObjectType OutputType { get; }
-
-        /// <summary>
-        /// Gets the name of the construction. 
-        /// </summary>
-        public override string Name { get; }
+        public ConstructedConfigurationObject ConstructionOutput => Configuration.ConstructedObjects.Last();
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="ComposedConstruction"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration that represents the composed construction.</param>
-        /// <param name="indices">The indices of the outputted objects that are from the constructed objects of the given configuration.</param>
-        /// <param name="parameters">The parameters of the construction (the signature must correspond to the loose objects of the configuration).</param>
         /// <param name="name">The name of the construction.</param>
-        public ComposedConstruction(Configuration configuration, int index, IReadOnlyList<ConstructionParameter> parameters, string name)
+        /// <param name="configuration">The configuration that defines the construction steps. The output of the construction is its last constructed object.</param>
+        /// <param name="parameters">The parameters representing the signature of the construction. They must match the loose objects of the parent configuration.</param>
+        public ComposedConstruction(string name, Configuration configuration, IReadOnlyList<ConstructionParameter> parameters)
+            : base(name, parameters, configuration.ConstructedObjects.Last().ObjectType)
         {
-            ParentalConfiguration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            ConstructionParameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            Name = name ?? throw new ArgumentNullException(nameof(name));
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
-            // Find constructed objects in the configuration according to the indices enumerable
-            ConstructionOutput = configuration.ConstructedObjects[index];
+            #region Checking if the passed parameters match the loose objects of the configuration
 
-            // Find the types of outputted objects
-            OutputType = ConstructionOutput.ObjectType;
+            // Local function that throws an exception if they don't
+            void ThrowException() => throw new GeoGenException("Incorrect composed construction: The loose objects don't correspond to the parameters");
+
+            // Wrap the loose objects in a map and for each pair of [type, objects]....
+            var looseObjectsMap = new ConfigurationObjectsMap(configuration.LooseObjectsHolder.LooseObjects);
+
+            // Make sure the number of the actual object types is the same as the number of the needed object types
+            // If not, throw an exception...
+            if (looseObjectsMap.Count != ObjectTypesToNeededCount.Count)
+                ThrowException();
+
+            // Check if the number of objects of each type matched the needed count
+            looseObjectsMap.ForEach(pair =>
+            {
+                // If not, throw an exception...
+                if (pair.Value.Count != ObjectTypesToNeededCount[pair.Key])
+                    ThrowException();
+            });
+
+            #endregion
         }
 
         #endregion
