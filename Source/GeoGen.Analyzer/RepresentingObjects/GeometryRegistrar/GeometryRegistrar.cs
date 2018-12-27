@@ -23,11 +23,6 @@ namespace GeoGen.Analyzer
         private readonly IConstructorsResolver _resolver;
 
         /// <summary>
-        /// The container for keeping default (trivial) theorems.
-        /// </summary>
-        private readonly ITheoremsContainer _container;
-
-        /// <summary>
         /// The mapper that maps configurations to their geometrical representations
         /// wrapped inside a <see cref="IObjectsContainersManager"/>.
         /// </summary>
@@ -42,13 +37,11 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="resolver">The resolver for finding the right constructors.</param>
         /// <param name="constructor">The constructor of loose objects.</param>
-        /// <param name="container">The container for keeping default theorems.</param>
         /// <param name="mapper">The manager of all objects container where we register the objects.</param>
-        public GeometryRegistrar(IConstructorsResolver resolver, ILooseObjectsConstructor constructor, ITheoremsContainer container, IObjectContainersMapper mapper)
+        public GeometryRegistrar(IConstructorsResolver resolver, ILooseObjectsConstructor constructor, IObjectContainersMapper mapper)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _container = container ?? throw new ArgumentNullException(nameof(container));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
@@ -77,7 +70,7 @@ namespace GeoGen.Analyzer
                 // Objects are constructed using the injected loose objects constructed
                 container.Add(configuration.LooseObjectsHolder.LooseObjects, c => _constructor.Construct(configuration.LooseObjectsHolder));
             }
-            
+
             // Then we group the constructed objects into constructible groups 
             foreach (var constructedObjects in configuration.GroupConstructedObjects())
             {
@@ -99,14 +92,6 @@ namespace GeoGen.Analyzer
             }
 
             // If we got here, then all the objects have been registered correctly
-            
-            // We may add the default theorems
-            foreach (var theorem in theorems)
-            {
-                _container.Add(theorem);
-            }
-
-            // And finally return the OK result
             return new RegistrationResult
             {
                 UnconstructibleObjects = null,
@@ -198,10 +183,7 @@ namespace GeoGen.Analyzer
                 };
             }
             
-            // Otherwise we evaluate the theorms and add them to the prepares list
-            theorems.AddRange(constructorOutput.DefaultTheoremsFunction());
-            
-            // And return the ok result
+            // Otherwise we return the ok result
             return new RegistrationResult
             {
                 UnconstructibleObjects = null,

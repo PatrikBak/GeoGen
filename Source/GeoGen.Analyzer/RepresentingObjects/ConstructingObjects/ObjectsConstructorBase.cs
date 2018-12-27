@@ -27,7 +27,6 @@ namespace GeoGen.Analyzer
             return new ConstructorOutput
             {
                 ConstructorFunction = container => Construct(flattenedObjects, container),
-                DefaultTheoremsFunction = () => FindDefaultTheorms(constructedObjects, flattenedObjects)
             };
         }
 
@@ -44,15 +43,6 @@ namespace GeoGen.Analyzer
         /// <param name="container">The objects container.</param>
         /// <returns>The list of constructed analytic objects.</returns>
         protected abstract List<AnalyticObject> Construct(IReadOnlyList<ConfigurationObject> flattenedObjects, IObjectsContainer container);
-
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected abstract List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects);
 
         #endregion
     }

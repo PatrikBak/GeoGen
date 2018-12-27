@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Generator
 {
     /// <summary>
-    /// A factory for creating a <see cref="Generator"/> for a given <see cref="GeneratorInput"/>.
+    /// A factory for creating a <see cref="IGenerator"/> for a given <see cref="GeneratorInput"/>.
     /// </summary>
     public interface IGeneratorFactory
     {
@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
         /// <returns>The generator.</returns>
-        Generator CreateGenerator(GeneratorInput generatorInput);
+        IGenerator CreateGenerator(GeneratorInput generatorInput);
     }
 }

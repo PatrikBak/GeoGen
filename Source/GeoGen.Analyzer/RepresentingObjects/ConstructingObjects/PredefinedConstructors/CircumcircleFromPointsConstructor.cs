@@ -30,19 +30,7 @@ namespace GeoGen.Analyzer
                 return null;
 
             // Otherwise construct the circle
-            return new List<AnalyticObject> {new Circle(point1, point2, point3)};
-        }
-
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
-        {
-            return new List<Theorem>();
+            return new List<AnalyticObject> { new Circle(point1, point2, point3) };
         }
     }
 }

@@ -61,30 +61,9 @@ namespace GeoGen.Analyzer
                 if (!container.Contains(randomPoint))
                 {
                     // If yes, return it
-                    return new List<AnalyticObject> {randomPoint};
+                    return new List<AnalyticObject> { randomPoint };
                 }
             }
-        }
-
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
-        {
-            return new List<Theorem>
-            {
-                // The random loose point is collinear with the two points
-                new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>
-                {
-                    new TheoremObject(flattenedObjects[0]),
-                    new TheoremObject(flattenedObjects[1]),
-                    new TheoremObject(input[0])
-                })
-            };
         }
 
         #endregion

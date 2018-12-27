@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Utilities;
+using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -245,7 +245,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return HashCodeUtilities.GetOrderDependentHashCode(Radius, Center);
+            return new { Radius, Center }.GetHashCode();
         }
 
         /// <summary>

@@ -117,19 +117,6 @@ namespace GeoGen.Analyzer
             return new List<ConstructedConfigurationObject> { _construction.ConstructionOutput }.Select(internalContainer.Get).ToList();
         }
 
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
-        {
-            // Invoke the function from the constructor, or return an empty list, if it's not set
-            return new List<Theorem>();
-        }
-
         #endregion
     }
 }

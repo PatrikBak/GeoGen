@@ -40,28 +40,7 @@ namespace GeoGen.Analyzer
             var intersection = line.IntersectionWith(otherLine);
 
             // If it doesn't exist, return null; otherwise return the wrapped intersection
-            return intersection == null ? null : new List<AnalyticObject> {intersection};
-        }
-
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
-        {
-            return new List<Theorem>
-            {
-                // The intersection is collinear with first two points
-                new Theorem(TheoremType.CollinearPoints, new List<TheoremObject>
-                {
-                    new TheoremObject(flattenedObjects[1]),
-                    new TheoremObject(flattenedObjects[2]),
-                    new TheoremObject(input[0])
-                })
-            };
+            return intersection == null ? null : new List<AnalyticObject> { intersection };
         }
     }
 }

@@ -8,7 +8,7 @@ using System.Linq;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents a service that performs the generator algorithm. It generates configurations by layers.
+    /// The default implementation of <see cref="IGenerator"/>. It generates configurations by layers.
     /// Initially the first layer consists of the initial configuration from the <see cref="GeneratorInput"/>.
     /// Then in every iteration we extend all the configurations from the current layer with new 
     /// <see cref="ConstructedConfigurationObject"/>, that are created using <see cref="IArgumentsGenerator"/>,
@@ -18,7 +18,7 @@ namespace GeoGen.Generator
     /// next layer. Every valid configuration is then analyzer for theorems using <see cref="ITheoremsAnalyzer"/>. 
     /// The generation process is lazy. Once it has started, we can't run it again with the same instance of the class.
     /// </summary>
-    public class Generator
+    public class Generator : IGenerator
     {
         #region Dependencies
 
@@ -94,7 +94,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region Public methods
+        #region IGenerator implementation
 
         /// <summary>
         /// Starts the generation process and lazily returns the output. The algorithm is described

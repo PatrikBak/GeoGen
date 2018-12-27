@@ -44,8 +44,8 @@ namespace GeoGen.Runner
             kernel.Bind<IArgumentsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
 
             // Bind Generator that needs its dynamic input
-            kernel.Bind<Generator.Generator>()
-                .ToSelf()
+            kernel.Bind<IGenerator>()
+                .To<Generator.Generator>()
                 .WithConstructorArgument("input", context => context.Kernel.Get<GeneratorInput>())
                 .DefinesNamedScope(GeneratorScopeName);
 
@@ -68,7 +68,6 @@ namespace GeoGen.Runner
             kernel.Bind<IContextualContainerFactory>().To<ContextualContainerFactory>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeometryRegistrar>().To<GeometryRegistrar>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectContainersMapper>().To<ObjectContainersMapper>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremsContainer>().To<TheoremsContainer>().InNamedScope(GeneratorScopeName);
 
             // Transient objects
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();

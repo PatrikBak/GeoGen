@@ -15,10 +15,5 @@ namespace GeoGen.Analyzer
         /// object using an <see cref="IObjectsContainer"/> container.
         /// </summary>
         public Func<IObjectsContainer, List<AnalyticObject>> ConstructorFunction { get; set; }
-
-        /// <summary>
-        /// Gets or sets the function that creates the list of default theorems.
-        /// </summary>
-        public Func<List<Theorem>> DefaultTheoremsFunction { get; set; }
     }
 }

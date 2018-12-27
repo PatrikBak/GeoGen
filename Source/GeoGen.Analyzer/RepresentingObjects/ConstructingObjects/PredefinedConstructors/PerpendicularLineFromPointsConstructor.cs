@@ -30,26 +30,7 @@ namespace GeoGen.Analyzer
             var line = new Line(linePoint1, linePoint2);
 
             // Construct the result
-            return new List<AnalyticObject> {line.PerpendicularLine(pointFrom)};
-        }
-
-        /// <summary>
-        /// Constructs a list of default theorems using a newly constructed objects and
-        /// flattened objects from the passed arguments.
-        /// </summary>
-        /// <param name="input">The constructed objects.</param>
-        /// <param name="flattenedObjects">The flattened argument objects.</param>
-        /// <returns>The list of default theorems.</returns>
-        protected override List<Theorem> FindDefaultTheorms(IReadOnlyList<ConstructedConfigurationObject> input, IReadOnlyList<ConfigurationObject> flattenedObjects)
-        {
-            return new List<Theorem>
-            {
-                new Theorem(TheoremType.PerpendicularLines, new List<TheoremObject>
-                {
-                    new TheoremObject(TheoremObjectSignature.LineGivenByPoints, flattenedObjects[1], flattenedObjects[2]),
-                    new TheoremObject(input[0])
-                })
-            };
+            return new List<AnalyticObject> { line.PerpendicularLine(pointFrom) };
         }
     }
 }

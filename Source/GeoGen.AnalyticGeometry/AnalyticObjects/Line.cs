@@ -1,5 +1,4 @@
 ﻿using System;
-using GeoGen.Utilities;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -286,7 +285,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return HashCodeUtilities.GetOrderDependentHashCode(A, B, C);
+            return new { A, B, C }.GetHashCode();
         }
 
         /// <summary>

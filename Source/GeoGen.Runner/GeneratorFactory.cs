@@ -47,7 +47,7 @@ namespace GeoGen.Runner
         /// </summary>
         /// <param name="generatorInput">The generator input.</param>
         /// <returns>The generator.</returns>
-        public Generator.Generator CreateGenerator(GeneratorInput generatorInput)
+        public IGenerator CreateGenerator(GeneratorInput generatorInput)
         {
             // Make sure two different threads won't manipulate the container at the same time
             lock (_lock)
@@ -56,7 +56,7 @@ namespace GeoGen.Runner
                 var inputBinding = _kernel.Bind<GeneratorInput>().ToConstant(generatorInput);
 
                 // Get the generator
-                var generator = _kernel.Get<Generator.Generator>();
+                var generator = _kernel.Get<IGenerator>();
 
                 // Release the input so it can be bound again later
                 _kernel.Unbind<GeneratorInput>();
