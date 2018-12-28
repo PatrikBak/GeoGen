@@ -8,16 +8,16 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.EqualAngles"/>.
+    /// An <see cref="IPotentialTheoremsAnalyzer"/> for <see cref="TheoremType.EqualAngles"/>.
     /// </summary>
-    public class EqualAnglesVerifier : TheoremVerifierBase
+    public class EqualAnglesAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
+        /// Finds all potential (unverified) theorems in a given contextual container.
         /// </summary>
-        /// <param name="container">The container from which we get the geometrical objects.</param>
-        /// <returns>The outputs.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
+        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <returns>An enumerable of found potential theorems.</returns>
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Find new lines. 
             var newLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
@@ -121,7 +121,7 @@ namespace GeoGen.Analyzer
                     {
                         TheoremType = Type,
                         InvolvedObjects = new[] { pair[0].line1, pair[0].line2, pair[1].line1, pair[1].line2 },
-                        VerifierFunction = Verify
+                        VerificationFunction = Verify
                     };
                 }
             }

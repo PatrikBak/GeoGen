@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
 {
     /// <summary>
     /// A base implementation of <see cref="IPredefinedConstructor"/> that infers the
-    /// type of the construction from the class name that should be in the form "{type}Constructor".
+    /// type of construction from the class name that should be in the form "{type}Constructor".
     /// </summary>
     public abstract class PredefinedConstructorBase : ObjectsConstructorBase, IPredefinedConstructor
     {
@@ -37,7 +37,7 @@ namespace GeoGen.Analyzer
         /// Infers the type of the predefined constructor from the class name. 
         /// The class name should be in the form {type}Constructor.
         /// </summary>
-        /// <returns>The type.</returns>
+        /// <returns>The inferred type.</returns>
         private PredefinedConstructionType FindTypeFromClassName()
         {
             // Call the utility helper that does the job

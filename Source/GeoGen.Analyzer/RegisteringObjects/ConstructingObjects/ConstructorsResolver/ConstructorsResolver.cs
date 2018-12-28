@@ -39,9 +39,9 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructorsResolver"/> class.
         /// </summary>
-        /// <param name="constructors">All the predefined constructors.</param>
+        /// <param name="constructors">The array of all the predefined constructors.</param>
         /// <param name="factory">The factory for creating composed constructors for given composed constructions.</param>
-        public ConstructorsResolver(IEnumerable<IPredefinedConstructor> constructors, IComposedConstructorFactory factory)
+        public ConstructorsResolver(IPredefinedConstructor[] constructors, IComposedConstructorFactory factory)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 

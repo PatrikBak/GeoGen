@@ -61,7 +61,7 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 2
+                MaximalNumberOfIterations = 3
             };
 
             var generator = _kernel.Get<IGeneratorFactory>().CreateGenerator(input);

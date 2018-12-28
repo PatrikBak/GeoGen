@@ -4,36 +4,35 @@ using System;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeneratorException"/> that is thrown
-    /// when the <see cref="Generator"/> couldn't be initialized because of
-    /// the incorrect <see cref="GeneratorInput"/>.
+    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
+    /// when something incorrect happens in the generator module.
     /// </summary>
-    public class InitializationException : GeoGenException
+    public class GeneratorException : GeoGenException
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class.
+        /// Initializes a new instance of the <see cref="GeneratorException"/> class.
         /// </summary>
-        public InitializationException()
+        public GeneratorException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class
+        /// Initializes a new instance of the <see cref="GeneratorException"/> class
         /// with a custom message about what happened.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
-        public InitializationException(string message)
+        public GeneratorException(string message)
                 : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class
+        /// Initializes a new instance of the <see cref="GeneratorException"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
         /// <param name="innerException">The inner exception that caused this one.</param>
-        public InitializationException(string message, Exception innerException)
+        public GeneratorException(string message, Exception innerException)
                 : base(message, innerException)
         {
         }

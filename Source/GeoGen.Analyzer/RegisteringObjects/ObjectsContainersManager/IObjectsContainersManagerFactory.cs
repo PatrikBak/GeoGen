@@ -10,6 +10,6 @@
         /// Creates a new manager.
         /// </summary>
         /// <returns>The manager.</returns>
-        IObjectsContainersManager Create();
+        IObjectsContainersManager CreateContainersManager();
     }
 }

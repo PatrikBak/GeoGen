@@ -30,12 +30,12 @@ namespace GeoGen.Runner
             kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
             kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
-
+            kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
+            
             // Transient objects
             kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
@@ -61,34 +61,33 @@ namespace GeoGen.Runner
 
             // Singletons per one generation
             kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IPotentialTheoremValidator>().To<PotentialTheoremValidator>().InNamedScope(GeneratorScopeName);
             kernel.Bind<INeedlessObjectsAnalyzer>().To<NeedlessObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InNamedScope(GeneratorScopeName);            
-            kernel.Bind<IContextualContainerFactory>().To<ContextualContainerFactory>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeometryRegistrar>().To<GeometryRegistrar>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IObjectContainersMapper>().To<ObjectContainersMapper>().InNamedScope(GeneratorScopeName);
 
             // Transient objects
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
             kernel.Bind<IObjectsContainersManager>().To<ObjectsContainersManager>();
             kernel.Bind<IObjectsContainer>().To<ObjectsContainer>();
+            kernel.Bind<IContextualContainer>().To<ContextualContainer>();
             
             // Ninject factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsContainersManagerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
-
-            // Theorem verifiers
-            kernel.Bind<ITheoremVerifier>().To<CollinearPointsVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<ConcurrentObjectsVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<ConcyclicPointsVerifier>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IContextualContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
+            
+            // Potential theorem analyzers
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcyclicPointsAnalyzer>().InNamedScope(GeneratorScopeName);
             //kernel.Bind<ITheoremVerifier>().To<EqualAnglesVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<EqualLineSegmentsVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<LineTangentToCircleVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<ParallelLinesVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<PerpendicularLinesVerifier>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<ITheoremVerifier>().To<TangentCirclesVerifier>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualLineSegmentsAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<LineTangentToCircleAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ParallelLinesAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<PerpendicularLinesAnalyzer>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<TangentCirclesAnalyzer>().InNamedScope(GeneratorScopeName);
 
             // Predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CircumcenterFromPointsConstructor>().InNamedScope(GeneratorScopeName);

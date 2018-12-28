@@ -1,14 +1,20 @@
 ﻿using GeoGen.Core;
 using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A default implementation of <see cref="IGeometryRegistrar"/>. 
+    /// The default implementation of <see cref="IGeometryRegistrar"/>. 
     /// </summary>
     public class GeometryRegistrar : IGeometryRegistrar
     {
-        #region Private fields
+        #region Dependencies
+
+        /// <summary>
+        /// The factory for creating object container managers that hold the actual geometry.
+        /// </summary>
+        private readonly IObjectsContainersManagerFactory _factory;
 
         /// <summary>
         /// The constructor of loose objects.
@@ -16,31 +22,34 @@ namespace GeoGen.Analyzer
         private readonly ILooseObjectsConstructor _constructor;
 
         /// <summary>
-        /// The resolver for finding constructors.
+        /// The resolver of object constructors for particular constructions.
         /// </summary>
         private readonly IConstructorsResolver _resolver;
 
+        #endregion
+
+        #region Private fields
+
         /// <summary>
-        /// The mapper that maps configurations to their geometrical representations
-        /// wrapped inside a <see cref="IObjectsContainersManager"/>.
+        /// The dictionary where we store object managers for successfully registered configurations.
         /// </summary>
-        private readonly IObjectContainersMapper _mapper;
+        private readonly Dictionary<Configuration, IObjectsContainersManager> _managers = new Dictionary<Configuration, IObjectsContainersManager>();
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="GeometryRegistrar"/> class.
         /// </summary>
-        /// <param name="resolver">The resolver for finding the right constructors.</param>
+        /// <param name="factory">The factory for creating object container managers that hold the actual geometry.</param>
         /// <param name="constructor">The constructor of loose objects.</param>
-        /// <param name="mapper">The manager of all objects container where we register the objects.</param>
-        public GeometryRegistrar(IConstructorsResolver resolver, ILooseObjectsConstructor constructor, IObjectContainersMapper mapper)
+        /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
+        public GeometryRegistrar(IObjectsContainersManagerFactory factory, ILooseObjectsConstructor constructor, IConstructorsResolver resolver)
         {
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         #endregion
@@ -48,16 +57,16 @@ namespace GeoGen.Analyzer
         #region IGeometryRegistrar implementation
 
         /// <summary>
-        /// Registers a given configuration to the actual geometrical system
-        /// and returns if it is contructible and if it doesn't contain
-        /// duplicate objects.
+        /// Registers a given configuration to the geometry system. The configuration must be constructible 
+        /// and must not contain duplicate objects. If it does, the registration won't be successful, i.e. 
+        /// the geometrical representation of the configuration won't be stored.
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        /// <returns>The registration result.</returns>
+        /// <param name="configuration">The configuration to be registered.</param>
+        /// <returns>A registration result containing information about inconstructible and duplicate objects.</returns>
         public RegistrationResult Register(Configuration configuration)
         {
             // Create the manager for the configuration
-            var manager = _mapper.Create(configuration);
+            var manager = _factory.CreateContainersManager();
 
             // First we add loose objects to all containers
             foreach (var container in manager)
@@ -70,7 +79,7 @@ namespace GeoGen.Analyzer
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
                 // For a given one prepare a function that performs the actual registration of it
-                RegistrationResult RegistrationFunction() => Register(constructedObject, manager);
+                RegistrationResult RegistrationFunction() => RegisterObject(constructedObject, manager);
 
                 // Safely execute the registration (with auto-resolving of inconsistencies)
                 var result = manager.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
@@ -83,9 +92,45 @@ namespace GeoGen.Analyzer
                     return result;
             }
 
-            // If we got here, then all the objects have been registered correctly and we can return an empty (i.e. OK) result
+            // If we got here, then all the objects have been registered correctly 
+            // We may try to cache the manager
+            try
+            {
+                _managers.Add(configuration, manager);
+            }
+            // If we couldn't, it means the configuration has already been registered
+            catch (ArgumentException)
+            {
+                throw new AnalyzerException("The configuration is already registered.");
+            }
+
+            // And finally we can return an empty (i.e. OK) result
             return new RegistrationResult();
         }
+
+        /// <summary>
+        /// Gets the manager corresponding to a given configuration. The configuration must
+        /// have been registered before.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The manager corresponding to the given configuration.</returns>
+        public IObjectsContainersManager GetContainersManager(Configuration configuration)
+        {
+            // Try to get the manager from the cache
+            try
+            {
+                return _managers[configuration];
+            }
+            // If we couldn't, then the configuration hasn't been registered yet
+            catch (KeyNotFoundException)
+            {
+                throw new AnalyzerException("The configuration hasn't been cached yet");
+            }
+        }
+
+        #endregion
+
+        #region Private methods
 
         /// <summary>
         /// Performs the actual registration of a given object into all the objects containers of a given containers manager.
@@ -93,7 +138,7 @@ namespace GeoGen.Analyzer
         /// <param name="configurationObject">The object to be registered.</param>
         /// <param name="manager">The manager of all the objects containers where we should add the object.</param>
         /// <returns>The result of the registration.</returns>
-        private RegistrationResult Register(ConstructedConfigurationObject configurationObject, IObjectsContainersManager manager)
+        private RegistrationResult RegisterObject(ConstructedConfigurationObject configurationObject, IObjectsContainersManager manager)
         {
             // Initialize a variable indicating if the construction is possible
             bool canBeConstructed = default;

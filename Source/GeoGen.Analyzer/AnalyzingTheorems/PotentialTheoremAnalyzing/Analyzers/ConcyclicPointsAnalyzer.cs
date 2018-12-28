@@ -5,16 +5,16 @@ using GeoGen.Core;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="ITheoremVerifier"/> for the type <see cref="TheoremType.ConcyclicPoints"/>.
+    /// An <see cref="IPotentialTheoremsAnalyzer"/> for the type <see cref="TheoremType.ConcyclicPoints"/>.
     /// </summary>
-    public class ConcyclicPointsVerifier : TheoremVerifierBase
+    public class ConcyclicPointsAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
+        /// Finds all potential (unverified) theorems in a given contextual container.
         /// </summary>
-        /// <param name="container">The container from which we get the geometrical objects.</param>
-        /// <returns>The outputs.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
+        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <returns>An enumerable of found potential theorems.</returns>
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Now we first pull new points
             return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
@@ -36,7 +36,7 @@ namespace GeoGen.Analyzer
                     {
                         TheoremType = Type,
                         InvolvedObjects = circle.Points,
-                        VerifierFunction = null
+                        VerificationFunction = _ => true
                     });
         }
     }

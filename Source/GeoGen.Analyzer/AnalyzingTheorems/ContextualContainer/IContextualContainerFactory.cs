@@ -12,6 +12,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The container.</returns>
-        IContextualContainer Create(Configuration configuration);
+        IContextualContainer Create(Configuration configuration, IObjectsContainersManager manager);
     }
 }

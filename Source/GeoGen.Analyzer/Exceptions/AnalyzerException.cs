@@ -1,39 +1,38 @@
 ﻿using GeoGen.Core;
 using System;
 
-namespace GeoGen.Generator
+namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeneratorException"/> that is thrown
-    /// when the <see cref="Generator"/> couldn't be initialized because of
-    /// the incorrect <see cref="GeneratorInput"/>.
+    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
+    /// when something incorrect happens in the analyzer module.
     /// </summary>
-    public class InitializationException : GeoGenException
+    public class AnalyzerException : GeoGenException
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class.
+        /// Initializes a new instance of the <see cref="AnalyzerException"/> class.
         /// </summary>
-        public InitializationException()
+        public AnalyzerException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class
+        /// Initializes a new instance of the <see cref="AnalyzerException"/> class
         /// with a custom message about what happened.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
-        public InitializationException(string message)
+        public AnalyzerException(string message)
                 : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="InitializationException"/> class
+        /// Initializes a new instance of the <see cref="GeoGenException"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
         /// <param name="innerException">The inner exception that caused this one.</param>
-        public InitializationException(string message, Exception innerException)
+        public AnalyzerException(string message, Exception innerException)
                 : base(message, innerException)
         {
         }

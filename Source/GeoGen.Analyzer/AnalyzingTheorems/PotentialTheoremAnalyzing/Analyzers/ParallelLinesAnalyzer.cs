@@ -8,16 +8,16 @@ using GeoGen.Utilities;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// An <see cref="ITheoremVerifier"/> for <see cref="TheoremType.PerpendicularLines"/>.
+    /// An <see cref="IPotentialTheoremsAnalyzer"/> for <see cref="TheoremType.ParallelLines"/>.
     /// </summary>
-    public class PerpendicularLinesVerifier : TheoremVerifierBase
+    public class ParallelLinesAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potencial unverified theorems wrapped in <see cref="PotentialTheorem"/> objects.
+        /// Finds all potential (unverified) theorems in a given contextual container.
         /// </summary>
-        /// <param name="container">The container from which we get the geometrical objects.</param>
-        /// <returns>The outputs.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotencialTheorems(IContextualContainer container)
+        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <returns>An enumerable of found potential theorems.</returns>
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Find all new lines. At least one of them must be included in a new theorem
             var newLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
@@ -70,15 +70,15 @@ namespace GeoGen.Analyzer
                     var analyticLine2 = container.GetAnalyticObject<Line>(line2, objectsContainer);
 
                     // Return if there are parallel
-                    return analyticLine1.IsPerpendicularTo(analyticLine2);
+                    return analyticLine1.IsParallelTo(analyticLine2);
                 }
 
                 // Construct the output
                 yield return new PotentialTheorem
                 {
                     TheoremType = Type,
-                    InvolvedObjects = new[] { line1, line2 },
-                    VerifierFunction = Verify
+                    InvolvedObjects = new [] { line1, line2 },
+                    VerificationFunction = Verify
                 };
             }
         }

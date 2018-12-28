@@ -105,7 +105,7 @@ namespace GeoGen.Generator
         {
             // Make sure the generator is not re-used
             if (_generationStarted)
-                throw new GeoGenException("The generator cannot be used twice. Create a new one.");
+                throw new GeneratorException("The generator cannot be used twice. Create a new one.");
 
             // Mark that we've started
             _generationStarted = true;
