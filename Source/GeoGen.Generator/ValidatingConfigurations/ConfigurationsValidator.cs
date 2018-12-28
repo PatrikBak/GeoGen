@@ -102,7 +102,7 @@ namespace GeoGen.Generator
             #region Equal configurations validation
 
             // Add the configuration to the container
-            _container.Add(configuration, out var equalConfiguration);
+            _container.TryAdd(configuration, out var equalConfiguration);
 
             // If there already is an equal version of it, this one is invalid
             if (equalConfiguration != null)
@@ -118,33 +118,33 @@ namespace GeoGen.Generator
             var registrationResult = _registrar.Register(configuration);
 
             // Find out if there is an inconstructible object
-            var anyUnconstructibleObject = !registrationResult.UnconstructibleObjects.IsNullOrEmpty();
+            var anyInconstructibleObject = registrationResult.InconstructibleObject != null;
 
             // Find out if there are any duplicates
-            var anyDuplicates = !registrationResult.Duplicates.IsNullOrEmpty();
+            var anyDuplicates = registrationResult.Duplicates != (null, null);
 
-            // Find out if the configuration is correct, i.e. constructible and without duplicates
-            var isCorrect = !anyDuplicates && !anyUnconstructibleObject;
-
-            // If there are inconstructible objects..
-            if (anyUnconstructibleObject)
+            // If there is an inconstructible object
+            if (anyInconstructibleObject)
             {
-                // Then we want to remember their ids
-                registrationResult.UnconstructibleObjects.ForEach(obj => _inconstructibleObjectsIds.Add(obj.Id));
+                // Then we want to remember its ids
+                _inconstructibleObjectsIds.Add(registrationResult.InconstructibleObject.Id);
 
-                // And trace them
-                registrationResult.UnconstructibleObjects.ForEach(obj => _inconstructibleObjectsTracer?.TraceInconstructibleObject(obj));
+                // And trace it
+                _inconstructibleObjectsTracer?.TraceInconstructibleObject(registrationResult.InconstructibleObject);
             }
 
             // If there are duplicates...
             if (anyDuplicates)
             {
-                // We want to trace them
-                registrationResult.Duplicates.ForEach(pair => _equalObjectsTracer?.TraceEqualObjects(pair.olderObject, pair.newerObject));
+                // We deconstruct them
+                var (olderObject, newerObject) = registrationResult.Duplicates;
+
+                // And trace them
+                _equalObjectsTracer?.TraceEqualObjects(olderObject, newerObject);
             }
 
             // If there are any invalid objects or duplicates, then it's incorrect
-            if (anyUnconstructibleObject || anyDuplicates)
+            if (anyInconstructibleObject || anyDuplicates)
                 return false;
 
             #endregion

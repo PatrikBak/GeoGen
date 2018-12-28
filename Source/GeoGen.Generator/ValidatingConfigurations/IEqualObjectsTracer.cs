@@ -13,8 +13,8 @@ namespace GeoGen.Generator
         /// <summary>
         /// Traces that we found two geometrically equal objects.
         /// </summary>
-        /// <param name="object1">The first object.</param>
-        /// <param name="object2">The second object.</param>
-        void TraceEqualObjects(ConfigurationObject object1, ConfigurationObject object2);
+        /// <param name="olderObject">The object that was constructed first.</param>
+        /// <param name="newerObject">The object that is geometrically equal to the first one that was constructed later.</param>
+        void TraceEqualObjects(ConfigurationObject olderObject, ConfigurationObject newerObject);
     }
 }

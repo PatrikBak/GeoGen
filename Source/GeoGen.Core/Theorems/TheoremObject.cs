@@ -1,22 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents an object that are used to define <see cref="Theorem"/>.
+    /// Represents an object that wraps one or several <see cref="ConfigurationObject"/>s representing
+    /// a single geometric object used in the definition of a <see cref="Theorem"/>. The semantics of
+    /// the internal configuration objects is defined by <see cref="TheoremObjectSignature"/>.
     /// </summary>
     public class TheoremObject
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the type of the signature that this object has.
+        /// Gets the signature of the object.
         /// </summary>
-        public TheoremObjectSignature Type { get; }
+        public TheoremObjectSignature Signature { get; }
 
         /// <summary>
-        /// Gets the actual configuration objects that defines this object.
+        /// Gets the actual configuration objects that define this theorem object.
         /// </summary>
         public IReadOnlyList<ConfigurationObject> InternalObjects { get; }
 
@@ -25,35 +28,25 @@ namespace GeoGen.Core
         #region Constructors
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="TheoremObject"/> class.
         /// </summary>
-        /// <param name="type">The signature type that this object has.</param>
-        /// <param name="objects">The objects that define this theorem object.</param>
-        public TheoremObject(TheoremObjectSignature type, params ConfigurationObject[] objects)
+        /// <param name="signature">The signature of the object.</param>
+        /// <param name="objects">The actual configuration objects that define this theorem object.</param>
+        public TheoremObject(TheoremObjectSignature signature, IEnumerable<ConfigurationObject> objects)
         {
-            Type = type;
-            InternalObjects = objects ?? throw new ArgumentNullException(nameof(objects));
+            Signature = signature;
+            InternalObjects = objects?.ToList() ?? throw new ArgumentNullException(nameof(objects));
         }
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="TheoremObject"/> class
+        /// representing a wrapper for a single object, i.e. a theorem object with the
+        /// <see cref="TheoremObjectSignature.SingleObject"/> signature.
         /// </summary>
-        /// <param name="type">The signature type that this object has.</param>
-        /// <param name="objects">The list of objects that define this theorem object.</param>
-        public TheoremObject(TheoremObjectSignature type, List<ConfigurationObject> objects)
-        {
-            Type = type;
-            InternalObjects = objects ?? throw new ArgumentNullException(nameof(objects));
-        }
-
-        /// <summary>
-        /// Constructor for a theorem object wrapping a single configuration object.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
+        /// <param name="configurationObject">The object that defines this theorem object.</param>
         public TheoremObject(ConfigurationObject configurationObject)
+            : this(TheoremObjectSignature.SingleObject, new[] { configurationObject })
         {
-            Type = TheoremObjectSignature.SingleObject;
-            InternalObjects = new List<ConfigurationObject> { configurationObject };
         }
 
         #endregion

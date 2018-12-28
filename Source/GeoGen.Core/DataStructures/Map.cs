@@ -1,14 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a data structure that acts like a <see cref="Dictionary{TKey,TValue}"/>,
-    /// but in both ways (i.e. you can get TKey items from TValues).
+    /// Represents a data structure that acts like a <see cref="Dictionary{TKey,TValue}"/>, but in both ways
+    /// (i.e. you can get TKey items from TValues). It implements <see cref="IEnumerable{T}"/>, where 'T'
+    /// is a tuple of the mapped items.
     /// </summary>
     /// <typeparam name="T1">The type of first items.</typeparam>
     /// <typeparam name="T2">The type of second items.</typeparam>
-    public class Map<T1, T2>
+    public class Map<T1, T2> : IEnumerable<(T1 item1, T2 item2)>
     {
         #region Private fields
 
@@ -30,12 +33,12 @@ namespace GeoGen.Core
         /// <summary>
         /// Adds given items to the map.
         /// </summary>
-        /// <param name="t1">The first item.</param>
-        /// <param name="t2">The second item.</param>
-        public void Add(T1 t1, T2 t2)
+        /// <param name="item1">The first item.</param>
+        /// <param name="item2">The second item.</param>
+        public void Add(T1 item1, T2 item2)
         {
-            _leftToRight.Add(t1, t2);
-            _rightToLeft.Add(t2, t1);
+            _leftToRight.Add(item1, item2);
+            _rightToLeft.Add(item2, item1);
         }
 
         /// <summary>
@@ -61,21 +64,21 @@ namespace GeoGen.Core
         /// <summary>
         /// Checks if the map contains a given T1 item.
         /// </summary>
-        /// <param name="t1">The T1 item.</param>
+        /// <param name="item">The T1 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsLeftKey(T1 t1)
+        public bool ContainsLeftKey(T1 item)
         {
-            return _leftToRight.ContainsKey(t1);
+            return _leftToRight.ContainsKey(item);
         }
 
         /// <summary>
         /// Checks if the map contains a given T2 item.
         /// </summary>
-        /// <param name="t2">The T2 item.</param>
+        /// <param name="item">The T2 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsRightKey(T2 t2)
+        public bool ContainsRightKey(T2 item)
         {
-            return _rightToLeft.ContainsKey(t2);
+            return _rightToLeft.ContainsKey(item);
         }
 
         /// <summary>
@@ -86,6 +89,22 @@ namespace GeoGen.Core
             _leftToRight.Clear();
             _rightToLeft.Clear();
         }
+
+        #endregion
+
+        #region IEnumerable implementation
+
+        /// <summary>
+        /// Gets a generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
+        public IEnumerator<(T1 item1, T2 item2)> GetEnumerator() => _leftToRight.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
+
+        /// <summary>
+        /// Gets a non-generic enumerator.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

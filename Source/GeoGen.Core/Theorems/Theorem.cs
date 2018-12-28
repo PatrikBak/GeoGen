@@ -4,8 +4,10 @@ using System.Collections.Generic;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a theorem that can be true in a configuration. For example:
-    /// Collinear points, concyclic points, a line tangent to a circle. 
+    /// Represents a geometric theorem that holds true for some objects. It is defined by 
+    /// its <see cref="TheoremType"/> and <see cref="TheoremObject"/>s that wrap the actual
+    /// <see cref="ConfigurationObject"/>s. The number of theorems objects, as well as their
+    /// <see cref="TheoremObjectSignature"/>, depends on the type of the theorem.
     /// </summary>
     public class Theorem
     {
@@ -26,22 +28,11 @@ namespace GeoGen.Core
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="Theorem"/> object.
         /// </summary>
-        /// <param name="type">The theorem type.</param>
-        /// <param name="involvedObjects">The involved objects list.</param>
+        /// <param name="type">The type of the theorem.</param>
+        /// <param name="involvedObjects">The list of theorem objects that this theorem is about.</param>
         public Theorem(TheoremType type, IReadOnlyList<TheoremObject> involvedObjects)
-        {
-            Type = type;
-            InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
-        }
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        /// <param name="type">The theorem type.</param>
-        /// <param name="involvedObjects">The involved objects list.</param>
-        public Theorem(TheoremType type, TheoremObject theoremObject, params TheoremObject[] involvedObjects)
         {
             Type = type;
             InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));

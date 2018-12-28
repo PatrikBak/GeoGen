@@ -99,12 +99,12 @@ namespace GeoGen.ConsoleTest
 
         private string ObjectToString(TheoremObject theoremObject)
         {
-            if (theoremObject.Type == TheoremObjectSignature.SingleObject)
+            if (theoremObject.Signature == TheoremObjectSignature.SingleObject)
             {
                 return ObjectToStringById(theoremObject.InternalObjects.First());
             }
 
-            var isLine = theoremObject.Type == TheoremObjectSignature.LineGivenByPoints;
+            var isLine = theoremObject.Signature == TheoremObjectSignature.LineGivenByPoints;
 
             var list = theoremObject.InternalObjects.Select(ObjectToStringById).ToList();
 

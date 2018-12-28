@@ -177,7 +177,7 @@ namespace GeoGen.Generator
                     {
                         // Add the new object to the container. It will found out if there 
                         // already is an equal version of it inside
-                        _container.Add(newObject, out var equalObject);
+                        _container.TryAdd(newObject, out var equalObject);
 
                         // If there is an equal object already in the container
                         if (equalObject != null)

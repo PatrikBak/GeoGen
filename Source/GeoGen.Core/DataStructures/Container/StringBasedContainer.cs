@@ -40,14 +40,14 @@ namespace GeoGen.Core
         #region IContainer implementation
 
         /// <summary>
-        /// Adds a given item to the container. If an equal version of the item is present 
+        /// Tries to add a given item to the container. If an equal version of the item is present 
         /// in the container, the item won't be added and the <paramref name="equalItem"/> will be set 
-        /// to this equal version. Otherwise the <paramref name="equalItem"/> will be set
-        /// to the default value of <typeparamref name="T"/>.
+        /// to this equal version. Otherwise the item will be added and the <paramref name="equalItem"/> 
+        /// will be set to the default value of <typeparamref name="T"/>.
         /// </summary>
         /// <param name="item">The item to be added.</param>
         /// <param name="equalItem">Either the equal version of the passed item from the container (if there's any), or the default value of the type <typeparamref name="T"/>.</param>
-        public void Add(T item, out T equalItem)
+        public void TryAdd(T item, out T equalItem)
         {
             // Convert the object to a string
             var stringRepresentation = _converter.ConvertToString(item);
@@ -66,7 +66,7 @@ namespace GeoGen.Core
             _items.Add(stringRepresentation, item);
 
             // Set that there is no equal item
-            equalItem = default(T);
+            equalItem = default;
         }
 
         #endregion

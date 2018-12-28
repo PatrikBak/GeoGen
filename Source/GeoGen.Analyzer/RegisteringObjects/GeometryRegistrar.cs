@@ -1,0 +1,152 @@
+﻿using GeoGen.Core;
+using System;
+
+namespace GeoGen.Analyzer
+{
+    /// <summary>
+    /// A default implementation of <see cref="IGeometryRegistrar"/>. 
+    /// </summary>
+    public class GeometryRegistrar : IGeometryRegistrar
+    {
+        #region Private fields
+
+        /// <summary>
+        /// The constructor of loose objects.
+        /// </summary>
+        private readonly ILooseObjectsConstructor _constructor;
+
+        /// <summary>
+        /// The resolver for finding constructors.
+        /// </summary>
+        private readonly IConstructorsResolver _resolver;
+
+        /// <summary>
+        /// The mapper that maps configurations to their geometrical representations
+        /// wrapped inside a <see cref="IObjectsContainersManager"/>.
+        /// </summary>
+        private readonly IObjectContainersMapper _mapper;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="resolver">The resolver for finding the right constructors.</param>
+        /// <param name="constructor">The constructor of loose objects.</param>
+        /// <param name="mapper">The manager of all objects container where we register the objects.</param>
+        public GeometryRegistrar(IConstructorsResolver resolver, ILooseObjectsConstructor constructor, IObjectContainersMapper mapper)
+        {
+            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+        }
+
+        #endregion
+
+        #region IGeometryRegistrar implementation
+
+        /// <summary>
+        /// Registers a given configuration to the actual geometrical system
+        /// and returns if it is contructible and if it doesn't contain
+        /// duplicate objects.
+        /// </summary>
+        /// <param name="configuration">The configuration.</param>
+        /// <returns>The registration result.</returns>
+        public RegistrationResult Register(Configuration configuration)
+        {
+            // Create the manager for the configuration
+            var manager = _mapper.Create(configuration);
+
+            // First we add loose objects to all containers
+            foreach (var container in manager)
+            {
+                // Objects are constructed using the injected loose objects constructed
+                container.Add(configuration.LooseObjectsHolder.LooseObjects, () => _constructor.Construct(configuration.LooseObjectsHolder));
+            }
+
+            // Then we also add all the constructed object
+            foreach (var constructedObject in configuration.ConstructedObjects)
+            {
+                // For a given one prepare a function that performs the actual registration of it
+                RegistrationResult RegistrationFunction() => Register(constructedObject, manager);
+
+                // Safely execute the registration (with auto-resolving of inconsistencies)
+                var result = manager.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
+
+                // Find out if the result is correct
+                var correctResult = result.InconstructibleObject == null && result.Duplicates == (null, null);
+
+                // If it's not, we directly return the result without dealing with the remaining objects
+                if (!correctResult)
+                    return result;
+            }
+
+            // If we got here, then all the objects have been registered correctly and we can return an empty (i.e. OK) result
+            return new RegistrationResult();
+        }
+
+        /// <summary>
+        /// Performs the actual registration of a given object into all the objects containers of a given containers manager.
+        /// </summary>
+        /// <param name="configurationObject">The object to be registered.</param>
+        /// <param name="manager">The manager of all the objects containers where we should add the object.</param>
+        /// <returns>The result of the registration.</returns>
+        private RegistrationResult Register(ConstructedConfigurationObject configurationObject, IObjectsContainersManager manager)
+        {
+            // Initialize a variable indicating if the construction is possible
+            bool canBeConstructed = default;
+
+            // Initialize a variable holding the duplicate version of the object
+            ConfigurationObject duplicate = default;
+
+            // Initialize a variable indicating if we've already processed some container
+            var noContainerProcessed = true;
+
+            // Let the resolver find the constructor and let it create the constructor function
+            var constructorFunction = _resolver.Resolve(configurationObject.Construction).Construct(configurationObject);
+
+            // Add the object to all the containers
+            foreach (var container in manager)
+            {
+                // Add the object to the current one using this function that uses the current container
+                container.TryAdd(configurationObject, () => constructorFunction(container), out var objectConstructed, out var equalObject);
+
+                // We need to first check if some other container didn't mark constructibility in the opposite way
+                // If yes, we have an inconsistency
+                if (!noContainerProcessed && canBeConstructed != objectConstructed)
+                    throw new InconsistentContainersException();
+
+                // Now we need to check if some other container didn't find a different duplicate 
+                // If yes, we have an inconsistency
+                if (!noContainerProcessed && duplicate != equalObject)
+                    throw new InconsistentContainersException();
+
+                // If this is the first container that we're processing...
+                if (noContainerProcessed)
+                {
+                    // Then we need to set the constructible and duplicate variables
+                    // so we can work with them in the other iterations
+                    canBeConstructed = objectConstructed;
+                    duplicate = equalObject;
+
+                    // And set that we've processed a container
+                    noContainerProcessed = false;
+                }
+            }
+
+            //  Now all the objects are added to all the containers, and we can return the result
+            return new RegistrationResult
+            {
+                // Set inconstructible object to the provided object, if it can't be constructed
+                InconstructibleObject = !canBeConstructed ? configurationObject : default,
+
+                // Set the duplicates to the pair of this object and the found duplicate, if there's any
+                Duplicates = duplicate != null ? (olderObject: duplicate, newerObject: configurationObject) : default
+            };
+        }
+
+        #endregion
+    }
+}

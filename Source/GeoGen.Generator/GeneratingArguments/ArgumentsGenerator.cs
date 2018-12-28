@@ -82,7 +82,7 @@ namespace GeoGen.Generator
             {
                 // Add the generated arguments to the container
                 // It will find if we already have these
-                generatedArguments.Add(arguments, out var equalArguments);
+                generatedArguments.TryAdd(arguments, out var equalArguments);
 
                 // Return them if there are no equal arguments
                 if (equalArguments == null)

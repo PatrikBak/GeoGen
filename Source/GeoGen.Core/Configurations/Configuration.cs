@@ -59,14 +59,5 @@ namespace GeoGen.Core
         }
 
         #endregion
-
-        /// <summary>
-        /// This method will be removed soon.
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<List<ConstructedConfigurationObject>> GroupConstructedObjects()
-        {
-            return ConstructedObjects.Select(o => new List<ConstructedConfigurationObject> { o });
-        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a type of a <see cref="Theorem"/>.
+    /// Represents a type of <see cref="Theorem"/> that are examined.
     /// </summary>
     public enum TheoremType
     {
@@ -16,12 +16,12 @@
         ConcyclicPoints,
 
         /// <summary>
-        /// Three or more concurrent objects that each is either a line, or a circle
+        /// Three or more objects are concurrent, each of them is either a line, or a circle
         /// </summary>
         ConcurrentObjects,
 
         /// <summary>
-        /// Two or more lines parallel to each other
+        /// Two or more lines are parallel to each other
         /// </summary>
         ParallelLines,
 
@@ -36,17 +36,17 @@
         TangentCircles,
 
         /// <summary>
-        /// A line tangent to a circle
+        /// A line is tangent to a circle
         /// </summary>
         LineTangentToCircle,
 
         /// <summary>
-        /// Two line segments with the equal lengths
+        /// Two line segments have equal lengths
         /// </summary>
         EqualLineSegments,
 
         /// <summary>
-        /// Two pairs of lines that make the same angles
+        /// Two pairs of lines make the same angles
         /// </summary>
         EqualAngles
     }
