@@ -3,7 +3,10 @@
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A factory for creating <see cref="IContextualContainer"/> containing given objects.
+    /// Represents a factory for creating new instances of <see cref="IContextualContainer"/>, 
+    /// that should contain objects from a <see cref="Configuration"/> and get the actual 
+    /// geometric version of them from a <see cref="IObjectsContainersManager"/>.
+    /// <para>The implementation is supposed to be provided by the dependency injection management system.</para>
     /// </summary>
     public interface IContextualContainerFactory
     {

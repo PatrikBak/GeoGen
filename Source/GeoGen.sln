@@ -5,17 +5,27 @@ VisualStudioVersion = 15.0.28307.136
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConsoleTest", "GeoGen.ConsoleTest\GeoGen.ConsoleTest.csproj", "{3BF24AAF-2079-48B1-922C-EA928738C045}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities", "GeoGen.Utilities\GeoGen.Utilities.csproj", "{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities", "GeoGen.Utilities\GeoGen.Utilities.csproj", "{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator", "GeoGen.Generator\GeoGen.Generator.csproj", "{1B7D635C-67D1-4594-AE47-56CF3F04F906}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator", "GeoGen.Generator\GeoGen.Generator.csproj", "{1B7D635C-67D1-4594-AE47-56CF3F04F906}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer", "GeoGen.Analyzer\GeoGen.Analyzer.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer", "GeoGen.Analyzer\GeoGen.Analyzer.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.AnalyticGeometry", "GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry", "GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Runner", "GeoGen.Runner\GeoGen.Runner.csproj", "{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Runner", "GeoGen.Runner\GeoGen.Runner.csproj", "{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.AnalyticGemetry.Tests", "GeoGen.AnalyticGemetry.Tests\GeoGen.AnalyticGemetry.Tests\GeoGen.AnalyticGemetry.Tests.csproj", "{ED87CC35-B292-421F-9CD1-E8E3A7992F30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer.Tests", "GeoGen.Analyzer.Tests\GeoGen.Analyzer.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core.Tests", "GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator.Tests", "GeoGen.Generator.Tests\GeoGen.Generator.Tests.csproj", "{FFA143EC-4172-4A3D-B36A-CE663AC18F28}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +61,26 @@ Global
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFA143EC-4172-4A3D-B36A-CE663AC18F28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFA143EC-4172-4A3D-B36A-CE663AC18F28}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFA143EC-4172-4A3D-B36A-CE663AC18F28}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFA143EC-4172-4A3D-B36A-CE663AC18F28}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
