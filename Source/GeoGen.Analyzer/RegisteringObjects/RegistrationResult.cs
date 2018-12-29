@@ -9,6 +9,11 @@ namespace GeoGen.Analyzer
     public class RegistrationResult
     {
         /// <summary>
+        /// Gets or sets if the configuration was successfully registered. 
+        /// </summary>
+        public bool SuccessfullyDrawn { get; set; }
+
+        /// <summary>
         /// Gets or set the first found pair of objects that turned out to be geometrically the same one.
         /// If there is none, the value should be (null, null).
         /// </summary>
@@ -18,6 +23,6 @@ namespace GeoGen.Analyzer
         /// Gets or set the first object that turned out to be geometrically inconstructible. 
         /// If there is none, the value should be null.
         /// </summary>
-        public ConfigurationObject InconstructibleObject { get; set; }
+        public ConfigurationObject InconstructibleObject { get; set; }        
     }
 }

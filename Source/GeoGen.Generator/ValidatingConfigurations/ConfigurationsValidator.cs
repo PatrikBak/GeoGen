@@ -117,6 +117,10 @@ namespace GeoGen.Generator
             // Call the registrar to get the geometrical info about the configuration
             var registrationResult = _registrar.Register(configuration);
 
+            // If the registration didn't work out, then we have to say the configuration is invalid
+            if (!registrationResult.SuccessfullyDrawn)
+                return false;
+
             // Find out if there is an inconstructible object
             var anyInconstructibleObject = registrationResult.InconstructibleObject != null;
 

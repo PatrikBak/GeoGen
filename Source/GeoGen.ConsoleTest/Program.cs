@@ -3,13 +3,9 @@ using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Runner;
 using Ninject;
-using Ninject.Extensions.ContextPreservation;
-using Ninject.Extensions.Factory;
-using Ninject.Planning.Bindings.Resolvers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using static GeoGen.Core.PredefinedConstructionType;
 
@@ -25,23 +21,22 @@ namespace GeoGen.ConsoleTest
 
         private static ConstructorHelper _constructorHelper => _kernel.Get<ConstructorHelper>();
 
-        private static ConsoleInconsistenciesTracker _tracker => _kernel.Get<IInconsistenciesTracker>() as ConsoleInconsistenciesTracker;
+        private static ConsoleInconsistenciesTracker _tracker => _kernel.Get<IInconsistentContainersTracer>() as ConsoleInconsistenciesTracker;
 
         private static void Bootstrap()
         {
-            _kernel = new StandardKernel(new FuncModule(), new ContextPreservationModule());
-            _kernel.Components.RemoveAll<IMissingBindingResolver>();
-            _kernel.Settings.AllowNullInjection = true;
-            _kernel.AddAlgorithm();
-
+            // 3:09
+            _kernel = new StandardKernel();
             _kernel.Bind<ConstructionsContainer>().ToSelf().InSingletonScope();
             _kernel.Bind<ComposedConstructions>().ToSelf().InSingletonScope();
             _kernel.Bind<ConstructorHelper>().ToSelf().InSingletonScope();
 
-            _kernel.Bind<IInconsistenciesTracker>().ToConstant(new ConsoleInconsistenciesTracker());
-            _kernel.Bind<IEqualObjectsTracer>().ToConstant(new ConsoleEqualObjectsTracer());
-            _kernel.Bind<IInconstructibleObjectsTracer>().ToConstant(new ConsoleInconstructibleObjectsTracer());
-            //_kernel.Rebind<ITheoremsAnalyzer>().To<DummyTheoremsAnalyzer>();
+            _kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>().WithConstructorArgument(new Action<IKernel>(internalKernel =>
+            {
+                internalKernel.Rebind<IInconsistentContainersTracer>().ToConstant(new ConsoleInconsistenciesTracker());
+                internalKernel.Rebind<IEqualObjectsTracer>().ToConstant(new ConsoleEqualObjectsTracer());
+                internalKernel.Rebind<IInconstructibleObjectsTracer>().ToConstant(new ConsoleInconstructibleObjectsTracer());
+            }));
         }
 
         private static void Main()
@@ -61,7 +56,10 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 3
+                MaximalNumberOfIterations = 4,
+                NumberOfContainers = 10,
+                MaximalAttemptsToReconstructOneContainer = 10000,
+                MaximalAttemptsToReconstructAllContainers = 100000
             };
 
             var generator = _kernel.Get<IGeneratorFactory>().CreateGenerator(input);
@@ -75,8 +73,6 @@ namespace GeoGen.ConsoleTest
             Console.WriteLine($"Generated: {result.Count}");
             Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
             Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
-            Console.WriteLine($"Inconsistencies: {_tracker.Inconsistencies}");
-            Console.WriteLine($"Failed attempts to reconstruct: {_tracker.AttemptsToReconstruct}");
             Console.WriteLine($"-------------------------------------------------");
             Console.ReadKey();
 

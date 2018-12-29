@@ -6,9 +6,9 @@ namespace GeoGen.ConsoleTest
 {
     public class DummyTheoremsAnalyzer : ITheoremsAnalyzer
     {
-        public List<Theorem> Analyze(Configuration configuration)
+        TheoremsAnalyzerOutput ITheoremsAnalyzer.Analyze(Configuration configuration)
         {
-            return new List<Theorem>();
+            throw new System.NotImplementedException();
         }
     }
 }

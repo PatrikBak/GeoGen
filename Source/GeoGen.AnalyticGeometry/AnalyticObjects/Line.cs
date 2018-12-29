@@ -299,5 +299,14 @@ namespace GeoGen.AnalyticGeometry
         }
 
         #endregion
+
+        #region To String
+
+        public override string ToString()
+        {
+            return $"{A}x {(B < 0 ? "-" : "+")}{B}y + {(B < 0 ? "-" : "+")}{C} = 0";
+        }
+
+        #endregion
     }
 }

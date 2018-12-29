@@ -4,6 +4,7 @@ using GeoGen.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Analyzer
 {
@@ -169,11 +170,15 @@ namespace GeoGen.Analyzer
         public bool Contains(ConfigurationObject configurationObject) => _content.ContainsLeftKey(configurationObject);
 
         /// <summary>
-        /// Tries to reconstruct all the objects in the container. 
+        /// Tries to reconstruct all the objects in the container. If the reconstruction fails, 
+        /// the content of the container will remain unchanged.
         /// </summary>
-        /// <returns>true, if the reconstruction was successful; false otherwise.</returns>
-        public bool TryReconstruct()
+        /// <param name="reconstructionSuccessful">true, if the reconstruction was successful; false otherwise.</param>
+        public void TryReconstruct(out bool reconstructionSuccessful)
         {
+            // Cache the content so we can revert it if the reconstruction fails
+            var cachedContent = _content.ToList();
+
             // Clear the content 
             _content.Clear();
 
@@ -181,15 +186,24 @@ namespace GeoGen.Analyzer
             foreach (var reconstructor in _reconstructors)
             {
                 // Perform a given one
-                var reconstructionSuccessful = reconstructor();
+                var currentResult = reconstructor();
 
-                // If the reconstruction wasn't successful, we can stop
-                if (!reconstructionSuccessful)
-                    return false;
+                // If the reconstruction wasn't successful...
+                if (!currentResult)
+                {
+                    // We mark it
+                    reconstructionSuccessful = false;
+
+                    // Revert the content
+                    _content.SetItems(cachedContent);
+
+                    // And stop
+                    return;
+                }
             }
 
             // If we got here, the reconstruction went fine
-            return true;
+            reconstructionSuccessful = true;
         }
 
         #endregion
@@ -199,13 +213,13 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Gets a generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A generic enumerator.</returns>
         public IEnumerator<(ConfigurationObject configurationObject, AnalyticObject analyticObject)> GetEnumerator() => _content.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

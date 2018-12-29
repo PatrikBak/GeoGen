@@ -76,13 +76,13 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets a generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A generic enumerator.</returns>
         public IEnumerator<T> GetEnumerator() => _items.Values.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Analyzer
@@ -60,17 +59,30 @@ namespace GeoGen.Analyzer
         /// Performs the theorem analysis for a given configuration.
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
-        /// <returns>The list of theorems that hold true in the configuration.</returns>
-        public List<Theorem> Analyze(Configuration configuration)
+        /// <returns>The output of the analyzer holding the theorems.</returns>
+        public TheoremsAnalyzerOutput Analyze(Configuration configuration)
         {
             // Find the containers manager that was created for this configuration
             var manager = _registrar.GetContainersManager(configuration);
 
-            // Let the manager safely create an instance of the contextual container
-            var container = manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(configuration, manager));
+            // Prepare a variable holding the contextual container to be used by the analyzers
+            IContextualContainer container;
 
-            // For each verifier create many outputs
-            return _theoremsAnalyzers.SelectMany(verifier => verifier.FindPotentialTheorems(container))
+            try
+            {
+                // Let the manager create an instance of the contextual container
+                container = manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(configuration, manager));
+            }
+            // If there are unresolvable inconsistencies, then we can't do much
+            catch (UnresolvableInconsistencyException)
+            {
+                return new TheoremsAnalyzerOutput { TheoremAnalysisSuccessful = false };
+            }
+
+            // Otherwise we have a correct contextual container
+            // We can create the theorems list
+            // For each verifier create many outputs...
+            var theorems = _theoremsAnalyzers.SelectMany(verifier => verifier.FindPotentialTheorems(container))
                     // Take those potential theorems that turn out to be true
                     .Where(potentialTheorem =>
                     {
@@ -82,9 +94,19 @@ namespace GeoGen.Analyzer
                         return _needlessObjectsAnalyzer.ContainsNeedlessObjects(configuration, potentialTheorem.InvolvedObjects);
                     })
                     // Cast these potential theorem to actual theorem objects
-                    .Select(output => output.ToTheorem())
+                    .Select(potentialTheorem => potentialTheorem.ToTheorem())
                     // And enumerate to a list
                     .ToList();
+
+            // Return the final output
+            return new TheoremsAnalyzerOutput
+            {
+                // Set the theorems
+                Theorems = theorems,
+
+                // Set that we've finished successfully
+                TheoremAnalysisSuccessful = true
+            };
         }
 
         #endregion

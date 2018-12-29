@@ -200,8 +200,19 @@ namespace GeoGen.Generator
                     // Finally construct the output for each of them
                     .Select(generatedConfiguration =>
                     {
-                        // Make sure it's added to the generated list
-                        generatedConfigurations.Add(generatedConfiguration);
+                        // Run the analyzer
+                        var analyzerOutput = _analyzer.Analyze(generatedConfiguration);
+
+                        // If the analyzer output was incorrect...
+                        var theorems = !analyzerOutput.TheoremAnalysisSuccessful
+                            // We assume there were no theorems
+                            ? new List<Theorem>()
+                            // Otherwise take the theorems from the output
+                            : analyzerOutput.Theorems;
+
+                        // Make sure it's added to the generated list if it could be analyzed properly...
+                        if (analyzerOutput.TheoremAnalysisSuccessful)
+                            generatedConfigurations.Add(generatedConfiguration);
 
                         // Construct the output
                         return new GeneratorOutput
@@ -209,8 +220,8 @@ namespace GeoGen.Generator
                             // Set the configuration
                             Configuration = generatedConfiguration,
 
-                            // Find theorems
-                            Theorems = _analyzer.Analyze(generatedConfiguration)
+                            // Set the theorems
+                            Theorems = theorems
                         };
                     });
                 });

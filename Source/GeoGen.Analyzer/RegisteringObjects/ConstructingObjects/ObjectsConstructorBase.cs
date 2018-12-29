@@ -27,8 +27,19 @@ namespace GeoGen.Analyzer
                 // Get the analytic versions of the objects passed in the arguments       
                 var analyticObjects = configurationObject.PassedArguments.FlattenedList.Select(container.Get).ToArray();
 
-                // Call the abstract function to get the actual result
-                return Construct(analyticObjects);
+                try
+                {
+                    // Try to call the abstract function to get the actual result
+                    return Construct(analyticObjects);
+                }
+                // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
+                // return null indicating the construct has failed. These exception are possible, because
+                // it would be very hard to predict every possible outcome of the fact that the numerical
+                // system is not precise. Other exceptions would be a bigger deal and we won't hide them
+                catch (AnalyticException)
+                {
+                    return null;
+                }
             };
         }
 

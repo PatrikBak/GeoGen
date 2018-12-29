@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using GeoGen.Utilities;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -90,6 +91,19 @@ namespace GeoGen.Core
             _rightToLeft.Clear();
         }
 
+        /// <summary>
+        /// Sets the content of the map to the items from a given enumerable of items pairs.
+        /// </summary>
+        /// <param name="items">The enumerable of the pairs of items that should be the content of the map.</param>
+        public void SetItems(IEnumerable<(T1, T2)> items)
+        {
+            // First clear
+            Clear();
+
+            // Then add all the items
+            items.ForEach(itemsPair => Add(itemsPair.Item1, itemsPair.Item2));
+        }
+
         #endregion
 
         #region IEnumerable implementation
@@ -97,13 +111,13 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets a generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A generic enumerator.</returns>
         public IEnumerator<(T1 item1, T2 item2)> GetEnumerator() => _leftToRight.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
         /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

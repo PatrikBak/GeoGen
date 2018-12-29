@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// A default of implementation of <see cref="ITriangleConstructor"/>.
+    /// THe default of implementation of <see cref="ITriangleConstructor"/>.
     /// </summary>
     public class TriangleConstructor : ITriangleConstructor
     {
@@ -50,10 +50,11 @@ namespace GeoGen.AnalyticGeometry
             // In that way we get a triangle that is acute-angled, isn't too flat, 
             // isn't too close to a right-angled triangle and isn't close to a isosceles triangle.
             // It can be shown that if we generate <A from the interval (60+d, 90-d) and then
-            // <B from the interval ((180+d-A)/2, A-d), that we will get a wanted result (simple math).
-            // In order be able to generate A, we need to have d from the interval (0,15). I'm not
-            // sure about the best value, so I put the middle one :)
-            const double d = 7.5;
+            // <B from the interval ((180+d-A)/2, A-d), that we will get the wanted result (simple math).
+            // In order to be able to generate A, we need to have d from the interval (0,15). 
+            // Generally the bigger, the better, but not very close to 15, because in that case
+            // we might limit the variety of possible triangles (alpha would always be close to 75)
+            const double d = 14;
 
             // Let us generate angles according to our formulas
             var alpha = _random.NextDouble(60 + d, 90 - d);
@@ -89,7 +90,7 @@ namespace GeoGen.AnalyticGeometry
             var c = new Point(x, y);
 
             // And return all of them
-            return new List<AnalyticObject> {a, b, c};
+            return new List<AnalyticObject> { a, b, c };
         }
 
         #endregion

@@ -3,22 +3,32 @@ using GeoGen.Analyzer;
 
 namespace GeoGen.ConsoleTest
 {
-    public class ConsoleInconsistenciesTracker : IInconsistenciesTracker
+    public class ConsoleInconsistenciesTracker : IInconsistentContainersTracer
     {
-        public int AttemptsToReconstruct { get; private set; }
+        private int all;
 
-        public int Inconsistencies { get; private set; }
+        private int one;
 
-        public void OnUnsuccessfulAttemptToReconstructContainer()
+        public void TraceReachingMaximalNumberOfAttemptsToReconstructAllContainers(IObjectsContainersManager manager)
         {
-            AttemptsToReconstruct++;
-            Console.WriteLine($"Marked failed attempt to reconstruct: {AttemptsToReconstruct}");
+            all++;
+            Console.WriteLine($"{all}. We've reached the maximal for all containers.");
         }
 
-        public void MarkInconsistency()
+        public void TraceReachingMaximalNumberOfAttemptsToReconstructOneContainer(IObjectsContainersManager manager, IObjectsContainer container)
         {
-            Inconsistencies++;
-            Console.WriteLine($"Marked inconsistency: {Inconsistencies}");
+            one++;
+            Console.WriteLine($"{one}. We've reached the maximal for one container.");
+        }
+
+        public void TraceResolvedInconsistency(IObjectsContainersManager manager, int attemptsToReconstruct)
+        {
+            Console.WriteLine($"Resolved inconsistency with {attemptsToReconstruct} reconstructions.");
+        }
+
+        public void TraceUnsuccessfulAtemptsToReconstructOneContainer(IObjectsContainersManager manager, IObjectsContainer container, int attemptsToReconstruct)
+        {
+            Console.WriteLine($"{attemptsToReconstruct} unsuccessful attempts to reconstruct.");
         }
     }
 }

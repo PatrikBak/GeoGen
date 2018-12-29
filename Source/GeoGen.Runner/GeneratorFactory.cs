@@ -1,5 +1,7 @@
 ﻿using GeoGen.Generator;
 using Ninject;
+using Ninject.Extensions.ContextPreservation;
+using Ninject.Extensions.Factory;
 using System;
 
 namespace GeoGen.Runner
@@ -7,23 +9,14 @@ namespace GeoGen.Runner
     /// <summary>
     /// The default implementation of <see cref="IGeneratorFactory"/> that uses NInject.
     /// </summary>
-    internal class GeneratorFactory : IGeneratorFactory
+    public class GeneratorFactory : IGeneratorFactory
     {
-        #region Private fields
+        #region Public properties
 
         /// <summary>
-        /// The lock for the CreateGenerator method calls.
+        /// The action that gets called directly before resolving the generator. 
         /// </summary>
-        private static readonly object _lock = new object();
-
-        #endregion
-
-        #region Dependencies
-
-        /// <summary>
-        /// The NInject kernel.
-        /// </summary>
-        private readonly IKernel _kernel;
+        private readonly Action<IKernel> _kernelConfigurer;
 
         #endregion
 
@@ -32,10 +25,10 @@ namespace GeoGen.Runner
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratorFactory"/> class.
         /// </summary>
-        /// <param name="kernel">The NInject kernel.</param>
-        public GeneratorFactory(IKernel kernel)
+        /// <param name="kernelConfigurer">The action that gets called directly before resolving the generator. Its default value is null.</param>
+        public GeneratorFactory(Action<IKernel> kernelConfigurer = null)
         {
-            _kernel = kernel ?? throw new ArgumentNullException(nameof(kernel));
+            _kernelConfigurer = kernelConfigurer;
         }
 
         #endregion
@@ -49,21 +42,23 @@ namespace GeoGen.Runner
         /// <returns>The generator.</returns>
         public IGenerator CreateGenerator(GeneratorInput generatorInput)
         {
-            // Make sure two different threads won't manipulate the container at the same time
-            lock (_lock)
-            {
-                // Bind the input, so it can be accessed in the run-time construction arguments resolution
-                var inputBinding = _kernel.Bind<GeneratorInput>().ToConstant(generatorInput);
+            // Create a kernel that will perform the resolution
+            var kernel = new StandardKernel(new FuncModule(), new ContextPreservationModule());
 
-                // Get the generator
-                var generator = _kernel.Get<IGenerator>();
+            // Make sure we can bind to null 
+            // This is used only for tracers, that are not compulsory
+            // I like this better than the NullObject pattern, because
+            // of the ? operator that can be used to prevent null-checks
+            kernel.Settings.AllowNullInjection = true;
 
-                // Release the input so it can be bound again later
-                _kernel.Unbind<GeneratorInput>();
+            // Add the algorithm dependencies to it
+            kernel.AddAlgorithm(generatorInput);
 
-                // Return the generator
-                return generator;
-            }
+            // Call the set configurer
+            _kernelConfigurer?.Invoke(kernel);
+
+            // Resolve the generator
+            return kernel.Get<IGenerator>();
         }
 
         #endregion

@@ -59,5 +59,10 @@ namespace GeoGen.Core
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return ToStringHelper.ObjectToString(this);
+        }
     }
 }

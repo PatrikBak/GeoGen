@@ -81,9 +81,21 @@ namespace GeoGen.Analyzer
                 // For a given one prepare a function that performs the actual registration of it
                 RegistrationResult RegistrationFunction() => RegisterObject(constructedObject, manager);
 
-                // Safely execute the registration (with auto-resolving of inconsistencies)
-                var result = manager.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
+                // Prepare the variable holding the final result
+                RegistrationResult result;
 
+                try
+                {
+                    // Execute the registration (with auto-resolving of inconsistencies)
+                    result = manager.ExecuteAndResolvePossibleIncosistencies(RegistrationFunction);
+                }
+                // If there are unresolvable inconsistencies, then we can't do much
+                catch (UnresolvableInconsistencyException)
+                {
+                    return new RegistrationResult { SuccessfullyDrawn = false };
+                }
+
+                // At this point the registration is completed and correct
                 // Find out if the result is correct
                 var correctResult = result.InconstructibleObject == null && result.Duplicates == (null, null);
 
@@ -104,8 +116,8 @@ namespace GeoGen.Analyzer
                 throw new AnalyzerException("The configuration is already registered.");
             }
 
-            // And finally we can return an empty (i.e. OK) result
-            return new RegistrationResult();
+            // And finally return the OK result
+            return new RegistrationResult { SuccessfullyDrawn = true };
         }
 
         /// <summary>
@@ -124,7 +136,7 @@ namespace GeoGen.Analyzer
             // If we couldn't, then the configuration hasn't been registered yet
             catch (KeyNotFoundException)
             {
-                throw new AnalyzerException("The configuration hasn't been cached yet");
+                throw new AnalyzerException("The configuration hasn't been registered yet");
             }
         }
 
@@ -184,6 +196,9 @@ namespace GeoGen.Analyzer
             //  Now all the objects are added to all the containers, and we can return the result
             return new RegistrationResult
             {
+                // Set that the configuration was drawn
+                SuccessfullyDrawn = true,
+
                 // Set inconstructible object to the provided object, if it can't be constructed
                 InconstructibleObject = !canBeConstructed ? configurationObject : default,
 

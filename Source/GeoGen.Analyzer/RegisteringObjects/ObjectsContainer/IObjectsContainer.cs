@@ -62,9 +62,10 @@ namespace GeoGen.Analyzer
         bool Contains(ConfigurationObject configurationObject);
 
         /// <summary>
-        /// Tries to reconstruct all the objects in the container. 
+        /// Tries to reconstruct all the objects in the container. If the reconstruction fails, 
+        /// the content of the container will remain unchanged.
         /// </summary>
-        /// <returns>true, if the reconstruction was successful; false otherwise.</returns>
-        bool TryReconstruct();
+        /// <param name="reconstructionSuccessful">true, if the reconstruction was successful; false otherwise.</param>
+        void TryReconstruct(out bool reconstructionSuccessful);
     }
 }

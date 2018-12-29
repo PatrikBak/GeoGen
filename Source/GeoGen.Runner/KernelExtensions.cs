@@ -14,11 +14,11 @@ namespace GeoGen.Runner
     public static class KernelExtensions
     {
         /// <summary>
-        /// Binds <see cref="IGeneratorFactory"/> with all its needed dependencies.
+        /// Binds <see cref="IGenerator"/> with all its needed dependencies having a given input.
         /// </summary>
         /// <param name="kernel">The Ninject kernel.</param>
-        /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddAlgorithm(this IKernel kernel)
+        /// <param name="generatorInput">The input for the generator.</param>
+        public static void AddAlgorithm(this IKernel kernel, GeneratorInput generatorInput)
         {
             // The name of the generator scope that represents a single IGenerator 
             const string GeneratorScopeName = "Generator";
@@ -40,20 +40,24 @@ namespace GeoGen.Runner
             kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
 
+            // Tracers
+            kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer) null);
+            kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer) null);
+
             // Ninject factories
             kernel.Bind<IArgumentsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
 
             // Bind Generator that needs its dynamic input
             kernel.Bind<IGenerator>()
                 .To<Generator.Generator>()
-                .WithConstructorArgument("input", context => context.Kernel.Get<GeneratorInput>())
+                .WithConstructorArgument("input", generatorInput)
                 .DefinesNamedScope(GeneratorScopeName);
 
             // Bind the full converter that needs loose objects from the initial configuration
             kernel.Bind<FullConfigurationToStringConverter>()
                 .ToSelf()
                 .InNamedScope(GeneratorScopeName)
-                .WithConstructorArgument("looseObjects", context => context.Kernel.Get<GeneratorInput>().InitialConfiguration.LooseObjectsHolder.LooseObjects);
+                .WithConstructorArgument("looseObjects", generatorInput.InitialConfiguration.LooseObjectsHolder.LooseObjects);
 
             #endregion
 
@@ -68,10 +72,19 @@ namespace GeoGen.Runner
 
             // Transient objects
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
-            kernel.Bind<IObjectsContainersManager>().To<ObjectsContainersManager>();
             kernel.Bind<IObjectsContainer>().To<ObjectsContainer>();
             kernel.Bind<IContextualContainer>().To<ContextualContainer>();
+
+            // Tracer
+            kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
             
+            // An object with constructor arguments
+            kernel.Bind<IObjectsContainersManager>()
+                .To<ObjectsContainersManager>()
+                .WithConstructorArgument("numberOfContainers", generatorInput.NumberOfContainers)
+                .WithConstructorArgument("maximalAttemptsToReconstructOneContainer", generatorInput.MaximalAttemptsToReconstructOneContainer)
+                .WithConstructorArgument("maximalAttemptsToReconstructAllContainers", generatorInput.MaximalAttemptsToReconstructAllContainers);
+
             // Ninject factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsContainersManagerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
@@ -82,7 +95,7 @@ namespace GeoGen.Runner
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcyclicPointsAnalyzer>().InNamedScope(GeneratorScopeName);
-            //kernel.Bind<ITheoremVerifier>().To<EqualAnglesVerifier>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualAnglesAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualLineSegmentsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<LineTangentToCircleAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ParallelLinesAnalyzer>().InNamedScope(GeneratorScopeName);
@@ -109,9 +122,6 @@ namespace GeoGen.Runner
             kernel.Bind<ITriangleConstructor>().To<TriangleConstructor>().InNamedScope(GeneratorScopeName);
 
             #endregion
-
-            // Return the kernel for chaining
-            return kernel;
         }
     }
 }
