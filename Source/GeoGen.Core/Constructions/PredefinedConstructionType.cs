@@ -36,9 +36,14 @@
         IntersectionOfLinesFromLineAndPoints,
 
         /// <summary>
-        /// A random points lying on the line constructed from 2 points (signature {P, P}).
+        /// A random point lying on the line constructed from 2 points (signature {P, P}).
         /// </summary>
         RandomPointOnLineFromPoints,
+
+        /// <summary>
+        /// A random point lying on a line (signature L).
+        /// </summary>
+        RandomPointOnLine,
 
         /// <summary>
         /// The midpoint of the line segment constructed from 2 points (signature {P, P}).
@@ -48,6 +53,12 @@
         /// <summary>
         /// The perpendicular line constructed from 3 points (signature P, {P, P}).
         /// </summary>
-        PerpendicularLineFromPoints
+        PerpendicularLineFromPoints,
+
+        /// <summary>
+        /// The second intersection of a line given by two points A, B, and a circle passing through A and other two given
+        /// points (signature P, P, {P, P}, where the first 'P' is meant to be B, and the second one is meant to be A)
+        /// </summary>
+        SecondIntersectionOfCircleFromPointsAndLineFromPoints,
     }
 }

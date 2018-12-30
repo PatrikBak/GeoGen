@@ -52,21 +52,27 @@ namespace GeoGen.AnalyticGeometry
 
         #region HashCode and Equals
 
-        public override int GetHashCode()
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
         {
-            return _hashCodeInitializer.Value;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is null)
+            if (otherObject is null)
                 return false;
 
-            if (!(obj is T other))
+            if (!(otherObject is T other))
                 return false;
 
             return IsEqualTo(other);
         }
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => _hashCodeInitializer.Value;
 
         #endregion
 

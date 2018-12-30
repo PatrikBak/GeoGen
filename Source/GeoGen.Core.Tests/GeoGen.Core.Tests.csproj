@@ -11,4 +11,10 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.12.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities.TestHelpers\GeoGen.Utilities.TestHelpers.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
+  </ItemGroup>
+
 </Project>

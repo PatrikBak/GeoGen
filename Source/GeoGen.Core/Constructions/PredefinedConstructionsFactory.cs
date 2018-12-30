@@ -134,7 +134,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a loose point of a line construction.
+        /// Creates a random point of a line construction.
         /// </summary>
         /// <returns>The construction.</returns>
         private static PredefinedConstruction RandomPointOnLineFromPoints()
@@ -147,6 +147,22 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a random point of a line construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction RandomPointOnLine()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Line)
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLine, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -180,6 +196,24 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLineFromPoints, parameters, ConfigurationObjectType.Line);
+        }
+
+        /// <summary>
+        /// Creates a second intersection of circle from points and line from points construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction SecondIntersectionOfCircleFromPointsAndLineFromPoints()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleFromPointsAndLineFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         #endregion

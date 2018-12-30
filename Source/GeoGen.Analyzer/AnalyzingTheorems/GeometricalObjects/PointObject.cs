@@ -1,24 +1,23 @@
-﻿using System;
+﻿using GeoGen.Core;
 using System.Collections.Generic;
-using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a geometrical point that is aware of all lines and circles
-    /// that it belongs to.
+    /// Represents a geometrical point that is defined by a point <see cref="ConfigurationObject"/>.
+    /// It contains all <see cref="LineObject"/>s and <see cref="CircleObject"/>s that pass through it.
     /// </summary>
     public class PointObject : GeometricalObject
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the set of lines passing through this point.
+        /// Gets all the lines passing through this point.
         /// </summary>
         public HashSet<LineObject> Lines { get; } = new HashSet<LineObject>();
 
         /// <summary>
-        /// Gets the set of circles passing through this point.
+        /// Gets all the circles passing through this point.
         /// </summary>
         public HashSet<CircleObject> Circles { get; } = new HashSet<CircleObject>();
 
@@ -27,12 +26,11 @@ namespace GeoGen.Analyzer
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initialize a new instance of the <see cref="PointObject"/> class wrapping a given point <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="id">The id of this point.</param>
-        /// <param name="configurationObject">The configuration object wrapped by this point.</param>
-        public PointObject(int id, ConfigurationObject configurationObject)
-                : base(id, configurationObject)
+        /// <param name="configurationObject">The point configuration object represented by this geometrical object.</param>
+        public PointObject(ConfigurationObject configurationObject)
+                : base(configurationObject)
         {
         }
 

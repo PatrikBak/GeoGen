@@ -1,5 +1,7 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -58,6 +60,24 @@ namespace GeoGen.Core
             : this(construction, arguments)
         {
             Id = id;
+        }
+
+        #endregion
+
+        #region ConfigurationObject overridden methods
+
+        /// <summary>
+        /// Enumerates the objects that are internally used to define this configuration object.
+        /// </summary>
+        /// <returns>The enumeration of the internal objects.</returns>
+        public override IEnumerable<ConfigurationObject> GetInternalObjects()
+        {
+            // Take the passed objects from the arguments....
+            return PassedArguments.FlattenedList
+                // Add the internal objects to each of them
+                .Concat(PassedArguments.FlattenedList.Select(obj => obj.GetInternalObjects()).Flatten())
+                // Take only distinct ones
+                .Distinct();
         }
 
         #endregion

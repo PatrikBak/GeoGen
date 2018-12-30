@@ -65,7 +65,6 @@ namespace GeoGen.Runner
 
             // Singletons per one generation
             kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<INeedlessObjectsAnalyzer>().To<NeedlessObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InNamedScope(GeneratorScopeName);            
             kernel.Bind<IGeometryRegistrar>().To<GeometryRegistrar>().InNamedScope(GeneratorScopeName);
@@ -117,7 +116,6 @@ namespace GeoGen.Runner
 
             #region Analytic geometry
 
-            kernel.Bind<IRandomObjectsProvider>().To<RandomObjectsProvider>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IRandomnessProvider>().To<RandomnessProvider>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ITriangleConstructor>().To<TriangleConstructor>().InNamedScope(GeneratorScopeName);
 

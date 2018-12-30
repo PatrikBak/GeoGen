@@ -25,7 +25,6 @@ namespace GeoGen.ConsoleTest
 
         private static void Bootstrap()
         {
-            // 3:09
             _kernel = new StandardKernel();
             _kernel.Bind<ConstructionsContainer>().ToSelf().InSingletonScope();
             _kernel.Bind<ComposedConstructions>().ToSelf().InSingletonScope();
@@ -44,7 +43,7 @@ namespace GeoGen.ConsoleTest
             Bootstrap();
 
             var points = Enumerable.Range(0, 3)
-                    .Select(i => new LooseConfigurationObject(ConfigurationObjectType.Point))
+                    .Select(_ => new LooseConfigurationObject(ConfigurationObjectType.Point))
                     .ToList();
 
             var constructedObjects = ConstructedObjects(points);
@@ -56,15 +55,15 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 4,
-                NumberOfContainers = 10,
+                MaximalNumberOfIterations = 3,
+                NumberOfContainers = 8,
                 MaximalAttemptsToReconstructOneContainer = 10000,
                 MaximalAttemptsToReconstructAllContainers = 100000
             };
 
             var generator = _kernel.Get<IGeneratorFactory>().CreateGenerator(input);
-            var stopwatch = new Stopwatch();
 
+            var stopwatch = new Stopwatch();
             stopwatch.Start();
             var result = generator.Generate().ToList();
             stopwatch.Stop();
@@ -73,9 +72,8 @@ namespace GeoGen.ConsoleTest
             Console.WriteLine($"Generated: {result.Count}");
             Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
             Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
-            Console.WriteLine($"-------------------------------------------------");
-            Console.ReadKey();
 
+            Console.ReadKey();
             PrintTheorems(result);
         }
 
@@ -105,7 +103,7 @@ namespace GeoGen.ConsoleTest
 
             return new List<ConstructedConfigurationObject>
             {
-                //  o
+                //o
                 //i
             };
         }

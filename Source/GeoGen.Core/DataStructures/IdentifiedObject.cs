@@ -39,9 +39,9 @@ namespace GeoGen.Core
         #region HashCode and Equals
 
         /// <summary>
-        /// Finds out if the passed object is equal to this one.
+        /// Finds out if a passed object is equal to this one.
         /// </summary>
-        /// <param name="otherObject">The other object.</param>
+        /// <param name="otherObject">The passed object.</param>
         /// <returns>true, if they are equal; false otherwise.</returns>
         public override bool Equals(object otherObject)
         {
@@ -50,7 +50,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Gets the hash code if this object.
+        /// Gets the hash code of this object.
         /// </summary>
         /// <returns>The hash code.</returns>
         public override int GetHashCode() => Id;

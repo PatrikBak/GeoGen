@@ -1,4 +1,6 @@
-﻿namespace GeoGen.Core
+﻿using System.Collections.Generic;
+
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an object of a <see cref="Configuration"/>. It inherits from <see cref="IdentifiedObject"/>, 
@@ -25,6 +27,16 @@
         {
             ObjectType = objectType;
         }
+
+        #endregion
+
+        #region Public abstract methods
+
+        /// <summary>
+        /// Enumerates the objects that are internally used to define this configuration object.
+        /// </summary>
+        /// <returns>The enumeration of the internal objects.</returns>
+        public abstract IEnumerable<ConfigurationObject> GetInternalObjects();
 
         #endregion
     }

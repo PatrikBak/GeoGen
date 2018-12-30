@@ -50,18 +50,8 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly HashSet<CircleObject> _newCircles;
 
-        /// <summary>
-        /// The id of the last identified geometrical object by the container.
-        /// </summary>
-        private int _geometricalObjectsNextId;
-
-        /// <summary>
-        /// The set of ids of configuration objects that are present in the container.
-        /// </summary>
-        private readonly HashSet<int> _ids;
-
         #endregion
-        
+
         #region Private properties
 
         /// <summary>
@@ -107,7 +97,6 @@ namespace GeoGen.Analyzer
             _newPoints = new HashSet<PointObject>();
             _oldCircles = new HashSet<CircleObject>();
             _newCircles = new HashSet<CircleObject>();
-            _ids = new HashSet<int>();
             _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
 
             // Initialize the objects dictionary
@@ -123,7 +112,7 @@ namespace GeoGen.Analyzer
         #endregion
 
         #region IContextualContainer implementation
-        
+
         /// <summary>
         /// Gets the geometrical objects matching a given query and casts them
         /// to a given type.
@@ -231,12 +220,6 @@ namespace GeoGen.Analyzer
         /// <param name="isNew">Indicates if this object should be added to particular new or old objects set.</param>
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
-            // Pull the id
-            var id = configurationObject.Id;
-
-            // Add id to the ids set
-            _ids.Add(id);
-
             // Let the helper method find the geometrical object that represents this object
             var geometricalObject = FindObject(configurationObject);
 
@@ -483,7 +466,7 @@ namespace GeoGen.Analyzer
             }
 
             // Otherwise we need to create a new line that contains these two points
-            result = new LineObject(_geometricalObjectsNextId++, point1, point2);
+            result = new LineObject(point1, point2);
 
             // We can immediately add the line to the particular lines set 
             (isNew ? _newLines : _oldLines).Add(result);
@@ -533,9 +516,9 @@ namespace GeoGen.Analyzer
                 // Pull the map between geometrical and analytic objects
                 var objects = _objects[container];
 
-                var p1 = (Point)objects.GetRightValue(point1);
-                var p2 = (Point)objects.GetRightValue(point2);
-                var p3 = (Point)objects.GetRightValue(point3);
+                var p1 = (Point) objects.GetRightValue(point1);
+                var p2 = (Point) objects.GetRightValue(point2);
+                var p3 = (Point) objects.GetRightValue(point3);
 
                 // Prepare the analytic circle.
                 Circle analyticCircle;
@@ -584,7 +567,7 @@ namespace GeoGen.Analyzer
                         throw new InconsistentContainersException();
 
                     // Otherwise we can update the result
-                    result = (CircleObject)newResult;
+                    result = (CircleObject) newResult;
                 }
             }
 
@@ -603,7 +586,7 @@ namespace GeoGen.Analyzer
             }
 
             // Otherwise we can create a new circle object with these points
-            result = new CircleObject(_geometricalObjectsNextId++, point3, point1, point2);
+            result = new CircleObject(point3, point1, point2);
 
             // We can add it to the particular circles set
             (isNew ? _newCircles : _oldCircles).Add(result);
@@ -720,11 +703,11 @@ namespace GeoGen.Analyzer
             switch (configurationObject.ObjectType)
             {
                 case ConfigurationObjectType.Point:
-                    return new PointObject(_geometricalObjectsNextId++, configurationObject);
+                    return new PointObject(configurationObject);
                 case ConfigurationObjectType.Line:
-                    return new LineObject(_geometricalObjectsNextId++, configurationObject);
+                    return new LineObject(configurationObject);
                 case ConfigurationObjectType.Circle:
-                    return new CircleObject(_geometricalObjectsNextId++, configurationObject);
+                    return new CircleObject(configurationObject);
                 default:
                     throw new AnalyzerException("Unhandled case.");
             }

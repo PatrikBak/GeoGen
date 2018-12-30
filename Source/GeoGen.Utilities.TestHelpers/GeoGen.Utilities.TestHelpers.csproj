@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>GeoGen.Utilities.TestHelpers</AssemblyName>
+    <RootNamespace>GeoGen.Utilities.TestHelpers</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj" />
+    <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj" />
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
+    <ProjectReference Include="..\GeoGen.Runner\GeoGen.Runner.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

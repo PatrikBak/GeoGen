@@ -54,14 +54,14 @@ namespace GeoGen.Core
 
             // Make sure the number of the actual object types is the same as the number of the needed object types
             // If not, throw an exception...
-            if (looseObjectsMap.Count != ObjectTypesToNeededCount.Count)
+            if (looseObjectsMap.Count != Signature.ObjectTypesToNeededCount.Count)
                 ThrowException();
 
             // Check if the number of objects of each type matched the needed count
             looseObjectsMap.ForEach(pair =>
             {
                 // If not, throw an exception...
-                if (pair.Value.Count != ObjectTypesToNeededCount[pair.Key])
+                if (pair.Value.Count != Signature.ObjectTypesToNeededCount[pair.Key])
                     ThrowException();
             });
 

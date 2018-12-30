@@ -27,11 +27,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly IContextualContainerFactory _factory;
 
-        /// <summary>
-        /// The analyzer whether a theorem essentially involves all the objects from the configuration.
-        /// </summary>
-        private readonly INeedlessObjectsAnalyzer _needlessObjectsAnalyzer;
-
         #endregion
 
         #region Constructor
@@ -42,13 +37,11 @@ namespace GeoGen.Analyzer
         /// <param name="theoremsAnalyzers">The array of all the available potential theorems analyzers.</param>
         /// <param name="registrar">The geometry registrar that holds already registered object managers for the configurations.</param>
         /// <param name="factory">The factory for creating contextual containers that are required by the theorem analyzers.</param>
-        /// <param name="needlessObjectAnalyzer">The analyzer whether a theorem essentially involves all the objects from the configuration.</param>
-        public TheoremsAnalyzer(IPotentialTheoremsAnalyzer[] theoremsAnalyzers, IGeometryRegistrar registrar, IContextualContainerFactory factory, INeedlessObjectsAnalyzer needlessObjectAnalyzer)
+        public TheoremsAnalyzer(IPotentialTheoremsAnalyzer[] theoremsAnalyzers, IGeometryRegistrar registrar, IContextualContainerFactory factory)
         {
             _theoremsAnalyzers = theoremsAnalyzers ?? throw new ArgumentNullException(nameof(theoremsAnalyzers));
             _registrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
-            _needlessObjectsAnalyzer = needlessObjectAnalyzer ?? throw new ArgumentNullException(nameof(needlessObjectAnalyzer));
         }
 
         #endregion
@@ -90,8 +83,10 @@ namespace GeoGen.Analyzer
                         if (!manager.All(potentialTheorem.VerificationFunction))
                             return false;
 
-                        // If the theorem holds true, then it's fine if and only if it doesn't contain needless objects
-                        return _needlessObjectsAnalyzer.ContainsNeedlessObjects(configuration, potentialTheorem.InvolvedObjects);
+                        // If the theorem holds true, then it's fine if and only if it doesn't contain needless 
+                        // objects. We'll figure this out by asking if the minimal number of objects that are 
+                        // needed to state this theorem is equal to the number of objects of the configuration
+                        return !potentialTheorem.ContainsNeedlessObjects(expectedMinimalNumberOfNeededObjects: configuration.ObjectsMap.AllObjects.Count);
                     })
                     // Cast these potential theorem to actual theorem objects
                     .Select(potentialTheorem => potentialTheorem.ToTheorem())

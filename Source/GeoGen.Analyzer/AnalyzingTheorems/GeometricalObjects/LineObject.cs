@@ -3,38 +3,37 @@
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a geometrical line that is aware of the points on it.
+    /// Represents a geometrical line that can be defined by two <see cref="PointObject"/>. 
+    /// It contains all the <see cref="PointObject"/>s that lie on it.
     /// </summary>
     public class LineObject : DefinableByPoints
     {
         #region DefineableByPoints properties
 
         /// <summary>
-        /// Gets the minimal number of distinct points that are needed to define the object.
+        /// Gets the minimal number of distinct points that are needed to define this type of object.
         /// </summary>
-        public override int NumberOfNeededPoints { get; } = 2;
+        public override int NumberOfNeededPoints => 2;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Constructor used for when we simply wrap a given configuration object.
+        /// Initialize a new instance of the <see cref="LineObject"/> class wrapping a given line <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="id">The id of the object.</param>
-        /// <param name="configurationObject">The configuration object.</param>
-        public LineObject(int id, ConfigurationObject configurationObject)
-                : base(id, configurationObject)
+        /// <param name="configurationObject">The line configuration object represented by this geometrical object.</param>
+        public LineObject(ConfigurationObject configurationObject)
+                : base(configurationObject)
         {
         }
 
         /// <summary>
-        /// Constructor used when we define object by points.
+        /// Initialize a new instance of the <see cref="LineObject"/> class by at least 2 <see cref="PointObject"/>s that it passes through.
         /// </summary>
-        /// <param name="id">The id of the object.</param>
-        /// <param name="points">The points.</param>
-        public LineObject(int id, params PointObject[] points)
-                : base(id, points)
+        /// <param name="points">The points that define this line.</param>
+        public LineObject(params PointObject[] points)
+                : base(points)
         {
         } 
 

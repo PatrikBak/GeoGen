@@ -167,7 +167,7 @@ namespace GeoGen.Generator
                     return _input.Constructions.SelectMany(construction =>
                     {
                         // For a given construction first generate all possible arguments
-                        var generatedArguments = _generator.GenerateArguments(currentConfiguration.ObjectsMap, construction);
+                        var generatedArguments = _generator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature);
 
                         // Cast each arguments to a new constructed object
                         return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments, _nextConfigurationObjectId++));
