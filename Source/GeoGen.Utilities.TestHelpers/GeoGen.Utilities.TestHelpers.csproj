@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.10.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj" />
     <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />

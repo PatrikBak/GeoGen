@@ -1,24 +1,24 @@
 ﻿namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// Represents a query that can be performed on a <see cref="IContextualContainer"/>.
+    /// Represents a query that can be asked of a <see cref="IContextualContainer"/>.
     /// </summary>
     public class ContexualContainerQuery
     {
+        #region ObjectType enum
+
         /// <summary>
         /// Represents a type of geometrical objects that we're looking for.
         /// </summary>
         public enum ObjectsType
         {
             /// <summary>
-            /// Objects that were added to the container while adding the last
-            /// group of constructed objects.
+            /// Objects that were added to the container while adding the last configuration object.
             /// </summary>
             New,
 
             /// <summary>
-            /// Objects that were added to the container while adding objects distinct 
-            /// from the ones contained in the last group of constructed objects.
+            /// Objects that were added to the container and aren't new.
             /// </summary>
             Old,
 
@@ -28,8 +28,12 @@
             All
         }
 
+        #endregion
+
+        #region Public properties
+
         /// <summary>
-        /// Gets or sets the type of geometrical objects that we're seeking.
+        /// Gets or sets the type of geometrical objects that we're asking for.
         /// </summary>
         public ObjectsType Type { get; set; }
 
@@ -46,6 +50,8 @@
         /// <summary>
         /// Gets or sets if we should include circles.
         /// </summary>
-        public bool IncludeCirces { get; set; }
+        public bool IncludeCirces { get; set; } 
+
+        #endregion
     }
 }

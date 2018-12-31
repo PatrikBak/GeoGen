@@ -163,10 +163,12 @@ namespace GeoGen.AnalyticGeometry
 
         #region To string
 
-        public override string ToString()
-        {
-            return OriginalValue.ToString(CultureInfo.InvariantCulture);
-        }
+        /// <summary>
+        /// Converts a given value to a string. 
+        /// NOTE: This method id used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the value.</returns>
+        public override string ToString() => OriginalValue.ToString(CultureInfo.InvariantCulture);
 
         #endregion
     }

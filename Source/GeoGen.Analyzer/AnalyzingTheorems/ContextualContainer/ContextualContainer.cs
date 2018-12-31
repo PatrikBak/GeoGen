@@ -8,70 +8,70 @@ using GeoGen.Utilities;
 namespace GeoGen.Analyzer
 {
     /// <summary>
-    /// A default implementation of <see cref="IContextualContainer"/>.
+    /// The default implementation of <see cref="IContextualContainer"/>.
     /// </summary>
     public class ContextualContainer : IContextualContainer
     {
         #region Private fields
 
         /// <summary>
-        /// The dictionary mapping objects container to the map between geometrical objects
-        /// and analytic objects (from that container).
+        /// The dictionary mapping objects container to the maps between geometrical objects
+        /// and analytic objects (that are retrieved from the particular container).
         /// </summary>
-        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects;
+        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
 
         /// <summary>
-        /// The set of all old points in the container.
+        /// The set of all the old points in the container.
         /// </summary>
-        private readonly HashSet<PointObject> _oldPoints;
+        private readonly HashSet<PointObject> _oldPoints = new HashSet<PointObject>();
 
         /// <summary>
-        /// The set of all old lines in the container.
+        /// The set of all the old lines in the container.
         /// </summary>
-        private readonly HashSet<LineObject> _oldLines;
+        private readonly HashSet<LineObject> _oldLines = new HashSet<LineObject>();
 
         /// <summary>
-        /// The set of all old circles in the container.
+        /// The set of all the old circles in the container.
         /// </summary>
-        private readonly HashSet<CircleObject> _oldCircles;
+        private readonly HashSet<CircleObject> _oldCircles = new HashSet<CircleObject>();
 
         /// <summary>
-        /// The set of all new points in the container.
+        /// The set of all the new points in the container.
         /// </summary>
-        private readonly HashSet<PointObject> _newPoints;
+        private readonly HashSet<PointObject> _newPoints = new HashSet<PointObject>();
 
         /// <summary>
-        /// The set of all new lines in the container.
+        /// The set of all the new lines in the container.
         /// </summary>
-        private readonly HashSet<LineObject> _newLines;
+        private readonly HashSet<LineObject> _newLines = new HashSet<LineObject>();
 
         /// <summary>
-        /// The set of all new circles in the container.
+        /// The set of all the new circles in the container.
         /// </summary>
-        private readonly HashSet<CircleObject> _newCircles;
+        private readonly HashSet<CircleObject> _newCircles = new HashSet<CircleObject>();
 
         #endregion
 
         #region Private properties
 
         /// <summary>
-        /// All line objects in the container.
+        /// All the line objects in the container.
         /// </summary>
         private IEnumerable<LineObject> AllLines => _oldLines.Concat(_newLines);
 
         /// <summary>
-        /// All circle objects in the container.
+        /// All the circle objects in the container.
         /// </summary>
         private IEnumerable<CircleObject> AllCircles => _oldCircles.Concat(_newCircles);
 
         /// <summary>
-        /// All point objects in the container.
+        /// All the point objects in the container.
         /// </summary>
         private IEnumerable<PointObject> AllPoints => _oldPoints.Concat(_newPoints);
 
         #endregion
 
-        #region IContectualContainer properties
+        #region IContextualContainer properties
 
         /// <summary>
         /// Gets the objects container manager that holds all the  representations of 
@@ -84,29 +84,19 @@ namespace GeoGen.Analyzer
         #region Constructor
 
         /// <summary>
-        /// Default constructor.
+        /// Initializes a new instance of the <see cref="ContextualContainer"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration to be represented by this container.</param>
-        /// <param name="manager">The manager holding all objects containers.</param>
-        public ContextualContainer(Configuration configuration, IObjectsContainersManager manager)
+        /// <param name="objects">The objects to be present in the container.</param>
+        /// <param name="manager">The manager of all the containers where our objects are supposed to be drawn.</param>
+        public ContextualContainer(IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager)
         {
             Manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _oldLines = new HashSet<LineObject>();
-            _newLines = new HashSet<LineObject>();
-            _oldPoints = new HashSet<PointObject>();
-            _newPoints = new HashSet<PointObject>();
-            _oldCircles = new HashSet<CircleObject>();
-            _newCircles = new HashSet<CircleObject>();
-            _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
 
-            // Initialize the objects dictionary
-            foreach (var objectsContainer in manager)
-            {
-                _objects.Add(objectsContainer, new Map<GeometricalObject, AnalyticObject>());
-            }
+            // Initialize the dictionary mapping containers to the object maps
+            manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, AnalyticObject>()));
 
-            // Add all objects
-            AddAll(configuration);
+            // Add all objects, where only the last one is new
+            objects.ForEach((obj, index) => Add(obj, isNew: index == objects.Count - 1));
         }
 
         #endregion
@@ -114,21 +104,20 @@ namespace GeoGen.Analyzer
         #region IContextualContainer implementation
 
         /// <summary>
-        /// Gets the geometrical objects matching a given query and casts them
-        /// to a given type.
+        /// Gets the geometrical objects matching a given query and casts them to a given type.
         /// </summary>
         /// <typeparam name="T">The type of objects.</typeparam>
-        /// <param name="query">The contextual container query.</param>
-        /// <returns>The objects.</returns>
+        /// <param name="query">The query that we want to perform.</param>
+        /// <returns>The queried objects.</returns>
         public IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject
         {
-            // Prepare result
+            // Prepare the result
             var result = Enumerable.Empty<GeometricalObject>();
 
             // If we should include points
             if (query.IncludePoints)
             {
-                // Then we decide by the objects type
+                // Then we decide based on the objects type
                 switch (query.Type)
                 {
                     case ContexualContainerQuery.ObjectsType.New:
@@ -146,7 +135,7 @@ namespace GeoGen.Analyzer
             // If we should include lines
             if (query.IncludeLines)
             {
-                // Then we decide by the objects type
+                // Then we decide based on the objects type
                 switch (query.Type)
                 {
                     case ContexualContainerQuery.ObjectsType.New:
@@ -164,7 +153,7 @@ namespace GeoGen.Analyzer
             // If we should include circles
             if (query.IncludeCirces)
             {
-                // Then we decide by the objects type
+                // Then we decide based on the objects type
                 switch (query.Type)
                 {
                     case ContexualContainerQuery.ObjectsType.New:
@@ -179,7 +168,7 @@ namespace GeoGen.Analyzer
                 }
             }
 
-            // Return casted result
+            // Return the result casted to the wanted type
             return result.Cast<T>();
         }
 
@@ -189,10 +178,10 @@ namespace GeoGen.Analyzer
         /// /// <typeparam name="T">The wanted type of the analytic object.</typeparam>
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
-        /// <returns>The analytic object.</returns>
+        /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
         public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject
         {
-            // Find the right map and pull the analytic object from it
+            // Find the right map, pull the analytic object from it, and cast it
             return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
         }
 
@@ -201,29 +190,16 @@ namespace GeoGen.Analyzer
         #region Adding new objects
 
         /// <summary>
-        /// Adds all objects from a configuration to the container.
+        /// Adds a given object and all the objects it implicitly creates (lines / circles).
         /// </summary>
-        /// <param name="configuration">The configuration.</param>
-        private void AddAll(Configuration configuration)
-        {
-            // Add loose objects
-            configuration.LooseObjectsHolder.LooseObjects.ForEach(obj => Add(obj, isNew: false));
-
-            // Add constructed objects
-            configuration.ConstructedObjects.ForEach(obj => Add(obj, isNew: obj == configuration.ConstructedObjects.Last()));
-        }
-
-        /// <summary>
-        /// Adds a given object and all objects that it implicitly creates (lines / circles)
-        /// </summary>
-        /// <param name="configurationObject">The object.</param>
-        /// <param name="isNew">Indicates if this object should be added to particular new or old objects set.</param>
+        /// <param name="configurationObject">The object that should be added.</param>
+        /// <param name="isNew">Indicates if the object should be considered as a new one (which affects queries).</param>
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
-            // Let the helper method find the geometrical object that represents this object
-            var geometricalObject = FindObject(configurationObject);
+            // Let the helper method get the geometrical object that represents this object
+            var geometricalObject = GetGeometricalObject(configurationObject);
 
-            // If this object is not null (i.e. there already is it's representation)
+            // If this object is not null (i.e. there already is it's representation)...
             if (geometricalObject != null)
             {
                 // Pull the internal configuration object
@@ -231,179 +207,163 @@ namespace GeoGen.Analyzer
 
                 // If this object is not null, it means this object has already been added
                 if (internalConfigurationObject != null)
-                    throw new AnalyzerException("An attempt to add existing configuration object.");
+                    throw new AnalyzerException("An attempt to add an existing configuration object.");
 
                 // Otherwise we can set the internal object to this one
                 geometricalObject.ConfigurationObject = configurationObject;
 
-                // And terminate
+                // And terminate, since the implicit objects this might create have already been added
                 return;
             }
 
             // If this object isn't null, it means that this object doesn't exist 
-            // in the container (explicitly or implicitly). We can let the helper method to a new one
-            geometricalObject = CreateGeometricalObject(configurationObject);
+            // Let's create it based on the configuration object's type
+            switch (configurationObject.ObjectType)
+            {
+                case ConfigurationObjectType.Point:
+                    geometricalObject = new PointObject(configurationObject);
+                    break;
+                case ConfigurationObjectType.Line:
+                    geometricalObject = new LineObject(configurationObject);
+                    break;
+                case ConfigurationObjectType.Circle:
+                    geometricalObject = new CircleObject(configurationObject);
+                    break;
+                default:
+                    throw new AnalyzerException("Unknown type of configuration object.");
+            }
 
-            // We add the geometrical object to the objects dictionary
-            AddToObjectsDictionary(geometricalObject);
+            // We add the geometrical object to all the dictionaries
+            _objects.Keys.ForEach(container => _objects[container].Add(geometricalObject, container.Get(configurationObject)));
 
-            // If it's point
+            // If it's a point
             if (configurationObject.ObjectType == ConfigurationObjectType.Point)
             {
-                // Let the helper method add it as the point
+                // Let the helper method add it as a point
                 AddPoint((PointObject) geometricalObject, isNew);
 
                 // And terminate
                 return;
             }
 
-            // Otherwise it's line or circle, we let the helper method add it
+            // Otherwise it's a line or a circle, we let another helper method add it
             AddLineOrCircle(geometricalObject, isNew);
         }
 
         /// <summary>
-        /// Finds the geometrical object that corresponds to a given configuration object.
+        /// Gets the geometrical object that corresponds to a given configuration object. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The geometrical object, if there is any; otherwise null.</returns>
-        private GeometricalObject FindObject(ConfigurationObject configurationObject)
+        /// <returns>The corresponding geometrical object, if there is any; otherwise null.</returns>
+        private GeometricalObject GetGeometricalObject(ConfigurationObject configurationObject)
         {
-            // Initialize resulting geometrical object
+            // NOTE: We could have just taken one container and look for the object
+            // in it, but we didn't. There is a chance of inconsistency, that is 
+            // extremely rare. Assume we have 2 containers, in each we have 2 points,
+            // A,B. So we have the line AB in the container implicitly. Now assume
+            // we should add its physical version, which was constructed in a different
+            // way than the line AB. It might happen that this slight imprecision will
+            // cause that the line will be found in one container, but won't be found 
+            // in the other. I genuinely hope it won't happen, because that would mean 
+            // our numerical system is very imprecise for our calculations. In any case
+            // if it does happen, we can find it. What we wouldn't be able to find it 
+            // is it happening incorrectly in all the containers. But even once it is
+            // very improbable :)
+
+            // Declare the result
             GeometricalObject result = null;
 
-            // We loop over containers
+            // We're gonna check all the containers
             foreach (var container in Manager)
             {
                 // Pull the analytic representation of this object. It must exist,
-                // which is a part of the contract of this class
+                // which is part of the contract of this class
                 var analyticObject = container.Get(configurationObject);
 
-                // Pull the map for this container
-                var map = _objects[container];
-
-                // If the map doesn't contain the analytic object
-                if (!map.ContainsRightKey(analyticObject))
+                // If the analytic version of this object is not present...
+                if (!_objects[container].ContainsRightKey(analyticObject))
                 {
-                    // And the result is not set yet
+                    // And the result is already set, then we have an inconsistency
                     if (result != null)
-                    {
-                        // when we clearly have inconsistency between containers
                         throw new InconsistentContainersException();
-                    }
 
-                    // Otherwise the object probably doesn't exist and we can continue
+                    // Otherwise we'll try another container
                     continue;
                 }
 
-                // But if it exists in the container, we pull it's geometrical version.
-                var geometricalObject = map.GetLeftValue(analyticObject);
+                // But if it exists in the container, we pull its geometrical version.
+                var geometricalObject = _objects[container].GetLeftValue(analyticObject);
 
-                // If the result has been already set to something else
+                // If the result has been already set to something else, then we have an inconsistency
                 if (result != null && !ReferenceEquals(result, geometricalObject))
-                {
-                    // Then we clearly have inconsistency between containers
                     throw new InconsistentContainersException();
-                }
 
-                // If we're fine, we can set the result to the geometrical object
+                // If we're fine, we can set the result and test the next container
                 result = geometricalObject;
             }
 
-            // And finally return the result
+            // If we got here, then there are no inconsistencies and we can return the result
             return result;
         }
 
         /// <summary>
-        /// Adds a given geometrical object to the objects dictionary.
-        /// </summary>
-        /// <param name="geometricalObject">The geometrical object.</param>
-        private void AddToObjectsDictionary(GeometricalObject geometricalObject)
-        {
-            // Loop over pairs [container, map]
-            foreach (var pair in _objects)
-            {
-                // Pull the container
-                var container = pair.Key;
-
-                // Pull the map
-                var map = pair.Value;
-
-                // Pull the configuration object representing this object
-                var configurationPoint = geometricalObject.ConfigurationObject;
-
-                // Find the analytic version of this object 
-                var analyticObject = container.Get(configurationPoint);
-
-                // Add these objects to the map
-                map.Add(geometricalObject, analyticObject);
-            }
-        }
-
-        /// <summary>
-        /// Adds a given point object to the container. It handles creating all lines
-        /// that implicitly uses this point and finding all existing lines / circles
+        /// Adds a given point object to the container. It handles creating all the lines
+        /// that implicitly use this point and finding all the existing lines / circles
         /// that contain this point.
         /// </summary>
         /// <param name="pointObject">The point object.</param>
-        /// <param name="isNew">Indicates if this point should be added to the new points set or to the old points set.</param>
+        /// <param name="isNew">Indicates if this point should be added to the new points set.</param>
         private void AddPoint(PointObject pointObject, bool isNew)
         {
             #region Update existing lines and circles that contain this point
 
-            // Iterate over all lines
+            // Iterate over all the lines
             foreach (var lineObject in AllLines)
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, lineObject))
                 {
-                    // Register the point to the line
+                    // Make sure the line knows about the point
                     lineObject.Points.Add(pointObject);
 
-                    // Register the line to the point
+                    // Make sure the point knows about the line
                     pointObject.Lines.Add(lineObject);
                 }
             }
 
-            // Iterate over all circles
+            // Iterate over all the circles
             foreach (var circleObject in AllCircles)
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, circleObject))
                 {
-                    // Register the point to the circle
+                    // Make sure the circle knows about the point
                     circleObject.Points.Add(pointObject);
 
-                    // Register the circle to the point
+                    // Make sure the point knows about the circle
                     pointObject.Circles.Add(circleObject);
                 }
             }
 
             #endregion
 
-            #region Create new lines and circles from this point and others
+            #region Create new lines and circles from this point and the other ones
 
-            // Enumerate all the points
-            var points = AllPoints.ToList();
+            // Enumerate all the points so we get all the pairs of distinct ones
+            var points = AllPoints.ToArray();
 
             // Now we construct all lines that pass through our point
-            // So we iterate over all the points (that don't contain this point yet0
+            // We use our helper method to do the hard work
             foreach (var point in points)
-            {
-                // Resolve line
-                ResolveLine(pointObject, point, isNew);
-            }
+               ResolveLine(pointObject, point, isNew);
+
 
             // Now we construct all circles that pass through our point
-            // We iterate once over points to obtain all unique non-ordered
-            // pairs of points
-            for (var i = 0; i < points.Count; i++)
-            {
-                for (var j = i + 1; j < points.Count; j++)
-                {
-                    // Resolve circle
+            // We iterate twice over to obtain all the non-ordered pairs of them
+            // and use our helper method to do the hard work
+            for (var i = 0; i < points.Length; i++)
+                for (var j = i + 1; j < points.Length; j++)
                     ResolveCircle(pointObject, points[i], points[j], isNew);
-                }
-            }
 
             #endregion
 
@@ -412,43 +372,39 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Tries to construct a new geometrical line using given two points. The order
-        /// of the points is not important.
+        /// Tries to construct a new geometrical line using given two points. 
+        /// If it doesn't exist yet, it is properly initialized.
         /// </summary>
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
-        /// <param name="isNew">Indicates if a new line should be added to the new lines set or to the old lines set.</param>
+        /// <param name="isNew">Indicates if a new line should be added to the new lines set.</param>
         private void ResolveLine(PointObject point1, PointObject point2, bool isNew)
         {
-            // Initialize map that caches created analytic representations of this line
+            // Initialize a map that caches created analytic representations of this line
             var containersMap = new Dictionary<IObjectsContainer, Line>();
 
-            // Initialize the resulting line object (that is going to be attempted to find)
+            // Initialize a resulting line object 
             LineObject result = null;
 
-            // Iterate over containers
+            // Try to find or construct the line in every container
             foreach (var container in Manager)
             {
-                // Pull the map between geometrical and analytic objects
-                var objects = _objects[container];
+                // Pull the map between geometrical and analytic objects for this container
+                var map = _objects[container];
 
-                // Find the analytic representations of the points in the map
-                var p1 = (Point) objects.GetRightValue(point1);
-                var p2 = (Point) objects.GetRightValue(point2);
-
-                // Construct the analytic line
-                var analyticLine = new Line(p1, p2);
+                // Construct the analytic line from the analytic representations of the points in the map
+                var analyticLine = new Line((Point) map.GetRightValue(point1), (Point) map.GetRightValue(point2));
 
                 // Cache the result
                 containersMap.Add(container, analyticLine);
 
-                // If the line is present in the map
-                if (objects.ContainsRightKey(analyticLine))
+                // If the line is present in the map...
+                if (map.ContainsRightKey(analyticLine))
                 {
-                    // Then pull the geometrical line
-                    var newResult = objects.GetLeftValue(analyticLine);
+                    // Then pull the corresponding geometrical line
+                    var newResult = map.GetLeftValue(analyticLine);
 
-                    // If the current result hasn't been set and is distinct
+                    // If the current result has been set and is distinct
                     // from the pulled line, then we have an inconsistency
                     if (result != null && !ReferenceEquals(result, newResult))
                         throw new InconsistentContainersException();
@@ -458,37 +414,24 @@ namespace GeoGen.Analyzer
                 }
             }
 
-            // If the result is not null (i.e. the line physically exist) 
+            // If the result is not null, i.e. the line already exists, we won't do anything else
             if (result != null)
-            {
-                // We can simply terminate
                 return;
-            }
 
-            // Otherwise we need to create a new line that contains these two points
+            // Otherwise we need to create a new line object that contains these two points
+            // The constructor will make sure the line knows about the points
             result = new LineObject(point1, point2);
 
-            // We can immediately add the line to the particular lines set 
-            (isNew ? _newLines : _oldLines).Add(result);
-
-            // And register this line to the points (the other registration has been done 
-            // by the constructor of LineObject)
+            // Make sure the points know about the line as well
             point1.Lines.Add(result);
             point2.Lines.Add(result);
 
+            // Add the line to the particular lines set 
+            (isNew ? _newLines : _oldLines).Add(result);
+
             // And finally we can use the cached analytic versions of the line
-            // to update the objects dictionary. We iterate over the cache dictionary
-            foreach (var pair in containersMap)
-            {
-                // Pull the container
-                var container = pair.Key;
-
-                // Pull the line
-                var line = pair.Value;
-
-                // Update the real objects dictionary
-                _objects[container].Add(result, line);
-            }
+            // to update the objects dictionary.
+            containersMap.ForEach(pair => _objects[pair.Key].Add(result, pair.Value));
         }
 
         /// <summary>
@@ -498,70 +441,56 @@ namespace GeoGen.Analyzer
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
         /// <param name="point3">The third point.</param>
-        /// <param name="isNew">Indicates if a new circle should be added to the new circles set or to the old circles set.</param>
+        /// <param name="isNew">Indicates if a new circle should be added to the new circles set.</param>
         private void ResolveCircle(PointObject point1, PointObject point2, PointObject point3, bool isNew)
         {
-            // Initialize map that caches creates analytic representations of this line
+            // Initialize a map that caches created analytic representations of this circle
             var containersMap = new Dictionary<IObjectsContainer, Circle>();
 
-            // Initialize the resulting circle
+            // Initialize a resulting circle
             CircleObject result = null;
 
-            // Initialize variable indicating if given points are collinear
+            // Initialize variable indicating if the given points are collinear
             bool? collinear = null;
 
             // Iterate over containers
             foreach (var container in Manager)
             {
-                // Pull the map between geometrical and analytic objects
-                var objects = _objects[container];
+                // Pull the map between geometrical and analytic objects for this container
+                var map = _objects[container];
 
-                var p1 = (Point) objects.GetRightValue(point1);
-                var p2 = (Point) objects.GetRightValue(point2);
-                var p3 = (Point) objects.GetRightValue(point3);
+                // Get the analytic versions of the points from the map
+                var analyticPoint1 = (Point) map.GetRightValue(point1);
+                var analyticPoint2 = (Point) map.GetRightValue(point2);
+                var analyticPoint3 = (Point) map.GetRightValue(point3);
 
-                // Prepare the analytic circle.
-                Circle analyticCircle;
+                // Check if they are collinear...
+                var areCollinear = AnalyticHelpers.AreCollinear(analyticPoint1, analyticPoint2, analyticPoint3);
 
-                try
-                {
-                    // Try to invoke the constructor. It may throw and argument exception
-                    // if the provided points are collinear
-                    analyticCircle = new Circle(p1, p2, p3);
+                // If we got a different result than the one set, then we have an inconsistency 
+                if (collinear != null && collinear.Value != areCollinear)
+                    throw new InconsistentContainersException();
 
-                    // Otherwise they're not collinear
-                    // If it's been marked that they are, then we have inconsistency
-                    if (collinear != null && collinear.Value)
-                        throw new InconsistentContainersException();
+                // We we're fine, we can set the collinearity result
+                collinear = areCollinear;
 
-                    // If we're fine, then we mark the points as not collinear
-                    collinear = false;
-                }
-                catch (Exception)
-                {
-                    // If the are collinear and they have been marked as
-                    // not collinear, then we have inconsistency 
-                    if (collinear != null && !collinear.Value)
-                        throw new InconsistentContainersException();
-
-                    // If we're fine, then we mark the points as collinear
-                    collinear = true;
-
-                    // And continue the iterations
+                // If they are collinear, we can't do more
+                if (areCollinear)
                     continue;
-                }
 
-                // If we're here, then the points are not collinear and we have their
-                // analytic representation. We can cache it.
+                // Otherwise we can construct the analytic circle from the points
+                var analyticCircle = new Circle(analyticPoint1, analyticPoint2, analyticPoint3);
+
+                // Cache the result
                 containersMap.Add(container, analyticCircle);
 
-                // If the circle is present in the map
-                if (objects.ContainsRightKey(analyticCircle))
+                // If the circle is present in the map...
+                if (map.ContainsRightKey(analyticCircle))
                 {
-                    // Then we can pull the geometrical circle 
-                    var newResult = objects.GetLeftValue(analyticCircle);
+                    // Then pull the corresponding geometrical circle
+                    var newResult = map.GetLeftValue(analyticCircle);
 
-                    // If the current result hasn't been set and is distinct
+                    // If the current result has been set and is distinct
                     // from the pulled circle, then we have an inconsistency
                     if (result != null && !ReferenceEquals(result, newResult))
                         throw new InconsistentContainersException();
@@ -571,86 +500,70 @@ namespace GeoGen.Analyzer
                 }
             }
 
-            // If the result is not null (i.e. the circle physically exist) 
+            // If the result is not null, i.e. the circle already exists, we won't do anything else
             if (result != null)
-            {
-                // We can simply terminate
                 return;
-            }
 
-            // If we have collinear points
-            if (collinear ?? throw new Exception("Impossible (at least one container exists)"))
-            {
-                // Then we can terminate as well (we hardly can construct a circle...)
+            // Similarly if the points are collinear...
+            if (collinear.Value)
                 return;
-            }
 
-            // Otherwise we can create a new circle object with these points
-            result = new CircleObject(point3, point1, point2);
+            // Otherwise we need to create a new circle object that contains these three points
+            // The constructor will make sure the circle knows about the points
+            result = new CircleObject(point1, point2, point3);
 
-            // We can add it to the particular circles set
-            (isNew ? _newCircles : _oldCircles).Add(result);
-
-            // And register this line to the points
+            // Make sure the points know about the circle as well
             point1.Circles.Add(result);
             point2.Circles.Add(result);
             point3.Circles.Add(result);
 
-            // And finally we can use the cached analytic versions of the circle
-            // So we iterate over the cache dictionary
-            foreach (var pair in containersMap)
-            {
-                // Pull the container
-                var container = pair.Key;
+            // Add the circle to the particular circles set 
+            (isNew ? _newCircles : _oldCircles).Add(result);
 
-                // Pull the circle
-                var circle = pair.Value;
-
-                // Update the real objects dictionary
-                _objects[container].Add(result, circle);
-            }
+            // And finally we can use the cached analytic versions of the circles
+            // to update the objects dictionary.
+            containersMap.ForEach(pair => _objects[pair.Key].Add(result, pair.Value));
         }
 
         /// <summary>
         /// Adds a given geometrical object, that is either a line or a circle, to the container.
         /// </summary>
-        /// <param name="geometricalObject">The geometrical object.</param>
-        /// <param name="isNew">Indicates if the object should be added to the particular new or old objects set.</param>
+        /// <param name="geometricalObject">The geometrical object to be added.</param>
+        /// <param name="isNew">Indicates if the object should be added to the particular new set.</param>
         private void AddLineOrCircle(GeometricalObject geometricalObject, bool isNew)
         {
-            // Try to cast object to line and circle
+            // Safely cast the object to a line and a circle
             var line = geometricalObject as LineObject;
             var circle = geometricalObject as CircleObject;
 
-            // Iterate over points 
+            // Iterate over all the points 
             foreach (var pointObject in AllPoints)
             {
-                // If the given points lies on the line / circle, we want
-                // to mark it
+                // If the current point lies on the line / circle, we want to mark it
                 if (IsPointOnLineOrCircle(pointObject, geometricalObject))
                 {
-                    // If it's line
+                    // If it's a line
                     if (line != null)
                     {
-                        // Register the point to the line
+                        // Make sure the line knows about the point
                         line.Points.Add(pointObject);
 
-                        // Register the line to the line
+                        // Make sure the point knows about the line
                         pointObject.Lines.Add(line);
                     }
-                    // Or if it's circle
+                    // Or if it's a circle
                     else if (circle != null)
                     {
-                        // Register the point to the line
-                        pointObject.Circles.Add(circle);
-
-                        // Register the line to the line
+                        // Make sure the circle knows about the point
                         circle.Points.Add(pointObject);
+                        
+                        // Make sure the point knows about the circle
+                        pointObject.Circles.Add(circle);
                     }
                 }
             }
 
-            // Finally we add objects to the particular set.
+            // Finally we add the object to the particular set.
             if (line != null)
                 (isNew ? _newLines : _oldLines).Add(line);
             else if (circle != null)
@@ -658,59 +571,37 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
-        /// Finds out if a given point lies on a given geometrical object.
+        /// Finds out if a given point lies on a given geometrical object, that is either a line or a circle.
         /// </summary>
-        /// <param name="pointObject">The point object.</param>
-        /// <param name="geometricalObject">The geometrical object.</param>
-        /// <returns>true, if the point is on the line/circle; false otherwise.</returns>
+        /// <param name="pointObject">The point object to be examined.</param>
+        /// <param name="geometricalObject">The geometrical line or circle.</param>
+        /// <returns>true, if the point lies on the line/circle; false otherwise.</returns>
         private bool IsPointOnLineOrCircle(PointObject pointObject, GeometricalObject geometricalObject)
         {
-            // Initialize variable holding result
+            // Initialize a variable holding the result
             bool? result = null;
 
             // Iterate over containers
             foreach (var container in Manager)
             {
-                // Pull analytic representations of the objects
+                // Pull the analytic representations of the point and the line/circle
                 var point = (Point) _objects[container].GetRightValue(pointObject);
-                var analyticObject = _objects[container].GetRightValue(geometricalObject);
+                var lineOrCircle = _objects[container].GetRightValue(geometricalObject);
 
                 // Let the helper decide if the point lies on the object
-                var liesOn = AnalyticHelpers.LiesOn(analyticObject, point);
+                var liesOn = AnalyticHelpers.LiesOn(lineOrCircle, point);
 
                 // If the result has been set and it differs from the currently 
-                // found value, then we have inconsistency
+                // found value, then we have an inconsistency
                 if (result != null && result.Value != liesOn)
-                {
                     throw new InconsistentContainersException();
-                }
 
                 // Otherwise we update the result
                 result = liesOn;
             }
 
-            // Finally we can return the result (which should not be null)
-            return result ?? throw new AnalyzerException("Impossible (we have at least one container).");
-        }
-
-        /// <summary>
-        /// Creates a new geometrical object representing a given configuration object.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The new geometrical object.</returns>
-        private GeometricalObject CreateGeometricalObject(ConfigurationObject configurationObject)
-        {
-            switch (configurationObject.ObjectType)
-            {
-                case ConfigurationObjectType.Point:
-                    return new PointObject(configurationObject);
-                case ConfigurationObjectType.Line:
-                    return new LineObject(configurationObject);
-                case ConfigurationObjectType.Circle:
-                    return new CircleObject(configurationObject);
-                default:
-                    throw new AnalyzerException("Unhandled case.");
-            }
+            // Finally we can return the result
+            return result.Value;
         }
 
         #endregion

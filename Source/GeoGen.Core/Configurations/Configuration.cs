@@ -60,9 +60,15 @@ namespace GeoGen.Core
 
         #endregion
 
-        public override string ToString()
-        {
-            return ToStringHelper.ObjectToString(this);
-        }
+        #region To String
+
+        /// <summary>
+        /// Converts a given configuration to a string. 
+        /// NOTE: This method id used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the configuration.</returns>
+        public override string ToString() => ToStringHelper.ConfigurationToString(this);
+
+        #endregion
     }
 }

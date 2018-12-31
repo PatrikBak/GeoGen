@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -37,7 +38,7 @@ namespace GeoGen.AnalyticGeometry
         public Line(Point point1, Point point2)
         {
             // Check if points are not equal
-            if(point1 == point2)
+            if (point1 == point2)
                 throw new AnalyticException("An attempt to construct a line from two equal points.");
 
             // Calculate the coefficients of the direction vector
@@ -75,7 +76,7 @@ namespace GeoGen.AnalyticGeometry
             else
             {
                 // If b is negative
-                if ((RoundedDouble)b < RoundedDouble.Zero)
+                if ((RoundedDouble) b < RoundedDouble.Zero)
                 {
                     // We multiply the whole equation by -1
                     b = -b;
@@ -137,7 +138,7 @@ namespace GeoGen.AnalyticGeometry
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDouble)delta == RoundedDouble.Zero)
+            if ((RoundedDouble) delta == RoundedDouble.Zero)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -211,7 +212,7 @@ namespace GeoGen.AnalyticGeometry
                     return 0;
 
                 // Otherwise we calculate the scope of the line. The directional vector of the line is (-B, A).
-                var scope = (RoundedDouble)Math.Atan(-line.A / line.B);
+                var scope = (RoundedDouble) Math.Atan(-line.A / line.B);
 
                 // If the scope is less than zero, we'll normalize it to the interval [0, pi].
                 if (scope < RoundedDouble.Zero)
@@ -222,12 +223,12 @@ namespace GeoGen.AnalyticGeometry
             }
 
             // Now we calculate the relative angles for our two lines and return their absolute difference
-            var difference =  (RoundedDouble)Math.Abs(Angle(this) - Angle(otherLine));
+            var difference = (RoundedDouble) Math.Abs(Angle(this) - Angle(otherLine));
 
             // If the difference happens to be at least PI/2, we want to normalize it to the interval [0,PI/2].
             if (difference >= Math.PI / 2)
                 return Math.PI - difference;
-            
+
             // And return the result
             return difference;
         }
@@ -240,7 +241,7 @@ namespace GeoGen.AnalyticGeometry
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (RoundedDouble)(A * point.X + B * point.Y + C) == RoundedDouble.Zero;
+            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
         }
 
         /// <summary>
@@ -302,9 +303,68 @@ namespace GeoGen.AnalyticGeometry
 
         #region To String
 
+        /// <summary>
+        /// Converts a given line to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the line.</returns>
         public override string ToString()
         {
-            return $"{A}x {(B < 0 ? "-" : "+")}{B}y + {(B < 0 ? "-" : "+")}{C} = 0";
+            // I know this is crazy to read, but the result is pretty
+            // Prepare the result
+            var result = "";
+
+            // If there is an x-part...
+            if (A != 0)
+            {
+                // We don't want to write 1x
+                if (A == 1)
+                    result += "x";
+                // Or -1x
+                else if (A == -1)
+                    result += "-x";
+                // Here it's 2x or -2x, which is fine
+                else
+                    result += $"{A}x";
+            }
+
+            // If there is an y-part...
+            if (B != 0)
+            {
+                // If there was an x-part...
+                if (A != 0)
+                {
+                    // We want to include the sign with spaces
+                    if (B < 0)
+                        result += " - ";
+                    else
+                        result += " + ";
+
+                    // Again, we don't want 1x...Not even -y, we already have the sign
+                    if (B == 1 || B == -1)
+                        result += "y";
+                    else
+                        result += $"{Math.Abs(B).ToString(CultureInfo.InvariantCulture)}y";
+                }
+                // If there is not an x-part
+                else
+                {
+                    // Then we simply add the y-part. It can't be zero as well
+                    // but it can be 1 or -1 
+                    if (B == 1)
+                        result += "y";
+                    else if (B == -1)
+                        result += "-y";
+                    else
+                        result += $"{B}y";
+                }
+            }
+
+            // Add the end, which is much less iffy
+            result += $" = {(-C).ToString(CultureInfo.InvariantCulture)}";
+
+            // We're here!
+            return result;
         }
 
         #endregion

@@ -39,5 +39,16 @@ namespace GeoGen.Core
         public abstract IEnumerable<ConfigurationObject> GetInternalObjects();
 
         #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts a given object to a string. 
+        /// NOTE: This method id used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the object.</returns>
+        public override string ToString() => ToStringHelper.ObjectToString(this);
+
+        #endregion
     }
 }

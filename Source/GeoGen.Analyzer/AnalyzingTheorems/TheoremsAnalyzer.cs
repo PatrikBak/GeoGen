@@ -64,7 +64,7 @@ namespace GeoGen.Analyzer
             try
             {
                 // Let the manager create an instance of the contextual container
-                container = manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(configuration, manager));
+                container = manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(configuration.ObjectsMap.AllObjects, manager));
             }
             // If there are unresolvable inconsistencies, then we can't do much
             catch (UnresolvableInconsistencyException)

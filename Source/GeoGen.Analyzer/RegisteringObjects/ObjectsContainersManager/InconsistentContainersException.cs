@@ -9,7 +9,7 @@
     /// Inconsistencies are a pretty natural thing to happen (because we are using 
     /// a limited precision model) and they should by handled internally.
     /// </summary>
-    internal class InconsistentContainersException : AnalyzerException
+    public class InconsistentContainersException : AnalyzerException
     {
     }
 }

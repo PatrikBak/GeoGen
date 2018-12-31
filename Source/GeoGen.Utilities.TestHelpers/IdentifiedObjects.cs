@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using System.Collections.Generic;
 
 namespace GeoGen.Utilities.TestHelpers
 {
@@ -11,7 +12,13 @@ namespace GeoGen.Utilities.TestHelpers
         /// <summary>
         /// Identifies the given objects, starting from 0.
         /// </summary>
-        /// <param name="objects">The objects to be identified</param>
-        public static void Identify(params IdentifiedObject[] objects) => objects.ForEach((obj, index) => obj.Id = index);
+        /// <param name="objects">The objects to be identified.</param>
+        public static void Identify(params IdentifiedObject[] objects) => Identify((IEnumerable<IdentifiedObject>) objects);
+
+        /// <summary>
+        /// Identifies the given objects, starting from 0.
+        /// </summary>
+        /// <param name="objects">The objects to be identified.</param>
+        public static void Identify(IEnumerable<IdentifiedObject> objects) => objects.ForEach((obj, index) => obj.Id = index);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
@@ -262,9 +263,40 @@ namespace GeoGen.AnalyticGeometry
 
         #region To String
 
+        /// <summary>
+        /// Converts a given circle to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the circle.</returns>
         public override string ToString()
         {
-            return $"(x - {Center.X})^2 + (y - {Center.Y})^2 = {Radius}^2";
+            // Prepare the result
+            var result = "";
+
+            // Add the x-part, i.e. (x-Center.X)^2.
+            if (Center.X == 0)
+                result += "x^2";
+            else if (Center.X < 0)
+                result += $"(x + {(-Center.X).ToString(CultureInfo.InvariantCulture)})^2";
+            else
+                result += $"(x - {Center.X})^2";
+
+            // The middle plus
+            result += " + ";
+
+            // Add the y-part, i.e. (y-Center.Y)^2.
+            if (Center.Y == 0)
+                result += "y^2";
+            else if (Center.Y < 0)
+                result += $"(y + {(-Center.Y).ToString(CultureInfo.InvariantCulture)})^2";
+            else
+                result += $"(y - {Center.Y})^2";
+
+            // And the end
+            result += $" = {(Radius * Radius).ToString(CultureInfo.InvariantCulture)}";
+
+            // Return it
+            return result;
         }
 
         #endregion

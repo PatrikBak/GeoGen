@@ -55,8 +55,8 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 3,
-                NumberOfContainers = 8,
+                MaximalNumberOfIterations = 5,
+                NumberOfContainers = 25,
                 MaximalAttemptsToReconstructOneContainer = 10000,
                 MaximalAttemptsToReconstructAllContainers = 100000
             };
