@@ -92,7 +92,7 @@ namespace GeoGen.Runner
             
             // Potential theorem analyzers
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
+            //kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcyclicPointsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualAnglesAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualLineSegmentsAnalyzer>().InNamedScope(GeneratorScopeName);

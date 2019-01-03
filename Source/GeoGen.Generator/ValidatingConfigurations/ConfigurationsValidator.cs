@@ -130,7 +130,7 @@ namespace GeoGen.Generator
             // If there is an inconstructible object
             if (anyInconstructibleObject)
             {
-                // Then we want to remember its ids
+                // Then we want to remember its id
                 _inconstructibleObjectsIds.Add(registrationResult.InconstructibleObject.Id);
 
                 // And trace it
@@ -140,7 +140,7 @@ namespace GeoGen.Generator
             // If there are duplicates...
             if (anyDuplicates)
             {
-                // We deconstruct them
+                // We deconstruct the older and newer objects
                 var (olderObject, newerObject) = registrationResult.Duplicates;
 
                 // And trace them

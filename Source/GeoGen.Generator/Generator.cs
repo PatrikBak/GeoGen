@@ -172,7 +172,7 @@ namespace GeoGen.Generator
                         // Cast each arguments to a new constructed object
                         return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments, _nextConfigurationObjectId++));
                     })
-                    // Make sure each constructed object is correctly identified, and return it
+                    // Make sure each constructed object are added to the container so we can recognize equal ones
                     .Select(newObject =>
                     {
                         // Add the new object to the container. It will found out if there 
@@ -183,17 +183,17 @@ namespace GeoGen.Generator
                         if (equalObject != null)
                         {
                             // Then we'll re-assign the value to be returned further
-                            // This step makes sure that equal objects won't be used with
-                            // more than one instance. The objects that we will re-assign
-                            // shouldn't be used elsewhere and thus will be eventually 
-                            // eaten by the garbage collector
+                            // This also step makes sure that equal objects won't be 
+                            // used with more than one instance. The objects that we 
+                            // will re-assign shouldn't be used elsewhere and thus 
+                            // will be eventually eaten by the garbage collector. 
                             newObject = (ConstructedConfigurationObject) equalObject;
                         }
 
                         // Return the new object
                         return newObject;
                     })
-                    // Project each new object into a new generated configuration
+                    // For each new object create a new generated configuration
                     .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, _nextConfigurationId++))
                     // Take only valid ones
                     .Where(_validator.Validate)
@@ -203,14 +203,9 @@ namespace GeoGen.Generator
                         // Run the analyzer
                         var analyzerOutput = _analyzer.Analyze(generatedConfiguration);
 
-                        // If the analyzer output was incorrect...
-                        var theorems = !analyzerOutput.TheoremAnalysisSuccessful
-                            // We assume there were no theorems
-                            ? new List<Theorem>()
-                            // Otherwise take the theorems from the output
-                            : analyzerOutput.Theorems;
-
-                        // Make sure it's added to the generated list if it could be analyzed properly...
+                        // Make sure it's added to the generated list 
+                        // if the configuration was analyzed properly
+                        // If not, we then there is no point in extending it
                         if (analyzerOutput.TheoremAnalysisSuccessful)
                             generatedConfigurations.Add(generatedConfiguration);
 
@@ -220,8 +215,8 @@ namespace GeoGen.Generator
                             // Set the configuration
                             Configuration = generatedConfiguration,
 
-                            // Set the theorems
-                            Theorems = theorems
+                            // Set the output
+                            AnalyzerOutput = analyzerOutput
                         };
                     });
                 });

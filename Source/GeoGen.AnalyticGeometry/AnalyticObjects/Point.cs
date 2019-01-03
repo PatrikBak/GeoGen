@@ -13,12 +13,12 @@ namespace GeoGen.AnalyticGeometry
         /// <summary>
         /// Gets the X coordinate.
         /// </summary>
-        public RoundedDouble X { get; }
+        public double X { get; }
 
         /// <summary>
         /// Gets the Y coordinate.
         /// </summary>
-        public RoundedDouble Y { get; }
+        public double Y { get; }
 
         #endregion
 
@@ -31,8 +31,8 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="y">The Y coordinate.</param>
         public Point(double x, double y)
         {
-            X = (RoundedDouble) x;
-            Y = (RoundedDouble) y;
+            X = x;
+            Y = y;
         }
 
         #endregion
@@ -83,8 +83,8 @@ namespace GeoGen.AnalyticGeometry
             // To use this we first need to translate the point to the origin
 
             // Calculate the coordinates of the translated point
-            var dx = X.OriginalValue - center.X.OriginalValue;
-            var dy = Y.OriginalValue - center.Y.OriginalValue;
+            var dx = X - center.X;
+            var dy = Y - center.Y;
 
             // Now we use the matrix
             var newX = cosT * dx - sinT * dy;
@@ -112,8 +112,8 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The distance to the other point.</returns>
         public double DistanceTo(Point otherPoint)
         {
-            var dx = X.OriginalValue - otherPoint.X.OriginalValue;
-            var dy = Y.OriginalValue - otherPoint.Y.OriginalValue;
+            var dx = X - otherPoint.X;
+            var dy = Y - otherPoint.Y;
 
             return Math.Sqrt(dx * dx + dy * dy);
         }
@@ -160,13 +160,13 @@ namespace GeoGen.AnalyticGeometry
                 var dx1 = ray2Point.X - X;
 
                 // If it's not zero
-                if ((RoundedDouble) dx1 != RoundedDouble.Zero)
+                if (dx1.Rounded() != 0)
                 {
                     // Then we calculate the X coordinate of the vector B-A
                     var dx2 = i.X - X;
 
                     // And return if the corresponding t, that is equal to dx1 / dx2, is at least zero
-                    return (RoundedDouble) (dx1 / dx2) >= RoundedDouble.Zero;
+                    return (dx1 / dx2).Rounded() >= 0;
                 }
 
                 // Otherwise dx1 is zero and we have to use the Y differences. Calculate them
@@ -174,7 +174,7 @@ namespace GeoGen.AnalyticGeometry
                 var dy2 = i.Y - Y;
 
                 // And return if their ration is at least zero...
-                return (RoundedDouble) (dy1 / dy2) >= RoundedDouble.Zero;
+                return (dy1 / dy2).Rounded() >= 0;
             });
 
             // Now we just return the perpendicular bisector of the line 
@@ -252,7 +252,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return new { X, Y }.GetHashCode();
+            return new { x = X.Rounded(), y = Y.Rounded() }.GetHashCode();
         }
 
         /// <summary>
@@ -262,7 +262,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if the objects are equal, false otherwise.</returns>
         protected override bool IsEqualTo(Point other)
         {
-            return X == other.X && Y == other.Y;
+            return X.Rounded() == other.X.Rounded() && Y.Rounded() == other.Y.Rounded();
         }
 
         #endregion

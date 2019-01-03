@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Core;
+using GeoGen.Utilities;
+using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
@@ -16,28 +17,32 @@ namespace GeoGen.Analyzer
         /// <returns>An enumerable of found potential theorems.</returns>
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
-            // Now we first pull new points
+            // Take the new points. At least one of the involved points must be new
             return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
-                    {
-                        Type = ContexualContainerQuery.ObjectsType.New,
-                        IncludePoints = true,
-                        IncludeLines = false,
-                        IncludeCirces = false
-                    })
-                    // And find circles that they lie on
-                    .SelectMany(point => point.Circles)
-                    // Take only distinct ones
-                    .Distinct()
-                    // And only those that contain at least 4 points
-                    .Where(circle => circle.Points.Count >= 4)
-                    // Each of these circles represents a new theorem correct in all containers
-                    // (thus we don't set the verifier function)
-                    .Select(circle => new PotentialTheorem
-                    {
-                        TheoremType = Type,
-                        InvolvedObjects = circle.Points,
-                        VerificationFunction = _ => true
-                    });
+            {
+                Type = ContexualContainerQuery.ObjectsType.New,
+                IncludePoints = true,
+            })
+            // And find all the circles that pass through it
+            .SelectMany(point => point.Circles)
+            // Take only those that contain at least 4 points
+            .Where(circle => circle.Points.Count >= 4)
+            // And are distinct 
+            .Distinct()
+            // For each of them their quadruples of their points
+            .SelectMany(circle => circle.Points.Subsets(4))
+            // Each represents a theorem (not even potential, the contextual container made sure it's true)
+            .Select(quadruple => new PotentialTheorem
+            {
+                // Set the type using the base property
+                TheoremType = Type,
+
+                // Set the verifier function to a constant function returning always true
+                VerificationFunction = _ => true,
+
+                // Set the involved objects to the these triple of points
+                InvolvedObjects = quadruple
+            });
         }
     }
 }

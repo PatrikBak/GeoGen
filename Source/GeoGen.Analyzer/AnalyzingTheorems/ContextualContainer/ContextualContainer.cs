@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Analyzer
 {
@@ -18,7 +18,7 @@ namespace GeoGen.Analyzer
         /// The dictionary mapping objects container to the maps between geometrical objects
         /// and analytic objects (that are retrieved from the particular container).
         /// </summary>
-        private readonly Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
+        private Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
 
         /// <summary>
         /// The set of all the old points in the container.
@@ -81,6 +81,8 @@ namespace GeoGen.Analyzer
 
         #endregion
 
+        private IReadOnlyList<ConfigurationObject> _cObjects;
+
         #region Constructor
 
         /// <summary>
@@ -91,12 +93,29 @@ namespace GeoGen.Analyzer
         public ContextualContainer(IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager)
         {
             Manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _cObjects = objects;
 
+            Initialize();
+        }
+
+        private void Initialize()
+        {
             // Initialize the dictionary mapping containers to the object maps
-            manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, AnalyticObject>()));
+            Manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, AnalyticObject>()));
 
-            // Add all objects, where only the last one is new
-            objects.ForEach((obj, index) => Add(obj, isNew: index == objects.Count - 1));
+            try
+            {
+                // Add all objects, where only the last one is new
+                _cObjects.ForEach((obj, index) => Add(obj, isNew: index == _cObjects.Count - 1));
+            }
+            // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
+            // resolve it as an inconsistency. These exception are possible, because it would be very
+            // hard to predict every possible outcome of the fact that the numerical system is not 
+            // precise. Other exceptions would be a bigger deal and we won't hide them
+            catch (AnalyticException e)
+            {
+                throw new InconsistentContainersException();
+            }
         }
 
         #endregion
@@ -602,6 +621,54 @@ namespace GeoGen.Analyzer
 
             // Finally we can return the result
             return result.Value;
+        }
+
+        public void Recreate()
+        {
+            Manager.RecreateContainers();
+
+            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
+            Manager.ForEach(c => newMap.Add(c, new Map<GeometricalObject, AnalyticObject>()));
+
+            _objects.ForEach(pair =>
+            {
+                var container = pair.Key;
+
+                pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
+                {
+                    AnalyticObject analyticObject;
+
+                    if (geometricalObject.ConfigurationObject != null)
+                        analyticObject = container.Get(geometricalObject.ConfigurationObject);
+                    else
+                    {
+                        var definableByPoints = (DefinableByPoints) geometricalObject;
+
+                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
+                                        .Select(p => container.Get(p.ConfigurationObject))
+                                        .Cast<Point>()
+                                        .ToArray();
+
+                        switch (geometricalObject)
+                        {
+                            case LineObject line:
+                                analyticObject = new Line(points[0], points[1]);
+                                break;
+
+                            case CircleObject circle:
+                                analyticObject = new Circle(points[0], points[1], points[2]);
+                                break;
+
+                            default:
+                                throw new Exception();
+                        }
+                    }
+
+                    newMap[container].Add(geometricalObject, analyticObject);
+                });
+            });
+
+            _objects = newMap;
         }
 
         #endregion

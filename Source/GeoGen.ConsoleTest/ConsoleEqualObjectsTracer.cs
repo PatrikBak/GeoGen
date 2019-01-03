@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Generator;
-using System;
 
 namespace GeoGen.ConsoleTest
 {

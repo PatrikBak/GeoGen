@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -13,17 +12,17 @@ namespace GeoGen.AnalyticGeometry
         /// <summary>
         /// Gets the A coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble A { get; }
+        public double A { get; }
 
         /// <summary>
         /// Gets the B coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble B { get; }
+        public double B { get; }
 
         /// <summary>
         /// Gets the C coefficient of the equation Ax + By + C = 0.
         /// </summary>
-        public RoundedDouble C { get; }
+        public double C { get; }
 
         #endregion
 
@@ -39,58 +38,33 @@ namespace GeoGen.AnalyticGeometry
         {
             // Check if points are not equal
             if (point1 == point2)
-                throw new AnalyticException("An attempt to construct a line from two equal points.");
+                throw new AnalyticException("Cannot construct a line from 2 equal points.");
 
-            // Calculate the coefficients of the direction vector
-            var dx = point1.X.OriginalValue - point2.X.OriginalValue;
-            var dy = point1.Y.OriginalValue - point2.Y.OriginalValue;
+            // Calculate the coefficients of the normal vector
+            var dx = point1.X - point2.X;
+            var dy = point1.Y - point2.Y;
 
             // The pair (a,b) should be the normal vector, which is (dy, -dx)
             var a = dy;
             var b = -dx;
 
-            // And the c coefficient is calculated so that the point1 lies on the line
+            // And the c coefficient is calculated so that the point1 lies on the line Ax + By + c = 0
             var c = -a * point1.X - b * point1.Y;
 
-            // For any line they're infinitely many equations of the form Ax + By + C = 0.
-            // In order for us to have the unique representation for each one, we would
-            // want to have A^2 + B^2 + C^2 = 1 and A > 0 if A != 0 or B > 0 otherwise.
-            // Then the representation will be unique
+            // Now we calculate the scale so that (a,b) is a normalized vector (i.e. a^2+b^2 = 1)
+            var scale = Math.Sqrt(a.Squared() + b.Squared());
 
-            // Round a
-            var roundedA = (RoundedDouble) a;
+            // Using the scale we almost have a unique representation. 
+            // The problem is that ax+by+c = 0 and -ax-by-c=0 represent the same line
+            // even if a^2+b^2 = 1. We're going to solve it by expecting the leftmost non-zero
+            // coefficient to be positive. At least one of the numbers (a,b) is nonzero
+            // The scale will be -1 if and only if a<0, or a=0 and b<0.
+            scale *= a.Rounded() < 0 || (a.Rounded() == 0 && b.Rounded() < 0) ? -1 : 1;
 
-            // If a is not zero, we want it to be positive
-            if (roundedA != RoundedDouble.Zero)
-            {
-                // If it's not positive
-                if (roundedA < RoundedDouble.Zero)
-                {
-                    // We multiply the whole equation by -1
-                    a = -a;
-                    b = -b;
-                    c = -c;
-                }
-            }
-            // Otherwise if a is 0, we want b to be positive
-            else
-            {
-                // If b is negative
-                if ((RoundedDouble) b < RoundedDouble.Zero)
-                {
-                    // We multiply the whole equation by -1
-                    b = -b;
-                    c = -c;
-                }
-            }
-
-            // Now we can finally scale the coefficients so that A^2 + B^2 + C^2 = 1 holds true
-            var scale = Math.Sqrt(a * a + b * b + c * c);
-
-            // And set the coefficients
-            A = (RoundedDouble) (a / scale);
-            B = (RoundedDouble) (b / scale);
-            C = (RoundedDouble) (c / scale);
+            // Finally we set the scaled coefficients
+            A = a / scale;
+            B = b / scale;
+            C = c / scale;
         }
 
         #endregion
@@ -125,20 +99,20 @@ namespace GeoGen.AnalyticGeometry
             // x (a2b1 - a1b2) + c2b1 - c1b2 = 0
 
             // Pull the coefficients
-            var a1 = A.OriginalValue;
-            var b1 = B.OriginalValue;
-            var c1 = C.OriginalValue;
+            var a1 = A;
+            var b1 = B;
+            var c1 = C;
 
-            var a2 = otherLine.A.OriginalValue;
-            var b2 = otherLine.B.OriginalValue;
-            var c2 = otherLine.C.OriginalValue;
+            var a2 = otherLine.A;
+            var b2 = otherLine.B;
+            var c2 = otherLine.C;
 
             // Calculate the common delta from the last 2 equations
             var delta = a2 * b1 - a1 * b2;
 
             // If it's 0, then the lines are either parallel, or equal.
             // But we know they're not equal.
-            if ((RoundedDouble) delta == RoundedDouble.Zero)
+            if (delta.Rounded() == 0)
                 return null;
 
             // Otherwise we simply solve the simple linear equations
@@ -157,22 +131,6 @@ namespace GeoGen.AnalyticGeometry
         public Point RandomPointOnLine(IRandomnessProvider provider)
         {
             return null;
-        }
-
-        /// <summary>
-        /// Finds a point that lines on this line. This point might not be
-        /// random, i.e. it might be deterministic for the same line.
-        /// </summary>
-        /// <returns>The point.</returns>
-        public Point PointOnLine()
-        {
-            // Either A or B is not zero. We need to meet the equation Ax + By + C =0.
-            // So we try to take x=0, if B is not 0; or y=0 otherwise.
-            return B != RoundedDouble.Zero
-                    // If B is not zero, return this point
-                    ? new Point(B, (-C + A * B) / B)
-                    // Otherwise A is not zero and return
-                    : new Point(A, -(C + A * B) / A);
         }
 
         /// <summary>
@@ -204,33 +162,13 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The angle between the lines, in radians (0 for parallel lines). The value will in the interval [0, PI/2].</returns>
         public double AngleBetween(Line otherLine)
         {
-            // Local function to find out the oriented angle between x-axis and a line
-            double Angle(Line line)
-            {
-                // If A==0, then the line is verticular and thus the angle is PI/2. 
-                if (line.A == RoundedDouble.Zero)
-                    return 0;
+            if (IsParallelTo(otherLine))
+                return 0;
 
-                // Otherwise we calculate the scope of the line. The directional vector of the line is (-B, A).
-                var scope = (RoundedDouble) Math.Atan(-line.A / line.B);
+            if (IsPerpendicularTo(otherLine))
+                return Math.PI / 2;
 
-                // If the scope is less than zero, we'll normalize it to the interval [0, pi].
-                if (scope < RoundedDouble.Zero)
-                    return scope + Math.PI;
-
-                // And return it
-                return scope;
-            }
-
-            // Now we calculate the relative angles for our two lines and return their absolute difference
-            var difference = (RoundedDouble) Math.Abs(Angle(this) - Angle(otherLine));
-
-            // If the difference happens to be at least PI/2, we want to normalize it to the interval [0,PI/2].
-            if (difference >= Math.PI / 2)
-                return Math.PI - difference;
-
-            // And return the result
-            return difference;
+            return Math.Acos(Math.Abs(A * otherLine.A + B * otherLine.B));
         }
 
         /// <summary>
@@ -241,7 +179,7 @@ namespace GeoGen.AnalyticGeometry
         public bool Contains(Point point)
         {
             // We simply check if the point's coordinates meets the equation
-            return (RoundedDouble) (A * point.X + B * point.Y + C) == RoundedDouble.Zero;
+            return (A * point.X + B * point.Y + C).Rounded() == 0;
         }
 
         /// <summary>
@@ -251,8 +189,8 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if the lines are parallel; false otherwise.s</returns>
         public bool IsParallelTo(Line otherLine)
         {
-            // We simply check if these lines aren't equal and if there is no intersection between them
-            return this == otherLine || IntersectionWith(otherLine) == null;
+            // We check if their direction vectors are the same (they are normalized)
+            return A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded();
         }
 
         /// <summary>
@@ -262,17 +200,8 @@ namespace GeoGen.AnalyticGeometry
         /// <returns></returns>
         public bool IsPerpendicularTo(Line otherLine)
         {
-            // We construct some perpendicular line to this one
-            // and check if it is parallel to the given line
-
-            // First we need a some point on line
-            var pointOnThisLine = PointOnLine();
-
-            // Then we construct a perpendicular line at this point
-            var perpendicularLine = PerpendicularLine(pointOnThisLine);
-
-            // And return if this line is parallel to the given one
-            return perpendicularLine.IsParallelTo(otherLine);
+            // We check if their direction vectors are perpendicular same (they are normalized)
+            return (A * otherLine.A + B * otherLine.B).Rounded() == 0;
         }
 
         #endregion
@@ -286,7 +215,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return new { A, B, C }.GetHashCode();
+            return new { a = A.Rounded(), b = B.Rounded(), c = C.Rounded() }.GetHashCode();
         }
 
         /// <summary>
@@ -296,7 +225,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if the objects are equal, false otherwise.</returns>
         protected override bool IsEqualTo(Line other)
         {
-            return A == other.A && B == other.B && C == other.C;
+            return A.Rounded() == other.A.Rounded() && B.Rounded() == other.B.Rounded() && C.Rounded() == other.C.Rounded();
         }
 
         #endregion
@@ -344,7 +273,7 @@ namespace GeoGen.AnalyticGeometry
                     if (B == 1 || B == -1)
                         result += "y";
                     else
-                        result += $"{Math.Abs(B).ToString(CultureInfo.InvariantCulture)}y";
+                        result += $"{Math.Abs(B).ToString()}y";
                 }
                 // If there is not an x-part
                 else
@@ -361,7 +290,7 @@ namespace GeoGen.AnalyticGeometry
             }
 
             // Add the end, which is much less iffy
-            result += $" = {(-C).ToString(CultureInfo.InvariantCulture)}";
+            result += $" = {(-C).ToString()}";
 
             // We're here!
             return result;

@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>false</Optimize>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
@@ -25,6 +25,7 @@
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
     <ProjectReference Include="..\GeoGen.Runner\GeoGen.Runner.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities.TestHelpers\GeoGen.Utilities.TestHelpers.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>
 

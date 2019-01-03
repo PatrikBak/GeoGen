@@ -18,5 +18,8 @@ namespace GeoGen.Analyzer
         /// <param name="function">The function to be executed.</param>
         /// <returns>The returned result of the executed function.</returns>
         T ExecuteAndResolvePossibleIncosistencies<T>(Func<T> function);
+
+
+        void RecreateContainers();
     }
 }

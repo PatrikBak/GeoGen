@@ -54,7 +54,7 @@ namespace GeoGen.AnalyticGeometry
             // In order to be able to generate A, we need to have d from the interval (0,15). 
             // Generally the bigger, the better, but not very close to 15, because in that case
             // we might limit the variety of possible triangles (alpha would always be close to 75)
-            const double d = 14;
+            const double d = 10;
 
             // Let us generate angles according to our formulas
             var alpha = _random.NextDouble(60 + d, 90 - d);

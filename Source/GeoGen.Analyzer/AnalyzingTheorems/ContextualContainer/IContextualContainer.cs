@@ -33,5 +33,6 @@ namespace GeoGen.Analyzer
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
         T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject;
+        void Recreate();
     }
 }

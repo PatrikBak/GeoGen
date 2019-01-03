@@ -1,34 +1,32 @@
-﻿using System;
+﻿using GeoGen.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using GeoGen.Core;
+using System.Text.RegularExpressions;
 
 namespace GeoGen.ConsoleTest
 {
     public class OutputFormatter
     {
-        private Dictionary<int, char> _objectIdToString;
+        private Dictionary<int, char> _objectIdToString = new Dictionary<int, char>();
 
-        private ConstructionsContainer _constructionsContainer;
+        private Configuration _configuration;
 
-        public OutputFormatter(ConstructionsContainer constructionsContainer)
+        public OutputFormatter(Configuration configuration)
         {
-            _constructionsContainer = constructionsContainer;
+            _configuration = configuration;
+            Register(configuration.ObjectsMap.AllObjects);
         }
 
-        public string Format(Configuration configuration)
+        public string FormatConfiguration()
         {
-            _objectIdToString = new Dictionary<int, char>();
-            var looseObjects = configuration.LooseObjectsHolder.LooseObjects;
-            Register(looseObjects);
-            Register(configuration.ConstructedObjects);
+            var looseObjects = _configuration.LooseObjectsHolder.LooseObjects;
 
             var stringBuilder = new StringBuilder();
 
             stringBuilder.Append($"Loose: {string.Join(", ", looseObjects.Select(ObjectToStringById))}\n");
 
-            foreach (var constructedObject in configuration.ConstructedObjects)
+            foreach (var constructedObject in _configuration.ConstructedObjects)
             {
                 stringBuilder.Append($"{ObjectToStringById(constructedObject)} = {ConstructedObjectToString(constructedObject)}\n");
             }
@@ -36,11 +34,61 @@ namespace GeoGen.ConsoleTest
             return stringBuilder.ToString().Trim();
         }
 
+        public void Register(IEnumerable<ConfigurationObject> objects)
+        {
+            foreach (var configurationObject in objects)
+            {
+                var id = configurationObject.Id;
+
+                if (_objectIdToString.ContainsKey(id))
+                    continue;
+
+                var newLetter = (char) ('A' + _objectIdToString.Count);
+
+                _objectIdToString.Add(id, newLetter);
+            }
+        }
+
+        public string FormatTheorems(List<Theorem> theorems)
+        {
+            var stringBuilder = new StringBuilder();
+
+            foreach (var theorem in theorems)
+            {
+                stringBuilder.Append(ConvertTheoremToString(theorem)).Append("\n");
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        public string ConvertTheoremToString(Theorem theorem)
+        {
+            if (theorem.Type == TheoremType.EqualLineSegments || theorem.Type == TheoremType.EqualAngles)
+            {
+                var firstTwo = theorem.InvolvedObjects.Take(2).Select(TheoremObjectToString).ToList();
+                firstTwo.Sort();
+
+                var secondTwo = theorem.InvolvedObjects.Skip(2).Select(TheoremObjectToString).ToList();
+                secondTwo.Sort();
+
+                var firstPart = $"[{ string.Join(", ", firstTwo)}]";
+                var secondPart = $"[{string.Join(", ", secondTwo)}]";
+
+                return $"{theorem.Type}: {(firstPart.CompareTo(secondPart) < 0 ? firstPart : secondPart)} {(firstPart.CompareTo(secondPart) < 0 ? secondPart : firstPart)}";
+            }
+
+            var list = theorem.InvolvedObjects.Select(TheoremObjectToString).ToList();
+
+            list.Sort();
+
+            return $"{theorem.Type}: {string.Join(", ", list)}";
+        }
+
         private string ConstructedObjectToString(ConstructedConfigurationObject constructedObject)
         {
             var result = new StringBuilder();
 
-            result.Append(ConstructionToString(constructedObject.Construction))
+            result.Append(ConstructionName(constructedObject.Construction))
                     .Append("(")
                     .Append(string.Join(", ", constructedObject.PassedArguments.Select(ArgumentToString)))
                     .Append(")");
@@ -48,9 +96,12 @@ namespace GeoGen.ConsoleTest
             return result.ToString();
         }
 
-        private string ConstructionToString(Construction construction)
+        private string ConstructionName(Construction construction)
         {
-            return _constructionsContainer.GetName(construction);
+            if (construction is PredefinedConstruction predefinedConstruction)
+                return Regex.Match(predefinedConstruction.Type.ToString(), "(.*)From.*").Groups[1].Value;
+
+            return construction.Name;
         }
 
         private string ArgumentToString(ConstructionArgument argument)
@@ -65,39 +116,7 @@ namespace GeoGen.ConsoleTest
             return $"{{{string.Join(", ", setArgument.PassedArguments.Select(ArgumentToString))}}}";
         }
 
-        public string Format(List<Theorem> theorems)
-        {
-            var stringBuilder = new StringBuilder();
-
-            foreach (var theorem in theorems)
-            {
-                stringBuilder.Append(ConvertToString(theorem)).Append("\n");
-            }
-
-            return stringBuilder.ToString();
-        }
-
-        public string ConvertToString(Theorem theorem)
-        {
-            if (theorem.Type == TheoremType.EqualLineSegments)
-            {
-                var firstTwo = theorem.InvolvedObjects.Take(2).Select(ObjectToString).ToList();
-                firstTwo.Sort();
-
-                var secondTwo = theorem.InvolvedObjects.Skip(2).Select(ObjectToString).ToList();
-                secondTwo.Sort();
-
-                return $"{theorem.Type}: [{string.Join(", ", firstTwo)}] [{string.Join(", ", secondTwo)}]";
-            }
-
-            var list = theorem.InvolvedObjects.Select(ObjectToString).ToList();
-
-            list.Sort();
-
-            return $"{theorem.Type}: {string.Join(", ", list)}";
-        }
-
-        private string ObjectToString(TheoremObject theoremObject)
+        private string TheoremObjectToString(TheoremObject theoremObject)
         {
             if (theoremObject.Signature == TheoremObjectSignature.SingleObject)
             {
@@ -110,27 +129,12 @@ namespace GeoGen.ConsoleTest
 
             list.Sort();
 
-            return $"{(isLine ? "[" : "(")}{string.Join(", ",list)}{(isLine ? "]" : ")")}";
+            return $"{(isLine ? "[" : "(")}{string.Join(", ", list)}{(isLine ? "]" : ")")}";
         }
 
         private string ObjectToStringById(ConfigurationObject configurationObject)
         {
             return _objectIdToString[configurationObject.Id].ToString();
-        }
-
-        private void Register(IEnumerable<ConfigurationObject> objects)
-        {
-            foreach (var configurationObject in objects)
-            {
-                var id = configurationObject.Id;
-
-                if (_objectIdToString.ContainsKey(id))
-                    continue;
-
-                var newLetter = (char) ('A' + _objectIdToString.Count);
-
-                _objectIdToString.Add(id, newLetter);
-            }
         }
     }
 }

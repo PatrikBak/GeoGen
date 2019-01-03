@@ -1,9 +1,7 @@
-﻿using System;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Core;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.AnalyticGeometry;
-using GeoGen.Core;
-using GeoGen.Utilities;
 
 namespace GeoGen.Analyzer
 {
@@ -19,67 +17,54 @@ namespace GeoGen.Analyzer
         /// <returns>An enumerable of found potential theorems.</returns>
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
-            // Find all new circles. At least one of them must be included in a new theorem
+            // Find new circles. At least one of them must be included in every new theorem
             var newCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
                 Type = ContexualContainerQuery.ObjectsType.New,
-                IncludePoints = false,
-                IncludeLines = false,
                 IncludeCirces = true
             }).ToList();
 
-            // Find all old circles.
-            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            // Find all circles.
+            var allCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
-                IncludePoints = false,
-                IncludeLines = false,
+                Type = ContexualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).ToList();
 
-            // A local function for combinining all the circles so that at least one of them is new
-            IEnumerable<(CircleObject circle1, CircleObject circle2)> CombineCircles()
+            // Go through all the new circles
+            foreach (var newCircle in newCircles)
             {
-                // First combine the new circles with themselves
-                for (var i = 0; i < newCircles.Count; i++)
+                // Go through all the circles
+                foreach (var anyCircle in allCircles)
                 {
-                    for (var j = i + 1; j < newCircles.Count; j++)
+                    // If we happen to have equal ones, skip them
+                    if (newCircle == anyCircle)
+                        continue;
+
+                    // Construct the verifier function
+                    bool Verify(IObjectsContainer objectsContainer)
                     {
-                        yield return (newCircles[i], newCircles[j]);
-                    }
-                }
+                        // Cast the circles to their analytic versions
+                        var analyticCircle1 = container.GetAnalyticObject<Circle>(newCircle, objectsContainer);
+                        var analyticCircle2 = container.GetAnalyticObject<Circle>(anyCircle, objectsContainer);
 
-                // Now combine new circles with old ones
-                foreach (var newCircle in newCircles)
-                {
-                    foreach (var oldCircle in oldCircles)
+                        // Return if there are tangent to each other
+                        return analyticCircle1.IsTangentTo(analyticCircle2);
+                    }
+
+                    // Lazily return the output
+                    yield return new PotentialTheorem
                     {
-                        yield return (newCircle, oldCircle);
-                    }
+                        // Set the type using the base property
+                        TheoremType = Type,
+
+                        // Set the function
+                        VerificationFunction = Verify,
+
+                        // Set the involved objects to our two circles
+                        InvolvedObjects = new[] { newCircle, anyCircle }
+                    };
                 }
-            }
-
-            // Now execute the local function to find all potential pairs of circles
-            foreach (var (circle1, circle2) in CombineCircles())
-            {
-                // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
-                {
-                    // Pull analytic circles representing each one
-                    var analyticCircle1 = container.GetAnalyticObject<Circle>(circle1, objectsContainer);
-                    var analyticCircle2 = container.GetAnalyticObject<Circle>(circle2, objectsContainer);
-
-                    // Return if there are tangent to each other
-                    return analyticCircle1.IsTangentTo(analyticCircle2);
-                }
-
-                // Construct the output
-                yield return new PotentialTheorem
-                {
-                    TheoremType = Type,
-                    InvolvedObjects = new[] { circle1, circle2 },
-                    VerificationFunction = Verify
-                };
             }
         }
     }

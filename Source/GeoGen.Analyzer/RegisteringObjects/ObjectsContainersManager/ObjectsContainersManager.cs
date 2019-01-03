@@ -184,6 +184,11 @@ namespace GeoGen.Analyzer
         /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
+        public void RecreateContainers()
+        {
+            _containers.ForEach(TryReconstruct);
+        }
+
         #endregion
     }
 }

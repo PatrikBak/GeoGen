@@ -2,33 +2,29 @@
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Runner;
+using GeoGen.Utilities;
 using Ninject;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.ConsoleTest
 {
     public class Program
     {
+        public static int Containers = 15;
+
         private static IKernel _kernel;
 
-        private static ConstructionsContainer _constructionsContainer => _kernel.Get<ConstructionsContainer>();
-
-        private static ComposedConstructions _composedConstructions => _kernel.Get<ComposedConstructions>();
-
-        private static ConstructorHelper _constructorHelper => _kernel.Get<ConstructorHelper>();
-
-        private static ConsoleInconsistenciesTracker _tracker => _kernel.Get<IInconsistentContainersTracer>() as ConsoleInconsistenciesTracker;
+        private static Stopwatch _stopwatch = new Stopwatch();
 
         private static void Bootstrap()
         {
             _kernel = new StandardKernel();
-            _kernel.Bind<ConstructionsContainer>().ToSelf().InSingletonScope();
-            _kernel.Bind<ComposedConstructions>().ToSelf().InSingletonScope();
-            _kernel.Bind<ConstructorHelper>().ToSelf().InSingletonScope();
 
             _kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>().WithConstructorArgument(new Action<IKernel>(internalKernel =>
             {
@@ -40,77 +36,116 @@ namespace GeoGen.ConsoleTest
 
         private static void Main()
         {
+            // This makes sure that doubles in the VS debugger will be displayed with a decimal point
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             Bootstrap();
+            var inconsistenciesHandler = new TheoremInconsistenciesHandler();
+
+            //for (var i = 0; i < 150; i++)            //{
 
             var points = Enumerable.Range(0, 3)
                     .Select(_ => new LooseConfigurationObject(ConfigurationObjectType.Point))
                     .ToList();
 
-            var constructedObjects = ConstructedObjects(points);
-
-            var configuration = new Configuration(points, constructedObjects, LooseObjectsLayout.ScaleneAcuteAngledTriangled);
+            var configuration = new Configuration(points, new List<ConstructedConfigurationObject>(), LooseObjectsLayout.ScaleneAcuteAngledTriangled);
             var constructions = Constructions();
 
             var input = new GeneratorInput
             {
                 InitialConfiguration = configuration,
                 Constructions = constructions,
-                MaximalNumberOfIterations = 5,
-                NumberOfContainers = 25,
-                MaximalAttemptsToReconstructOneContainer = 10000,
-                MaximalAttemptsToReconstructAllContainers = 100000
+                MaximalNumberOfIterations = 4,
+                NumberOfContainers = Containers,
+                MaximalAttemptsToReconstructOneContainer = 100,
+                MaximalAttemptsToReconstructAllContainers = 1000
             };
 
             var generator = _kernel.Get<IGeneratorFactory>().CreateGenerator(input);
 
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var result = generator.Generate().ToList();
-            stopwatch.Stop();
+            _stopwatch.Restart();
+            var result = generator.Generate();
+            _stopwatch.Stop();
 
-            Console.WriteLine($"Elapsed: {stopwatch.ElapsedMilliseconds}");
-            Console.WriteLine($"Generated: {result.Count}");
-            Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
-            Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
+            //Console.WriteLine($"{(i+1)} took {_stopwatch.ElapsedMilliseconds}");
+            //Console.SetOut(new StreamWriter("weird2.txt", append: false) { AutoFlush = true });
 
-            Console.ReadKey();
-            PrintTheorems(result);
+            var i = 0;
+
+            result.ForEach(output =>
+            {
+                i++;
+                if (i % 10000 == 0)
+                    Console.WriteLine(i);
+                    //var inconsistencies = inconsistenciesHandler.AddAndReturnInconsistencies(output);
+                    //
+                    //if (inconsistencies.Count == 0)
+                    //    return;
+                    //
+                    //var formatter = new OutputFormatter(output.Configuration);
+                    //Console.WriteLine("-------------------\n");
+                    //Console.WriteLine(formatter.FormatConfiguration());
+                    //Console.WriteLine();
+                    //Console.WriteLine("Inconsistent theorems:");
+                    //Console.WriteLine();
+                    //Console.WriteLine(string.Join(Environment.NewLine, inconsistencies));
+                    //Console.ReadKey(true);
+                    //Console.Clear();
+
+
+                    output.AnalyzerOutput.NumberOfTrueContainers.Sort((p1, p2) => p1.Item2 - p2.Item2);
+                var l = output.AnalyzerOutput.NumberOfTrueContainers.Where(p => p.Item2 != 0 && p.Item2 != 1 && p.Item2 != Containers).ToList();
+
+                if (l.Count == 0)
+                    return;
+
+                var fd = l.Where(pair => new int[] { 2,3,4,5,6 }.Contains(pair.Item2)).ToList();
+
+                if (fd.Count == 0)
+                    return;
+
+
+                var formatter = new OutputFormatter(output.Configuration);
+
+                //Console.WriteLine(formatter.FormatConfiguration());
+                //Console.WriteLine("-------------------\n");
+                //Console.WriteLine("Theorems:\n");
+                //fd.ForEach(pair =>
+                //{
+                //    Console.WriteLine($"{pair.Item2} {formatter.ConvertTheoremToString(pair.Item1)}");
+                //});
+                //
+                    //Console.ReadKey(true);
+                    //Console.Clear();
+                });
+            //}
+
+            //PrintResult(result);
         }
 
         private static List<Construction> Constructions()
         {
             return new List<Construction>
             {
-                _composedConstructions.AddIncenterFromPoints(),
-                _composedConstructions.AddCentroidFromPoints(),
-                _constructionsContainer.Get(IntersectionOfLinesFromPoints),
-                _constructionsContainer.Get(IntersectionOfLinesFromLineAndPoints),
-                _constructionsContainer.Get(IntersectionOfLines),
-                _constructionsContainer.Get(MidpointFromPoints),
-                _constructionsContainer.Get(CircumcenterFromPoints),
-                _constructionsContainer.Get(PerpendicularLineFromPoints),
-                _constructionsContainer.Get(InternalAngleBisectorFromPoints),
+                ComposedConstructions.IncenterFromPoints(),
+                ComposedConstructions.CentroidFromPoints(),
+                PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints),
+                PredefinedConstructionsFactory.Get(IntersectionOfLinesFromLineAndPoints),
+                PredefinedConstructionsFactory.Get(IntersectionOfLines),
+                PredefinedConstructionsFactory.Get(MidpointFromPoints),
+                PredefinedConstructionsFactory.Get(CircumcenterFromPoints),
+                PredefinedConstructionsFactory.Get(PerpendicularLineFromPoints),
+                PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints),
             };
         }
 
-        private static List<ConstructedConfigurationObject> ConstructedObjects(List<LooseConfigurationObject> points)
+        private static void PrintResult(List<GeneratorOutput> result)
         {
-            //_composedConstructions.AddIncenterFromPoints();
-
-            //var o = _constructorHelper.CreateCircumcenter(points[0], points[1], points[2]);
-            //var i = _constructorHelper.CreateIncenter(points[0], points[1], points[2]);
-            //var p = _constructorHelper.CreateIntersection(o, i, points[0], points[1]);
-
-            return new List<ConstructedConfigurationObject>
-            {
-                //o
-                //i
-            };
-        }
-
-        private static void PrintTheorems(IEnumerable<GeneratorOutput> result)
-        {
-            var formatter = new OutputFormatter(_constructionsContainer);
+            Console.WriteLine($"Elapsed: {_stopwatch.ElapsedMilliseconds}");
+            Console.WriteLine($"Generated: {result.Count}");
+            Console.WriteLine($"Generated with theorems: {result.Count(r => r.Theorems.Any())}");
+            Console.WriteLine($"Total number of theorems: {result.Sum(output => output.Theorems.Count)}");
+            Console.ReadKey();
 
             Console.WriteLine("Results:\n");
 
@@ -118,13 +153,15 @@ namespace GeoGen.ConsoleTest
 
             foreach (var generatorOutput in result.Where(t => t.Theorems.Any()))
             {
+                var formatter = new OutputFormatter(generatorOutput.Configuration);
+
                 Console.Clear();
                 Console.WriteLine($"{i++}.");
                 Console.WriteLine("-------------------\n");
-                Console.WriteLine(formatter.Format(generatorOutput.Configuration));
+                Console.WriteLine(formatter.FormatConfiguration());
                 Console.WriteLine("-------------------\n");
                 Console.WriteLine("Theorems:");
-                Console.WriteLine(formatter.Format(generatorOutput.Theorems));
+                Console.WriteLine(formatter.FormatTheorems(generatorOutput.Theorems));
                 Console.ReadKey(true);
             }
         }

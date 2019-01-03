@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -33,19 +32,19 @@ namespace GeoGen.ConsoleTest
             return construction;
         }
 
-        public Construction Get(string name)
-        {
-            return _composedConstructions.First(c => GetName(c) == name);
-        }
-
-        private string ExtractName(PredefinedConstructionType type) => Regex.Match(type.ToString(), "(.*)From.*").Groups[1].Value;
+        public Construction Get(string name) => _composedConstructions.First(c => GetName(c) == name);
 
         public void Add(ComposedConstruction composedConstruction)
         {
-            _composedConstructions.Add(composedConstruction);
-            _names.Add((composedConstruction, composedConstruction.Name));
+            if (!_composedConstructions.Any(c => c.Name == composedConstruction.Name))
+            {
+                _composedConstructions.Add(composedConstruction);
+                _names.Add((composedConstruction, composedConstruction.Name));
+            }
         }
 
         public string GetName(Construction construction) => _names.Where(pair => pair.Item1 == construction).First().Item2;
+
+        private string ExtractName(PredefinedConstructionType type) => Regex.Match(type.ToString(), "(.*)From.*").Groups[1].Value;
     }
 }

@@ -9,7 +9,7 @@ namespace GeoGen.AnalyticGeometry
     public static class MathematicalHelpers
     {
         /// <summary>
-        /// Solves a given quadratic equation. This method internally uses <see cref="RoundedDouble"/>s.
+        /// Solves a given quadratic equation. 
         /// </summary>
         /// <param name="a">The a coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <param name="b">The b coefficient of the equation ax^2 + bx + c = 0.</param>
@@ -18,14 +18,14 @@ namespace GeoGen.AnalyticGeometry
         public static List<double> SolveQuadraticEquation(double a, double b, double c)
         {
             // Calculate and round the discriminant
-            var d = (RoundedDouble) (b * b - 4 * a * c);
+            var d = b * b - 4 * a * c;
 
             // If it less than zero, then we have no solutions
-            if (d < RoundedDouble.Zero)
+            if (d.Rounded() < 0)
                 return new List<double>();
 
             // If it's exactly zero, then we have exactly one solution
-            if (d == RoundedDouble.Zero)
+            if (d.Rounded() == 0)
                 return new List<double> {-b / (2 * a)};
 
             // Otherwise we have 2 solution. Let's calculate sqrt(d).

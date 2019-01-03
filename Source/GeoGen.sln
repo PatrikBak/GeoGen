@@ -17,17 +17,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Runner", "GeoGen.Run
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.AnalyticGemetry.Tests", "GeoGen.AnalyticGemetry.Tests\GeoGen.AnalyticGemetry.Tests\GeoGen.AnalyticGemetry.Tests.csproj", "{ED87CC35-B292-421F-9CD1-E8E3A7992F30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer.Tests", "GeoGen.Analyzer.Tests\GeoGen.Analyzer.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Analyzer.Tests", "GeoGen.Analyzer.Tests\GeoGen.Analyzer.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core.Tests", "GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Core.Tests", "GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator.Tests", "GeoGen.Generator.Tests\GeoGen.Generator.Tests.csproj", "{FFA143EC-4172-4A3D-B36A-CE663AC18F28}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Generator.Tests", "GeoGen.Generator.Tests\GeoGen.Generator.Tests.csproj", "{FFA143EC-4172-4A3D-B36A-CE663AC18F28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.TestHelpers", "GeoGen.Utilities.TestHelpers\GeoGen.Utilities.TestHelpers.csproj", "{839F0999-564E-48F3-A7F6-3590C45D92EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Utilities.TestHelpers", "GeoGen.Utilities.TestHelpers\GeoGen.Utilities.TestHelpers.csproj", "{839F0999-564E-48F3-A7F6-3590C45D92EB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,10 +63,6 @@ Global
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ED87CC35-B292-421F-9CD1-E8E3A7992F30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{984DAF5E-56BA-46D1-A321-FF4659AF8C33}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +83,10 @@ Global
 		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

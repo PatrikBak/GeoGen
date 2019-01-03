@@ -18,5 +18,8 @@ namespace GeoGen.Analyzer
         /// finish successfully.
         /// </summary>
         public List<Theorem> Theorems { get; set; }
+
+
+        public List<(Theorem, int)> NumberOfTrueContainers { get; set; }
     }
 }

@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Core;
+using GeoGen.Utilities;
+using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {
@@ -16,28 +17,32 @@ namespace GeoGen.Analyzer
         /// <returns>An enumerable of found potential theorems.</returns>
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
-            // Now we first pull new points
+            // Take the new points. At least one of the involved points must be new
             return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
-                    {
-                        Type = ContexualContainerQuery.ObjectsType.New,
-                        IncludePoints = true,
-                        IncludeLines = false,
-                        IncludeCirces = false
-                    })
-                    // And find lines that they lie on
-                    .SelectMany(point => point.Lines)
-                    // Take only distinct ones
-                    .Distinct()
-                    // And only those that contain at least 3 points
-                    .Where(line => line.Points.Count >= 3)
-                    // Each of these lines represents a new theorem correct in all the containers 
-                    // (thus we don't set the verifier function)
-                    .Select(line => new PotentialTheorem
-                    {
-                        TheoremType = Type,
-                        InvolvedObjects = line.Points,
-                        VerificationFunction = _ => true
-                    });
+            {
+                Type = ContexualContainerQuery.ObjectsType.New,
+                IncludePoints = true,
+            })
+            // And find all the lines that pass through it
+            .SelectMany(point => point.Lines)
+            // Take only those that contain at least 3 points
+            .Where(line => line.Points.Count >= 3)
+            // And are distinct 
+            .Distinct()
+            // For each of them their triples of their points
+            .SelectMany(line => line.Points.Subsets(3))
+            // Each represents a theorem (not even potential, the contextual container made sure it's true)
+            .Select(triple => new PotentialTheorem
+            {
+                // Set the type using the base property
+                TheoremType = Type,
+
+                // Set the verifier function to a constant function returning always true
+                VerificationFunction = _ => true,
+
+                // Set the involved objects to the these triple of points
+                InvolvedObjects = triple
+            });
         }
     }
 }

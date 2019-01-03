@@ -1,4 +1,5 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Analyzer;
+using GeoGen.Core;
 using System.Collections.Generic;
 
 namespace GeoGen.Generator
@@ -14,8 +15,10 @@ namespace GeoGen.Generator
         public GeneratedConfiguration Configuration { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of the theorems that holds true in the generated configuration.
+        /// Gets or sets the output of the theorem analysis module.
         /// </summary>
-        public List<Theorem> Theorems { get; set; }
+        public TheoremsAnalyzerOutput AnalyzerOutput { get; set; }
+
+        public List<Theorem> Theorems;
     }
 }

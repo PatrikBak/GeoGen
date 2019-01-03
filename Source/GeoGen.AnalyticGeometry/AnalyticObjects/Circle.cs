@@ -1,6 +1,6 @@
 ﻿using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
@@ -20,7 +20,7 @@ namespace GeoGen.AnalyticGeometry
         /// <summary>
         /// Gets the radius of the circle.
         /// </summary>
-        public RoundedDouble Radius { get; }
+        public double Radius { get; }
 
         #endregion
 
@@ -35,6 +35,22 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point3">The third point.</param>
         public Circle(Point point1, Point point2, Point point3)
         {
+           // The center has coordinates[x, y] satisfying
+           //
+           // (x - x1) ^ 2 + (y - y1) ^ 2 = (x - x2) ^ 2 + (y - y2) ^ 2
+           // (x - x1) ^ 2 + (y - y1) ^ 2 = (x - x3) ^ 2 + (y - y3) ^ 2
+           //
+           //
+           //  They can be easily reduced to
+
+
+             //x cit(x1^ 2(y2 - y3) + x2 ^ 2(y3 - y1) + x3 ^ 2(y1 - y2) - (y1 - y2)(y2 - y3)(y3 - y1))
+              // 2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+
+//y cit(x1(y2^ 2 - y3 ^ 2) +x2(y3 ^ 2 - y1 ^ 2) + x3(y1 ^ 2 - y2 ^ 2) + (x1 - x2)(x2 - x3)(x3 - x1))
+              // 2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+
+
             // We create the perpendicular bisectors of lines P1P2, P1P3
             var bisector1 = point1.PerpendicularBisector(point2);
             var bisector2 = point1.PerpendicularBisector(point3);
@@ -47,7 +63,7 @@ namespace GeoGen.AnalyticGeometry
 
             // Otherwise the situation is fine and radius is the distance
             // from any point to the center.
-            Radius = (RoundedDouble) point1.DistanceTo(Center);
+            Radius = point1.DistanceTo(Center);
         }
 
         /// <summary>
@@ -58,7 +74,7 @@ namespace GeoGen.AnalyticGeometry
         public Circle(Point center, double radius)
         {
             Center = center;
-            Radius = (RoundedDouble) radius;
+            Radius = radius;
         }
 
         #endregion
@@ -76,7 +92,7 @@ namespace GeoGen.AnalyticGeometry
             var dx = point.X - Center.X;
             var dy = point.Y - Center.Y;
 
-            return (RoundedDouble) (dx * dx + dy * dy - Radius * Radius) == RoundedDouble.Zero;
+            return (dx * dx + dy * dy - Radius * Radius).Rounded() == 0;
         }
 
         /// <summary>
@@ -86,7 +102,15 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Circle otherCircle)
         {
-            return IntersectWith(otherCircle).Count == 1;
+            var dist = Center.DistanceTo(otherCircle.Center).Rounded();
+
+            if (dist == (Radius + otherCircle.Radius).Rounded())
+                return true;
+
+            if (dist  == Math.Abs(Radius - otherCircle.Radius).Rounded())
+                return true;
+
+            return false;
         }
 
         /// <summary>
@@ -96,7 +120,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Line line)
         {
-            return IntersectWith(line).Count == 1;
+            return Math.Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
         }
 
         /// <summary>
@@ -106,43 +130,40 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
         public List<Point> IntersectWith(Circle otherCircle)
         {
-            // If they're distinct and concentric, then there's no intersection
-            if (Center == otherCircle.Center)
+            // Make sure it is not equal
+            if (this == otherCircle)
+                throw new AnalyticException("The circles are not supposed to be equal");
+
+            // Find the distance between the centers.
+            var dist = Center.DistanceTo(otherCircle.Center);
+
+            // See how many solutions there are.
+            if (dist.Rounded() > (Radius + otherCircle.Radius).Rounded())
+            {
                 return new List<Point>();
+            }
+            else if (dist.Rounded() < Math.Abs(Radius - otherCircle.Radius).Rounded())
+            {
+                return new List<Point>();
+            }
+            else
+            {
+                // Find a and h.
+                double a = (Radius * Radius - otherCircle.Radius * otherCircle.Radius + dist * dist) / (2 * dist);
+                double h = Math.Sqrt(Radius * Radius - a * a);
 
-            // Otherwise we're solving the system:
-            // 
-            // (x-m1)^2 + (y-n1)^2 = r1^2       (1)
-            // (x-m2)^2 + (y-n2)^2 = r2^2       (2)
-            //
-            // The idea is to solve the equivalent system 
-            // (1), (1) - (2) instead. Since (1) - (2)
-            // is the equation of line (as it turns out,
-            // the radical axis of these two circles),
-            // we can use the coded method. The coefficients
-            // of the line are
-            //
-            // x --> 2(m2 - m1)
-            // y --> 2(n2 - n1)
-            // 1 --> m1^2 - m2^2 + n1^2 - n2^2 + r2^2 - r1^2
+                // Find P2.
+                double cx2 = Center.X + a * (otherCircle.Center.X - Center.X) / dist;
+                double cy2 = Center.Y + a * (otherCircle.Center.Y - Center.Y) / dist;
 
-            // Pull the parameters of this circle
-            var m1 = Center.X.OriginalValue;
-            var n1 = Center.Y.OriginalValue;
-            var r1 = Radius.OriginalValue;
+                var p1 = new Point(cx2 + h * (otherCircle.Center.Y - Center.Y) / dist, cy2 - h * (otherCircle.Center.X - Center.X) / dist);
+                var p2 = new Point(cx2 - h * (otherCircle.Center.Y - Center.Y) / dist, cy2 + h * (otherCircle.Center.X - Center.X) / dist);
 
-            // Pull the parameters of the other circle
-            var m2 = otherCircle.Center.X.OriginalValue;
-            var n2 = otherCircle.Center.Y.OriginalValue;
-            var r2 = otherCircle.Radius.OriginalValue;
-
-            // Create coefficients
-            var aCoef = 2 * (m2 - m1);
-            var bCoef = 2 * (n2 - n1);
-            var cCoef = m1 * m1 - m2 * m2 + n1 * n1 - n2 * n2 + r2 * r2 - r1 * r1;
-
-            // Call the internal method
-            return IntersectWithLine(aCoef, bCoef, cCoef);
+                if (p1 == p2)
+                    return new List<Point> { p1 };
+                else
+                    return new List<Point> { p1, p2 };
+            }
         }
 
         /// <summary>
@@ -177,9 +198,9 @@ namespace GeoGen.AnalyticGeometry
         private List<Point> IntersectWithLine(double a, double b, double c)
         {
             // Pull the parameters of the equation of the circle
-            var m = Center.X.OriginalValue;
-            var n = Center.Y.OriginalValue;
-            var r = Radius.OriginalValue;
+            var m = Center.X;
+            var n = Center.Y;
+            var r = Radius;
 
             // We're solving the system:
             //
@@ -193,7 +214,7 @@ namespace GeoGen.AnalyticGeometry
             // if and only if the previous one had the solution [y',x']
 
             // First we determine if we'll do the mapping. 
-            var changingVariables = (RoundedDouble) a == RoundedDouble.Zero;
+            var changingVariables = a.Rounded() == 0;
 
             // If yes, we use the helper method to do so
             if (changingVariables)
@@ -246,7 +267,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The hash code.</returns>
         protected override int CalculateHashCode()
         {
-            return new { Radius, Center }.GetHashCode();
+            return new { r = Radius.Rounded(), o = Center }.GetHashCode();
         }
 
         /// <summary>
@@ -256,7 +277,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if the objects are equal, false otherwise.</returns>
         protected override bool IsEqualTo(Circle other)
         {
-            return Center == other.Center && Radius == other.Radius;
+            return Center == other.Center && Radius.Rounded() == other.Radius.Rounded();
         }
 
         #endregion
@@ -277,7 +298,7 @@ namespace GeoGen.AnalyticGeometry
             if (Center.X == 0)
                 result += "x^2";
             else if (Center.X < 0)
-                result += $"(x + {(-Center.X).ToString(CultureInfo.InvariantCulture)})^2";
+                result += $"(x + {(-Center.X).ToString()})^2";
             else
                 result += $"(x - {Center.X})^2";
 
@@ -288,12 +309,12 @@ namespace GeoGen.AnalyticGeometry
             if (Center.Y == 0)
                 result += "y^2";
             else if (Center.Y < 0)
-                result += $"(y + {(-Center.Y).ToString(CultureInfo.InvariantCulture)})^2";
+                result += $"(y + {(-Center.Y).ToString()})^2";
             else
                 result += $"(y - {Center.Y})^2";
 
             // And the end
-            result += $" = {(Radius * Radius).ToString(CultureInfo.InvariantCulture)}";
+            result += $" = {(Radius * Radius).ToString()}";
 
             // Return it
             return result;
