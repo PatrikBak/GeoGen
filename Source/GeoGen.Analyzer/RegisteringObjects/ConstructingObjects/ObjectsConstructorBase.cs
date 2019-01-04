@@ -19,7 +19,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="constructedObjects">The object to be constructed.</param>
         /// <returns>The function that can perform the actual construction using the context from a given container.</returns>
-        public Func<IObjectsContainer, AnalyticObject> Construct(ConstructedConfigurationObject configurationObject)
+        public Func<IObjectsContainer, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject)
         {
             // Return the function that takes a container as an input and returns the result of a construction
             return container =>
@@ -53,7 +53,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="input">The analytic objects to be used as an input.</param>
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
-        protected abstract AnalyticObject Construct(AnalyticObject[] input);
+        protected abstract IAnalyticObject Construct(IAnalyticObject[] input);
 
         #endregion
     }

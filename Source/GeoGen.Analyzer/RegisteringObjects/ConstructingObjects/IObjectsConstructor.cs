@@ -15,6 +15,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="constructedObjects">The object to be constructed.</param>
         /// <returns>The function that can perform the actual construction using the context from a given container.</returns>
-        Func<IObjectsContainer, AnalyticObject> Construct(ConstructedConfigurationObject configurationObject);
+        Func<IObjectsContainer, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject);
     }
 }

@@ -134,10 +134,10 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a random point of a line construction.
+        /// Creates a random point of a line segment construction.
         /// </summary>
         /// <returns>The construction.</returns>
-        private static PredefinedConstruction RandomPointOnLineFromPoints()
+        private static PredefinedConstruction RandomPointOnLineSegment()
         {
             // Create the parameters
             var parameters = new List<ConstructionParameter>
@@ -146,7 +146,7 @@ namespace GeoGen.Core
             };
 
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineSegment, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>

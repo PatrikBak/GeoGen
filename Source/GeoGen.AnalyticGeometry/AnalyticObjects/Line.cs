@@ -3,34 +3,41 @@
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// Represents a geometrical 2D line.
+    /// Represents a geometric 2D line. This line is represented by its analytic equation
+    /// Ax + By + C = 0. In order to get the unique equation for each line this class makes
+    /// sure that A^2 + B^2 = 1, and A>0 || (A==0 && B>0) (in other wise, the leftmost 
+    /// non-zero coefficient in the sequence A,B is positive - they can't be both zero).
     /// </summary>
-    public class Line : AnalyticObjectBase<Line>
+    public struct Line : IAnalyticObject, IEquatable<Line>
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the A coefficient of the equation Ax + By + C = 0.
+        /// Gets the A coefficient of the equation Ax + By + C = 0 of the line.
         /// </summary>
         public double A { get; }
 
         /// <summary>
-        /// Gets the B coefficient of the equation Ax + By + C = 0.
+        /// Gets the B coefficient of the equation Ax + By + C = 0 of the line.
         /// </summary>
         public double B { get; }
 
         /// <summary>
-        /// Gets the C coefficient of the equation Ax + By + C = 0.
+        /// Gets the C coefficient of the equation Ax + By + C = 0 of the line.
         /// </summary>
         public double C { get; }
+
+        /// <summary>
+        /// Gets the points that were used to create the line.
+        /// </summary>
+        public (Point point1, Point point2) Points { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Constructs a new line passing through given two points.
-        /// These points can't be the same.
+        /// Initializes a new instance of the <see cref="Line"/> class using two distinct points.
         /// </summary>
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
@@ -40,31 +47,33 @@ namespace GeoGen.AnalyticGeometry
             if (point1 == point2)
                 throw new AnalyticException("Cannot construct a line from 2 equal points.");
 
-            // Calculate the coefficients of the normal vector
+            // Calculate the coefficients of the directional vector
             var dx = point1.X - point2.X;
             var dy = point1.Y - point2.Y;
 
-            // The pair (a,b) should be the normal vector, which is (dy, -dx)
+            // Then the normal vector should be (dy, -dx)
             var a = dy;
             var b = -dx;
 
-            // And the c coefficient is calculated so that the point1 lies on the line Ax + By + c = 0
+            // And the c coefficient is calculated so that point1 meets the equation Ax + By + c = 0
             var c = -a * point1.X - b * point1.Y;
 
             // Now we calculate the scale so that (a,b) is a normalized vector (i.e. a^2+b^2 = 1)
             var scale = Math.Sqrt(a.Squared() + b.Squared());
 
-            // Using the scale we almost have a unique representation. 
-            // The problem is that ax+by+c = 0 and -ax-by-c=0 represent the same line
-            // even if a^2+b^2 = 1. We're going to solve it by expecting the leftmost non-zero
-            // coefficient to be positive. At least one of the numbers (a,b) is nonzero
-            // The scale will be -1 if and only if a<0, or a=0 and b<0.
+            // If we used this scale, we would almost have the unique representation. The problem is that ax+by= 0 
+            // and -ax-by=0 represent the same line even when a^2+b^2 = (-a)^2+(-b)^2=1. We're going to solve it by
+            // expecting the first non-zero coefficient between a,b to be positive. At least one of them is nonzero. 
+            // We multiply the scale by -1 if and only if a<0, or a=0 and b<0.
             scale *= a.Rounded() < 0 || (a.Rounded() == 0 && b.Rounded() < 0) ? -1 : 1;
 
             // Finally we set the scaled coefficients
             A = a / scale;
             B = b / scale;
             C = c / scale;
+
+            // Assign the points as well
+            Points = (point1, point2);
         }
 
         #endregion
@@ -73,15 +82,15 @@ namespace GeoGen.AnalyticGeometry
 
         /// <summary>
         /// Constructs the intersection of this line with another given one. These
-        /// lines can't be the same. If the lines are parallel, the null will be returned.
+        /// lines can't equal. If the lines are parallel, then this method returns null.
         /// </summary>
         /// <param name="otherLine">The other line.</param>
-        /// <returns>The intersection, or null, if there isn't any.</returns>
-        public Point IntersectionWith(Line otherLine)
+        /// <returns>The intersection of this line, if there is any, or null otherwise.</returns>
+        public Point? IntersectionWith(Line otherLine)
         {
             // Check if they are equal
             if (this == otherLine)
-                throw new AnalyticException("Equal lines cannot be interested.");
+                throw new AnalyticException("Equal lines cannot be intersected.");
 
             // We want to solve the system
             //
@@ -98,7 +107,7 @@ namespace GeoGen.AnalyticGeometry
             // y (a2b1 - a1b2) + c1a2 - c2a1 = 0
             // x (a2b1 - a1b2) + c2b1 - c1b2 = 0
 
-            // Pull the coefficients
+            // Pull the coefficients so that the code looks better
             var a1 = A;
             var b1 = B;
             var c1 = C;
@@ -124,28 +133,18 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
-        /// Finds a random point that lies on this line.
-        /// </summary>
-        /// <param name="provider">The randomness provider.</param>
-        /// <returns>A random point.</returns>
-        public Point RandomPointOnLine(IRandomnessProvider provider)
-        {
-            return null;
-        }
-
-        /// <summary>
         /// Creates a line that is perpendicular to this one and passes through a
         /// given point.
         /// </summary>
-        /// <param name="point">The point.</param>
-        /// <returns>The perpendicular line.</returns>
+        /// <param name="point">The point that should lie on the resulting line.</param>
+        /// <returns>The line perpendicular to this one passing through the given point.</returns>
         public Line PerpendicularLine(Point point)
         {
             // Math suggests that the directional vector of the result
             // will be (A,B). We have one point on the line, [x,y]
             // the other could be [x+A, y+B] (they will not be the same 
             // because either A != 0, or B != 0). Then we can simply
-            // use the constructor for line from 2 points
+            // use the constructor for the line from 2 points
 
             // Create the other point
             var otherPoint = new Point(point.X + A, point.Y + B);
@@ -156,18 +155,24 @@ namespace GeoGen.AnalyticGeometry
 
         /// <summary>
         /// Calculates the angle between this line and a given one. 
-        /// The lines should be distinct.
         /// </summary>
-        /// <param name="otherLine">The angle between lines.</param>
-        /// <returns>The angle between the lines, in radians (0 for parallel lines). The value will in the interval [0, PI/2].</returns>
+        /// <param name="otherLine">The other line.</param>
+        /// <returns>The angle between the lines, in radians. The value will in the interval [0, PI/2].</returns>
         public double AngleBetween(Line otherLine)
         {
+            // Check the parallel case. 
             if (IsParallelTo(otherLine))
                 return 0;
 
+            // Check the perpendicular case
             if (IsPerpendicularTo(otherLine))
                 return Math.PI / 2;
 
+            // Otherwise use the well-known formula that the angle between two vectors
+            // u,v is given by arccos(|u.v| / (||u|| ||v||)). In our case (A, B) is the normal
+            // vector of our line, and in our case it's normalized, i.e. ||u|| = 1. 
+            // In order to find the angle between two lines we can simply find the angle
+            // between its normal vectors. This yields a very simple formula:
             return Math.Acos(Math.Abs(A * otherLine.A + B * otherLine.B));
         }
 
@@ -175,10 +180,10 @@ namespace GeoGen.AnalyticGeometry
         /// Determines if a given point lies on this line.
         /// </summary>
         /// <param name="point">The given point.</param>
-        /// <returns>true, if the point lies on the line, false otherwise.</returns>
+        /// <returns>true, if the point lies on the line; false otherwise.</returns>
         public bool Contains(Point point)
         {
-            // We simply check if the point's coordinates meets the equation
+            // We check if the point's coordinates meet the equation of the line
             return (A * point.X + B * point.Y + C).Rounded() == 0;
         }
 
@@ -186,46 +191,83 @@ namespace GeoGen.AnalyticGeometry
         /// Finds out if a given line is parallel to this one.
         /// </summary>
         /// <param name="otherLine">The line.</param>
-        /// <returns>true, if the lines are parallel; false otherwise.s</returns>
+        /// <returns>true, if the lines are parallel; false otherwise.</returns>
         public bool IsParallelTo(Line otherLine)
         {
-            // We check if their direction vectors are the same (they are normalized)
+            // We check if their normal vectors are the same 
+            // (they are normalized, so they uniformly define the direction)
             return A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded();
         }
 
         /// <summary>
         /// Finds out if a given line is perpendicular to this one.
         /// </summary>
-        /// <param name="otherLine"></param>
-        /// <returns></returns>
+        /// <param name="otherLine">The line to be checked.</param>
+        /// <returns>true, if the lines are perpendicular; false otherwise.</returns>
         public bool IsPerpendicularTo(Line otherLine)
         {
-            // We check if their direction vectors are perpendicular same (they are normalized)
+            // We check if their normal vectors (A,B), (otherA, otherB) are perpendicular using the scalar product
             return (A * otherLine.A + B * otherLine.B).Rounded() == 0;
         }
 
         #endregion
 
-        #region Abstract HashCode and Equals implementation
+        #region Overloaded operators
 
         /// <summary>
-        /// Calculates the hash code of the object. This method is called once per
-        /// object, unlike GetHashCode, which will reuse the result of this method.
+        /// Checks if two lines are equal.
         /// </summary>
-        /// <returns>The hash code.</returns>
-        protected override int CalculateHashCode()
+        /// <param name="left">The left line.</param>
+        /// <param name="right">The right line.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public static bool operator ==(Line left, Line right) => left.Equals(right);
+
+        /// <summary>
+        /// Checks if two lines are not equal.
+        /// </summary>
+        /// <param name="left">The left line.</param>
+        /// <param name="right">The right line.</param>
+        /// <returns>true, if they are not equal; false otherwise.</returns>
+        public static bool operator !=(Line left, Line right) => !left.Equals(right);
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
         {
-            return new { a = A.Rounded(), b = B.Rounded(), c = C.Rounded() }.GetHashCode();
+            // Do the null and then the type check and then call the other Equals method
+            return otherObject != null && otherObject is Line line && Equals(line);
         }
 
         /// <summary>
-        /// Returns if a given analytic object is equal to this one.
+        /// Gets the hash code of this object.
         /// </summary>
-        /// <param name="other">The other object.</param>
-        /// <returns>true, if the objects are equal, false otherwise.</returns>
-        protected override bool IsEqualTo(Line other)
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
         {
-            return A.Rounded() == other.A.Rounded() && B.Rounded() == other.B.Rounded() && C.Rounded() == other.C.Rounded();
+            // Let's use the built-in .NET hash code calculator for anonymous types
+            return new { a = A.Rounded(), b = B.Rounded(), c = C.Rounded() }.GetHashCode();
+        }
+
+        #endregion
+
+        #region IEquatable implementation
+
+        /// <summary>
+        /// Finds out if the passed line is equal to this one.
+        /// </summary>
+        /// <param name="otherLine">The other line.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public bool Equals(Line otherLine)
+        {
+            // We can simply compare the equations of our lines because they are normalized
+            return A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded() && C.Rounded() == otherLine.C.Rounded();
         }
 
         #endregion
@@ -252,7 +294,7 @@ namespace GeoGen.AnalyticGeometry
                 // Or -1x
                 else if (A == -1)
                     result += "-x";
-                // Here it's 2x or -2x, which is fine
+                // Here it's something of type 2x or -2x, which is fine
                 else
                     result += $"{A}x";
             }
@@ -269,13 +311,13 @@ namespace GeoGen.AnalyticGeometry
                     else
                         result += " + ";
 
-                    // Again, we don't want 1x...Not even -y, we already have the sign
+                    // Again, we don't want 1y...Not even -y, we already have the sign
                     if (B == 1 || B == -1)
                         result += "y";
                     else
                         result += $"{Math.Abs(B).ToString()}y";
                 }
-                // If there is not an x-part
+                // If there was not an x-part
                 else
                 {
                     // Then we simply add the y-part. It can't be zero as well
@@ -289,7 +331,7 @@ namespace GeoGen.AnalyticGeometry
                 }
             }
 
-            // Add the end, which is much less iffy
+            // Add the end, which is much less iffy (pun intended)
             result += $" = {(-C).ToString()}";
 
             // We're here!

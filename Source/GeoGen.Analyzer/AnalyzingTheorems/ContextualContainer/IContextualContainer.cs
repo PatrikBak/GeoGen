@@ -5,7 +5,7 @@ namespace GeoGen.Analyzer
 {
     /// <summary>
     /// Represents a container that holds <see cref="GeometricalObject"/>s. This container
-    /// is responsible for creating them and mapping them between <see cref="AnalyticObject"/>s
+    /// is responsible for creating them and mapping them between <see cref="IAnalyticObject"/>s
     /// with respect to <see cref="IObjectsContainer"/>s.
     /// </summary>
     public interface IContextualContainer
@@ -32,7 +32,7 @@ namespace GeoGen.Analyzer
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
-        T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject;
+        T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject;
         void Recreate();
     }
 }

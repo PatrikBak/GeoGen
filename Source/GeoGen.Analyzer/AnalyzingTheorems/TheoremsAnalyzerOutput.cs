@@ -21,5 +21,7 @@ namespace GeoGen.Analyzer
 
 
         public List<(Theorem, int)> NumberOfTrueContainers { get; set; }
+
+        public List<(Theorem, int, int)> AfterRetesting { get; set; }
     }
 }

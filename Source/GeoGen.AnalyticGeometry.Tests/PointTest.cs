@@ -323,7 +323,7 @@ namespace GeoGen.AnalyticGeometry.Tests
             var alfa = a.InternalAngleBisector(b, c);
             var bcBisector = b.PerpendicularBisector(c);
             var circumCircle = new Circle(a, b, c);
-            var intersection = alfa.IntersectionWith(bcBisector);
+            var intersection = alfa.IntersectionWith(bcBisector).Value;
 
             Assert.IsTrue(circumCircle.Contains(intersection));
         }

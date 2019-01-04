@@ -1,10 +1,8 @@
-﻿using System;
-
-namespace GeoGen.AnalyticGeometry
+﻿namespace GeoGen.AnalyticGeometry
 {
     public static class DoubleExtensions
     {
-        public static unsafe double Rounded(this double number, int precision = 30)
+        public static unsafe double Rounded(this double number, int precision = 25)
         {
             var bits = *(long*) &number;
 
@@ -22,7 +20,7 @@ namespace GeoGen.AnalyticGeometry
 
             if (((bits >> (64 - importantBits)) & 1) == 1)
                 bits += 1L << (64 - importantBits);
-]
+
             return *(double*) &bits;
         }
 

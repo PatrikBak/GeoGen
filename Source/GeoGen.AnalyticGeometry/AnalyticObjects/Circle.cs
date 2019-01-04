@@ -6,14 +6,14 @@ using System.Linq;
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// Represents a geometrical 2D circle.
+    /// Represents a geometrical 2D circle. This circle is defined by its center and radius.
     /// </summary>
-    public class Circle : AnalyticObjectBase<Circle>
+    public class Circle : IAnalyticObject, IEquatable<Circle>
     {
         #region Public properties
 
         /// <summary>
-        /// Gets the centers of the circle.
+        /// Gets the center of the circle.
         /// </summary>
         public Point Center { get; }
 
@@ -27,50 +27,63 @@ namespace GeoGen.AnalyticGeometry
         #region Constructor
 
         /// <summary>
-        /// Constructs a new circle given by 3 given points. These points
-        /// must be mutually distinct and can't be collinear.
+        /// Initializes a new instance of the <see cref="Circle"/> structure
+        /// given by three non-collinear points that should lie on it.
         /// </summary>
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
         /// <param name="point3">The third point.</param>
         public Circle(Point point1, Point point2, Point point3)
         {
-           // The center has coordinates[x, y] satisfying
-           //
-           // (x - x1) ^ 2 + (y - y1) ^ 2 = (x - x2) ^ 2 + (y - y2) ^ 2
-           // (x - x1) ^ 2 + (y - y1) ^ 2 = (x - x3) ^ 2 + (y - y3) ^ 2
-           //
-           //
-           //  They can be easily reduced to
+            // The center has coordinates [x, y] satisfying
+            //
+            // (x - x1)^2 + (y - y1)^2 = (x - x2)^2 + (y - y2)^2
+            // (x - x1)^2 + (y - y1)^2 = (x - x3)^2 + (y - y3)^2
+            //
+            //
+            // From this we can find:
+            // 
+            //      x1^2(y2 - y3) + x2^2(y3 - y1) + x3^2(y1 - y2) - (y1 - y2)(y2 - y3)(y3 - y1) 
+            // x = -----------------------------------------------------------------------------
+            //                        2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+            //
+            //      y1^2(x3 - x2) + y2^2(x1 - x3) + y3^2(x2 - x1) + (x1 - x2)(x2 - x3)(x3 - x1)
+            // y = ----------------------------------------------------------------------------------
+            //                        2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+            // 
+            // If you want to verify it, then please, take a photo of those calculations and mail them to me, thanks :)
 
+            // Let's declare variables matching the ones in the equations
+            var x1 = point1.X;
+            var x2 = point2.X;
+            var x3 = point3.X;
+            var y1 = point1.Y;
+            var y2 = point2.Y;
+            var y3 = point3.Y;
 
-             //x cit(x1^ 2(y2 - y3) + x2 ^ 2(y3 - y1) + x3 ^ 2(y1 - y2) - (y1 - y2)(y2 - y3)(y3 - y1))
-              // 2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+            // Calculate the denominator
+            var denominator = 2 * (x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2));
 
-//y cit(x1(y2^ 2 - y3 ^ 2) +x2(y3 ^ 2 - y1 ^ 2) + x3(y1 ^ 2 - y2 ^ 2) + (x1 - x2)(x2 - x3)(x3 - x1))
-              // 2(x1(y2 - y3) + x2(y3 - y1) + x3(y1 - y2))
+            // If it's zero, then we have collinear points
+            if (denominator.Rounded() == 0)
+                throw new AnalyticException("Cannot construct a circle from collinear points");
 
+            // Now calculate x and y
+            var x = (x1.Squared() * (y2 - y3) + x2.Squared() * (y3 - y1) + x3.Squared() * (y1 - y2) - (y1 - y2) * (y2 - y3) * (y3 - y1)) / denominator;
+            var y = (y1.Squared() * (x3 - x2) + y2.Squared() * (x1 - x3) + y3.Squared() * (x2 - x1) + (x1 - x2) * (x2 - x3) * (x3 - x1)) / denominator;
 
-            // We create the perpendicular bisectors of lines P1P2, P1P3
-            var bisector1 = point1.PerpendicularBisector(point2);
-            var bisector2 = point1.PerpendicularBisector(point3);
+            // Set the center
+            Center = new Point(x, y);
 
-            // They should intersect in the center
-            var center = bisector1.IntersectionWith(bisector2);
-
-            // If the center is null, we have collinear points.
-            Center = center ?? throw new AnalyticException("Collinear points");
-
-            // Otherwise the situation is fine and radius is the distance
-            // from any point to the center.
+            // Calculate the radius
             Radius = point1.DistanceTo(Center);
         }
 
         /// <summary>
-        /// Constructs a new circle given by a center and a radius.
+        /// Initializes a new instance of the <see cref="Circle"/> structure given by its center and radius.
         /// </summary>
-        /// <param name="center">The center.</param>
-        /// <param name="radius">The radius.</param>
+        /// <param name="center">The center of the circle.</param>
+        /// <param name="radius">The radius of the circle.</param>
         public Circle(Point center, double radius)
         {
             Center = center;
@@ -82,34 +95,35 @@ namespace GeoGen.AnalyticGeometry
         #region Public methods
 
         /// <summary>
-        /// Determines if a given point lies on this circle.
+        /// Checks if a given point lies on this circle.
         /// </summary>
         /// <param name="point">The given point.</param>
-        /// <returns>true, if the point lies on the circle, false otherwise.</returns>
+        /// <returns>true, if the point lies on the circle; false otherwise.</returns>
         public bool Contains(Point point)
         {
-            // We simply check whether the coordinates of the point meet the equation
-            var dx = point.X - Center.X;
-            var dy = point.Y - Center.Y;
-
-            return (dx * dx + dy * dy - Radius * Radius).Rounded() == 0;
+            // We simply check whether the coordinates of the point meet the equation of this circle
+            return ((point.X - Center.X).Squared() + (point.Y - Center.Y).Squared() - Radius.Squared()).Rounded() == 0;
         }
 
         /// <summary>
         /// Finds out if a given circle is tangent to this circle.
         /// </summary>
-        /// <param name="line">The other circle.</param>
+        /// <param name="otherCircle">The other circle.</param>
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Circle otherCircle)
         {
-            var dist = Center.DistanceTo(otherCircle.Center).Rounded();
+            // Calculate the distance between their centers
+            var distanceBetweenCenters = Center.DistanceTo(otherCircle.Center).Rounded();
 
-            if (dist == (Radius + otherCircle.Radius).Rounded())
+            // If this distance is the same as the sum of their radii, then they're tangent externally
+            if (distanceBetweenCenters == (Radius + otherCircle.Radius).Rounded())
                 return true;
 
-            if (dist  == Math.Abs(Radius - otherCircle.Radius).Rounded())
+            // If this distance is the same as the difference between their radii, then they're tangent internally
+            if (distanceBetweenCenters == Math.Abs(Radius - otherCircle.Radius).Rounded())
                 return true;
 
+            // Otherwise they're not tangent
             return false;
         }
 
@@ -120,6 +134,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Line line)
         {
+            // 
             return Math.Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
         }
 
@@ -128,7 +143,7 @@ namespace GeoGen.AnalyticGeometry
         /// The given circle can't be equal to this. 
         /// </summary>
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        public List<Point> IntersectWith(Circle otherCircle)
+        public Point[] IntersectWith(Circle otherCircle)
         {
             // Make sure it is not equal
             if (this == otherCircle)
@@ -140,11 +155,11 @@ namespace GeoGen.AnalyticGeometry
             // See how many solutions there are.
             if (dist.Rounded() > (Radius + otherCircle.Radius).Rounded())
             {
-                return new List<Point>();
+                return new Point[0];
             }
             else if (dist.Rounded() < Math.Abs(Radius - otherCircle.Radius).Rounded())
             {
-                return new List<Point>();
+                return new Point[0];
             }
             else
             {
@@ -160,9 +175,9 @@ namespace GeoGen.AnalyticGeometry
                 var p2 = new Point(cx2 - h * (otherCircle.Center.Y - Center.Y) / dist, cy2 + h * (otherCircle.Center.X - Center.X) / dist);
 
                 if (p1 == p2)
-                    return new List<Point> { p1 };
+                    return new [] { p1 };
                 else
-                    return new List<Point> { p1, p2 };
+                    return new [] { p1, p2 };
             }
         }
 
@@ -171,7 +186,7 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="line">The line.</param>
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        public List<Point> IntersectWith(Line line)
+        public Point[] IntersectWith(Line line)
         {
             // Pull the coefficients of the equation of the line
             var a = line.A;
@@ -195,7 +210,7 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="b">The b coefficient.</param>
         /// <param name="c">The c coefficient.</param>
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        private List<Point> IntersectWithLine(double a, double b, double c)
+        private Point[] IntersectWithLine(double a, double b, double c)
         {
             // Pull the parameters of the equation of the circle
             var m = Center.X;
@@ -231,16 +246,16 @@ namespace GeoGen.AnalyticGeometry
             // x   --> 2bc/a^2 + 2bm/a - 2n
             // 1   --> (c/a + m)^2 + n^2 - r^2
 
-            var aCoef = b * b / (a * a) + 1;
-            var bCoef = 2 * b * c / (a * a) + 2 * b * m / a - 2 * n;
-            var cCoef = (c / a + m) * (c / a + m) + n * n - r * r;
+            var aCoef = (b/a).Squared() + 1;
+            var bCoef = 2 * b * c / a.Squared() + 2 * b * m / a - 2 * n;
+            var cCoef = (c / a + m).Squared() + n.Squared() - r.Squared();
 
             // Let the helper method solve the quadratic equation for y.
             var yRoots = MathematicalHelpers.SolveQuadraticEquation(aCoef, bCoef, cCoef);
 
             // If there are no solutions, we won't have any intersection
             if (yRoots.IsEmpty())
-                return new List<Point>();
+                return new Point[0];
 
             // Otherwise we compute the corresponding x-roots using x = (-c - by) / a
             var xRoots = yRoots.Select(y => (-c - b * y) / a).ToList();
@@ -253,31 +268,67 @@ namespace GeoGen.AnalyticGeometry
                 var yRoot = yRoots[i];
 
                 return changingVariables ? new Point(yRoot, xRoot) : new Point(xRoot, yRoot);
-            }).ToList();
+            }).ToArray();
         }
 
         #endregion
 
-        #region Abstract HashCode and Equals implementation
+        #region Overloaded operators
 
         /// <summary>
-        /// Calculates the hash code of the object. This method is called once per
-        /// object, unlike GetHashCode, which will reuse the result of this method.
+        /// Checks if two circles are equal.
         /// </summary>
-        /// <returns>The hash code.</returns>
-        protected override int CalculateHashCode()
+        /// <param name="left">The left circle.</param>
+        /// <param name="right">The right circle.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public static bool operator ==(Circle left, Circle right) => left.Equals(right);
+
+        /// <summary>
+        /// Checks if two circles are not equal.
+        /// </summary>
+        /// <param name="left">The left circle.</param>
+        /// <param name="right">The right circle.</param>
+        /// <returns>true, if they are not equal; false otherwise.</returns>
+        public static bool operator !=(Circle left, Circle right) => !left.Equals(right);
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
         {
-            return new { r = Radius.Rounded(), o = Center }.GetHashCode();
+            // Do the null and then the type check and then call the other Equals method
+            return otherObject != null && otherObject is Circle circle && Equals(circle);
         }
 
         /// <summary>
-        /// Returns if a given analytic object is equal to this one.
+        /// Gets the hash code of this object.
         /// </summary>
-        /// <param name="other">The other object.</param>
-        /// <returns>true, if the objects are equal, false otherwise.</returns>
-        protected override bool IsEqualTo(Circle other)
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
         {
-            return Center == other.Center && Radius.Rounded() == other.Radius.Rounded();
+            // Let's use the built-in .NET hash code calculator for anonymous types
+            return new { r = Radius.Rounded(), o = Center }.GetHashCode();
+        }
+
+        #endregion
+
+        #region IEquatable implementation
+
+        /// <summary>
+        /// Finds out if the passed circle is equal to this one.
+        /// </summary>
+        /// <param name="otherCircle">The other circle.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public bool Equals(Circle otherCircle)
+        {
+            // Check if the centers and radii are equal
+            return Center == otherCircle.Center && Radius.Rounded() == otherCircle.Radius.Rounded();
         }
 
         #endregion

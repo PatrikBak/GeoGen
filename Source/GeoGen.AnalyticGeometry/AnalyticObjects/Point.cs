@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// Represents a geometrical 2D point.
+    /// Represents a geometric 2D point.
     /// </summary>
-    public class Point : AnalyticObjectBase<Point>
+    public struct Point : IAnalyticObject, IEquatable<Point>
     {
         #region Public properties
 
@@ -100,86 +99,51 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="otherPoint">The other point.</param>
         /// <returns>The midpoint.</returns>
-        public Point Midpoint(Point otherPoint)
-        {
-            return (this + otherPoint) / 2;
-        }
+        public Point Midpoint(Point otherPoint) => (this + otherPoint) / 2;
 
         /// <summary>
         /// Calculates the euclidean distance to a given other point.
         /// </summary>
         /// <param name="otherPoint">The other point.</param>
         /// <returns>The distance to the other point.</returns>
-        public double DistanceTo(Point otherPoint)
-        {
-            var dx = X - otherPoint.X;
-            var dy = Y - otherPoint.Y;
-
-            return Math.Sqrt(dx * dx + dy * dy);
-        }
+        public double DistanceTo(Point otherPoint) => Math.Sqrt((X - otherPoint.X).Squared() + (Y - otherPoint.Y).Squared());
 
         /// <summary>
-        /// Constructs the internal angle bisector of the angle given by [ray1Point][this][ray2Point]
-        /// (or equivalently [ray2Point][this][ray1Point]). All three points
-        /// must be distinct and not collinear. 
+        /// Constructs the internal angle bisector of the angle [ray1Point][this][ray2Point]
+        /// (or equivalently [ray2Point][this][ray1Point]). All three points must be distinct
+        /// and not collinear. 
         /// </summary>
-        /// <param name="ray1Point">The first point on the ray starting from this point.</param>
-        /// <param name="ray2Point">The second point on the ray starting from this point.</param>
-        /// <returns>The internal angle bisector.</returns>
+        /// <param name="ray1Point">The first point on the ray starting from [this] point.</param>
+        /// <param name="ray2Point">The second point on the ray starting from [this] point.</param>
+        /// <returns>The internal angle bisector of the angle [ray1Point][this][ray2Point].</returns>
         public Line InternalAngleBisector(Point ray1Point, Point ray2Point)
         {
-            // First we create the circle with center in [this] and radius
-            // equal to distance between dist and first ray point
-            var circle = new Circle(this, ray1Point.DistanceTo(this));
+            // Denote A = [this], B = [ray1Point], C = [ray2Point]
+            // We're going to construct the line AX, where X is the intersection
+            // of the internal angle bisector of BAC with BC. It's known that
+            // BX / CX = AB / AC. One can use this to calculate the relation
+            // X = B + ||AB||/(||AB||+||AC||) . (C-B) (this is a vector relation)
 
-            // Now we create the circle connecting [this] and the second ray point
-            var line = new Line(this, ray2Point);
+            // First calculate the distances
+            var distanceAB = DistanceTo(ray1Point);
+            var distanceAC = DistanceTo(ray2Point);
 
-            // And intersect them
-            var intersections = circle.IntersectWith(line);
+            // Make sure their sum is not null...
+            if ((distanceAB + distanceAC).Rounded() == 0)
+                throw new AnalyticException("Cannot construct the angle bisector using equal points");
 
-            // Logically we must have 2 intersections. We need to pick
-            // the one lying on the ray from [this] to the second point
+            // Calculate the ratio
+            var ratio = distanceAB / (distanceAB + distanceAC);
 
-            // Generally, if we have a point C that lies on the line AB, then
-            // there exists a real number 't' such that t(B-A) = (C-A)/(B-A).
-            // Point C then lies on the ray AB if and only if t >= 0 (if t=0, then C=A)
-            // Since we know that C lies on AB, so we can choose whether to calculate
-            // the t from X, or from Y coordinates. However, one of these differences
-            // could be 0, hence we have to put the non-zero one. At least one of them
-            // must be non zero (cause points C, A are distinct).
-            //
-            // A = [this]
-            // B = ray2Point
-            // C = one of intersections
-            //
-            // The intersection must logically exist
-            var correctIntersection = intersections.First(i =>
-            {
-                // Calculate the X coordinate of the vector (C-A)
-                var dx1 = ray2Point.X - X;
+            // Construct the coordinates of point X
+            var x = ray1Point.X + ratio * (ray2Point.X - ray1Point.X);
+            var y = ray1Point.Y + ratio * (ray2Point.Y - ray1Point.Y);
 
-                // If it's not zero
-                if (dx1.Rounded() != 0)
-                {
-                    // Then we calculate the X coordinate of the vector B-A
-                    var dx2 = i.X - X;
+            // Construct X
+            var X = new Point(x, y);
 
-                    // And return if the corresponding t, that is equal to dx1 / dx2, is at least zero
-                    return (dx1 / dx2).Rounded() >= 0;
-                }
-
-                // Otherwise dx1 is zero and we have to use the Y differences. Calculate them
-                var dy1 = ray2Point.Y - Y;
-                var dy2 = i.Y - Y;
-
-                // And return if their ration is at least zero...
-                return (dy1 / dy2).Rounded() >= 0;
-            });
-
-            // Now we just return the perpendicular bisector of the line 
-            // connecting the first ray point with this correct intersection
-            return ray1Point.PerpendicularBisector(correctIntersection);
+            // And finally line AX
+            return new Line(this, X);
         }
 
         /// <summary>
@@ -191,17 +155,14 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The projection.</returns>
         public Point Project(Line line)
         {
-            // Get the perpendicular line
+            // Get the perpendicular line passing through this point
             var perpendicularLine = line.PerpendicularLine(this);
 
             // Intersect it with the given line
             var intersection = perpendicularLine.IntersectionWith(line);
 
-            // Get the result. It definitely should exist
-            var result = intersection ?? throw new Exception("Math has stopped working. The world is about to end.");
-
-            // Return the result
-            return result;
+            // Return the intersection. It definitely should exist
+            return intersection ?? throw new AnalyticException("This intersection should have existed. The precision is really flawed.");
         }
 
         #endregion
@@ -214,10 +175,7 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
         /// <returns>The sum of the points.</returns>
-        public static Point operator +(Point point1, Point point2)
-        {
-            return new Point(point1.X + point2.X, point1.Y + point2.Y);
-        }
+        public static Point operator +(Point point1, Point point2) => new Point(point1.X + point2.X, point1.Y + point2.Y);
 
         /// <summary>
         /// Scales a point by dividing the coordinates by a given factor.
@@ -225,10 +183,7 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point">The point.</param>
         /// <param name="factor">The factor.</param>
         /// <returns>The scaled point.</returns>
-        public static Point operator /(Point point, double factor)
-        {
-            return new Point(point.X / factor, point.Y / factor);
-        }
+        public static Point operator /(Point point, double factor) => new Point(point.X / factor, point.Y / factor);
 
         /// <summary>
         /// Scales a point by multiplying the coordinates by a given factor.
@@ -236,34 +191,59 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point">The point.</param>
         /// <param name="factor">The factor.</param>
         /// <returns>The scaled point.</returns>
-        public static Point operator *(Point point, double factor)
+        public static Point operator *(Point point, double factor) => new Point(point.X * factor, point.Y * factor);
+
+        /// <summary>
+        /// Checks if two points are equal.
+        /// </summary>
+        /// <param name="left">The left point.</param>
+        /// <param name="right">The right point.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public static bool operator ==(Point left, Point right) => left.Equals(right);
+
+        /// <summary>
+        /// Checks if two points are not equal.
+        /// </summary>
+        /// <param name="left">The left point.</param>
+        /// <param name="right">The right point.</param>
+        /// <returns>true, if they are not equal; false otherwise.</returns>
+        public static bool operator !=(Point left, Point right) => !left.Equals(right);
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
         {
-            return new Point(point.X * factor, point.Y * factor);
+            // Do the null and then the type check and then call the other Equals method
+            return otherObject != null && otherObject is Point point && Equals(point);
+        }
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
+        {
+            // Let's use the built-in .NET hash code calculator for anonymous types
+            return new { x = X.Rounded(), y = Y.Rounded() }.GetHashCode();
         }
 
         #endregion
 
-        #region Abstract HashCode and Equals implementation
+        #region IEquatable implementation
 
         /// <summary>
-        /// Calculates the hash code of the object. This method is called once per
-        /// object, unlike GetHashCode, which will reuse the result of this method.
+        /// Finds out if the passed point is equal to this one.
         /// </summary>
-        /// <returns>The hash code.</returns>
-        protected override int CalculateHashCode()
-        {
-            return new { x = X.Rounded(), y = Y.Rounded() }.GetHashCode();
-        }
-
-        /// <summary>
-        /// Returns if a given analytic object is equal to this one.
-        /// </summary>
-        /// <param name="other">The other object.</param>
-        /// <returns>true, if the objects are equal, false otherwise.</returns>
-        protected override bool IsEqualTo(Point other)
-        {
-            return X.Rounded() == other.X.Rounded() && Y.Rounded() == other.Y.Rounded();
-        }
+        /// <param name="otherPoint">The other point.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public bool Equals(Point otherPoint) => X.Rounded() == otherPoint.X.Rounded() && Y.Rounded() == otherPoint.Y.Rounded();
 
         #endregion
 

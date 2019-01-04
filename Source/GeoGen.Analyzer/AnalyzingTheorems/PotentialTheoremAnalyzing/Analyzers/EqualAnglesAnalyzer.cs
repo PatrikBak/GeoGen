@@ -32,9 +32,6 @@ namespace GeoGen.Analyzer
                 IncludeLines = true
             }).ToList();
 
-            // Find all lines
-            var allLines = newLines.Concat(oldLines).ToList();
-
             // A local helper function for getting all the pairs of line
             // representing an angle where at leasts one line is new
             IEnumerable<(LineObject line1, LineObject line2)> NewAngles()
@@ -49,42 +46,54 @@ namespace GeoGen.Analyzer
                         yield return (newLine, oldLine);
             }
 
-            // Go through all the new angles
-            foreach (var (line1, line2) in NewAngles())
+            // A local helper function for getting all the pairs of 
+            // angles where at least one contains a new line
+            IEnumerable<((LineObject, LineObject), (LineObject, LineObject))> NewPairsOfAngles()
             {
-                // Go through all the possible angles
-                foreach (var (line3, line4) in allLines.UnorderedPairs())
+                // First enumerate the new angles
+                var newAngles = NewAngles().ToList();
+
+                // Now enumerate the old line angles
+                var oldAngles = oldLines.UnorderedPairs().ToList();
+
+                // Now we can combine the new angles with themselves
+                foreach (var pairOfNewAngles in newAngles.UnorderedPairs())
+                    yield return pairOfNewAngles;
+
+                // And the new angles with the old ones
+                foreach (var newAngle in newAngles)
+                    foreach (var oldAngle in oldAngles)
+                        yield return (newAngle, oldAngle);
+            }
+
+            // Go through all the possible combinations
+            foreach (var ((line1, line2), (line3, line4)) in NewPairsOfAngles())
+            {
+                // Construct the verifier function
+                bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // Skip them if they are equal
-                    if ((line1, line2) == (line3, line4) || (line1, line2) == (line4, line3))
-                        continue;
+                    // Cast the lines to their analytic versions
+                    var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
+                    var analyticLine2 = container.GetAnalyticObject<Line>(line3, objectsContainer);
+                    var analyticLine3 = container.GetAnalyticObject<Line>(line3, objectsContainer);
+                    var analyticLine4 = container.GetAnalyticObject<Line>(line4, objectsContainer);
 
-                    // Construct the verifier function
-                    bool Verify(IObjectsContainer objectsContainer)
-                    {
-                        // Cast the lines to their analytic versions
-                        var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
-                        var analyticLine2 = container.GetAnalyticObject<Line>(line3, objectsContainer);
-                        var analyticLine3 = container.GetAnalyticObject<Line>(line3, objectsContainer);
-                        var analyticLine4 = container.GetAnalyticObject<Line>(line4, objectsContainer);
-
-                        // Return if the angles between them match
-                        return analyticLine1.AngleBetween(analyticLine2).Rounded() == analyticLine3.AngleBetween(analyticLine4).Rounded();
-                    }
-
-                    // Lazily return the output
-                    yield return new PotentialTheorem
-                    {
-                        // Set the type using the base property
-                        TheoremType = Type,
-
-                        // Set the function
-                        VerificationFunction = Verify,
-
-                        // Set the involved objects to our four angle lines
-                        InvolvedObjects = new[] { line1, line2, line3, line4 }
-                    };
+                    // Return if the angles between them match
+                    return analyticLine1.AngleBetween(analyticLine2).Rounded() == analyticLine3.AngleBetween(analyticLine4).Rounded();
                 }
+
+                // Lazily return the output
+                yield return new PotentialTheorem
+                {
+                    // Set the type using the base property
+                    TheoremType = Type,
+
+                    // Set the function
+                    VerificationFunction = Verify,
+
+                    // Set the involved objects to our four angle lines
+                    InvolvedObjects = new[] { line1, line2, line3, line4 }
+                };
             }
         }
     }

@@ -25,7 +25,7 @@ namespace GeoGen.Analyzer.Tests
         /// </summary>
         /// <param name="allObjects">The list of analytic representations of a geometric situation, each given as an array of analytic objects.</param>
         /// <returns>The contextual container holding given objects.</returns>
-        private static ContextualContainer CreateContainer(List<AnalyticObject[]> allObjects)
+        private static ContextualContainer CreateContainer(List<IAnalyticObject[]> allObjects)
         {
             // First we create a configuration 
             // We can simply make all the objects loose, it doesn't matter
@@ -95,15 +95,15 @@ namespace GeoGen.Analyzer.Tests
         public void Test_With_Triangle()
         {
             // Create container (it's good to draw it)
-            var container = CreateContainer(new List<AnalyticObject[]>
+            var container = CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0), 
                     new Point(0, 1), 
                     new Point(3, 6) 
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(0, 1),
@@ -219,9 +219,9 @@ namespace GeoGen.Analyzer.Tests
         public void Test_With_Four_Points_And_Line_Through_Them_And_Circle_Passing_Through_One()
         {
             // Create container (it's good to draw it)
-            var container = CreateContainer(new List<AnalyticObject[]>
+            var container = CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(1, 1),
@@ -230,7 +230,7 @@ namespace GeoGen.Analyzer.Tests
                     new Point(3, 3),
                     new Circle(new Point(-2, 1), Math.Sqrt(5))
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 1),
                     new Point(0, 2),
@@ -370,9 +370,9 @@ namespace GeoGen.Analyzer.Tests
         public void Test_Triangle_With_Midpoints_And_Centroid()
         {
             // Create container (it's good to draw it)
-            var container = CreateContainer(new List<AnalyticObject[]>
+            var container = CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(0, 1),
@@ -382,7 +382,7 @@ namespace GeoGen.Analyzer.Tests
                     new Point(0, 0.5),
                     new Point(1, 2)
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 2),
                     new Point(2, 1),
@@ -523,9 +523,9 @@ namespace GeoGen.Analyzer.Tests
         public void Test_Triangle_With_Midpoints_And_Feets_Of_Altitudes_Which_Should_Be_Concyclic()
         {
             // Create container (it's good to draw it)
-            var container = CreateContainer(new List<AnalyticObject[]>
+            var container = CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 5),
                     new Point(-2, 1),
@@ -537,7 +537,7 @@ namespace GeoGen.Analyzer.Tests
                     new Point(6.0 / 13, 61.0 / 13),
                     new Point(-0.4, 4.2)
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 3),
                     new Point(-2, 1),
@@ -570,15 +570,15 @@ namespace GeoGen.Analyzer.Tests
         public void Test_That_Collinear_Inconsistency_Causes_Inconsistent_Containers_Exception()
         {
             // Create action that should cause an exception
-            Action act = () => CreateContainer(new List<AnalyticObject[]>
+            Action act = () => CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(0, 1),
                     new Point(0, 2)
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(1, 0),
@@ -594,16 +594,16 @@ namespace GeoGen.Analyzer.Tests
         public void Test_That_Concyclic_Inconsistency_Causes_Inconsistent_Containers_Exception()
         {
             // Create action that should cause an exception
-            Action act = () => CreateContainer(new List<AnalyticObject[]>
+            Action act = () => CreateContainer(new List<IAnalyticObject[]>
             {
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(0, 1),
                     new Point(1, 0),
                     new Point(1, 1),
                 },
-                new AnalyticObject[]
+                new IAnalyticObject[]
                 {
                     new Point(0, 0),
                     new Point(0, 1),

@@ -113,7 +113,7 @@ namespace GeoGen.Analyzer
            
 
             var f = result.Where(pair => new int[] { 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }.Contains(pair.Item2)).ToList();
-
+            var ar = new List<(Theorem, int, int)>();
             if(f.Count != 0)
             {
                 container.Recreate();
@@ -122,7 +122,9 @@ namespace GeoGen.Analyzer
                 {
                     var count = manager.Count(d[pair.t].VerificationFunction);
 
-                    WriteLine($"{$"[{pair.t.Type}]",25} {$"Rozdiel: {Math.Abs(pair.Item2 - count)}",14}     Bol {pair.Item2}, uz je {count}");
+                    Console.WriteLine($"{$"[{pair.t.Type}]",25} {$"Rozdiel: {Math.Abs(pair.Item2 - count)}",14}     Bol {pair.Item2}, uz je {count}");
+
+                    ar.Add((pair.t, pair.Item2, count));
                 });
             }
 
@@ -133,7 +135,9 @@ namespace GeoGen.Analyzer
                 NumberOfTrueContainers = result,
 
                 // Set that we've finished successfully
-                TheoremAnalysisSuccessful = true
+                TheoremAnalysisSuccessful = true,
+
+                AfterRetesting = ar
             };
         }
 

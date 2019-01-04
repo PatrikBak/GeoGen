@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,47 +25,53 @@ namespace GeoGen.Analyzer
                 IncludeLines = true
             }).ToList();
 
-            // Find all lines.
-            var allLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            // Find old lines.
+            var oldLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludeLines = true
             }).ToList();
 
-            // Go through all the new lines
-            foreach (var newLine in newLines)
+            // A local helper function for getting all the pairs of 
+            // lines where at least of them is new
+            IEnumerable<(LineObject, LineObject)> NewPairsOfLines()
             {
-                // Go through all the lines
-                foreach (var anyLine in allLines)
+                // First combine the new lines with themselves
+                foreach (var pairOfLines in newLines.UnorderedPairs())
+                    yield return pairOfLines;
+
+                // Now combine the new lines with the old ones
+                foreach (var newLine in newLines)
+                    foreach (var oldLine in oldLines)
+                        yield return (newLine, oldLine);
+            }
+
+            // Go through all the possible combinations
+            foreach (var (line1, line2) in NewPairsOfLines())
+            {
+                // Construct the verifier function
+                bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // If we happen to have equal ones, skip them
-                    if (newLine == anyLine)
-                        continue;
+                    // Cast the lines to their analytic versions
+                    var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
+                    var analyticLine2 = container.GetAnalyticObject<Line>(line2, objectsContainer);
 
-                    // Construct the verifier function
-                    bool Verify(IObjectsContainer objectsContainer)
-                    {
-                        // Cast the lines to their analytic versions
-                        var analyticLine1 = container.GetAnalyticObject<Line>(newLine, objectsContainer);
-                        var analyticLine2 = container.GetAnalyticObject<Line>(anyLine, objectsContainer);
-
-                        // Return if there are parallel
-                        return analyticLine1.IsParallelTo(analyticLine2);
-                    }
-
-                    // Lazily return the output
-                    yield return new PotentialTheorem
-                    {
-                        // Set the type using the base property
-                        TheoremType = Type,
-
-                        // Set the function
-                        VerificationFunction = Verify,
-
-                        // Set the involved objects to our two lines
-                        InvolvedObjects = new[] { newLine, anyLine }
-                    };
+                    // Return if there are perpendicular
+                    return analyticLine1.IsParallelTo(analyticLine2);
                 }
+
+                // Lazily return the output
+                yield return new PotentialTheorem
+                {
+                    // Set the type using the base property
+                    TheoremType = Type,
+
+                    // Set the function
+                    VerificationFunction = Verify,
+
+                    // Set the involved objects to our two lines
+                    InvolvedObjects = new[] { line1, line2 }
+                };
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,47 +25,53 @@ namespace GeoGen.Analyzer
                 IncludeCirces = true
             }).ToList();
 
-            // Find all circles.
-            var allCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            // Find old circles.
+            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).ToList();
 
-            // Go through all the new circles
-            foreach (var newCircle in newCircles)
+            // A local helper function for getting all the pairs of 
+            // circles where at least of them is new
+            IEnumerable<(CircleObject, CircleObject)> NewPairOfCircles()
             {
-                // Go through all the circles
-                foreach (var anyCircle in allCircles)
+                // First combine the new circles with themselves
+                foreach (var pairOfCircles in newCircles.UnorderedPairs())
+                    yield return pairOfCircles;
+
+                // Now combine the new circles with just the old ones
+                foreach (var newCircle in newCircles)
+                    foreach (var oldCircle in oldCircles)
+                        yield return (newCircle, oldCircle);
+            }
+
+            // Go through all the possible combinations
+            foreach (var (circle1, circle2) in NewPairOfCircles())
+            {
+                // Construct the verifier function
+                bool Verify(IObjectsContainer objectsContainer)
                 {
-                    // If we happen to have equal ones, skip them
-                    if (newCircle == anyCircle)
-                        continue;
+                    // Cast the circles to their analytic versions
+                    var analyticCircle1 = container.GetAnalyticObject<Circle>(circle1, objectsContainer);
+                    var analyticCircle2 = container.GetAnalyticObject<Circle>(circle2, objectsContainer);
 
-                    // Construct the verifier function
-                    bool Verify(IObjectsContainer objectsContainer)
-                    {
-                        // Cast the circles to their analytic versions
-                        var analyticCircle1 = container.GetAnalyticObject<Circle>(newCircle, objectsContainer);
-                        var analyticCircle2 = container.GetAnalyticObject<Circle>(anyCircle, objectsContainer);
-
-                        // Return if there are tangent to each other
-                        return analyticCircle1.IsTangentTo(analyticCircle2);
-                    }
-
-                    // Lazily return the output
-                    yield return new PotentialTheorem
-                    {
-                        // Set the type using the base property
-                        TheoremType = Type,
-
-                        // Set the function
-                        VerificationFunction = Verify,
-
-                        // Set the involved objects to our two circles
-                        InvolvedObjects = new[] { newCircle, anyCircle }
-                    };
+                    // Return if there are tangent to each other
+                    return analyticCircle1.IsTangentTo(analyticCircle2);
                 }
+
+                // Lazily return the output
+                yield return new PotentialTheorem
+                {
+                    // Set the type using the base property
+                    TheoremType = Type,
+
+                    // Set the function
+                    VerificationFunction = Verify,
+
+                    // Set the involved objects to our two circles
+                    InvolvedObjects = new[] { circle1, circle2 }
+                };
             }
         }
     }

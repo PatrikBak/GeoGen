@@ -18,7 +18,7 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// The map representing the actual content of the container.
         /// </summary>
-        private readonly Map<ConfigurationObject, AnalyticObject> _content = new Map<ConfigurationObject, AnalyticObject>();
+        private readonly Map<ConfigurationObject, IAnalyticObject> _content = new Map<ConfigurationObject, IAnalyticObject>();
 
         /// <summary>
         /// The dictionary mapping accepted types of analytic objects to 
@@ -61,7 +61,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="objects">The configuration objects to be added to the container.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic versions of the objects.</param>
-        public void Add(IEnumerable<ConfigurationObject> objects, Func<List<AnalyticObject>> constructor)
+        public void Add(IEnumerable<ConfigurationObject> objects, Func<List<IAnalyticObject>> constructor)
         {
             // Prepare the constructor function
             bool Construct()
@@ -110,7 +110,7 @@ namespace GeoGen.Analyzer
         /// <param name="constructor">The constructor function that performs the construction of the analytic version of the object.</param>
         /// <param name="equalObject">If there already is the same object in the container, this value will be set to that object. Otherwise it will be null.</param>
         /// <param name="objectConstructed">Indicates if the construction was successful.</param>
-        public void TryAdd(ConfigurationObject configurationObject, Func<AnalyticObject> constructor, out bool objectConstructed, out ConfigurationObject equalObject)
+        public void TryAdd(ConfigurationObject configurationObject, Func<IAnalyticObject> constructor, out bool objectConstructed, out ConfigurationObject equalObject)
         {
             // Local function that does the construction and returns whether it's constructible and possibly an equal object
             (bool successful, ConfigurationObject equalObject) Construct()
@@ -146,21 +146,21 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The analytic object of a given configuration object.</returns>
-        public AnalyticObject Get(ConfigurationObject configurationObject) => _content.GetRightValue(configurationObject);
+        public IAnalyticObject Get(ConfigurationObject configurationObject) => _content.GetRightValue(configurationObject);
 
         /// <summary>
         /// Gets the configuration object corresponding to a given analytic object.
         /// </summary>
         /// <param name="analyticObject">The analytic object.</param>
         /// <returns>The configuration object of a given analytic object.</returns>
-        public ConfigurationObject Get(AnalyticObject analyticObject) => _content.GetLeftValue(analyticObject);
+        public ConfigurationObject Get(IAnalyticObject analyticObject) => _content.GetLeftValue(analyticObject);
 
         /// <summary>
         /// Finds out if a given analytic object is present if the container.
         /// </summary>
         /// <param name="analyticObject">The analytic object.</param>
         /// <returns>true, if the object is present in the container; false otherwise.</returns>
-        public bool Contains(AnalyticObject analyticObject) => _content.ContainsRightKey(analyticObject);
+        public bool Contains(IAnalyticObject analyticObject) => _content.ContainsRightKey(analyticObject);
 
         /// <summary>
         /// Finds out if a given configuration object is present if the container.
@@ -214,7 +214,7 @@ namespace GeoGen.Analyzer
         /// Gets a generic enumerator.
         /// </summary>
         /// <returns>A generic enumerator.</returns>
-        public IEnumerator<(ConfigurationObject configurationObject, AnalyticObject analyticObject)> GetEnumerator() => _content.GetEnumerator();
+        public IEnumerator<(ConfigurationObject configurationObject, IAnalyticObject analyticObject)> GetEnumerator() => _content.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.
@@ -235,7 +235,7 @@ namespace GeoGen.Analyzer
         /// <param name="configurationObject">The configuration object.</param>
         /// <param name="analyticalObject">The analytical object.</param>
         /// <param name="equalObject">Either the equal configuration object already present in the container; or null, if there's none.</param>
-        private void TryAdd(ConfigurationObject configurationObject, AnalyticObject analyticObject, out ConfigurationObject equalObject)
+        private void TryAdd(ConfigurationObject configurationObject, IAnalyticObject analyticObject, out ConfigurationObject equalObject)
         {
             // Check if the types of objects correspond. This could save us some time while finding weird errors
             if (_correctTypes[analyticObject.GetType()] != configurationObject.ObjectType)

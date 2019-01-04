@@ -14,6 +14,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="looseObjectsHolder">The loose objects holder whose objects should be constructed.</param>
         /// <returns>Analytic versions of particular loose objects of the holder.</returns>
-        List<AnalyticObject> Construct(LooseObjectsHolder looseObjectsHolder);
+        List<IAnalyticObject> Construct(LooseObjectsHolder looseObjectsHolder);
     }
 }

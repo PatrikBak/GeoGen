@@ -152,7 +152,7 @@ namespace GeoGen.Analyzer.Tests
             var C = Construct(RandomPointOnLine, l);
             var D = Construct(RandomPointOnLine, l);
             var E = Construct(SecondIntersectionOfCircleFromPointsAndLineFromPoints, D, A, B, C);
-            var F = Construct(RandomPointOnLineFromPoints, A, E);
+            var F = Construct(RandomPointOnLineSegment, A, E);
 
             // Identify
             Identify(l, A, B, C, D, E, F);

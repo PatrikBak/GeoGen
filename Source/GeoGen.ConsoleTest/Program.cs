@@ -1,4 +1,5 @@
-﻿using GeoGen.Analyzer;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Analyzer;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Runner;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using static GeoGen.Core.PredefinedConstructionType;
@@ -68,7 +70,7 @@ namespace GeoGen.ConsoleTest
             _stopwatch.Stop();
 
             //Console.WriteLine($"{(i+1)} took {_stopwatch.ElapsedMilliseconds}");
-            //Console.SetOut(new StreamWriter("weird2.txt", append: false) { AutoFlush = true });
+            Console.SetOut(new StreamWriter("weird.txt", append: false) { AutoFlush = true });
 
             var i = 0;
 
@@ -77,47 +79,43 @@ namespace GeoGen.ConsoleTest
                 i++;
                 if (i % 10000 == 0)
                     Console.WriteLine(i);
-                    //var inconsistencies = inconsistenciesHandler.AddAndReturnInconsistencies(output);
-                    //
-                    //if (inconsistencies.Count == 0)
-                    //    return;
-                    //
-                    //var formatter = new OutputFormatter(output.Configuration);
-                    //Console.WriteLine("-------------------\n");
-                    //Console.WriteLine(formatter.FormatConfiguration());
-                    //Console.WriteLine();
-                    //Console.WriteLine("Inconsistent theorems:");
-                    //Console.WriteLine();
-                    //Console.WriteLine(string.Join(Environment.NewLine, inconsistencies));
-                    //Console.ReadKey(true);
-                    //Console.Clear();
+                //var inconsistencies = inconsistenciesHandler.AddAndReturnInconsistencies(output);
+                //
+                //if (inconsistencies.Count == 0)
+                //    return;
+                //
+                //var formatter = new OutputFormatter(output.Configuration);
+                //Console.WriteLine("-------------------\n");
+                //Console.WriteLine(formatter.FormatConfiguration());
+                //Console.WriteLine();
+                //Console.WriteLine("Inconsistent theorems:");
+                //Console.WriteLine();
+                //Console.WriteLine(string.Join(Environment.NewLine, inconsistencies));
+                //Console.ReadKey(true);
+                //Console.Clear();
 
 
-                    output.AnalyzerOutput.NumberOfTrueContainers.Sort((p1, p2) => p1.Item2 - p2.Item2);
-                var l = output.AnalyzerOutput.NumberOfTrueContainers.Where(p => p.Item2 != 0 && p.Item2 != 1 && p.Item2 != Containers).ToList();
+                var list = output.AnalyzerOutput.AfterRetesting;
 
-                if (l.Count == 0)
+                if (list.Count == 0)
                     return;
 
-                var fd = l.Where(pair => new int[] { 2,3,4,5,6 }.Contains(pair.Item2)).ToList();
-
-                if (fd.Count == 0)
-                    return;
-
-
+                
                 var formatter = new OutputFormatter(output.Configuration);
 
-                //Console.WriteLine(formatter.FormatConfiguration());
-                //Console.WriteLine("-------------------\n");
-                //Console.WriteLine("Theorems:\n");
-                //fd.ForEach(pair =>
-                //{
-                //    Console.WriteLine($"{pair.Item2} {formatter.ConvertTheoremToString(pair.Item1)}");
-                //});
-                //
-                    //Console.ReadKey(true);
-                    //Console.Clear();
+                Console.WriteLine();
+                Console.WriteLine(formatter.FormatConfiguration());
+                Console.WriteLine("-------------------\n");
+                Console.WriteLine("Theorems:\n");
+                list.ForEach(pair =>
+                {
+                    Console.WriteLine($"{pair.Item2} {formatter.ConvertTheoremToString(pair.Item1)}");
                 });
+                Console.WriteLine();
+
+                //Console.ReadKey(true);
+                //Console.Clear();
+            });
             //}
 
             //PrintResult(result);

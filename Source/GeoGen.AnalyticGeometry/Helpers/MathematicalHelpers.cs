@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// A static helper class for math functions.
+    /// A static helper class for math operations.
     /// </summary>
     public static class MathematicalHelpers
     {
         /// <summary>
-        /// Solves a given quadratic equation. 
+        /// Solves a given quadratic equation of the form ax^2 + bx + c = 0. This 
+        /// method internally uses <see cref="DoubleExtensions.Rounded(double, int)"/> method.
         /// </summary>
         /// <param name="a">The a coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <param name="b">The b coefficient of the equation ax^2 + bx + c = 0.</param>
         /// <param name="c">The c coefficient of the equation ax^2 + bx + c = 0.</param>
-        /// <returns>The list of solutions. If there is no solution, an empty list.</returns>
-        public static List<double> SolveQuadraticEquation(double a, double b, double c)
+        /// <returns>An array of solutions. If there is no solution, an empty array.</returns>
+        public static double[] SolveQuadraticEquation(double a, double b, double c)
         {
-            // Calculate and round the discriminant
+            // Calculate the discriminant
             var d = b * b - 4 * a * c;
 
             // If it less than zero, then we have no solutions
             if (d.Rounded() < 0)
-                return new List<double>();
+                return new double[0];
 
             // If it's exactly zero, then we have exactly one solution
             if (d.Rounded() == 0)
-                return new List<double> {-b / (2 * a)};
+                return new[] { -b / (2 * a) };
 
             // Otherwise we have 2 solution. Let's calculate sqrt(d).
             var squareRoot = Math.Sqrt(d);
@@ -36,18 +36,15 @@ namespace GeoGen.AnalyticGeometry
             var root1 = (-b - squareRoot) / (2 * a);
             var root2 = (-b + squareRoot) / (2 * a);
 
-            // Finally we wrap the solutions as list.
-            return new List<double> {root1, root2};
+            // Return them in an array
+            return new[] { root1, root2 };
         }
 
         /// <summary>
-        /// Converts a given angle to radius. 
+        /// Converts a given angle in degrees to radians.
         /// </summary>
         /// <param name="angleInDegrees">The angle in degrees.</param>
         /// <returns>The angle in radians.</returns>
-        public static double ToRadians(double angleInDegrees)
-        {
-            return angleInDegrees * Math.PI / 180;
-        }
+        public static double ToRadians(double angleInDegrees) => angleInDegrees * Math.PI / 180;
     }
 }

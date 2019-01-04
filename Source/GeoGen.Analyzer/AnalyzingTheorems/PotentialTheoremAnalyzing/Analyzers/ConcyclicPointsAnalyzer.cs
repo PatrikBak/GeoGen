@@ -24,14 +24,12 @@ namespace GeoGen.Analyzer
                 IncludePoints = true,
             })
             // And find all the circles that pass through it
-            .SelectMany(point => point.Circles)
-            // Take only those that contain at least 4 points
-            .Where(circle => circle.Points.Count >= 4)
-            // And are distinct 
-            .Distinct()
-            // For each of them their quadruples of their points
-            .SelectMany(circle => circle.Points.Subsets(4))
-            // Each represents a theorem (not even potential, the contextual container made sure it's true)
+            .SelectMany(point => point.Circles.Select(circle => (point, circle)))
+            // Take only those circles that contain at least 4 points
+            .Where(pair => pair.circle.Points.Count >= 4)
+            // And for every such a circle take those quadruples of points that contain the new one we're interested in
+            .SelectMany(pair => pair.circle.Points.Subsets(4).Where(points => points.Contains(pair.point)))
+            // Each such a quadruples represents a theorem (not even potential, the contextual container made sure it's true)
             .Select(quadruple => new PotentialTheorem
             {
                 // Set the type using the base property
@@ -40,7 +38,7 @@ namespace GeoGen.Analyzer
                 // Set the verifier function to a constant function returning always true
                 VerificationFunction = _ => true,
 
-                // Set the involved objects to the these triple of points
+                // Set the involved objects to the these quadruples of points
                 InvolvedObjects = quadruple
             });
         }

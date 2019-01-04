@@ -89,7 +89,7 @@ namespace GeoGen.AnalyticGeometry.Tests
             var projB = b.Project(new Line(a, c));
             var projC = c.Project(new Line(a, b));
 
-            var h = new Line(a, projA).IntersectionWith(new Line(b, projB));
+            var h = new Line(a, projA).IntersectionWith(new Line(b, projB)).Value;
 
             var midAh = h.Midpoint(a);
             var midBh = h.Midpoint(b);
@@ -207,7 +207,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var line = new Line(tuple.Item1, tuple.Item2);
                 var interesections = circle.IntersectWith(line);
 
-                Assert.AreEqual(1, interesections.Count);
+                Assert.AreEqual(1, interesections.Length);
                 Assert.AreEqual(results[i], interesections.First());
             }
         }
@@ -246,7 +246,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var line = new Line(tuple.Item1, tuple.Item2);
                 var intersections = circle.IntersectWith(line);
 
-                Assert.AreEqual(2, intersections.Count);
+                Assert.AreEqual(2, intersections.Length);
                 Assert.IsTrue(EqualPoints(i, intersections));
             }
         }
@@ -348,7 +348,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var circle = circles[i];
                 var intersections = mainCircle.IntersectWith(circle);
 
-                Assert.AreEqual(1, intersections.Count);
+                Assert.AreEqual(1, intersections.Length);
                 Assert.AreEqual(results[i], intersections[0]);
                 Assert.IsTrue(circle.IsTangentTo(mainCircle));
                 Assert.IsTrue(mainCircle.IsTangentTo(circle));
@@ -387,7 +387,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var circle = circles[i];
                 var interesections = mainCircle.IntersectWith(circle);
 
-                Assert.AreEqual(2, interesections.Count);
+                Assert.AreEqual(2, interesections.Length);
                 Assert.IsTrue(EqualPoints(i, interesections));
             }
         }

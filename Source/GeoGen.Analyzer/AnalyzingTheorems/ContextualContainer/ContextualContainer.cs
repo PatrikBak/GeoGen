@@ -18,7 +18,7 @@ namespace GeoGen.Analyzer
         /// The dictionary mapping objects container to the maps between geometrical objects
         /// and analytic objects (that are retrieved from the particular container).
         /// </summary>
-        private Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>> _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
+        private Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>> _objects = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
 
         /// <summary>
         /// The set of all the old points in the container.
@@ -101,7 +101,7 @@ namespace GeoGen.Analyzer
         private void Initialize()
         {
             // Initialize the dictionary mapping containers to the object maps
-            Manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, AnalyticObject>()));
+            Manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
 
             try
             {
@@ -112,7 +112,7 @@ namespace GeoGen.Analyzer
             // resolve it as an inconsistency. These exception are possible, because it would be very
             // hard to predict every possible outcome of the fact that the numerical system is not 
             // precise. Other exceptions would be a bigger deal and we won't hide them
-            catch (AnalyticException e)
+            catch (AnalyticException)
             {
                 throw new InconsistentContainersException();
             }
@@ -198,7 +198,7 @@ namespace GeoGen.Analyzer
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
-        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : AnalyticObject
+        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject
         {
             // Find the right map, pull the analytic object from it, and cast it
             return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
@@ -627,8 +627,8 @@ namespace GeoGen.Analyzer
         {
             Manager.RecreateContainers();
 
-            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, AnalyticObject>>();
-            Manager.ForEach(c => newMap.Add(c, new Map<GeometricalObject, AnalyticObject>()));
+            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
+            Manager.ForEach(c => newMap.Add(c, new Map<GeometricalObject, IAnalyticObject>()));
 
             _objects.ForEach(pair =>
             {
@@ -636,7 +636,7 @@ namespace GeoGen.Analyzer
 
                 pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
                 {
-                    AnalyticObject analyticObject;
+                    IAnalyticObject analyticObject;
 
                     if (geometricalObject.ConfigurationObject != null)
                         analyticObject = container.Get(geometricalObject.ConfigurationObject);

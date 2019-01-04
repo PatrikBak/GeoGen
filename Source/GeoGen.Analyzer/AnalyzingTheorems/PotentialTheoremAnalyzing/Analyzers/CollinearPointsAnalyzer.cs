@@ -24,14 +24,12 @@ namespace GeoGen.Analyzer
                 IncludePoints = true,
             })
             // And find all the lines that pass through it
-            .SelectMany(point => point.Lines)
-            // Take only those that contain at least 3 points
-            .Where(line => line.Points.Count >= 3)
-            // And are distinct 
-            .Distinct()
-            // For each of them their triples of their points
-            .SelectMany(line => line.Points.Subsets(3))
-            // Each represents a theorem (not even potential, the contextual container made sure it's true)
+            .SelectMany(point => point.Lines.Select(line => (point, line)))
+            // Take only those lines that contain at least three points
+            .Where(pair => pair.line.Points.Count >= 3)
+            // And for every such a line take those triples of points that contain the new one we're interested in
+            .SelectMany(pair => pair.line.Points.Subsets(3).Where(points => points.Contains(pair.point)))
+            // Each such a triple represents a theorem (not even potential, the contextual container made sure it's true)
             .Select(triple => new PotentialTheorem
             {
                 // Set the type using the base property

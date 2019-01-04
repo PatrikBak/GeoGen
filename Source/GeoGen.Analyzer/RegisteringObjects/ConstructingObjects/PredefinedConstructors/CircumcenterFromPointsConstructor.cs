@@ -14,7 +14,7 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="input">The analytic objects to be used as an input.</param>
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
-        protected override AnalyticObject Construct(AnalyticObject[] input)
+        protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
             var point1 = (Point) input[0];

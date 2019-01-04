@@ -38,7 +38,7 @@
         /// <summary>
         /// A random point lying on the line constructed from 2 points (signature {P, P}).
         /// </summary>
-        RandomPointOnLineFromPoints,
+        RandomPointOnLineSegment,
 
         /// <summary>
         /// A random point lying on a line (signature L).

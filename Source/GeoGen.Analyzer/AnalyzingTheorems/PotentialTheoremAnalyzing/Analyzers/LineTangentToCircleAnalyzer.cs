@@ -38,30 +38,30 @@ namespace GeoGen.Analyzer
                 IncludeCirces = true
             }).ToList();
 
-            // Find all lines.
-            var allLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            // Find old lines.
+            var oldLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludeLines = true,
             }).ToList();
 
             // A local helper function for combining pairs consisting of
             // one line and one circle where at least one of them is new
-            IEnumerable<(LineObject line, CircleObject circle)> CombineLineAndCircle()
+            IEnumerable<(LineObject, CircleObject)> CombineLinesWithCircles()
             {
                 // First combine the new lines with all the circles
                 foreach (var newLine in newLines)
                     foreach (var anyCircle in allCircles)
                         yield return (newLine, anyCircle);
 
-                // Then combine the new circles with all the lines
+                // Then combine the new circles with just the old lines
                 foreach (var newCircle in newCircles)
-                    foreach (var anyLine in allLines)
-                        yield return (anyLine, newCircle);
+                    foreach (var oldLine in oldLines)
+                        yield return (oldLine, newCircle);
             }
 
             // Go through all the possible combinations
-            foreach (var (line, circle) in CombineLineAndCircle())
+            foreach (var (line, circle) in CombineLinesWithCircles())
             {
                 // Construct the verifier function
                 bool Verify(IObjectsContainer objectsContainer)
