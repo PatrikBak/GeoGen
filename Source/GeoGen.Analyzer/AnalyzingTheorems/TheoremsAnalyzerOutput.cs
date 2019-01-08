@@ -1,5 +1,4 @@
-﻿using GeoGen.Core;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Analyzer
 {
@@ -9,19 +8,19 @@ namespace GeoGen.Analyzer
     public class TheoremsAnalyzerOutput
     {
         /// <summary>
-        /// Gets or sets whether the theorem analysis successfully finished.
+        /// Gets or sets whether the theorem analysis successfully finished. 
         /// </summary>
         public bool TheoremAnalysisSuccessful { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of theorems. This value may be null if the theorem analysis didn't 
-        /// finish successfully.
+        /// Gets or sets the list of found theorems.
         /// </summary>
-        public List<Theorem> Theorems { get; set; }
+        public List<AnalyzedTheorem> Theorems { get; set; }
 
-
-        public List<(Theorem, int)> NumberOfTrueContainers { get; set; }
-
-        public List<(Theorem, int, int)> AfterRetesting { get; set; }
+        /// <summary>
+        /// Gets or sets the list of theorems that were true in some containers, but after
+        /// the second test they weren't evaluated as correct ones.
+        /// </summary>
+        public List<AnalyzedTheorem> PotentialFalseNegatives { get; set; }
     }
 }

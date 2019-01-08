@@ -1,10 +1,11 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// A class containing static utilities for manipulation with analytic objects.
+    /// A static helper class for manipulation with analytic objects.
     /// </summary>
     public static class AnalyticHelpers
     {
@@ -12,31 +13,31 @@ namespace GeoGen.AnalyticGeometry
         /// Finds all intersections of given analytic objects. They must not
         /// contain <see cref="Point"/>s and duplicate objects.
         /// </summary>
-        /// <param name="inputObjects">The input objects.</param>
+        /// <param name="objects">The objects to be intersected.</param>
         /// <returns>The intersections array.</returns>
-        public static Point[] Intersect(params IAnalyticObject[] inputObjects)
+        public static Point[] Intersect(params IAnalyticObject[] objects)
         {
             // Find which of the passed objects are lines and circles
-            var lines = inputObjects.OfType<Line>().ToArray();
-            var circles = inputObjects.OfType<Circle>().ToArray();
+            var lines = objects.OfType<Line>().ToArray();
+            var circles = objects.OfType<Circle>().ToArray();
 
-            // Prepare the array of possible intersections
+            // Prepare an array of possible intersections
             Point[] intersections;
 
-            // Prepare the array or intersected objects
+            // Prepare an array or intersected objects
             IAnalyticObject[] intersected;
 
             // First check if we have two lines...
             if (lines.Length >= 2)
             {
-                // If yes, then we intersect them. 
+                // If yes, then we intersect them
                 var intersection = lines[0].IntersectionWith(lines[1]);
 
-                // If there is no intersection, then we can immediately return an empty set
+                // If there is no intersection, then we can immediately return an empty array
                 if (intersection == null)
                     return new Point[0];
 
-                // Otherwise we set the intersection array to this one
+                // Otherwise we set the intersections to this single one
                 intersections = new[] { intersection.Value };
 
                 // And set the intersected objects
@@ -62,9 +63,9 @@ namespace GeoGen.AnalyticGeometry
             }
 
             // Now we find the remaining (non-intersected) objects
-            var remaningObjects = inputObjects.Where(obj => !intersected.Contains(obj)).ToArray();
+            var remaningObjects = objects.Where(obj => !intersected.Contains(obj)).ToArray();
 
-            // And select those intersection points that lie on all the remaining objects object
+            // And select those intersection points that lie on all the remaining objects
             return intersections.Where(point => remaningObjects.All(obj => LiesOn(obj, point))).ToArray();
         }
 
@@ -86,7 +87,7 @@ namespace GeoGen.AnalyticGeometry
                 case Circle circle:
                     return circle.Contains(point);
 
-                // Otherwise there is a point...
+                // Otherwise we have a problem....
                 default:
                     throw new AnalyticException("Incorrect analytic object.");
             }
@@ -99,7 +100,7 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if all the passed points are collinear; false otherwise.</returns>
         public static bool AreCollinear(params Point[] points)
         {
-            // Take two points and construct the line
+            // Take two points and construct their line
             var line = new Line(points[0], points[1]);
 
             // Return if all other points lie on this line
@@ -116,18 +117,16 @@ namespace GeoGen.AnalyticGeometry
             var a = new Point(0, 0);
             var b = new Point(1, 0);
 
-            // In order to generate a third point C, we need to establish 
-            // the rules. We want each two angles <A, <B, <C to have the
-            // absolute difference at least d, where d is a constant.
-            // Now we WLOG assume that <A is the largest angle and <C the smallest angle.
-            // We also want to have <C to be at least 'd' and 90 - <A to be at least 'd'. 
-            // In that way we get a triangle that is acute-angled, isn't too flat, 
-            // isn't too close to a right-angled triangle and isn't close to a isosceles triangle.
-            // It can be shown that if we generate <A from the interval (60+d, 90-d) and then
-            // <B from the interval ((180+d-A)/2, A-d), that we will get the wanted result (simple math).
-            // In order to be able to generate A, we need to have d from the interval (0,15). 
-            // Generally the bigger, the better, but not very close to 15, because in that case
-            // we might limit the variety of possible triangles (alpha would always be close to 75)
+            // In order to generate a third point C, we need to establish the rules. We want each two 
+            // angles <A, <B, <C to have the absolute difference at least d, where d is a constant. Now 
+            // we WLOG assume that <A is the largest angle and <C the smallest angle. We also want to have 
+            // <C to be at least 'd' and 90 - <A to be at least 'd'. In that way we get a triangle that is 
+            // acute, isn't too flat, isn't too close to a right-angled triangle and isn't close to an 
+            // isosceles triangle. It can be shown that if we generate <A from the interval (60+d, 90-d)
+            // and then <B from the interval ((180+d-A)/2, A-d), that we will get the wanted result (simple
+            // math). In order to be able to generate <A, we need to have d from the interval (0,15). 
+            // Generally the bigger, the better, but not very close to 15, because in that case  we might 
+            // limit the variety of possible triangles (alpha would always be very close to 75). 
             const double d = 7.5;
 
             // Let us generate angles according to our formulas
@@ -147,16 +146,16 @@ namespace GeoGen.AnalyticGeometry
             // x = tan(<A) / (tan(<A) - tan(180-<B))
             // y = tan(<A) tan(180-<B) / (tan(<A) - tan(180-<B))
             //
-            // It's also easy to see that the denominator can't be 0 :) 
+            // It's also easy to see that the denominator can't be 0.
             // (in short, we would have either <A + <B = 180, or 180 - <B = 90 - <A, both are impossible)
             // 
-            // Therefore we may happily generate the point C
+            // Therefore we may happily generate point C
 
             // First calculate tangents
             var tanAlpha = Math.Tan(MathematicalHelpers.ToRadians(alpha));
             var tan180MinusBeta = Math.Tan(MathematicalHelpers.ToRadians(180 - beta));
 
-            // Then calculate coordinates
+            // Then calculate the coordinates
             var x = tan180MinusBeta / (tan180MinusBeta - tanAlpha);
             var y = tanAlpha * tan180MinusBeta / (tan180MinusBeta - tanAlpha);
 
@@ -165,6 +164,82 @@ namespace GeoGen.AnalyticGeometry
 
             // And return all of them
             return new[] { a, b, c };
+        }
+
+        /// <summary>
+        /// Constructs the perpendicular bisector of the line defined by given distinct points.
+        /// </summary>
+        /// <param name="point1">The first point.</param>
+        /// <param name="point2">The second point.</param>
+        /// <returns>The perpendicular bisector of the line [point1][point2].</returns>
+        public static Line PerpendicularBisector(Point point1, Point point2)
+        {
+            // First we get the midpoint between these two points
+            // This is a first needed point lying on the desired line
+            var midpoint = (point1 + point2) / 2;
+
+            // Rotate the first point around the midpoint by 90 degrees.
+            // This is a second needed point lying on the desired line
+            var rotatedPoint = point1.Rotate(midpoint, 90);
+
+            // We can construct the line from these two points
+            return new Line(midpoint, rotatedPoint);
+        }
+
+        /// <summary>
+        /// Constructs the internal angle bisector of the angle [rayPoint1][vertex][rayPoint2]
+        /// (or equivalently [rayPoint2][vertex][rayPoint1]). All three points must be distinct
+        /// and not collinear. 
+        /// </summary>
+        /// <param name="vertex">The vertex of the angle.</param>
+        /// <param name="rayPoint1">The first point on the ray starting from the vertex.</param>
+        /// <param name="rayPoint2">The second point on the ray starting from the vertex.</param>
+        /// <returns>The internal angle bisector of the angle [rayPoint1][vertex][rayPoint2].</returns>
+        public static Line InternalAngleBisector(Point vertex, Point rayPoint1, Point rayPoint2)
+        {
+            // Denote A = [vertex], B = [rayPoint1], C = [rayPoint2]
+            // We're going to construct line AX, where X is the intersection
+            // of the internal angle bisector of BAC with BC. It's known that
+            // BX / CX = AB / AC. One can use this to calculate the relation
+            // X = B + |AB|/(|AB|+|AC|) . (C-B) (this is a vector relation)
+
+            // First calculate the distances
+            var distanceAB = vertex.DistanceTo(rayPoint1);
+            var distanceAC = vertex.DistanceTo(rayPoint2);
+
+            // Make sure their sum is not null...
+            if ((distanceAB + distanceAC).Rounded() == 0)
+                throw new AnalyticException("Cannot construct the angle bisector using equal points");
+
+            // Construct point X according to the formula
+            var X = rayPoint1 + distanceAB / (distanceAB + distanceAC) * (rayPoint2 - rayPoint1);
+
+            // And finally line AX
+            return new Line(vertex, X);
+        }
+
+        /// <summary>
+        /// Calculates the angle between two lines.
+        /// </summary>
+        /// <param name="line1">The first line.</param>
+        /// <param name="line2">The second line.</param>
+        /// <returns>The angle between the lines, in radians. The value will in the interval [0, PI/2].</returns>
+        public static double AngleBetweenLines(Line line1, Line line2)
+        {
+            // Check the parallel case. 
+            if (line1.IsParallelTo(line2))
+                return 0;
+
+            // Check the perpendicular case
+            if (line1.IsPerpendicularTo(line2))
+                return Math.PI / 2;
+
+            // Otherwise use the well-known formula that the angle between two vectors
+            // u,v is arccos(|u.v| / (||u|| ||v||)). In our case (A, B) is the normal
+            // vector of our line, and in our case it's normalized, i.e. ||u|| = ||v|| = 1. 
+            // In order to find the angle between two lines we can simply find the angle
+            // between its normal vectors. This yields a very simple formula:
+            return Math.Acos(Math.Abs(line1.A * line2.A + line1.B * line2.B));
         }
     }
 }

@@ -19,7 +19,10 @@ namespace GeoGen.Analyzer
         /// <returns>The returned result of the executed function.</returns>
         T ExecuteAndResolvePossibleIncosistencies<T>(Func<T> function);
 
-
-        void RecreateContainers();
+        /// <summary>
+        /// Tries to reconstruct all the containers that this manager manages. If it cannot be done, then 
+        /// an <see cref="UnreconstructibleContainerException"/> is thrown.
+        /// </summary>
+        void TryReconstructContainers();
     }
 }

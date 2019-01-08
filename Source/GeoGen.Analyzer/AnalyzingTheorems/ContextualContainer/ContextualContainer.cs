@@ -49,6 +49,16 @@ namespace GeoGen.Analyzer
         /// The set of all the new circles in the container.
         /// </summary>
         private readonly HashSet<CircleObject> _newCircles = new HashSet<CircleObject>();
+        
+        /// <summary>
+        /// The configuration objects represented in this container.
+        /// </summary>
+        private readonly IReadOnlyList<ConfigurationObject> _configurationObjects;
+
+        /// <summary>
+        /// The objects container manager that holds all the representations of the objects inside this container.
+        /// </summary>
+        public readonly IObjectsContainersManager _manager;
 
         #endregion
 
@@ -71,18 +81,6 @@ namespace GeoGen.Analyzer
 
         #endregion
 
-        #region IContextualContainer properties
-
-        /// <summary>
-        /// Gets the objects container manager that holds all the  representations of 
-        /// the objects inside this container.
-        /// </summary>
-        public IObjectsContainersManager Manager { get; }
-
-        #endregion
-
-        private IReadOnlyList<ConfigurationObject> _cObjects;
-
         #region Constructor
 
         /// <summary>
@@ -92,21 +90,16 @@ namespace GeoGen.Analyzer
         /// <param name="manager">The manager of all the containers where our objects are supposed to be drawn.</param>
         public ContextualContainer(IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager)
         {
-            Manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _cObjects = objects;
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _configurationObjects = objects;
 
-            Initialize();
-        }
-
-        private void Initialize()
-        {
             // Initialize the dictionary mapping containers to the object maps
-            Manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
+            _manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
 
             try
             {
                 // Add all objects, where only the last one is new
-                _cObjects.ForEach((obj, index) => Add(obj, isNew: index == _cObjects.Count - 1));
+                _configurationObjects.ForEach((obj, index) => Add(obj, isNew: index == _configurationObjects.Count - 1));
             }
             // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
             // resolve it as an inconsistency. These exception are possible, because it would be very
@@ -204,6 +197,100 @@ namespace GeoGen.Analyzer
             return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
         }
 
+        /// <summary>
+        /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
+        /// This method doesn't get delete the <see cref="GeometricalObject"/>s that container already created.
+        /// </summary>
+        public void Recreate()
+        {
+            // Let the manager reconstruct its containers
+            _manager.TryReconstructContainers();
+
+            // Prepare a new objects map
+            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
+
+            // Add the containers to it
+            _manager.ForEach(container => newMap.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
+
+            // Go through all the original pairs of [container, objects] map...
+            _objects.ForEach(pair =>
+            {
+                // Get the current container
+                var container = pair.Key;
+
+                // Go through all the geometrical objects in this container
+                pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
+                {
+                    // We're going to find the current analytic representation of it
+                    IAnalyticObject analyticObject;
+
+                    // If the configuration object is set, then we can ask the container directly
+                    if (geometricalObject.ConfigurationObject != null)
+                        analyticObject = container.Get(geometricalObject.ConfigurationObject);
+                    else
+                    {
+                        // Otherwise we need to reconstruct the object from points
+                        var definableByPoints = (DefinableByPoints) geometricalObject;
+
+                        // We get the needed numbers of points (which is 2 for line, 3 for circle)
+                        // We could have tried get all pair and triples to be sure they make the same
+                        // line/circle, but 
+                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
+                                        // Get their analytic representations in the container
+                                        .Select(point => container.Get(point.ConfigurationObject))
+                                        // Cast to the right type
+                                        .Cast<Point>()
+                                        // Enumerate to an array
+                                        .ToArray();
+
+                        try
+                        {
+                            // Decide according to the object
+                            switch (geometricalObject)
+                            {
+                                // Line case
+                                case LineObject line:
+                                    analyticObject = new Line(points[0], points[1]);
+                                    break;
+
+                                // Circle case
+                                case CircleObject circle:
+                                    analyticObject = new Circle(points[0], points[1], points[2]);
+                                    break;
+
+                                // There shouldn't be any other
+                                default:
+                                    throw new AnalyzerException("Unknown type of geometrical object");
+                            }
+                        }
+                        catch (AnalyticException)
+                        {
+                            // Since we didn't care about inconsistencies, it might happen that
+                            // in the new container the points can't make a line or a circle anymore
+                            // because of some very slight imprecision. This is a very rare case though.
+                            throw new AnalyzerException("Reconstruction of the container failed.");
+                        }
+                    }
+
+                    try
+                    {
+                        // Finally we can add a new mapping between the objects
+                        newMap[container].Add(geometricalObject, analyticObject);
+                    }
+                    catch (ArgumentException)
+                    {
+                        // Since we didn't care about inconsistencies, it might happen that
+                        // an almost equal version of this object is already added  because
+                        // of some very slight imprecision. This is a very rare case though.
+                        throw new AnalyzerException("Reconstruction of the container failed.");
+                    }                    
+                });
+            });
+
+            // Reset the objects map to the new one
+            _objects = newMap;
+        }
+
         #endregion
 
         #region Adding new objects
@@ -293,7 +380,7 @@ namespace GeoGen.Analyzer
             GeometricalObject result = null;
 
             // We're gonna check all the containers
-            foreach (var container in Manager)
+            foreach (var container in _manager)
             {
                 // Pull the analytic representation of this object. It must exist,
                 // which is part of the contract of this class
@@ -406,7 +493,7 @@ namespace GeoGen.Analyzer
             LineObject result = null;
 
             // Try to find or construct the line in every container
-            foreach (var container in Manager)
+            foreach (var container in _manager)
             {
                 // Pull the map between geometrical and analytic objects for this container
                 var map = _objects[container];
@@ -473,7 +560,7 @@ namespace GeoGen.Analyzer
             bool? collinear = null;
 
             // Iterate over containers
-            foreach (var container in Manager)
+            foreach (var container in _manager)
             {
                 // Pull the map between geometrical and analytic objects for this container
                 var map = _objects[container];
@@ -601,7 +688,7 @@ namespace GeoGen.Analyzer
             bool? result = null;
 
             // Iterate over containers
-            foreach (var container in Manager)
+            foreach (var container in _manager)
             {
                 // Pull the analytic representations of the point and the line/circle
                 var point = (Point) _objects[container].GetRightValue(pointObject);
@@ -621,54 +708,6 @@ namespace GeoGen.Analyzer
 
             // Finally we can return the result
             return result.Value;
-        }
-
-        public void Recreate()
-        {
-            Manager.RecreateContainers();
-
-            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
-            Manager.ForEach(c => newMap.Add(c, new Map<GeometricalObject, IAnalyticObject>()));
-
-            _objects.ForEach(pair =>
-            {
-                var container = pair.Key;
-
-                pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
-                {
-                    IAnalyticObject analyticObject;
-
-                    if (geometricalObject.ConfigurationObject != null)
-                        analyticObject = container.Get(geometricalObject.ConfigurationObject);
-                    else
-                    {
-                        var definableByPoints = (DefinableByPoints) geometricalObject;
-
-                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
-                                        .Select(p => container.Get(p.ConfigurationObject))
-                                        .Cast<Point>()
-                                        .ToArray();
-
-                        switch (geometricalObject)
-                        {
-                            case LineObject line:
-                                analyticObject = new Line(points[0], points[1]);
-                                break;
-
-                            case CircleObject circle:
-                                analyticObject = new Circle(points[0], points[1], points[2]);
-                                break;
-
-                            default:
-                                throw new Exception();
-                        }
-                    }
-
-                    newMap[container].Add(geometricalObject, analyticObject);
-                });
-            });
-
-            _objects = newMap;
         }
 
         #endregion

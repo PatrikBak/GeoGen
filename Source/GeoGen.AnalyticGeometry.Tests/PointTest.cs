@@ -1,7 +1,7 @@
-﻿using NUnit.Framework;
+﻿using GeoGen.Utilities;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.AnalyticGeometry.Tests
 {
@@ -88,7 +88,7 @@ namespace GeoGen.AnalyticGeometry.Tests
             {
                 new Point(3.0 / 2, 1.7),
                 new Point(1.2, 1.8),
-                new Point(0.333333333, 2.5),
+                new Point(0.33333333333333333333333333, 2.5),
                 new Point(1e-45, -1e-43)
             };
 
@@ -96,7 +96,7 @@ namespace GeoGen.AnalyticGeometry.Tests
             {
                 true,
                 false,
-                false,
+                true,
                 true
             };
 
@@ -124,32 +124,6 @@ namespace GeoGen.AnalyticGeometry.Tests
             var p2 = new Point(28, 1);
 
             Assert.AreEqual(p1.GetHashCode(), p2.GetHashCode());
-        }
-
-        [Test]
-        public void Test_Midpoint_Distint_Points()
-        {
-            var p1 = new Point(1, 7);
-            var p2 = new Point(4.5, -3);
-            var p3 = new Point(-4, 5);
-
-            var midpoint1 = p1.Midpoint(p2);
-            var midpoint2 = p1.Midpoint(p3);
-
-            Assert.IsTrue(2.75 == midpoint1.X);
-            Assert.IsTrue(2 == midpoint1.Y);
-
-            Assert.IsTrue(-1.5 == midpoint2.X);
-            Assert.IsTrue(6 == midpoint2.Y);
-        }
-
-        [Test]
-        public void Test_Midpoint_Same_Point()
-        {
-            var p = new Point(42, 666);
-            var midpoint = p.Midpoint(p);
-
-            Assert.AreEqual(p, midpoint);
         }
 
         [Test]
@@ -220,57 +194,6 @@ namespace GeoGen.AnalyticGeometry.Tests
         }
 
         [Test]
-        public void Test_Perpendicular_Bisector_Equal_Points()
-        {
-            Assert.Throws<AnalyticException>
-            (
-                () =>
-                {
-                    var p1 = new Point(1.0 / 3, 2.0 / 3);
-                    var p2 = new Point(0.1 / 0.3, 0.2 / 0.3);
-
-                    p1.PerpendicularBisector(p2);
-                }
-            );
-        }
-
-        [Test]
-        public void Test_Perpedicular_Bisector_Distint_Points()
-        {
-            var tests = new List<Tuple<Point, Point>>
-            {
-                new Tuple<Point, Point>(new Point(0, 0), new Point(1, 0)),
-                new Tuple<Point, Point>(new Point(0, 0), new Point(0, 1)),
-                new Tuple<Point, Point>(new Point(7, 9.5), new Point(7, 9.6)),
-                new Tuple<Point, Point>(new Point(0, 0), new Point(4, 4)),
-                new Tuple<Point, Point>(new Point(17, 4), new Point(11, 2))
-            };
-
-            var unnormalizedCoefficients = new List<List<double>>
-            {
-                new List<double> {1, 0, -0.5},
-                new List<double> {0, 1, -0.5},
-                new List<double> {0, 1, -9.55},
-                new List<double> {1, 1, -4},
-                new List<double> {3, 1, -45}
-            };
-
-            foreach (var i in Enumerable.Range(0, tests.Count))
-            {
-                var test = tests[i];
-                var line = test.Item1.PerpendicularBisector(test.Item2);
-
-                var coefficients = unnormalizedCoefficients[i];
-                var sumOfSquares = Math.Sqrt(coefficients[0].Squared()+coefficients[1].Squared());
-                var normalized = coefficients.Select(c => c / sumOfSquares).ToList();
-
-                Assert.IsTrue(line.A.Rounded() == normalized[0].Rounded(), $"{i}");
-                Assert.IsTrue(line.B.Rounded() == normalized[1].Rounded(), $"{i}");
-                Assert.IsTrue(line.C.Rounded() == normalized[2].Rounded(), $"{i}");
-            }
-        }
-
-        [Test]
         public void Test_Projection()
         {
             var a = new Point(-4, -2);
@@ -287,45 +210,6 @@ namespace GeoGen.AnalyticGeometry.Tests
 
             var aXbcCopy = aXbc.Project(new Line(b, c));
             Assert.IsTrue(aXbcCopy == aXbc);
-        }
-
-        [Test]
-        public void Test_Internal_Angle_Bisector_With_Intencter()
-        {
-            var a = new Point(1, 3);
-            var b = new Point(2, 5);
-            var c = new Point(7, 7);
-
-            var alfa = a.InternalAngleBisector(b, c);
-            var betta = b.InternalAngleBisector(a, c);
-            var gamma = c.InternalAngleBisector(a, b);
-
-            Assert.IsTrue(alfa.Contains(a));
-            Assert.IsTrue(betta.Contains(b));
-            Assert.IsTrue(gamma.Contains(c));
-
-            var i1 = alfa.IntersectionWith(betta);
-            var i2 = betta.IntersectionWith(gamma);
-            var i3 = gamma.IntersectionWith(alfa);
-
-            Assert.AreEqual(i1, i2);
-            Assert.AreEqual(i2, i3);
-            Assert.AreEqual(i3, i1);
-        }
-
-        [Test]
-        public void Test_Internal_Angle_Bisector_With__Svrcek_Point()
-        {
-            var a = new Point(1, 3);
-            var b = new Point(2, 5);
-            var c = new Point(7, 7);
-
-            var alfa = a.InternalAngleBisector(b, c);
-            var bcBisector = b.PerpendicularBisector(c);
-            var circumCircle = new Circle(a, b, c);
-            var intersection = alfa.IntersectionWith(bcBisector).Value;
-
-            Assert.IsTrue(circumCircle.Contains(intersection));
         }
     }
 }

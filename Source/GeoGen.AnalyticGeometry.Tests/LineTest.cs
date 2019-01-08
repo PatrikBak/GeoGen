@@ -1,4 +1,4 @@
-﻿using GeoGen.AnalyticGeometry;
+﻿using GeoGen.Utilities;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -76,8 +76,8 @@ namespace GeoGen.AnalyticGeometry.Tests
             var a = new Point(1, 2);
             var b = new Point(2, 3);
             var c = new Point(-4, 5);
-            var d = a.Midpoint(b);
-            var e = a.Midpoint(c);
+            var d = (a + b) / 2;
+            var e = (a + c) / 2;
 
             var ab = new Line(a, b);
             var ac = new Line(a, c);
@@ -108,7 +108,7 @@ namespace GeoGen.AnalyticGeometry.Tests
             var a = new Point(1, 2);
             var b = new Point(2, 3);
             var c = new Point(-4, 5);
-            var d = a.Midpoint(b);
+            var d = (a + b) / 2;
 
             var ab = new Line(a, b);
             var ac = new Line(a, c);
@@ -133,7 +133,7 @@ namespace GeoGen.AnalyticGeometry.Tests
         {
             var a = new Point(1, 2);
             var b = new Point(2, 3);
-            var c = a.Midpoint(b);
+            var c = (a + b) / 2;
 
             var set = new HashSet<Line>
             {
@@ -160,9 +160,9 @@ namespace GeoGen.AnalyticGeometry.Tests
                     (
                         new List<Point>
                         {
-                            a.Midpoint(b),
-                            b.Midpoint(c),
-                            c.Midpoint(a),
+                            (a+b)/2,
+                            (b+c)/2,
+                            (c+a)/2,
                             (a + b + c) / 3
                         }
                     )
@@ -192,17 +192,17 @@ namespace GeoGen.AnalyticGeometry.Tests
             var b = new Point(8, 19);
             var c = new Point(-666, 42);
 
-            var xab = a.PerpendicularBisector(b);
-            var xac = a.PerpendicularBisector(c);
-            var xbc = b.PerpendicularBisector(c);
+            var xab = AnalyticHelpers.PerpendicularBisector(a, b);
+            var xac = AnalyticHelpers.PerpendicularBisector(a, c);
+            var xbc = AnalyticHelpers.PerpendicularBisector(b, c);
 
-            var o = xab.IntersectionWith(xac) ?? throw new Exception("No intersection");
+            var o = xab.IntersectionWith(xac).Value;
 
             Assert.IsTrue(xbc.Contains(o));
 
-            Assert.IsTrue(xbc.Contains(b.Midpoint(c)));
-            Assert.IsTrue(xac.Contains(a.Midpoint(c)));
-            Assert.IsTrue(xab.Contains(a.Midpoint(b)));
+            Assert.IsTrue(xbc.Contains((b + c) / 2));
+            Assert.IsTrue(xac.Contains((a + c) / 2));
+            Assert.IsTrue(xab.Contains((a + b) / 2));
 
             var ab = new Line(a, b);
             var bc = new Line(b, c);
@@ -274,109 +274,6 @@ namespace GeoGen.AnalyticGeometry.Tests
                 Assert.IsTrue(normalized[2].Rounded() == result.C.Rounded());
             }
         }
-
-        [Test]
-        public void Test_Angle_Between_Lines_With_Equal_Lines()
-        {
-            // Diagonal lines
-            var line1 = new Line(new Point(0, 0), new Point(1, 1));
-            var line2 = new Line(new Point(2, 2), new Point(3, 3));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-
-            // Vertical lines
-            line1 = new Line(new Point(0, 1), new Point(0, 2));
-            line2 = new Line(new Point(0, 3), new Point(0, 4));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-
-            // Horizontal lines
-            line1 = new Line(new Point(1, 0), new Point(3, 0));
-            line2 = new Line(new Point(2, 0), new Point(4, 0));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-        }
-
-        [Test]
-        public void Test_Angle_Between_Lines_With_Parallel_Lines()
-        {
-            // Diagonal lines
-            var line1 = new Line(new Point(0, 0), new Point(1, 1));
-            var line2 = new Line(new Point(-1, 0), new Point(0, 1));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-
-            // Vertical lines
-            line1 = new Line(new Point(0, 1), new Point(0, 2));
-            line2 = new Line(new Point(1, 3), new Point(1, 4));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-
-            // Horizontal lines
-            line1 = new Line(new Point(1, 1), new Point(3, 1));
-            line2 = new Line(new Point(2, 0), new Point(4, 0));
-
-            Assert.AreEqual(0, line1.AngleBetween(line2).Rounded());
-        }
-
-        [Test]
-        public void Test_Angle_Between_Lines_With_Acute_Angled_Triangle()
-        {
-            // Prepare points
-            var a = new Point(2, -2);
-            var b = new Point(8, -2);
-            var c = new Point(3, 6);
-
-            // Prepare lines
-            var lines = new List<Line>
-            {
-                new Line(a, b),
-                new Line(a, c),
-                new Line(b, c)
-            };
-
-            // Prepare pre-calculted results
-            var results = new List<double>
-            {
-                Math.Atan(8),
-                Math.Atan(8.0/5),
-                (Math.PI - Math.Atan(8) - Math.Atan(8.0/5))
-            };
-
-            // Assert
-            Assert.AreEqual(results[0].Rounded(), lines[0].AngleBetween(lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(), lines[0].AngleBetween(lines[2]).Rounded());
-            Assert.AreEqual(results[2].Rounded(), lines[1].AngleBetween(lines[2]).Rounded());
-        }
-
-        [Test]
-        public void Test_Angle_Between_Lines_With_Right_Angled_Triangle()
-        {
-            // Prepare points
-            var a = new Point(0, 3);
-            var b = new Point(8, 5);
-            var c = new Point(3, 8);
-
-            // Prepare lines
-            var lines = new List<Line>
-            {
-                new Line(a, b),
-                new Line(a, c),
-                new Line(b, c)
-            };
-
-            // Prepare pre-calculted results
-            var results = new List<double>
-            {
-                Math.PI/4,
-                Math.PI/4,
-                Math.PI/2
-            };
-
-            // Assert
-            Assert.AreEqual(results[0].Rounded(), lines[0].AngleBetween(lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(), lines[0].AngleBetween(lines[2]).Rounded());
-            Assert.AreEqual(results[2].Rounded(), lines[1].AngleBetween(lines[2]).Rounded());
-        }
+        
     }
 }

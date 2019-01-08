@@ -30,7 +30,7 @@ namespace GeoGen.Analyzer
                 return null;
 
             // Otherwise construct the result
-            return intersection.InternalAngleBisector(point1, point2);
+            return AnalyticHelpers.InternalAngleBisector(intersection, point1, point2);
         }
     }
 }

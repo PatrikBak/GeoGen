@@ -21,7 +21,7 @@ namespace GeoGen.Analyzer
             var point2 = (Point) input[1];
 
             // Construct the result
-            return point1.Midpoint(point2);
+            return (point1 + point2) / 2;
         }
     }
 }

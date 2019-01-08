@@ -1,4 +1,3 @@
-using GeoGen.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -30,14 +29,9 @@ namespace GeoGen.Analyzer
         private readonly List<IObjectsContainer> _containers;
 
         /// <summary>
-        /// The maximal number of attempts to resolve inconsistencies between containers by reconstructing all of them.
+        /// The configuration for the manager.
         /// </summary>
-        private readonly int _maximalAttemptsToReconstructAllContainers;
-
-        /// <summary>
-        /// The maximal number of attempts to reconstruct a single objects container.
-        /// </summary>
-        private readonly int _maximalAttemptsToReconstructOneContainer;
+        private readonly IObjectsContainersManagerConfiguration _configuration;
 
         #endregion
 
@@ -46,24 +40,15 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="ObjectsContainersManager"/> class.
         /// </summary>
-        /// <param name="numberOfContainers">The number of containers to be used by the manager.</param>
-        /// <param name="maximalAttemptsToReconstructAllContainers">The maximal number of attempts to resolve inconsistencies between containers by reconstructing all of them.</param>
-        /// <param name="maximalAttemptsToReconstructOneContainer">The maximal number of attempts to reconstruct a single objects container.</param>
+        /// <param name="configuration">The configuration for the manager.</param>
         /// <param name="factory">The factory for creating empty objects containers.</param>
         /// <param name="tracer">The tracer of occurrences of inconsistencies between containers.</param>
-        public ObjectsContainersManager(int numberOfContainers, int maximalAttemptsToReconstructOneContainer, int maximalAttemptsToReconstructAllContainers, IObjectsContainerFactory factory, IInconsistentContainersTracer tracer = null)
+        public ObjectsContainersManager(IObjectsContainersManagerConfiguration configuration, IObjectsContainerFactory factory, IInconsistentContainersTracer tracer = null)
         {
-            // Make sure all the passed values are > 0
-            Ensure.IsGreaterThanZero(numberOfContainers, nameof(numberOfContainers));
-            Ensure.IsGreaterThanZero(maximalAttemptsToReconstructOneContainer, nameof(maximalAttemptsToReconstructOneContainer));
-            Ensure.IsGreaterThanZero(maximalAttemptsToReconstructAllContainers, nameof(maximalAttemptsToReconstructAllContainers));
-
-            // Assign maximal attempts
-            _maximalAttemptsToReconstructOneContainer = maximalAttemptsToReconstructOneContainer;
-            _maximalAttemptsToReconstructAllContainers = maximalAttemptsToReconstructAllContainers;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
             // Create the requested number of containers
-            _containers = Enumerable.Range(0, numberOfContainers).Select(i => factory.CreateContainer()).ToList();
+            _containers = Enumerable.Range(0, configuration.NumberOfContainers).Select(i => factory.CreateContainer()).ToList();
 
             // Assign tracer
             _tracer = tracer;
@@ -89,7 +74,7 @@ namespace GeoGen.Analyzer
             var result = default(T);
 
             // Try to perform the function until we reach the maximal number of attempts
-            while (attempts < _maximalAttemptsToReconstructAllContainers)
+            while (attempts < _configuration.MaximalAttemptsToReconstructAllContainers)
             {
                 try
                 {
@@ -105,13 +90,22 @@ namespace GeoGen.Analyzer
                     // Mark an attempt 
                     attempts++;
 
-                    // Try to reconstruct all the containers
-                    _containers.ForEach(TryReconstruct);
+                    try
+                    {
+                        // Try to reconstruct all the containers
+                        TryReconstructContainers();
+                    }
+                    catch (UnreconstructibleContainerException)
+                    {
+                        // If we can't reconstruct a container, we evaluate it as an unresolvable inconsistency
+                        throw new UnresolvableInconsistencyException();
+                    }
+
                 }
             }
 
             // If we reached the maximal number of reconstructions...
-            if (attempts == _maximalAttemptsToReconstructAllContainers)
+            if (attempts == _configuration.MaximalAttemptsToReconstructAllContainers)
             {
                 // Then we want to trace it 
                 _tracer?.TraceReachingMaximalNumberOfAttemptsToReconstructAllContainers(this);
@@ -130,6 +124,16 @@ namespace GeoGen.Analyzer
         }
 
         /// <summary>
+        /// Tries to reconstruct all the containers that this manager manages. If it cannot be done, then 
+        /// an <see cref="UnreconstructibleContainerException"/> is thrown.
+        /// </summary>
+        public void TryReconstructContainers() => _containers.ForEach(TryReconstruct);
+
+        #endregion
+
+        #region Private methods
+
+        /// <summary>
         /// Tries to reconstruct a single container for the maximal number of allowed times.
         /// </summary>
         /// <param name="container">The container to be reconstructed.</param>
@@ -139,7 +143,7 @@ namespace GeoGen.Analyzer
             var attempts = 0;
 
             // Try until we reach the maximal allowed number of attempts
-            while (attempts < _maximalAttemptsToReconstructOneContainer)
+            while (attempts < _configuration.MaximalAttemptsToReconstructOneContainer)
             {
                 // Mark an attempt
                 attempts++;
@@ -153,13 +157,13 @@ namespace GeoGen.Analyzer
             }
 
             // If we reached the maximal number of reconstructions...
-            if (attempts == _maximalAttemptsToReconstructOneContainer)
+            if (attempts == _configuration.MaximalAttemptsToReconstructOneContainer)
             {
                 // Then we want to trace it 
                 _tracer?.TraceReachingMaximalNumberOfAttemptsToReconstructOneContainer(this, container);
 
                 // And let the caller know
-                throw new UnresolvableInconsistencyException();
+                throw new UnreconstructibleContainerException();
             }
 
             // If there were some unsuccessful attempts, trace them. 
@@ -184,11 +188,6 @@ namespace GeoGen.Analyzer
         /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        public void RecreateContainers()
-        {
-            _containers.ForEach(TryReconstruct);
-        }
-
-        #endregion
+        #endregion        
     }
 }

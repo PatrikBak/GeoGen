@@ -1,11 +1,12 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
     /// Represents a geometric 2D line. This line is represented by its analytic equation
     /// Ax + By + C = 0. In order to get the unique equation for each line this class makes
-    /// sure that A^2 + B^2 = 1, and A>0 || (A==0 && B>0) (in other wise, the leftmost 
+    /// sure that A^2 + B^2 = 1, and A>0 || (A==0 && B>0) (in other words, the leftmost 
     /// non-zero coefficient in the sequence A,B is positive - they can't be both zero).
     /// </summary>
     public struct Line : IAnalyticObject, IEquatable<Line>
@@ -27,23 +28,18 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         public double C { get; }
 
-        /// <summary>
-        /// Gets the points that were used to create the line.
-        /// </summary>
-        public (Point point1, Point point2) Points { get; }
-
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Line"/> class using two distinct points.
+        /// Initializes a new instance of the <see cref="Line"/> structure using two distinct points.
         /// </summary>
         /// <param name="point1">The first point.</param>
         /// <param name="point2">The second point.</param>
         public Line(Point point1, Point point2)
         {
-            // Check if points are not equal
+            // Make sure the points are not equal
             if (point1 == point2)
                 throw new AnalyticException("Cannot construct a line from 2 equal points.");
 
@@ -61,9 +57,9 @@ namespace GeoGen.AnalyticGeometry
             // Now we calculate the scale so that (a,b) is a normalized vector (i.e. a^2+b^2 = 1)
             var scale = Math.Sqrt(a.Squared() + b.Squared());
 
-            // If we used this scale, we would almost have the unique representation. The problem is that ax+by= 0 
-            // and -ax-by=0 represent the same line even when a^2+b^2 = (-a)^2+(-b)^2=1. We're going to solve it by
-            // expecting the first non-zero coefficient between a,b to be positive. At least one of them is nonzero. 
+            // If we used this scale, we would almost have the unique representation. The problem is that ax+by=0 
+            // and -ax-by=0 represent the same line even when a^2+b^2 = (-a)^2+(-b)^2 = 1. We're going to solve it by
+            // expecting the first non-zero coefficient between a,b to be positive. At least one of them is non-zero. 
             // We multiply the scale by -1 if and only if a<0, or a=0 and b<0.
             scale *= a.Rounded() < 0 || (a.Rounded() == 0 && b.Rounded() < 0) ? -1 : 1;
 
@@ -71,9 +67,6 @@ namespace GeoGen.AnalyticGeometry
             A = a / scale;
             B = b / scale;
             C = c / scale;
-
-            // Assign the points as well
-            Points = (point1, point2);
         }
 
         #endregion
@@ -85,10 +78,10 @@ namespace GeoGen.AnalyticGeometry
         /// lines can't equal. If the lines are parallel, then this method returns null.
         /// </summary>
         /// <param name="otherLine">The other line.</param>
-        /// <returns>The intersection of this line, if there is any, or null otherwise.</returns>
+        /// <returns>The intersection of the lines, if there is any; or null otherwise.</returns>
         public Point? IntersectionWith(Line otherLine)
         {
-            // Check if they are equal
+            // Make sure they are not equal
             if (this == otherLine)
                 throw new AnalyticException("Equal lines cannot be intersected.");
 
@@ -133,8 +126,7 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
-        /// Creates a line that is perpendicular to this one and passes through a
-        /// given point.
+        /// Creates a line that is perpendicular to this one and passes through a given point.
         /// </summary>
         /// <param name="point">The point that should lie on the resulting line.</param>
         /// <returns>The line perpendicular to this one passing through the given point.</returns>
@@ -149,31 +141,8 @@ namespace GeoGen.AnalyticGeometry
             // Create the other point
             var otherPoint = new Point(point.X + A, point.Y + B);
 
-            // Create the line from 2 points
+            // Create the line from these 2 points
             return new Line(point, otherPoint);
-        }
-
-        /// <summary>
-        /// Calculates the angle between this line and a given one. 
-        /// </summary>
-        /// <param name="otherLine">The other line.</param>
-        /// <returns>The angle between the lines, in radians. The value will in the interval [0, PI/2].</returns>
-        public double AngleBetween(Line otherLine)
-        {
-            // Check the parallel case. 
-            if (IsParallelTo(otherLine))
-                return 0;
-
-            // Check the perpendicular case
-            if (IsPerpendicularTo(otherLine))
-                return Math.PI / 2;
-
-            // Otherwise use the well-known formula that the angle between two vectors
-            // u,v is given by arccos(|u.v| / (||u|| ||v||)). In our case (A, B) is the normal
-            // vector of our line, and in our case it's normalized, i.e. ||u|| = 1. 
-            // In order to find the angle between two lines we can simply find the angle
-            // between its normal vectors. This yields a very simple formula:
-            return Math.Acos(Math.Abs(A * otherLine.A + B * otherLine.B));
         }
 
         /// <summary>
@@ -190,7 +159,7 @@ namespace GeoGen.AnalyticGeometry
         /// <summary>
         /// Finds out if a given line is parallel to this one.
         /// </summary>
-        /// <param name="otherLine">The line.</param>
+        /// <param name="otherLine">The other line.</param>
         /// <returns>true, if the lines are parallel; false otherwise.</returns>
         public bool IsParallelTo(Line otherLine)
         {

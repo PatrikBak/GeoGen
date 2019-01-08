@@ -1,6 +1,5 @@
 ﻿using GeoGen.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
@@ -134,7 +133,9 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Line line)
         {
-            // 
+            // The distance between a point P[x,y] and the line ax+by+c = 0 is equal to 
+            // |ax + by + c| / sqrt(a^2 + b^2). We know that (a,b) is normalized, so it's 
+            // |ax + by + c|. We can test tangency by checking if this is equal to the radius.
             return Math.Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
         }
 
@@ -145,71 +146,63 @@ namespace GeoGen.AnalyticGeometry
         /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
         public Point[] IntersectWith(Circle otherCircle)
         {
-            // Make sure it is not equal
+            // Make sure they're not equal...
             if (this == otherCircle)
-                throw new AnalyticException("The circles are not supposed to be equal");
+                throw new AnalyticException("Cannot intersect equal circles");
 
-            // Find the distance between the centers.
-            var dist = Center.DistanceTo(otherCircle.Center);
+            // Otherwise we're solving the system:
+            // 
+            // (x-m1)^2 + (y-n1)^2 = r1^2       (1)
+            // (x-m2)^2 + (y-n2)^2 = r2^2       (2)
+            //
+            // The idea is to solve the equivalent system (1), (1) - (2) instead. 
+            // Since (1) - (2) is the equation of line (as it turns out, the radical
+            // axis of these two circles), we can reduce this problem to the problem
+            // of intersecting a line and a circle. The coefficients of the line are
+            //
+            // x --> 2(m2 - m1)
+            // y --> 2(n2 - n1)
+            // 1 --> m1^2 - m2^2 + n1^2 - n2^2 + r2^2 - r1^2
 
-            // See how many solutions there are.
-            if (dist.Rounded() > (Radius + otherCircle.Radius).Rounded())
-            {
-                return new Point[0];
-            }
-            else if (dist.Rounded() < Math.Abs(Radius - otherCircle.Radius).Rounded())
-            {
-                return new Point[0];
-            }
-            else
-            {
-                // Find a and h.
-                double a = (Radius * Radius - otherCircle.Radius * otherCircle.Radius + dist * dist) / (2 * dist);
-                double h = Math.Sqrt(Radius * Radius - a * a);
+            // Pull the parameters of this circle
+            var m1 = Center.X;
+            var n1 = Center.Y;
+            var r1 = Radius;
 
-                // Find P2.
-                double cx2 = Center.X + a * (otherCircle.Center.X - Center.X) / dist;
-                double cy2 = Center.Y + a * (otherCircle.Center.Y - Center.Y) / dist;
+            // Pull the parameters of the other circle
+            var m2 = otherCircle.Center.X;
+            var n2 = otherCircle.Center.Y;
+            var r2 = otherCircle.Radius;
 
-                var p1 = new Point(cx2 + h * (otherCircle.Center.Y - Center.Y) / dist, cy2 - h * (otherCircle.Center.X - Center.X) / dist);
-                var p2 = new Point(cx2 - h * (otherCircle.Center.Y - Center.Y) / dist, cy2 + h * (otherCircle.Center.X - Center.X) / dist);
+            // Create the coefficients
+            var aCoef = 2 * (m2 - m1);
+            var bCoef = 2 * (n2 - n1);
+            var cCoef = m1 * m1 - m2 * m2 + n1 * n1 - n2 * n2 + r2 * r2 - r1 * r1;
 
-                if (p1 == p2)
-                    return new [] { p1 };
-                else
-                    return new [] { p1, p2 };
-            }
+            // Call the private method 
+            return IntersectWithLine(aCoef, bCoef, cCoef);
         }
 
         /// <summary>
         /// Finds all the intersections of this circle with a given line.
         /// </summary>
         /// <param name="line">The line.</param>
-        /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
-        public Point[] IntersectWith(Line line)
-        {
-            // Pull the coefficients of the equation of the line
-            var a = line.A;
-            var b = line.B;
-            var c = line.C;
-
-            // Call the internal method
-            return IntersectWithLine(a, b, c);
-        }
+        /// <returns>An array of the intersections.</returns>
+        public Point[] IntersectWith(Line line) => IntersectWithLine(line.A, line.B, line.C);
 
         #endregion
 
         #region Private methods
 
         /// <summary>
-        /// Finds all the intersections of this circle with a line given by its
+        /// Finds all the intersections of this circle with the line given by its
         /// coefficients of the equation ax + by + c = 0. It is assumed that 
         /// at least one of the coefficients a, b is not zero. 
         /// </summary>
         /// <param name="a">The a coefficient.</param>
         /// <param name="b">The b coefficient.</param>
         /// <param name="c">The c coefficient.</param>
-        /// <returns>The list of intersections. An empty list, if there isn't any.</returns>
+        /// <returns>An array of intersections.</returns>
         private Point[] IntersectWithLine(double a, double b, double c)
         {
             // Pull the parameters of the equation of the circle
@@ -223,52 +216,47 @@ namespace GeoGen.AnalyticGeometry
             // (x-m)^2 + (y-n)^2 = r^2       (2)
             //
             // At least one of a,b is not zero.
-            // If it's a, we'll express a by terms of b,c. 
-            // If it's b, then mapping (a,b,m,n) --> (b,a,n,m) we'll give
-            // us the second case. The new equation would have the solution [x',y']
-            // if and only if the previous one had the solution [y',x']
+            // If it's a, we'll express a in terms of b,c. 
+            // If it's b, then mapping (a,b,m,n) --> (b,a,n,m) will give
+            // us the second case. The new equation has the solution [x',y']
+            // if and only if the previous one has the solution [y',x']
 
-            // First we determine if we'll do the mapping. 
+            // First we determine if we'll do the remapping. 
             var changingVariables = a.Rounded() == 0;
 
-            // If yes, we use the helper method to do so
+            // If yes, we use our helper method to do so
             if (changingVariables)
             {
                 GeneralUtilities.Swap(ref a, ref b);
                 GeneralUtilities.Swap(ref m, ref n);
             }
 
-            // Now we're sure that a != 0. (1) gives x = (-c - by) / a;
+            // Now we're sure that a != 0. (1) gives x = (-c - by) / a.
             // The (2) becomes ((-c - by) / a - m)^2 + (y - n)^2 = r^2
-            // We have a quadratic equation The coefficients are:
+            // We have a quadratic equation. The coefficients are:
             // 
             // x^2 --> (b/a)^2 + 1
             // x   --> 2bc/a^2 + 2bm/a - 2n
             // 1   --> (c/a + m)^2 + n^2 - r^2
 
-            var aCoef = (b/a).Squared() + 1;
-            var bCoef = 2 * b * c / a.Squared() + 2 * b * m / a - 2 * n;
-            var cCoef = (c / a + m).Squared() + n.Squared() - r.Squared();
+            // Get the coefficients
+            var coefficient1 = (b / a).Squared() + 1;
+            var coefficient2 = 2 * b * c / a.Squared() + 2 * b * m / a - 2 * n;
+            var coefficient3 = (c / a + m).Squared() + n.Squared() - r.Squared();
 
             // Let the helper method solve the quadratic equation for y.
-            var yRoots = MathematicalHelpers.SolveQuadraticEquation(aCoef, bCoef, cCoef);
+            return MathematicalHelpers.SolveQuadraticEquation(coefficient1, coefficient2, coefficient3)
+                // Each root represents a solution
+                .Select(y =>
+                {
+                    // Calculate x using the formula x = (-c - by) / a
+                    var x = (-c - b * y) / a;
 
-            // If there are no solutions, we won't have any intersection
-            if (yRoots.IsEmpty())
-                return new Point[0];
-
-            // Otherwise we compute the corresponding x-roots using x = (-c - by) / a
-            var xRoots = yRoots.Select(y => (-c - b * y) / a).ToList();
-
-            // Now we can construct the result. We can't forget that we might
-            // have changed the meaning of x and y
-            return Enumerable.Range(0, xRoots.Count).Select(i =>
-            {
-                var xRoot = xRoots[i];
-                var yRoot = yRoots[i];
-
-                return changingVariables ? new Point(yRoot, xRoot) : new Point(xRoot, yRoot);
-            }).ToArray();
+                    // Construct the final result, taking into account a potential variable change
+                    return changingVariables ? new Point(y, x) : new Point(x, y);
+                })
+                // Enumerate the solutions to an array
+                .ToArray();
         }
 
         #endregion

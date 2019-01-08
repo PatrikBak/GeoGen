@@ -1,8 +1,8 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
-using NUnit.Framework;
 
 namespace GeoGen.AnalyticGeometry.Tests
 {
@@ -81,9 +81,9 @@ namespace GeoGen.AnalyticGeometry.Tests
             var b = new Point(7, 4);
             var c = new Point(10, 11);
 
-            var midAb = a.Midpoint(b);
-            var midBc = b.Midpoint(c);
-            var midCa = c.Midpoint(a);
+            var midAb = (a + b) / 2;
+            var midBc = (b + c) / 2;
+            var midCa = (c + a) / 2;
 
             var projA = a.Project(new Line(b, c));
             var projB = b.Project(new Line(a, c));
@@ -91,9 +91,9 @@ namespace GeoGen.AnalyticGeometry.Tests
 
             var h = new Line(a, projA).IntersectionWith(new Line(b, projB)).Value;
 
-            var midAh = h.Midpoint(a);
-            var midBh = h.Midpoint(b);
-            var midCh = h.Midpoint(c);
+            var midAh = (h + a) / 2;
+            var midBh = (h + b) / 2;
+            var midCh = (h + c) / 2;
 
             // Nine-points circle points
             var points = new List<Point> { midAb, midBc, midCa, midAh, midBh, midCh, projA, projB, projC };
@@ -130,7 +130,7 @@ namespace GeoGen.AnalyticGeometry.Tests
 
             var abcCircle = new Circle(a, b, c);
             var o = abcCircle.Center;
-            var center = o.Midpoint(h);
+            var center = (o + h) / 2;
 
             Assert.IsTrue(ninePointCircle.Center == center);
             Assert.IsTrue(ninePointCircle.Radius.Rounded() == (abcCircle.Radius / 2).Rounded());

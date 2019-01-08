@@ -49,7 +49,7 @@ namespace GeoGen.ConsoleTest
             }
         }
 
-        public string FormatTheorems(List<Theorem> theorems)
+        public string FormatTheorems(IEnumerable<Theorem> theorems)
         {
             var stringBuilder = new StringBuilder();
 

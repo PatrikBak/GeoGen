@@ -30,7 +30,7 @@ namespace GeoGen.AnalyticGeometry
             // since the Random object is not thread-safe
             lock (_random)
             {
-                // NextDouble() is in the interval [0,1], we make it from [minValue, maxValue]
+                // NextDouble() is in the interval [0,1), we make it from [minValue, maxValue)
                 return minValue + (maxValue - minValue) * _random.NextDouble();
             }
         }

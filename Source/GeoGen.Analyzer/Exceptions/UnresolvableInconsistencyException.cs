@@ -6,7 +6,7 @@
     /// couldn't be automatically resolved. For more details about inconsistencies see the documentation
     /// of <see cref="InconsistentContainersException"/>. This exception should be handled internally.
     /// </summary>
-    internal class UnresolvableInconsistencyException : AnalyzerException
+    public class UnresolvableInconsistencyException : AnalyzerException
     {
     }
 }

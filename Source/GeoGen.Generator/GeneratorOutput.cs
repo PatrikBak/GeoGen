@@ -1,6 +1,4 @@
 ﻿using GeoGen.Analyzer;
-using GeoGen.Core;
-using System.Collections.Generic;
 
 namespace GeoGen.Generator
 {
@@ -18,7 +16,5 @@ namespace GeoGen.Generator
         /// Gets or sets the output of the theorem analysis module.
         /// </summary>
         public TheoremsAnalyzerOutput AnalyzerOutput { get; set; }
-
-        public List<Theorem> Theorems;
     }
 }

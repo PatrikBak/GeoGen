@@ -79,7 +79,7 @@ namespace GeoGen.Analyzer
                     var analyticLine4 = container.GetAnalyticObject<Line>(line4, objectsContainer);
 
                     // Return if the angles between them match
-                    return analyticLine1.AngleBetween(analyticLine2).Rounded() == analyticLine3.AngleBetween(analyticLine4).Rounded();
+                    return AnalyticHelpers.AngleBetweenLines(analyticLine1, analyticLine2).Rounded() == AnalyticHelpers.AngleBetweenLines(analyticLine3, analyticLine4).Rounded();
                 }
 
                 // Lazily return the output

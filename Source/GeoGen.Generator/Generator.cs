@@ -9,7 +9,7 @@ namespace GeoGen.Generator
 {
     /// <summary>
     /// The default implementation of <see cref="IGenerator"/>. It generates configurations by layers.
-    /// Initially the first layer consists of the initial configuration from the <see cref="GeneratorInput"/>.
+    /// Initially the first layer consists of the initial configuration from the <see cref="IGeneratorConfiguration"/>.
     /// Then in every iteration we extend all the configurations from the current layer with new 
     /// <see cref="ConstructedConfigurationObject"/>, that are created using <see cref="IArgumentsGenerator"/>,
     /// and the <see cref="Construction"/>s/ from the input. We use <see cref="IContainer{T}{T}"/>, where 'T' 
@@ -49,7 +49,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The input for the generator.
         /// </summary>
-        private readonly GeneratorInput _input;
+        private readonly IGeneratorConfiguration _input;
 
         /// <summary>
         /// The configurations that are to be extended
@@ -83,7 +83,7 @@ namespace GeoGen.Generator
         /// <param name="generator">The generator of arguments that are passed to newly created constructed objects.</param>
         /// <param name="validator">The validator of newly generated configurations.</param>
         /// <param name="analyzer">The analyzer of theorems in the generated configurations.</param>
-        public Generator(GeneratorInput input, IContainer<ConfigurationObject> container, IArgumentsGenerator generator, IConfigurationsValidator validator, ITheoremsAnalyzer analyzer)
+        public Generator(IGeneratorConfiguration input, IContainer<ConfigurationObject> container, IArgumentsGenerator generator, IConfigurationsValidator validator, ITheoremsAnalyzer analyzer)
         {
             _input = input ?? throw new ArgumentNullException(nameof(input));
             _container = container ?? throw new ArgumentNullException(nameof(container));

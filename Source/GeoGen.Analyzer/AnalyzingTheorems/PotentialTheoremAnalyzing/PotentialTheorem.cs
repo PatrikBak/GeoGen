@@ -35,48 +35,6 @@ namespace GeoGen.Analyzer
         #region Public methods
 
         /// <summary>
-        /// Converts this potential theorem to an actual theorem. The signatures of the internal
-        /// theorem objects are inferred automatically.
-        /// </summary>
-        /// <returns>The converted theorem.</returns>
-        public Theorem ToTheorem()
-        {
-            // Local function that converts a geometrical object to a theorem object
-            TheoremObject Construct(GeometricalObject geometricalObject)
-            {
-                // First we look if the configuration object version of this object is present
-                var configurationObject = geometricalObject.ConfigurationObject;
-
-                // If it's present, then we simply wrap it
-                if (configurationObject != null)
-                    return new TheoremObject(configurationObject);
-
-                // Otherwise we can't have a point, since it can't be defined otherwise
-                // The object is either a line, or a circle, so its definable by points
-                var objectWithPoints = (DefinableByPoints) geometricalObject;
-
-                // Let's find the configuration objects corresponding to these points 
-                var involedObjects = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
-
-                // Determine the right signature of the theorem object 
-                // We're using that it's either a line, or a circle, so 
-                // if it's not a line, then it's a circle
-                var objectType = objectWithPoints is LineObject
-                        ? TheoremObjectSignature.LineGivenByPoints
-                        : TheoremObjectSignature.CircleGivenByPoints;
-
-                // Construct the final theorem object
-                return new TheoremObject(objectType, involedObjects);
-            }
-
-            // Convert all the involved objects to theorem objects
-            var theoremObjects = InvolvedObjects.Select(Construct).ToList();
-
-            // Construct the final result
-            return new Theorem(TheoremType, theoremObjects);
-        }
-
-        /// <summary>
         /// Finds out if the theorem can be defined using fewer objects than a given expected number.
         /// There might be more ways, because <see cref="GeometricalObject"/>s can be defined in 
         /// multiple ways. For example, if we have the theorem that lines [A,B,C] and [A,D,E] are 

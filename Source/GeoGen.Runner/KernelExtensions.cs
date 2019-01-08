@@ -1,5 +1,4 @@
-﻿using GeoGen.AnalyticGeometry;
-using GeoGen.Analyzer;
+﻿using GeoGen.Analyzer;
 using GeoGen.Core;
 using GeoGen.Generator;
 using Ninject;
@@ -35,9 +34,8 @@ namespace GeoGen.Runner
             kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
             kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf().InNamedScope(GeneratorScopeName);
-            
+
             // Transient objects
-            kernel.Bind<IGeneratorFactory>().To<GeneratorFactory>();
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
 
             // Tracers
@@ -63,10 +61,19 @@ namespace GeoGen.Runner
 
             #region Analyzer
 
+            // Bind analyzer with its configuration
+            kernel.Bind<ITheoremsAnalyzer>()
+                .To<TheoremsAnalyzer>()
+                .WithConstructorArgument("configuration", generatorInput);
+
+            // Bind manager with its configuration
+            kernel.Bind<IObjectsContainersManager>()
+                .To<ObjectsContainersManager>()
+                .WithConstructorArgument("configuration", generatorInput);
+
             // Singletons per one generation
-            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>().InNamedScope(GeneratorScopeName);
-            kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InNamedScope(GeneratorScopeName);            
+            kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IGeometryRegistrar>().To<GeometryRegistrar>().InNamedScope(GeneratorScopeName);
 
             // Transient objects
@@ -76,20 +83,13 @@ namespace GeoGen.Runner
 
             // Tracer
             kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
-            
-            // An object with constructor arguments
-            kernel.Bind<IObjectsContainersManager>()
-                .To<ObjectsContainersManager>()
-                .WithConstructorArgument("numberOfContainers", generatorInput.NumberOfContainers)
-                .WithConstructorArgument("maximalAttemptsToReconstructOneContainer", generatorInput.MaximalAttemptsToReconstructOneContainer)
-                .WithConstructorArgument("maximalAttemptsToReconstructAllContainers", generatorInput.MaximalAttemptsToReconstructAllContainers);
 
             // Ninject factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsContainersManagerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IObjectsContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
             kernel.Bind<IContextualContainerFactory>().ToFactory().InNamedScope(GeneratorScopeName);
-            
+
             // Potential theorem analyzers
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>().InNamedScope(GeneratorScopeName);

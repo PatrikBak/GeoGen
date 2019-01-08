@@ -11,13 +11,6 @@ namespace GeoGen.Analyzer
     public interface IContextualContainer
     {
         /// <summary>
-        /// Gets the objects container manager that holds all the  representations of 
-        /// the objects inside this container.
-        /// TODO: Get rid of this
-        /// </summary>
-        IObjectsContainersManager Manager { get; }
-
-        /// <summary>
         /// Gets the geometrical objects matching a given query and casts them to a given type.
         /// </summary>
         /// <typeparam name="T">The type of objects.</typeparam>
@@ -33,6 +26,11 @@ namespace GeoGen.Analyzer
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
         T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject;
+
+        /// <summary>
+        /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
+        /// This method doesn't get delete the <see cref="GeometricalObject"/>s that container already created.
+        /// </summary>
         void Recreate();
     }
 }
