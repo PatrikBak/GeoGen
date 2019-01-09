@@ -49,7 +49,7 @@ namespace GeoGen.Analyzer
         /// The set of all the new circles in the container.
         /// </summary>
         private readonly HashSet<CircleObject> _newCircles = new HashSet<CircleObject>();
-        
+
         /// <summary>
         /// The configuration objects represented in this container.
         /// </summary>
@@ -60,24 +60,15 @@ namespace GeoGen.Analyzer
         /// </summary>
         public readonly IObjectsContainersManager _manager;
 
-        #endregion
-
-        #region Private properties
+        /// <summary>
+        /// The tracer of unsuccessful attempts to reconstruct the container.
+        /// </summary>
+        private readonly IUnsuccessfulReconstructionsTracer _tracer;
 
         /// <summary>
-        /// All the line objects in the container.
+        /// The configuration of the container.
         /// </summary>
-        private IEnumerable<LineObject> AllLines => _oldLines.Concat(_newLines);
-
-        /// <summary>
-        /// All the circle objects in the container.
-        /// </summary>
-        private IEnumerable<CircleObject> AllCircles => _oldCircles.Concat(_newCircles);
-
-        /// <summary>
-        /// All the point objects in the container.
-        /// </summary>
-        private IEnumerable<PointObject> AllPoints => _oldPoints.Concat(_newPoints);
+        private readonly IContextualContainerConfiguration _configuration;
 
         #endregion
 
@@ -86,12 +77,16 @@ namespace GeoGen.Analyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextualContainer"/> class.
         /// </summary>
+        /// <param name="configuration">The configuration of the container.</param>
         /// <param name="objects">The objects to be present in the container.</param>
         /// <param name="manager">The manager of all the containers where our objects are supposed to be drawn.</param>
-        public ContextualContainer(IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager)
+        /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the container.</param>[
+        public ContextualContainer(IContextualContainerConfiguration configuration, IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager, IUnsuccessfulReconstructionsTracer tracer = null)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _configurationObjects = objects;
+            _tracer = tracer;
 
             // Initialize the dictionary mapping containers to the object maps
             _manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
@@ -101,12 +96,12 @@ namespace GeoGen.Analyzer
                 // Add all objects, where only the last one is new
                 _configurationObjects.ForEach((obj, index) => Add(obj, isNew: index == _configurationObjects.Count - 1));
             }
-            // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
-            // resolve it as an inconsistency. These exception are possible, because it would be very
-            // hard to predict every possible outcome of the fact that the numerical system is not 
-            // precise. Other exceptions would be a bigger deal and we won't hide them
             catch (AnalyticException)
             {
+                // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
+                // resolve it as an inconsistency. These exception are possible, because it would be very
+                // hard to predict every possible outcome of the fact that the numerical system is not 
+                // precise. Other exceptions would be a bigger deal and we won't hide them
                 throw new InconsistentContainersException();
             }
         }
@@ -139,7 +134,7 @@ namespace GeoGen.Analyzer
                         result = result.Concat(_oldPoints);
                         break;
                     case ContexualContainerQuery.ObjectsType.All:
-                        result = result.Concat(AllPoints);
+                        result = result.Concat(_oldPoints).Concat(_newPoints);
                         break;
                 }
             }
@@ -157,7 +152,7 @@ namespace GeoGen.Analyzer
                         result = result.Concat(_oldLines);
                         break;
                     case ContexualContainerQuery.ObjectsType.All:
-                        result = result.Concat(AllLines);
+                        result = result.Concat(_oldLines).Concat(_newLines);
                         break;
                 }
             }
@@ -175,7 +170,7 @@ namespace GeoGen.Analyzer
                         result = result.Concat(_oldCircles);
                         break;
                     case ContexualContainerQuery.ObjectsType.All:
-                        result = result.Concat(AllCircles);
+                        result = result.Concat(_oldCircles).Concat(_newCircles);
                         break;
                 }
             }
@@ -201,95 +196,45 @@ namespace GeoGen.Analyzer
         /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
         /// This method doesn't get delete the <see cref="GeometricalObject"/>s that container already created.
         /// </summary>
-        public void Recreate()
+        /// <param name="successful">true, if the reconstruction was successful; false otherwise.</param>
+        public void TryReconstruct(out bool successful)
         {
-            // Let the manager reconstruct its containers
-            _manager.TryReconstructContainers();
+            // Prepare a variable holding the current number of attempts
+            var numberOfAttempts = 0;
 
-            // Prepare a new objects map
-            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
-
-            // Add the containers to it
-            _manager.ForEach(container => newMap.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
-
-            // Go through all the original pairs of [container, objects] map...
-            _objects.ForEach(pair =>
+            // While we are supposed to try...
+            while (numberOfAttempts < _configuration.MaximalNumberOfAttemptsToReconstruct)
             {
-                // Get the current container
-                var container = pair.Key;
+                // Mark an attempt
+                numberOfAttempts++;
 
-                // Go through all the geometrical objects in this container
-                pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
+                try
                 {
-                    // We're going to find the current analytic representation of it
-                    IAnalyticObject analyticObject;
+                    // Perform the reconstruction
+                    Reconstruct();
 
-                    // If the configuration object is set, then we can ask the container directly
-                    if (geometricalObject.ConfigurationObject != null)
-                        analyticObject = container.Get(geometricalObject.ConfigurationObject);
-                    else
-                    {
-                        // Otherwise we need to reconstruct the object from points
-                        var definableByPoints = (DefinableByPoints) geometricalObject;
+                    // If we got here, we're happy
+                    break;
+                }
+                catch (AnalyzerException)
+                {
+                    // It might happen that it failed. This is a very rare case, 
+                    // but due to the imprecision of the analytic geometry it is possible
+                }
+            }
 
-                        // We get the needed numbers of points (which is 2 for line, 3 for circle)
-                        // We could have tried get all pair and triples to be sure they make the same
-                        // line/circle, but 
-                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
-                                        // Get their analytic representations in the container
-                                        .Select(point => container.Get(point.ConfigurationObject))
-                                        // Cast to the right type
-                                        .Cast<Point>()
-                                        // Enumerate to an array
-                                        .ToArray();
+            // We did it if and only if we didn't reach the maximal number of attempts
+            successful = numberOfAttempts != _configuration.MaximalNumberOfAttemptsToReconstruct;
 
-                        try
-                        {
-                            // Decide according to the object
-                            switch (geometricalObject)
-                            {
-                                // Line case
-                                case LineObject line:
-                                    analyticObject = new Line(points[0], points[1]);
-                                    break;
+            // If we made it and needed more than one attempt, trace it
+            if (successful && numberOfAttempts > 1)
+                _tracer?.TraceUnsucessfullAttemptsToReconstruct(this, _manager, numberOfAttempts);
 
-                                // Circle case
-                                case CircleObject circle:
-                                    analyticObject = new Circle(points[0], points[1], points[2]);
-                                    break;
-
-                                // There shouldn't be any other
-                                default:
-                                    throw new AnalyzerException("Unknown type of geometrical object");
-                            }
-                        }
-                        catch (AnalyticException)
-                        {
-                            // Since we didn't care about inconsistencies, it might happen that
-                            // in the new container the points can't make a line or a circle anymore
-                            // because of some very slight imprecision. This is a very rare case though.
-                            throw new AnalyzerException("Reconstruction of the container failed.");
-                        }
-                    }
-
-                    try
-                    {
-                        // Finally we can add a new mapping between the objects
-                        newMap[container].Add(geometricalObject, analyticObject);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // Since we didn't care about inconsistencies, it might happen that
-                        // an almost equal version of this object is already added  because
-                        // of some very slight imprecision. This is a very rare case though.
-                        throw new AnalyzerException("Reconstruction of the container failed.");
-                    }                    
-                });
-            });
-
-            // Reset the objects map to the new one
-            _objects = newMap;
+            // If we weren't successful at all, trace that as well
+            if (!successful)
+                _tracer?.TraceReachingMaximalNumberOfAttemptsToReconstruct(this, _manager);
         }
+
 
         #endregion
 
@@ -424,7 +369,7 @@ namespace GeoGen.Analyzer
             #region Update existing lines and circles that contain this point
 
             // Iterate over all the lines
-            foreach (var lineObject in AllLines)
+            foreach (var lineObject in _oldLines.Concat(_newLines))
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, lineObject))
@@ -438,7 +383,7 @@ namespace GeoGen.Analyzer
             }
 
             // Iterate over all the circles
-            foreach (var circleObject in AllCircles)
+            foreach (var circleObject in _oldCircles.Concat(_newCircles))
             {
                 // If this point lies on it
                 if (IsPointOnLineOrCircle(pointObject, circleObject))
@@ -456,12 +401,12 @@ namespace GeoGen.Analyzer
             #region Create new lines and circles from this point and the other ones
 
             // Enumerate all the points so we get all the pairs of distinct ones
-            var points = AllPoints.ToArray();
+            var points = _oldPoints.Concat(_newPoints).ToArray();
 
             // Now we construct all lines that pass through our point
             // We use our helper method to do the hard work
             foreach (var point in points)
-               ResolveLine(pointObject, point, isNew);
+                ResolveLine(pointObject, point, isNew);
 
 
             // Now we construct all circles that pass through our point
@@ -643,7 +588,7 @@ namespace GeoGen.Analyzer
             var circle = geometricalObject as CircleObject;
 
             // Iterate over all the points 
-            foreach (var pointObject in AllPoints)
+            foreach (var pointObject in _oldPoints.Concat(_newPoints))
             {
                 // If the current point lies on the line / circle, we want to mark it
                 if (IsPointOnLineOrCircle(pointObject, geometricalObject))
@@ -662,7 +607,7 @@ namespace GeoGen.Analyzer
                     {
                         // Make sure the circle knows about the point
                         circle.Points.Add(pointObject);
-                        
+
                         // Make sure the point knows about the circle
                         pointObject.Circles.Add(circle);
                     }
@@ -708,6 +653,104 @@ namespace GeoGen.Analyzer
 
             // Finally we can return the result
             return result.Value;
+        }
+
+        #endregion
+
+        #region Reconstructing container
+
+        /// <summary>
+        /// Performs the actual reconstruction of the container and throws an <see cref="AnalyticException"/>,
+        /// if it's not successful.
+        /// </summary>
+        private void Reconstruct()
+        {
+            // Let the manager reconstruct its containers
+            _manager.TryReconstructContainers();
+
+            // Prepare a new objects map
+            var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
+
+            // Add the containers to it
+            _manager.ForEach(container => newMap.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
+
+            // Go through all the original pairs of [container, objects] map...
+            _objects.ForEach(pair =>
+            {
+                // Get the current container
+                var container = pair.Key;
+
+                // Go through all the geometrical objects in this container
+                pair.Value.Select(tuple => tuple.item1).ForEach(geometricalObject =>
+                {
+                    // We're going to find the current analytic representation of it
+                    IAnalyticObject analyticObject;
+
+                    // If the configuration object is set, then we can ask the container directly
+                    if (geometricalObject.ConfigurationObject != null)
+                        analyticObject = container.Get(geometricalObject.ConfigurationObject);
+                    else
+                    {
+                        // Otherwise we need to reconstruct the object from points
+                        var definableByPoints = (DefinableByPoints) geometricalObject;
+
+                        // We get the needed numbers of points (which is 2 for line, 3 for circle)
+                        // We could have tried get all pair and triples to be sure they make the same
+                        // line/circle, but 
+                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
+                                        // Get their analytic representations in the container
+                                        .Select(point => container.Get(point.ConfigurationObject))
+                                        // Cast to the right type
+                                        .Cast<Point>()
+                                        // Enumerate to an array
+                                        .ToArray();
+
+                        try
+                        {
+                            // Decide according to the object
+                            switch (geometricalObject)
+                            {
+                                // Line case
+                                case LineObject line:
+                                    analyticObject = new Line(points[0], points[1]);
+                                    break;
+
+                                // Circle case
+                                case CircleObject circle:
+                                    analyticObject = new Circle(points[0], points[1], points[2]);
+                                    break;
+
+                                // There shouldn't be any other
+                                default:
+                                    throw new AnalyzerException("Unknown type of geometrical object");
+                            }
+                        }
+                        catch (AnalyticException)
+                        {
+                            // Since we didn't care about inconsistencies, it might happen that
+                            // in the new container the points can't make a line or a circle anymore
+                            // because of some very slight imprecision. This is a very rare case though.
+                            throw new AnalyzerException("Reconstruction of the container failed.");
+                        }
+                    }
+
+                    try
+                    {
+                        // Finally we can add a new mapping between the objects
+                        newMap[container].Add(geometricalObject, analyticObject);
+                    }
+                    catch (ArgumentException)
+                    {
+                        // Since we didn't care about inconsistencies, it might happen that
+                        // an almost equal version of this object is already added  because
+                        // of some very slight imprecision. This is a very rare case though.
+                        throw new AnalyzerException("Reconstruction of the container failed.");
+                    }
+                });
+            });
+
+            // Reset the objects map to the new one
+            _objects = newMap;
         }
 
         #endregion

@@ -15,7 +15,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="ConfigurationsContainer"/> class.
         /// </summary>
         /// <param name="converter">The converter of configurations to a string used by the container.</param>
-        public ConfigurationsContainer(FullConfigurationToStringConverter converter) 
+        public ConfigurationsContainer(FullConfigurationToStringConverter converter)
             : base(converter)
         {
         }

@@ -56,7 +56,7 @@ namespace GeoGen.Core
         /// <param name="construction">The construction that should be used to draw this object.</param>
         /// <param name="arguments">The arguments that should be passed to the construction function.</param>
         /// <param name="id">The id of the object.</param>
-        public ConstructedConfigurationObject(Construction construction, Arguments arguments, int id) 
+        public ConstructedConfigurationObject(Construction construction, Arguments arguments, int id)
             : this(construction, arguments)
         {
             Id = id;

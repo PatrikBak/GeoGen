@@ -176,7 +176,7 @@ namespace GeoGen.Core
             {
                 new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
             };
-            
+
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.MidpointFromPoints, parameters, ConfigurationObjectType.Point);
         }

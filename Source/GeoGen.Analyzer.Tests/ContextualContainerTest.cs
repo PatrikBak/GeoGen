@@ -79,12 +79,15 @@ namespace GeoGen.Analyzer.Tests
                 return container;
             }).ToList();
 
-            // Finally we can mock a manager that doesn't care about inconsistencies
+            // Mock a manager that doesn't care about inconsistencies
             var manager = new Mock<IObjectsContainersManager>();
             manager.Setup(s => s.GetEnumerator()).Returns(() => containers.GetEnumerator());
 
+            // Mock the configuration
+            var configuration = new Mock<IContextualContainerConfiguration>();
+
             // And create the final result
-            return new ContextualContainer(looseObjects, manager.Object);
+            return new ContextualContainer(configuration.Object, looseObjects, manager.Object);
         }
 
         #endregion
@@ -99,9 +102,9 @@ namespace GeoGen.Analyzer.Tests
             {
                 new IAnalyticObject[]
                 {
-                    new Point(0, 0), 
-                    new Point(0, 1), 
-                    new Point(3, 6) 
+                    new Point(0, 0),
+                    new Point(0, 1),
+                    new Point(3, 6)
                 },
                 new IAnalyticObject[]
                 {
@@ -455,7 +458,7 @@ namespace GeoGen.Analyzer.Tests
                 Type = ContexualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).Should().HaveCount(17, "there are 29 (all) - 12 (new) of them");
-            
+
             // Test that all the circles pass through 3 points
             container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
             {

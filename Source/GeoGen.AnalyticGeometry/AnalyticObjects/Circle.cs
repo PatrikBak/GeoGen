@@ -150,6 +150,10 @@ namespace GeoGen.AnalyticGeometry
             if (this == otherCircle)
                 throw new AnalyticException("Cannot intersect equal circles");
 
+            // Make sure they're not co-centric
+            if (Center == otherCircle.Center)
+                return new Point[0];
+
             // Otherwise we're solving the system:
             // 
             // (x-m1)^2 + (y-n1)^2 = r1^2       (1)

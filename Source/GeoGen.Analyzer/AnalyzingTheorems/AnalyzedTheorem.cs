@@ -20,7 +20,7 @@ namespace GeoGen.Analyzer
         /// Gets  the number of objects containers in which the theorem was true after the second test.
         /// This value may be null if there wasn't the second test, or if it wasn't successful.
         /// </summary>
-        public int? NumberOfTrueContainersAfterSecondTest { get;  }
+        public int? NumberOfTrueContainersAfterSecondTest { get; }
 
         #endregion
 

@@ -7,7 +7,7 @@ namespace GeoGen.Generator
     /// <summary>
     /// Represents an input for the <see cref="Generator"/>.
     /// </summary>
-    public class GeneratorInput : IGeneratorConfiguration, IObjectsContainersManagerConfiguration, ITheoremAnalysisConfiguration
+    public class GeneratorInput : IGeneratorConfiguration, IObjectsContainersManagerConfiguration, ITheoremAnalysisConfiguration, IContextualContainerConfiguration
     {
         #region IGeneratorConfiguration implementation
 
@@ -24,9 +24,9 @@ namespace GeoGen.Generator
         public IReadOnlyList<Construction> Constructions { get; set; }
 
         /// <summary>
-        /// The maximal number of iterations that are to be performed by the generator.
+        /// The number of iterations that are to be performed by the generator.
         /// </summary>
-        public int MaximalNumberOfIterations { get; set; }
+        public int NumberOfIterations { get; set; }
 
         #endregion
 
@@ -61,11 +61,14 @@ namespace GeoGen.Generator
         /// </summary>
         public int MinimalNumberOfTrueContainersToRevalidate { get; set; }
 
+        #endregion
+
+        #region IContextualContainerConfiguration implementation
+
         /// <summary>
-        /// Gets the maximal number of attempts to reconstruct the contextual container
-        /// before the second theorem validation phase.
+        /// The maximal allowed number of attempts to reconstruct the contextual container.
         /// </summary>
-        public int MaximalNumberOfAttemptsToReconstructContextualContainer { get; set; }
+        public int MaximalNumberOfAttemptsToReconstruct { get; set; }
 
         #endregion
     }

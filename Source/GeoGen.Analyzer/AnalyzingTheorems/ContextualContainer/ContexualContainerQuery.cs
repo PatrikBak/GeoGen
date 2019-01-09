@@ -50,7 +50,7 @@
         /// <summary>
         /// Gets or sets if we should include circles.
         /// </summary>
-        public bool IncludeCirces { get; set; } 
+        public bool IncludeCirces { get; set; }
 
         #endregion
     }

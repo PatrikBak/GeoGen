@@ -152,7 +152,7 @@ namespace GeoGen.Generator
             #region Algorithm
 
             // Execute the requested number of iterations
-            for (var iterationIndex = 0; iterationIndex < _input.MaximalNumberOfIterations; iterationIndex++)
+            for (var iterationIndex = 0; iterationIndex < _input.NumberOfIterations; iterationIndex++)
             {
                 // In each iteration we initialize a list for new configurations that will be extended
                 // in the next iteration. We're gonna fill it with our the configurations generated

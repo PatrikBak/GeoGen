@@ -105,39 +105,6 @@ namespace GeoGen.Analyzer
             // null means we didn't, false means we did and it wasn't successful, true means it went fine
             bool? wasContainerRecreated = null;
 
-            // Local function that performs the recreation and sets this value
-            void RecreateContextualContainer()
-            {
-                // A variable indicating the number of attempts
-                var numberOfAttempts = 0;
-
-                // While we should try...
-                while (numberOfAttempts < _configuration.MaximalNumberOfAttemptsToReconstructContextualContainer)
-                {
-                    // Mark an attempt
-                    numberOfAttempts++;
-
-                    try
-                    {
-                        // Perform the recreation
-                        container.Recreate();
-
-                        // If we got here, we're happy
-                        break;
-                    }
-                    catch (AnalyzerException)
-                    {
-                        // It might happen that it failed. This is a very rare case, 
-                        // but due to the imprecision of the analytic geometry it is possible
-                        // TODO: Replace with some tracer
-                        Console.WriteLine("It has happened");
-                    }
-                }
-
-                // We did it if and only if we didn't reach the maximal number of attempts
-                wasContainerRecreated = numberOfAttempts == _configuration.MaximalNumberOfAttemptsToReconstructContextualContainer;
-            }
-
             // Handle all the theorems we're left with
             foreach (var (potentialTheorem, trueContainers) in potentialTheorems)
             {
@@ -152,9 +119,15 @@ namespace GeoGen.Analyzer
                 }
 
                 // Otherwise we have a theorem to retest
-                // First we recreate the container, if we haven't it done already
+                // If we haven't recreated the container yet...
                 if (wasContainerRecreated == null)
-                    RecreateContextualContainer();
+                {
+                    // We do it
+                    container.TryReconstruct(out var successful);
+
+                    // And set if it was successful
+                    wasContainerRecreated = successful;
+                }
 
                 // If the container couldn't be recreated, then we can't perform the second phase :(
                 if (!wasContainerRecreated.Value)

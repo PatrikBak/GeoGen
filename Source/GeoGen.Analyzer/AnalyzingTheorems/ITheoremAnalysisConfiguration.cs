@@ -14,11 +14,5 @@
         /// The minimal number of containers in which a theorem must be true before we try to re-validate it. 
         /// </summary>
         int MinimalNumberOfTrueContainersToRevalidate { get; }
-
-        /// <summary>
-        /// Gets the maximal number of attempts to reconstruct the contextual container
-        /// before the second theorem validation phase.
-        /// </summary>
-        int MaximalNumberOfAttemptsToReconstructContextualContainer { get; }
     }
 }

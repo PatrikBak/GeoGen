@@ -15,7 +15,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="ArgumentsContainer"/> class.
         /// </summary>
         /// <param name="converter">The converter of arguments to a string used by the string based container.</param>
-        public ArgumentsContainer(DefaultArgumentsToStringConverter converter) 
+        public ArgumentsContainer(DefaultArgumentsToStringConverter converter)
             : base(converter)
         {
         }

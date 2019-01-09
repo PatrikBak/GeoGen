@@ -1,4 +1,5 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Analyzer;
+using GeoGen.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace GeoGen.ConsoleTest
 {
     public class OutputFormatter
     {
-        private Dictionary<int, char> _objectIdToString = new Dictionary<int, char>();
+        private Dictionary<ConfigurationObject, char> _objectToName = new Dictionary<ConfigurationObject, char>();
 
         private Configuration _configuration;
 
@@ -24,8 +25,8 @@ namespace GeoGen.ConsoleTest
 
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append($"Loose: {string.Join(", ", looseObjects.Select(ObjectToStringById))}\n");
-
+            stringBuilder.Append($"{_configuration.LooseObjectsHolder.Layout}: {string.Join(", ",_configuration.LooseObjectsHolder.LooseObjects.Select(ObjectToStringById))}\n");
+            
             foreach (var constructedObject in _configuration.ConstructedObjects)
             {
                 stringBuilder.Append($"{ObjectToStringById(constructedObject)} = {ConstructedObjectToString(constructedObject)}\n");
@@ -38,18 +39,16 @@ namespace GeoGen.ConsoleTest
         {
             foreach (var configurationObject in objects)
             {
-                var id = configurationObject.Id;
-
-                if (_objectIdToString.ContainsKey(id))
+                if (_objectToName.ContainsKey(configurationObject))
                     continue;
 
-                var newLetter = (char) ('A' + _objectIdToString.Count);
+                var newLetter = (char) ('A' + _objectToName.Count);
 
-                _objectIdToString.Add(id, newLetter);
+                _objectToName.Add(configurationObject, newLetter);
             }
         }
 
-        public string FormatTheorems(IEnumerable<Theorem> theorems)
+        public string FormatTheorems(IEnumerable<AnalyzedTheorem> theorems)
         {
             var stringBuilder = new StringBuilder();
 
@@ -58,11 +57,15 @@ namespace GeoGen.ConsoleTest
                 stringBuilder.Append(ConvertTheoremToString(theorem)).Append("\n");
             }
 
-            return stringBuilder.ToString();
+            return stringBuilder.ToString().Trim();
         }
 
-        public string ConvertTheoremToString(Theorem theorem)
+        public string ConvertTheoremToString(AnalyzedTheorem theorem)
         {
+            var containersNumbersString = theorem.NumberOfTrueContainersAfterSecondTest != null
+                ? $"{theorem.NumberOfTrueContainersAfterFirstTest},{theorem.NumberOfTrueContainersAfterSecondTest}"
+                : $"{theorem.NumberOfTrueContainersAfterFirstTest}";
+
             if (theorem.Type == TheoremType.EqualLineSegments || theorem.Type == TheoremType.EqualAngles)
             {
                 var firstTwo = theorem.InvolvedObjects.Take(2).Select(TheoremObjectToString).ToList();
@@ -74,14 +77,14 @@ namespace GeoGen.ConsoleTest
                 var firstPart = $"[{ string.Join(", ", firstTwo)}]";
                 var secondPart = $"[{string.Join(", ", secondTwo)}]";
 
-                return $"{theorem.Type}: {(firstPart.CompareTo(secondPart) < 0 ? firstPart : secondPart)} {(firstPart.CompareTo(secondPart) < 0 ? secondPart : firstPart)}";
+                return $"[{containersNumbersString}] {theorem.Type}: {(firstPart.CompareTo(secondPart) < 0 ? firstPart : secondPart)} {(firstPart.CompareTo(secondPart) < 0 ? secondPart : firstPart)}";
             }
 
             var list = theorem.InvolvedObjects.Select(TheoremObjectToString).ToList();
 
             list.Sort();
 
-            return $"{theorem.Type}: {string.Join(", ", list)}";
+            return $"[{containersNumbersString}] {theorem.Type}: {string.Join(", ", list)}";
         }
 
         private string ConstructedObjectToString(ConstructedConfigurationObject constructedObject)
@@ -134,7 +137,7 @@ namespace GeoGen.ConsoleTest
 
         private string ObjectToStringById(ConfigurationObject configurationObject)
         {
-            return _objectIdToString[configurationObject.Id].ToString();
+            return _objectToName[configurationObject].ToString();
         }
     }
 }

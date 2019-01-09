@@ -31,6 +31,7 @@ namespace GeoGen.Analyzer
         /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
         /// This method doesn't get delete the <see cref="GeometricalObject"/>s that container already created.
         /// </summary>
-        void Recreate();
+        /// <param name="successful">true, if the reconstruction was successful; false otherwise.</param>
+        void TryReconstruct(out bool successful);
     }
 }

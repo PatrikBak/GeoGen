@@ -190,18 +190,18 @@ namespace GeoGen.AnalyticGeometry.Tests
                 new Line(b, c)
             };
 
-            // Prepare pre-calculted results
+            // Prepare precalculated results
             var results = new List<double>
             {
                 Math.Atan(8),
                 Math.Atan(8.0/5),
-                (Math.PI - Math.Atan(8) - Math.Atan(8.0/5))
+                Math.PI - Math.Atan(8) - Math.Atan(8.0/5)
             };
 
             // Assert
             Assert.AreEqual(results[0].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0],lines[1]).Rounded());
-            Assert.AreEqual(results[2].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0],lines[1]).Rounded());
+            Assert.AreEqual(results[1].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[2]).Rounded());
+            Assert.AreEqual(results[2].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[1], lines[2]).Rounded());
         }
 
         [Test]
@@ -220,7 +220,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 new Line(b, c)
             };
 
-            // Prepare pre-calculted results
+            // Prepare precalculated results
             var results = new List<double>
             {
                 Math.PI/4,
@@ -229,9 +229,9 @@ namespace GeoGen.AnalyticGeometry.Tests
             };
 
             // Assert
-            Assert.AreEqual(results[0].Rounded(),AnalyticHelpers.AngleBetweenLines(lines[0],lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(),AnalyticHelpers.AngleBetweenLines(lines[0],lines[1]).Rounded());
-            Assert.AreEqual(results[2].Rounded(),AnalyticHelpers.AngleBetweenLines(lines[0],lines[1]).Rounded());
+            Assert.AreEqual(results[0].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[1]).Rounded());
+            Assert.AreEqual(results[1].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[2]).Rounded());
+            Assert.AreEqual(results[2].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[1], lines[2]).Rounded());
         }
 
 

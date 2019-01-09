@@ -274,6 +274,6 @@ namespace GeoGen.AnalyticGeometry.Tests
                 Assert.IsTrue(normalized[2].Rounded() == result.C.Rounded());
             }
         }
-        
+
     }
 }

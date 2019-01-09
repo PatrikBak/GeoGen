@@ -71,6 +71,12 @@ namespace GeoGen.Runner
                 .To<ObjectsContainersManager>()
                 .WithConstructorArgument("configuration", generatorInput);
 
+            // Bind contextual container with its configuration
+            kernel.Bind<IContextualContainer>()
+                .To<ContextualContainer>()
+                .WithConstructorArgument("configuration", generatorInput);
+
+
             // Singletons per one generation
             kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InNamedScope(GeneratorScopeName);
@@ -79,10 +85,10 @@ namespace GeoGen.Runner
             // Transient objects
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
             kernel.Bind<IObjectsContainer>().To<ObjectsContainer>();
-            kernel.Bind<IContextualContainer>().To<ContextualContainer>();
 
-            // Tracer
+            // Tracers
             kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
+            kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer) null);
 
             // Ninject factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InNamedScope(GeneratorScopeName);

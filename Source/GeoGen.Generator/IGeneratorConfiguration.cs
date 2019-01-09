@@ -21,8 +21,8 @@ namespace GeoGen.Generator
         IReadOnlyList<Construction> Constructions { get; }
 
         /// <summary>
-        /// The maximal number of iterations that are to be performed by the generator.
+        /// The number of iterations that are to be performed by the generator.
         /// </summary>
-        int MaximalNumberOfIterations { get; }
+        int NumberOfIterations { get; }
     }
 }

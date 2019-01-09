@@ -29,7 +29,7 @@ namespace GeoGen.Generator
         private readonly IReadOnlyDictionary<LooseConfigurationObject, int> _remappedIds;
 
         #endregion
-        
+
         #region Constructor
 
         /// <summary>

@@ -35,7 +35,7 @@ namespace GeoGen.Analyzer
         public LineObject(params PointObject[] points)
                 : base(points)
         {
-        } 
+        }
 
         #endregion
     }

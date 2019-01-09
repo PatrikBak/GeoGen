@@ -71,7 +71,7 @@ namespace GeoGen.Generator
                         .Select(permutation =>
                         {
                             // Each permutation is first casted to the tuple of itself and id of the object to which this object is mapped
-                            return permutation.Select((looseObject, index) => (looseObject, id : looseObjects[index].Id))
+                            return permutation.Select((looseObject, index) => (looseObject, id: looseObjects[index].Id))
                                     // Then we exclude the ones that are mapped to itself
                                     .Where(pair => pair.looseObject.Id != pair.id)
                                     // And wrap the remaining ones to a dictionary

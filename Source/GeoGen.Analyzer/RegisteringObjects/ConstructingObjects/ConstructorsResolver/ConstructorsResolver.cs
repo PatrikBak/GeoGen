@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Analyzer
 {

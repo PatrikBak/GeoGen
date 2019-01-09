@@ -23,6 +23,6 @@ namespace GeoGen.Analyzer
         /// Gets or set the first object that turned out to be geometrically inconstructible. 
         /// If there is none, the value should be null.
         /// </summary>
-        public ConfigurationObject InconstructibleObject { get; set; }        
+        public ConfigurationObject InconstructibleObject { get; set; }
     }
 }

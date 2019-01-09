@@ -24,11 +24,11 @@ namespace GeoGen.ConsoleTest
                 new ObjectConstructionArgument(objects[2])
             });
 
-            var argumentsList1 = new List<ConstructionArgument> {argument1};
-            var argumentsList2 = new List<ConstructionArgument> {argument2};
+            var argumentsList1 = new List<ConstructionArgument> { argument1 };
+            var argumentsList2 = new List<ConstructionArgument> { argument2 };
 
-            var midpoint1 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(MidpointFromPoints), argumentsList1) {Id = 3};
-            var midpoint2 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(MidpointFromPoints), argumentsList2) {Id = 4};
+            var midpoint1 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(MidpointFromPoints), argumentsList1) { Id = 3 };
+            var midpoint2 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(MidpointFromPoints), argumentsList2) { Id = 4 };
 
             var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
@@ -44,11 +44,11 @@ namespace GeoGen.ConsoleTest
                 })
             });
 
-            var argumentsList = new List<ConstructionArgument> {argument};
+            var argumentsList = new List<ConstructionArgument> { argument };
 
-            var centroid = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints), argumentsList) {Id = 5};
+            var centroid = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints), argumentsList) { Id = 5 };
 
-            var constructedObjects = new List<ConstructedConfigurationObject> {midpoint1, midpoint2, centroid};
+            var constructedObjects = new List<ConstructedConfigurationObject> { midpoint1, midpoint2, centroid };
 
             var configuration = new Configuration(objects, constructedObjects);
 
@@ -84,9 +84,9 @@ namespace GeoGen.ConsoleTest
                     new ObjectConstructionArgument(objects[2]),
                 })
             };
-            
-            var line1 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints), arguments1) {Id = 3};
-            var line2 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints), arguments2) {Id = 4};
+
+            var line1 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints), arguments1) { Id = 3 };
+            var line2 = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints), arguments2) { Id = 4 };
 
             var argument = new SetConstructionArgument(new List<ConstructionArgument>
             {
@@ -94,11 +94,11 @@ namespace GeoGen.ConsoleTest
                 new ObjectConstructionArgument(line2),
             });
 
-            var argumentsList = new List<ConstructionArgument> {argument};
+            var argumentsList = new List<ConstructionArgument> { argument };
 
-            var incenter = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(IntersectionOfLines), argumentsList) {Id = 5};
+            var incenter = new ConstructedConfigurationObject(PredefinedConstructionsFactory.Get(IntersectionOfLines), argumentsList) { Id = 5 };
 
-            var constructedObjects = new List<ConstructedConfigurationObject> {line1, line2, incenter};
+            var constructedObjects = new List<ConstructedConfigurationObject> { line1, line2, incenter };
 
             var configuration = new Configuration(objects, constructedObjects);
 
