@@ -35,5 +35,16 @@ namespace GeoGen.Analyzer
         }
 
         #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts a given point to a string. 
+        /// NOTE: This method id used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the point.</returns>
+        public override string ToString() => ConfigurationObject.ToString();
+
+        #endregion
     }
 }

@@ -74,7 +74,7 @@ namespace GeoGen.Analyzer
                 {
                     // Cast the lines to their analytic versions
                     var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
-                    var analyticLine2 = container.GetAnalyticObject<Line>(line3, objectsContainer);
+                    var analyticLine2 = container.GetAnalyticObject<Line>(line2, objectsContainer);
                     var analyticLine3 = container.GetAnalyticObject<Line>(line3, objectsContainer);
                     var analyticLine4 = container.GetAnalyticObject<Line>(line4, objectsContainer);
 

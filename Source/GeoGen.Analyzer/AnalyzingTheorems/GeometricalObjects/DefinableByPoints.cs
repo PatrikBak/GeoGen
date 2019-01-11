@@ -49,5 +49,26 @@ namespace GeoGen.Analyzer
         }
 
         #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts a given object to a string. 
+        /// NOTE: This method id used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the object.</returns>
+        public override string ToString()
+        {
+            // Create the configuration object part, if there is any
+            var configurationObject = ConfigurationObject == null ? "" : $"{ConfigurationObject} ";
+
+            // Create the points part
+            var points = string.Join("; ", Points);
+
+            // Concatenate them
+            return $"{configurationObject}Points: {points}";
+        }
+
+        #endregion
     }
 }
