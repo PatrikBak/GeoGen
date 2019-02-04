@@ -315,7 +315,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 new Circle(new Point(7, 1), 0.999)
             };
 
-            for(var i = 0; i < circles.Count; i++)
+            for (var i = 0; i < circles.Count; i++)
             {
                 Assert.IsTrue(circles[i].IntersectWith(mainCircle).IsEmpty(), i.ToString());
             }

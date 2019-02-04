@@ -19,7 +19,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the layout in which these objects are arranged.
         /// </summary>
-        public LooseObjectsLayout? Layout { get; }
+        public LooseObjectsLayout Layout { get; }
 
         #endregion
 
@@ -30,8 +30,8 @@ namespace GeoGen.Core
         /// instance wrapping the actual loose objects and possible their layout.
         /// </summary>
         /// <param name="looseObjects">The actual loose configurations objects.</param>
-        /// <param name="layout">The layout of the objects. This parameter has the default value 'null'.</param>
-        public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout? layout = null)
+        /// <param name="layout">The layout of these loose objects.</param>
+        public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout layout = default)
         {
             LooseObjects = looseObjects?.ToList() ?? throw new ArgumentNullException(nameof(looseObjects));
             Layout = layout;
@@ -39,7 +39,8 @@ namespace GeoGen.Core
             // Verify the objects match the layout
             switch (layout)
             {
-                case null:
+                case LooseObjectsLayout.None:
+
                     // Specifying no layout is allowed
                     return;
 

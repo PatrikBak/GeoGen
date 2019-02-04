@@ -48,14 +48,27 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Configuration"/> class.
+        /// Initializes  a new instance of the <see cref="Configuration"/> class that consists of given objects.
+        /// The loose objects will be automatically detected and will have a specified layout, which is 
+        /// <see cref="LooseObjectsLayout.None"/> by default.
         /// </summary>
-        /// <param name="looseObjects">The loose configurations objects of the configuration.</param>
-        /// <param name="constructedObjects">The list of constructed configuration objects ordered in a way that we can construct them in this order.</param>
-        /// <param name="layout">The layout of the loose objects. This parameter has the default value 'null'.</param>
-        public Configuration(IReadOnlyList<LooseConfigurationObject> looseObjects, IReadOnlyList<ConstructedConfigurationObject> constructedObjects, LooseObjectsLayout? layout = null)
-                : this(new LooseObjectsHolder(looseObjects, layout), constructedObjects)
+        /// <param name="layout">The layout of the loose objects, with the default value <see cref="LooseObjectsLayout.None"/>.</param>
+        /// <param name="objects">The objects of the configuration.</param>
+        public Configuration(LooseObjectsLayout layout = LooseObjectsLayout.None, params ConfigurationObject[] objects)
+            : this(new LooseObjectsHolder(objects.OfType<LooseConfigurationObject>().ToList(), layout), objects.OfType<ConstructedConfigurationObject>().ToList())
         {
+        }
+
+        /// <summary>
+        /// Initializes  a new instance of the <see cref="Configuration"/> class that consists of given objects.
+        /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.None"/> layout.
+        /// All the objects will be automatically identified.
+        /// </summary>
+        /// <param name="objects">The objects of the configuration.</param>
+        public Configuration(params ConfigurationObject[] objects)
+            : this(layout: LooseObjectsLayout.None, objects)
+        {
+            Identify(objects);
         }
 
         #endregion

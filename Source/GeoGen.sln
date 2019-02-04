@@ -25,8 +25,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator.Tests", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.TestHelpers", "GeoGen.Utilities.TestHelpers\GeoGen.Utilities.TestHelpers.csproj", "{839F0999-564E-48F3-A7F6-3590C45D92EB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
 EndProject
 Global
@@ -79,10 +77,6 @@ Global
 		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{839F0999-564E-48F3-A7F6-3590C45D92EB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Release|Any CPU.ActiveCfg = Release|Any CPU

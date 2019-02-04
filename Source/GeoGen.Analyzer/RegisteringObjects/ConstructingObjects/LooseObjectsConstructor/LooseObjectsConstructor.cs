@@ -20,8 +20,8 @@ namespace GeoGen.Analyzer
         {
             switch (looseObjectsHolder.Layout)
             {
-                // Don't allow null layout in this scenario 
-                case null:
+                // Don't allow none layout in this scenario 
+                case LooseObjectsLayout.None:
                     throw new AnalyzerException("The loose objects constructor doesn't allow the loose objects layout to be 'null'.");
 
                 // For a triangle let the helper constructor to the job and create a random triangle

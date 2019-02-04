@@ -3,8 +3,6 @@ using GeoGen.Core;
 using NUnit.Framework;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;
-using static GeoGen.Utilities.TestHelpers.ConfigurationObjects;
-using static GeoGen.Utilities.TestHelpers.IdentifiedObjects;
 
 namespace GeoGen.Analyzer.Tests
 {
@@ -21,13 +19,13 @@ namespace GeoGen.Analyzer.Tests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var D = Construct(MidpointFromPoints, A, B);
-            var E = Construct(MidpointFromPoints, B, C);
-            var F = Construct(MidpointFromPoints, C, A);
-            var G = Construct(IntersectionOfLinesFromPoints, B, F, C, D);
+            var D = new ConstructedConfigurationObject(MidpointFromPoints, A, B);
+            var E = new ConstructedConfigurationObject(MidpointFromPoints, B, C);
+            var F = new ConstructedConfigurationObject(MidpointFromPoints, C, A);
+            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, F, C, D);
 
             // Identify
-            Identify(A, B, C, D, E, F, G);
+            IdentifiedObject.Identify(A, B, C, D, E, F, G);
 
             // Assert
             new PotentialTheorem
@@ -148,14 +146,14 @@ namespace GeoGen.Analyzer.Tests
             // Initialize objects (it's good to draw it like I did)
             var l = new LooseConfigurationObject(Line);
             var A = new LooseConfigurationObject(Point);
-            var B = Construct(RandomPointOnLine, l);
-            var C = Construct(RandomPointOnLine, l);
-            var D = Construct(RandomPointOnLine, l);
-            var E = Construct(SecondIntersectionOfCircleFromPointsAndLineFromPoints, D, A, B, C);
-            var F = Construct(RandomPointOnLineSegment, A, E);
+            var B = new ConstructedConfigurationObject(RandomPointOnLine, l);
+            var C = new ConstructedConfigurationObject(RandomPointOnLine, l);
+            var D = new ConstructedConfigurationObject(RandomPointOnLine, l);
+            var E = new ConstructedConfigurationObject(SecondIntersectionOfCircleFromPointsAndLineFromPoints, D, A, B, C);
+            var F = new ConstructedConfigurationObject(RandomPointOnLineSegment, A, E);
 
             // Identify
-            Identify(l, A, B, C, D, E, F);
+            IdentifiedObject.Identify(l, A, B, C, D, E, F);
 
             // Assert
             new PotentialTheorem

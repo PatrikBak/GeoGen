@@ -19,8 +19,6 @@ namespace GeoGen.ConsoleTest
     {
         private static IKernel _kernel;
 
-        private static Stopwatch _stopwatch = new Stopwatch();
-
         private static ConsoleInconsistenciesTracker _inconsistencies;
 
         private static ConsoleInconstructibleObjectsTracer _inconstructibleObjects;
@@ -46,34 +44,34 @@ namespace GeoGen.ConsoleTest
 
             Bootstrap();
 
-            var points = Enumerable.Range(0, 3)
-                    .Select(_ => new LooseConfigurationObject(ConfigurationObjectType.Point))
-                    .ToList();
-
-            var configuration = new Configuration(points, new List<ConstructedConfigurationObject>(), LooseObjectsLayout.ScaleneAcuteAngledTriangled);
-            var constructions = Constructions();
-
             var input = new GeneratorInput
             {
-                InitialConfiguration = configuration,
-                Constructions = constructions,
-                NumberOfIterations = 3,
+                InitialConfiguration = Configuration(),
+                Constructions = Constructions(),
+                NumberOfIterations = 1,
                 NumberOfContainers = 8,
                 MinimalNumberOfTrueContainers = 7,
-                MinimalNumberOfTrueContainersToRevalidate = 2,
+                MinimalNumberOfTrueContainersToRevalidate = 1,
                 MaximalNumberOfAttemptsToReconstruct = 100,
                 MaximalAttemptsToReconstructOneContainer = 100,
                 MaximalAttemptsToReconstructAllContainers = 1000
             };
 
-            _stopwatch = new Stopwatch();
-            _stopwatch.Start();
-            var result = _kernel.Get<IGeneratorFactory>().CreateGenerator(input).Generate().ToList();
-            _stopwatch.Stop();
+            GenerateAndPrintResultsWithAtLeastOneTheorem(input, "output.txt", measureTime: true);
+            _inconstructibleObjects.WriteReport("inconstructible_objects.txt");
+            _equalObjects.WriteReport("equal_objects.txt");
+        }
 
-            PrintResult(input, result, new StreamWriter("output.txt") { AutoFlush = true });
-            _inconstructibleObjects.WriteReport(new StreamWriter("inconstructible_objects.txt") { AutoFlush = true });
-            _equalObjects.WriteReport(new StreamWriter("equal_objects.txt") { AutoFlush = true });
+        private static Configuration Configuration()
+        {
+            var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+            var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+            var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+            var H = new ConstructedConfigurationObject(ComposedConstructions.OrthocenterFromPoints(), A, B, C);
+            var Hb = new ConstructedConfigurationObject(ComposedConstructions.ReflectionInLineFromPoints(), H, C, A);
+            var Hc = new ConstructedConfigurationObject(ComposedConstructions.ReflectionInLineFromPoints(), H, A, B);
+
+            return new Configuration(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, H, Hb, Hc);
         }
 
         private static List<Construction> Constructions()
@@ -81,68 +79,96 @@ namespace GeoGen.ConsoleTest
             return new List<Construction>
             {
                 //ComposedConstructions.IncenterFromPoints(),
+                //ComposedConstructions.Parallelogram(),
+                //ComposedConstructions.ReflectionInLineFromPoints(),
                 //ComposedConstructions.CentroidFromPoints(),
-                PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints),
-                PredefinedConstructionsFactory.Get(IntersectionOfLinesFromLineAndPoints),
-                PredefinedConstructionsFactory.Get(IntersectionOfLines),
-                PredefinedConstructionsFactory.Get(MidpointFromPoints),
-                PredefinedConstructionsFactory.Get(CircumcenterFromPoints),
-                PredefinedConstructionsFactory.Get(PerpendicularLineFromPoints),
-                PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints),
+                //ComposedConstructions.OrthocenterFromPoints(),
+                //ComposedConstructions.OrthocenterFromPoints(),
+                //PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints),
+                //PredefinedConstructionsFactory.Get(IntersectionOfLinesFromLineAndPoints),
+                //PredefinedConstructionsFactory.Get(IntersectionOfLines),
+                //PredefinedConstructionsFactory.Get(MidpointFromPoints),
+                //PredefinedConstructionsFactory.Get(PointReflection),
+                //PredefinedConstructionsFactory.Get(CircumcenterFromPoints),
+                //PredefinedConstructionsFactory.Get(PerpendicularLineFromPoints),
+                //PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints),
+                //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleFromPointsAndLineFromPoints),
+                PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCirclesFromPoints)
             };
         }
 
-        private static void PrintResult(GeneratorInput input, List<GeneratorOutput> result, TextWriter writer)
+        private static void GenerateAndPrintResultsWithAtLeastOneTheorem(GeneratorInput input, string fileName, bool measureTime = false)
         {
-            writer.WriteLine($"Initial configuration: Scalene Acute Triangle");
-            writer.WriteLine($"Iterations: {input.NumberOfIterations}");
-            writer.WriteLine($"Pictures per configuration: {input.NumberOfContainers}");
-            writer.WriteLine($"Number of pictures where a theorem must hold: {input.MinimalNumberOfTrueContainers}");
-            writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {input.MinimalNumberOfTrueContainersToRevalidate}");
-            writer.WriteLine();
-            writer.WriteLine($"Constructions:");
-            writer.WriteLine();
-            input.Constructions.ForEach(construction => writer.WriteLine($" - {construction}"));
-            writer.WriteLine();
-            writer.WriteLine($"Elapsed milliseconds: {_stopwatch.ElapsedMilliseconds}");
-            writer.WriteLine($"Generated configuration: {result.Count}");
-            writer.WriteLine($"Generated configuration with theorems: {result.Count(r => r.AnalyzerOutput.Theorems.Any())}");
-            writer.WriteLine($"Total number of theorems: {result.Sum(output => output.AnalyzerOutput.Theorems.Count)}");
-            writer.WriteLine();
-            writer.WriteLine($"Results:");
-            writer.WriteLine();
-            writer.WriteLine("[8] means the theorem was true in this 8 pictures");
-            writer.WriteLine("[7,8] means the theorem was initially true in 7 pictures, and after revalidation in 8 pictures");
-            writer.WriteLine();
+            GenerateAndPrintResults(input, fileName, output => output.AnalyzerOutput.Theorems.Count != 0, measureTime);
+        }
 
-            var i = 1;
-
-            foreach (var generatorOutput in result)
+        private static void GenerateAndPrintResults(GeneratorInput input, string fileName, Func<GeneratorOutput, bool> condition, bool measureTime)
+        {
+            using (var writer = new StreamWriter(fileName))
             {
-                if (generatorOutput.AnalyzerOutput.Theorems.Count == 0)
-                    continue;
-
-                var formatter = new OutputFormatter(generatorOutput.Configuration);
-
-                writer.WriteLine("------------------------------------------------");
-                writer.WriteLine($"{i++}. (id={generatorOutput.Configuration.Id})");
-                writer.WriteLine("------------------------------------------------\n");
-                writer.WriteLine(formatter.FormatConfiguration());
-
-                var theorems = generatorOutput.AnalyzerOutput.Theorems;
-                if (theorems.Count != 0)
-                {
-                    writer.WriteLine("\nTheorems:\n");
-                    writer.WriteLine(formatter.FormatTheorems(theorems));
-                }
-
-                var possibleFalseNegatives = generatorOutput.AnalyzerOutput.PotentialFalseNegatives;
-                if (possibleFalseNegatives.Count != 0)
-                {
-                    writer.WriteLine("\nPossible false negatives:\n");
-                    writer.WriteLine(formatter.FormatTheorems(generatorOutput.AnalyzerOutput.PotentialFalseNegatives));
-                }
+                writer.WriteLine($"Initial configuration: Scalene Acute Triangle");
+                writer.WriteLine($"Iterations: {input.NumberOfIterations}");
+                writer.WriteLine($"Pictures per configuration: {input.NumberOfContainers}");
+                writer.WriteLine($"Number of pictures where a theorem must hold: {input.MinimalNumberOfTrueContainers}");
+                writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {input.MinimalNumberOfTrueContainersToRevalidate}");
                 writer.WriteLine();
+                writer.WriteLine($"Constructions:");
+                writer.WriteLine();
+                input.Constructions.ForEach(construction => writer.WriteLine($" - {construction}"));
+                writer.WriteLine();
+
+                var result = _kernel.Get<IGeneratorFactory>().CreateGenerator(input).Generate();
+
+                if (measureTime)
+                {
+                    var stopwatch = new Stopwatch();
+                    stopwatch.Start();
+                    var list = result.ToList();
+                    result = list;
+                    stopwatch.Stop();
+
+                    writer.WriteLine($"Elapsed milliseconds: {stopwatch.ElapsedMilliseconds}");
+                    writer.WriteLine($"Generated configuration: {list.Count}");
+                    writer.WriteLine($"Generated configuration with theorems: {list.Count(r => r.AnalyzerOutput.Theorems.Any())}");
+                    writer.WriteLine($"Total number of theorems: {list.Sum(output => output.AnalyzerOutput.Theorems.Count)}");
+                    writer.WriteLine();
+                }
+
+                writer.WriteLine($"Results:");
+                writer.WriteLine();
+                writer.WriteLine("[8] means the theorem was true in this 8 pictures");
+                writer.WriteLine("[7,8] means the theorem was initially true in 7 pictures, and after revalidation in 8 pictures");
+                writer.WriteLine();
+
+                var i = 1;
+
+                foreach (var generatorOutput in result)
+                {
+                    if (!condition(generatorOutput))
+                        continue;
+
+                    var formatter = new OutputFormatter(generatorOutput.Configuration);
+
+                    writer.WriteLine("------------------------------------------------");
+                    writer.WriteLine($"{i++}. (id={generatorOutput.Configuration.Id})");
+                    writer.WriteLine("------------------------------------------------\n");
+                    writer.WriteLine(formatter.FormatConfiguration());
+
+                    var theorems = generatorOutput.AnalyzerOutput.Theorems;
+                    if (theorems.Count != 0)
+                    {
+                        writer.WriteLine("\nTheorems:\n");
+                        writer.WriteLine(formatter.FormatTheorems(theorems));
+                    }
+
+                    var possibleFalseNegatives = generatorOutput.AnalyzerOutput.PotentialFalseNegatives;
+                    if (possibleFalseNegatives.Count != 0)
+                    {
+                        writer.WriteLine("\nPossible false negatives:\n");
+                        writer.WriteLine(formatter.FormatTheorems(generatorOutput.AnalyzerOutput.PotentialFalseNegatives));
+                    }
+                    writer.WriteLine();
+                }
             }
         }
     }

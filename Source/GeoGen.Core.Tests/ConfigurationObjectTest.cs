@@ -2,8 +2,6 @@
 using NUnit.Framework;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;
-using static GeoGen.Utilities.TestHelpers.ConfigurationObjects;
-using static GeoGen.Utilities.TestHelpers.IdentifiedObjects;
 
 namespace GeoGen.Core.Tests
 {
@@ -20,15 +18,15 @@ namespace GeoGen.Core.Tests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var D = Construct(MidpointFromPoints, A, B);
-            var E = Construct(MidpointFromPoints, B, C);
-            var F = Construct(MidpointFromPoints, C, A);
-            var G = Construct(IntersectionOfLinesFromPoints, B, F, C, D);
-            var c = Construct(CircumcircleFromPoints, E, F, G);
-            var l = Construct(PerpendicularLineFromPoints, A, E, D);
+            var D = new ConstructedConfigurationObject(MidpointFromPoints, A, B);
+            var E = new ConstructedConfigurationObject(MidpointFromPoints, B, C);
+            var F = new ConstructedConfigurationObject(MidpointFromPoints, C, A);
+            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, F, C, D);
+            var c = new ConstructedConfigurationObject(CircumcircleFromPoints, E, F, G);
+            var l = new ConstructedConfigurationObject(PerpendicularLineFromPoints, A, E, D);
 
             // Identify
-            Identify(A, B, C, D, E, F, G, c, l);
+            IdentifiedObject.Identify(A, B, C, D, E, F, G, c, l);
 
             // Check loose objects
             A.GetInternalObjects().Should().BeEmpty();

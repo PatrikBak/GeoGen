@@ -116,8 +116,16 @@ namespace GeoGen.Generator
             if (_input.Constructions.Select(construction => construction.Name).Count() != _input.Constructions.Count)
                 throw new InitializationException("The constructions are supposed to have mutually distinct names");
 
-            // Identify them
-            _input.Constructions.ForEach((construction, index) => construction.Id = index);
+            // Map all the construction to their names 
+            // We have to include the construction used to construct initial objects as well 
+            // Take all the constructions of the initial objects
+            _input.InitialConfiguration.ConstructedObjects.Select(obj => obj.Construction)
+                // Merge with the input constructions
+                .Concat(_input.Constructions)
+                // Group them according to their name
+                .GroupBy(construction => construction.Name)
+                // Identify each group with the same id
+                .ForEach((group, index) => group.ForEach(construction => construction.Id = index));
 
             #endregion
 

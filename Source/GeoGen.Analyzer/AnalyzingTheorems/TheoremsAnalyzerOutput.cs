@@ -22,5 +22,10 @@ namespace GeoGen.Analyzer
         /// the second test they weren't evaluated as correct ones.
         /// </summary>
         public List<AnalyzedTheorem> PotentialFalseNegatives { get; set; }
+
+        /// <summary>
+        /// The manager of all the containers holding analytic representations of the objects.
+        /// </summary>
+        public IObjectsContainersManager Manager { get; set; }
     }
 }

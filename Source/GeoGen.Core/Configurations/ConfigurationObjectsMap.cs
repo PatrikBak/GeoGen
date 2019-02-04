@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -33,7 +32,7 @@ namespace GeoGen.Core
             foreach (var configurationObject in objects)
             {
                 // Find the type of the current object
-                var type = configurationObject?.ObjectType ?? throw new ArgumentException("Null object");
+                var type = configurationObject.ObjectType;
 
                 // Prepare the list of objects of this type
                 List<ConfigurationObject> list;

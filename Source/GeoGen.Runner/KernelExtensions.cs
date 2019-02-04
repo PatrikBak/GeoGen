@@ -116,6 +116,10 @@ namespace GeoGen.Runner
             kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<MidpointFromPointsConstructor>().InNamedScope(GeneratorScopeName);
             kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineFromPointsConstructor>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleFromPointsAndLineFromPointsConstructor>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPredefinedConstructor>().To<CircleFromCenterAndPointOnItConstructor>().InNamedScope(GeneratorScopeName);
+            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCirclesFromPointsConstructor>().InNamedScope(GeneratorScopeName);
 
             #endregion
         }

@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
-using GeoGen.Utilities.TestHelpers;
 using Moq;
 using NUnit.Framework;
 using System;
@@ -52,7 +51,7 @@ namespace GeoGen.Analyzer.Tests
                 .ToList();
 
             // Identify them
-            IdentifiedObjects.Identify(looseObjects);
+            IdentifiedObject.Identify(looseObjects);
 
             // Create object containers holding the objects
             var containers = allObjects.Select(objects =>

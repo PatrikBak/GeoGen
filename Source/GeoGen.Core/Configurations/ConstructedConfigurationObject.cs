@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -35,19 +34,8 @@ namespace GeoGen.Core
         public ConstructedConfigurationObject(Construction construction, Arguments arguments)
             : base(construction.OutputType)
         {
-            Construction = construction ?? throw new ArgumentNullException(nameof(construction));
-            PassedArguments = arguments ?? throw new ArgumentNullException(nameof(arguments));
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructedConfigurationObject"/> class.
-        /// </summary>
-        /// <param name="construction">The construction that should be used to draw this object.</param>
-        /// <param name="argumentsList">The list of arguments that should be passed to the construction function.</param>
-        /// <param name="id">The id of the object.</param>
-        public ConstructedConfigurationObject(Construction construction, List<ConstructionArgument> argumentsList)
-            : this(construction, new Arguments(argumentsList))
-        {
+            Construction = construction;
+            PassedArguments = arguments;
         }
 
         /// <summary>
@@ -60,6 +48,28 @@ namespace GeoGen.Core
             : this(construction, arguments)
         {
             Id = id;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConstructedConfigurationObject"/> class
+        /// using a predefined construction of a given type and input objects.
+        /// </summary>
+        /// <param name="type">The type of the predefined construction to be performed.</param>
+        /// <param name="input">The input objects in the flattened order (see <see cref="Arguments.FlattenedList")/></param>
+        public ConstructedConfigurationObject(PredefinedConstructionType type, params ConfigurationObject[] input)
+            : this(PredefinedConstructionsFactory.Get(type), input)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConstructedConfigurationObject"/> class
+        /// using a construction and input objects.
+        /// </summary>
+        /// <param name="construction">The construction that should be used to draw this object.</param>
+        /// <param name="input">The input objects in the flattened order (see <see cref="Arguments.FlattenedList")/></param>
+        public ConstructedConfigurationObject(Construction construction, params ConfigurationObject[] input)
+            : this(construction, construction.Signature.Match(new ConfigurationObjectsMap(input)))
+        {
         }
 
         #endregion

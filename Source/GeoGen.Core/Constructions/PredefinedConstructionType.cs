@@ -11,6 +11,11 @@
         CircumcenterFromPoints,
 
         /// <summary>
+        /// The circle with given center passing through a given point (signature P, P).
+        /// </summary>
+        CircleFromCenterAndPointOnIt,
+
+        /// <summary>
         /// The circumcircle constructed from 3 points (signature {P, P, P}).
         /// </summary>
         CircumcircleFromPoints,
@@ -60,5 +65,16 @@
         /// points (signature P, P, {P, P}, where the first 'P' is meant to be B, and the second one is meant to be A)
         /// </summary>
         SecondIntersectionOfCircleFromPointsAndLineFromPoints,
+
+        /// <summary>
+        /// The second intersection of a circle given by points A, B, C, and a circle given by points A, C, D
+        /// (signature P, {{P, P}, {P, P}})
+        /// </summary>
+        SecondIntersectionOfTwoCirclesFromPoints,
+
+        /// <summary>
+        /// The reflection of a point with respect to another point (signature P, P)
+        /// </summary>
+        PointReflection,
     }
 }

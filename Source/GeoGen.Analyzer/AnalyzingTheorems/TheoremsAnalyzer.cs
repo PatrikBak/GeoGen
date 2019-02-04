@@ -159,7 +159,10 @@ namespace GeoGen.Analyzer
                 Theorems = trueTheorems,
 
                 // Set false negatives
-                PotentialFalseNegatives = potentialFalseNegatives
+                PotentialFalseNegatives = potentialFalseNegatives,
+
+                // Set manager
+                Manager = manager
             };
         }
 

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -25,8 +27,8 @@ namespace GeoGen.Core
         /// </summary>
         public int Id
         {
-            get => _id ?? throw new GeoGenException("The id hasn't been set yet.");
-            set => _id = !_id.HasValue ? value : throw new GeoGenException("The id has been already set and cannot be changed.");
+            get => _id ?? throw new GeoGenException($"The id of a '{GetType()}' hasn't been set yet.");
+            set => _id = !_id.HasValue ? value : throw new GeoGenException($"The id of a '{GetType()}' has been already set and cannot be changed.");
         }
 
         /// <summary>
@@ -65,6 +67,22 @@ namespace GeoGen.Core
         /// <param name="otherObject">The other object.</param>
         /// <returns>true, if they are equal; false otherwise.</returns>
         public bool Equals(IdentifiedObject otherObject) => Id == otherObject.Id;
+
+        #endregion
+
+        #region Public static helpers
+
+        /// <summary>
+        /// Identifies the given objects, starting from 0.
+        /// </summary>
+        /// <param name="objects">The objects to be identified.</param>
+        public static void Identify(params IdentifiedObject[] objects) => Identify((IEnumerable<IdentifiedObject>) objects);
+
+        /// <summary>
+        /// Identifies the given objects, starting from 0.
+        /// </summary>
+        /// <param name="objects">The objects to be identified.</param>
+        public static void Identify(IEnumerable<IdentifiedObject> objects) => objects.ForEach((obj, index) => obj.Id = index);
 
         #endregion
     }

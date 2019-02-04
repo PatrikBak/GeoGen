@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -87,7 +86,7 @@ namespace GeoGen.Core
             var constructedObjects = definingObjects.OfType<ConstructedConfigurationObject>().ToList();
 
             // Create a configuration simulating the definition of the object
-            var configuration = new Configuration(looseObjects, constructedObjects);
+            var configuration = new Configuration(new LooseObjectsHolder(looseObjects), constructedObjects);
 
             // And use the configuration converted
             return ConfigurationToString(configuration, objectsSeparator, displayId);

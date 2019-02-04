@@ -25,8 +25,8 @@ namespace GeoGen.ConsoleTest
 
             var stringBuilder = new StringBuilder();
 
-            stringBuilder.Append($"{_configuration.LooseObjectsHolder.Layout}: {string.Join(", ",_configuration.LooseObjectsHolder.LooseObjects.Select(ObjectToStringById))}\n");
-            
+            stringBuilder.Append($"{_configuration.LooseObjectsHolder.Layout}: {string.Join(", ", _configuration.LooseObjectsHolder.LooseObjects.Select(ObjectToStringById))}\n");
+
             foreach (var constructedObject in _configuration.ConstructedObjects)
             {
                 stringBuilder.Append($"{ObjectToStringById(constructedObject)} = {ConstructedObjectToString(constructedObject)}\n");
@@ -102,7 +102,11 @@ namespace GeoGen.ConsoleTest
         private string ConstructionName(Construction construction)
         {
             if (construction is PredefinedConstruction predefinedConstruction)
-                return Regex.Match(predefinedConstruction.Type.ToString(), "(.*)From.*").Groups[1].Value;
+            {
+                var name = Regex.Match(predefinedConstruction.Type.ToString(), "(.*)From.*").Groups[1].Value;
+
+                return name == string.Empty ? predefinedConstruction.Type.ToString() : name;
+            }
 
             return construction.Name;
         }

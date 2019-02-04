@@ -19,13 +19,14 @@ namespace GeoGen.Core
         #region Public properties
 
         /// <summary>
-        /// Gets the configuration that defines this composed construction.
+        /// Gets the configuration that defines this composed construction. The output of the construction is
+        /// its last constructed object. Its loose objects should match its signature. The layout of the 
+        /// loose objects is ignored.
         /// </summary>
         public Configuration Configuration { get; }
 
         /// <summary>
         /// Gets the constructed configuration object that represents the output of this construction.
-        /// It is the last object of the configuration that defines this composed construction.
         /// </summary>
         public ConstructedConfigurationObject ConstructionOutput => Configuration.ConstructedObjects.Last();
 
@@ -38,7 +39,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="name">The name of the construction.</param>
         /// <param name="configuration">The configuration that defines the construction steps. The output of the construction is its last constructed object.</param>
-        /// <param name="parameters">The parameters representing the signature of the construction. They must match the loose objects of the parent configuration.</param>
+        /// <param name="parameters">The parameters representing the signature of the construction. They must match the loose objects of the defining configuration.</param>
         public ComposedConstruction(string name, Configuration configuration, IReadOnlyList<ConstructionParameter> parameters)
             : base(name, parameters, configuration.ConstructedObjects.Last().ObjectType)
         {

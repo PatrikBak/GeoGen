@@ -90,10 +90,7 @@ namespace GeoGen.Core
             // Create the parameters
             var parameters = new List<ConstructionParameter>
             {
-                new SetConstructionParameter
-                (
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2
-                )
+                new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2)
             };
 
             // Create the actual construction
@@ -214,6 +211,57 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleFromPointsAndLineFromPoints, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a second intersection of two circles from points construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction SecondIntersectionOfTwoCirclesFromPoints()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2)
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfTwoCirclesFromPoints, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a point reflection construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction PointReflection()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.PointReflection, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a circle from a center and a point on it construction
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction CircleFromCenterAndPointOnIt()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.CircleFromCenterAndPointOnIt, parameters, ConfigurationObjectType.Circle);
         }
 
         #endregion

@@ -16,29 +16,33 @@ namespace GeoGen.ConsoleTest
             _objects.Add((object1, object2));
         }
 
-        public void WriteReport(TextWriter writer)
+        public void WriteReport(string fileName)
         {
-            writer.WriteLine("This file contains all the pairs of objects that have been resolved as equal ones during the generation.");
-            writer.WriteLine();
-            _objects.ForEach((tuple, i) =>
+            using (var writer = new StreamWriter(fileName))
             {
-                // We're going to find the objects that define these including themselves
-                var definingObjects = tuple.Item1.GetInternalObjects()
-                                        .Concat(tuple.Item2.GetInternalObjects())
-                                        .Concat(tuple.Item1)
-                                        .Concat(tuple.Item2)
-                                        .Distinct()
-                                        .ToList();
+                writer.WriteLine("This file contains all the pairs of objects that have been resolved as equal ones during the generation.");
+                writer.WriteLine();
 
-                // Sort them according to their ids (so we know which ones were created first)
-                definingObjects.Sort((o1, o2) => o1.Id - o2.Id);
+                _objects.ForEach((tuple, i) =>
+                {
+                    // We're going to find the objects that define these including themselves
+                    var definingObjects = tuple.Item1.GetInternalObjects()
+                                                .Concat(tuple.Item2.GetInternalObjects())
+                                                .Concat(tuple.Item1)
+                                                .Concat(tuple.Item2)
+                                                .Distinct()
+                                                .ToList();
 
-                // Convert them to string
-                var objectStrings = ToStringHelper.ObjectsToString(definingObjects, displayId: false).ToList();
+                    // Sort them according to their ids (so we know which ones were created first)
+                    definingObjects.Sort((o1, o2) => o1.Id - o2.Id);
 
-                // And use the configuration converted
-                writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {(char) ('A' + definingObjects.IndexOf(tuple.Item1))}.");
-            });
+                    // Convert them to string
+                    var objectStrings = ToStringHelper.ObjectsToString(definingObjects, displayId: false).ToList();
+
+                    // And use the configuration converted
+                    writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {(char) ('A' + definingObjects.IndexOf(tuple.Item1))}.");
+                });
+            }
         }
     }
 }
