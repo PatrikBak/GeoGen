@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer", "GeoGen.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry", "GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Runner", "GeoGen.Runner\GeoGen.Runner.csproj", "{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer.Tests", "GeoGen.Analyzer.Tests\GeoGen.Analyzer.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
@@ -26,6 +24,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GeometryRegistrar", "GeoGen.GeometryRegistrar\GeoGen.GeometryRegistrar.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GeometryRegistrar.Tests", "GeoGen.GeometryRegistrar.Tests\GeoGen.GeometryRegistrar.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +55,6 @@ Global
 		{5EC5CCA8-B332-45E4-AD78-422208315BD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5EC5CCA8-B332-45E4-AD78-422208315BD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5EC5CCA8-B332-45E4-AD78-422208315BD1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B0393C77-D7CC-479F-B1B7-A06ED3D40E09}.Release|Any CPU.Build.0 = Release|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE76DEC9-A1E0-417A-9F59-C28844154D3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -81,6 +79,14 @@ Global
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D2DB312-1EBC-479C-B2EB-97DBECA44433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D2DB312-1EBC-479C-B2EB-97DBECA44433}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D2DB312-1EBC-479C-B2EB-97DBECA44433}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D2DB312-1EBC-479C-B2EB-97DBECA44433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

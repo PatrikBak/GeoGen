@@ -48,17 +48,7 @@ namespace GeoGen.ConsoleTest
             }
         }
 
-        public string FormatTheorems(IEnumerable<AnalyzedTheorem> theorems)
-        {
-            var stringBuilder = new StringBuilder();
-
-            foreach (var theorem in theorems)
-            {
-                stringBuilder.Append(ConvertTheoremToString(theorem)).Append("\n");
-            }
-
-            return stringBuilder.ToString().Trim();
-        }
+        public string FormatTheorems(IEnumerable<AnalyzedTheorem> theorems) => string.Join("\n", theorems.Select(ConvertTheoremToString).Distinct());
 
         public string ConvertTheoremToString(AnalyzedTheorem theorem)
         {

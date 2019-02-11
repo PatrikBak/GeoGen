@@ -8,10 +8,10 @@ namespace GeoGen.Generator
     public interface IGenerator
     {
         /// <summary>
-        /// Starts the generation process and lazily returns the output. The algorithm is described
-        /// in the documentation of this class.
+        /// Starts the generation process and lazily returns the output. 
         /// </summary>
+        /// <param name="input">The input for the generator.</param>
         /// <returns>A lazy enumerable of generator outputs.</returns>
-        IEnumerable<GeneratorOutput> Generate();
+        IEnumerable<GeneratorOutput> Generate(GeneratorInput input);
     }
 }

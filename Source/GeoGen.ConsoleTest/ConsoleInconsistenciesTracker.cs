@@ -1,4 +1,4 @@
-﻿using GeoGen.Analyzer;
+﻿using GeoGen.GeometryRegistrar;
 using System;
 using System.IO;
 

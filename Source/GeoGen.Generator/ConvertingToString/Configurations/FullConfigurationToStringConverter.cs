@@ -14,7 +14,7 @@ namespace GeoGen.Generator
     /// equal, but they're quite the same as far as the theorem finding is concerned. That's why we want 
     /// to keep exactly one of them, or in other words, say these two are equal.
     /// <para>
-    /// The algorithm is following: For a given configuration we can say which configurations are isomorphic
+    /// The algorithm is the following: For a given configuration we can say which configurations are isomorphic
     /// to it - the ones which can be obtained by reordering its loose objects in some way. For example,
     /// for a triangle we have 3 loose points, which yield 3! = 6 possible reorders of them, which means there
     /// might be at most 5 configurations isomorphic to it (even fewer, some of the might be equal). Therefore
@@ -35,16 +35,21 @@ namespace GeoGen.Generator
         /// </summary>
         private readonly IGeneralConfigurationToStringConverter _configurationToString;
 
+        /// <summary>
+        /// The full object to string converter which is used together with the configuration to string converter.
+        /// </summary>
+        private readonly IFullObjectToStringConverter _objectToString;
+
         #endregion
 
         #region Private fields
 
         /// <summary>
-        /// The lazy evaluator for the list of all the generated to string converters which 
-        /// are used to determine the unique represent of the symmetry class. For the details 
-        /// see the documentation to the class.
+        /// The dictionary mapping loose object holders to the list of all the created to string
+        /// converters which are used to determine the unique represent of the symmetry class.
+        /// For the details see the documentation to the class.
         /// </summary>
-        private Lazy<List<FuncToStringConverter<ConfigurationObject>>> _converters;
+        private readonly Dictionary<LooseObjectsHolder, List<FuncToStringConverter<ConfigurationObject>>> _convertersMap = new Dictionary<LooseObjectsHolder, List<FuncToStringConverter<ConfigurationObject>>>();
 
         #endregion
 
@@ -53,39 +58,12 @@ namespace GeoGen.Generator
         /// <summary>
         /// Initializes a new instance of the <see cref="FullConfigurationToStringConverter"/> converter.
         /// </summary>
-        /// <param name="looseObjects">The loose objects of every configuration used in this generation.</param>
         /// <param name="configurationToString">The generic configuration to string converter to which the actual conversion is delegated.</param>
         /// <param name="objectToString">The full object to string converter which is used together with the configuration to string converter.</param>
-        public FullConfigurationToStringConverter(IReadOnlyList<LooseConfigurationObject> looseObjects, IGeneralConfigurationToStringConverter configurationToString, IFullObjectToStringConverter objectToString)
+        public FullConfigurationToStringConverter(IGeneralConfigurationToStringConverter configurationToString, IFullObjectToStringConverter objectToString)
         {
             _configurationToString = configurationToString ?? throw new ArgumentNullException(nameof(configurationToString));
-
-            // Construct the lazy evaluator of all possible to string converters, each representing
-            // a single order of loose objects (in other words, a single remapping of loose objects)
-            _converters = new Lazy<List<FuncToStringConverter<ConfigurationObject>>>(() =>
-            {
-                // We take all the permutations of the loose objects
-                return looseObjects.Permutations()
-                        // Cast each of them to the dictionary mapping those loose objects
-                        // that are mapped to some id different then theirs
-                        .Select(permutation =>
-                        {
-                            // Each permutation is first casted to the tuple of itself and id of the object to which this object is mapped
-                            return permutation.Select((looseObject, index) => (looseObject, id: looseObjects[index].Id))
-                                    // Then we exclude the ones that are mapped to itself
-                                    .Where(pair => pair.looseObject.Id != pair.id)
-                                    // And wrap the remaining ones to a dictionary
-                                    .ToDictionary(pair => pair.looseObject, pair => pair.id);
-                        })
-                        // Wrap this dictionary into a LooseObjectIdsRemapping object, 
-                        // making sure that we will reuse the empty remapping, if possible
-                        .Select(dictionary => dictionary.IsEmpty() ? LooseObjectIdsRemapping.NoRemapping : new LooseObjectIdsRemapping(dictionary))
-                        // Each of these remapping is then used to create a to string converter that is 
-                        // required to be passed to the general configuration to string 
-                        .Select(mapping => new FuncToStringConverter<ConfigurationObject>(obj => objectToString.ConvertToString(obj, mapping)))
-                        // Finally wrap the result to a list
-                        .ToList();
-            });
+            _objectToString = objectToString ?? throw new ArgumentNullException(nameof(objectToString));
         }
 
         #endregion
@@ -99,26 +77,40 @@ namespace GeoGen.Generator
         /// <returns>A string representation of the configuration.</returns>
         public string ConvertToString(GeneratedConfiguration configuration)
         {
-            // Initialize the minimal string
-            string minimalString = null;
-
-            // Determine the lexicographically minimal string representing the configuration
-            // using all the converters, each representing a single order of the loose objects
-            foreach (var converter in _converters.Value)
-            {
-                // Convert a given configuration to string using the gotten converter
-                var stringVersion = _configurationToString.ConvertToString(configuration, converter);
-
-                // If it's the first conversion or we have a smaller string...
-                if (minimalString == null || string.CompareOrdinal(minimalString, stringVersion) < 0)
+            // Get the converters, or create and return them if they are not created yet
+            return _convertersMap.GetOrAdd(configuration.LooseObjectsHolder, () =>
                 {
-                    // Set the minimal string to the current one 
-                    minimalString = stringVersion;
-                }
-            }
+                    // Get the loose objects list
+                    var looseObjects = configuration.LooseObjectsHolder.LooseObjects;
 
-            // We should have the minimal string now
-            return minimalString;
+                    // Construct all possible to string converters, each representing
+                    // a single order of loose objects (in other words, a single remapping of loose objects)
+                    // We take all the permutations of the loose objects
+                    return looseObjects.Permutations()
+                            // Cast each of them to the dictionary mapping those loose objects
+                            // that are mapped to some id different then theirs
+                            .Select(permutation =>
+                            {
+                                // Each permutation is first casted to the tuple of itself and id of the object to which this object is mapped
+                                return permutation.Select((looseObject, index) => (looseObject, id: looseObjects[index].Id))
+                                        // Then we exclude the ones that are mapped to itself
+                                        .Where(pair => pair.looseObject.Id != pair.id)
+                                        // And wrap the remaining ones to a dictionary
+                                        .ToDictionary(pair => pair.looseObject, pair => pair.id);
+                            })
+                            // Wrap this dictionary into a LooseObjectIdsRemapping object, 
+                            // making sure that we will reuse the empty remapping, if possible
+                            .Select(dictionary => dictionary.IsEmpty() ? LooseObjectIdsRemapping.NoRemapping : new LooseObjectIdsRemapping(dictionary))
+                            // Each of these remapping is then used to create a to string converter that is 
+                            // required to be passed to the general configuration to string 
+                            .Select(mapping => new FuncToStringConverter<ConfigurationObject>(obj => _objectToString.ConvertToString(obj, mapping)))
+                            // Finally wrap the result to a list
+                            .ToList();
+                })
+                // Use each of them to convert the configuration to a string
+                .Select(converter => _configurationToString.ConvertToString(configuration, converter))
+                // Take the lexicographically the smallest one
+                .Min();
         }
 
         #endregion

@@ -1,4 +1,4 @@
-﻿using GeoGen.Analyzer;
+﻿using GeoGen.GeometryRegistrar;
 
 namespace GeoGen.Generator
 {
@@ -13,8 +13,8 @@ namespace GeoGen.Generator
         public GeneratedConfiguration Configuration { get; set; }
 
         /// <summary>
-        /// Gets or sets the output of the theorem analysis module.
+        /// Gets or sets the manager holding the geometric representations. of the configurations.
         /// </summary>
-        public TheoremsAnalyzerOutput AnalyzerOutput { get; set; }
+        public IObjectsContainersManager Manager { get; set; }
     }
 }

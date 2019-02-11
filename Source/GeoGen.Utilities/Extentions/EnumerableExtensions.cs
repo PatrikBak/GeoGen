@@ -294,6 +294,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
+        /// <param name="numberOfElements">The size of each subset.</param>
         /// <returns>A lazy enumerable of all possible subsets with a given size.</returns>
         public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> enumerable, int numberOfElements)
         {
@@ -335,6 +336,21 @@ namespace GeoGen.Utilities
 
             // Execute the algorithm from the beginning
             return Generate(0, numberOfElements);
+        }
+
+        /// <summary>
+        /// Generates all possible subsets from the elements of a given enumerable.
+        /// </summary>
+        /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <returns>A lazy enumerable of all possible subsets.</returns>
+        public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> enumerable)
+        {
+            // Enumerate the items to an array
+            var items = enumerable.ToArray();
+
+            // Merge the subsets of every possible size
+            return Enumerable.Range(0, items.Length + 1).SelectMany(size => items.Subsets(size));
         }
     }
 }
