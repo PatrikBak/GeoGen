@@ -1,4 +1,4 @@
-﻿using GeoGen.GeometryRegistrar;
+﻿using GeoGen.Constructor;
 
 namespace GeoGen.Generator
 {

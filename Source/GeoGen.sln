@@ -25,9 +25,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GeometryRegistrar", "GeoGen.GeometryRegistrar\GeoGen.GeometryRegistrar.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Constructor", "GeoGen.Constructor\GeoGen.Constructor.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GeometryRegistrar.Tests", "GeoGen.GeometryRegistrar.Tests\GeoGen.GeometryRegistrar.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

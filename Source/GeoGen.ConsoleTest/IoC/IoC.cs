@@ -1,7 +1,7 @@
 ﻿using GeoGen.Analyzer;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
-using GeoGen.GeometryRegistrar;
 using Ninject;
 using Ninject.Extensions.ContextPreservation;
 using Ninject.Extensions.Factory;
@@ -57,7 +57,7 @@ namespace GeoGen.ConsoleTest
 
             // Add bindings
             AddGenerator();
-            AddRegistrar();
+            AddConstructor();
             AddAnalyzer();
             AddLocalDependencies();
         }
@@ -89,11 +89,11 @@ namespace GeoGen.ConsoleTest
         }
 
         /// <summary>
-        /// Bindings the dependencies from the Registrar module.
+        /// Bindings the dependencies from the Constructor module.
         /// </summary>
-        private static void AddRegistrar()
+        private static void AddConstructor()
         {
-            Kernel.Bind<IGeometryRegistrar>().To<GeometryRegistrar.GeometryRegistrar>();
+            Kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
             Kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>();
             Kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             Kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
@@ -155,8 +155,8 @@ namespace GeoGen.ConsoleTest
         private static void AddLocalDependencies()
         {
             Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
-            Kernel.Rebind<IEqualObjectsTracer, ConsoleEqualObjectsTracer>().To<ConsoleEqualObjectsTracer>().InSingletonScope();
-            Kernel.Rebind<IInconstructibleObjectsTracer, ConsoleInconstructibleObjectsTracer>().To<ConsoleInconstructibleObjectsTracer>().InSingletonScope();
+            Kernel.Rebind<IEqualObjectsTracer, DefaultEqualObjectsTracer>().To<DefaultEqualObjectsTracer>().InSingletonScope();
+            Kernel.Rebind<IInconstructibleObjectsTracer, DefaultInconstructibleObjectsTracer>().To<DefaultInconstructibleObjectsTracer>().InSingletonScope();
         }
 
         #endregion

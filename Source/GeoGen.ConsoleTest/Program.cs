@@ -1,7 +1,7 @@
 ﻿using GeoGen.Analyzer;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
-using GeoGen.GeometryRegistrar;
 using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,8 +62,8 @@ namespace GeoGen.ConsoleTest
             GenerateAndPrintResults(input, theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings, "output.txt", measureTime: true);
 
             // Write reports
-            IoC.Get<ConsoleInconstructibleObjectsTracer>().WriteReport("inconstructible_objects.txt");
-            IoC.Get<ConsoleEqualObjectsTracer>().WriteReport("equal_objects.txt");
+            IoC.Get<DefaultInconstructibleObjectsTracer>().WriteReport("inconstructible_objects.txt");
+            IoC.Get<DefaultEqualObjectsTracer>().WriteReport("equal_objects.txt");
         }
 
         private static Configuration InitialConfiguration()
@@ -109,7 +109,7 @@ namespace GeoGen.ConsoleTest
                                                     ObjectsContainersManagerSettings objectsContainersManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
-                                                    bool analyzeInitialTheorems = false)
+                                                    bool analyzeInitialTheorems = true)
         {
 
             using (var writer = new StreamWriter(fileName))

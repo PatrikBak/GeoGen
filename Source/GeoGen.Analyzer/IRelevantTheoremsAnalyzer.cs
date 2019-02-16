@@ -1,5 +1,5 @@
-﻿using GeoGen.Core;
-using GeoGen.GeometryRegistrar;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 
 namespace GeoGen.Analyzer
 {

@@ -1,6 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.GeometryRegistrar;
 using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;

@@ -24,7 +24,7 @@
     <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
-    <ProjectReference Include="..\GeoGen.GeometryRegistrar\GeoGen.GeometryRegistrar.csproj" />
+    <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>
 

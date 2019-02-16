@@ -1,5 +1,5 @@
-﻿using GeoGen.Core;
-using GeoGen.GeometryRegistrar;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -38,17 +38,17 @@ namespace GeoGen.Generator
         private readonly IArgumentsGenerator _argumentsGenerator;
 
         /// <summary>
-        /// The registrar that perform the actual geometrical construction of configurations.
+        /// The constructor that perform the actual geometrical construction of configurations.
         /// </summary>
-        private readonly IGeometryRegistrar _geometryRegistrar;
+        private readonly IGeometryConstructor _geometryConstructor;
 
         /// <summary>
-        /// The tracer of geometrically equal objects determined by the registrar.
+        /// The tracer of geometrically equal objects determined by the geometry constructor.
         /// </summary>
         private readonly IEqualObjectsTracer _equalObjectsTracer;
 
         /// <summary>
-        /// The tracer of geometrically inconstructible objects determined by the registrar.
+        /// The tracer of geometrically inconstructible objects determined by the geometry constructor.
         /// </summary>
         private readonly IInconstructibleObjectsTracer _inconstructibleObjectsTracer;
 
@@ -62,20 +62,20 @@ namespace GeoGen.Generator
         /// <param name="objectsContainerFactory">The factory for creating a container for configuration objects that recognizes equal ones.</param>
         /// <param name="configurationsContainerFactory">The factory for creating a container for generated configurations that recognizes equal ones.</param>
         /// <param name="argumentsGenerator">The generator of arguments that are passed to newly created constructed objects.</param>
-        /// <param name="geometryRegistrar">The registrar that perform the actual geometrical construction of configurations.</param>
-        /// <param name="equalObjectsTracer">The tracer of geometrically equal objects determined by the registrar.</param>
-        /// <param name="inconstructibleObjectsTracer">The tracer of geometrically inconstructible objects determined by the registrar.</param>
+        /// <param name="geometryConstructor">The constructor that perform the actual geometrical construction of configurations.</param>
+        /// <param name="equalObjectsTracer">The tracer of geometrically equal objects determined by the geometry constructor.</param>
+        /// <param name="inconstructibleObjectsTracer">The tracer of geometrically inconstructible objects determined by the geometry constructor.</param>
         public Generator(IConfigurationObjectsContainerFactory objectsContainerFactory,
                          IConfigurationsContainerFactory configurationsContainerFactory,
                          IArgumentsGenerator argumentsGenerator,
-                         IGeometryRegistrar geometryRegistrar,
+                         IGeometryConstructor geometryConstructor,
                          IEqualObjectsTracer equalObjectsTracer = null,
                          IInconstructibleObjectsTracer inconstructibleObjectsTracer = null)
         {
             _objectsContainerFactory = objectsContainerFactory ?? throw new ArgumentNullException(nameof(objectsContainerFactory));
             _configurationsContainerFactory = configurationsContainerFactory ?? throw new ArgumentNullException(nameof(configurationsContainerFactory));
             _argumentsGenerator = argumentsGenerator ?? throw new ArgumentNullException(nameof(argumentsGenerator));
-            _geometryRegistrar = geometryRegistrar ?? throw new ArgumentNullException(nameof(geometryRegistrar));
+            _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _equalObjectsTracer = equalObjectsTracer;
             _inconstructibleObjectsTracer = inconstructibleObjectsTracer;
         }
@@ -161,19 +161,19 @@ namespace GeoGen.Generator
             // Add it to the first layer
             currentLayer.Add(firstConfiguration);
 
-            // Register it to the system
-            var firstConfigurationRegistrationResult = _geometryRegistrar.Register(firstConfiguration);
+            // Construct it 
+            var firstConfigurationGeoemtryData = _geometryConstructor.Construct(firstConfiguration);
 
             // Make sure it's been examined correctly
-            if (!firstConfigurationRegistrationResult.SuccessfullyExamined)
+            if (!firstConfigurationGeoemtryData.SuccessfullyExamined)
                 throw new InitializationException("Drawing of the initial configuration failed.");
 
             // Make sure it is constructible
-            if (firstConfigurationRegistrationResult.InconstructibleObject != null)
+            if (firstConfigurationGeoemtryData.InconstructibleObject != null)
                 throw new InitializationException($"The initial configuration contains an inconstructible object.");
 
             // Make sure there are no duplicates...
-            if (firstConfigurationRegistrationResult.Duplicates != (null, null))
+            if (firstConfigurationGeoemtryData.Duplicates != (null, null))
                 throw new InitializationException($"The initial configuration contains duplicate objects.");
 
             #endregion
@@ -261,39 +261,39 @@ namespace GeoGen.Generator
                             // In this case the configuration is correct and ready to be drawn
                             return true;
                         })
-                        // Register them
-                        .Select(configuration => (configuration, registrationResult: _geometryRegistrar.Register(configuration)))
+                        // Construct them
+                        .Select(configuration => (configuration, geometryData: _geometryConstructor.Construct(configuration)))
                         // Take only geometrically valid ones
                         .Where(tuple =>
                         {
                             // Deconstruct 
-                            var (configuration, registrationResult) = tuple;
+                            var (configuration, geometryData) = tuple;
 
-                            // If the registration didn't work out, then we have to say the configuration is invalid
-                            if (!registrationResult.SuccessfullyExamined)
+                            // If the construction didn't work out, then we have to say the configuration is invalid
+                            if (!geometryData.SuccessfullyExamined)
                                 return false;
 
                             // Find out if there is an inconstructible object
-                            var anyInconstructibleObject = registrationResult.InconstructibleObject != null;
+                            var anyInconstructibleObject = geometryData.InconstructibleObject != null;
 
                             // Find out if there are any duplicates
-                            var anyDuplicates = registrationResult.Duplicates != (null, null);
+                            var anyDuplicates = geometryData.Duplicates != (null, null);
 
                             // If there is an inconstructible object
                             if (anyInconstructibleObject)
                             {
                                 // Then we want to remember its id
-                                inconstructibleObjectsIds.Add(registrationResult.InconstructibleObject.Id);
+                                inconstructibleObjectsIds.Add(geometryData.InconstructibleObject.Id);
 
                                 // And trace it
-                                _inconstructibleObjectsTracer?.TraceInconstructibleObject(registrationResult.InconstructibleObject);
+                                _inconstructibleObjectsTracer?.TraceInconstructibleObject(geometryData.InconstructibleObject);
                             }
 
                             // If there are duplicates...
                             if (anyDuplicates)
                             {
                                 // We deconstruct the older and newer objects
-                                var (olderObject, newerObject) = registrationResult.Duplicates;
+                                var (olderObject, newerObject) = geometryData.Duplicates;
 
                                 // And trace them
                                 _equalObjectsTracer?.TraceEqualObjects(olderObject, newerObject);
@@ -316,7 +316,7 @@ namespace GeoGen.Generator
                                 Configuration = tuple.configuration,
 
                                 // Set the manager
-                                Manager = tuple.registrationResult.Manager
+                                Manager = tuple.geometryData.Manager
                             };
                         });
                 });

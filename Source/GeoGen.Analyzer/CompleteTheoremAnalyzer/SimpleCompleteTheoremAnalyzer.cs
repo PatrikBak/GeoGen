@@ -1,5 +1,5 @@
-﻿using GeoGen.Core;
-using GeoGen.GeometryRegistrar;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -22,9 +22,9 @@ namespace GeoGen.Analyzer
         private IRelevantTheoremsAnalyzer _analyzer;
 
         /// <summary>
-        /// The drawer of configurations.
+        /// The constructor of configurations.
         /// </summary>
-        private IGeometryRegistrar _registrar;
+        private IGeometryConstructor _constructor;
 
         #endregion
 
@@ -34,11 +34,11 @@ namespace GeoGen.Analyzer
         /// Initializes a new instance of the <see cref="SimpleCompleteTheoremAnalyzer"/> class.
         /// </summary>
         /// <param name="analyzer">The analyzer of relevant theorems that is reused.</param>
-        /// <param name="registrar">The drawer of configurations.</param>
-        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryRegistrar registrar)
+        /// <param name="constructor">The constructor of configurations.</param>
+        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryConstructor constructor)
         {
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-            _registrar = registrar ?? throw new ArgumentNullException(nameof(registrar));
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
         }
 
         #endregion
@@ -52,21 +52,21 @@ namespace GeoGen.Analyzer
         /// <returns>The analysis output.</returns>
         public TheoremAnalysisOutput Analyze(Configuration configuration)
         {
-            #region Registration
+            #region Construction
 
-            // Register the configuration
-            var registrationResult = _registrar.Register(configuration);
+            // Construct the configuration
+            var geometryData = _constructor.Construct(configuration);
 
             // Make sure it's correct
-            if (!registrationResult.SuccessfullyExamined)
+            if (!geometryData.SuccessfullyExamined)
                 throw new AnalyzerException("The configuration couldn't be examined.");
 
             // Make sure it is constructible
-            if (registrationResult.InconstructibleObject != null)
+            if (geometryData.InconstructibleObject != null)
                 throw new AnalyzerException("The configuration contains inconstructible objects.");
 
             // Make sure it has no duplicates
-            if (registrationResult.Duplicates != (null, null))
+            if (geometryData.Duplicates != (null, null))
                 throw new AnalyzerException("The configurations contains duplicate objects.");
 
             #endregion
@@ -98,7 +98,7 @@ namespace GeoGen.Analyzer
                 // Make a configuration. The constructed objects should be ordered correctly
                 .Select(objects => new Configuration(configuration.LooseObjectsHolder, objects))
                 // Find its theorems
-                .Select(_configuration => _analyzer.Analyze(_configuration, registrationResult.Manager))
+                .Select(_configuration => _analyzer.Analyze(_configuration, geometryData.Manager))
                 // Enumerate for further processing
                 .ToList();
 
