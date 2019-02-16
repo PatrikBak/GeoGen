@@ -18,12 +18,12 @@ namespace GeoGen.Core.Tests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var D = new ConstructedConfigurationObject(MidpointFromPoints, A, B);
-            var E = new ConstructedConfigurationObject(MidpointFromPoints, B, C);
-            var F = new ConstructedConfigurationObject(MidpointFromPoints, C, A);
-            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, F, C, D);
-            var c = new ConstructedConfigurationObject(CircumcircleFromPoints, E, F, G);
-            var l = new ConstructedConfigurationObject(PerpendicularLineFromPoints, A, E, D);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, B, C);
+            var F = new ConstructedConfigurationObject(Midpoint, C, A);
+            var G = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints(), B, F, C, D);
+            var c = new ConstructedConfigurationObject(Circumcircle, E, F, G);
+            var l = new ConstructedConfigurationObject(ComposedConstructions.PerpendicularLineToLineFromPoints(), A, E, D);
 
             // Identify
             IdentifiedObject.Identify(A, B, C, D, E, F, G, c, l);

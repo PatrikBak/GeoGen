@@ -4,9 +4,9 @@ using GeoGen.Core;
 namespace GeoGen.GeometryRegistrar
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.MidpointFromPoints"/>>.
+    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.CircleWithCenterThroughPoint"/>>.
     /// </summary>
-    public class MidpointFromPointsConstructor : PredefinedConstructorBase
+    public class CircleWithCenterThroughPointConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
@@ -17,11 +17,11 @@ namespace GeoGen.GeometryRegistrar
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var point1 = (Point) input[0];
-            var point2 = (Point) input[1];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
 
-            // Construct the result
-            return (point1 + point2) / 2;
+            // Perform the construction
+            return new Circle(A, A.DistanceTo(B));
         }
     }
 }

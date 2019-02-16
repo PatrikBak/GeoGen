@@ -4,9 +4,9 @@ using GeoGen.Core;
 namespace GeoGen.GeometryRegistrar
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.IntersectionOfLinesFromPoints"/>>.
+    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.Circumcircle"/>>.
     /// </summary>
-    public class IntersectionOfLinesFromPointsConstructor : PredefinedConstructorBase
+    public class CircumcircleConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
@@ -17,22 +17,16 @@ namespace GeoGen.GeometryRegistrar
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var point1 = (Point) input[0];
-            var point2 = (Point) input[1];
-            var point3 = (Point) input[2];
-            var point4 = (Point) input[3];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
+            var C = (Point) input[2];
 
-            // Create lines. 
-            var line1 = new Line(point1, point2);
-            var line2 = new Line(point3, point4);
-
-            // If they are equal, the construction fails
-            if (line1 == line2)
+            // If the points are collinear, the construction can't be done
+            if (AnalyticHelpers.AreCollinear(A, B, C))
                 return null;
 
-            // Otherwise we can intersect them. 
-            // If there is no intersection, the result will be null
-            return line1.IntersectionWith(line2);
+            // Otherwise construct the circumcircle
+            return new Circle(A, B, C);
         }
     }
 }

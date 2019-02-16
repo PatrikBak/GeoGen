@@ -17,11 +17,11 @@ namespace GeoGen.GeometryRegistrar
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var point1 = (Point) input[0];
-            var point2 = (Point) input[1];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
 
-            // We want (X + point1) / 2 = point2, from which we easily have the result
-            return 2 * point2 - point1;
+            // We want (X + A) / 2 = B, from which we easily have the result
+            return 2 * B - A;
         }
     }
 }

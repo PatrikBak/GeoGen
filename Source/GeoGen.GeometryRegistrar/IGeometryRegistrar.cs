@@ -3,8 +3,7 @@
 namespace GeoGen.GeometryRegistrar
 {
     /// <summary>
-    /// Represents a service that cares care of constructing and storing actual geometrical 
-    /// representations of <see cref="Configuration"/>s. 
+    /// Represents a service that cares care of geometrical construction of <see cref="Configuration"/>s.
     /// </summary>
     public interface IGeometryRegistrar
     {

@@ -104,18 +104,19 @@ namespace GeoGen.ConsoleTest
             Kernel.BindsWithDynamicSettings<IObjectsContainersManager, ObjectsContainersManager, ObjectsContainersManagerSettings>();
 
             // Predefined constructors
-            Kernel.Bind<IPredefinedConstructor>().To<CircumcenterFromPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<CircumcircleFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<CircleWithCenterThroughPointConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<CircumcircleConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesFromLineAndPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesFromPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorFromPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<MidpointFromPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineFromPointsConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleFromPointsAndLineFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<LineFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<MidpointConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<PerpendicularProjectionConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<CircleFromCenterAndPointOnItConstructor>();
-            Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCirclesFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>();
 
             // Factories
             Kernel.Bind<IComposedConstructorFactory>().ToFactory();

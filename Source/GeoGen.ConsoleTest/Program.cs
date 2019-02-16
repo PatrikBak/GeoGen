@@ -71,31 +71,36 @@ namespace GeoGen.ConsoleTest
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var H = new ConstructedConfigurationObject(ComposedConstructions.OrthocenterFromPoints(), A, B, C);
-            var Hb = new ConstructedConfigurationObject(ComposedConstructions.ReflectionInLineFromPoints(), H, C, A);
-            var Hc = new ConstructedConfigurationObject(ComposedConstructions.ReflectionInLineFromPoints(), H, A, B);
+            var H = new ConstructedConfigurationObject(ComposedConstructions.Orthocenter(), A, B, C);
 
-            return new Configuration(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, H, Hb, Hc);
+            return new Configuration(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, H);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
         {
-            //ComposedConstructions.IncenterFromPoints(),
-            //ComposedConstructions.Parallelogram(),
-            //ComposedConstructions.ReflectionInLineFromPoints(),
-            //ComposedConstructions.CentroidFromPoints(),
-            //ComposedConstructions.OrthocenterFromPoints(),
-            //ComposedConstructions.OrthocenterFromPoints(),
-            //PredefinedConstructionsFactory.Get(IntersectionOfLinesFromPoints),
-            //PredefinedConstructionsFactory.Get(IntersectionOfLinesFromLineAndPoints),
-            //PredefinedConstructionsFactory.Get(IntersectionOfLines),
-            //PredefinedConstructionsFactory.Get(MidpointFromPoints),
-            //PredefinedConstructionsFactory.Get(PointReflection),
-            //PredefinedConstructionsFactory.Get(CircumcenterFromPoints),
-            //PredefinedConstructionsFactory.Get(PerpendicularLineFromPoints),
-            //PredefinedConstructionsFactory.Get(InternalAngleBisectorFromPoints),
-            //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleFromPointsAndLineFromPoints),
-            PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCirclesFromPoints)
+            PredefinedConstructionsFactory.Get(CenterOfCircle),
+            PredefinedConstructionsFactory.Get(CircleWithCenterThroughPoint),
+            PredefinedConstructionsFactory.Get(Circumcircle),
+            PredefinedConstructionsFactory.Get(InternalAngleBisector),
+            PredefinedConstructionsFactory.Get(IntersectionOfLines),
+            PredefinedConstructionsFactory.Get(LineFromPoints),
+            PredefinedConstructionsFactory.Get(Midpoint),
+            PredefinedConstructionsFactory.Get(PerpendicularLine),
+            PredefinedConstructionsFactory.Get(PerpendicularProjection),
+            PredefinedConstructionsFactory.Get(PointReflection),
+            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
+            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
+            PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
+            ComposedConstructions.Centroid(),
+            ComposedConstructions.Incenter(),
+            ComposedConstructions.Orthocenter(),
+            ComposedConstructions.IntersectionOfLinesFromPoints(),
+            ComposedConstructions.IntersectionOfLineAndLineFromPoints(),
+            ComposedConstructions.Parallelogram(),
+            ComposedConstructions.PerpendicularLineAtPointOfLine(),
+            ComposedConstructions.PerpendicularLineToLineFromPoints(),
+            ComposedConstructions.ReflectionInLine(),
+            ComposedConstructions.ReflectionInLineFromPoints()
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,
@@ -103,7 +108,8 @@ namespace GeoGen.ConsoleTest
                                                     ContextualContainerSettings contextualContainerSettings,
                                                     ObjectsContainersManagerSettings objectsContainersManagerSettings,
                                                     string fileName,
-                                                    bool measureTime = false)
+                                                    bool measureTime = false,
+                                                    bool analyzeInitialTheorems = false)
         {
 
             using (var writer = new StreamWriter(fileName))
@@ -135,22 +141,25 @@ namespace GeoGen.ConsoleTest
                     }
                 }
 
-                var initialOutput = IoC.Get<ICompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Analyze(initialConfigurationCopy);
+                if (analyzeInitialTheorems)
+                {
+                    var initialOutput = IoC.Get<ICompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Analyze(initialConfigurationCopy);
 
-                writer.WriteLine();
-                FormatOutput(initialFormatter, initialOutput);
-                writer.WriteLine("------------------------------------------------");
-                writer.WriteLine();
+                    writer.WriteLine();
+                    FormatOutput(initialFormatter, initialOutput);
+                    writer.WriteLine("------------------------------------------------");
+                    writer.WriteLine();
 
-                writer.WriteLine($"Iterations: {input.NumberOfIterations}");
-                writer.WriteLine($"Pictures per configuration: {objectsContainersManagerSettings.NumberOfContainers}");
-                writer.WriteLine($"Number of pictures where a theorem must hold: {theoremAnalysisSettings.MinimalNumberOfTrueContainers}");
-                writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {theoremAnalysisSettings.MinimalNumberOfTrueContainersToRevalidate}");
-                writer.WriteLine();
-                writer.WriteLine($"Constructions:");
-                writer.WriteLine();
-                input.Constructions.ForEach(construction => writer.WriteLine($" - {construction}"));
-                writer.WriteLine();
+                    writer.WriteLine($"Iterations: {input.NumberOfIterations}");
+                    writer.WriteLine($"Pictures per configuration: {objectsContainersManagerSettings.NumberOfContainers}");
+                    writer.WriteLine($"Number of pictures where a theorem must hold: {theoremAnalysisSettings.MinimalNumberOfTrueContainers}");
+                    writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {theoremAnalysisSettings.MinimalNumberOfTrueContainersToRevalidate}");
+                    writer.WriteLine();
+                    writer.WriteLine($"Constructions:");
+                    writer.WriteLine();
+                    input.Constructions.ForEach(construction => writer.WriteLine($" - {construction}"));
+                    writer.WriteLine();
+                }
 
                 var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Execute(input);
 

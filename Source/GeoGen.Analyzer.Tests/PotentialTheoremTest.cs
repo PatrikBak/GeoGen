@@ -20,10 +20,10 @@ namespace GeoGen.Analyzer.Tests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var D = new ConstructedConfigurationObject(MidpointFromPoints, A, B);
-            var E = new ConstructedConfigurationObject(MidpointFromPoints, B, C);
-            var F = new ConstructedConfigurationObject(MidpointFromPoints, C, A);
-            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, F, C, D);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, B, C);
+            var F = new ConstructedConfigurationObject(Midpoint, C, A);
+            var G = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints(), B, F, C, D);
 
             // Identify
             IdentifiedObject.Identify(A, B, C, D, E, F, G);
@@ -150,7 +150,7 @@ namespace GeoGen.Analyzer.Tests
             var B = new ConstructedConfigurationObject(RandomPointOnLine, l);
             var C = new ConstructedConfigurationObject(RandomPointOnLine, l);
             var D = new ConstructedConfigurationObject(RandomPointOnLine, l);
-            var E = new ConstructedConfigurationObject(SecondIntersectionOfCircleFromPointsAndLineFromPoints, D, A, B, C);
+            var E = new ConstructedConfigurationObject(SecondIntersectionOfCircleAndLineFromPoints, D, A, B, C);
             var F = new ConstructedConfigurationObject(RandomPointOnLineSegment, A, E);
 
             // Identify

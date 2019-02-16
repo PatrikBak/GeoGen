@@ -4,9 +4,9 @@ using GeoGen.Core;
 namespace GeoGen.GeometryRegistrar
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.IntersectionOfLinesFromLineAndPoints"/>>.
+    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.InternalAngleBisector"/>>.
     /// </summary>
-    public class IntersectionOfLinesFromLineAndPointsConstructor : PredefinedConstructorBase
+    public class InternalAngleBisectorConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
@@ -16,23 +16,19 @@ namespace GeoGen.GeometryRegistrar
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
-            // Get the line
-            var line = (Line) input[0];
-
             // Get the points
-            var point1 = (Point) input[1];
-            var point2 = (Point) input[2];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
+            var C = (Point) input[2];
 
-            // Create the other line
-            var otherLine = new Line(point1, point2);
-
-            // If the lines are the same, then the construction is not possible
-            if (line == otherLine)
+            // If they are collinear, don't perform the construction
+            // (it would be possible, but it would be unnecessarily 
+            // equivalent to the perpendicular line construction)
+            if (AnalyticHelpers.AreCollinear(A, B, C))
                 return null;
 
-            // Otherwise we can intersect them. 
-            // If there is no intersection, the result will be null
-            return line.IntersectionWith(otherLine);
+            // Otherwise construct the result
+            return AnalyticHelpers.InternalAngleBisector(A, B, C);
         }
     }
 }

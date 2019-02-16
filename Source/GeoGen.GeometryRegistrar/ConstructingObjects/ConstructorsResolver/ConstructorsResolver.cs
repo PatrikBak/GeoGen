@@ -28,9 +28,9 @@ namespace GeoGen.GeometryRegistrar
         private readonly Dictionary<PredefinedConstructionType, IPredefinedConstructor> _predefinedConstructors = new Dictionary<PredefinedConstructionType, IPredefinedConstructor>();
 
         /// <summary>
-        /// The dictionary mapping composed constructions to their corresponding constructors.
+        /// The dictionary mapping names of composed constructions to their corresponding constructors.
         /// </summary>
-        private readonly Dictionary<ComposedConstruction, IComposedConstructor> _composedConstructors = new Dictionary<ComposedConstruction, IComposedConstructor>();
+        private readonly Dictionary<string, IComposedConstructor> _composedConstructors = new Dictionary<string, IComposedConstructor>();
 
         #endregion
 
@@ -79,7 +79,7 @@ namespace GeoGen.GeometryRegistrar
             var composedConstruction = (ComposedConstruction) construction;
 
             // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
-            return _composedConstructors.GetOrAdd(composedConstruction, () => _factory.Create(composedConstruction));
+            return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));
         }
 
         #endregion

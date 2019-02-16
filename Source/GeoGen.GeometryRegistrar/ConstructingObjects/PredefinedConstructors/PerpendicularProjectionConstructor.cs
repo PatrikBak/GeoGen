@@ -4,9 +4,9 @@ using GeoGen.Core;
 namespace GeoGen.GeometryRegistrar
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.CircumcircleFromPoints"/>>.
+    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.PerpendicularProjection"/>>.
     /// </summary>
-    public class CircumcircleFromPointsConstructor : PredefinedConstructorBase
+    public class PerpendicularProjectionConstructor : PredefinedConstructorBase
     {
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
@@ -17,16 +17,11 @@ namespace GeoGen.GeometryRegistrar
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var point1 = (Point) input[0];
-            var point2 = (Point) input[1];
-            var point3 = (Point) input[2];
+            var A = (Point) input[0];
+            var l = (Line) input[1];
 
-            // If the points are collinear, the construction can't be done
-            if (AnalyticHelpers.AreCollinear(point1, point2, point3))
-                return null;
-
-            // Otherwise construct their circumcircle
-            return new Circle(point1, point2, point3);
+            // Construct the result
+            return A.Project(l);
         }
     }
 }

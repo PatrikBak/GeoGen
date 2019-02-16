@@ -6,75 +6,78 @@
     public enum PredefinedConstructionType
     {
         /// <summary>
-        /// The circumcenter constructed from 3 points (signature {P, P, P}).
+        /// The line through 2 points A, B (signature {A, B}).
         /// </summary>
-        CircumcenterFromPoints,
+        LineFromPoints,
 
         /// <summary>
-        /// The circle with given center passing through a given point (signature P, P).
+        /// The circle through 3 points A, B, C (signature {A, B, C}).
         /// </summary>
-        CircleFromCenterAndPointOnIt,
+        Circumcircle,
 
         /// <summary>
-        /// The circumcircle constructed from 3 points (signature {P, P, P}).
+        /// The circle with center A passing through point B (signature A, B).
         /// </summary>
-        CircumcircleFromPoints,
+        CircleWithCenterThroughPoint,
 
         /// <summary>
-        /// The internal angle bisector constructed from 3 points (signature P, {P, P}).
+        /// The center of circle c. (signature c).
         /// </summary>
-        InternalAngleBisectorFromPoints,
+        CenterOfCircle,
 
         /// <summary>
-        /// The intersection of the two lines constructed from 4 points (signature {{P, P}, {P, P}}).
-        /// </summary>
-        IntersectionOfLinesFromPoints,
-
-        /// <summary>
-        /// The intersection of 2 lines (signature {L, L}).
+        /// The intersection of 2 lines l, m (signature {l, m}).
         /// </summary>
         IntersectionOfLines,
 
         /// <summary>
-        /// The intersection of the two lines constructed from a line and 2 points (signature L, {P, P}).
+        /// The internal angle bisector of angle BAC (signature A, {B, C}).
         /// </summary>
-        IntersectionOfLinesFromLineAndPoints,
+        InternalAngleBisector,
 
         /// <summary>
-        /// A random point lying on the line constructed from 2 points (signature {P, P}).
+        /// The reflection of point A by point B (signature A, B).
+        /// </summary>
+        PointReflection,
+
+        /// <summary>
+        /// The midpoint of line segment AB (signature {A, B}).
+        /// </summary>
+        Midpoint,
+
+        /// <summary>
+        /// The perpendicular projection of point A on line l. (signature A, l)
+        /// </summary>
+        PerpendicularProjection,
+
+        /// <summary>
+        /// The line passing through point A and perpendicular to line l. (signature A, l)
+        /// </summary>
+        PerpendicularLine,
+
+        /// <summary>
+        /// The second intersection of the circle given by points A, B, C and the circle given by points A, D, E (signature A, {{B, C}, {D, E}}).
+        /// </summary>
+        SecondIntersectionOfTwoCircumcircles,
+
+        /// <summary>
+        /// The second intersection of line AB, and circle given by points A, C, D (signature A, B, {C, D}).
+        /// </summary>
+        SecondIntersectionOfCircleAndLineFromPoints,
+
+        /// <summary>
+        /// The second intersection of line AB with the circle with center C passing through A (signature A, B, C).
+        /// </summary>
+        SecondIntersectionOfCircleWithCenterAndLineFromPoints,
+
+        /// <summary>
+        /// A random point lying on line AB (signature {A, B}).
         /// </summary>
         RandomPointOnLineSegment,
 
         /// <summary>
-        /// A random point lying on a line (signature L).
+        /// A random point lying on line l (signature l).
         /// </summary>
-        RandomPointOnLine,
-
-        /// <summary>
-        /// The midpoint of the line segment constructed from 2 points (signature {P, P}).
-        /// </summary>
-        MidpointFromPoints,
-
-        /// <summary>
-        /// The perpendicular line constructed from 3 points (signature P, {P, P}).
-        /// </summary>
-        PerpendicularLineFromPoints,
-
-        /// <summary>
-        /// The second intersection of a line given by two points A, B, and a circle passing through A and other two given
-        /// points (signature P, P, {P, P}, where the first 'P' is meant to be B, and the second one is meant to be A)
-        /// </summary>
-        SecondIntersectionOfCircleFromPointsAndLineFromPoints,
-
-        /// <summary>
-        /// The second intersection of a circle given by points A, B, C, and a circle given by points A, C, D
-        /// (signature P, {{P, P}, {P, P}})
-        /// </summary>
-        SecondIntersectionOfTwoCirclesFromPoints,
-
-        /// <summary>
-        /// The reflection of a point with respect to another point (signature P, P)
-        /// </summary>
-        PointReflection,
+        RandomPointOnLine
     }
 }
