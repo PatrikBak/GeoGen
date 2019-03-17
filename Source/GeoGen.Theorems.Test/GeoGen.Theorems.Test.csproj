@@ -1,28 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Optimize>false</Optimize>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.6.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="Moq" Version="4.10.1" />
     <PackageReference Include="Ninject" Version="3.3.4" />
     <PackageReference Include="Ninject.Extensions.ContextPreservation" Version="3.3.1" />
     <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.2" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj" />
-    <ProjectReference Include="..\GeoGen.Analyzer\GeoGen.Analyzer.csproj" />
+    <ProjectReference Include="..\GeoGen.ConsoleTest\GeoGen.ConsoleTest.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
+    <ProjectReference Include="..\GeoGen.Theorems\GeoGen.Theorems.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>
 

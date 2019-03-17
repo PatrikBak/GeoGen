@@ -17,6 +17,11 @@ namespace GeoGen.Core
         public IReadOnlyList<LooseConfigurationObject> LooseObjects { get; }
 
         /// <summary>
+        /// Gets the loose objects wrapped in an objects map.
+        /// </summary>
+        public ConfigurationObjectsMap ObjectsMap { get; }
+
+        /// <summary>
         /// Gets the layout in which these objects are arranged.
         /// </summary>
         public LooseObjectsLayout Layout { get; }
@@ -34,6 +39,7 @@ namespace GeoGen.Core
         public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout layout = default)
         {
             LooseObjects = looseObjects?.ToList() ?? throw new ArgumentNullException(nameof(looseObjects));
+            ObjectsMap = new ConfigurationObjectsMap(looseObjects);
             Layout = layout;
 
             // Verify the objects match the layout

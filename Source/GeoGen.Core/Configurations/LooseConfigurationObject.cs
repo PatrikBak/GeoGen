@@ -10,8 +10,6 @@ namespace GeoGen.Core
     /// </summary>
     public class LooseConfigurationObject : ConfigurationObject
     {
-        #region Constructor
-
         /// <summary>
         /// Initializes a new instance of the <see cref="LooseConfigurationObject"/> with a given type.
         /// </summary>
@@ -20,17 +18,5 @@ namespace GeoGen.Core
             : base(objectType)
         {
         }
-
-        #endregion
-
-        #region ConfigurationObject overridden methods
-
-        /// <summary>
-        /// Enumerates the objects that are internally used to define this configuration object.
-        /// </summary>
-        /// <returns>The enumeration of the internal objects.</returns>
-        public override IEnumerable<ConfigurationObject> GetInternalObjects() => Enumerable.Empty<ConfigurationObject>();
-
-        #endregion
     }
 }

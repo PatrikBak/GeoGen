@@ -112,6 +112,7 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IPredefinedConstructor>().To<LineFromPointsConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<MidpointConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineConstructor>();
+            Kernel.Bind<IPredefinedConstructor>().To<ParallelLineConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<PerpendicularProjectionConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>();
             Kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>();

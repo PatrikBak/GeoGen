@@ -352,5 +352,14 @@ namespace GeoGen.Utilities
             // Merge the subsets of every possible size
             return Enumerable.Range(0, items.Length + 1).SelectMany(size => items.Subsets(size));
         }
+
+        /// <summary>
+        /// A fluent version of the string.Join method.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="separator">The separator of elements.</param>
+        /// <returns>The elements joined with the operator.</returns>
+        public static string ToJoinedString<T>(this IEnumerable<T> enumerable, string separator = ", ") => string.Join(separator, enumerable);
     }
 }

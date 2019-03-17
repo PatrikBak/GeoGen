@@ -12,7 +12,7 @@ namespace GeoGen.Core
     /// be ordered so that it's possible to construct them in this order. The configuration should contain mutually
     /// distinct objects.
     /// </summary>
-    public class Configuration : IdentifiedObject
+    public class Configuration
     {
         #region Public properties
 
@@ -59,17 +59,26 @@ namespace GeoGen.Core
         {
         }
 
+        #endregion
+
+        #region Public static methods
+
         /// <summary>
-        /// Initializes  a new instance of the <see cref="Configuration"/> class that consists of given objects.
-        /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.None"/> layout.
-        /// All the objects will be automatically identified.
+        /// Creates a configuration that simulates the construction of given constructed objects.
+        /// The loose objects will be automatically detected and will have the specified layout.
         /// </summary>
-        /// <param name="objects">The objects of the configuration.</param>
-        public Configuration(params ConfigurationObject[] objects)
-            : this(layout: LooseObjectsLayout.None, objects)
-        {
-            Identify(objects);
-        }
+        /// <param name="layout">The layout for the automatically detected loose objects.</param>
+        /// <param name="constructedObjects">The constructed objects whose construction defines the configuration.</param>
+        /// <returns>The configuration derived from the objects.</returns>
+        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConstructedConfigurationObject[] constructedObjects) => new Configuration(layout, constructedObjects.GetDefiningObjects().ToArray());
+
+        /// <summary>
+        /// Creates a configuration that simulates the construction of given constructed objects.
+        /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.None"/> layout.
+        /// </summary>
+        /// <param name="constructedObjects">The constructed objects whose construction defines the configuration.</param>
+        /// <returns>The configuration derived from the objects.</returns>
+        public static Configuration DeriveFromObjects(params ConstructedConfigurationObject[] constructedObjects) => DeriveFromObjects(LooseObjectsLayout.None, constructedObjects);
 
         #endregion
 
@@ -77,7 +86,7 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Converts a given configuration to a string. 
-        /// NOTE: This method id used only for debugging purposes.
+        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => ToStringHelper.ConfigurationToString(this);

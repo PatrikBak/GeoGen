@@ -56,6 +56,11 @@
         PerpendicularLine,
 
         /// <summary>
+        /// The line passing through point A and parallel to line l (signature A, l).
+        /// </summary>
+        ParallelLine, 
+
+        /// <summary>
         /// The second intersection of the circle given by points A, B, C and the circle given by points A, D, E (signature A, {{B, C}, {D, E}}).
         /// </summary>
         SecondIntersectionOfTwoCircumcircles,
@@ -78,6 +83,11 @@
         /// <summary>
         /// A random point lying on line l (signature l).
         /// </summary>
-        RandomPointOnLine
+        RandomPointOnLine,
+
+        /// <summary>
+        /// A random point lying on circle c (signature c).
+        /// </summary>
+        RandomPointOnCircle
     }
 }

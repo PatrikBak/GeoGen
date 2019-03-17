@@ -39,18 +39,6 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructedConfigurationObject"/> class.
-        /// </summary>
-        /// <param name="construction">The construction that should be used to draw this object.</param>
-        /// <param name="arguments">The arguments that should be passed to the construction function.</param>
-        /// <param name="id">The id of the object.</param>
-        public ConstructedConfigurationObject(Construction construction, Arguments arguments, int id)
-            : this(construction, arguments)
-        {
-            Id = id;
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ConstructedConfigurationObject"/> class
         /// using a predefined construction of a given type and input objects.
         /// </summary>
@@ -70,24 +58,6 @@ namespace GeoGen.Core
         public ConstructedConfigurationObject(Construction construction, params ConfigurationObject[] input)
             : this(construction, construction.Signature.Match(new ConfigurationObjectsMap(input)))
         {
-        }
-
-        #endregion
-
-        #region ConfigurationObject overridden methods
-
-        /// <summary>
-        /// Enumerates the objects that are internally used to define this configuration object.
-        /// </summary>
-        /// <returns>The enumeration of the internal objects.</returns>
-        public override IEnumerable<ConfigurationObject> GetInternalObjects()
-        {
-            // Take the passed objects from the arguments....
-            return PassedArguments.FlattenedList
-                // Add the internal objects to each of them
-                .Concat(PassedArguments.FlattenedList.Select(obj => obj.GetInternalObjects()).Flatten())
-                // Take only distinct ones
-                .Distinct();
         }
 
         #endregion

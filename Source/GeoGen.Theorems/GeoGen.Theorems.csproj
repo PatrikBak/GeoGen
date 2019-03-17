@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -71,7 +71,7 @@ namespace GeoGen.ConsoleTest
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var H = new ConstructedConfigurationObject(ComposedConstructions.Orthocenter(), A, B, C);
+            var H = new ConstructedConfigurationObject(ComposedConstructions.Orthocenter, A, B, C);
 
             return new Configuration(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, H);
         }
@@ -91,16 +91,16 @@ namespace GeoGen.ConsoleTest
             PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
             PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
             PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
-            ComposedConstructions.Centroid(),
-            ComposedConstructions.Incenter(),
-            ComposedConstructions.Orthocenter(),
-            ComposedConstructions.IntersectionOfLinesFromPoints(),
-            ComposedConstructions.IntersectionOfLineAndLineFromPoints(),
-            ComposedConstructions.Parallelogram(),
-            ComposedConstructions.PerpendicularLineAtPointOfLine(),
-            ComposedConstructions.PerpendicularLineToLineFromPoints(),
-            ComposedConstructions.ReflectionInLine(),
-            ComposedConstructions.ReflectionInLineFromPoints()
+            ComposedConstructions.Centroid,
+            ComposedConstructions.Incenter,
+            ComposedConstructions.Orthocenter,
+            ComposedConstructions.IntersectionOfLinesFromPoints,
+            ComposedConstructions.IntersectionOfLineAndLineFromPoints,
+            ComposedConstructions.Parallelogram,
+            ComposedConstructions.PerpendicularLineAtPointOfLine,
+            ComposedConstructions.PerpendicularLineToLineFromPoints,
+            ComposedConstructions.ReflectionInLine,
+            ComposedConstructions.ReflectionInLineFromPoints
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,
@@ -115,9 +115,6 @@ namespace GeoGen.ConsoleTest
             using (var writer = new StreamWriter(fileName))
             {
                 var initialConfigurationCopy = InitialConfiguration();
-                IdentifiedObject.Identify(initialConfigurationCopy.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(initialConfigurationCopy.ConstructedObjects));
-                IdentifiedObject.Identify(initialConfigurationCopy.ConstructedObjects.Select(c => c.Construction));
-
                 var initialFormatter = new OutputFormatter(initialConfigurationCopy);
 
                 writer.WriteLine("Initial configuration:");
@@ -197,7 +194,7 @@ namespace GeoGen.ConsoleTest
                     var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
 
                     writer.WriteLine("------------------------------------------------");
-                    writer.WriteLine($"{i++}. (id={algorithmOutput.GeneratorOutput.Configuration.Id})");
+                    writer.WriteLine($"{i++}");
                     writer.WriteLine("------------------------------------------------\n");
                     writer.WriteLine(formatter.FormatConfiguration());
 

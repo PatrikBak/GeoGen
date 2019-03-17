@@ -174,7 +174,7 @@ namespace GeoGen.Constructor
                     objectConstructed = analyticObject != null;
 
                     // Set if there is an equal object
-                    equalObject = container.Contains(analyticObject) ? container.Get(analyticObject) : null;
+                    equalObject = analyticObject != null && container.Contains(analyticObject) ? container.Get(analyticObject) : null;
                 }
 
                 // We need to first check if some other container didn't mark constructibility in the opposite way

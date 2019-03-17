@@ -105,7 +105,7 @@ namespace GeoGen.Analyzer
                 if (trueContainers >= _settings.MinimalNumberOfTrueContainers)
                 {
                     // Then we add the theorem to the list of certain ones
-                    trueTheorems.Add(new AnalyzedTheorem(potentialTheorem, trueContainers, numberOfTrueContainersAfterSecondTest: null));
+                    trueTheorems.Add(new AnalyzedTheorem(configuration, potentialTheorem, trueContainers, numberOfTrueContainersAfterSecondTest: null));
 
                     // And continue to the next one
                     continue;
@@ -126,7 +126,7 @@ namespace GeoGen.Analyzer
                 if (!wasContainerRecreated.Value)
                 {
                     // We just add the theorem to potentially false negatives
-                    potentialFalseNegatives.Add(new AnalyzedTheorem(potentialTheorem, trueContainers, numberOfTrueContainersAfterSecondTest: null));
+                    potentialFalseNegatives.Add(new AnalyzedTheorem(configuration, potentialTheorem, trueContainers, numberOfTrueContainersAfterSecondTest: null));
 
                     // And continue to the next one
                     continue;
@@ -136,7 +136,7 @@ namespace GeoGen.Analyzer
                 var trueContainersAfterRevalidation = manager.Count(potentialTheorem.VerificationFunction);
 
                 // Construct the resulting theorem
-                var theorem = new AnalyzedTheorem(potentialTheorem, trueContainers, trueContainersAfterRevalidation);
+                var theorem = new AnalyzedTheorem(configuration, potentialTheorem, trueContainers, trueContainersAfterRevalidation);
 
                 // And decide to which list we're going to add it according to the settings
                 (trueContainersAfterRevalidation >= _settings.MinimalNumberOfTrueContainers ? trueTheorems : potentialFalseNegatives).Add(theorem);

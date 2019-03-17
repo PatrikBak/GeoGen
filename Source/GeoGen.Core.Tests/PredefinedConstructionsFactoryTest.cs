@@ -27,7 +27,6 @@ namespace GeoGen.Core.Tests
                     // Assert
                     construction.Should().NotBeNull();
                     construction.Type.Should().Be(type);
-                    construction.HasId.Should().BeFalse();
                 });
         }
     }

@@ -9,14 +9,13 @@ namespace GeoGen.Generator
     public class GeneratorInput
     {
         /// <summary>
-        /// The initial configuration from which the generation process starts. The configuration
-        /// shouldn't be identified, nor its internal objects should or constructions should.
+        /// The initial configuration from which the generation process starts. 
         /// </summary>
         public Configuration InitialConfiguration { get; set; }
 
         /// <summary>
         /// The constructions that are supposed to be used to extend the configurations, including the initial one.
-        /// The constructions must have distinct names and cannot be identified.
+        /// The constructions should have distinct names.
         /// </summary>
         public IReadOnlyList<Construction> Constructions { get; set; }
 

@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using GeoGen.AnalyticGeometry;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using Moq;
 using NUnit.Framework;
@@ -10,7 +11,7 @@ using System.Linq;
 namespace GeoGen.Constructor.Tests
 {
     /// <summary>
-    /// The test class for <see cref="PotentialTheorem"/>.
+    /// The test class for <see cref="ContextualContainer"/>.
     /// </summary>
     [TestFixture]
     public class ContextualContainerTest
@@ -50,8 +51,6 @@ namespace GeoGen.Constructor.Tests
                 // Enumerate to a list
                 .ToList();
 
-            // Identify them
-            IdentifiedObject.Identify(looseObjects);
 
             // Create object containers holding the objects
             var containers = allObjects.Select(objects =>

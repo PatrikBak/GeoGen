@@ -4,9 +4,9 @@ namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents a <see cref="IContainer{T}"/>, where 'T' is <see cref="ConfigurationObject"/>.
-    /// This container is able to recognize equal arguments consisting of correctly identified objects
+    /// This container is able to recognize equal arguments consisting of correctly created objects
     /// (i.e. fulfilling the invariant that two objects are formally equal if and only if they have 
-    /// distinct ids). This class makes use of <see cref="StringBasedContainer{T}"/> together with
+    /// distinct references). This class makes use of <see cref="StringBasedContainer{T}"/> together with
     /// <see cref="DefaultArgumentsToStringConverter"/>.
     /// </summary>
     public class ArgumentsContainer : StringBasedContainer<Arguments>

@@ -182,6 +182,23 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.ParallelLine"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction ParallelLine()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                new ObjectConstructionParameter(ConfigurationObjectType.Line)
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.ParallelLine, parameters, ConfigurationObjectType.Line);
+        }
+
+        /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.PointReflection"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>
@@ -281,6 +298,22 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineSegment, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircle"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction RandomPointOnCircle()
+        {
+            // Create the parameters
+            var parameters = new List<ConstructionParameter>
+            {
+                new ObjectConstructionParameter(ConfigurationObjectType.Circle)
+            };
+
+            // Create the actual construction
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircle, parameters, ConfigurationObjectType.Point);
         }
 
         #endregion

@@ -27,11 +27,9 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="currentConfiguration">The configuration that was extended.</param>
         /// <param name="newObject">The new object with which this configuration was extended.</param>
-        /// <param name="id">The id of the configuration.</param>
-        public GeneratedConfiguration(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject newObject, int id)
+        public GeneratedConfiguration(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject newObject)
             : base(currentConfiguration.LooseObjectsHolder, currentConfiguration.ConstructedObjects.Concat(newObject.AsEnumerable()).ToList())
         {
-            Id = id;
         }
 
         /// <summary>
@@ -39,11 +37,9 @@ namespace GeoGen.Generator
         /// representing a configuration with no previous configuration.
         /// </summary>
         /// <param name="configuration">The configuration to be wrapped by this object.</param>
-        /// <param name="id">The id of the configuration.</param>
-        public GeneratedConfiguration(Configuration configuration, int id)
+        public GeneratedConfiguration(Configuration configuration)
             : base(configuration.LooseObjectsHolder, configuration.ConstructedObjects)
         {
-            Id = id;
         }
 
         #endregion

@@ -53,25 +53,15 @@ namespace GeoGen.Analyzer
         /// <returns>true, if there are fewer needed objects than expected; false otherwise.</returns>
         public bool ContainsNeedlessObjects(int expectedMinimalNumberOfNeededObjects)
         {
-            // Helper function that creates a set containing the definition objects 
-            // of an configuration object, together with the given object
-            HashSet<ConfigurationObject> ObjectWithItsInternalObjects(ConfigurationObject configurationObject)
-            {
-                // Take the object and concatenate its internal objects
-                return configurationObject.GetInternalObjects().Concat(configurationObject).ToSet();
-            }
-
             // Local function that enumerated all possible definitions of a given geometrical object
-            // Each definition is given as a set of configuration objects
-            IEnumerable<HashSet<ConfigurationObject>> AllDefinitions(GeometricalObject geometricalObject)
+            IEnumerable<IEnumerable<ConfigurationObject>> AllDefinitions(GeometricalObject geometricalObject)
             {
                 // Pull configuration object version
                 var configurationObject = geometricalObject.ConfigurationObject;
 
-                // If the configuration version is set, then it's this object 
-                // with its internal ones is one possible definition
+                // If the configuration version is set, then the objects defining this one is one possible definition
                 if (configurationObject != null)
-                    yield return ObjectWithItsInternalObjects(configurationObject);
+                    yield return configurationObject.GetDefiningObjects();
 
                 // If this is a point, then there is no other definition
                 if (geometricalObject is PointObject)
@@ -89,8 +79,8 @@ namespace GeoGen.Analyzer
                 // Otherwise we have some definition of this type
                 // Let's prepare them. First we take all the subsets (all pairs / triples) of points
                 var remainingdefinitions = definableByPoints.Points.Subsets(definableByPoints.NumberOfNeededPoints)
-                    // For each all the needed definition points
-                    .Select(points => points.SelectMany(point => ObjectWithItsInternalObjects(point.ConfigurationObject)).ToSet());
+                    // For each of these subjects we have a definition
+                    .Select(points => points.Select(p => p.ConfigurationObject).GetDefiningObjects());
 
                 // And return them
                 foreach (var definition in remainingdefinitions)

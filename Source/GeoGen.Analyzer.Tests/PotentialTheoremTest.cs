@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Constructor;
 using NUnit.Framework;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;
@@ -23,10 +23,7 @@ namespace GeoGen.Analyzer.Tests
             var D = new ConstructedConfigurationObject(Midpoint, A, B);
             var E = new ConstructedConfigurationObject(Midpoint, B, C);
             var F = new ConstructedConfigurationObject(Midpoint, C, A);
-            var G = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints(), B, F, C, D);
-
-            // Identify
-            IdentifiedObject.Identify(A, B, C, D, E, F, G);
+            var G = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints, B, F, C, D);
 
             // Assert
             new PotentialTheorem
@@ -152,9 +149,6 @@ namespace GeoGen.Analyzer.Tests
             var D = new ConstructedConfigurationObject(RandomPointOnLine, l);
             var E = new ConstructedConfigurationObject(SecondIntersectionOfCircleAndLineFromPoints, D, A, B, C);
             var F = new ConstructedConfigurationObject(RandomPointOnLineSegment, A, E);
-
-            // Identify
-            IdentifiedObject.Identify(l, A, B, C, D, E, F);
 
             // Assert
             new PotentialTheorem

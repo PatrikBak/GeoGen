@@ -23,7 +23,7 @@ namespace GeoGen.ConsoleTest
                 writer.WriteLine();
                 writer.WriteLine("The last object in each list is an inconstructible one.");
                 writer.WriteLine();
-                _objects.ForEach((obj, i) => writer.WriteLine($"{i + 1}. {ToStringHelper.ObjectToString(obj, displayId: false)}"));
+                _objects.ForEach((obj, i) => writer.WriteLine($"{i + 1}. {ToStringHelper.ObjectToString(obj)}"));
             }
         }
     }

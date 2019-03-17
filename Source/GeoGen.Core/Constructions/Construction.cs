@@ -8,10 +8,8 @@ namespace GeoGen.Core
     /// It's given by its <see cref="Core.Signature"/>, which is essentially a list of
     /// <see cref="ConstructionParameter"/>s, and the <see cref="ConfigurationObjectType"/> of the 
     /// output object. Every construction has a name that should be the unique identifier for it.
-    /// It inherits from <see cref="IdentifiedObject"/>, since some GeoGen algorithms require to work 
-    /// with an integer id.
     /// </summary>
-    public abstract class Construction : IdentifiedObject
+    public abstract class Construction 
     {
         #region Public properties
 
@@ -53,7 +51,7 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Converts a given construction to a string. 
-        /// NOTE: This method id used only for debugging purposes.
+        /// NOTE: This method i used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the construction.</returns>
         public override string ToString() => ToStringHelper.ConstructionToString(this);

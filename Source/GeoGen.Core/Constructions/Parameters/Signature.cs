@@ -200,7 +200,7 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Converts a given signature to a string. 
-        /// NOTE: This method id used only for debugging purposes.
+        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the signature.</returns>
         public override string ToString() => ToStringHelper.SignatureToString(this);

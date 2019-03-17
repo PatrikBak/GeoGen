@@ -96,14 +96,8 @@ namespace GeoGen.Generator
             // The configurations that are to be extended
             var currentLayer = new List<GeneratedConfiguration>();
 
-            // The id prepared to be set to the next generated configuration object.
-            var nextConfigurationObjectId = 0;
-
-            // The id prepared to be set to the next generated configuration.
-            var nextConfigurationId = 0;
-
-            // The set containing ids of inconstructible objects. 
-            var inconstructibleObjectsIds = new HashSet<int>();
+            // The set containing inconstructible objects. 
+            var inconstructibleObjects = new HashSet<ConfigurationObject>();
 
             // The container for configuration objects
             var objectsContainer = _objectsContainerFactory.CreateContainer();
@@ -113,34 +107,12 @@ namespace GeoGen.Generator
 
             #endregion
 
-            #region Initialize constructions
-
-            // Make sure the constructions have distinct names
-            if (input.Constructions.Select(construction => construction.Name).Count() != input.Constructions.Count)
-                throw new InitializationException("The constructions are supposed to have mutually distinct names");
-
-            // Map all the construction to their names 
-            // We have to include the construction used to construct initial objects as well 
-            // Take all the constructions of the initial objects
-            input.InitialConfiguration.ConstructedObjects.Select(obj => obj.Construction)
-                // Merge with the input constructions
-                .Concat(input.Constructions)
-                // Group them according to their name
-                .GroupBy(construction => construction.Name)
-                // Identify each group with the same id
-                .ForEach((group, index) => group.ForEach(construction => construction.Id = index));
-
-            #endregion
-
             #region Initialize the initial objects
 
             // For each object...
             input.InitialConfiguration.ObjectsMap.AllObjects.ForEach(obj =>
             {
-                // Make sure it is identified
-                obj.Id = nextConfigurationObjectId++;
-
-                // And added to the container
+                // Make sure it's added to the container
                 objectsContainer.TryAdd(obj, out var equalObject);
 
                 // Make sure there are no duplicates...
@@ -153,7 +125,7 @@ namespace GeoGen.Generator
             #region Handle the first configuration
 
             // Create the initial generated configuration from the passed initial one
-            var firstConfiguration = new GeneratedConfiguration(input.InitialConfiguration, nextConfigurationId++);
+            var firstConfiguration = new GeneratedConfiguration(input.InitialConfiguration);
 
             // Add it to the container
             configurationsContainer.Add(firstConfiguration);
@@ -199,7 +171,7 @@ namespace GeoGen.Generator
                             var generatedArguments = _argumentsGenerator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature);
 
                             // Cast each arguments to a new constructed object
-                            return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments, nextConfigurationObjectId++));
+                            return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments));
                         })
                         // Make sure each constructed object are added to the container so we can recognize equal ones
                         .Select(newObject =>
@@ -223,27 +195,20 @@ namespace GeoGen.Generator
                             return newObject;
                         })
                         // For each new object creates a new generated configuration
-                        .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, nextConfigurationId++))
+                        .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject))
                         // Take only valid ones
                         .Where(configuration =>
                         {
-                            #region Object ids based validation
-
-                            // Let's find the object ids
-                            var objectIds = configuration.ObjectsMap.AllObjects.Select(obj => obj.Id).ToSet();
-
-                            // Check if there is no duplicate, i.e. the number of ids is equal to the number of objects
-                            if (configuration.ObjectsMap.AllObjects.Count != objectIds.Count)
+                            // Check if the last object is constructible
+                            if (inconstructibleObjects.Contains(configuration.ConstructedObjects.Last()))
                                 return false;
 
-                            // Check if there is any id that has been marked as inconstructible
-                            if (objectIds.Any(inconstructibleObjectsIds.Contains))
+                            // Make sure the last object is not equal to any previous ones
+                            if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj != configuration.ConstructedObjects.Last()))
                                 return false;
-
+                            
                             // We're sure the configuration is formally correct (no duplicates)
                             // and that can't be excluded based on the previous data (inconstructible objects)
-
-                            #endregion
 
                             #region Equal configurations validation
 
@@ -282,8 +247,8 @@ namespace GeoGen.Generator
                             // If there is an inconstructible object
                             if (anyInconstructibleObject)
                             {
-                                // Then we want to remember its id
-                                inconstructibleObjectsIds.Add(geometryData.InconstructibleObject.Id);
+                                // Then we want to remember it
+                                inconstructibleObjects.Add(geometryData.InconstructibleObject);
 
                                 // And trace it
                                 _inconstructibleObjectsTracer?.TraceInconstructibleObject(geometryData.InconstructibleObject);

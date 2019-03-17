@@ -54,7 +54,7 @@ namespace GeoGen.Constructor
 
         /// <summary>
         /// Converts a given object to a string. 
-        /// NOTE: This method id used only for debugging purposes.
+        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
         public override string ToString()

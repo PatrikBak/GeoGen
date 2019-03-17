@@ -6,7 +6,7 @@ namespace GeoGen.Generator
     /// <summary>
     /// Represents a <see cref="IToStringConverter{T}"/>, where 'T' is <see cref="ConfigurationObject"/>.
     /// It converts objects to a string using <see cref="IFullObjectToStringConverter"/> in a way that no 
-    /// id is being remapped (it passes the value <see cref="LooseObjectIdsRemapping.NoRemapping"/> to it).
+    /// loose object is being remapped (it passes the value <see cref="LooseObjectsRemapping.NoRemapping"/> to it).
     /// The use-case for this is to recognize equal configuration objects.
     /// </summary>
     public class DefaultFullObjectToStringConverter : IToStringConverter<ConfigurationObject>
@@ -42,8 +42,8 @@ namespace GeoGen.Generator
         /// <returns>A string representation of the object.</returns>
         public string ConvertToString(ConfigurationObject configurationObject)
         {
-            // Call the general full converter with no loose objects ids remapping
-            return _objectToString.ConvertToString(configurationObject, LooseObjectIdsRemapping.NoRemapping);
+            // Call the general full converter with no loose objects remapping
+            return _objectToString.ConvertToString(configurationObject, LooseObjectsRemapping.NoRemapping);
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Utilities
 {
@@ -41,8 +42,16 @@ namespace GeoGen.Utilities
         /// Adds given items to the collection.
         /// </summary>
         /// <typeparam name="T">The type of items.</typeparam>
-        /// <param name="collection">The collections.</param>
+        /// <param name="collection">The collection.</param>
         /// <param name="items">The items to be added.</param>
         public static void Add<T>(this ICollection<T> collection, IEnumerable<T> items) => items.ForEach(collection.Add);
+
+        /// <summary>
+        /// Determines if the collection contains two equal items.
+        /// </summary>
+        /// <typeparam name="T">The type of items.</typeparam>
+        /// <param name="collection">The collection.</param>
+        /// <returns>true, if the collection contains duplicate items; false otherwise.</returns>
+        public static bool AnyDuplicates<T>(this IReadOnlyCollection<T> collection) => collection.Count == collection.Distinct().Count();
     }
 }

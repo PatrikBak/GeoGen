@@ -25,22 +25,23 @@ namespace GeoGen.ConsoleTest
 
                 _objects.ForEach((tuple, i) =>
                 {
-                    // We're going to find the objects that define these including themselves
-                    var definingObjects = tuple.Item1.GetInternalObjects()
-                                                .Concat(tuple.Item2.GetInternalObjects())
-                                                .Concat(tuple.Item1)
-                                                .Concat(tuple.Item2)
-                                                .Distinct()
-                                                .ToList();
+                    // Deconstruct the objects
+                    var (obj1, obj2) = tuple;
 
-                    // Sort them according to their ids (so we know which ones were created first)
-                    definingObjects.Sort((o1, o2) => o1.Id - o2.Id);
+                    // We're going to find the objects that define these including themselves
+                    var definingObjects = new[] { obj1, obj2 }.GetDefiningObjects().ToList();
+
+                    // Make sure the equal objects are at the end
+                    definingObjects.Remove(obj1);
+                    definingObjects.Add(obj1);
+                    definingObjects.Remove(obj2);
+                    definingObjects.Add(obj2);
 
                     // Convert them to string
-                    var objectStrings = ToStringHelper.ObjectsToString(definingObjects, displayId: false).ToList();
+                    var objectStrings = ToStringHelper.ObjectsToString(definingObjects).ToList();
 
                     // And use the configuration converted
-                    writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {(char) ('A' + definingObjects.IndexOf(tuple.Item1))}.");
+                    writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {objectStrings[objectStrings.Count - 2]}.");
                 });
             }
         }

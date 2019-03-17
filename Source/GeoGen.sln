@@ -25,9 +25,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Constructor", "GeoGen.Constructor\GeoGen.Constructor.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor", "GeoGen.Constructor\GeoGen.Constructor.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Theorems", "GeoGen.Theorems\GeoGen.Theorems.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Theorems.Test", "GeoGen.Theorems.Test\GeoGen.Theorems.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +91,14 @@ Global
 		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{636043F8-22D7-456F-90CA-1DAC90D52B2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

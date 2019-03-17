@@ -32,7 +32,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="signature">The signature of the object.</param>
         /// <param name="objects">The actual configuration objects that define this theorem object.</param>
-        public TheoremObject(TheoremObjectSignature signature, IEnumerable<ConfigurationObject> objects)
+        public TheoremObject(TheoremObjectSignature signature, params ConfigurationObject[] objects)
         {
             Signature = signature;
             InternalObjects = objects?.ToList() ?? throw new ArgumentNullException(nameof(objects));
@@ -45,7 +45,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configurationObject">The object that defines this theorem object.</param>
         public TheoremObject(ConfigurationObject configurationObject)
-            : this(TheoremObjectSignature.SingleObject, new[] { configurationObject })
+            : this(TheoremObjectSignature.SingleObject, configurationObject)
         {
         }
 

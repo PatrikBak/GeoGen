@@ -31,11 +31,12 @@ namespace GeoGen.Analyzer
         /// Initializes a new instance of the <see cref="AnalyzedTheorem"/> object 
         /// from a potential theorem and analysis data.
         /// </summary>
+        /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="potentialTheorem">The potential theorem that was analyzed.</param>
         /// <param name="numberOfTrueContainersAfterFirstTest">The number of objects containers in which the theorem was true after the first test.</param>
         /// <param name="numberOfTrueContainersAfterSecondTest">Gets  the number of objects containers in which the theorem was true after the second test, or null, if there wasn't any.</param>
-        public AnalyzedTheorem(PotentialTheorem potentialTheorem, int numberOfTrueContainersAfterFirstTest, int? numberOfTrueContainersAfterSecondTest)
-            : base(potentialTheorem.TheoremType, ConstructTheoremObjects(potentialTheorem.InvolvedObjects))
+        public AnalyzedTheorem(Configuration configuration, PotentialTheorem potentialTheorem, int numberOfTrueContainersAfterFirstTest, int? numberOfTrueContainersAfterSecondTest)
+            : base(configuration, potentialTheorem.TheoremType, ConstructTheoremObjects(potentialTheorem.InvolvedObjects))
         {
             NumberOfTrueContainersAfterFirstTest = numberOfTrueContainersAfterFirstTest;
             NumberOfTrueContainersAfterSecondTest = numberOfTrueContainersAfterSecondTest;

@@ -75,28 +75,19 @@ namespace GeoGen.Analyzer
             // Take all the subjects of the constructed objects
             var theorems = configuration.ConstructedObjects.Subsets()
                 // Enumerate each sorted by id
-                .Select(objects => objects.OrderBy(obj => obj.Id).ToArray())
+                //.Select(objects => objects.OrderBy(obj => obj.Id).ToArray())
                 // Take only those that make a correct configuration
                 .Where(objects =>
                 {
                     // We will find this out by having look at the number of distinct 
                     // objects of the potential configuration
-                    // First take loose objects
-                    var numberOfObjects = configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>()
-                        // Plus the constructed objects
-                        .Concat(objects)
-                        // Add all the internals of the constructed objects
-                        .Concat(objects.SelectMany(o => o.GetInternalObjects()))
-                        // Take distinct ones
-                        .Distinct()
-                        // And their number 
-                        .Count();
+                    var numberOfObjects = configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().GetDefiningObjects().Count();
 
                     // There shouldn't be any leftover objects
-                    return numberOfObjects <= configuration.LooseObjectsHolder.LooseObjects.Count + objects.Length;
+                    return numberOfObjects <= configuration.LooseObjectsHolder.LooseObjects.Count + objects.ToArray().Length;
                 })
                 // Make a configuration. The constructed objects should be ordered correctly
-                .Select(objects => new Configuration(configuration.LooseObjectsHolder, objects))
+                .Select(objects => new Configuration(configuration.LooseObjectsHolder, objects.ToArray()))
                 // Find its theorems
                 .Select(_configuration => _analyzer.Analyze(_configuration, geometryData.Manager))
                 // Enumerate for further processing

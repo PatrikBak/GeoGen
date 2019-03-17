@@ -21,7 +21,7 @@ namespace GeoGen.Generator
     /// we might take a configuration, generate all the ones isomorphic to it, convert all of them to a string,
     /// and deterministically pick the representant, for example as the lexicographically minimal string.
     /// This is what indeed happens, but it is not implementing by creating new configurations. Instead, we
-    /// convert the same configuration using different <see cref="LooseObjectIdsRemapping"/>s. For each of
+    /// convert the same configuration using different <see cref="LooseObjectsRemapping"/>s. For each of
     /// these mappings we have a single <see cref="IToStringConverter{T}"/> that is used together with a 
     /// <see cref="IGeneralConfigurationToStringConverter"/>.
     /// </para> 
@@ -88,19 +88,19 @@ namespace GeoGen.Generator
                     // We take all the permutations of the loose objects
                     return looseObjects.Permutations()
                             // Cast each of them to the dictionary mapping those loose objects
-                            // that are mapped to some id different then theirs
+                            // that are mapped to some different ones
                             .Select(permutation =>
                             {
-                                // Each permutation is first casted to the tuple of itself and id of the object to which this object is mapped
-                                return permutation.Select((looseObject, index) => (looseObject, id: looseObjects[index].Id))
+                                // Each permutation is first casted to the tuple of the object that is mapped to the result of the mapping
+                                return permutation.Select((looseObject, index) => (from: looseObjects[index], to: looseObject))
                                         // Then we exclude the ones that are mapped to itself
-                                        .Where(pair => pair.looseObject.Id != pair.id)
+                                        .Where(pair => pair.from != pair.to)
                                         // And wrap the remaining ones to a dictionary
-                                        .ToDictionary(pair => pair.looseObject, pair => pair.id);
+                                        .ToDictionary(pair => pair.from, pair => pair.to);
                             })
-                            // Wrap this dictionary into a LooseObjectIdsRemapping object, 
+                            // Wrap this dictionary into a LooseObjectsRemapping object, 
                             // making sure that we will reuse the empty remapping, if possible
-                            .Select(dictionary => dictionary.IsEmpty() ? LooseObjectIdsRemapping.NoRemapping : new LooseObjectIdsRemapping(dictionary))
+                            .Select(dictionary => dictionary.IsEmpty() ? LooseObjectsRemapping.NoRemapping : new LooseObjectsRemapping(dictionary))
                             // Each of these remapping is then used to create a to string converter that is 
                             // required to be passed to the general configuration to string 
                             .Select(mapping => new FuncToStringConverter<ConfigurationObject>(obj => _objectToString.ConvertToString(obj, mapping)))

@@ -13,55 +13,49 @@ namespace GeoGen.Core
         /// Converts a given configuration to a string.
         /// </summary>
         /// <param name="configuration">The configuration to be converted.</param>
-        /// <param name="objectsSeparator">The separator of individual objects in the final string.</param>
-        /// <param name="displayId">Indicates if we should include the object's id.</param>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public static string ConfigurationToString(Configuration configuration, string objectsSeparator = ", ", bool displayId = true)
+        public static string ConfigurationToString(Configuration configuration)
         {
             // Get the objects strings
-            var objectStrings = ObjectsToString(configuration.ObjectsMap.AllObjects, displayId);
+            var objectStrings = ObjectsToString(configuration.ObjectsMap.AllObjects);
 
-            // And create the final result
-            return $"{(configuration.HasId ? $"[{configuration.Id}] " : "")}{string.Join(objectsSeparator, objectStrings)}";
+            // Join them to get the final result
+            return string.Join(", ", objectStrings);
         }
 
         /// <summary>
         /// Converts given configuration objects to string.
         /// </summary>
         /// <param name="objects">The objects to be converted.</param>
-        /// <param name="displayId">Indicates if we should include the object's id.</param>
         /// <returns>The string representations of individual objects.</returns>
-        public static IEnumerable<string> ObjectsToString(IEnumerable<ConfigurationObject> objects, bool displayId = true)
+        public static IEnumerable<string> ObjectsToString(IEnumerable<ConfigurationObject> objects)
         {
             // It's good to name the objects first. 
             // For simplicity we're going to name all the objects 
-            // with capital letters starting from 'A'
+            // with capital letters starting from an 'A'
             var names = objects.ToDictionary((obj, index) => obj, (obj, index) => (char) ('A' + index));
 
             // Now we cast each object to its string representation
             return objects.Select(obj =>
             {
-                // Get the id string
-                var idString = displayId ? $"[{ obj.Id}]" : "";
-
                 // Switch according to the type
                 switch (obj)
                 {
                     case LooseConfigurationObject _:
 
-                        // For loose objects it's simple
-                        return $"{names[obj]}={obj.ObjectType}{idString}";
+                        // For loose objects we include just the name and the type
+                        return $"{names[obj]}={obj.ObjectType}";
 
                     case ConstructedConfigurationObject constructedObject:
 
                         // For a constructed object we first convert its arguments using the found names
                         var arguments = ArgumentsToString(constructedObject.PassedArguments, names);
 
-                        // And construct the final string
-                        return $"{names[obj]}={constructedObject.Construction.Name}({string.Join(",", arguments)}){idString}";
+                        // And construct the final string with the name of the object and construction + arguments
+                        return $"{names[obj]}={constructedObject.Construction.Name}({string.Join(",", arguments)})";
 
                     default:
-                        throw new GeoGenException("Unknown object type");
+                        throw new GeoGenException("Unhandled object type");
                 }
             });
         }
@@ -70,26 +64,21 @@ namespace GeoGen.Core
         /// Converts a given object to a string.
         /// </summary>
         /// <param name="configurationObject">The object to be converted.</param>
-        /// <param name="objectsSeparator">The separator of individual objects in the final string.</param>
-        /// <param name="displayId">Indicates if we should include the object's id.</param>
         /// <returns>A human-readable string representation of the object.</returns>
-        public static string ObjectToString(ConfigurationObject configurationObject, string objectsSeparator = ", ", bool displayId = true)
+        public static string ObjectToString(ConfigurationObject configurationObject)
         {
-            // We're going to find the objects that define this one including itself
-            var definingObjects = configurationObject.AsEnumerable().Concat(configurationObject.GetInternalObjects()).Distinct().ToList();
-
-            // Sort them according to their ids (so we know which ones were created first)
-            definingObjects.Sort((o1, o2) => o1.Id - o2.Id);
+            // Find the list of objects that define this one
+            var definingObjects = configurationObject.GetDefiningObjects();
 
             // Separate the loose and the constructed ones
             var looseObjects = definingObjects.OfType<LooseConfigurationObject>().ToList();
             var constructedObjects = definingObjects.OfType<ConstructedConfigurationObject>().ToList();
 
-            // Create a configuration simulating the definition of the object
+            // Create a configuration simulating a definition of the object
             var configuration = new Configuration(new LooseObjectsHolder(looseObjects), constructedObjects);
 
-            // And use the configuration converted
-            return ConfigurationToString(configuration, objectsSeparator, displayId);
+            // And use the configuration converter
+            return ConfigurationToString(configuration);
         }
 
         /// <summary>
@@ -123,15 +112,15 @@ namespace GeoGen.Core
                 var innerParameterString = ConvertParameter(setParameter.TypeOfParameters);
 
                 // And repeat it the needed number of times
-                return $"{{{string.Join(",", Enumerable.Repeat(innerParameterString, setParameter.NumberOfParameters))}}}";
+                return $"{{{string.Join(", ", Enumerable.Repeat(innerParameterString, setParameter.NumberOfParameters))}}}";
             }
 
             // Convert individual parameters
-            return string.Join(",", signature.Select(ConvertParameter));
+            return string.Join(", ", signature.Select(ConvertParameter));
         }
 
         /// <summary>
-        /// Converts given arguments to a string, using the provided names map.
+        /// Converts given arguments to a string, using the provided object names map.
         /// </summary>
         /// <param name="arguments">The arguments to be converted.</param>
         /// <param name="names">The mapping of objects to their names.</param>
