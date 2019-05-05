@@ -68,28 +68,50 @@ namespace GeoGen.Core
         /// The loose objects will be automatically detected and will have the specified layout.
         /// </summary>
         /// <param name="layout">The layout for the automatically detected loose objects.</param>
-        /// <param name="constructedObjects">The constructed objects whose construction defines the configuration.</param>
+        /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
-        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConstructedConfigurationObject[] constructedObjects) => new Configuration(layout, constructedObjects.GetDefiningObjects().ToArray());
+        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConfigurationObject[] objects) => new Configuration(layout, objects.GetDefiningObjects().ToArray());
 
         /// <summary>
         /// Creates a configuration that simulates the construction of given constructed objects.
         /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.None"/> layout.
         /// </summary>
-        /// <param name="constructedObjects">The constructed objects whose construction defines the configuration.</param>
+        /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
-        public static Configuration DeriveFromObjects(params ConstructedConfigurationObject[] constructedObjects) => DeriveFromObjects(LooseObjectsLayout.None, constructedObjects);
+        public static Configuration DeriveFromObjects(params ConfigurationObject[] objects) => DeriveFromObjects(LooseObjectsLayout.None, objects);
 
         #endregion
 
         #region To String
 
         /// <summary>
-        /// Converts a given configuration to a string. 
+        /// Converts the configuration to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => ToStringHelper.ConfigurationToString(this);
+        public override string ToString()
+        {
+            // Join all the objects to a single string
+            return string.Join("; ", ObjectsMap.AllObjects.Select(obj =>
+            {
+                // Switch according to the type
+                switch (obj)
+                {
+                    case LooseConfigurationObject _:
+
+                        // For a loose object we include just the name and the type
+                        return $"{obj.Id}={obj.ObjectType}";
+
+                    case ConstructedConfigurationObject constructedObject:
+
+                        // For a constructed object construct the final string with the name of the construction + passed arguments
+                        return $"{obj.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})";
+
+                    default:
+                        throw new GeoGenException("Unhandled object type");
+                }
+            }));
+        }
 
         #endregion
     }

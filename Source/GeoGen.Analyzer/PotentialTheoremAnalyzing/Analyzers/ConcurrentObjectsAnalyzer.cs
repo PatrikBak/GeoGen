@@ -20,30 +20,30 @@ namespace GeoGen.Analyzer
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Find new circles. Either a new line or a new circle must be included in every new theorem
-            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeCirces = true
             }).ToList();
 
             // Find new lines. Either a new line or a new circle must be included in every new theorem
-            var newLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            var newLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeLines = true,
             }).ToList();
 
             // Find old circles.
-            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).ToList();
 
             // Find old lines.
-            var oldLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            var oldLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeLines = true,
             }).ToList();
 

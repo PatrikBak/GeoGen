@@ -1,9 +1,12 @@
-﻿namespace GeoGen.Constructor
+﻿using GeoGen.Core;
+using System.Collections.Generic;
+
+namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a query that can be asked of a <see cref="IContextualContainer"/>.
     /// </summary>
-    public class ContexualContainerQuery
+    public class ContextualContainerQuery
     {
         #region ObjectType enum
 
@@ -52,6 +55,11 @@
         /// </summary>
         public bool IncludeCirces { get; set; }
 
+        /// <summary>
+        /// Gets or sets the list of points that should line on every line or circle that we're queering.
+        /// </summary>
+        public IEnumerable<ConfigurationObject> ContainingPoints { get; set; }
+             
         #endregion
     }
 }

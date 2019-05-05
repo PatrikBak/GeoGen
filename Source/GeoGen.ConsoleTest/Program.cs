@@ -3,6 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;

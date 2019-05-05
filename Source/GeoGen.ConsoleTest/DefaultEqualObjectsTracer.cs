@@ -38,10 +38,10 @@ namespace GeoGen.ConsoleTest
                     definingObjects.Add(obj2);
 
                     // Convert them to string
-                    var objectStrings = ToStringHelper.ObjectsToString(definingObjects).ToList();
+                    //var objectStrings = ToStringHelper.ObjectsToString(definingObjects).ToList();
 
                     // And use the configuration converted
-                    writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {objectStrings[objectStrings.Count - 2]}.");
+                    //writer.WriteLine($"{i + 1}. {string.Join(", ", objectStrings.SkipLast(1))}; then {objectStrings.Last()} is equal to {objectStrings[objectStrings.Count - 2]}.");
                 });
             }
         }

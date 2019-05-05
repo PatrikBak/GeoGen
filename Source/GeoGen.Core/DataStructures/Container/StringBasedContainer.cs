@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -68,6 +69,13 @@ namespace GeoGen.Core
             // Set that there is no equal item
             equalItem = default;
         }
+
+        /// <summary>
+        /// Finds an item in the container equal to a given one.
+        /// </summary>
+        /// <param name="item">The item which equal version we're seeking.</param>
+        /// <returns>The item from the container equal to this one, if it exists; otherwise null.</returns>
+        public T FindEqualItem(T item) => _items.GetOrDefault(_converter.ConvertToString(item));
 
         #endregion
 

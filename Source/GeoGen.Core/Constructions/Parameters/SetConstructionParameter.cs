@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -36,6 +37,17 @@ namespace GeoGen.Core
             TypeOfParameters = typeOfParameters ?? throw new ArgumentNullException(nameof(numberOfParameters));
             NumberOfParameters = numberOfParameters;
         }
+
+        #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts the set construction parameter to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the configuration.</returns>
+        public override string ToString() => $"{{{string.Join(", ", Enumerable.Repeat(TypeOfParameters.ToString(), NumberOfParameters))}}}";
 
         #endregion
     }

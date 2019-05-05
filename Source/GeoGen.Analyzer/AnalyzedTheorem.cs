@@ -56,29 +56,25 @@ namespace GeoGen.Analyzer
             // Local function that converts a geometrical object to a theorem object
             TheoremObject Construct(GeometricalObject geometricalObject)
             {
-                // First we look if the configuration object version of this object is present
-                var configurationObject = geometricalObject.ConfigurationObject;
+                // If we have a point, then we have the only option...
+                if (geometricalObject is PointObject)
+                    return new TheoremPointObject(geometricalObject.ConfigurationObject);
 
-                // If it's present, then we simply wrap it
-                if (configurationObject != null)
-                    return new TheoremObject(configurationObject);
-
-                // Otherwise we can't have a point, since it can't be defined otherwise
-                // The object is either a line, or a circle, so its definable by points
+                // Otherwise the object is either a line, or a circle, so its definable by points
                 var objectWithPoints = (DefinableByPoints) geometricalObject;
 
                 // Let's find the configuration objects corresponding to these points 
-                var involedObjects = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
+                var points = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
 
-                // Determine the right signature of the theorem object 
+                // Determine the right type of the theorem object 
                 // We're using that it's either a line, or a circle, so 
                 // if it's not a line, then it's a circle
                 var objectType = objectWithPoints is LineObject
-                        ? TheoremObjectSignature.LineGivenByPoints
-                        : TheoremObjectSignature.CircleGivenByPoints;
+                        ? ConfigurationObjectType.Line
+                        : ConfigurationObjectType.Circle;
 
                 // Construct the final theorem object
-                return new TheoremObject(objectType, involedObjects);
+                return new TheoremObjectWithPoints(objectType, geometricalObject.ConfigurationObject, points);
             }
 
             // Convert all the involved objects to theorem objects

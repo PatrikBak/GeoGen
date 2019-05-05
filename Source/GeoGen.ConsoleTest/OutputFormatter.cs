@@ -115,18 +115,19 @@ namespace GeoGen.ConsoleTest
 
         private string TheoremObjectToString(TheoremObject theoremObject)
         {
-            if (theoremObject.Signature == TheoremObjectSignature.SingleObject)
-            {
-                return ObjectToStringById(theoremObject.InternalObjects.First());
-            }
+            return "";
+            //if (theoremObject.Signature == TheoremObjectSignature.SingleObject)
+            //{
+            //    return ObjectToStringById(theoremObject.InternalObjects.First());
+            //}
 
-            var isLine = theoremObject.Signature == TheoremObjectSignature.LineGivenByPoints;
+            //var isLine = theoremObject.Signature == TheoremObjectSignature.LineGivenByPoints;
 
-            var list = theoremObject.InternalObjects.Select(ObjectToStringById).ToList();
+            //var list = theoremObject.InternalObjects.Select(ObjectToStringById).ToList();
 
-            list.Sort();
+            //list.Sort();
 
-            return $"{(isLine ? "[" : "(")}{string.Join(", ", list)}{(isLine ? "]" : ")")}";
+            //return $"{(isLine ? "[" : "(")}{string.Join(", ", list)}{(isLine ? "]" : ")")}";
         }
 
         private string ObjectToStringById(ConfigurationObject configurationObject)

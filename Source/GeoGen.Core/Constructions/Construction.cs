@@ -50,11 +50,11 @@ namespace GeoGen.Core
         #region To String
 
         /// <summary>
-        /// Converts a given construction to a string. 
+        /// Converts the construction to a string. 
         /// NOTE: This method i used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the construction.</returns>
-        public override string ToString() => ToStringHelper.ConstructionToString(this);
+        public override string ToString() => $"{Name} ({Signature})";
 
         #endregion
     }

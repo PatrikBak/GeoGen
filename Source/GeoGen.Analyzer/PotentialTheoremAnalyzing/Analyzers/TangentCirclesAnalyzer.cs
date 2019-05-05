@@ -20,16 +20,16 @@ namespace GeoGen.Analyzer
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Find new circles. At least one of them must be included in every new theorem
-            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeCirces = true
             }).ToList();
 
             // Find old circles.
-            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).ToList();
 

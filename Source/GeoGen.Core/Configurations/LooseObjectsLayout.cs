@@ -16,8 +16,8 @@
 
         /// <summary>
         /// Represents two circles intersecting at two different points. This layout 
-        /// consist of 4 loose objects, 2 circles and the 2 intersection points
+        /// consist of 4 loose objects, the 2 circles and the 2 intersection points
         /// </summary>
-        IntersectingCircles
+        IntersectingCircles        
     }
 }

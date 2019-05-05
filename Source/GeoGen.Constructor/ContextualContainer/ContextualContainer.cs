@@ -51,9 +51,9 @@ namespace GeoGen.Constructor
         private readonly HashSet<CircleObject> _newCircles = new HashSet<CircleObject>();
 
         /// <summary>
-        /// The configuration objects represented in this container.
+        /// The map of configuration objects represented in this container to their geometrical objects.
         /// </summary>
-        private readonly IReadOnlyList<ConfigurationObject> _configurationObjects;
+        private readonly Dictionary<ConfigurationObject, GeometricalObject> _configurationObjectsMap = new Dictionary<ConfigurationObject, GeometricalObject>();
 
         /// <summary>
         /// The objects container manager that holds all the representations of the objects inside this container.
@@ -85,7 +85,6 @@ namespace GeoGen.Constructor
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
-            _configurationObjects = objects;
             _tracer = tracer;
 
             // Initialize the dictionary mapping containers to the object maps
@@ -94,7 +93,7 @@ namespace GeoGen.Constructor
             try
             {
                 // Add all objects, where only the last one is new
-                _configurationObjects.ForEach((obj, index) => Add(obj, isNew: index == _configurationObjects.Count - 1));
+                objects.ForEach((obj, index) => Add(obj, isNew: index == _configurationObjectsMap.Count - 1));
             }
             catch (AnalyticException)
             {
@@ -116,7 +115,7 @@ namespace GeoGen.Constructor
         /// <typeparam name="T">The type of objects.</typeparam>
         /// <param name="query">The query that we want to perform.</param>
         /// <returns>The queried objects.</returns>
-        public IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject
+        public IEnumerable<T> GetGeometricalObjects<T>(ContextualContainerQuery query) where T : GeometricalObject
         {
             // Prepare the result
             var result = Enumerable.Empty<GeometricalObject>();
@@ -127,13 +126,13 @@ namespace GeoGen.Constructor
                 // Then we decide based on the objects type
                 switch (query.Type)
                 {
-                    case ContexualContainerQuery.ObjectsType.New:
+                    case ContextualContainerQuery.ObjectsType.New:
                         result = result.Concat(_newPoints);
                         break;
-                    case ContexualContainerQuery.ObjectsType.Old:
+                    case ContextualContainerQuery.ObjectsType.Old:
                         result = result.Concat(_oldPoints);
                         break;
-                    case ContexualContainerQuery.ObjectsType.All:
+                    case ContextualContainerQuery.ObjectsType.All:
                         result = result.Concat(_oldPoints).Concat(_newPoints);
                         break;
                 }
@@ -145,13 +144,13 @@ namespace GeoGen.Constructor
                 // Then we decide based on the objects type
                 switch (query.Type)
                 {
-                    case ContexualContainerQuery.ObjectsType.New:
+                    case ContextualContainerQuery.ObjectsType.New:
                         result = result.Concat(_newLines);
                         break;
-                    case ContexualContainerQuery.ObjectsType.Old:
+                    case ContextualContainerQuery.ObjectsType.Old:
                         result = result.Concat(_oldLines);
                         break;
-                    case ContexualContainerQuery.ObjectsType.All:
+                    case ContextualContainerQuery.ObjectsType.All:
                         result = result.Concat(_oldLines).Concat(_newLines);
                         break;
                 }
@@ -163,21 +162,38 @@ namespace GeoGen.Constructor
                 // Then we decide based on the objects type
                 switch (query.Type)
                 {
-                    case ContexualContainerQuery.ObjectsType.New:
+                    case ContextualContainerQuery.ObjectsType.New:
                         result = result.Concat(_newCircles);
                         break;
-                    case ContexualContainerQuery.ObjectsType.Old:
+                    case ContextualContainerQuery.ObjectsType.Old:
                         result = result.Concat(_oldCircles);
                         break;
-                    case ContexualContainerQuery.ObjectsType.All:
+                    case ContextualContainerQuery.ObjectsType.All:
                         result = result.Concat(_oldCircles).Concat(_newCircles);
                         break;
                 }
             }
 
+            // If we should take into account some points...
+            if(query.ContainingPoints != null)
+            {
+                // Then we take those line and circles...
+                result = result.Where(o => o is DefinableByPoints lineOrCircle
+                    // Whose points are superset of the points that should be contained in this object
+                    && lineOrCircle.Points.Select(p => p.ConfigurationObject).ToSet().IsSupersetOf(query.ContainingPoints));
+            }
+
             // Return the result casted to the wanted type
             return result.Cast<T>();
         }
+
+        /// <summary>
+        /// Gets the geometrical objects of the requested type that corresponds to a given configuration object.
+        /// </summary>
+        /// <typeparam name="T">The type of the geometrical object.</typeparam>
+        /// <param name="configurationObject">The configuration object.</param>
+        /// <returns>The corresponding geometrical object.</returns>
+        public T GetGeometricalObject<T>(ConfigurationObject configurationObject) where T : GeometricalObject => (T) _configurationObjectsMap[configurationObject];
 
         /// <summary>
         /// Gets the analytic representation of a given geometrical object in a given objects container.
@@ -186,11 +202,7 @@ namespace GeoGen.Constructor
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
-        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject
-        {
-            // Find the right map, pull the analytic object from it, and cast it
-            return (T) _objects[objectsContainer].GetRightValue(geometricalObject);
-        }
+        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject => (T) _objects[objectsContainer].GetRightValue(geometricalObject);
 
         /// <summary>
         /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
@@ -263,6 +275,9 @@ namespace GeoGen.Constructor
                 // Otherwise we can set the internal object to this one
                 geometricalObject.ConfigurationObject = configurationObject;
 
+                // Map them
+                _configurationObjectsMap.Add(configurationObject, geometricalObject);
+
                 // And terminate, since the implicit objects this might create have already been added
                 return;
             }
@@ -286,6 +301,9 @@ namespace GeoGen.Constructor
 
             // We add the geometrical object to all the dictionaries
             _objects.Keys.ForEach(container => _objects[container].Add(geometricalObject, container.Get(configurationObject)));
+
+            // Map them
+            _configurationObjectsMap.Add(configurationObject, geometricalObject);
 
             // If it's a point
             if (configurationObject.ObjectType == ConfigurationObjectType.Point)
@@ -522,7 +540,7 @@ namespace GeoGen.Constructor
                 if (collinear != null && collinear.Value != areCollinear)
                     throw new InconsistentContainersException();
 
-                // We we're fine, we can set the collinearity result
+                // We're fine, we can set the collinearity result
                 collinear = areCollinear;
 
                 // If they are collinear, we can't do more

@@ -19,9 +19,9 @@ namespace GeoGen.Analyzer
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Take the new points. At least one of the involved points must be new
-            return container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            return container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludePoints = true,
             })
             // And find all the circles that pass through it

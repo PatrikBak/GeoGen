@@ -1,4 +1,5 @@
 using GeoGen.AnalyticGeometry;
+using GeoGen.Core;
 using System.Collections.Generic;
 
 namespace GeoGen.Constructor
@@ -16,7 +17,15 @@ namespace GeoGen.Constructor
         /// <typeparam name="T">The type of objects.</typeparam>
         /// <param name="query">The query that we want to perform.</param>
         /// <returns>The queried objects.</returns>
-        IEnumerable<T> GetGeometricalObjects<T>(ContexualContainerQuery query) where T : GeometricalObject;
+        IEnumerable<T> GetGeometricalObjects<T>(ContextualContainerQuery query) where T : GeometricalObject;
+
+        /// <summary>
+        /// Gets the geometrical objects of the requested type that corresponds to a given configuration object.
+        /// </summary>
+        /// <typeparam name="T">The type of the geometrical object.</typeparam>
+        /// <param name="configurationObject">The configuration object.</param>
+        /// <returns>The corresponding geometrical object.</returns>
+        T GetGeometricalObject<T>(ConfigurationObject configurationObject) where T : GeometricalObject;
 
         /// <summary>
         /// Gets the analytic representation of a given geometrical object in a given objects container.

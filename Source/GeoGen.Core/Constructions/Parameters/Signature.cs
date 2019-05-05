@@ -96,12 +96,34 @@ namespace GeoGen.Core
                 // If the parameter is an object parameter...
                 if (parameter is ObjectConstructionParameter objectParameter)
                 {
-                    // Then we simply ask for the next object of the expected type
-                    // and increase the index for the next expected object of this type
-                    var nextObject = objectsMap[objectParameter.ObjectType][indices[objectParameter.ObjectType]++];
+                    // Prepare a variable holding the next index
+                    var nextIndex = default(int);
 
-                    // And return the object argument wrapping this object
-                    return new ObjectConstructionArgument(nextObject);
+                    // Prepare a variable holding the list of objects of the current type
+                    var objects = default(IReadOnlyList<ConfigurationObject>);
+
+                    try
+                    {
+                        // Get and increment the index of the current object
+                        nextIndex = indices[objectParameter.ObjectType]++;
+
+                        // Get the objects from the objects map
+                        objects = objectsMap[objectParameter.ObjectType];
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        throw new GeoGenException($"The signature requires an object of type {objectParameter.ObjectType}, but no such object has been passed.");
+                    }
+
+                    try
+                    {
+                        // Try to return the object...
+                        return new ObjectConstructionArgument(objects[nextIndex]);
+                    }
+                    catch (ArgumentOutOfRangeException)
+                    {
+                        throw new GeoGenException($"The signature requires {ObjectTypesToNeededCount[objectParameter.ObjectType]} object(s) of type {objectParameter.ObjectType} and there are only {objects.Count} of them.");
+                    }
                 }
 
                 // Otherwise we have a set construction parameter
@@ -199,11 +221,11 @@ namespace GeoGen.Core
         #region To String
 
         /// <summary>
-        /// Converts a given signature to a string. 
+        /// Converts the signature to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the signature.</returns>
-        public override string ToString() => ToStringHelper.SignatureToString(this);
+        public override string ToString() => string.Join(", ", Parameters);
 
         #endregion
     }

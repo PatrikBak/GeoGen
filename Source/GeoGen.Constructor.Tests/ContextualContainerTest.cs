@@ -115,30 +115,30 @@ namespace GeoGen.Constructor.Tests
             #region Lines
 
             // Test all lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).Should().HaveCount(3);
 
             // Test new lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeLines = true
             }).Should().HaveCount(2);
 
             // Test old lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeLines = true
             }).Should().HaveCount(1);
 
             // Test that the lines knows about its 2 points
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).All(line => line.Points.Count == 2).Should().BeTrue();
 
@@ -147,30 +147,30 @@ namespace GeoGen.Constructor.Tests
             #region Circles
 
             // Test all circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).Should().HaveCount(1);
 
             // Test new circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeCirces = true
             }).Should().HaveCount(1);
 
             // Test old circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).Should().HaveCount(0);
 
             // Test that the circle knows about its 3 points
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).All(circle => circle.Points.Count == 3).Should().BeTrue();
 
@@ -179,37 +179,37 @@ namespace GeoGen.Constructor.Tests
             #region Points
 
             // Test all points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Should().HaveCount(3);
 
             // Test new points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludePoints = true
             }).Should().HaveCount(1);
 
             // Test old points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludePoints = true
             }).Should().HaveCount(2);
 
             // Test that the points know about 1 circle and 2 lines passing through it
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).All(point => point.Lines.Count == 2 && point.Circles.Count == 1).Should().BeTrue();
 
             // Test that the points have their configuration object set
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).All(point => point.ConfigurationObject != null).Should().BeTrue();
 
@@ -245,37 +245,37 @@ namespace GeoGen.Constructor.Tests
             #region Lines
 
             // Test all lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).Should().HaveCount(1);
 
             // Test new lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeLines = true
             }).Should().HaveCount(0);
 
             // Test old lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeLines = true
             }).Should().HaveCount(1);
 
             // Test that the line knows about its 4 points
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).All(line => line.Points.Count == 4).Should().BeTrue();
 
             // Test that the line has the configuration object set
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).All(line => line.ConfigurationObject != null).Should().BeTrue();
 
@@ -284,37 +284,37 @@ namespace GeoGen.Constructor.Tests
             #region Circles
 
             // Test all circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).Should().HaveCount(1);
 
             // Test new circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeCirces = true
             }).Should().HaveCount(1);
 
             // Test old circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).Should().HaveCount(0);
 
             // Test that the circle knows about its 1 point 
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).All(circle => circle.Points.Count == 1).Should().BeTrue();
 
             // Test that the circle has the configuration object set
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).All(circle => circle.ConfigurationObject != null).Should().BeTrue();
 
@@ -323,44 +323,44 @@ namespace GeoGen.Constructor.Tests
             #region Points
 
             // Test all points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Should().HaveCount(4);
 
             // Test new points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludePoints = true
             }).Should().HaveCount(0);
 
             // Test old points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludePoints = true
             }).Should().HaveCount(4);
 
             // Test there is a point that lines on 1 line and 1 circle
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Any(point => point.Circles.Count == 1 && point.Lines.Count == 1).Should().BeTrue();
 
             // Test the number of points with 0 circles and 1 lines
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Count(point => point.Circles.Count == 0 && point.Lines.Count == 1).Should().Be(3);
 
             // Test that the points have their configuration object set
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).All(point => point.ConfigurationObject != null).Should().BeTrue();
 
@@ -398,37 +398,37 @@ namespace GeoGen.Constructor.Tests
             #region Lines
 
             // Test all lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).Should().HaveCount(9);
 
             // Test new lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeLines = true
             }).Should().HaveCount(0);
 
             // Test old lines
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeLines = true
             }).Should().HaveCount(9);
 
             // Test that the number of lines with 3 points
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).Count(line => line.Points.Count == 3).Should().Be(6);
 
             // Test that the number of lines with 2 points
-            container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeLines = true
             }).Count(line => line.Points.Count == 2).Should().Be(3);
 
@@ -437,30 +437,30 @@ namespace GeoGen.Constructor.Tests
             #region Circles
 
             // Test all circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).Should().HaveCount(29, "there are binomial[7,3] - 6 of them");
 
             // Test new circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeCirces = true
             }).Should().HaveCount(12, "no four points are concyclic and the centroid adds binomial[6,2] - 3");
 
             // Test old circles
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).Should().HaveCount(17, "there are 29 (all) - 12 (new) of them");
 
             // Test that all the circles pass through 3 points
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true
             }).All(circle => circle.Points.Count == 3).Should().BeTrue();
 
@@ -469,51 +469,51 @@ namespace GeoGen.Constructor.Tests
             #region Points
 
             // Test all points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Should().HaveCount(7);
 
             // Test new points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludePoints = true
             }).Should().HaveCount(1);
 
             // Test old points
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludePoints = true
             }).Should().HaveCount(6);
 
             // Test the number of points with 3 lines
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Count(point => point.Lines.Count == 3).Should().Be(4);
 
             // Test the number of points with 4 lines
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Count(point => point.Lines.Count == 4).Should().Be(3);
 
             // Test that 3 points (the midpoints) have binomial[6,2] - 2 circles
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).Count(point => point.Circles.Count == 13).Should().Be(3);
 
             // Test that the points have their configuration object set
-            container.GetGeometricalObjects<PointObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludePoints = true
             }).All(point => point.ConfigurationObject != null).Should().BeTrue();
 
@@ -553,16 +553,16 @@ namespace GeoGen.Constructor.Tests
              });
 
             // Test that there is one circle which passes through 6 points (Feurbach circle)
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true,
             }).Count(circle => circle.Points.Count == 6).Should().Be(1);
 
             // Test the number of circles passing through 4 points
-            container.GetGeometricalObjects<CircleObject>(new ContexualContainerQuery
+            container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.All,
+                Type = ContextualContainerQuery.ObjectsType.All,
                 IncludeCirces = true,
             }).Count(circle => circle.Points.Count == 4).Should().Be(3, "two vertices and corresponding feet are concyclic");
         }

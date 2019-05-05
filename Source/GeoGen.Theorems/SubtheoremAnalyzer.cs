@@ -10,6 +10,17 @@ namespace GeoGen.Theorems
 {
     public class SubtheoremAnalyzer : ISubtheoremAnalyzer
     {
+        #region MappingData class
+
+        private class MappingData
+        {
+            public Dictionary<ConfigurationObject, ConfigurationObject> Mapping { get; set; }
+
+            public List<(ConfigurationObject newerObject, ConfigurationObject olderObject)> EqualObjects { get; set; }
+        }
+
+        #endregion
+
         #region Dependencies
 
         /// <summary>
@@ -20,7 +31,8 @@ namespace GeoGen.Theorems
         /// <summary>
         /// The factory for creating objects containers that allows us to find syntactically equal objects.
         /// </summary>
-        private readonly IConfigurationObjectsContainerFactory _factory;
+        private readonly IConfigurationObjectsContainerFactory _objectContainersFactory;
+        private readonly IContextualContainerFactory _contextualContainerFactory;
 
         #endregion
 
@@ -30,10 +42,13 @@ namespace GeoGen.Theorems
         /// Initializes a new instance of the <see cref="SubtheoremAnalyzer"/> class.
         /// </summary>
         /// <param name="constructor">The constructor of geometric objects.</param>
-        public SubtheoremAnalyzer(IGeometryConstructor constructor, IConfigurationObjectsContainerFactory factory)
+        /// <param name="objectContainersFactory"></param>
+        /// <param name="contextualContainerFactory"></param>
+        public SubtheoremAnalyzer(IGeometryConstructor constructor, IConfigurationObjectsContainerFactory objectContainersFactory, IContextualContainerFactory contextualContainerFactory)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _objectContainersFactory = objectContainersFactory ?? throw new ArgumentNullException(nameof(objectContainersFactory));
+            _contextualContainerFactory = contextualContainerFactory ?? throw new ArgumentNullException(nameof(contextualContainerFactory));
         }
 
         #endregion
@@ -75,94 +90,189 @@ namespace GeoGen.Theorems
                 // TODO: Create a specific exception for this project
                 throw new GeoGenException();
 
-            #region Create objects container from the original configuration
+            #region Create containers from the original configuration
 
             // Create an empty container
-            var container = _factory.CreateContainer();
+            var objectsContainer = _objectContainersFactory.CreateContainer();
 
             // Add all the objects
-            potentialConsequence.Configuration.ObjectsMap.AllObjects.ForEach(container.Add);
+            potentialConsequence.Configuration.ObjectsMap.AllObjects.ForEach(objectsContainer.Add);
+
+            // Create a lazy initializer of the contextual container
+            var contextualContainerInitializer = new Lazy<IContextualContainer>(() => _contextualContainerFactory.Create(potentialConsequence.Configuration.ObjectsMap.AllObjects, testedConfigurationData.Manager));
+
+            // Local function to access the contextual container
+            IContextualContainer ContextualContainer() => contextualContainerInitializer.Value;
 
             #endregion
+
+            IEnumerable<MappingData> GenerateMappingsIncludingObject(MappingData data, ConstructedConfigurationObject constructedObject)
+            {
+                // First we need to remap its passed objects according to our mapping
+                var mappedObjects = constructedObject.PassedArguments.FlattenedList.Select(o => data.Mapping[o]).ToArray();
+
+                // Make sure there are no two equal objects
+                // If yes, the mapping is incorrect
+                if (mappedObjects.Distinct().Count() != mappedObjects.Length)
+                    return Enumerable.Empty<MappingData>();
+
+                // Create the new object 
+                var newPassedObjects = new ConfigurationObjectsMap(mappedObjects);
+
+                // Create the new arguments for them
+                var newArguments = constructedObject.Construction.Signature.Match(newPassedObjects);
+
+                // Finally create its remapped version
+                var newObject = new ConstructedConfigurationObject(constructedObject.Construction, newArguments);
+
+                #region Handling mapping if the object is a random point (on a line or a circle)
+
+                // Prepare a line/circle where the point lies
+                var lineOrCircle = default(DefinableByPoints);
+
+                // There are only predefined random constructions...
+                if (newObject.Construction is PredefinedConstruction predefinedConstruction)
+                {
+                    // Consider all the cases
+                    switch (predefinedConstruction.Type)
+                    {
+                        // Point on an explicit circle/line
+                        case PredefinedConstructionType.RandomPointOnCircle:
+                        case PredefinedConstructionType.RandomPointOnLine:
+
+                            // Get the single line / circle corresponding to the one in the argument
+                            lineOrCircle = ContextualContainer().GetGeometricalObject<DefinableByPoints>(newObject.PassedArguments.FlattenedList.Single());
+
+                            break;
+
+                        // Point on an implicit line                             
+                        case PredefinedConstructionType.RandomPointOnLineSegment:
+
+                            // Get the single line containing passed points
+                            lineOrCircle = ContextualContainer().GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                            {
+                                IncludeLines = true,
+                                Type = ContextualContainerQuery.ObjectsType.All,
+                                ContainingPoints = newObject.PassedArguments.FlattenedList
+                            }).Single();
+
+                            break;
+                    }
+                }
+
+                // If we've found a line or a circle...
+                if (lineOrCircle != null)
+                {
+                    // Then we need to generate all possible options of mapping
+                    // Take all the points that lie on our line/circle...
+                    return lineOrCircle.Points.Select(point =>
+                    {
+                        // Copy the current mapping
+                        var currentMappingCopy = new MappingData
+                        {
+                            Mapping = data.Mapping.ToDictionary(pair => pair.Key, pair => pair.Value),
+                            EqualObjects = data.EqualObjects.ToList()
+                        };
+
+                        // Add the new point mapping to it
+                        currentMappingCopy.Mapping.Add(constructedObject, point.ConfigurationObject);
+
+                        // Return it
+                        return currentMappingCopy;
+                    });
+                }
+
+                #endregion
+
+                // First we check if it's not directly equal to some object
+                var equalObject = objectsContainer.FindEqualItem(newObject);
+
+                // If there is no equal real object...
+                if (equalObject == null)
+                {
+                    // We need to examine this object with respect to the tested configuration
+                    var newObjectData = _constructor.Examine(newObject, testedConfigurationData.Manager);
+
+                    // Make sure the examination went fine. If not, we can't do much
+                    if (!newObjectData.SuccessfullyExamined)
+                        return Enumerable.Empty<MappingData>();
+
+                    // If the object is not constructible, then the mapping is incorrect
+                    if (newObjectData.InconstructibleObject != null)
+                        return Enumerable.Empty<MappingData>();
+
+                    // If there is NO duplicate, then the mapping is not correct as well
+                    if (newObjectData.Duplicates == (null, null))
+                        return Enumerable.Empty<MappingData>();
+
+                    // Otherwise we know some real objects corresponds to the templated one
+                    equalObject = newObjectData.Duplicates.olderObject;
+
+                    // Mark this equality
+                    data.EqualObjects.Add(newObjectData.Duplicates);
+                }
+
+                // Make sure the object is added to the mapping
+                data.Mapping.Add(constructedObject, equalObject);
+
+                // Return the current data
+                return data.AsEnumerable();
+            }
 
             // Use the helper method to generate possible mappings between the objects of the
             // tested configuration and the loose objects of the original theorem
             return GenerateMappings(originalTheorem.Configuration.LooseObjectsHolder, potentialConsequence.Configuration.ObjectsMap)
-                // Try all of them
-                .Select(mapping =>
-                {
-                    // Prepare the list of all non-trivial equalities
-                    var equalities = new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>();
-
-                    // With mapping of the template loose objects we need to construct the constructed objects as well
-                    foreach (var constructedObject in originalTheorem.Configuration.ConstructedObjects)
-                    {
-                        // First we need to remap its passed objects according to our mapping
-                        var newPassedObjects = new ConfigurationObjectsMap(constructedObject.PassedArguments.FlattenedList.Select(o => mapping[o]));
-
-                        // Create the new arguments for them
-                        var newArguments = constructedObject.Construction.Signature.Match(newPassedObjects);
-
-                        // Finally create its remapped version
-                        var newObject = new ConstructedConfigurationObject(constructedObject.Construction, newArguments);
-
-                        // First we check if it's not directly equal to some object
-                        container.TryAdd(newObject, out var equalRealObject);
-
-                        // If there is no equal real object...
-                        if (equalRealObject == null)
-                        {
-                            // W need to examine this object with respect to the tested configuration
-                            var newObjectData = _constructor.Examine(newObject, testedConfigurationData.Manager);
-
-                            // Make sure the examination went fine. If not, we can't do much
-                            if (!newObjectData.SuccessfullyExamined)
-                                return (null, null);
-
-                            // If the object is not constructible, then the mapping is incorrect
-                            if (newObjectData.InconstructibleObject != null)
-                                return (null, null);
-
-                            // If there is NO duplicate, then the mapping is not correct as well
-                            if (newObjectData.Duplicates == (null, null))
-                                return (null, null);
-
-                            // Otherwise we know some real objects corresponds to the templated one
-                            equalRealObject = newObjectData.Duplicates.olderObject;
-
-                            // We can mark this non-trivial equality
-                            equalities.Add(newObjectData.Duplicates);
-                        }
-
-                        // We can update the mapping so it can be used to construct other objects
-                        mapping.Add(constructedObject, equalRealObject);
-                    }
-
-                    // If we got here, the mapping is successful. 
-                    return (mapping, equalities);
-                })
-                // Skip unsuccessful ones
-                .Where(mapping => mapping != (null, null))
+                // We assign an index to the current mapping representing the 
+                // current constructed object that hasn't been mapped
+                //.Select(mapping => (mapping, objectIndexToConstruct: -1))
+                // We try to construct one constructed object given by the index
+                .SelectMany(data => originalTheorem.Configuration.ConstructedObjects
+                    .Aggregate(data.AsEnumerable(), (current, constructedObject) => current.SelectMany(mapping => GenerateMappingsIncludingObject(mapping, constructedObject))))
                 // Create the data for successful ones
-                .Select(pair =>
+                .Select(data =>
                 {
-                    // Deconstruct
-                    var (mapping, equalities) = pair;
-
                     #region Create remapped theorem
 
                     // Helper function to remapped a TheoremObject
-                    TheoremObject Remap(TheoremObject theoremObject) => new TheoremObject(theoremObject.Signature, 
-                        // Cast each internal object to the object corresponding in the mapping
-                        theoremObject.InternalObjects.Select(internalobject => mapping[internalobject]).ToArray());
+                    TheoremObject Remap(TheoremObject theoremObject)
+                    {
+                        // If we have a point, then we just remap the internal object
+                        if (theoremObject.Type == ConfigurationObjectType.Point)
+                            return new TheoremPointObject(data.Mapping[theoremObject.ConfigurationObject]);
+
+                        // Otherwise we have a theorem object with points
+                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
+
+                        // We need to remap them
+                        var points = objectWithPoints.Points.Select(p => data.Mapping[p]).ToSet();
+
+                        // If there are is not physical object and not enough points, the mapping couldn't be done
+                        if (theoremObject.ConfigurationObject == null && points.Count < objectWithPoints.NumberOfNeededPoints)
+                            return null;
+
+                        // We need to remap the internal object as well, if it's present...
+                        var internalObject = theoremObject.ConfigurationObject == null ? null : data.Mapping[theoremObject.ConfigurationObject];
+
+                        // And we're done
+                        return new TheoremObjectWithPoints(theoremObject.Type, internalObject, points);
+                    }
+
+                    // Remap the involved objects
+                    var remappedInvolvedObjects = originalTheorem.InvolvedObjects.Select(Remap).Distinct().ToArray();
+
+                    // If there is an object that could be mapped, for example
+                    // because of the fact that two distinct points making a line are
+                    // mapped to the same object, then we won't have a correct theorem
+                    if (remappedInvolvedObjects.Any(o => o == null))
+                        return null;
 
                     // Reconstruct the original theorem with respect to the mapping
-                    var remappedTheorem = new Theorem(potentialConsequence.Configuration, originalTheorem.Type, originalTheorem.InvolvedObjects.Select(Remap).ToArray());
+                    var remappedTheorem = new Theorem(potentialConsequence.Configuration, originalTheorem.Type, remappedInvolvedObjects);
 
                     #endregion
 
-                    // Skip not equal theorems
-                    if (!AreTheoremsEqual(remappedTheorem, potentialConsequence))
+                    // Find out if the theorems express the same fact (that is assumed to be true)
+                    if (!Theorem.AreTheoremsEquivalent(remappedTheorem, potentialConsequence))
                         return null;
 
                     // Otherwise we can create a correct result
@@ -175,10 +285,10 @@ namespace GeoGen.Theorems
                         IsSubtheorem = true,
 
                         // Create the list of objects on which the theorem was applied
-                        MappedObjects = originalTheorem.Configuration.LooseObjectsHolder.LooseObjects.Select(o => mapping[o]).ToList(),
+                        MappedObjects = originalTheorem.Configuration.LooseObjectsHolder.LooseObjects.Select(o => data.Mapping[o]).ToList(),
 
                         // Set found equalities
-                        UsedEqualities = equalities
+                        UsedEqualities = data.EqualObjects
                     };
 
                 })
@@ -189,74 +299,29 @@ namespace GeoGen.Theorems
                 {
                     SuccessfullyAnalyzed = true,
                     IsSubtheorem = false
-                };            
+                };
         }
 
-        private bool AreTheoremsEqual(Theorem theorem1, Theorem theorem2)
-        {
-            // Check the types first
-            if (theorem1.Type != theorem2.Type)
-                return false;
-
-            // If they don't have the same number of involved objects, then they are not equal
-            if (theorem1.InvolvedObjects.Count != theorem2.InvolvedObjects.Count)
-                return false;
-
-            // Helper comparer to determine equality of theorem objects
-            // They must have equal signatures and equal sets of internal objects
-            var comparer = new SimpleEqualityComparer<TheoremObject>((o1, o2) => o1.Signature == o2.Signature && o1.InternalObjects.ToSet().SetEquals(o2.InternalObjects), t => 0);
-            
-            // We need to take care particular types since they might have specific signatures
-            switch (theorem1.Type)
-            {
-                // The cases where the objects can be in any order
-                case TheoremType.CollinearPoints:
-                case TheoremType.ConcurrentObjects:
-                case TheoremType.ConcyclicPoints:
-                case TheoremType.ParallelLines:
-                case TheoremType.PerpendicularLines:
-                case TheoremType.TangentCircles:
-
-                    // Check if the sets of their internal objects are equal
-                    return theorem1.InvolvedObjects.ToSet(comparer).SetEquals(theorem2.InvolvedObjects);
-
-                // The case where there is one line and one circle (in this order)
-                case TheoremType.LineTangentToCircle:
-
-                    // Check the corresponding objects
-                    return theorem1.InvolvedObjects.SequenceEqual(theorem2.InvolvedObjects, comparer);
-
-                // The cases where we basically have the signature {{x, x}, {x, x}} 
-                // (i.e. objects in pair can be in any order, and the pairs itself as well)
-                case TheoremType.EqualAngles:
-                case TheoremType.EqualLineSegments:
-
-                    // Get the pairs for each object
-                    var obj1Set1 = new HashSet<TheoremObject>(comparer) { theorem1.InvolvedObjects[0], theorem1.InvolvedObjects[1] };
-                    var obj1Set2 = new HashSet<TheoremObject>(comparer) { theorem1.InvolvedObjects[2], theorem1.InvolvedObjects[3] };
-                    var obj2Set1 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[0], theorem2.InvolvedObjects[1] };
-                    var obj2Set2 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[2], theorem2.InvolvedObjects[3] };
-
-                    // Write this boring condition that should do the job
-                    return obj1Set1.SetEquals(obj2Set1) && obj1Set2.SetEquals(obj2Set2) ||
-                           obj1Set1.SetEquals(obj2Set2) && obj1Set2.SetEquals(obj2Set1);
-
-                // Default case
-                default:
-                    throw new GeoGenException("Unhandled type");
-            }
-        }
-
-        private IEnumerable<Dictionary<ConfigurationObject, ConfigurationObject>> GenerateMappings(LooseObjectsHolder templateObjects, ConfigurationObjectsMap realObjects)
+        private IEnumerable<MappingData> GenerateMappings(LooseObjectsHolder templateObjects, ConfigurationObjectsMap realObjects)
         {
             // Handle the case where there is no layout in the template, i.e. objects can be mapped without rules
             if (templateObjects.Layout == LooseObjectsLayout.None)
             {
+                // Make sure all the types are there
+                if (!templateObjects.ObjectsMap.Keys.All(realObjects.ContainsKey))
+                    return Enumerable.Empty<MappingData>();
+
+
                 return templateObjects.ObjectsMap.Select(keyValue => realObjects[keyValue.Key]
-                                                                .Variations(keyValue.Value.Count)
+                                                                ?.Variations(keyValue.Value.Count)
                                                                 .Select(variation => variation.Zip(keyValue.Value, (real, original) => (real, original))))
                                           .Combine()
-                                          .Select(mapping => mapping.Flatten().ToDictionary(pair => pair.original, pair => pair.real));
+                                          .Select(mapping => mapping.Flatten().ToDictionary(pair => pair.original, pair => pair.real))
+                                          .Select(mapping => new MappingData
+                                          {
+                                              Mapping = mapping,
+                                              EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
+                                          });
 
             }
 

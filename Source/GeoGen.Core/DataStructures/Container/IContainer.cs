@@ -17,5 +17,12 @@ namespace GeoGen.Core
         /// <param name="item">The item to be added.</param>
         /// <param name="equalItem">Either the equal version of the passed item from the container (if there's any), or the default value of the type <typeparamref name="T"/>.</param>
         void TryAdd(T item, out T equalItem);
+
+        /// <summary>
+        /// Finds an item in the container equal to a given one.
+        /// </summary>
+        /// <param name="item">The item which equal version we're seeking.</param>
+        /// <returns>The item from the container equal to this one, if it exists; otherwise default(T).</returns>
+        T FindEqualItem(T item);
     }
 }

@@ -1,12 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System.Diagnostics;
+using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an object of a <see cref="Configuration"/>. 
     /// </summary>
-    public abstract class ConfigurationObject 
+    public abstract class ConfigurationObject
     {
+        #region Debugging code
+
+#if DEBUG
+
+        /// <summary>
+        /// The id of the last globally created object. 
+        /// </summary>
+        private static int _id;
+
+        /// <summary>
+        /// The lock for incrementing and setting the global id.
+        /// </summary>
+        private static readonly object _lock = new object();
+
+        /// <summary>
+        /// Gets the id of the configuration object.
+        /// This property is available only in the DEBUG mode for diagnostic purposes.
+        /// </summary>
+        public int Id { get; private set; }
+
+        /// <summary>
+        /// Sets up the id of the object in a thread-safe manner.
+        /// </summary>
+        [Conditional("DEBUG")]
+        private void SetupId()
+        {
+            // Lock so that two threads won't set the same id.
+            lock (_lock)
+            {
+                _id++;
+                Id = _id;
+            }
+        }
+
+#endif
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -25,6 +64,7 @@ namespace GeoGen.Core
         protected ConfigurationObject(ConfigurationObjectType objectType)
         {
             ObjectType = objectType;
+            SetupId();
         }
 
         #endregion
@@ -32,11 +72,25 @@ namespace GeoGen.Core
         #region To String
 
         /// <summary>
-        /// Converts a given object to a string. 
+        /// Converts the configuration object to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
-        public override string ToString() => ToStringHelper.ObjectToString(this);
+        public override string ToString()
+        {
+            // Find the list of objects that define this one
+            var definingObjects = this.GetDefiningObjects();
+
+            // Separate the loose and the constructed ones
+            var looseObjects = definingObjects.OfType<LooseConfigurationObject>().ToList();
+            var constructedObjects = definingObjects.OfType<ConstructedConfigurationObject>().ToList();
+
+            // Create a configuration simulating a definition of the object
+            var configuration = new Configuration(new LooseObjectsHolder(looseObjects), constructedObjects);
+
+            // And use the configuration converter
+            return $"{Id} (Full definition: {configuration})";
+        }
 
         #endregion
     }

@@ -20,16 +20,16 @@ namespace GeoGen.Analyzer
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
         {
             // Find new lines.  At least one of them must be included in every new theorem
-            var newLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            var newLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.New,
+                Type = ContextualContainerQuery.ObjectsType.New,
                 IncludeLines = true
             }).ToList();
 
             // Find old lines. 
-            var oldLines = container.GetGeometricalObjects<LineObject>(new ContexualContainerQuery
+            var oldLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
             {
-                Type = ContexualContainerQuery.ObjectsType.Old,
+                Type = ContextualContainerQuery.ObjectsType.Old,
                 IncludeLines = true
             }).ToList();
 
