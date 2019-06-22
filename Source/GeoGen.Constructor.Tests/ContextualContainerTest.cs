@@ -95,7 +95,7 @@ namespace GeoGen.Constructor.Tests
         [Test]
         public void Test_With_Triangle()
         {
-            // Create container (it's good to draw it)
+            // Create a container (it's good to draw it)
             var container = CreateContainer(new List<IAnalyticObject[]>
             {
                 new IAnalyticObject[]
@@ -219,7 +219,7 @@ namespace GeoGen.Constructor.Tests
         [Test]
         public void Test_With_Four_Points_And_Line_Through_Them_And_Circle_Passing_Through_One()
         {
-            // Create container (it's good to draw it)
+            // Create a container (it's good to draw it)
             var container = CreateContainer(new List<IAnalyticObject[]>
             {
                 new IAnalyticObject[]
@@ -370,7 +370,7 @@ namespace GeoGen.Constructor.Tests
         [Test]
         public void Test_Triangle_With_Midpoints_And_Centroid()
         {
-            // Create container (it's good to draw it)
+            // Create a container (it's good to draw it)
             var container = CreateContainer(new List<IAnalyticObject[]>
             {
                 new IAnalyticObject[]
@@ -380,7 +380,7 @@ namespace GeoGen.Constructor.Tests
                     new Point(3, 5),
                     new Point(1.5, 3),
                     new Point(1.5, 2.5),
-                    new Point(0, 0.5),
+                    new Point(0, 0.5),                               
                     new Point(1, 2)
                 },
                 new IAnalyticObject[]
@@ -570,7 +570,7 @@ namespace GeoGen.Constructor.Tests
         [Test]
         public void Test_That_Collinear_Inconsistency_Causes_Inconsistent_Containers_Exception()
         {
-            // Create action that should cause an exception
+            // Create an action that should cause an exception
             Action act = () => CreateContainer(new List<IAnalyticObject[]>
             {
                 new IAnalyticObject[]
@@ -594,7 +594,7 @@ namespace GeoGen.Constructor.Tests
         [Test]
         public void Test_That_Concyclic_Inconsistency_Causes_Inconsistent_Containers_Exception()
         {
-            // Create action that should cause an exception
+            // Create an action that should cause an exception
             Action act = () => CreateContainer(new List<IAnalyticObject[]>
             {
                 new IAnalyticObject[]

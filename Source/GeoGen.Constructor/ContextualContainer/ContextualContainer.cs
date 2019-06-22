@@ -93,7 +93,7 @@ namespace GeoGen.Constructor
             try
             {
                 // Add all objects, where only the last one is new
-                objects.ForEach((obj, index) => Add(obj, isNew: index == _configurationObjectsMap.Count - 1));
+                objects.ForEach((obj, index) => Add(obj, isNew: index == objects.Count - 1));
             }
             catch (AnalyticException)
             {
