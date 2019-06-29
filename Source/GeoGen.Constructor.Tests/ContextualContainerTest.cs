@@ -380,7 +380,7 @@ namespace GeoGen.Constructor.Tests
                     new Point(3, 5),
                     new Point(1.5, 3),
                     new Point(1.5, 2.5),
-                    new Point(0, 0.5),                               
+                    new Point(0, 0.5),
                     new Point(1, 2)
                 },
                 new IAnalyticObject[]

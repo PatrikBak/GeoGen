@@ -69,7 +69,7 @@ namespace GeoGen.Analyzer
 
                 // Otherwise we have a line or a circle, i.e. something definable by points
                 // Let's find how many of them we need
-                var definableByPoints = (DefinableByPoints) geometricalObject;
+                var definableByPoints = (DefinableByPoints)geometricalObject;
 
                 // Each pair or triple (given by the object's property) together with internal objects is a definition
                 // If there are not enough points, we can't do much

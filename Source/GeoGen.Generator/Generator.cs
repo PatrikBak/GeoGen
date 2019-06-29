@@ -166,124 +166,130 @@ namespace GeoGen.Generator
                 {
                     // For a given configuration we create all possible objects that are use our constructions
                     return input.Constructions.SelectMany(construction =>
+                    {
+                        // For a given construction first generate all possible arguments
+                        var generatedArguments = _argumentsGenerator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature);
+
+                        // Cast each arguments to a new constructed object
+                        return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments));
+                    })
+                    // Make sure each constructed object are added to the container so we can recognize equal ones
+                    .Select(newObject =>
+                    {
+                        // Add the new object to the container. It will found out if there 
+                        // already is an equal version of it inside
+                        objectsContainer.TryAdd(newObject, out var equalObject);
+
+                        // If there is an equal object already in the container
+                        if (equalObject != null)
                         {
-                            // For a given construction first generate all possible arguments
-                            var generatedArguments = _argumentsGenerator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature);
+                            // Then we'll re-assign the value to be returned further
+                            // This also step makes sure that equal objects won't be 
+                            // used with more than one instance. The objects that we 
+                            // will re-assign shouldn't be used elsewhere and thus 
+                            // will be eventually eaten by the garbage collector. 
+                            newObject = (ConstructedConfigurationObject)equalObject;
+                        }
 
-                            // Cast each arguments to a new constructed object
-                            return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments));
-                        })
-                        // Make sure each constructed object are added to the container so we can recognize equal ones
-                        .Select(newObject =>
+                        // Return the new object
+                        return newObject;
+                    })
+                    // For each new object creates a new generated configuration
+                    .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject))
+                    // Take only valid ones
+                    .Where(configuration =>
+                    {
+                        // Check if the last object is constructible
+                        if (inconstructibleObjects.Contains(configuration.ConstructedObjects.Last()))
+                            return false;
+
+                        // Make sure the last object is not equal to any previous ones
+                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj == configuration.ConstructedObjects.Last()))
+                            return false;
+
+                        // We're sure the configuration is formally correct (no duplicates)
+                        // and that can't be excluded based on the previous data (inconstructible objects)
+
+                        #region Equal configurations validation
+
+                        // Add the configuration to the container
+                        configurationsContainer.TryAdd(configuration, out var equalConfiguration);
+
+                        // If there already is an equal version of it, this one is invalid
+                        if (equalConfiguration != null)
+                            return false;
+
+                        // We're sure the configuration is new, i.e. we haven't seen an equal version of it yet
+
+                        #endregion
+
+                        // In this case the configuration is correct and ready to be drawn
+                        return true;
+                    })
+                    // Construct them
+                    .Select(configuration => (configuration, geometryData: _geometryConstructor.Construct(configuration)))
+                    // Take only geometrically valid ones
+                    .Where(tuple =>
+                    {
+                        // Deconstruct 
+                        var (configuration, geometryData) = tuple;
+
+                        // If the construction didn't work out, then we have to say the configuration is invalid
+                        if (!geometryData.SuccessfullyExamined)
+                            return false;
+
+                        // Find out if there is an inconstructible object
+                        var anyInconstructibleObject = geometryData.InconstructibleObject != null;
+
+                        // Find out if there are any duplicates
+                        var anyDuplicates = geometryData.Duplicates != (null, null);
+
+                        // If there is an inconstructible object
+                        if (anyInconstructibleObject)
                         {
-                            // Add the new object to the container. It will found out if there 
-                            // already is an equal version of it inside
-                            objectsContainer.TryAdd(newObject, out var equalObject);
+                            // Then we want to remember it
+                            inconstructibleObjects.Add(geometryData.InconstructibleObject);
 
-                            // If there is an equal object already in the container
-                            if (equalObject != null)
-                            {
-                                // Then we'll re-assign the value to be returned further
-                                // This also step makes sure that equal objects won't be 
-                                // used with more than one instance. The objects that we 
-                                // will re-assign shouldn't be used elsewhere and thus 
-                                // will be eventually eaten by the garbage collector. 
-                                newObject = (ConstructedConfigurationObject) equalObject;
-                            }
+                            // And trace it
+                            _inconstructibleObjectsTracer?.TraceInconstructibleObject(geometryData.InconstructibleObject);
+                        }
 
-                            // Return the new object
-                            return newObject;
-                        })
-                        // For each new object creates a new generated configuration
-                        .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject))
-                        // Take only valid ones
-                        .Where(configuration =>
+                        // If there are duplicates...
+                        if (anyDuplicates)
                         {
-                            // Check if the last object is constructible
-                            if (inconstructibleObjects.Contains(configuration.ConstructedObjects.Last()))
-                                return false;
+                            // We deconstruct the older and newer objects
+                            var (olderObject, newerObject) = geometryData.Duplicates;
 
-                            // Make sure the last object is not equal to any previous ones
-                            if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj != configuration.ConstructedObjects.Last()))
-                                return false;
-                            
-                            // We're sure the configuration is formally correct (no duplicates)
-                            // and that can't be excluded based on the previous data (inconstructible objects)
+                            // And trace them
+                            _equalObjectsTracer?.TraceEqualObjects(olderObject, newerObject);
+                        }
 
-                            #region Equal configurations validation
+                        // If there are any invalid objects or duplicates, then it's incorrect
+                        if (anyInconstructibleObject || anyDuplicates)
+                            return false;
 
-                            // Add the configuration to the container
-                            configurationsContainer.TryAdd(configuration, out var equalConfiguration);
+                        // After all the validations passed, we will extend it further in the next iteration
+                        generatedConfigurations.Add(configuration);
 
-                            // If there already is an equal version of it, this one is invalid
-                            if (equalConfiguration != null)
-                                return false;
-
-                            // We're sure the configuration is new, i.e. we haven't seen an equal version of it yet
-
-                            #endregion
-
-                            // In this case the configuration is correct and ready to be drawn
-                            return true;
-                        })
-                        // Construct them
-                        .Select(configuration => (configuration, geometryData: _geometryConstructor.Construct(configuration)))
-                        // Take only geometrically valid ones
-                        .Where(tuple =>
+                        // Return that it's valid
+                        return true;
+                    })
+                    // Finally construct the output for each of them
+                    .Select(tuple =>
+                    {
+                        // Construct the output
+                        return new GeneratorOutput
                         {
-                            // Deconstruct 
-                            var (configuration, geometryData) = tuple;
+                            // Set the configuration
+                            Configuration = tuple.configuration,
 
-                            // If the construction didn't work out, then we have to say the configuration is invalid
-                            if (!geometryData.SuccessfullyExamined)
-                                return false;
+                            // Set the manager
+                            Manager = tuple.geometryData.Manager,
 
-                            // Find out if there is an inconstructible object
-                            var anyInconstructibleObject = geometryData.InconstructibleObject != null;
-
-                            // Find out if there are any duplicates
-                            var anyDuplicates = geometryData.Duplicates != (null, null);
-
-                            // If there is an inconstructible object
-                            if (anyInconstructibleObject)
-                            {
-                                // Then we want to remember it
-                                inconstructibleObjects.Add(geometryData.InconstructibleObject);
-
-                                // And trace it
-                                _inconstructibleObjectsTracer?.TraceInconstructibleObject(geometryData.InconstructibleObject);
-                            }
-
-                            // If there are duplicates...
-                            if (anyDuplicates)
-                            {
-                                // We deconstruct the older and newer objects
-                                var (olderObject, newerObject) = geometryData.Duplicates;
-
-                                // And trace them
-                                _equalObjectsTracer?.TraceEqualObjects(olderObject, newerObject);
-                            }
-
-                            // If there are any invalid objects or duplicates, then it's incorrect
-                            if (anyInconstructibleObject || anyDuplicates)
-                                return false;
-
-                            // After all the validations passed, return that it's valid
-                            return true;
-                        })
-                        // Finally construct the output for each of them
-                        .Select(tuple =>
-                        {
-                            // Construct the output
-                            return new GeneratorOutput
-                            {
-                                // Set the configuration
-                                Configuration = tuple.configuration,
-
-                                // Set the manager
-                                Manager = tuple.geometryData.Manager
-                            };
-                        });
+                            // Set the iteration index
+                            IterationIndex = iterationIndex + 1
+                        };
+                    });
                 });
 
                 // Perform the generation by enumerating the enumerable 

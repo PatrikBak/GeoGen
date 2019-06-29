@@ -26,7 +26,7 @@ namespace GeoGen.Core
                 throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
 
             // Otherwise we invoke it and return the casted result
-            return (PredefinedConstruction) methodInfo.Invoke(obj: null, parameters: null);
+            return (PredefinedConstruction)methodInfo.Invoke(obj: null, parameters: null);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GeoGen.Core
@@ -9,8 +10,6 @@ namespace GeoGen.Core
     public abstract class ConfigurationObject
     {
         #region Debugging code
-
-#if DEBUG
 
         /// <summary>
         /// The id of the last globally created object. 
@@ -24,14 +23,13 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Gets the id of the configuration object.
-        /// This property is available only in the DEBUG mode for diagnostic purposes.
+        /// This property should be used only for diagnostic purposes.
         /// </summary>
-        public int Id { get; private set; }
+        internal int Id { get; private set; }
 
         /// <summary>
         /// Sets up the id of the object in a thread-safe manner.
         /// </summary>
-        [Conditional("DEBUG")]
         private void SetupId()
         {
             // Lock so that two threads won't set the same id.
@@ -41,8 +39,6 @@ namespace GeoGen.Core
                 Id = _id;
             }
         }
-
-#endif
 
         #endregion
 
@@ -64,7 +60,10 @@ namespace GeoGen.Core
         protected ConfigurationObject(ConfigurationObjectType objectType)
         {
             ObjectType = objectType;
-            SetupId();
+
+            // Setup Id only when we're debugging
+            if (Debugger.IsAttached)
+                SetupId();
         }
 
         #endregion

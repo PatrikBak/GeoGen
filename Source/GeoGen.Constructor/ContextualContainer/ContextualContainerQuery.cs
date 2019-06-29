@@ -59,7 +59,7 @@ namespace GeoGen.Constructor
         /// Gets or sets the list of points that should line on every line or circle that we're queering.
         /// </summary>
         public IEnumerable<ConfigurationObject> ContainingPoints { get; set; }
-             
+
         #endregion
     }
 }

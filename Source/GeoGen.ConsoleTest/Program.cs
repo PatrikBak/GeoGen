@@ -56,11 +56,11 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = InitialConfiguration(),
                 Constructions = Constructions(),
-                NumberOfIterations = 1,
+                NumberOfIterations = 3,
             };
 
             // Perform the algorithm
-            GenerateAndPrintResults(input, theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings, "output.txt", measureTime: true);
+            GenerateAndPrintResults(input, theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings, "output.txt");
 
             // Write reports
             IoC.Get<DefaultInconstructibleObjectsTracer>().WriteReport("inconstructible_objects.txt");
@@ -72,36 +72,36 @@ namespace GeoGen.ConsoleTest
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var H = new ConstructedConfigurationObject(ComposedConstructions.Orthocenter, A, B, C);
+            var I = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, B, C);
 
-            return new Configuration(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, H);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
         {
-            PredefinedConstructionsFactory.Get(CenterOfCircle),
-            PredefinedConstructionsFactory.Get(CircleWithCenterThroughPoint),
-            PredefinedConstructionsFactory.Get(Circumcircle),
-            PredefinedConstructionsFactory.Get(InternalAngleBisector),
-            PredefinedConstructionsFactory.Get(IntersectionOfLines),
-            PredefinedConstructionsFactory.Get(LineFromPoints),
+            //PredefinedConstructionsFactory.Get(CenterOfCircle),
+            //PredefinedConstructionsFactory.Get(CircleWithCenterThroughPoint),
+            //PredefinedConstructionsFactory.Get(Circumcircle),
+            //PredefinedConstructionsFactory.Get(InternalAngleBisector),
+            //PredefinedConstructionsFactory.Get(IntersectionOfLines),
+            //PredefinedConstructionsFactory.Get(LineFromPoints),
             PredefinedConstructionsFactory.Get(Midpoint),
-            PredefinedConstructionsFactory.Get(PerpendicularLine),
-            PredefinedConstructionsFactory.Get(PerpendicularProjection),
-            PredefinedConstructionsFactory.Get(PointReflection),
-            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
-            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
-            PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
-            ComposedConstructions.Centroid,
-            ComposedConstructions.Incenter,
-            ComposedConstructions.Orthocenter,
-            ComposedConstructions.IntersectionOfLinesFromPoints,
-            ComposedConstructions.IntersectionOfLineAndLineFromPoints,
-            ComposedConstructions.Parallelogram,
-            ComposedConstructions.PerpendicularLineAtPointOfLine,
-            ComposedConstructions.PerpendicularLineToLineFromPoints,
-            ComposedConstructions.ReflectionInLine,
-            ComposedConstructions.ReflectionInLineFromPoints
+            //PredefinedConstructionsFactory.Get(PerpendicularLine),
+            //PredefinedConstructionsFactory.Get(PerpendicularProjection),
+            //PredefinedConstructionsFactory.Get(PointReflection),
+            //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
+            //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
+            //PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
+            //ComposedConstructions.Centroid,
+            //ComposedConstructions.Incenter,
+            //ComposedConstructions.Orthocenter,
+            //ComposedConstructions.IntersectionOfLinesFromPoints,
+            //ComposedConstructions.IntersectionOfLineAndLineFromPoints,
+            //ComposedConstructions.Parallelogram,
+            //ComposedConstructions.PerpendicularLineAtPointOfLine,
+            //ComposedConstructions.PerpendicularLineToLineFromPoints,
+            //ComposedConstructions.ReflectionInLine,
+            //ComposedConstructions.ReflectionInLineFromPoints
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,
@@ -110,7 +110,8 @@ namespace GeoGen.ConsoleTest
                                                     ObjectsContainersManagerSettings objectsContainersManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
-                                                    bool analyzeInitialTheorems = true)
+                                                    bool analyzeInitialTheorems = true,
+                                                    bool skipConfigurationsWithoutTheormems = false)
         {
 
             using (var writer = new StreamWriter(fileName))
@@ -169,8 +170,13 @@ namespace GeoGen.ConsoleTest
                     result = list;
                     stopwatch.Stop();
 
+                    var generatedConfiguratonsString = list.GroupBy(output => output.GeneratorOutput.IterationIndex)
+                                                           .Select(grouping => $"[{grouping.Key}: {grouping.Count()}]")
+                                                           .ToJoinedString();
+
                     writer.WriteLine($"Elapsed milliseconds: {stopwatch.ElapsedMilliseconds}");
-                    writer.WriteLine($"Generated configuration: {list.Count}");
+                    writer.WriteLine($"Configurations generated on particular iterations: {generatedConfiguratonsString}");
+                    writer.WriteLine($"Total number of generated configuration: {list.Count}");
                     writer.WriteLine($"Generated configuration with theorems: {list.Count(r => r.AnalyzerOutput.Theorems.Any())}");
                     writer.WriteLine($"Total number of theorems: {list.Sum(output => output.AnalyzerOutput.Theorems.Count)}");
                     writer.WriteLine();
@@ -189,7 +195,7 @@ namespace GeoGen.ConsoleTest
                     if (!algorithmOutput.AnalyzerOutput.TheoremAnalysisSuccessful)
                         continue;
 
-                    if (algorithmOutput.AnalyzerOutput.Theorems.Count == 0)
+                    if (skipConfigurationsWithoutTheormems && algorithmOutput.AnalyzerOutput.Theorems.Count == 0)
                         continue;
 
                     var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);

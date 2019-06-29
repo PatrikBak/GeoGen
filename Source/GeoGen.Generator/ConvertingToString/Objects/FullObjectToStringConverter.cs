@@ -90,10 +90,10 @@ namespace GeoGen.Generator
 
                 // Makes sure the object has an id in the dictionary and convert it to a string 
                 return _looseObjectsIds.GetOrAdd(resolvedObject, () => _looseObjectsIds.Count).ToString();
-            }                
+            }
 
             // Otherwise the object must be a constructed one
-            var constructedObject = (ConstructedConfigurationObject) configurationObject;
+            var constructedObject = (ConstructedConfigurationObject)configurationObject;
 
             // First get the cache dictionary corresponding to the current remapping, or add a new one and return it
             var cache = _stringsCache.GetOrAdd(remapping, () => new Dictionary<ConstructedConfigurationObject, string>());

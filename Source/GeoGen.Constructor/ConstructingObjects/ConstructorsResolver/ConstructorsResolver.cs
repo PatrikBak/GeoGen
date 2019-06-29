@@ -76,7 +76,7 @@ namespace GeoGen.Constructor
             }
 
             // Otherwise we have a composed construction
-            var composedConstruction = (ComposedConstruction) construction;
+            var composedConstruction = (ComposedConstruction)construction;
 
             // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
             return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));

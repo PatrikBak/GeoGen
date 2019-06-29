@@ -84,8 +84,8 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IConfigurationsContainerFactory>().ToFactory();
 
             // Tracers
-            Kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer) null);
-            Kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer) null);
+            Kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer)null);
+            Kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer)null);
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IContextualContainerFactory>().ToFactory();
 
             // Tracers
-            Kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
-            Kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer) null);
+            Kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer)null);
+            Kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer)null);
         }
 
         /// <summary>

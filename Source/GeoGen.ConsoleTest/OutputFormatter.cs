@@ -42,7 +42,7 @@ namespace GeoGen.ConsoleTest
                 if (_objectToName.ContainsKey(configurationObject))
                     continue;
 
-                var newLetter = (char) ('A' + _objectToName.Count);
+                var newLetter = (char)('A' + _objectToName.Count);
 
                 _objectToName.Add(configurationObject, newLetter);
             }
@@ -108,26 +108,25 @@ namespace GeoGen.ConsoleTest
                 return ObjectToStringById(objectArgument.PassedObject);
             }
 
-            var setArgument = (SetConstructionArgument) argument;
+            var setArgument = (SetConstructionArgument)argument;
 
             return $"{{{string.Join(", ", setArgument.PassedArguments.Select(ArgumentToString))}}}";
         }
 
         private string TheoremObjectToString(TheoremObject theoremObject)
         {
-            return "";
-            //if (theoremObject.Signature == TheoremObjectSignature.SingleObject)
-            //{
-            //    return ObjectToStringById(theoremObject.InternalObjects.First());
-            //}
+            if (theoremObject.ConfigurationObject != null)
+                return ObjectToStringById(theoremObject.ConfigurationObject);
 
-            //var isLine = theoremObject.Signature == TheoremObjectSignature.LineGivenByPoints;
+            var lineOrCircle = (TheoremObjectWithPoints)theoremObject;
 
-            //var list = theoremObject.InternalObjects.Select(ObjectToStringById).ToList();
+            var isLine = lineOrCircle.Type == ConfigurationObjectType.Line;
 
-            //list.Sort();
+            var list = lineOrCircle.Points.Select(ObjectToStringById).ToList();
 
-            //return $"{(isLine ? "[" : "(")}{string.Join(", ", list)}{(isLine ? "]" : ")")}";
+            list.Sort();
+
+            return $"{(isLine ? "[" : "(")}{string.Join(", ", list)}{(isLine ? "]" : ")")}";
         }
 
         private string ObjectToStringById(ConfigurationObject configurationObject)

@@ -241,7 +241,7 @@ namespace GeoGen.Theorems
                             return new TheoremPointObject(data.Mapping[theoremObject.ConfigurationObject]);
 
                         // Otherwise we have a theorem object with points
-                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
+                        var objectWithPoints = (TheoremObjectWithPoints)theoremObject;
 
                         // We need to remap them
                         var points = objectWithPoints.Points.Select(p => data.Mapping[p]).ToSet();

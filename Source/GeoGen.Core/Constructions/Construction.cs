@@ -9,7 +9,7 @@ namespace GeoGen.Core
     /// <see cref="ConstructionParameter"/>s, and the <see cref="ConfigurationObjectType"/> of the 
     /// output object. Every construction has a name that should be the unique identifier for it.
     /// </summary>
-    public abstract class Construction 
+    public abstract class Construction
     {
         #region Public properties
 
