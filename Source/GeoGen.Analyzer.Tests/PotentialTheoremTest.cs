@@ -148,7 +148,7 @@ namespace GeoGen.Analyzer.Tests
             var C = new ConstructedConfigurationObject(RandomPointOnLine, l);
             var D = new ConstructedConfigurationObject(RandomPointOnLine, l);
             var E = new ConstructedConfigurationObject(SecondIntersectionOfCircleAndLineFromPoints, D, A, B, C);
-            var F = new ConstructedConfigurationObject(RandomPointOnLineSegment, A, E);
+            var F = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, A, E);
 
             // Assert
             new PotentialTheorem

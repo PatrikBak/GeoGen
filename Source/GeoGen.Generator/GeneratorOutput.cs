@@ -18,7 +18,7 @@ namespace GeoGen.Generator
         public IObjectsContainersManager Manager { get; set; }
 
         /// <summary>
-        /// Gets the index of the iteraton on which the output was produces. It is 0 for the initial configuration. 
+        /// Gets the index of the iteration on which the output was produces. It is 0 for the initial configuration. 
         /// </summary>
         public int IterationIndex { get; set; }
     }

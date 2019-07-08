@@ -12,6 +12,12 @@ namespace GeoGen.Core
     /// </summary>
     public class Theorem
     {
+        #region Public static properties
+
+        public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) => AreTheoremsEquivalent(t1, t2), t => 0);
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -88,10 +94,6 @@ namespace GeoGen.Core
             if (theorem1.Type != theorem2.Type)
                 return false;
 
-            // If they don't have the same number of involved objects, then they are not equivalent
-            if (theorem1.InvolvedObjects.Count != theorem2.InvolvedObjects.Count)
-                return false;
-
             // Local helper function that checks if two theorem objects are equivalent
             bool AreTheoremObjectsEquivalent(TheoremObject theoremObject1, TheoremObject theoremObject2)
             {
@@ -156,7 +158,7 @@ namespace GeoGen.Core
                     var obj2Set1 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[0], theorem2.InvolvedObjects[1] };
                     var obj2Set2 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[2], theorem2.InvolvedObjects[3] };
 
-                    // Write this boring condition that should do the job
+                    // This boring condition should do the job
                     return obj1Set1.SetEquals(obj2Set1) && obj1Set2.SetEquals(obj2Set2) ||
                            obj1Set1.SetEquals(obj2Set2) && obj1Set2.SetEquals(obj2Set1);
 

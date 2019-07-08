@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Constructor
 {
@@ -23,6 +24,17 @@ namespace GeoGen.Constructor
         /// Gets the minimal number of distinct points that are needed to define this type of object.
         /// </summary>
         public abstract int NumberOfNeededPoints { get; }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Returns the common points that this object has in common with a given one.
+        /// </summary>
+        /// <param name="other">The given object.</param>
+        /// <returns>A lazy enumerable of common points.</returns>
+        public IEnumerable<PointObject> CommonPointsWith(DefinableByPoints other) => Points.Intersect(other.Points);
 
         #endregion
 

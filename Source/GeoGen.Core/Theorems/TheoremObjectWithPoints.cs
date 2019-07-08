@@ -87,7 +87,7 @@ namespace GeoGen.Core
             var objectPart = ConfigurationObject == null ? " " : $" object: {ConfigurationObject.Id}";
 
             // Construct the final string including the ids of the points
-            return $"{Type}{objectPart}{string.Join("--", Points.Select(p => p.Id))}";
+            return $"{Type}{objectPart}{Points.Select(p => p.Id).ToJoinedString("--")}";
         }
 
         #endregion

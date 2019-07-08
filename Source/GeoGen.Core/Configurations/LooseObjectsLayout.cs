@@ -9,15 +9,25 @@
         None,
 
         /// <summary>
-        /// Represented a triangle whose angles are all acute and their mutual differences
-        /// are at least some value (so the triangle is not isosceles).
+        /// Represented a triangle whose angles are all acute and distinct.
         /// </summary>
         ScaleneAcuteAngledTriangled,
 
         /// <summary>
-        /// Represents two circles intersecting at two different points. This layout 
-        /// consist of 4 loose objects, the 2 circles and the 2 intersection points
+        /// Represents points A, B, C, D, E, F such that there are three circles
+        /// (ABCD), (CDEF), (EFAB) (from the radical axis theorem this means that
+        /// lines AB, CD, EF are concurrent).
         /// </summary>
-        IntersectingCircles
+        ThreeCyclicQuadrilatersOnSixPoints,
+
+        /// <summary>
+        /// Represents points A, B, C, D such that AB is parallel to CD.
+        /// </summary>
+        Trapezoid,
+
+        /// <summary>
+        /// Represents a circle and two points A, B such that line AB is tangent to the circle.
+        /// </summary>
+        CircleAndItsTangentLine
     }
 }

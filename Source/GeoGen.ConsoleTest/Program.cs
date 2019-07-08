@@ -56,7 +56,7 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = InitialConfiguration(),
                 Constructions = Constructions(),
-                NumberOfIterations = 3,
+                NumberOfIterations = 0,
             };
 
             // Perform the algorithm
@@ -73,8 +73,9 @@ namespace GeoGen.ConsoleTest
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var I = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, B, C);
+            var M = new ConstructedConfigurationObject(ComposedConstructions.Circumcenter, B, C, I);
 
-            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, I, M);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
@@ -85,7 +86,7 @@ namespace GeoGen.ConsoleTest
             //PredefinedConstructionsFactory.Get(InternalAngleBisector),
             //PredefinedConstructionsFactory.Get(IntersectionOfLines),
             //PredefinedConstructionsFactory.Get(LineFromPoints),
-            PredefinedConstructionsFactory.Get(Midpoint),
+            //PredefinedConstructionsFactory.Get(Midpoint),
             //PredefinedConstructionsFactory.Get(PerpendicularLine),
             //PredefinedConstructionsFactory.Get(PerpendicularProjection),
             //PredefinedConstructionsFactory.Get(PointReflection),
@@ -103,7 +104,7 @@ namespace GeoGen.ConsoleTest
             //ComposedConstructions.ReflectionInLine,
             //ComposedConstructions.ReflectionInLineFromPoints
         };
-
+        
         private static void GenerateAndPrintResults(GeneratorInput input,
                                                     TheoremAnalysisSettings theoremAnalysisSettings,
                                                     ContextualContainerSettings contextualContainerSettings,
@@ -111,7 +112,7 @@ namespace GeoGen.ConsoleTest
                                                     string fileName,
                                                     bool measureTime = false,
                                                     bool analyzeInitialTheorems = true,
-                                                    bool skipConfigurationsWithoutTheormems = false)
+                                                    bool skipConfigurationsWithoutTheormems = true)
         {
 
             using (var writer = new StreamWriter(fileName))

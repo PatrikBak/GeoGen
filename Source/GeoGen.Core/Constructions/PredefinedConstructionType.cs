@@ -78,7 +78,7 @@
         /// <summary>
         /// A random point lying on line AB (signature {A, B}).
         /// </summary>
-        RandomPointOnLineSegment,
+        RandomPointOnLineFromPoints,
 
         /// <summary>
         /// A random point lying on line l (signature l).
@@ -88,6 +88,11 @@
         /// <summary>
         /// A random point lying on circle c (signature c).
         /// </summary>
-        RandomPointOnCircle
+        RandomPointOnCircle,
+
+        /// <summary>
+        /// A random point in a plane (empty signature).
+        /// </summary>
+        RandomPoint
     }
 }

@@ -5,8 +5,10 @@ using GeoGen.ConsoleTest;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;
@@ -82,6 +84,7 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -122,6 +125,7 @@ namespace GeoGen.Theorems.Test
                 // We need to discover M is the midpoint of BC
                 (M, new ConstructedConfigurationObject(Midpoint, B, C))
             });
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -173,6 +177,7 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -228,6 +233,7 @@ namespace GeoGen.Theorems.Test
                 // We need to discover O is the circumcircle of ABC
                 (O, new ConstructedConfigurationObject(Circumcenter, A, B, C))
             });
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -278,6 +284,7 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -334,6 +341,7 @@ namespace GeoGen.Theorems.Test
                 (E, new ConstructedConfigurationObject(Midpoint, C, A)),
                 (F, new ConstructedConfigurationObject(Midpoint, A, B))
             });
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -370,6 +378,7 @@ namespace GeoGen.Theorems.Test
 
             // Assert
             result.IsSubtheorem.Should().BeTrue();
+            result.UsedFacts.Should().BeNullOrEmpty();
             result.UsedEqualities.Should().HaveCount(1, "Exactly one of the previous two potential reasons should hold true");
             new[]
             {
@@ -380,6 +389,7 @@ namespace GeoGen.Theorems.Test
                 (H, new ConstructedConfigurationObject(PointReflection, D, M))
             }
             .Should().ContainEquivalentOf(result.UsedEqualities[0]);
+
         }
 
         [Test]
@@ -418,29 +428,28 @@ namespace GeoGen.Theorems.Test
 
             // Assert
             result.IsSubtheorem.Should().BeTrue();
-            result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedEqualities.Should().BeEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
-        [Ignore("This requires defining a new layout and implementing the generation of all the options for this layout.")]
         public void Test_Tangent_Circles_Because_Of_Homothety()
         {
             // Create original configuration objects
             var A_ = new LooseConfigurationObject(Point);
             var B_ = new LooseConfigurationObject(Point);
             var C_ = new LooseConfigurationObject(Point);
-            var D_ = new ConstructedConfigurationObject(RandomPointOnLineSegment, A_, B_);
-            var l_ = new ConstructedConfigurationObject(ParallelLineToLineFromPoints, D_, B_, C_);
-            var E_ = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, l_, A_, C_);
+            var D_ = new LooseConfigurationObject(Point);
+            var E_ = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A_, C_, B_, D_);
 
             // Create the original configuration
-            var originalConfiguration = Configuration.DeriveFromObjects(E_);
+            var originalConfiguration = new Configuration(LooseObjectsLayout.Trapezoid, A_, B_, C_, D_, E_);
 
             // Create the original theorem
             var originalTheorem = new Theorem(originalConfiguration, TheoremType.TangentCircles, new[]
             {
-                new TheoremObjectWithPoints(Circle, A_, D_, E_),
-                new TheoremObjectWithPoints(Circle, A_, B_, C_)
+                new TheoremObjectWithPoints(Circle, E_, A_, B_),
+                new TheoremObjectWithPoints(Circle, E_, C_, D_)
             });
 
             // Create potential consequence theorem objects
@@ -465,7 +474,20 @@ namespace GeoGen.Theorems.Test
 
             // Assert
             result.IsSubtheorem.Should().BeTrue();
-            result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
+            {
+                // When the algorithm construct mapped E_, it intersects BD and CE
+                // After constructing this intersection it finds out that it is actually A
+                (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
+            });
+            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            {
+                new Theorem(consequenceConfiguration, TheoremType.ParallelLines, new[]
+                {
+                    new TheoremObjectWithPoints(Line, B, C),
+                    new TheoremObjectWithPoints(Line, D, E)
+                })
+            }).Should().BeTrue();
         }
 
         [Test]
@@ -505,6 +527,7 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -554,6 +577,7 @@ namespace GeoGen.Theorems.Test
                 // We need to discover O is the orthocenter of ABC
                 (H, new ConstructedConfigurationObject(Orthocenter, A, B, C))
             });
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -563,9 +587,9 @@ namespace GeoGen.Theorems.Test
             var A_ = new LooseConfigurationObject(Point);
             var B_ = new LooseConfigurationObject(Point);
             var C_ = new LooseConfigurationObject(Point);
-            var D_ = new ConstructedConfigurationObject(RandomPointOnLineSegment, A_, B_);
-            var E_ = new ConstructedConfigurationObject(RandomPointOnLineSegment, B_, C_);
-            var F_ = new ConstructedConfigurationObject(RandomPointOnLineSegment, C_, A_);
+            var D_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, A_, B_);
+            var E_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, B_, C_);
+            var F_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, C_, A_);
 
             // Create the original configuration
             var originalConfiguration = Configuration.DeriveFromObjects(D_, E_, F_);
@@ -603,24 +627,22 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
-        [Ignore("This requires defining a new layout and implementing the generation of all the options for this layout.")]
         public void Test_Reflected_Tangent_Line_Is_Still_Tangent_To_Circle()
         {
             // Create original configuration objects
             var c_ = new LooseConfigurationObject(Circle);
-            var A_ = new ConstructedConfigurationObject(RandomPointOnCircle, c_);
+            var P1_ = new LooseConfigurationObject(Point);
+            var P2_ = new LooseConfigurationObject(Point);
             var O_ = new ConstructedConfigurationObject(CenterOfCircle, c_);
-            var t_ = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, A_, O_);
-            var P1_ = new ConstructedConfigurationObject(RandomPointOnLine, t_);
-            var P2_ = new ConstructedConfigurationObject(RandomPointOnLine, t_);
             var Q1_ = new ConstructedConfigurationObject(PointReflection, P1_, O_);
             var Q2_ = new ConstructedConfigurationObject(PointReflection, P2_, O_);
 
             // Create the original configuration
-            var originalConfiguration = Configuration.DeriveFromObjects(Q1_, Q2_);
+            var originalConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.CircleAndItsTangentLine, c_, P1_, P2_, Q1_, Q2_);
 
             // Create the original theorem
             var originalTheorem = new Theorem(originalConfiguration, TheoremType.LineTangentToCircle, new[]
@@ -633,20 +655,19 @@ namespace GeoGen.Theorems.Test
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
+            var c = new ConstructedConfigurationObject(Incircle, A, B, C);
             var I = new ConstructedConfigurationObject(Incenter, A, B, C);
-            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
-            var incircle = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, I, D);
             var B1 = new ConstructedConfigurationObject(PointReflection, B, I);
             var C1 = new ConstructedConfigurationObject(PointReflection, C, I);
 
             // Create the consequence configuration
-            var consequenceConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, B1, C1);
+            var consequenceConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, B1, C1, c);
 
             // Create the potential consequence theorem
             var consequenceTheorem = new Theorem(consequenceConfiguration, TheoremType.LineTangentToCircle, new[]
             {
                 new TheoremObjectWithPoints(Line, B1, C1),
-                new TheoremObjectWithPoints(Circle, incircle)
+                new TheoremObjectWithPoints(Circle, c)
             });
 
             // Analyze
@@ -654,32 +675,42 @@ namespace GeoGen.Theorems.Test
 
             // Assert
             result.IsSubtheorem.Should().BeTrue();
-            result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
+            {
+                // We need to discover I is really the center of the incircle
+                (I, new ConstructedConfigurationObject(CenterOfCircle, c))
+            });
+            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            {
+                new Theorem(consequenceConfiguration, TheoremType.LineTangentToCircle, new[]
+                {
+                    new TheoremObjectWithPoints(Line, B, C),
+                    new TheoremObjectWithPoints(c)
+                })
+            })
+            .Should().BeTrue();
         }
 
         [Test]
-        [Ignore("The generation of all options for the intersecting circles is not implemented")]
         public void Test_Radical_Axis_Theorem()
         {
             // Create original configuration objects
-            var c1_ = new LooseConfigurationObject(Circle);
-            var c2_ = new LooseConfigurationObject(Circle);
             var A_ = new LooseConfigurationObject(Point);
             var B_ = new LooseConfigurationObject(Point);
-            var P1_ = new ConstructedConfigurationObject(RandomPointOnCircle, c1_);
-            var P2_ = new ConstructedConfigurationObject(RandomPointOnCircle, c1_);
-            var Q1_ = new ConstructedConfigurationObject(RandomPointOnCircle, c2_);
-            var Q2_ = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, Q1_, A_, B_, P1_, P2_);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+            var E_ = new LooseConfigurationObject(Point);
+            var F_ = new LooseConfigurationObject(Point);
 
             // Create the original configuration
-            var originalConfiguration = new Configuration(LooseObjectsLayout.IntersectingCircles, A_, B_, P1_, P2_, Q1_, Q2_);
+            var originalConfiguration = new Configuration(LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints, A_, B_, C_, D_, E_, F_);
 
             // Create the original theorem
             var originalTheorem = new Theorem(originalConfiguration, TheoremType.ConcurrentObjects, new[]
             {
                 new TheoremObjectWithPoints(Line, A_, B_),
-                new TheoremObjectWithPoints(Line, P1_, P2_),
-                new TheoremObjectWithPoints(Line, Q1_, Q2_)
+                new TheoremObjectWithPoints(Line, C_, D_),
+                new TheoremObjectWithPoints(Line, E_, F_)
             });
 
             // Create potential consequence theorem objects
@@ -707,6 +738,93 @@ namespace GeoGen.Theorems.Test
             // Assert
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
+            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            {
+                new Theorem(consequenceConfiguration, TheoremType.ConcyclicPoints, A, H1, H, D),
+                new Theorem(consequenceConfiguration, TheoremType.ConcyclicPoints, A, H1, B, C),
+                new Theorem(consequenceConfiguration, TheoremType.ConcyclicPoints, H, D, B, C),
+            })
+            .Should().BeTrue();
+        }
+
+        [Test]
+        public void Test_Equal_Equals_Because_Of_Parallel_Lines()
+        {
+            // Create original configuration objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+            var E_ = new ConstructedConfigurationObject(RandomPoint);
+            var F_ = new ConstructedConfigurationObject(RandomPoint);
+
+            // Create the original configuration
+            var originalConfiguration = new Configuration(LooseObjectsLayout.Trapezoid, A_, B_, C_, D_, E_, F_);
+
+            // Create the original theorem
+            var originalTheorem = new Theorem(originalConfiguration, TheoremType.EqualAngles, new[]
+            {
+                new TheoremObjectWithPoints(Line, A_, B_),
+                new TheoremObjectWithPoints(Line, E_, F_),
+                new TheoremObjectWithPoints(Line, C_, D_),
+                new TheoremObjectWithPoints(Line, E_, F_)
+            });
+
+            // Create potential consequence theorem objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, C, D);
+            var F = new ConstructedConfigurationObject(Midpoint, A, E);
+
+            // Create the consequence configuration
+            var consequenceConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, F);
+
+            // Create the potential consequence theorem
+            var consequenceTheorems = new[]
+            {
+                new Theorem(consequenceConfiguration, TheoremType.EqualAngles, new[]
+                {
+                    new TheoremObjectWithPoints(Line, B, E),
+                    new TheoremObjectWithPoints(Line, C, F),
+                    new TheoremObjectWithPoints(Line, D, F),
+                    new TheoremObjectWithPoints(Line, C, F)
+                }),
+                new Theorem(consequenceConfiguration, TheoremType.EqualAngles, new[]
+                {
+                    new TheoremObjectWithPoints(Line, A, C),
+                    new TheoremObjectWithPoints(Line, B, E),
+                    new TheoremObjectWithPoints(Line, A, C),
+                    new TheoremObjectWithPoints(Line, D, F)
+                }),
+                new Theorem(consequenceConfiguration, TheoremType.EqualAngles, new[]
+                {
+                    new TheoremObjectWithPoints(Line, B, C),
+                    new TheoremObjectWithPoints(Line, B, E),
+                    new TheoremObjectWithPoints(Line, B, C),
+                    new TheoremObjectWithPoints(Line, D, F)
+                })
+            };
+
+            // Analyze all theorems
+            consequenceTheorems.ForEach(consequenceTheorem =>
+            {
+                // Analyze
+                var result = _analyzer.Analyze(originalTheorem, consequenceTheorem);
+
+                // Assert
+                result.IsSubtheorem.Should().BeTrue();
+                result.UsedEqualities.Should().BeNullOrEmpty();
+                result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+                {
+                    new Theorem(consequenceConfiguration, TheoremType.ParallelLines, new[]
+                    {
+                        new TheoremObjectWithPoints(Line, B, E),
+                        new TheoremObjectWithPoints(Line, D, F)
+                    })
+                }).Should().BeTrue();
+            });
         }
     }
 }

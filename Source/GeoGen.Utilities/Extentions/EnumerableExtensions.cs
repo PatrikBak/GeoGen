@@ -99,7 +99,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of the element.</typeparam>
         /// <param name="item">The item.</param>
         /// <returns>The enumerable containing the single given item.</returns>
-        public static IEnumerable<T> AsEnumerable<T>(this T item)
+        public static IEnumerable<T> ToEnumerable<T>(this T item)
         {
             yield return item;
         }

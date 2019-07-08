@@ -96,6 +96,6 @@ namespace GeoGen.Core
         /// Finds the objects that define this object, in an order in which they can be constructed, including this one.
         /// </summary>
         /// <returns>The collection of the defining objects.</returns>
-        public static IReadOnlyList<ConfigurationObject> GetDefiningObjects(this ConfigurationObject configurationObject) => configurationObject.AsEnumerable().GetDefiningObjects();
+        public static IReadOnlyList<ConfigurationObject> GetDefiningObjects(this ConfigurationObject configurationObject) => configurationObject.ToEnumerable().GetDefiningObjects();
     }
 }

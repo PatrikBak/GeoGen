@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.Core
@@ -393,6 +392,36 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction("Incenter", configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Incircle of triangle ABC points A on line BC (signature {A, B, C}).
+        /// </summary>
+        /// <returns>The construction.</returns>
+        public static ComposedConstruction Incircle
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+                var projection = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+                var incircle = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, I, projection);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(incircle);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                     new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction("Incircle", configuration, parameters);
             }
         }
 

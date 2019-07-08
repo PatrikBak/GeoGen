@@ -24,8 +24,12 @@ namespace GeoGen.Theorems
         public List<(ConfigurationObject originalObject, ConfigurationObject equalObject)> UsedEqualities { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of objects to which the original theorem configuration was mapped to detect the sub-theorem.
+        /// Gets or sets the list of all used theorems that were needed to detect the sub-theorem.
+        /// These theorems are related to the initial layout of objects. For example: 
+        /// We might have a layout of concyclic quadruples of points. If we successfully
+        /// match some, then the fact those points are concyclic might be an interesting theorem,
+        /// so we remember it. 
         /// </summary>
-        public List<ConfigurationObject> MappedObjects { get; set; }
+        public List<Theorem> UsedFacts { get; set; }        
     }
 }

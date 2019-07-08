@@ -285,10 +285,10 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLineSegment"/> construction.
+        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLineFromPoints"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>
-        private static PredefinedConstruction RandomPointOnLineSegment()
+        private static PredefinedConstruction RandomPointOnLineFromPoints()
         {
             // Create the parameters
             var parameters = new List<ConstructionParameter>
@@ -297,7 +297,7 @@ namespace GeoGen.Core
             };
 
             // Create the actual construction
-            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineSegment, parameters, ConfigurationObjectType.Point);
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
         }
 
         /// <summary>
@@ -314,6 +314,16 @@ namespace GeoGen.Core
 
             // Create the actual construction
             return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircle, parameters, ConfigurationObjectType.Point);
+        }
+
+        /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.RandomPoint"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        private static PredefinedConstruction RandomPoint()
+        {
+            // Create the actual construction, which has no parameters
+            return new PredefinedConstruction(PredefinedConstructionType.RandomPoint, new ConstructionParameter[0], ConfigurationObjectType.Point);
         }
 
         #endregion

@@ -1,4 +1,5 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Utilities;
@@ -17,6 +18,8 @@ namespace GeoGen.Theorems
             public Dictionary<ConfigurationObject, ConfigurationObject> Mapping { get; set; }
 
             public List<(ConfigurationObject newerObject, ConfigurationObject olderObject)> EqualObjects { get; set; }
+
+            public List<Theorem> UsedFacts { get; set; }
         }
 
         #endregion
@@ -125,7 +128,7 @@ namespace GeoGen.Theorems
                 // Finally create its remapped version
                 var newObject = new ConstructedConfigurationObject(constructedObject.Construction, newArguments);
 
-                #region Handling mapping if the object is a random point (on a line or a circle)
+                #region Handling mapping if the object is a random point
 
                 // Prepare a line/circle where the point lies
                 var lineOrCircle = default(DefinableByPoints);
@@ -133,6 +136,27 @@ namespace GeoGen.Theorems
                 // There are only predefined random constructions...
                 if (newObject.Construction is PredefinedConstruction predefinedConstruction)
                 {
+                    if (predefinedConstruction.Type == PredefinedConstructionType.RandomPoint)
+                    {
+                        return potentialConsequence.Configuration.ObjectsMap[ConfigurationObjectType.Point]
+                            .Select(point =>
+                            {
+                                // Copy the current mapping
+                                var currentMappingCopy = new MappingData
+                                {
+                                    Mapping = data.Mapping.ToDictionary(pair => pair.Key, pair => pair.Value),
+                                    EqualObjects = data.EqualObjects.ToList(),
+                                    UsedFacts = data.UsedFacts.ToList()
+                                };
+
+                                // Add the new point mapping to it
+                                currentMappingCopy.Mapping.Add(constructedObject, point);
+
+                                // Return it
+                                return currentMappingCopy;
+                            });
+                    }
+
                     // Consider all the cases
                     switch (predefinedConstruction.Type)
                     {
@@ -146,7 +170,7 @@ namespace GeoGen.Theorems
                             break;
 
                         // Point on an implicit line                             
-                        case PredefinedConstructionType.RandomPointOnLineSegment:
+                        case PredefinedConstructionType.RandomPointOnLineFromPoints:
 
                             // Get the single line containing passed points
                             lineOrCircle = ContextualContainer().GetGeometricalObjects<LineObject>(new ContextualContainerQuery
@@ -171,7 +195,8 @@ namespace GeoGen.Theorems
                         var currentMappingCopy = new MappingData
                         {
                             Mapping = data.Mapping.ToDictionary(pair => pair.Key, pair => pair.Value),
-                            EqualObjects = data.EqualObjects.ToList()
+                            EqualObjects = data.EqualObjects.ToList(),
+                            UsedFacts = data.UsedFacts.ToList()
                         };
 
                         // Add the new point mapping to it
@@ -216,18 +241,210 @@ namespace GeoGen.Theorems
                 data.Mapping.Add(constructedObject, equalObject);
 
                 // Return the current data
-                return data.AsEnumerable();
+                return data.ToEnumerable();
+            }
+
+            IEnumerable<MappingData> GenerateInitialMappings()
+            {
+                var templateObjects = originalTheorem.Configuration.LooseObjectsHolder;
+                var realObjects = potentialConsequence.Configuration.ObjectsMap;
+
+                // Handle the case where there is no layout in the template, i.e. objects can be mapped without rules
+                if (templateObjects.Layout == LooseObjectsLayout.None)
+                {
+                    // Make sure all the types are there
+                    if (!templateObjects.ObjectsMap.Keys.All(realObjects.ContainsKey))
+                        return Enumerable.Empty<MappingData>();
+
+
+                    return templateObjects.ObjectsMap.Select(keyValue => realObjects[keyValue.Key]
+                                                                    ?.Variations(keyValue.Value.Count)
+                                                                    .Select(variation => variation.Zip(keyValue.Value, (real, original) => (real, original))))
+                                              .Combine()
+                                              .Select(mapping => mapping.Flatten().ToDictionary(pair => pair.original, pair => pair.real))
+                                              .Select(mapping => new MappingData
+                                              {
+                                                  Mapping = mapping,
+                                                  EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
+                                                  UsedFacts = new List<Theorem>()
+                                              });
+                }
+
+                if (templateObjects.Layout == LooseObjectsLayout.CircleAndItsTangentLine)
+                {
+                    return testedConfigurationData.Manager.Aggregate(
+
+                            // Seed
+                            new IEnumerable<DefinableByPoints>[]
+                            {
+                                // Circles
+                                ContextualContainer().GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+                                {
+                                    IncludeCirces = true,
+                                    Type = ContextualContainerQuery.ObjectsType.All
+                                })
+                                .Where(circle => circle.ConfigurationObject != null),
+
+                                // Lines
+                                ContextualContainer().GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                                {
+                                    IncludeLines = true,
+                                    Type = ContextualContainerQuery.ObjectsType.All
+                                })
+                                .Where(line => line.Points.Count >= 2)
+                            }
+                            .Combine(),
+
+                            // Current groups
+                            (currentPairs, manager) =>
+                            {
+                                return currentPairs.Where(pair => ContextualContainer()
+                                    .GetAnalyticObject<Circle>(pair[0], manager)
+                                    .IsTangentTo(ContextualContainer().GetAnalyticObject<Line>(pair[1], manager)));
+                            })
+                            .SelectMany(pair => pair[1].Points.Subsets(2).Select(p => p.ToArray()).Select(pairOfPoints =>
+                            {
+                                return new MappingData
+                                {
+                                    Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
+                                    {
+                                        { templateObjects.LooseObjects[0], pair[0].ConfigurationObject },
+                                        { templateObjects.LooseObjects[1], pairOfPoints[0].ConfigurationObject },
+                                        { templateObjects.LooseObjects[2], pairOfPoints[1].ConfigurationObject }
+                                    },
+                                    UsedFacts = new List<Theorem>
+                                    {
+                                        new Theorem(potentialConsequence.Configuration, TheoremType.LineTangentToCircle, new[]
+                                        {
+                                            new TheoremObjectWithPoints(ConfigurationObjectType.Line, pairOfPoints[0].ConfigurationObject, pairOfPoints[1].ConfigurationObject),
+                                            new TheoremObjectWithPoints(ConfigurationObjectType.Circle, pair[0].ConfigurationObject)
+                                        })
+                                    },
+                                    EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
+                                };
+                            }));
+                }
+
+                if (templateObjects.Layout == LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints)
+                {
+                    return ContextualContainer()
+                        .GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+                        {
+                            IncludeCirces = true,
+                            Type = ContextualContainerQuery.ObjectsType.All
+                        })
+                        .Where(circle => circle.Points.Count >= 4)
+                        .Select(x =>
+                        {
+                            return x;
+                        })
+                        .ToList()
+                        .UnorderedTriples()
+                        .Select(triple => new[] { (triple.Item1, triple.Item2), (triple.Item2, triple.Item3), (triple.Item3, triple.Item1)
+}
+                                            .Select(pair => pair.Item1.CommonPointsWith(pair.Item2).ToArray()).ToArray())
+                        .Where(commonPoints => commonPoints.All(points => points.Length == 2))
+                        .Select(commonPoints => new MappingData
+                        {
+                            Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
+                            {
+                                { templateObjects.LooseObjects[0], commonPoints[0][0].ConfigurationObject },
+                                { templateObjects.LooseObjects[1], commonPoints[0][1].ConfigurationObject },
+                                { templateObjects.LooseObjects[2], commonPoints[1][0].ConfigurationObject },
+                                { templateObjects.LooseObjects[3], commonPoints[1][1].ConfigurationObject },
+                                { templateObjects.LooseObjects[4], commonPoints[2][0].ConfigurationObject },
+                                { templateObjects.LooseObjects[5], commonPoints[2][1].ConfigurationObject }
+                            },
+                            UsedFacts = new List<Theorem>
+                            {
+                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                                {
+                                    new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[1][1].ConfigurationObject)
+                                }),
+                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                                {
+                                    new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
+                                }),
+                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                                {
+                                    new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[1][1].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
+                                    new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
+                                })
+                            },
+                            EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
+                        });
+                }
+
+                if (templateObjects.Layout == LooseObjectsLayout.Trapezoid)
+                {
+
+                    return testedConfigurationData.Manager.Aggregate(
+
+                        // First argument
+                        ContextualContainer().GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                        {
+                            IncludeLines = true,
+                            Type = ContextualContainerQuery.ObjectsType.All
+                        })
+                        .Where(line => line.Points.Count >= 2).ToEnumerable(),
+
+                        // Second argument
+                        (currentGroups, container) =>
+                        {
+                            return currentGroups.SelectMany(current =>
+                            {
+                                return current.GroupBy(line => ContextualContainer().GetAnalyticObject<Line>(line, container).Angle)
+                                              .Select(innerGroup => innerGroup.ToArray())
+                                              .Where(innerGroup => innerGroup.Length >= 2);
+                            });
+                        })
+                        .SelectMany(group => group.ToArray().UnorderedPairs())
+                        .Select(linePair => new[] { linePair.Item1.Points.Subsets(2), linePair.Item2.Points.Subsets(2) }.Combine())
+                        .Select(x => x.Flatten().Flatten().ToArray())
+                        .Select(x => new MappingData
+                        {
+                            Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
+                            {
+                                { templateObjects.LooseObjects[0], x[0].ConfigurationObject },
+                                { templateObjects.LooseObjects[1], x[1].ConfigurationObject },
+                                { templateObjects.LooseObjects[2], x[2].ConfigurationObject },
+                                { templateObjects.LooseObjects[3], x[3].ConfigurationObject }
+                            },
+                            UsedFacts = new List<Theorem>
+                            {
+                                new Theorem(originalTheorem.Configuration, TheoremType.ParallelLines, new[]
+                                {
+                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, x[0].ConfigurationObject, x[1].ConfigurationObject),
+                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, x[2].ConfigurationObject, x[3].ConfigurationObject)
+                                })
+                            },
+                            EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
+                        });
+                }
+
+                // TODO: Handle other layouts
+                throw new NotImplementedException();
+
+                // TODO: variation.Zip(keyValue.Value, (real, original) => (real, original)) can be extracted to an extension method
             }
 
             // Use the helper method to generate possible mappings between the objects of the
             // tested configuration and the loose objects of the original theorem
-            return GenerateMappings(originalTheorem.Configuration.LooseObjectsHolder, potentialConsequence.Configuration.ObjectsMap)
+            return GenerateInitialMappings()
                 // We assign an index to the current mapping representing the 
                 // current constructed object that hasn't been mapped
                 //.Select(mapping => (mapping, objectIndexToConstruct: -1))
                 // We try to construct one constructed object given by the index
                 .SelectMany(data => originalTheorem.Configuration.ConstructedObjects
-                    .Aggregate(data.AsEnumerable(), (current, constructedObject) => current.SelectMany(mapping => GenerateMappingsIncludingObject(mapping, constructedObject))))
+                    .Aggregate(data.ToEnumerable(), (current, constructedObject) => current.SelectMany(mapping => GenerateMappingsIncludingObject(mapping, constructedObject))))
                 // Create the data for successful ones
                 .Select(data =>
                 {
@@ -241,7 +458,7 @@ namespace GeoGen.Theorems
                             return new TheoremPointObject(data.Mapping[theoremObject.ConfigurationObject]);
 
                         // Otherwise we have a theorem object with points
-                        var objectWithPoints = (TheoremObjectWithPoints)theoremObject;
+                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
 
                         // We need to remap them
                         var points = objectWithPoints.Points.Select(p => data.Mapping[p]).ToSet();
@@ -284,11 +501,11 @@ namespace GeoGen.Theorems
                         // Set sub-theorem
                         IsSubtheorem = true,
 
-                        // Create the list of objects on which the theorem was applied
-                        MappedObjects = originalTheorem.Configuration.LooseObjectsHolder.LooseObjects.Select(o => data.Mapping[o]).ToList(),
-
                         // Set found equalities
-                        UsedEqualities = data.EqualObjects
+                        UsedEqualities = data.EqualObjects,
+
+                        // Set found used facts
+                        UsedFacts = data.UsedFacts
                     };
 
                 })
@@ -300,35 +517,6 @@ namespace GeoGen.Theorems
                     SuccessfullyAnalyzed = true,
                     IsSubtheorem = false
                 };
-        }
-
-        private IEnumerable<MappingData> GenerateMappings(LooseObjectsHolder templateObjects, ConfigurationObjectsMap realObjects)
-        {
-            // Handle the case where there is no layout in the template, i.e. objects can be mapped without rules
-            if (templateObjects.Layout == LooseObjectsLayout.None)
-            {
-                // Make sure all the types are there
-                if (!templateObjects.ObjectsMap.Keys.All(realObjects.ContainsKey))
-                    return Enumerable.Empty<MappingData>();
-
-
-                return templateObjects.ObjectsMap.Select(keyValue => realObjects[keyValue.Key]
-                                                                ?.Variations(keyValue.Value.Count)
-                                                                .Select(variation => variation.Zip(keyValue.Value, (real, original) => (real, original))))
-                                          .Combine()
-                                          .Select(mapping => mapping.Flatten().ToDictionary(pair => pair.original, pair => pair.real))
-                                          .Select(mapping => new MappingData
-                                          {
-                                              Mapping = mapping,
-                                              EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
-                                          });
-
-            }
-
-            // TODO: Handle other layouts
-            throw new NotImplementedException();
-
-            // TODO: variation.Zip(keyValue.Value, (real, original) => (real, original)) can be extracted to an extension method
         }
 
         #endregion
