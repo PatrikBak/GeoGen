@@ -1,18 +1,22 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.Analyzer;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Analyzer
+namespace GeoGen.ConsoleTest
 {
     /// <summary>
-    /// Represents a simple <see cref="ICompleteTheoremAnalyzer"/> that reuses 
-    /// <see cref="IRelevantTheoremsAnalyzer"/> in a correct, but inefficient way.
-    /// It should not be used to analyze configurations in bulk.
+    /// Represents a service that finds all theorems that are true in a configuration.
+    /// 
+    /// NOTE: This is not part of any of the main algorithm. It is here just for the curiosity
+    ///       of the programmer of this project. Its implementation is highly inefficient. 
+    ///       When it becomes a serious part, it will be improved.
+    ///       
     /// </summary>
-    public class SimpleCompleteTheoremAnalyzer : ICompleteTheoremAnalyzer
+    public class SimpleCompleteTheoremAnalyzer
     {
         #region Dependencies
 
@@ -26,6 +30,11 @@ namespace GeoGen.Analyzer
         /// </summary>
         private IGeometryConstructor _constructor;
 
+        /// <summary>
+        /// The factory for creating contextual containers that are required by the relevant theorem analyzer.
+        /// </summary>
+        private readonly IContextualContainerFactory _factory;
+
         #endregion
 
         #region Constructor
@@ -35,10 +44,12 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="analyzer">The analyzer of relevant theorems that is reused.</param>
         /// <param name="constructor">The constructor of configurations.</param>
-        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryConstructor constructor)
+        /// <param name="factory">The factory for creating contextual containers that are required by the relevant theorem analyzer.</param>
+        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryConstructor constructor, IContextualContainerFactory factory)
         {
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion
@@ -59,23 +70,21 @@ namespace GeoGen.Analyzer
 
             // Make sure it's correct
             if (!geometryData.SuccessfullyExamined)
-                throw new AnalyzerException("The configuration couldn't be examined.");
+                throw new GeoGenException("The configuration couldn't be examined.");
 
             // Make sure it is constructible
             if (geometryData.InconstructibleObject != null)
-                throw new AnalyzerException("The configuration contains inconstructible objects.");
+                throw new GeoGenException("The configuration contains inconstructible objects.");
 
             // Make sure it has no duplicates
             if (geometryData.Duplicates != (null, null))
-                throw new AnalyzerException("The configurations contains duplicate objects.");
+                throw new GeoGenException("The configurations contains duplicate objects.");
 
             #endregion
 
             // We find theorems in every correct sub-configuration of this
             // Take all the subjects of the constructed objects
             var theorems = configuration.ConstructedObjects.Subsets()
-                // Enumerate each sorted by id
-                //.Select(objects => objects.OrderBy(obj => obj.Id).ToArray())
                 // Take only those that make a correct configuration
                 .Where(objects =>
                 {
@@ -89,24 +98,31 @@ namespace GeoGen.Analyzer
                 // Make a configuration. The constructed objects should be ordered correctly
                 .Select(objects => new Configuration(configuration.LooseObjectsHolder, objects.ToArray()))
                 // Find its theorems
-                .Select(_configuration => _analyzer.Analyze(_configuration, geometryData.Manager))
+                .Select(_configuration =>
+                {
+                    try
+                    {
+                        // Safely create the container
+                        var container = geometryData.Manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(_configuration.ObjectsMap.AllObjects, geometryData.Manager));
+
+                        // Run the analysis
+                        return _analyzer.Analyze(_configuration, geometryData.Manager, container);
+                    }
+                    catch (UnreconstructibleContainerException)
+                    {
+                        // If we cannot construct this container, we can't have full results...
+                        throw new GeoGenException("There is a configuration for which we were not able to create a contextual container");
+                    }
+                })
                 // Enumerate for further processing
                 .ToList();
 
-            // Make sure we have all the results
-            if (theorems.Any(_output => !_output.TheoremAnalysisSuccessful))
-                throw new AnalyzerException("The theorem analysis wasn't successful");
-
             // Local function to take theorems ordered by type for prettier result
-            // TODO: Handle duplicates
-            List<AnalyzedTheorem> Order(IEnumerable<AnalyzedTheorem> input) => input.OrderBy(t => t.Type).ToList();
+            List<AnalyzedTheorem> Order(IEnumerable<AnalyzedTheorem> input) => input.Distinct(Theorem.EquivalencyComparer).Cast<AnalyzedTheorem>().OrderBy(t => t.Type).ToList();
 
             // Create a single output that merges the results
             return new TheoremAnalysisOutput
             {
-                // It went fine
-                TheoremAnalysisSuccessful = true,
-
                 // Merge all the theorems
                 Theorems = Order(theorems.SelectMany(output => output.Theorems)),
 

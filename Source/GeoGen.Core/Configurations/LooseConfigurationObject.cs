@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="ConfigurationObject"/> that is meant to be a general independent object

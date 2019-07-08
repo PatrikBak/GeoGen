@@ -3,14 +3,12 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.ConsoleTest
 {
@@ -56,7 +54,7 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = InitialConfiguration(),
                 Constructions = Constructions(),
-                NumberOfIterations = 0,
+                NumberOfIterations = 2,
             };
 
             // Perform the algorithm
@@ -95,7 +93,7 @@ namespace GeoGen.ConsoleTest
             //PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
             //ComposedConstructions.Centroid,
             //ComposedConstructions.Incenter,
-            //ComposedConstructions.Orthocenter,
+            ComposedConstructions.Orthocenter,
             //ComposedConstructions.IntersectionOfLinesFromPoints,
             //ComposedConstructions.IntersectionOfLineAndLineFromPoints,
             //ComposedConstructions.Parallelogram,
@@ -104,7 +102,7 @@ namespace GeoGen.ConsoleTest
             //ComposedConstructions.ReflectionInLine,
             //ComposedConstructions.ReflectionInLineFromPoints
         };
-        
+
         private static void GenerateAndPrintResults(GeneratorInput input,
                                                     TheoremAnalysisSettings theoremAnalysisSettings,
                                                     ContextualContainerSettings contextualContainerSettings,
@@ -143,7 +141,7 @@ namespace GeoGen.ConsoleTest
 
                 if (analyzeInitialTheorems)
                 {
-                    var initialOutput = IoC.Get<ICompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Analyze(initialConfigurationCopy);
+                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Analyze(initialConfigurationCopy);
 
                     writer.WriteLine();
                     FormatOutput(initialFormatter, initialOutput);
@@ -193,9 +191,6 @@ namespace GeoGen.ConsoleTest
 
                 foreach (var algorithmOutput in result)
                 {
-                    if (!algorithmOutput.AnalyzerOutput.TheoremAnalysisSuccessful)
-                        continue;
-
                     if (skipConfigurationsWithoutTheormems && algorithmOutput.AnalyzerOutput.Theorems.Count == 0)
                         continue;
 

@@ -17,8 +17,8 @@ namespace GeoGen.Constructor
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the lines
-            var l = (Line)input[0];
-            var m = (Line)input[1];
+            var l = (Line) input[0];
+            var m = (Line) input[1];
 
             // Intersect them. If there is no intersection, the result will be null
             return l.IntersectionWith(m);

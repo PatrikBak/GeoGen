@@ -49,7 +49,7 @@ namespace GeoGen.Core
                 else
                 {
                     // Otherwise take the list from the dictionary
-                    list = (List<ConfigurationObject>)base[type];
+                    list = (List<ConfigurationObject>) base[type];
                 }
 
                 // Finally add the object to it

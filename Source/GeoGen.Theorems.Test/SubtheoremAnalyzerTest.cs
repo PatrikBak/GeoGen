@@ -1,14 +1,10 @@
 ﻿using FluentAssertions;
-using FluentAssertions.Equivalency;
-using FluentAssertions.Execution;
 using GeoGen.ConsoleTest;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.Utilities;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;

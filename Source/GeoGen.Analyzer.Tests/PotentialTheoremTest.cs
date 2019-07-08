@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
-using GeoGen.Core;
 using GeoGen.Constructor;
+using GeoGen.Core;
 using NUnit.Framework;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;

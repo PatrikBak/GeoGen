@@ -29,7 +29,7 @@ namespace GeoGen.AnalyticGeometry
         public double C { get; }
 
         /// <summary>
-        /// Gets the angle between this line and the x-axis. 
+        /// Gets the angle in radians between this line and the x-axis. 
         /// </summary>
         public double Angle => B.Rounded() == 0 ? Math.PI / 2 : Math.Atan(A / B);
 

@@ -1,4 +1,5 @@
 ﻿using GeoGen.Analyzer;
+using GeoGen.Constructor;
 using GeoGen.Generator;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,11 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         private readonly IRelevantTheoremsAnalyzer _analyzer;
 
+        /// <summary>
+        /// The factory for creating contextual containers that are required by the relevant theorem analyzer.
+        /// </summary>
+        private readonly IContextualContainerFactory _factory;
+
         #endregion
 
         #region Constructor
@@ -33,10 +39,12 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         /// <param name="generator">The generator that generates configurations.</param>
         /// <param name="analyzer">The analyzer of relevant theorems in generated configurations.</param>
-        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer analyzer)
+        /// <param name="factory">The factory for creating contextual containers that are required by the relevant theorem analyzer.</param>
+        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer analyzer, IContextualContainerFactory factory)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion
@@ -51,13 +59,34 @@ namespace GeoGen.ConsoleTest
         public IEnumerable<AlgorithmOutput> Execute(GeneratorInput input)
         {
             // Perform the generation
-            return _generator.Generate(input).Select(output => new AlgorithmOutput
+            return _generator.Generate(input).Select(output =>
+            {
+                // Prepare a variable holding the contextual container to be used by the analyzers
+                IContextualContainer container = null;
+
+                try
+                {
+                    // Let the manager safely create an instance of the contextual container
+                    container = output.Manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(output.Configuration.ObjectsMap.AllObjects, output.Manager));
+                }
+                catch (UnresolvableInconsistencyException)
+                {
+                    // If we cannot create a contextual container, we cannot do much
+                }
+
+                // Return the output together with the constructed container
+                return (output, container);
+            })
+            // Take only such pairs where the container was successfully created
+            .Where(pair => pair.container != null)
+            // For each such pair perform the theorem analysis
+            .Select(pair => new AlgorithmOutput
             {
                 // Set the generator output
-                GeneratorOutput = output,
+                GeneratorOutput = pair.output,
 
                 // Perform the theorem analysis
-                AnalyzerOutput = _analyzer.Analyze(output.Configuration, output.Manager)
+                AnalyzerOutput = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.container)
             });
         }
 

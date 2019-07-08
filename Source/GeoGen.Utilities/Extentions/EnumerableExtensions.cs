@@ -25,7 +25,7 @@ namespace GeoGen.Utilities
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="items">The items to be concatenated.</param>
         /// <returns>The enumerable with the concatenated items.</returns>
-        public static IEnumerable<T> Concat<T>(this IEnumerable<T> enumerable, params T[] items) => enumerable.Concat((IEnumerable<T>)items);
+        public static IEnumerable<T> Concat<T>(this IEnumerable<T> enumerable, params T[] items) => enumerable.Concat((IEnumerable<T>) items);
 
         /// <summary>
         /// Invokes a given action for each element in the enumerable.

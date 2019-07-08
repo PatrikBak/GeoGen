@@ -14,6 +14,6 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="input">The analytic objects to be used as an input.</param>
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
-        protected override IAnalyticObject Construct(IAnalyticObject[] input) => ((Circle)input[0]).Center;
+        protected override IAnalyticObject Construct(IAnalyticObject[] input) => ((Circle) input[0]).Center;
     }
 }

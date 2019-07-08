@@ -17,8 +17,8 @@ namespace GeoGen.Constructor
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var A = (Point)input[0];
-            var B = (Point)input[1];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
 
             // We want (X + A) / 2 = B, from which we easily have the result
             return 2 * B - A;

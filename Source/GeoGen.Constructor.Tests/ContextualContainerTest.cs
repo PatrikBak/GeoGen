@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using GeoGen.AnalyticGeometry;
-using GeoGen.Constructor;
 using GeoGen.Core;
 using Moq;
 using NUnit.Framework;

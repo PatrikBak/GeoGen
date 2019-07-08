@@ -1,8 +1,4 @@
-﻿using GeoGen.Utilities;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represent a <see cref="ConfigurationObject"/> that is composed of a <see cref="Core.Construction"/>, and 

@@ -49,7 +49,7 @@ namespace GeoGen.Generator
                 }
 
                 // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument)argument;
+                var setArgument = (SetConstructionArgument) argument;
 
                 // We'll recursively convert its individual arguments to strings
                 var individualArgs = setArgument.PassedArguments.Select(ArgumentToString).ToList();

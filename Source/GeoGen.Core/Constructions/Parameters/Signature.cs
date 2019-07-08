@@ -127,7 +127,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set construction parameter
-                var setParameter = (SetConstructionParameter)parameter;
+                var setParameter = (SetConstructionParameter) parameter;
 
                 // Create arguments list that we're going to fill
                 var arguments = new List<ConstructionArgument>();
@@ -202,7 +202,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set parameter
-                var setParameter = (SetConstructionParameter)parameter;
+                var setParameter = (SetConstructionParameter) parameter;
 
                 // We perform this examination on the inner parameters the given number of times
                 // (not the most efficient way, but it definitely doesn't matter here)

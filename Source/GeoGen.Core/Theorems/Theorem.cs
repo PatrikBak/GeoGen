@@ -14,6 +14,11 @@ namespace GeoGen.Core
     {
         #region Public static properties
 
+        /// <summary>
+        /// Gets the single instance of the equality comparer of two theorems that uses the 
+        /// <see cref="AreTheoremsEquivalent(Theorem, Theorem)"/> method and a constant hash code function
+        /// (i.e. using it together with a hash map / hash set would make all the operations O(n)).
+        /// </summary>
         public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) => AreTheoremsEquivalent(t1, t2), t => 0);
 
         #endregion
@@ -68,7 +73,7 @@ namespace GeoGen.Core
                 // If the current object is a point
                 o => o.ObjectType == ConfigurationObjectType.Point
                 // Create a point object
-                ? (TheoremObject)new TheoremPointObject(o)
+                ? (TheoremObject) new TheoremPointObject(o)
                 // Otherwise create a line/circle object
                 : new TheoremObjectWithPoints(o))
                 // Enumerate to an array
@@ -106,8 +111,8 @@ namespace GeoGen.Core
                     return theoremObject1.ConfigurationObject == theoremObject2.ConfigurationObject;
 
                 // Otherwise we have the line/circle case
-                var lineOrCircle1 = (TheoremObjectWithPoints)theoremObject1;
-                var lineOrCircle2 = (TheoremObjectWithPoints)theoremObject2;
+                var lineOrCircle1 = (TheoremObjectWithPoints) theoremObject1;
+                var lineOrCircle2 = (TheoremObjectWithPoints) theoremObject2;
 
                 // If their configuration objects are defined and matches, then they are equivalent
                 if (lineOrCircle1.ConfigurationObject != null && lineOrCircle1.ConfigurationObject == lineOrCircle2.ConfigurationObject)

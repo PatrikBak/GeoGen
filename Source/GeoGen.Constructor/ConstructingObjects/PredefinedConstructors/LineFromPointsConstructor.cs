@@ -17,8 +17,8 @@ namespace GeoGen.Constructor
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the points
-            var A = (Point)input[0];
-            var B = (Point)input[1];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
 
             // Construct the line
             return new Line(A, B);

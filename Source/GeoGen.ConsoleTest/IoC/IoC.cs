@@ -84,8 +84,8 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IConfigurationsContainerFactory>().ToFactory();
 
             // Tracers
-            Kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer)null);
-            Kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer)null);
+            Kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer) null);
+            Kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer) null);
         }
 
         /// <summary>
@@ -126,8 +126,8 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IContextualContainerFactory>().ToFactory();
 
             // Tracers
-            Kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer)null);
-            Kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer)null);
+            Kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
+            Kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer) null);
         }
 
         /// <summary>
@@ -136,7 +136,6 @@ namespace GeoGen.ConsoleTest
         private static void AddAnalyzer()
         {
             Kernel.BindsWithDynamicSettings<IRelevantTheoremsAnalyzer, RelevantTheoremsAnalyzer, TheoremAnalysisSettings>();
-            Kernel.Bind<ICompleteTheoremAnalyzer>().To<SimpleCompleteTheoremAnalyzer>();
 
             // Potential theorem analyzers
             Kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>();
@@ -158,6 +157,7 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
             Kernel.Rebind<IEqualObjectsTracer, DefaultEqualObjectsTracer>().To<DefaultEqualObjectsTracer>().InSingletonScope();
             Kernel.Rebind<IInconstructibleObjectsTracer, DefaultInconstructibleObjectsTracer>().To<DefaultInconstructibleObjectsTracer>().InSingletonScope();
+            Kernel.Bind<SimpleCompleteTheoremAnalyzer>().ToSelf();
         }
 
         #endregion

@@ -30,6 +30,6 @@ namespace GeoGen.Theorems
         /// match some, then the fact those points are concyclic might be an interesting theorem,
         /// so we remember it. 
         /// </summary>
-        public List<Theorem> UsedFacts { get; set; }        
+        public List<Theorem> UsedFacts { get; set; }
     }
 }

@@ -42,7 +42,7 @@ namespace GeoGen.ConsoleTest
                 if (_objectToName.ContainsKey(configurationObject))
                     continue;
 
-                var newLetter = (char)('A' + _objectToName.Count);
+                var newLetter = (char) ('A' + _objectToName.Count);
 
                 _objectToName.Add(configurationObject, newLetter);
             }
@@ -108,7 +108,7 @@ namespace GeoGen.ConsoleTest
                 return ObjectToStringById(objectArgument.PassedObject);
             }
 
-            var setArgument = (SetConstructionArgument)argument;
+            var setArgument = (SetConstructionArgument) argument;
 
             return $"{{{string.Join(", ", setArgument.PassedArguments.Select(ArgumentToString))}}}";
         }
@@ -118,7 +118,7 @@ namespace GeoGen.ConsoleTest
             if (theoremObject.ConfigurationObject != null)
                 return ObjectToStringById(theoremObject.ConfigurationObject);
 
-            var lineOrCircle = (TheoremObjectWithPoints)theoremObject;
+            var lineOrCircle = (TheoremObjectWithPoints) theoremObject;
 
             var isLine = lineOrCircle.Type == ConfigurationObjectType.Line;
 

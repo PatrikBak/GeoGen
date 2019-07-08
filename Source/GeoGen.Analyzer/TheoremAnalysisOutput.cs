@@ -8,11 +8,6 @@ namespace GeoGen.Analyzer
     public class TheoremAnalysisOutput
     {
         /// <summary>
-        /// Gets or sets whether the theorem analysis successfully finished. 
-        /// </summary>
-        public bool TheoremAnalysisSuccessful { get; set; }
-
-        /// <summary>
         /// Gets or sets the list of found theorems.
         /// </summary>
         public List<AnalyzedTheorem> Theorems { get; set; }

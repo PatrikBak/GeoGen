@@ -193,7 +193,7 @@ namespace GeoGen.Constructor
         /// <typeparam name="T">The type of the geometrical object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The corresponding geometrical object.</returns>
-        public T GetGeometricalObject<T>(ConfigurationObject configurationObject) where T : GeometricalObject => (T)_configurationObjectsMap[configurationObject];
+        public T GetGeometricalObject<T>(ConfigurationObject configurationObject) where T : GeometricalObject => (T) _configurationObjectsMap[configurationObject];
 
         /// <summary>
         /// Gets the analytic representation of a given geometrical object in a given objects container.
@@ -202,7 +202,7 @@ namespace GeoGen.Constructor
         /// <param name="geometricalObject">The geometrical object.</param>
         /// <param name="objectsContainer">The objects container.</param>
         /// <returns>The analytic object represented by the given geometrical object in the given container.</returns>
-        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject => (T)_objects[objectsContainer].GetRightValue(geometricalObject);
+        public T GetAnalyticObject<T>(GeometricalObject geometricalObject, IObjectsContainer objectsContainer) where T : IAnalyticObject => (T) _objects[objectsContainer].GetRightValue(geometricalObject);
 
         /// <summary>
         /// Recreates the underlying analytic objects that this container maps to <see cref="GeometricalObject"/>s.
@@ -309,7 +309,7 @@ namespace GeoGen.Constructor
             if (configurationObject.ObjectType == ConfigurationObjectType.Point)
             {
                 // Let the helper method add it as a point
-                AddPoint((PointObject)geometricalObject, isNew);
+                AddPoint((PointObject) geometricalObject, isNew);
 
                 // And terminate
                 return;
@@ -462,7 +462,7 @@ namespace GeoGen.Constructor
                 var map = _objects[container];
 
                 // Construct the analytic line from the analytic representations of the points in the map
-                var analyticLine = new Line((Point)map.GetRightValue(point1), (Point)map.GetRightValue(point2));
+                var analyticLine = new Line((Point) map.GetRightValue(point1), (Point) map.GetRightValue(point2));
 
                 // Cache the result
                 containersMap.Add(container, analyticLine);
@@ -479,7 +479,7 @@ namespace GeoGen.Constructor
                         throw new InconsistentContainersException();
 
                     // Otherwise we can update the result
-                    result = (LineObject)newResult;
+                    result = (LineObject) newResult;
                 }
             }
 
@@ -529,9 +529,9 @@ namespace GeoGen.Constructor
                 var map = _objects[container];
 
                 // Get the analytic versions of the points from the map
-                var analyticPoint1 = (Point)map.GetRightValue(point1);
-                var analyticPoint2 = (Point)map.GetRightValue(point2);
-                var analyticPoint3 = (Point)map.GetRightValue(point3);
+                var analyticPoint1 = (Point) map.GetRightValue(point1);
+                var analyticPoint2 = (Point) map.GetRightValue(point2);
+                var analyticPoint3 = (Point) map.GetRightValue(point3);
 
                 // Check if they are collinear...
                 var areCollinear = AnalyticHelpers.AreCollinear(analyticPoint1, analyticPoint2, analyticPoint3);
@@ -565,7 +565,7 @@ namespace GeoGen.Constructor
                         throw new InconsistentContainersException();
 
                     // Otherwise we can update the result
-                    result = (CircleObject)newResult;
+                    result = (CircleObject) newResult;
                 }
             }
 
@@ -654,7 +654,7 @@ namespace GeoGen.Constructor
             foreach (var container in _manager)
             {
                 // Pull the analytic representations of the point and the line/circle
-                var point = (Point)_objects[container].GetRightValue(pointObject);
+                var point = (Point) _objects[container].GetRightValue(pointObject);
                 var lineOrCircle = _objects[container].GetRightValue(geometricalObject);
 
                 // Let the helper decide if the point lies on the object
@@ -710,7 +710,7 @@ namespace GeoGen.Constructor
                     else
                     {
                         // Otherwise we need to reconstruct the object from points
-                        var definableByPoints = (DefinableByPoints)geometricalObject;
+                        var definableByPoints = (DefinableByPoints) geometricalObject;
 
                         // We get the needed numbers of points (which is 2 for line, 3 for circle)
                         // We could have tried get all pair and triples to be sure they make the same

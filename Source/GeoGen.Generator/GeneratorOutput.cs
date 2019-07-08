@@ -13,12 +13,12 @@ namespace GeoGen.Generator
         public GeneratedConfiguration Configuration { get; set; }
 
         /// <summary>
-        /// Gets or sets the manager holding the geometric representations. of the configurations.
+        /// Gets or sets the manager holding the geometric representation of the configuration.
         /// </summary>
         public IObjectsContainersManager Manager { get; set; }
 
         /// <summary>
-        /// Gets the index of the iteration on which the output was produces. It is 0 for the initial configuration. 
+        /// Gets the index of the iteration on which the output was produces, starting with 0.
         /// </summary>
         public int IterationIndex { get; set; }
     }

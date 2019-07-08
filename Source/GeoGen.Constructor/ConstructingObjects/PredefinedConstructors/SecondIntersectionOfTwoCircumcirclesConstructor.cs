@@ -18,11 +18,11 @@ namespace GeoGen.Constructor
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Pull the points
-            var A = (Point)input[0];
-            var B = (Point)input[1];
-            var C = (Point)input[2];
-            var D = (Point)input[3];
-            var E = (Point)input[4];
+            var A = (Point) input[0];
+            var B = (Point) input[1];
+            var C = (Point) input[2];
+            var D = (Point) input[3];
+            var E = (Point) input[4];
 
             // Make sure the points that should make circles are not collinear
             if (AnalyticHelpers.AreCollinear(A, B, C) || AnalyticHelpers.AreCollinear(A, D, E))

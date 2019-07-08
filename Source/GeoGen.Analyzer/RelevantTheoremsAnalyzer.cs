@@ -18,11 +18,6 @@ namespace GeoGen.Analyzer
         /// </summary>
         private readonly IPotentialTheoremsAnalyzer[] _theoremsAnalyzers;
 
-        /// <summary>
-        /// The factory for creating contextual containers that are required by the theorem analyzers.
-        /// </summary>
-        private readonly IContextualContainerFactory _factory;
-
         #endregion
 
         #region Private fields
@@ -41,12 +36,10 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="settings">The settings for the analyzer.</param>
         /// <param name="theoremsAnalyzers">The array of all the available potential theorems analyzers.</param>
-        /// <param name="factory">The factory for creating contextual containers that are required by the theorem analyzers.</param>
-        public RelevantTheoremsAnalyzer(TheoremAnalysisSettings settings, IPotentialTheoremsAnalyzer[] theoremsAnalyzers, IContextualContainerFactory factory)
+        public RelevantTheoremsAnalyzer(TheoremAnalysisSettings settings, IPotentialTheoremsAnalyzer[] theoremsAnalyzers)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _theoremsAnalyzers = theoremsAnalyzers ?? throw new ArgumentNullException(nameof(theoremsAnalyzers));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion
@@ -58,23 +51,10 @@ namespace GeoGen.Analyzer
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
         /// <param name="manager">The manager of all the containers where the theorems should be tested.</param>
+        /// <param name="container">The contextual container where the configuration is drawn.</param>
         /// <returns>The output of the analyzer holding the theorems.</returns>
-        public TheoremAnalysisOutput Analyze(Configuration configuration, IObjectsContainersManager manager)
+        public TheoremAnalysisOutput Analyze(Configuration configuration, IObjectsContainersManager manager, IContextualContainer container)
         {
-            // Prepare a variable holding the contextual container to be used by the analyzers
-            IContextualContainer container;
-
-            try
-            {
-                // Let the manager create an instance of the contextual container
-                container = manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(configuration.ObjectsMap.AllObjects, manager));
-            }
-            catch (UnresolvableInconsistencyException)
-            {
-                // If there are unresolvable inconsistencies, then we can't do much
-                return new TheoremAnalysisOutput { TheoremAnalysisSuccessful = false };
-            }
-
             // Perform the verification of the theorems. We use the fact that potential verifiers generate only theorems 
             // containing new objects (other would be automatically excluded). 
             var testedTheorems = _theoremsAnalyzers.SelectMany(verifier => verifier.FindPotentialTheorems(container))
@@ -145,9 +125,6 @@ namespace GeoGen.Analyzer
             // Return the final output
             return new TheoremAnalysisOutput
             {
-                // Set that we've finished successfully
-                TheoremAnalysisSuccessful = true,
-
                 // Set theorems
                 Theorems = trueTheorems,
 

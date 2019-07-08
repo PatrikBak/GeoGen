@@ -16,7 +16,7 @@ namespace GeoGen.Generator
     /// is <see cref="ConfigurationObject"/>, to recognize equal objects. Then we validate each created 
     /// configuration formally (no equal objects, not already generated) and geometrically (constructible
     /// and no duplicated) and return only valid ones. The valid configurations represent the next layer. 
-    /// The generation process is lazy. Once it has started, we can't run it again with the same instance of the class.
+    /// The generation process is lazy. 
     /// </summary>
     public class Generator : IGenerator
     {
@@ -188,7 +188,7 @@ namespace GeoGen.Generator
                             // used with more than one instance. The objects that we 
                             // will re-assign shouldn't be used elsewhere and thus 
                             // will be eventually eaten by the garbage collector. 
-                            newObject = (ConstructedConfigurationObject)equalObject;
+                            newObject = (ConstructedConfigurationObject) equalObject;
                         }
 
                         // Return the new object
@@ -275,20 +275,16 @@ namespace GeoGen.Generator
                         return true;
                     })
                     // Finally construct the output for each of them
-                    .Select(tuple =>
+                    .Select(tuple => new GeneratorOutput
                     {
-                        // Construct the output
-                        return new GeneratorOutput
-                        {
-                            // Set the configuration
-                            Configuration = tuple.configuration,
+                        // Set the configuration
+                        Configuration = tuple.configuration,
 
-                            // Set the manager
-                            Manager = tuple.geometryData.Manager,
+                        // Set the manager
+                        Manager = tuple.geometryData.Manager,
 
-                            // Set the iteration index
-                            IterationIndex = iterationIndex + 1
-                        };
+                        // Set the iteration index
+                        IterationIndex = iterationIndex + 1
                     });
                 });
 

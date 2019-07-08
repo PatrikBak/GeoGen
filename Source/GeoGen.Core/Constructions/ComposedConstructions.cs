@@ -396,7 +396,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Incircle of triangle ABC points A on line BC (signature {A, B, C}).
+        /// Incircle of triangle ABC (signature {A, B, C}).
         /// </summary>
         /// <returns>The construction.</returns>
         public static ComposedConstruction Incircle

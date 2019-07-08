@@ -25,7 +25,7 @@ namespace GeoGen.ConsoleTest
             // Bind to the service with the constructor argument created from the corresponding dynamic settings
             return kernel.Bind<TService>()
                          .To<TImplementation>()
-                         .WithConstructorArgument(context => (TSettings)context.Parameters.OfType<DynamicSettingsParameter>().Single(p => p.Value.GetType() == typeof(TSettings)).Value);
+                         .WithConstructorArgument(context => (TSettings) context.Parameters.OfType<DynamicSettingsParameter>().Single(p => p.Value.GetType() == typeof(TSettings)).Value);
         }
     }
 }

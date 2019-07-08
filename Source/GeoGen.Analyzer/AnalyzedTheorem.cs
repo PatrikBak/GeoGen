@@ -61,7 +61,7 @@ namespace GeoGen.Analyzer
                     return new TheoremPointObject(geometricalObject.ConfigurationObject);
 
                 // Otherwise the object is either a line, or a circle, so its definable by points
-                var objectWithPoints = (DefinableByPoints)geometricalObject;
+                var objectWithPoints = (DefinableByPoints) geometricalObject;
 
                 // Let's find the configuration objects corresponding to these points 
                 var points = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
