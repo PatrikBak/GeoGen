@@ -1,38 +1,36 @@
-﻿using GeoGen.Core;
-using System;
+﻿using System;
 
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
-    /// when something incorrect happens in the constructor module.
+    /// An exception thrown when a reconstruction of a <see cref="ContextualContainer"/> fails.
     /// </summary>
-    public class ConstructorException : GeoGenException
+    public class UnconstructibleContextualContainer : ConstructorException
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorException"/> class.
+        /// Initializes a new instance of the <see cref="UnconstructibleContextualContainer"/> class.
         /// </summary>
-        public ConstructorException()
+        public UnconstructibleContextualContainer()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorException"/> class
+        /// Initializes a new instance of the <see cref="UnconstructibleContextualContainer"/> class
         /// with a custom message about what happened.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
-        public ConstructorException(string message)
+        public UnconstructibleContextualContainer(string message)
                 : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorException"/> class
+        /// Initializes a new instance of the <see cref="UnconstructibleContextualContainer"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
         /// <param name="innerException">The inner exception that caused this one.</param>
-        public ConstructorException(string message, Exception innerException)
+        public UnconstructibleContextualContainer(string message, Exception innerException)
                 : base(message, innerException)
         {
         }

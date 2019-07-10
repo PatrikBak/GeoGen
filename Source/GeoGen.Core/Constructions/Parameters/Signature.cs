@@ -122,7 +122,7 @@ namespace GeoGen.Core
                     }
                     catch (ArgumentOutOfRangeException)
                     {
-                        throw new GeoGenException($"The signature requires {ObjectTypesToNeededCount[objectParameter.ObjectType]} object(s) of type {objectParameter.ObjectType} and there are only {objects.Count} of them.");
+                        throw new GeoGenException($"The number of required objects of type {objectParameter.ObjectType} is {ObjectTypesToNeededCount[objectParameter.ObjectType]}, but their count is {objects.Count}.");
                     }
                 }
 

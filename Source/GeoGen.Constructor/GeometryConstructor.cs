@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using System;
+using System.Linq;
 
 namespace GeoGen.Constructor
 {
@@ -25,6 +26,11 @@ namespace GeoGen.Constructor
         /// </summary>
         private readonly IConstructorsResolver _resolver;
 
+        /// <summary>
+        /// The tracer for objects that couldn't be constructed because of inconsistencies between containers.
+        /// </summary>
+        private readonly IGeometryConstructionFailureTracer _tracer;
+
         #endregion
 
         #region Constructor
@@ -35,11 +41,13 @@ namespace GeoGen.Constructor
         /// <param name="factory">The factory for creating object container managers that hold the actual geometry.</param>
         /// <param name="constructor">The constructor of loose objects.</param>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
-        public GeometryConstructor(IObjectsContainersManagerFactory factory, ILooseObjectsConstructor constructor, IConstructorsResolver resolver)
+        /// <param name="tracer">The tracer for objects that couldn't be constructed because of inconsistencies between containers.</param>
+        public GeometryConstructor(IObjectsContainersManagerFactory factory, ILooseObjectsConstructor constructor, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _tracer = tracer;
         }
 
         #endregion
@@ -67,17 +75,24 @@ namespace GeoGen.Constructor
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
                 // Prepare the variable holding the final result
-                GeometryData data;
+                GeometryData data = null;
 
                 try
                 {
                     // Execute the construction using our helper function
-                    data = manager.ExecuteAndResolvePossibleIncosistencies(() => ConstructObject(constructedObject, manager, addToContainers: true));
+                    manager.ExecuteAndResolvePossibleIncosistencies(
+                        // Call the internal construction function
+                        () => data = ConstructObject(constructedObject, manager, addToContainers: true),
+                        // Trace any inconsistency exception
+                        e => _tracer?.TraceInconsistencyWhileDrawingConfiguration(configuration, constructedObject, e.Message));
                 }
-                // If there are unresolvable inconsistencies....
-                catch (UnresolvableInconsistencyException)
+                // If there are unresolvable inconsistencies...
+                catch (UnresolvableInconsistencyException e)
                 {
-                    // Then we can't do more...
+                    // We trace it
+                    _tracer?.TraceUnresolvedInconsistencyWhileDrawingConfiguration(configuration, e.Message);
+
+                    // And return failure
                     return new GeometryData { SuccessfullyExamined = false };
                 }
 
@@ -102,27 +117,41 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Performs geometric examination of a given constructed object with respect to a given containers manager.
-        /// The object will be constructed, but won't be added to manager's containers.
+        /// Performs geometric examination of a given constructed object with respect to a given containers manager
+        /// that represents a given configuration.
+        /// The object will be constructed, but won't be added to the manager's containers.
         /// </summary>
+        /// <param name="configuration">The configuration that is drawn in the manager's containers.</param>
+        /// <param name="manager">The manager of objects containers where all the needed objects for the constructed object should be drawn.</param>
         /// <param name="constructedObject">The constructed configuration object to be examined.</param>
-        /// <param name="manager">The manager of objects containers.</param>
         /// <returns>The geometry data of the object.</returns>
-        public GeometryData Examine(ConstructedConfigurationObject constructedObject, IObjectsContainersManager manager)
+        public GeometryData Examine(Configuration configuration, IObjectsContainersManager manager, ConstructedConfigurationObject constructedObject)
         {
             try
             {
+                // Prepare the result
+                var data = default(GeometryData);
+
                 // Execute the construction without adding the object to the container
-                return manager.ExecuteAndResolvePossibleIncosistencies(() => ConstructObject(constructedObject, manager, addToContainers: false));
+                manager.ExecuteAndResolvePossibleIncosistencies(
+                    // Call the internal construction function
+                    () => data = ConstructObject(constructedObject, manager, addToContainers: false),
+                    // Trace any inconsistency exception
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(configuration, constructedObject, e.Message));
+
+                // Return the data
+                return data;
             }
             // If there are unresolvable inconsistencies...
-            catch (UnresolvableInconsistencyException)
+            catch (UnresolvableInconsistencyException e)
             {
-                // Then we can't do more...
+                // We trace it
+                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(configuration, constructedObject, e.Message);
+
+                // And return failure
                 return new GeometryData { SuccessfullyExamined = false };
             }
         }
-
 
         #endregion
 
@@ -142,9 +171,6 @@ namespace GeoGen.Constructor
 
             // Initialize a variable holding a potential duplicate version of the object
             ConfigurationObject duplicate = default;
-
-            // Initialize a variable indicating if we've already processed some container
-            var noContainerProcessed = true;
 
             // Let the resolver find the constructor and let it create the constructor function
             var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
@@ -179,25 +205,17 @@ namespace GeoGen.Constructor
 
                 // We need to first check if some other container didn't mark constructibility in the opposite way
                 // If yes, we have an inconsistency
-                if (!noContainerProcessed && canBeConstructed != objectConstructed)
-                    throw new InconsistentContainersException();
+                if (container != manager.First() && canBeConstructed != objectConstructed)
+                    throw new InconsistentContainersException("The fact whether the object can be constructed was not determined consistently.");
 
                 // Now we need to check if some other container didn't find a different duplicate 
                 // If yes, we have an inconsistency
-                if (!noContainerProcessed && duplicate != equalObject)
-                    throw new InconsistentContainersException();
+                if (container != manager.First() && duplicate != equalObject)
+                    throw new InconsistentContainersException("The fact whether the object has an equal version was not determined consistently.");
 
-                // If this is the first container that we're processing...
-                if (noContainerProcessed)
-                {
-                    // Then we need to set the constructible and duplicate variables
-                    // so we can work with them in the other iterations
-                    canBeConstructed = objectConstructed;
-                    duplicate = equalObject;
-
-                    // And set that we've processed a container
-                    noContainerProcessed = false;
-                }
+                // Set the found values
+                canBeConstructed = objectConstructed;
+                duplicate = equalObject;
             }
 
             //  Now the object is handled with respect to all the containers

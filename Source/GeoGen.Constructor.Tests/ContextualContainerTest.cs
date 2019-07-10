@@ -76,15 +76,25 @@ namespace GeoGen.Constructor.Tests
                 return container;
             }).ToList();
 
+            #region IObjectsContainerManager mock
+
             // Mock a manager that doesn't care about inconsistencies
             var manager = new Mock<IObjectsContainersManager>();
+
+            // Setup enumerator so it returns out containers
             manager.Setup(s => s.GetEnumerator()).Returns(() => containers.GetEnumerator());
 
-            // Mock the configuration
-            var configuration = new Mock<ContextualContainerSettings>();
+            // Setup function executing a given action so that it ignores inconsistencies (unlike the name says)
+            manager.Setup(s => s.ExecuteAndResolvePossibleIncosistencies(It.IsAny<Action>(), It.IsAny<Action<InconsistentContainersException>>()))
+                   .Callback<Action, Action<InconsistentContainersException>>((a, c) => a());
+
+            #endregion
+
+            // Mock the settings
+            var settings = new Mock<ContextualContainerSettings>();
 
             // And create the final result
-            return new ContextualContainer(configuration.Object, looseObjects, manager.Object);
+            return new ContextualContainer(new Configuration(new LooseObjectsHolder(looseObjects), new ConstructedConfigurationObject[0]), manager.Object, settings.Object);
         }
 
         #endregion

@@ -102,7 +102,7 @@ namespace GeoGen.Theorems
             potentialConsequence.Configuration.ObjectsMap.AllObjects.ForEach(objectsContainer.Add);
 
             // Create a lazy initializer of the contextual container
-            var contextualContainerInitializer = new Lazy<IContextualContainer>(() => _contextualContainerFactory.Create(potentialConsequence.Configuration.ObjectsMap.AllObjects, testedConfigurationData.Manager));
+            var contextualContainerInitializer = new Lazy<IContextualContainer>(() => _contextualContainerFactory.Create(potentialConsequence.Configuration, testedConfigurationData.Manager));
 
             // Local function to access the contextual container
             IContextualContainer ContextualContainer() => contextualContainerInitializer.Value;
@@ -216,7 +216,7 @@ namespace GeoGen.Theorems
                 if (equalObject == null)
                 {
                     // We need to examine this object with respect to the tested configuration
-                    var newObjectData = _constructor.Examine(newObject, testedConfigurationData.Manager);
+                    var newObjectData = _constructor.Examine(originalTheorem.Configuration, testedConfigurationData.Manager, newObject);
 
                     // Make sure the examination went fine. If not, we can't do much
                     if (!newObjectData.SuccessfullyExamined)
@@ -327,60 +327,54 @@ namespace GeoGen.Theorems
 
                 if (templateObjects.Layout == LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints)
                 {
-                    return ContextualContainer()
-                        .GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+                    return ContextualContainer().GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+                    {
+                        IncludeCirces = true,
+                        Type = ContextualContainerQuery.ObjectsType.All
+                    })
+                    .Where(circle => circle.Points.Count >= 4)
+                    .ToArray()
+                    .UnorderedTriples()
+                    .Select(triple => new[] { (triple.Item1, triple.Item2), (triple.Item2, triple.Item3), (triple.Item3, triple.Item1) }
+                                        .Select(pair => pair.Item1.CommonPointsWith(pair.Item2).ToArray()).ToArray())
+                    .Where(commonPoints => commonPoints.All(points => points.Length == 2))
+                    .Select(commonPoints => new MappingData
+                    {
+                        Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
                         {
-                            IncludeCirces = true,
-                            Type = ContextualContainerQuery.ObjectsType.All
-                        })
-                        .Where(circle => circle.Points.Count >= 4)
-                        .Select(x =>
+                            { templateObjects.LooseObjects[0], commonPoints[0][0].ConfigurationObject },
+                            { templateObjects.LooseObjects[1], commonPoints[0][1].ConfigurationObject },
+                            { templateObjects.LooseObjects[2], commonPoints[1][0].ConfigurationObject },
+                            { templateObjects.LooseObjects[3], commonPoints[1][1].ConfigurationObject },
+                            { templateObjects.LooseObjects[4], commonPoints[2][0].ConfigurationObject },
+                            { templateObjects.LooseObjects[5], commonPoints[2][1].ConfigurationObject }
+                        },
+                        UsedFacts = new List<Theorem>
                         {
-                            return x;
-                        })
-                        .ToList()
-                        .UnorderedTriples()
-                        .Select(triple => new[] { (triple.Item1, triple.Item2), (triple.Item2, triple.Item3), (triple.Item3, triple.Item1)
-}
-                                            .Select(pair => pair.Item1.CommonPointsWith(pair.Item2).ToArray()).ToArray())
-                        .Where(commonPoints => commonPoints.All(points => points.Length == 2))
-                        .Select(commonPoints => new MappingData
-                        {
-                            Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
+                            new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
                             {
-                                { templateObjects.LooseObjects[0], commonPoints[0][0].ConfigurationObject },
-                                { templateObjects.LooseObjects[1], commonPoints[0][1].ConfigurationObject },
-                                { templateObjects.LooseObjects[2], commonPoints[1][0].ConfigurationObject },
-                                { templateObjects.LooseObjects[3], commonPoints[1][1].ConfigurationObject },
-                                { templateObjects.LooseObjects[4], commonPoints[2][0].ConfigurationObject },
-                                { templateObjects.LooseObjects[5], commonPoints[2][1].ConfigurationObject }
-                            },
-                            UsedFacts = new List<Theorem>
+                                new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[1][1].ConfigurationObject)
+                            }),
+                            new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
                             {
-                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
-                                {
-                                    new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[1][1].ConfigurationObject)
-                                }),
-                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
-                                {
-                                    new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
-                                }),
-                                new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
-                                {
-                                    new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[1][1].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
-                                    new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
-                                })
-                            },
-                            EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
-                        });
+                                new TheoremPointObject(commonPoints[0][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[0][1].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
+                            }),
+                            new Theorem(originalTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                            {
+                                new TheoremPointObject(commonPoints[1][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[1][1].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[2][0].ConfigurationObject),
+                                new TheoremPointObject(commonPoints[2][1].ConfigurationObject)
+                            })
+                        },
+                        EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()
+                    });
                 }
 
                 if (templateObjects.Layout == LooseObjectsLayout.Trapezoid)
@@ -388,7 +382,7 @@ namespace GeoGen.Theorems
 
                     return testedConfigurationData.Manager.Aggregate(
 
-                        // First argument
+                        // Seed
                         ContextualContainer().GetGeometricalObjects<LineObject>(new ContextualContainerQuery
                         {
                             IncludeLines = true,
@@ -396,7 +390,7 @@ namespace GeoGen.Theorems
                         })
                         .Where(line => line.Points.Count >= 2).ToEnumerable(),
 
-                        // Second argument
+                        // Aggregation function
                         (currentGroups, container) =>
                         {
                             return currentGroups.SelectMany(current =>
@@ -407,23 +401,23 @@ namespace GeoGen.Theorems
                             });
                         })
                         .SelectMany(group => group.ToArray().UnorderedPairs())
-                        .Select(linePair => new[] { linePair.Item1.Points.Subsets(2), linePair.Item2.Points.Subsets(2) }.Combine())
-                        .Select(x => x.Flatten().Flatten().ToArray())
-                        .Select(x => new MappingData
+                        .Select(pairOfLines => new[] { pairOfLines.Item1.Points.Subsets(2), pairOfLines.Item2.Points.Subsets(2) }.Combine())
+                        .Select(pairOfPairsOfPoints => pairOfPairsOfPoints.Flatten().Flatten().ToArray())
+                        .Select(points => new MappingData
                         {
                             Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
                             {
-                                { templateObjects.LooseObjects[0], x[0].ConfigurationObject },
-                                { templateObjects.LooseObjects[1], x[1].ConfigurationObject },
-                                { templateObjects.LooseObjects[2], x[2].ConfigurationObject },
-                                { templateObjects.LooseObjects[3], x[3].ConfigurationObject }
+                                { templateObjects.LooseObjects[0], points[0].ConfigurationObject },
+                                { templateObjects.LooseObjects[1], points[1].ConfigurationObject },
+                                { templateObjects.LooseObjects[2], points[2].ConfigurationObject },
+                                { templateObjects.LooseObjects[3], points[3].ConfigurationObject }
                             },
                             UsedFacts = new List<Theorem>
                             {
                                 new Theorem(originalTheorem.Configuration, TheoremType.ParallelLines, new[]
                                 {
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, x[0].ConfigurationObject, x[1].ConfigurationObject),
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, x[2].ConfigurationObject, x[3].ConfigurationObject)
+                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, points[0].ConfigurationObject, points[1].ConfigurationObject),
+                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, points[2].ConfigurationObject, points[3].ConfigurationObject)
                                 })
                             },
                             EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>()

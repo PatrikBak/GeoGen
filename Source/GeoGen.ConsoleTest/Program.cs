@@ -9,6 +9,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.ConsoleTest
 {
@@ -31,22 +32,22 @@ namespace GeoGen.ConsoleTest
             // Prepare theorem analyzer settings
             var theoremAnalysisSettings = new TheoremAnalysisSettings
             {
-                MinimalNumberOfTrueContainers = 7,
-                MinimalNumberOfTrueContainersToRevalidate = 1,
+                MinimalNumberOfTrueContainers = 20,
+                MinimalNumberOfTrueContainersToRevalidate = 8,
             };
 
             // Prepare contextual container settings
             var contextualContainerSettings = new ContextualContainerSettings
             {
-                MaximalNumberOfAttemptsToReconstruct = 100,
+                MaximalNumberOfAttemptsToReconstruct = 5,
             };
 
             // Prepare objects containers settings
             var objectsContainersManagerSettings = new ObjectsContainersManagerSettings
             {
-                NumberOfContainers = 8,
-                MaximalAttemptsToReconstructOneContainer = 100,
-                MaximalAttemptsToReconstructAllContainers = 1000
+                NumberOfContainers = 20,
+                MaximalAttemptsToReconstructOneContainer = 5,
+                MaximalAttemptsToReconstructAllContainers = 5
             };
 
             // Prepare input
@@ -57,12 +58,10 @@ namespace GeoGen.ConsoleTest
                 NumberOfIterations = 2,
             };
 
+            var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Execute(input);
+
             // Perform the algorithm
             GenerateAndPrintResults(input, theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings, "output.txt");
-
-            // Write reports
-            IoC.Get<DefaultInconstructibleObjectsTracer>().WriteReport("inconstructible_objects.txt");
-            IoC.Get<DefaultEqualObjectsTracer>().WriteReport("equal_objects.txt");
         }
 
         private static Configuration InitialConfiguration()
@@ -71,9 +70,10 @@ namespace GeoGen.ConsoleTest
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var I = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, B, C);
-            var M = new ConstructedConfigurationObject(ComposedConstructions.Circumcenter, B, C, I);
+            var J = new ConstructedConfigurationObject(ComposedConstructions.Incenter, B, I, C);
+            var K = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, I, J);
 
-            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, I, M);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, I);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
@@ -89,11 +89,13 @@ namespace GeoGen.ConsoleTest
             //PredefinedConstructionsFactory.Get(PerpendicularProjection),
             //PredefinedConstructionsFactory.Get(PointReflection),
             //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
-            //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
+            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
             //PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
-            //ComposedConstructions.Centroid,
+            ComposedConstructions.Centroid,
             //ComposedConstructions.Incenter,
-            ComposedConstructions.Orthocenter,
+            //ComposedConstructions.Circumcenter,
+            //ComposedConstructions.PerpendicularProjectionOnLineFromPoints,
+            //ComposedConstructions.Orthocenter,
             //ComposedConstructions.IntersectionOfLinesFromPoints,
             //ComposedConstructions.IntersectionOfLineAndLineFromPoints,
             //ComposedConstructions.Parallelogram,
@@ -109,7 +111,7 @@ namespace GeoGen.ConsoleTest
                                                     ObjectsContainersManagerSettings objectsContainersManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
-                                                    bool analyzeInitialTheorems = true,
+                                                    bool analyzeInitialTheorems = false,
                                                     bool skipConfigurationsWithoutTheormems = true)
         {
 

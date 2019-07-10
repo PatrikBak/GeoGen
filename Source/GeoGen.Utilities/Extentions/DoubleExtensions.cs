@@ -11,7 +11,7 @@
         /// <param name="number">The number to be rounded.</param>
         /// <param name="precision">The number of binary places to which we want to round the number.</param>
         /// <returns>The rounded value of the number.</returns>
-        public static unsafe double Rounded(this double number, int precision = 30)
+        public static unsafe double Rounded(this double number, int precision = 25)
         {
             // Get the IEEE 754 bits of the number. 
             var bits = *(long*) &number;

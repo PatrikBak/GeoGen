@@ -103,12 +103,12 @@ namespace GeoGen.ConsoleTest
                     try
                     {
                         // Safely create the container
-                        var container = geometryData.Manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(_configuration.ObjectsMap.AllObjects, geometryData.Manager));
+                        var container = _factory.Create(_configuration, geometryData.Manager);
 
                         // Run the analysis
                         return _analyzer.Analyze(_configuration, geometryData.Manager, container);
                     }
-                    catch (UnreconstructibleContainerException)
+                    catch (UnconstructibleContextualContainer)
                     {
                         // If we cannot construct this container, we can't have full results...
                         throw new GeoGenException("There is a configuration for which we were not able to create a contextual container");

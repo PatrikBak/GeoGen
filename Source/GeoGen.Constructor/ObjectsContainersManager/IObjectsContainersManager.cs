@@ -14,14 +14,13 @@ namespace GeoGen.Constructor
         /// Performs a given function that might cause an <see cref="InconsistentContainersException"/> and tries 
         /// to handle it. If the exception couldn't be handled, throws an <see cref="UnresolvableInconsistencyException"/>.
         /// </summary>
-        /// <typeparam name="T">The return type of the function to be executed.</typeparam>
-        /// <param name="function">The function to be executed.</param>
-        /// <returns>The returned result of the executed function.</returns>
-        T ExecuteAndResolvePossibleIncosistencies<T>(Func<T> function);
+        /// <param name="function">The action to be executed.</param>
+        /// <param name="exceptionCallback">The action called after an <see cref="InconsistentContainersException"/> occurs.</param>
+        void ExecuteAndResolvePossibleIncosistencies(Action action, Action<InconsistentContainersException> exceptionCallback);
 
         /// <summary>
-        /// Tries to reconstruct all the containers that this manager manages. If it cannot be done, then 
-        /// an <see cref="UnreconstructibleContainerException"/> is thrown.
+        /// Tries to reconstruct all the containers that this manager manages. 
+        /// If the exception couldn't be handled, throws an <see cref="UnresolvableInconsistencyException"/>.
         /// </summary>
         void TryReconstructContainers();
     }

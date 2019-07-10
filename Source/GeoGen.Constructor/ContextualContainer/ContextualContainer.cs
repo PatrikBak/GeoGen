@@ -63,12 +63,17 @@ namespace GeoGen.Constructor
         /// <summary>
         /// The tracer of unsuccessful attempts to reconstruct the container.
         /// </summary>
-        private readonly IUnsuccessfulReconstructionsTracer _tracer;
+        private readonly IContexualContainerConstructionFailureTracer _tracer;
 
         /// <summary>
         /// The settings of the container.
         /// </summary>
         private readonly ContextualContainerSettings _settings;
+
+        /// <summary>
+        /// The configuration that is drawn in the container.
+        /// </summary>
+        private readonly Configuration _configuration;
 
         #endregion
 
@@ -81,8 +86,9 @@ namespace GeoGen.Constructor
         /// <param name="objects">The objects to be present in the container.</param>
         /// <param name="manager">The manager of all the containers where our objects are supposed to be drawn.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the container.</param>[
-        public ContextualContainer(ContextualContainerSettings settings, IReadOnlyList<ConfigurationObject> objects, IObjectsContainersManager manager, IUnsuccessfulReconstructionsTracer tracer = null)
+        public ContextualContainer(Configuration configuration, IObjectsContainersManager manager, ContextualContainerSettings settings, IContexualContainerConstructionFailureTracer tracer = null)
         {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _tracer = tracer;
@@ -90,19 +96,55 @@ namespace GeoGen.Constructor
             // Initialize the dictionary mapping containers to the object maps
             _manager.ForEach(container => _objects.Add(container, new Map<GeometricalObject, IAnalyticObject>()));
 
+            #region Adding objects
+
+            // Get the objects list of the configuration
+            var objects = configuration.ObjectsMap.AllObjects;
+
+            // Prepare a variable holding the currently added object so we can access
+            // it the inconsistency exception callback
+            var currentObject = default(ConfigurationObject);
+
             try
             {
-                // Add all objects, where only the last one is new
-                objects.ForEach((obj, index) => Add(obj, isNew: index == objects.Count - 1));
+                // Add all objects, safely through the manager handling inconsistencies
+                manager.ExecuteAndResolvePossibleIncosistencies(
+                    // Add all the objects
+                    () => objects.ForEach((obj, index) =>
+                    {
+                        // Set that we're processing this object
+                        currentObject = obj;
+
+                        // Add the current object. Only the last one is new
+                        Add(obj, isNew: index == objects.Count - 1);
+                    }),
+                    // Inconsistency handler
+                    e =>
+                    {
+                        // Trace possible inconsistency exceptions
+                        _tracer?.TraceInconsistencyWhileConstructingContainer(configuration, currentObject, e.Message);
+
+                        // Reset fields
+                        _objects.Values.ForEach(map => map.Clear());
+                        _oldPoints.Clear();
+                        _oldLines.Clear();
+                        _oldCircles.Clear();
+                        _newPoints.Clear();
+                        _newLines.Clear();
+                        _newCircles.Clear();
+                        _configurationObjectsMap.Clear();
+                    });
             }
-            catch (AnalyticException)
+            catch (UnresolvableInconsistencyException e)
             {
-                // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
-                // resolve it as an inconsistency. These exception are possible, because it would be very
-                // hard to predict every possible outcome of the fact that the numerical system is not 
-                // precise. Other exceptions would be a bigger deal and we won't hide them
-                throw new InconsistentContainersException();
+                // If we are unable to resolve inconsistencies, we trace it
+                _tracer?.TraceConstructionFailure(_configuration, e.Message);
+
+                // And say the container is not constructible
+                throw new UnconstructibleContextualContainer($"The construction of the contextual container failed. The inner reason: {e.Message}.");
             }
+
+            #endregion
         }
 
         #endregion
@@ -228,25 +270,19 @@ namespace GeoGen.Constructor
                     // If we got here, we're happy
                     break;
                 }
-                catch (ConstructorException)
+                catch (InconsistentContainersException e)
                 {
-                    // It might happen that it failed. This is a very rare case, 
-                    // but due to the imprecision of the analytic geometry it is possible
+                    // It might happen that it failed. Trace it
+                    _tracer?.TraceUnsuccessfulAttemptToReconstruct(_configuration, e.Message);
                 }
             }
 
             // We did it if and only if we didn't reach the maximal number of attempts
             successful = numberOfAttempts != _settings.MaximalNumberOfAttemptsToReconstruct;
 
-            // If we made it and needed more than one attempt, trace it
-            if (successful && numberOfAttempts > 1)
-                _tracer?.TraceUnsucessfullAttemptsToReconstruct(this, _manager, numberOfAttempts);
-
-            // If we weren't successful at all, trace that as well
-            if (!successful)
-                _tracer?.TraceReachingMaximalNumberOfAttemptsToReconstruct(this, _manager);
+            // Trace unsuccessful reconstruction
+            _tracer?.TraceReconstructionFailure(_configuration, $"The total number of attempts ({_settings.MaximalNumberOfAttemptsToReconstruct}) has been reached.");
         }
-
 
         #endregion
 
@@ -345,16 +381,16 @@ namespace GeoGen.Constructor
             // We're gonna check all the containers
             foreach (var container in _manager)
             {
-                // Pull the analytic representation of this object. It must exist,
-                // which is part of the contract of this class
+                // Pull the analytic representation of this object. 
                 var analyticObject = container.Get(configurationObject);
 
                 // If the analytic version of this object is not present...
                 if (!_objects[container].ContainsRightKey(analyticObject))
                 {
-                    // And the result is already set, then we have an inconsistency
-                    if (result != null)
-                        throw new InconsistentContainersException();
+                    // If this is not the first container and our results
+                    // don't match, then we have an inconsistency
+                    if (container != _manager.First() && result != null)
+                        throw new InconsistentContainersException("The geometrical object corresponding to a configuration object could not be determined consistently.");
 
                     // Otherwise we'll try another container
                     continue;
@@ -363,9 +399,10 @@ namespace GeoGen.Constructor
                 // But if it exists in the container, we pull its geometrical version.
                 var geometricalObject = _objects[container].GetLeftValue(analyticObject);
 
-                // If the result has been already set to something else, then we have an inconsistency
-                if (result != null && !ReferenceEquals(result, geometricalObject))
-                    throw new InconsistentContainersException();
+                // If this is not the first container and our results
+                // don't match, then we have an inconsistency
+                if (container != _manager.First() && result != geometricalObject)
+                    throw new InconsistentContainersException("The geometrical object corresponding to a configuration object could not be determined consistently.");
 
                 // If we're fine, we can set the result and test the next container
                 result = geometricalObject;
@@ -461,8 +498,21 @@ namespace GeoGen.Constructor
                 // Pull the map between geometrical and analytic objects for this container
                 var map = _objects[container];
 
-                // Construct the analytic line from the analytic representations of the points in the map
-                var analyticLine = new Line((Point) map.GetRightValue(point1), (Point) map.GetRightValue(point2));
+                // We should be able to construct a line from the analytic representations of the points in the map
+                var analyticLine = default(Line);
+
+                try
+                {
+                    // Let's try doing so
+                    analyticLine = new Line((Point) map.GetRightValue(point1), (Point) map.GetRightValue(point2));
+                }
+                catch (AnalyticException)
+                {
+                    // If we can't do it, then we have a very rare case where two points are almost
+                    // the same, which was not found out by their equals method, but we still cannot
+                    // construct a line from them. We will consider this an inconsistency
+                    throw new InconsistentContainersException("Two points were evaluated distinct, but yet we weren't able to construct a line through them (this should be very rare).");
+                }
 
                 // Cache the result
                 containersMap.Add(container, analyticLine);
@@ -473,14 +523,18 @@ namespace GeoGen.Constructor
                     // Then pull the corresponding geometrical line
                     var newResult = map.GetLeftValue(analyticLine);
 
-                    // If the current result has been set and is distinct
-                    // from the pulled line, then we have an inconsistency
-                    if (result != null && !ReferenceEquals(result, newResult))
-                        throw new InconsistentContainersException();
+                    // If this is not the first container and our results 
+                    // don't match, then we have an inconsistency
+                    if (container != _manager.First() && result != newResult)
+                        throw new InconsistentContainersException("A line object couldn't be set consistently within more containers (this should be very rare).");
 
                     // Otherwise we can update the result
                     result = (LineObject) newResult;
                 }
+                // If this is not the first container and the result is
+                // already set, then we also have an inconsistency
+                else if (container != _manager.First() && result != null)
+                    throw new InconsistentContainersException("A line object couldn't be set consistently within more containers (this should be very rare).");
             }
 
             // If the result is not null, i.e. the line already exists, we won't do anything else
@@ -538,7 +592,7 @@ namespace GeoGen.Constructor
 
                 // If we got a different result than the one set, then we have an inconsistency 
                 if (collinear != null && collinear.Value != areCollinear)
-                    throw new InconsistentContainersException();
+                    throw new InconsistentContainersException("Three points are not collinear in every container.");
 
                 // We're fine, we can set the collinearity result
                 collinear = areCollinear;
@@ -547,8 +601,19 @@ namespace GeoGen.Constructor
                 if (areCollinear)
                     continue;
 
-                // Otherwise we can construct the analytic circle from the points
-                var analyticCircle = new Circle(analyticPoint1, analyticPoint2, analyticPoint3);
+                // Otherwise we should be able to construct the analytic circle from the points
+                var analyticCircle = default(Circle);
+
+                try
+                {
+                    // Let's try so
+                    analyticCircle = new Circle(analyticPoint1, analyticPoint2, analyticPoint3);
+                }
+                catch (AnalyticException)
+                {
+                    // If it fails, which is a very rare case, it will be considered an inconsistency
+                    throw new InconsistentContainersException("Three points were evaluated collinear, but yet we weren't able to construct a circle through them (this is a rare case)");
+                }
 
                 // Cache the result
                 containersMap.Add(container, analyticCircle);
@@ -559,14 +624,18 @@ namespace GeoGen.Constructor
                     // Then pull the corresponding geometrical circle
                     var newResult = map.GetLeftValue(analyticCircle);
 
-                    // If the current result has been set and is distinct
-                    // from the pulled circle, then we have an inconsistency
-                    if (result != null && !ReferenceEquals(result, newResult))
-                        throw new InconsistentContainersException();
+                    // If this is not the first container and our results 
+                    // don't match, then we have an inconsistency
+                    if (container != _manager.First() && result != newResult)
+                        throw new InconsistentContainersException("A circle object couldn't be set consistently with more containers (this should be very rare).");
 
                     // Otherwise we can update the result
                     result = (CircleObject) newResult;
                 }
+                // If this is not the first container and the result is
+                // already set, then we also have an inconsistency
+                else if (container != _manager.First() && result != null)
+                    throw new InconsistentContainersException("A circle object couldn't be set consistently with more containers (this should be very rare).");
             }
 
             // If the result is not null, i.e. the circle already exists, we won't do anything else
@@ -663,7 +732,7 @@ namespace GeoGen.Constructor
                 // If the result has been set and it differs from the currently 
                 // found value, then we have an inconsistency
                 if (result != null && result.Value != liesOn)
-                    throw new InconsistentContainersException();
+                    throw new InconsistentContainersException($"The fact whether a point lies on a {(geometricalObject is LineObject ? "line" : "circle")} is not the same in every container.");
 
                 // Otherwise we update the result
                 result = liesOn;
@@ -678,13 +747,21 @@ namespace GeoGen.Constructor
         #region Reconstructing container
 
         /// <summary>
-        /// Performs the actual reconstruction of the container and throws an <see cref="AnalyticException"/>,
-        /// if it's not successful.
+        /// Performs the actual reconstruction of the container and throws an 
+        /// <see cref="InconsistentContainersException"/>, if it's not successful.
         /// </summary>
         private void Reconstruct()
         {
-            // Let the manager reconstruct its containers
-            _manager.TryReconstructContainers();
+            try
+            {
+                // Let the manager reconstruct its containers
+                _manager.TryReconstructContainers();
+            }
+            catch (UnresolvableInconsistencyException e)
+            {
+                // If we cannot do so, we're doomed
+                throw new UnconstructibleContextualContainer($"The reconstruction of the contextual container failed because of inability to reconstruct the objects manager. The inner message: {e.Message}");
+            }
 
             // Prepare a new objects map
             var newMap = new Dictionary<IObjectsContainer, Map<GeometricalObject, IAnalyticObject>>();
@@ -714,41 +791,57 @@ namespace GeoGen.Constructor
 
                         // We get the needed numbers of points (which is 2 for line, 3 for circle)
                         // We could have tried get all pair and triples to be sure they make the same
-                        // line/circle, but 
+                        // line/circle 
                         var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
-                                        // Get their analytic representations in the container
-                                        .Select(point => container.Get(point.ConfigurationObject))
-                                        // Cast to the right type
-                                        .Cast<Point>()
-                                        // Enumerate to an array
-                                        .ToArray();
+                                // Get their analytic representations in the container
+                                .Select(point => container.Get(point.ConfigurationObject))
+                                // Cast to the right type
+                                .Cast<Point>()
+                                // Enumerate to an array
+                                .ToArray();
 
-                        try
+                        // Decide according to the object
+                        switch (geometricalObject)
                         {
-                            // Decide according to the object
-                            switch (geometricalObject)
-                            {
-                                // Line case
-                                case LineObject line:
+                            // Line case
+                            case LineObject line:
+
+                                try
+                                {
+                                    // Construct a line from our points
                                     analyticObject = new Line(points[0], points[1]);
-                                    break;
+                                }
+                                catch (AnalyticException)
+                                {
+                                    // Since we didn't care about inconsistencies, it might happen that
+                                    // in the new container the points can't make a line anymore
+                                    // because of some very slight imprecision. This is a very rare case though.
+                                    throw new InconsistentContainersException("Analytical points that could make a line are no longer able to do so (this should be very rare).");
+                                }
 
-                                // Circle case
-                                case CircleObject circle:
+                                break;
+
+                            // Circle case
+                            case CircleObject circle:
+
+                                try
+                                {
+                                    // Construct a circle from our points
                                     analyticObject = new Circle(points[0], points[1], points[2]);
-                                    break;
+                                }
+                                catch (AnalyticException)
+                                {
+                                    // Since we didn't care about inconsistencies, it might happen that
+                                    // in the new container the points can't make a circle anymore
+                                    // because of some very slight imprecision. This is a very rare case though.
+                                    throw new InconsistentContainersException("Analytical points that could make a circle are no longer able to do so (this should be very rare).");
+                                }
 
-                                // There shouldn't be any other
-                                default:
-                                    throw new ConstructorException("Unknown type of geometrical object");
-                            }
-                        }
-                        catch (AnalyticException)
-                        {
-                            // Since we didn't care about inconsistencies, it might happen that
-                            // in the new container the points can't make a line or a circle anymore
-                            // because of some very slight imprecision. This is a very rare case though.
-                            throw new ConstructorException("Reconstruction of the container failed.");
+                                break;
+
+                            // There shouldn't be any other cases
+                            default:
+                                throw new ConstructorException("Unknown type of geometrical object");
                         }
                     }
 
@@ -760,9 +853,9 @@ namespace GeoGen.Constructor
                     catch (ArgumentException)
                     {
                         // Since we didn't care about inconsistencies, it might happen that
-                        // an almost equal version of this object is already added  because
+                        // an almost equal version of this object is already added because
                         // of some very slight imprecision. This is a very rare case though.
-                        throw new ConstructorException("Reconstruction of the container failed.");
+                        throw new InconsistentContainersException("Analytic objects that were distinct before are not longer like this (this should be very rare).");
                     }
                 });
             });

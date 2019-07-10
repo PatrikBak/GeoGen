@@ -16,12 +16,14 @@ namespace GeoGen.Constructor
         GeometryData Construct(Configuration configuration);
 
         /// <summary>
-        /// Performs geometric examination of a given constructed object with respect to a given containers manager.
-        /// The object will be constructed, but won't be added to manager's containers.
+        /// Performs geometric examination of a given constructed object with respect to a given containers manager
+        /// that represents a given configuration.
+        /// The object will be constructed, but won't be added to the manager's containers.
         /// </summary>
+        /// <param name="configuration">The configuration that is drawn in the manager's containers.</param>
+        /// <param name="manager">The manager of objects containers where all the needed objects for the constructed object should be drawn.</param>
         /// <param name="constructedObject">The constructed configuration object to be examined.</param>
-        /// <param name="manager">The manager of objects containers.</param>
         /// <returns>The geometry data of the object.</returns>
-        GeometryData Examine(ConstructedConfigurationObject constructedObject, IObjectsContainersManager manager);
+        GeometryData Examine(Configuration configuration, IObjectsContainersManager manager, ConstructedConfigurationObject constructedObject);
     }
 }

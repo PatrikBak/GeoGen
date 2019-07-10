@@ -67,9 +67,9 @@ namespace GeoGen.ConsoleTest
                 try
                 {
                     // Let the manager safely create an instance of the contextual container
-                    container = output.Manager.ExecuteAndResolvePossibleIncosistencies(() => _factory.Create(output.Configuration.ObjectsMap.AllObjects, output.Manager));
+                    container = _factory.Create(output.Configuration, output.Manager);
                 }
-                catch (UnresolvableInconsistencyException)
+                catch (UnconstructibleContextualContainer)
                 {
                     // If we cannot create a contextual container, we cannot do much
                 }

@@ -126,8 +126,8 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<IContextualContainerFactory>().ToFactory();
 
             // Tracers
-            Kernel.Bind<IInconsistentContainersTracer>().ToConstant((IInconsistentContainersTracer) null);
-            Kernel.Bind<IUnsuccessfulReconstructionsTracer>().ToConstant((IUnsuccessfulReconstructionsTracer) null);
+            Kernel.Bind<IGeometryConstructionFailureTracer>().ToConstant((IGeometryConstructionFailureTracer) null);
+            Kernel.Bind<IContexualContainerConstructionFailureTracer>().ToConstant((IContexualContainerConstructionFailureTracer) null);
         }
 
         /// <summary>
@@ -154,9 +154,11 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         private static void AddLocalDependencies()
         {
-            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
             Kernel.Rebind<IEqualObjectsTracer, DefaultEqualObjectsTracer>().To<DefaultEqualObjectsTracer>().InSingletonScope();
             Kernel.Rebind<IInconstructibleObjectsTracer, DefaultInconstructibleObjectsTracer>().To<DefaultInconstructibleObjectsTracer>().InSingletonScope();
+            Kernel.Rebind<IGeometryConstructionFailureTracer, DefaultGeometryConstructionFailureTracer>().To<DefaultGeometryConstructionFailureTracer>().InSingletonScope();
+            Kernel.Rebind<IContexualContainerConstructionFailureTracer, DefaultContexualContainerConstructionFailureTracer>().To<DefaultContexualContainerConstructionFailureTracer>().InSingletonScope();
+            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
             Kernel.Bind<SimpleCompleteTheoremAnalyzer>().ToSelf();
         }
 
