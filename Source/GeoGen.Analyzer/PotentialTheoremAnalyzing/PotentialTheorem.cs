@@ -22,7 +22,7 @@ namespace GeoGen.Analyzer
 
         /// <summary>
         /// Gets or sets the enumerable of the geometric objects that this theorem is about. 
-        /// Their actual types depend on the <see cref="TheoremType"/>.
+        /// Their actual types depend on the <see cref="Core.TheoremType"/>.
         /// </summary>
         public IEnumerable<GeometricalObject> InvolvedObjects { get; set; }
 

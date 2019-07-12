@@ -281,7 +281,8 @@ namespace GeoGen.Constructor
             successful = numberOfAttempts != _settings.MaximalNumberOfAttemptsToReconstruct;
 
             // Trace unsuccessful reconstruction
-            _tracer?.TraceReconstructionFailure(_configuration, $"The total number of attempts ({_settings.MaximalNumberOfAttemptsToReconstruct}) has been reached.");
+            if (!successful)
+                _tracer?.TraceReconstructionFailure(_configuration, $"The total number of attempts ({_settings.MaximalNumberOfAttemptsToReconstruct}) has been reached.");
         }
 
         #endregion

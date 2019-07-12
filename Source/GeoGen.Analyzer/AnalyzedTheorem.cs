@@ -53,12 +53,12 @@ namespace GeoGen.Analyzer
         /// <returns>The list of theorem objects representing the given geometrical objects.</returns>
         private static IReadOnlyList<TheoremObject> ConstructTheoremObjects(IEnumerable<GeometricalObject> geometricalObjects)
         {
-            // Local function that converts a geometrical object to a theorem object
-            TheoremObject Construct(GeometricalObject geometricalObject)
+            // Convert all the involved objects to theorem objects
+            return geometricalObjects.Select(geometricalObject =>
             {
                 // If we have a point, then we have the only option...
                 if (geometricalObject is PointObject)
-                    return new TheoremPointObject(geometricalObject.ConfigurationObject);
+                    return new TheoremPointObject(geometricalObject.ConfigurationObject) as TheoremObject;
 
                 // Otherwise the object is either a line, or a circle, so its definable by points
                 var objectWithPoints = (DefinableByPoints) geometricalObject;
@@ -75,10 +75,9 @@ namespace GeoGen.Analyzer
 
                 // Construct the final theorem object
                 return new TheoremObjectWithPoints(objectType, geometricalObject.ConfigurationObject, points);
-            }
-
-            // Convert all the involved objects to theorem objects
-            return geometricalObjects.Select(Construct).ToList();
+            })
+            // Enumerate to a list
+            .ToList();
         }
 
         #endregion

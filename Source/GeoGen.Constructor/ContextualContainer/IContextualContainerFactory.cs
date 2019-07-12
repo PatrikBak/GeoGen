@@ -11,8 +11,9 @@ namespace GeoGen.Constructor
     public interface IContextualContainerFactory
     {
         /// <summary>
-        /// Creates a new contextual container that holds given objects and gets their 
-        /// analytic representations from a given containers manager.
+        /// Creates a new contextual container that holds a given configuration and gets its
+        /// analytic representations from a given containers manager. If the construction cannot
+        /// be done, then the method raises an <see cref="UnconstructibleContextualContainer"/> exception.
         /// </summary>
         /// <param name="configuration">The configuration that will be drawn in the container.</param>
         /// <param name="manager">The manager of all the containers where our objects are supposed to be drawn.</param>

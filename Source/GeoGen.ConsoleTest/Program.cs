@@ -9,7 +9,6 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.ConsoleTest
 {
@@ -32,8 +31,8 @@ namespace GeoGen.ConsoleTest
             // Prepare theorem analyzer settings
             var theoremAnalysisSettings = new TheoremAnalysisSettings
             {
-                MinimalNumberOfTrueContainers = 20,
-                MinimalNumberOfTrueContainersToRevalidate = 8,
+                MinimalNumberOfTrueContainers = 5,
+                MinimalNumberOfTrueContainersToRevalidate = 5,
             };
 
             // Prepare contextual container settings
@@ -45,7 +44,7 @@ namespace GeoGen.ConsoleTest
             // Prepare objects containers settings
             var objectsContainersManagerSettings = new ObjectsContainersManagerSettings
             {
-                NumberOfContainers = 20,
+                NumberOfContainers = 5,
                 MaximalAttemptsToReconstructOneContainer = 5,
                 MaximalAttemptsToReconstructAllContainers = 5
             };
@@ -55,7 +54,7 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = InitialConfiguration(),
                 Constructions = Constructions(),
-                NumberOfIterations = 2,
+                NumberOfIterations = 1,
             };
 
             var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Execute(input);
@@ -69,40 +68,37 @@ namespace GeoGen.ConsoleTest
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var I = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, B, C);
-            var J = new ConstructedConfigurationObject(ComposedConstructions.Incenter, B, I, C);
-            var K = new ConstructedConfigurationObject(ComposedConstructions.Incenter, A, I, J);
 
-            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, I);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
         {
-            //PredefinedConstructionsFactory.Get(CenterOfCircle),
-            //PredefinedConstructionsFactory.Get(CircleWithCenterThroughPoint),
-            //PredefinedConstructionsFactory.Get(Circumcircle),
-            //PredefinedConstructionsFactory.Get(InternalAngleBisector),
-            //PredefinedConstructionsFactory.Get(IntersectionOfLines),
-            //PredefinedConstructionsFactory.Get(LineFromPoints),
-            //PredefinedConstructionsFactory.Get(Midpoint),
-            //PredefinedConstructionsFactory.Get(PerpendicularLine),
-            //PredefinedConstructionsFactory.Get(PerpendicularProjection),
-            //PredefinedConstructionsFactory.Get(PointReflection),
-            //PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleAndLineFromPoints),
-            PredefinedConstructionsFactory.Get(SecondIntersectionOfCircleWithCenterAndLineFromPoints),
-            //PredefinedConstructionsFactory.Get(SecondIntersectionOfTwoCircumcircles),
+            PredefinedConstructions.CenterOfCircle,
+            PredefinedConstructions.CircleWithCenterThroughPoint,
+            PredefinedConstructions.Circumcircle,
+            PredefinedConstructions.InternalAngleBisector,
+            PredefinedConstructions.IntersectionOfLines,
+            PredefinedConstructions.LineFromPoints,
+            PredefinedConstructions.Midpoint,
+            PredefinedConstructions.PerpendicularLine,
+            PredefinedConstructions.PerpendicularProjection,
+            PredefinedConstructions.PointReflection,
+            PredefinedConstructions.SecondIntersectionOfCircleAndLineFromPoints,
+            PredefinedConstructions.SecondIntersectionOfCircleWithCenterAndLineFromPoints,
+            PredefinedConstructions.SecondIntersectionOfTwoCircumcircles,
             ComposedConstructions.Centroid,
-            //ComposedConstructions.Incenter,
-            //ComposedConstructions.Circumcenter,
-            //ComposedConstructions.PerpendicularProjectionOnLineFromPoints,
-            //ComposedConstructions.Orthocenter,
-            //ComposedConstructions.IntersectionOfLinesFromPoints,
-            //ComposedConstructions.IntersectionOfLineAndLineFromPoints,
-            //ComposedConstructions.Parallelogram,
-            //ComposedConstructions.PerpendicularLineAtPointOfLine,
-            //ComposedConstructions.PerpendicularLineToLineFromPoints,
-            //ComposedConstructions.ReflectionInLine,
-            //ComposedConstructions.ReflectionInLineFromPoints
+            ComposedConstructions.Incenter,
+            ComposedConstructions.Circumcenter,
+            ComposedConstructions.PerpendicularProjectionOnLineFromPoints,
+            ComposedConstructions.Orthocenter,
+            ComposedConstructions.IntersectionOfLinesFromPoints,
+            ComposedConstructions.IntersectionOfLineAndLineFromPoints,
+            ComposedConstructions.Parallelogram,
+            ComposedConstructions.PerpendicularLineAtPointOfLine,
+            ComposedConstructions.PerpendicularLineToLineFromPoints,
+            ComposedConstructions.ReflectionInLine,
+            ComposedConstructions.ReflectionInLineFromPoints
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,
@@ -111,7 +107,7 @@ namespace GeoGen.ConsoleTest
                                                     ObjectsContainersManagerSettings objectsContainersManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
-                                                    bool analyzeInitialTheorems = false,
+                                                    bool analyzeInitialTheorems = true,
                                                     bool skipConfigurationsWithoutTheormems = true)
         {
 

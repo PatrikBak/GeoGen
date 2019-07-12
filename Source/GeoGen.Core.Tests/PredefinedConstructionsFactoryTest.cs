@@ -7,7 +7,7 @@ using System.Linq;
 namespace GeoGen.Core.Tests
 {
     /// <summary>
-    /// The test class for <see cref="PredefinedConstructionsFactory"/>
+    /// The test class for <see cref="PredefinedConstructions"/>
     /// </summary>
     public class PredefinedConstructionsFactoryTest
     {
@@ -22,7 +22,7 @@ namespace GeoGen.Core.Tests
                 .ForEach(type =>
                 {
                     // Get the construction
-                    var construction = PredefinedConstructionsFactory.Get(type);
+                    var construction = PredefinedConstructions.Get(type);
 
                     // Assert
                     construction.Should().NotBeNull();

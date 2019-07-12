@@ -5,7 +5,7 @@ using System.Linq;
 namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
-    /// Represents a geometrical 2D circle. This circle is defined by its center and radius.
+    /// Represents a geometric 2D circle. This circle is defined by its center and radius.
     /// </summary>
     public class Circle : IAnalyticObject, IEquatable<Circle>
     {

@@ -41,7 +41,7 @@
         /// <param name="type">The type of the predefined construction to be performed.</param>
         /// <param name="input">The input objects in the flattened order (see <see cref="Arguments.FlattenedList")/></param>
         public ConstructedConfigurationObject(PredefinedConstructionType type, params ConfigurationObject[] input)
-            : this(PredefinedConstructionsFactory.Get(type), input)
+            : this(PredefinedConstructions.Get(type), input)
         {
         }
 

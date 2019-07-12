@@ -29,11 +29,7 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
-        public Point(double x, double y)
-        {
-            X = x;
-            Y = y;
-        }
+        public Point(double x, double y) => (X, Y) = (x, y);
 
         #endregion
 

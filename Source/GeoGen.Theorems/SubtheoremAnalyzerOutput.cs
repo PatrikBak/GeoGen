@@ -6,13 +6,8 @@ namespace GeoGen.Theorems
     /// <summary>
     /// Represents an output of the <see cref="ISubtheoremAnalyzer"/>.
     /// </summary>
-    public class SubtheoremData
+    public class SubtheoremAnalyzerOutput
     {
-        /// <summary>
-        /// Gets or sets if the theorem was successfully analyzed. 
-        /// </summary>
-        public bool SuccessfullyAnalyzed { get; set; }
-
         /// <summary>
         /// Gets or sets if the theorem is sub-theorem of a provided theorem.
         /// </summary>

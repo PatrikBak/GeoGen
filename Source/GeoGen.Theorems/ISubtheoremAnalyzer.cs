@@ -8,11 +8,9 @@ namespace GeoGen.Theorems
     public interface ISubtheoremAnalyzer
     {
         /// <summary>
-        /// Finds out of a given original theorem is a consequence of another given theorem.
+        /// Performs the sub-theorem analysis on a given input.
         /// </summary>
-        /// <param name="originalTheorem">The original theorem that serves like a template.</param>
-        /// <param name="potentialConsequence">The theorem that might be a consequence of the original theorem.</param>
         /// <returns>The result of the sub-theorem analysis.</returns>
-        SubtheoremData Analyze(Theorem originalTheorem, Theorem potentialConsequence);
+        SubtheoremAnalyzerOutput Analyze(SubtheoremAnalyzerInput input);
     }
 }

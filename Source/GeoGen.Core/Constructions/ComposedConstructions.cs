@@ -4,7 +4,7 @@ using static GeoGen.Core.PredefinedConstructionType;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// A static class containing concrete <see cref="ComposedConstruction"/>s.
+    /// A static class containing concrete <see cref="ComposedConstruction"/>.
     /// </summary>
     public static class ComposedConstructions
     {
@@ -34,7 +34,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("IntersectionOfLineAndLineFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(IntersectionOfLineAndLineFromPoints), configuration, parameters);
             }
         }
 
@@ -65,7 +65,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("IntersectionOfLinesFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(IntersectionOfLinesFromPoints), configuration, parameters);
             }
         }
 
@@ -95,7 +95,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("PerpendicularProjectionOnLineFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(PerpendicularProjectionOnLineFromPoints), configuration, parameters);
             }
         }
 
@@ -124,7 +124,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("PerpendicularLineAtPointOfLine", configuration, parameters);
+                return new ComposedConstruction(nameof(PerpendicularLineAtPointOfLine), configuration, parameters);
             }
         }
 
@@ -154,7 +154,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("PerpendicularLineToLineFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(PerpendicularLineToLineFromPoints), configuration, parameters);
             }
         }
 
@@ -183,7 +183,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("ReflectionInLine", configuration, parameters);
+                return new ComposedConstruction(nameof(ReflectionInLine), configuration, parameters);
             }
         }
 
@@ -211,7 +211,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("PerpendicularBisector", configuration, parameters);
+                return new ComposedConstruction(nameof(PerpendicularBisector), configuration, parameters);
             }
         }
 
@@ -241,7 +241,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("ParallelLineToLineFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(ParallelLineToLineFromPoints), configuration, parameters);
             }
         }
 
@@ -271,7 +271,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("ReflectionInLineFromPoints", configuration, parameters);
+                return new ComposedConstruction(nameof(ReflectionInLineFromPoints), configuration, parameters);
             }
         }
 
@@ -301,7 +301,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Parallelogram", configuration, parameters);
+                return new ComposedConstruction(nameof(Parallelogram), configuration, parameters);
             }
         }
 
@@ -331,7 +331,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Orthocenter", configuration, parameters);
+                return new ComposedConstruction(nameof(Orthocenter), configuration, parameters);
             }
         }
 
@@ -361,7 +361,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Centroid", configuration, parameters);
+                return new ComposedConstruction(nameof(Centroid), configuration, parameters);
             }
         }
 
@@ -391,7 +391,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Incenter", configuration, parameters);
+                return new ComposedConstruction(nameof(Incenter), configuration, parameters);
             }
         }
 
@@ -421,7 +421,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Incircle", configuration, parameters);
+                return new ComposedConstruction(nameof(Incircle), configuration, parameters);
             }
         }
 
@@ -450,7 +450,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction("Circumcenter", configuration, parameters);
+                return new ComposedConstruction(nameof(Circumcenter), configuration, parameters);
             }
         }
     }
