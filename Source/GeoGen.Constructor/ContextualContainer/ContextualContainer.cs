@@ -141,7 +141,7 @@ namespace GeoGen.Constructor
                 _tracer?.TraceConstructionFailure(_configuration, e.Message);
 
                 // And say the container is not constructible
-                throw new UnconstructibleContextualContainer($"The construction of the contextual container failed. The inner reason: {e.Message}.");
+                throw new InconstructibleContextualContainer($"The construction of the contextual container failed. The inner reason: {e.Message}.");
             }
 
             #endregion
@@ -761,7 +761,7 @@ namespace GeoGen.Constructor
             catch (UnresolvableInconsistencyException e)
             {
                 // If we cannot do so, we're doomed
-                throw new UnconstructibleContextualContainer($"The reconstruction of the contextual container failed because of inability to reconstruct the objects manager. The inner message: {e.Message}");
+                throw new InconstructibleContextualContainer($"The reconstruction of the contextual container failed because of inability to reconstruct the objects manager. The inner message: {e.Message}");
             }
 
             // Prepare a new objects map

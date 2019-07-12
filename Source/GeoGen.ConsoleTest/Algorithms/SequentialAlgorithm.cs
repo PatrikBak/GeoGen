@@ -69,7 +69,7 @@ namespace GeoGen.ConsoleTest
                     // Let the manager safely create an instance of the contextual container
                     container = _factory.Create(output.Configuration, output.Manager);
                 }
-                catch (UnconstructibleContextualContainer)
+                catch (InconstructibleContextualContainer)
                 {
                     // If we cannot create a contextual container, we cannot do much
                 }

@@ -108,7 +108,7 @@ namespace GeoGen.ConsoleTest
                         // Run the analysis
                         return _analyzer.Analyze(_configuration, geometryData.Manager, container);
                     }
-                    catch (UnconstructibleContextualContainer)
+                    catch (InconstructibleContextualContainer)
                     {
                         // If we cannot construct this container, we can't have full results...
                         throw new GeoGenException("There is a configuration for which we were not able to create a contextual container");
