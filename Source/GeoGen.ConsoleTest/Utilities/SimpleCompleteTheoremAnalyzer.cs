@@ -1,4 +1,4 @@
-﻿using GeoGen.Analyzer;
+﻿using GeoGen.TheoremsFinder;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;

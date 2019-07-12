@@ -14,7 +14,7 @@ namespace GeoGen.Generator
     /// <see cref="ConstructedConfigurationObject"/>, that are created using <see cref="IArgumentsGenerator"/>,
     /// and the <see cref="Construction"/>s/ from the input. We use <see cref="IContainer{T}"/>, where 'T' 
     /// is <see cref="ConfigurationObject"/>, to recognize equal objects. Then we validate each created 
-    /// configuration formally (no equal objects, not already generated) and geometricly (constructible
+    /// configuration formally (no equal objects, not already generated) and geometrically (constructible
     /// and no duplicated) and return only valid ones. The valid configurations represent the next layer. 
     /// The generation process is lazy. 
     /// </summary>

@@ -9,13 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities", "GeoGen.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator", "GeoGen.Generator\GeoGen.Generator.csproj", "{1B7D635C-67D1-4594-AE47-56CF3F04F906}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer", "GeoGen.Analyzer\GeoGen.Analyzer.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsFinder", "GeoGen.TheoremsFinder\GeoGen.TheoremsFinder.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry", "GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Analyzer.Tests", "GeoGen.Analyzer.Tests\GeoGen.Analyzer.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsFinder.Tests", "GeoGen.TheoremsFinder.Tests\GeoGen.TheoremsFinder.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core.Tests", "GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
 EndProject
@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor", "GeoGe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Theorems", "GeoGen.Theorems\GeoGen.Theorems.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer", "GeoGen.TheoremsAnalyzer\GeoGen.TheoremsAnalyzer.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Theorems.Test", "GeoGen.Theorems.Test\GeoGen.Theorems.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer.Test", "GeoGen.TheoremsAnalyzer.Test\GeoGen.TheoremsAnalyzer.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

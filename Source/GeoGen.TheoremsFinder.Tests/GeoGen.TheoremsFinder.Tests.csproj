@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.7.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="Moq" Version="4.12.0" />
+    <PackageReference Include="NETStandard.Library" Version="2.0.3" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremsFinder\GeoGen.TheoremsFinder.csproj" />
+    <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>
