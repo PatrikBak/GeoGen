@@ -4,10 +4,10 @@ using System.Collections.Generic;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a geometrical point that is defined by a point <see cref="ConfigurationObject"/>.
+    /// Represents a geometric point that is defined by a point <see cref="ConfigurationObject"/>.
     /// It contains all <see cref="LineObject"/>s and <see cref="CircleObject"/>s that pass through it.
     /// </summary>
-    public class PointObject : GeometricalObject
+    public class PointObject : GeometricObject
     {
         #region Public properties
 
@@ -28,7 +28,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initialize a new instance of the <see cref="PointObject"/> class wrapping a given point <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="configurationObject">The point configuration object represented by this geometrical object.</param>
+        /// <param name="configurationObject">The point configuration object represented by this geometric object.</param>
         public PointObject(ConfigurationObject configurationObject)
                 : base(configurationObject)
         {

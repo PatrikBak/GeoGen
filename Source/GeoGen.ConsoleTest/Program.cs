@@ -31,22 +31,22 @@ namespace GeoGen.ConsoleTest
             // Prepare theorem analyzer settings
             var theoremAnalysisSettings = new TheoremAnalysisSettings
             {
-                MinimalNumberOfTrueContainers = 5,
-                MinimalNumberOfTrueContainersToRevalidate = 5,
+                MinimalNumberOfTruePictures = 5,
+                MinimalNumberOfTruePicturesToRevalidate = 5,
             };
 
-            // Prepare contextual container settings
-            var contextualContainerSettings = new ContextualContainerSettings
+            // Prepare contextual picture settings
+            var contextualPictureSettings = new ContextualPictureSettings
             {
                 MaximalNumberOfAttemptsToReconstruct = 5,
             };
 
-            // Prepare objects containers settings
-            var objectsContainersManagerSettings = new ObjectsContainersManagerSettings
+            // Prepare pictures manager settings
+            var picturesManagerSettings = new PicturesManagerSettings
             {
-                NumberOfContainers = 5,
-                MaximalAttemptsToReconstructOneContainer = 5,
-                MaximalAttemptsToReconstructAllContainers = 5
+                NumberOfPictures = 5,
+                MaximalAttemptsToReconstructOnePicture = 5,
+                MaximalAttemptsToReconstructAllPictures = 5
             };
 
             // Prepare input
@@ -57,10 +57,10 @@ namespace GeoGen.ConsoleTest
                 NumberOfIterations = 1,
             };
 
-            var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Execute(input);
+            var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Execute(input);
 
             // Perform the algorithm
-            GenerateAndPrintResults(input, theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings, "output.txt");
+            GenerateAndPrintResults(input, theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings, "output.txt");
         }
 
         private static Configuration InitialConfiguration()
@@ -103,8 +103,8 @@ namespace GeoGen.ConsoleTest
 
         private static void GenerateAndPrintResults(GeneratorInput input,
                                                     TheoremAnalysisSettings theoremAnalysisSettings,
-                                                    ContextualContainerSettings contextualContainerSettings,
-                                                    ObjectsContainersManagerSettings objectsContainersManagerSettings,
+                                                    ContextualPictureSettings contextualPictureSettings,
+                                                    PicturesManagerSettings picturesManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
                                                     bool analyzeInitialTheorems = true,
@@ -139,7 +139,7 @@ namespace GeoGen.ConsoleTest
 
                 if (analyzeInitialTheorems)
                 {
-                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Analyze(initialConfigurationCopy);
+                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Analyze(initialConfigurationCopy);
 
                     writer.WriteLine();
                     FormatOutput(initialFormatter, initialOutput);
@@ -147,9 +147,9 @@ namespace GeoGen.ConsoleTest
                     writer.WriteLine();
 
                     writer.WriteLine($"Iterations: {input.NumberOfIterations}");
-                    writer.WriteLine($"Pictures per configuration: {objectsContainersManagerSettings.NumberOfContainers}");
-                    writer.WriteLine($"Number of pictures where a theorem must hold: {theoremAnalysisSettings.MinimalNumberOfTrueContainers}");
-                    writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {theoremAnalysisSettings.MinimalNumberOfTrueContainersToRevalidate}");
+                    writer.WriteLine($"Pictures per configuration: {picturesManagerSettings.NumberOfPictures}");
+                    writer.WriteLine($"Number of pictures where a theorem must hold: {theoremAnalysisSettings.MinimalNumberOfTruePictures}");
+                    writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {theoremAnalysisSettings.MinimalNumberOfTruePicturesToRevalidate}");
                     writer.WriteLine();
                     writer.WriteLine($"Constructions:");
                     writer.WriteLine();
@@ -157,7 +157,7 @@ namespace GeoGen.ConsoleTest
                     writer.WriteLine();
                 }
 
-                var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualContainerSettings, objectsContainersManagerSettings).Execute(input);
+                var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Execute(input);
 
                 if (measureTime)
                 {

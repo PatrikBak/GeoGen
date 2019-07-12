@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a configuration of geometrical objects. It consists of a <see cref="Core.LooseObjectsHolder"/>
+    /// Represents a configuration of geometric objects. It consists of a <see cref="Core.LooseObjectsHolder"/>
     /// and a list of <see cref="ConstructedConfigurationObject"/>. The loose objects are the first objects to be 
     /// drawn (for example: in a triangle the loose objects are its 3 vertices. The constructed objects should to 
     /// be ordered so that it's possible to construct them in this order. The configuration should contain mutually

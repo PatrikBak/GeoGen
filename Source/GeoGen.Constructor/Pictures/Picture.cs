@@ -9,14 +9,14 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The default implementation of <see cref="IObjectsContainer"/>.
+    /// The default implementation of <see cref="IPicture"/>.
     /// </summary>
-    public class ObjectsContainer : IObjectsContainer
+    public class Picture : IPicture
     {
         #region Private fields
 
         /// <summary>
-        /// The map representing the actual content of the container.
+        /// The map representing the actual content of the picture.
         /// </summary>
         private readonly Map<ConfigurationObject, IAnalyticObject> _content = new Map<ConfigurationObject, IAnalyticObject>();
 
@@ -37,9 +37,9 @@ namespace GeoGen.Constructor
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectsContainer"/> class.
+        /// Initializes a new instance of the <see cref="Picture"/> class.
         /// </summary>
-        public ObjectsContainer()
+        public Picture()
         {
             // Set the correct types mapping
             _correctTypes = new Dictionary<Type, ConfigurationObjectType>
@@ -52,14 +52,14 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region IObjectsContainer implementation
+        #region IObjectsPicture implementation
 
         /// <summary>
-        /// Adds given configuration objects to the container. Their analytic versions are constructed
+        /// Adds given configuration objects to the picture. Their analytic versions are constructed
         /// using a provided constructor function. This method should be used only when we're sure that
         /// the construction will succeed (for example, for constructing loose objects).
         /// </summary>
-        /// <param name="objects">The configuration objects to be added to the container.</param>
+        /// <param name="objects">The configuration objects to be added to the picture.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic versions of the objects.</param>
         public void Add(IEnumerable<ConfigurationObject> objects, Func<List<IAnalyticObject>> constructor)
         {
@@ -80,7 +80,7 @@ namespace GeoGen.Constructor
 
                         // If there is an equal object, we have a problem...
                         if (equalObject != null)
-                            throw new AnalyticException("Couldn't add objects to the container because of the duplicity.");
+                            throw new AnalyticException("Couldn't add objects to the picture because of the duplicity.");
                     });
 
                     // If we got here, the construction went fine after all
@@ -101,14 +101,14 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Tries to add a given configuration object to the container. The analytic version of the object is 
+        /// Tries to add a given configuration object to the picture. The analytic version of the object is 
         /// constructed using the provided constructor function. The method sets the out parameters indicating
         /// whether the construction was successful and whether there is a duplicate version of the object.
         /// The object is added if and only if the construction is successful and there is no duplicity.
         /// </summary>
-        /// <param name="configurationObject">The configuration object to be added to the container.</param>
+        /// <param name="configurationObject">The configuration object to be added to the picture.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic version of the object.</param>
-        /// <param name="equalObject">If there already is the same object in the container, this value will be set to that object. Otherwise it will be null.</param>
+        /// <param name="equalObject">If there already is the same object in the picture, this value will be set to that object. Otherwise it will be null.</param>
         /// <param name="objectConstructed">Indicates if the construction was successful.</param>
         public void TryAdd(ConfigurationObject configurationObject, Func<IAnalyticObject> constructor, out bool objectConstructed, out ConfigurationObject equalObject)
         {
@@ -156,22 +156,22 @@ namespace GeoGen.Constructor
         public ConfigurationObject Get(IAnalyticObject analyticObject) => _content.GetLeftValue(analyticObject);
 
         /// <summary>
-        /// Finds out if a given analytic object is present if the container.
+        /// Finds out if a given analytic object is present if the picture.
         /// </summary>
         /// <param name="analyticObject">The analytic object.</param>
-        /// <returns>true, if the object is present in the container; false otherwise.</returns>
+        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
         public bool Contains(IAnalyticObject analyticObject) => _content.ContainsRightKey(analyticObject);
 
         /// <summary>
-        /// Finds out if a given configuration object is present if the container.
+        /// Finds out if a given configuration object is present if the picture.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>true, if the object is present in the container; false otherwise.</returns>
+        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
         public bool Contains(ConfigurationObject configurationObject) => _content.ContainsLeftKey(configurationObject);
 
         /// <summary>
-        /// Tries to reconstruct all the objects in the container. If the reconstruction fails, 
-        /// the content of the container will remain unchanged.
+        /// Tries to reconstruct all the objects in the picture. If the reconstruction fails, 
+        /// the content of the picture will remain unchanged.
         /// </summary>
         /// <param name="reconstructionSuccessful">true, if the reconstruction was successful; false otherwise.</param>
         public void TryReconstruct(out bool reconstructionSuccessful)
@@ -227,19 +227,19 @@ namespace GeoGen.Constructor
         #region Private methods
 
         /// <summary>
-        /// Tries to add given pair of objects to the container. If there already is 
+        /// Tries to add given pair of objects to the picture. If there already is 
         /// an equal analytic object, the <paramref name="equalObject"/> will be set to
         /// and the object won't be added. Otherwise it will be added and the 
         /// <paramref name="equalObject"/> will have its default value (which is null).
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <param name="analyticalObject">The analytical object.</param>
-        /// <param name="equalObject">Either the equal configuration object already present in the container; or null, if there's none.</param>
+        /// <param name="analyticObject">The analytic object.</param>
+        /// <param name="equalObject">Either the equal configuration object already present in the picture; or null, if there's none.</param>
         private void TryAdd(ConfigurationObject configurationObject, IAnalyticObject analyticObject, out ConfigurationObject equalObject)
         {
             // Check if the types of objects correspond. This could save us some time while finding weird errors
             if (_correctTypes[analyticObject.GetType()] != configurationObject.ObjectType)
-                throw new ConstructorException("Can't add objects of wrong types to the container.");
+                throw new ConstructorException("Can't add objects of wrong types to the picture.");
 
             // Check if we don't have a duplicity 
             if (_content.ContainsRightKey(analyticObject))

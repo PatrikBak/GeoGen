@@ -5,6 +5,9 @@ using System.Collections.Generic;
 
 namespace GeoGen.AnalyticGeometry.Tests
 {
+    /// <summary>
+    /// The test class for <see cref="Point"/>.
+    /// </summary>
     [TestFixture]
     public class PointTest
     {

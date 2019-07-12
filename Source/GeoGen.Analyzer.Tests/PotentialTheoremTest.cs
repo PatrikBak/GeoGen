@@ -73,7 +73,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new PointObject(A),
                     new LineObject(new PointObject(B), new PointObject(D))
@@ -82,7 +82,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new PointObject(D),
                     new LineObject(new PointObject(E), new PointObject(F))
@@ -91,7 +91,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(E)),
                     new LineObject(new PointObject(B), new PointObject(G))
@@ -100,7 +100,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new CircleObject(new PointObject(A), new PointObject(B), new PointObject(C)),
                     new LineObject(new PointObject(E), new PointObject(G))
@@ -109,7 +109,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new PointObject(A),
                     new LineObject(new PointObject(B), new PointObject(E)),
@@ -119,7 +119,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(E), new PointObject(F)),
                     new LineObject(new PointObject(B), new PointObject(E)),
@@ -129,7 +129,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(A), new PointObject(E)),
                     new LineObject(new PointObject(B), new PointObject(F)),
@@ -153,7 +153,7 @@ namespace GeoGen.Analyzer.Tests
             // Assert
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(D), new PointObject(E), new PointObject(F)) { ConfigurationObject = l },
                 }
@@ -162,7 +162,7 @@ namespace GeoGen.Analyzer.Tests
             // Assert
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(D), new PointObject(E), new PointObject(F)) { ConfigurationObject = l },
                 }
@@ -170,7 +170,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new PointObject(A)
@@ -179,7 +179,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new PointObject(A)
@@ -188,7 +188,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new PointObject(E)
@@ -197,7 +197,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new PointObject(E)
@@ -206,7 +206,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new LineObject(new PointObject(A), new PointObject(D), new PointObject(E), new PointObject(F))
@@ -215,7 +215,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new LineObject(new PointObject(A), new PointObject(D), new PointObject(E), new PointObject(F))
@@ -224,7 +224,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new CircleObject(new PointObject(A), new PointObject(B), new PointObject(C), new PointObject(E))
@@ -233,7 +233,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new CircleObject(new PointObject(A), new PointObject(B), new PointObject(C), new PointObject(E))
@@ -242,7 +242,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new CircleObject(new PointObject(A), new PointObject(B), new PointObject(C), new PointObject(E)),
@@ -252,7 +252,7 @@ namespace GeoGen.Analyzer.Tests
 
             new PotentialTheorem
             {
-                InvolvedObjects = new GeometricalObject[]
+                InvolvedObjects = new GeometricObject[]
                 {
                     new LineObject(new PointObject(B), new PointObject(C), new PointObject(D)) { ConfigurationObject = l },
                     new CircleObject(new PointObject(A), new PointObject(B), new PointObject(C), new PointObject(E)),

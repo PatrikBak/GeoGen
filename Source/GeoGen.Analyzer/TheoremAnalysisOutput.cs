@@ -13,7 +13,7 @@ namespace GeoGen.Analyzer
         public List<AnalyzedTheorem> Theorems { get; set; }
 
         /// <summary>
-        /// Gets or sets the list of theorems that were true in some containers, but after
+        /// Gets or sets the list of theorems that were true in some pictures, but after
         /// the second test they weren't evaluated as correct ones.
         /// </summary>
         public List<AnalyzedTheorem> PotentialFalseNegatives { get; set; }

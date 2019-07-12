@@ -5,9 +5,9 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a <see cref="GeometricalObject"/> that can be defined by <see cref="PointObject"/>s.
+    /// Represents a <see cref="GeometricObject"/> that can be defined by <see cref="PointObject"/>s.
     /// </summary>
-    public abstract class DefinableByPoints : GeometricalObject
+    public abstract class DefinableByPoints : GeometricObject
     {
         #region Public properties
 
@@ -43,7 +43,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initialize a new instance of the <see cref="DefinableByPoints"/> class wrapping a given circle <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="configurationObject">The configuration object represented by this geometrical object.</param>
+        /// <param name="configurationObject">The configuration object represented by this geometric object.</param>
         protected DefinableByPoints(ConfigurationObject configurationObject)
                 : base(configurationObject)
         {

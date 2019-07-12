@@ -6,7 +6,7 @@ using static GeoGen.Core.PredefinedConstructionType;
 namespace GeoGen.Core.Tests
 {
     /// <summary>
-    /// The test class for <see cref="ConfigurationObject"/> and its derived types.
+    /// The test class for <see cref="ConfigurationObjectsExtentions"/>.
     /// </summary>
     [TestFixture]
     public class ConfigurationObjectsExtentionsTest

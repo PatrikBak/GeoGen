@@ -97,11 +97,11 @@ namespace GeoGen.ConsoleTest
             Kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>();
             Kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             Kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
-            Kernel.Bind<IObjectsContainer>().To<ObjectsContainer>();
+            Kernel.Bind<IPicture>().To<Picture>();
 
             // Bindings with dynamic settings
-            Kernel.BindsWithDynamicSettings<IContextualContainer, ContextualContainer, ContextualContainerSettings>();
-            Kernel.BindsWithDynamicSettings<IObjectsContainersManager, ObjectsContainersManager, ObjectsContainersManagerSettings>();
+            Kernel.BindsWithDynamicSettings<IContextualPicture, ContextualPicture, ContextualPictureSettings>();
+            Kernel.BindsWithDynamicSettings<IPicturesManager, PicturesManager, PicturesManagerSettings>();
 
             // Predefined constructors
             Kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
@@ -121,13 +121,13 @@ namespace GeoGen.ConsoleTest
 
             // Factories
             Kernel.Bind<IComposedConstructorFactory>().ToFactory();
-            Kernel.Bind<IObjectsContainersManagerFactory>().ToFactory();
-            Kernel.Bind<IObjectsContainerFactory>().ToFactory();
-            Kernel.Bind<IContextualContainerFactory>().ToFactory();
+            Kernel.Bind<IPicturesManagerFactory>().ToFactory();
+            Kernel.Bind<IPictureFactory>().ToFactory();
+            Kernel.Bind<IContextualPictureFactory>().ToFactory();
 
             // Tracers
             Kernel.Bind<IGeometryConstructionFailureTracer>().ToConstant((IGeometryConstructionFailureTracer) null);
-            Kernel.Bind<IContexualContainerConstructionFailureTracer>().ToConstant((IContexualContainerConstructionFailureTracer) null);
+            Kernel.Bind<IContexualPictureConstructionFailureTracer>().ToConstant((IContexualPictureConstructionFailureTracer) null);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace GeoGen.ConsoleTest
             Kernel.Rebind<IEqualObjectsTracer, DefaultEqualObjectsTracer>().To<DefaultEqualObjectsTracer>().InSingletonScope();
             Kernel.Rebind<IInconstructibleObjectsTracer, DefaultInconstructibleObjectsTracer>().To<DefaultInconstructibleObjectsTracer>().InSingletonScope();
             Kernel.Rebind<IGeometryConstructionFailureTracer, DefaultGeometryConstructionFailureTracer>().To<DefaultGeometryConstructionFailureTracer>().InSingletonScope();
-            Kernel.Rebind<IContexualContainerConstructionFailureTracer, DefaultContexualContainerConstructionFailureTracer>().To<DefaultContexualContainerConstructionFailureTracer>().InSingletonScope();
+            Kernel.Rebind<IContexualPictureConstructionFailureTracer, DefaultContexualPictureConstructionFailureTracer>().To<DefaultContexualPictureConstructionFailureTracer>().InSingletonScope();
             Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
             Kernel.Bind<SimpleCompleteTheoremAnalyzer>().ToSelf();
         }

@@ -31,9 +31,9 @@ namespace GeoGen.ConsoleTest
         private IGeometryConstructor _constructor;
 
         /// <summary>
-        /// The factory for creating contextual containers that are required by the relevant theorem analyzer.
+        /// The factory for creating contextual pictures that are required by the relevant theorem analyzer.
         /// </summary>
-        private readonly IContextualContainerFactory _factory;
+        private readonly IContextualPictureFactory _factory;
 
         #endregion
 
@@ -44,8 +44,8 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         /// <param name="analyzer">The analyzer of relevant theorems that is reused.</param>
         /// <param name="constructor">The constructor of configurations.</param>
-        /// <param name="factory">The factory for creating contextual containers that are required by the relevant theorem analyzer.</param>
-        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryConstructor constructor, IContextualContainerFactory factory)
+        /// <param name="factory">The factory for creating contextual pictures that are required by the relevant theorem analyzer.</param>
+        public SimpleCompleteTheoremAnalyzer(IRelevantTheoremsAnalyzer analyzer, IGeometryConstructor constructor, IContextualPictureFactory factory)
         {
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
@@ -102,16 +102,16 @@ namespace GeoGen.ConsoleTest
                 {
                     try
                     {
-                        // Safely create the container
-                        var container = _factory.Create(_configuration, geometryData.Manager);
+                        // Safely create the picture
+                        var picture = _factory.Create(_configuration, geometryData.Manager);
 
                         // Run the analysis
-                        return _analyzer.Analyze(_configuration, geometryData.Manager, container);
+                        return _analyzer.Analyze(_configuration, geometryData.Manager, picture);
                     }
-                    catch (InconstructibleContextualContainer)
+                    catch (InconstructibleContextualPicture)
                     {
-                        // If we cannot construct this container, we can't have full results...
-                        throw new GeoGenException("There is a configuration for which we were not able to create a contextual container");
+                        // If we cannot construct this picture, we can't have full results...
+                        throw new GeoGenException("There is a configuration for which we were not able to create a contextual picture");
                     }
                 })
                 // Enumerate for further processing

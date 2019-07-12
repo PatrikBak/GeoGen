@@ -255,32 +255,32 @@ namespace GeoGen.Theorems
             // Get the template loose objects for shorter access
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
 
-            // We need to make sure the result are the same across the containers.
-            // We're going to use aggregation. Each container gets a list of (circle,line)
-            // pairs that were determined tangent to each other in the previous containers, 
-            // or all these pairs at the beginning. For every such a list each container
+            // We need to make sure the result are the same across the pictures.
+            // We're going to use aggregation. Each picture gets a list of (circle,line)
+            // pairs that were determined tangent to each other in the previous pictures, 
+            // or all these pairs at the beginning. For every such a list each picture
             // takes only those pairs that are tangent with respect to it. This way we are sure that 
-            // at the end we have only those that are tangent to each other in every container
+            // at the end we have only those that are tangent to each other in every picture
             return input.ExaminedConfigurationManager.Aggregate(
 
                // Initially we take all circles and lines
                new IEnumerable<DefinableByPoints>[]
                {
                     // Get the circles from the contextual picture
-                    input.ExaminedConfigurationContexualContainer.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
                     {
                         IncludeCirces = true,
-                        Type = ContextualContainerQuery.ObjectsType.All
+                        Type = ContextualPictureQuery.ObjectsType.All
                     })
                     // That have their configuration object set 
                     // (since it's one of the loose objects)
                     .Where(circle => circle.ConfigurationObject != null),
 
                     // Get the lines from the contextual picture
-                    input.ExaminedConfigurationContexualContainer.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
                     {
                         IncludeLines = true,
-                        Type = ContextualContainerQuery.ObjectsType.All
+                        Type = ContextualPictureQuery.ObjectsType.All
                     })
                     // That contain at least two points
                     .Where(line => line.Points.Count >= 2)
@@ -288,19 +288,19 @@ namespace GeoGen.Theorems
                // Combine them into pair in every possible way
                .Combine(),
 
-               // Each containers gets an enumeration of circle/point pairs...
-               (currentPairs, container) =>
+               // Each pictures gets an enumeration of circle/point pairs...
+               (currentPairs, picture) =>
                {
                    // And take those pairs...
                    return currentPairs.Where(pair =>
                    {
                        // Where the circle...
-                       return input.ExaminedConfigurationContexualContainer.GetAnalyticObject<Circle>(pair[0], container)
+                       return input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Circle>(pair[0], picture)
                             // Is tangent to the line
-                            .IsTangentTo(input.ExaminedConfigurationContexualContainer.GetAnalyticObject<Line>(pair[1], container));
+                            .IsTangentTo(input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(pair[1], picture));
                    });
                })
-               // Now we have correct pairs that are tangent to each other in every container
+               // Now we have correct pairs that are tangent to each other in every picture
                // For each such a pair we take every possible pair of points on the line...
                .SelectMany(circleLine => circleLine[1].Points.Subsets(2).Select(points => points.ToArray()).Select(points =>
                {
@@ -344,10 +344,10 @@ namespace GeoGen.Theorems
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
 
             // We start with getting all circles
-            return input.ExaminedConfigurationContexualContainer.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
                 IncludeCirces = true,
-                Type = ContextualContainerQuery.ObjectsType.All
+                Type = ContextualPictureQuery.ObjectsType.All
             })
             // That contain at least three points
             .Where(circle => circle.Points.Count >= 4)
@@ -418,43 +418,43 @@ namespace GeoGen.Theorems
             // Get the template loose objects for shorter access
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
 
-            // We need to make sure the result are the same across the containers.
-            // We're going to use aggregation. Each container gets a list of lists of lines
-            // that were determined parallel in the previous containers, or one list containing
+            // We need to make sure the result are the same across the pictures.
+            // We're going to use aggregation. Each picture gets a list of lists of lines
+            // that were determined parallel in the previous pictures, or one list containing
             // all lines at the beginning. For every such a list it groups its elements into 
             // sublists such that lines in each sublist are parallel. This way we are sure that 
-            // at the end all our lists contains lines that are parallel to each other in every container
+            // at the end all our lists contains lines that are parallel to each other in every picture
             return input.ExaminedConfigurationManager.Aggregate(
 
                 // Initially we work with one group 
                 (IEnumerable<IEnumerable<LineObject>>) new[]
                 {
                     // This group contains all lines
-                    input.ExaminedConfigurationContexualContainer.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
                     {
                         IncludeLines = true,
-                        Type = ContextualContainerQuery.ObjectsType.All
+                        Type = ContextualPictureQuery.ObjectsType.All
                     })
                     // That have at least two points
                     .Where(line => line.Points.Count >= 2)
                 },
 
-                // Each container gets a list of current groups of lines...
-                (currentGroups, container) =>
+                // Each picture gets a list of current groups of lines...
+                (currentGroups, picture) =>
                 {
                     // Every of these groups is then projected into one or more groups...
                     return currentGroups.SelectMany(currentGroup =>
                     {
                         // Within a single group we first categorize these lines be their angle
-                        // with respect to the current container (two lines are parallel if and
+                        // with respect to the current picture (two lines are parallel if and
                         // only if their angles are the same). 
-                        return currentGroup.GroupBy(line => input.ExaminedConfigurationContexualContainer.GetAnalyticObject<Line>(line, container).Angle)
+                        return currentGroup.GroupBy(line => input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(line, picture).Angle)
                                       // We clearly only those groups where there are at least two lines
                                       // (that are parallel to each other)
                                       .Where(innerGroup => innerGroup.Count() >= 2);
                     });
                 })
-                // Each found groups contains only lines parallel to each other in every container
+                // Each found groups contains only lines parallel to each other in every picture
                 // For each we consider every pair of the lines from the group
                 .SelectMany(parallelLines => parallelLines.ToArray().UnorderedPairs())
                 // For each such a pair of lines we combine pair of points from one line
@@ -565,7 +565,7 @@ namespace GeoGen.Theorems
                             case PredefinedConstructionType.RandomPointOnLine:
 
                                 // Then we get the geometric object corresponding to it 
-                                lineOrCircle = input.ExaminedConfigurationContexualContainer.GetGeometricalObject<DefinableByPoints>(mappedObject.PassedArguments.FlattenedList.Single());
+                                lineOrCircle = input.ExaminedConfigurationContexualPicture.GetGeometricObject<DefinableByPoints>(mappedObject.PassedArguments.FlattenedList.Single());
 
                                 break;
 
@@ -573,10 +573,10 @@ namespace GeoGen.Theorems
                             case PredefinedConstructionType.RandomPointOnLineFromPoints:
 
                                 // Then the result is the single line containing the examined points
-                                lineOrCircle = input.ExaminedConfigurationContexualContainer.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+                                lineOrCircle = input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
                                 {
                                     IncludeLines = true,
-                                    Type = ContextualContainerQuery.ObjectsType.All,
+                                    Type = ContextualPictureQuery.ObjectsType.All,
                                     ContainingPoints = mappedObject.PassedArguments.FlattenedList
                                 }).Single();
 

@@ -24,12 +24,12 @@ namespace GeoGen.Analyzer
         /// Gets or sets the enumerable of the geometric objects that this theorem is about. 
         /// Their actual types depend on the <see cref="Core.TheoremType"/>.
         /// </summary>
-        public IEnumerable<GeometricalObject> InvolvedObjects { get; set; }
+        public IEnumerable<GeometricObject> InvolvedObjects { get; set; }
 
         /// <summary>
-        /// Gets or sets the function that is able to tell if the theorem is true in a given container.
+        /// Gets or sets the function that is able to tell if the theorem is true in a given picture.
         /// </summary>
-        public Func<IObjectsContainer, bool> VerificationFunction { get; set; }
+        public Func<IPicture, bool> VerificationFunction { get; set; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace GeoGen.Analyzer
 
         /// <summary>
         /// Finds out if the theorem can be defined using fewer objects than a given expected number.
-        /// There might be more ways, because <see cref="GeometricalObject"/>s can be defined in 
+        /// There might be more ways, because <see cref="GeometricObject"/>s can be defined in 
         /// multiple ways. For example, if we have the theorem that lines [A,B,C] and [A,D,E] are 
         /// perpendicular, where A,B,C,D,E are points, then each of these lines can be defined in 
         /// exactly 3 ways, so there are 9 ways to state this theorem. There might also be more ways
@@ -53,23 +53,23 @@ namespace GeoGen.Analyzer
         /// <returns>true, if there are fewer needed objects than expected; false otherwise.</returns>
         public bool ContainsNeedlessObjects(int expectedMinimalNumberOfNeededObjects)
         {
-            // Local function that enumerated all possible definitions of a given geometrical object
-            IEnumerable<IEnumerable<ConfigurationObject>> AllDefinitions(GeometricalObject geometricalObject)
+            // Local function that enumerated all possible definitions of a given geometric object
+            IEnumerable<IEnumerable<ConfigurationObject>> AllDefinitions(GeometricObject geometricObject)
             {
                 // Pull configuration object version
-                var configurationObject = geometricalObject.ConfigurationObject;
+                var configurationObject = geometricObject.ConfigurationObject;
 
                 // If the configuration version is set, then the objects defining this one is one possible definition
                 if (configurationObject != null)
                     yield return configurationObject.GetDefiningObjects();
 
                 // If this is a point, then there is no other definition
-                if (geometricalObject is PointObject)
+                if (geometricObject is PointObject)
                     yield break;
 
                 // Otherwise we have a line or a circle, i.e. something definable by points
                 // Let's find how many of them we need
-                var definableByPoints = (DefinableByPoints) geometricalObject;
+                var definableByPoints = (DefinableByPoints) geometricObject;
 
                 // Each pair or triple (given by the object's property) together with internal objects is a definition
                 // If there are not enough points, we can't do much

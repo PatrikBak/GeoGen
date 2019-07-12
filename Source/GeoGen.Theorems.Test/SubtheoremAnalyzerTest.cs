@@ -40,11 +40,11 @@ namespace GeoGen.Theorems.Test
             IoC.Bootstrap();
 
             // Get the constructor
-            _constructor = IoC.Get<IGeometryConstructor>(new ObjectsContainersManagerSettings
+            _constructor = IoC.Get<IGeometryConstructor>(new PicturesManagerSettings
             {
-                NumberOfContainers = 8,
-                MaximalAttemptsToReconstructOneContainer = 100,
-                MaximalAttemptsToReconstructAllContainers = 1000
+                NumberOfPictures = 8,
+                MaximalAttemptsToReconstructOnePicture = 100,
+                MaximalAttemptsToReconstructAllPictures = 1000
             });
 
             // Create the analyzer
@@ -70,14 +70,14 @@ namespace GeoGen.Theorems.Test
             if (geometryData.Manager == null)
                 throw new GeoGenException("Incorrect configuration");
 
-            // Draw the contextual container
-            var contextualContainer = IoC.Get<IContextualContainerFactory>(new ContextualContainerSettings
+            // Draw the contextual picture
+            var contextualPicture = IoC.Get<IContextualPictureFactory>(new ContextualPictureSettings
             {
                 MaximalNumberOfAttemptsToReconstruct = 100
             })
             .Create(examinedTheorem.Configuration, geometryData.Manager);
 
-            // Create the objects container
+            // Create the container
             var objectsContainer = IoC.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
 
             // Fill it with objects of the examined configuration
@@ -89,7 +89,7 @@ namespace GeoGen.Theorems.Test
                 TemplateTheorem = templateTheorem,
                 ExaminedTheorem = examinedTheorem,
                 ExaminedConfigurationManager = geometryData.Manager,
-                ExaminedConfigurationContexualContainer = contextualContainer,
+                ExaminedConfigurationContexualPicture = contextualPicture,
                 ExaminedConfigurationObjectsContainer = objectsContainer
             });
         }

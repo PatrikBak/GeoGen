@@ -12,37 +12,37 @@ namespace GeoGen.Analyzer
     public class LineTangentToCircleAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Find new circles. Either a new line or a new circle must be included in every new theorem
-            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var newCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeCirces = true
             }).ToList();
 
             // Find new lines. Either a new line or a new circle must be included in every new theorem
-            var newLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var newLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeLines = true,
             }).ToList();
 
             // Find all circles.
-            var allCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var allCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.All,
+                Type = ContextualPictureQuery.ObjectsType.All,
                 IncludeCirces = true
             }).ToList();
 
             // Find old lines.
-            var oldLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var oldLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludeLines = true,
             }).ToList();
 
@@ -65,11 +65,11 @@ namespace GeoGen.Analyzer
             foreach (var (line, circle) in CombineLinesWithCircles())
             {
                 // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                bool Verify(IPicture picture)
                 {
                     // Pull analytic circles representing each one
-                    var analyticLine = container.GetAnalyticObject<Line>(line, objectsContainer);
-                    var analyticCircle = container.GetAnalyticObject<Circle>(circle, objectsContainer);
+                    var analyticLine = contextualPicture.GetAnalyticObject<Line>(line, picture);
+                    var analyticCircle = contextualPicture.GetAnalyticObject<Circle>(circle, picture);
 
                     // Return if there are tangent to each other
                     return analyticCircle.IsTangentTo(analyticLine);
@@ -85,7 +85,7 @@ namespace GeoGen.Analyzer
                     VerificationFunction = Verify,
 
                     // Set the involved objects to our line and circle
-                    InvolvedObjects = new GeometricalObject[] { line, circle },
+                    InvolvedObjects = new GeometricObject[] { line, circle },
                 };
             }
         }

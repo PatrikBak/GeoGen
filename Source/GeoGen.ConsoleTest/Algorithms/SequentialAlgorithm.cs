@@ -26,9 +26,9 @@ namespace GeoGen.ConsoleTest
         private readonly IRelevantTheoremsAnalyzer _analyzer;
 
         /// <summary>
-        /// The factory for creating contextual containers that are required by the relevant theorem analyzer.
+        /// The factory for creating contextual pictures that are required by the relevant theorem analyzer.
         /// </summary>
-        private readonly IContextualContainerFactory _factory;
+        private readonly IContextualPictureFactory _factory;
 
         #endregion
 
@@ -39,8 +39,8 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         /// <param name="generator">The generator that generates configurations.</param>
         /// <param name="analyzer">The analyzer of relevant theorems in generated configurations.</param>
-        /// <param name="factory">The factory for creating contextual containers that are required by the relevant theorem analyzer.</param>
-        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer analyzer, IContextualContainerFactory factory)
+        /// <param name="factory">The factory for creating contextual pictures that are required by the relevant theorem analyzer.</param>
+        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer analyzer, IContextualPictureFactory factory)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
@@ -61,24 +61,24 @@ namespace GeoGen.ConsoleTest
             // Perform the generation
             return _generator.Generate(input).Select(output =>
             {
-                // Prepare a variable holding the contextual container to be used by the analyzers
-                IContextualContainer container = null;
+                // Prepare a variable holding the contextual picture to be used by the analyzers
+                IContextualPicture picture = null;
 
                 try
                 {
-                    // Let the manager safely create an instance of the contextual container
-                    container = _factory.Create(output.Configuration, output.Manager);
+                    // Let the manager safely create an instance of the contextual picture
+                    picture = _factory.Create(output.Configuration, output.Manager);
                 }
-                catch (InconstructibleContextualContainer)
+                catch (InconstructibleContextualPicture)
                 {
-                    // If we cannot create a contextual container, we cannot do much
+                    // If we cannot create a contextual picture, we cannot do much
                 }
 
-                // Return the output together with the constructed container
-                return (output, container);
+                // Return the output together with the constructed picture
+                return (output, picture);
             })
-            // Take only such pairs where the container was successfully created
-            .Where(pair => pair.container != null)
+            // Take only such pairs where the picture was successfully created
+            .Where(pair => pair.picture != null)
             // For each such pair perform the theorem analysis
             .Select(pair => new AlgorithmOutput
             {
@@ -86,7 +86,7 @@ namespace GeoGen.ConsoleTest
                 GeneratorOutput = pair.output,
 
                 // Perform the theorem analysis
-                AnalyzerOutput = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.container)
+                AnalyzerOutput = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.picture)
             });
         }
 

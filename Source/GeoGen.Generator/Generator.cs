@@ -14,7 +14,7 @@ namespace GeoGen.Generator
     /// <see cref="ConstructedConfigurationObject"/>, that are created using <see cref="IArgumentsGenerator"/>,
     /// and the <see cref="Construction"/>s/ from the input. We use <see cref="IContainer{T}"/>, where 'T' 
     /// is <see cref="ConfigurationObject"/>, to recognize equal objects. Then we validate each created 
-    /// configuration formally (no equal objects, not already generated) and geometrically (constructible
+    /// configuration formally (no equal objects, not already generated) and geometricly (constructible
     /// and no duplicated) and return only valid ones. The valid configurations represent the next layer. 
     /// The generation process is lazy. 
     /// </summary>
@@ -38,7 +38,7 @@ namespace GeoGen.Generator
         private readonly IArgumentsGenerator _argumentsGenerator;
 
         /// <summary>
-        /// The constructor that perform the actual geometrical construction of configurations.
+        /// The constructor that perform the actual geometric construction of configurations.
         /// </summary>
         private readonly IGeometryConstructor _geometryConstructor;
 
@@ -62,7 +62,7 @@ namespace GeoGen.Generator
         /// <param name="objectsContainerFactory">The factory for creating a container for configuration objects that recognizes equal ones.</param>
         /// <param name="configurationsContainerFactory">The factory for creating a container for generated configurations that recognizes equal ones.</param>
         /// <param name="argumentsGenerator">The generator of arguments that are passed to newly created constructed objects.</param>
-        /// <param name="geometryConstructor">The constructor that perform the actual geometrical construction of configurations.</param>
+        /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="equalObjectsTracer">The tracer of geometrically equal objects determined by the geometry constructor.</param>
         /// <param name="inconstructibleObjectsTracer">The tracer of geometrically inconstructible objects determined by the geometry constructor.</param>
         public Generator(IConfigurationObjectsContainerFactory objectsContainerFactory,

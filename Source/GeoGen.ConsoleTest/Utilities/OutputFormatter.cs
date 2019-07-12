@@ -52,9 +52,9 @@ namespace GeoGen.ConsoleTest
 
         public string ConvertTheoremToString(AnalyzedTheorem theorem)
         {
-            var containersNumbersString = theorem.NumberOfTrueContainersAfterSecondTest != null
-                ? $"{theorem.NumberOfTrueContainersAfterFirstTest},{theorem.NumberOfTrueContainersAfterSecondTest}"
-                : $"{theorem.NumberOfTrueContainersAfterFirstTest}";
+            var picturesNumbersString = theorem.NumberOfTruePicturesAfterSecondTest != null
+                ? $"{theorem.NumberOfTruePicturesAfterFirstTest},{theorem.NumberOfTruePicturesAfterSecondTest}"
+                : $"{theorem.NumberOfTruePicturesAfterFirstTest}";
 
             if (theorem.Type == TheoremType.EqualLineSegments || theorem.Type == TheoremType.EqualAngles)
             {
@@ -67,14 +67,14 @@ namespace GeoGen.ConsoleTest
                 var firstPart = $"[{ string.Join(", ", firstTwo)}]";
                 var secondPart = $"[{string.Join(", ", secondTwo)}]";
 
-                return $"[{containersNumbersString}] {theorem.Type}: {(firstPart.CompareTo(secondPart) < 0 ? firstPart : secondPart)} {(firstPart.CompareTo(secondPart) < 0 ? secondPart : firstPart)}";
+                return $"[{picturesNumbersString}] {theorem.Type}: {(firstPart.CompareTo(secondPart) < 0 ? firstPart : secondPart)} {(firstPart.CompareTo(secondPart) < 0 ? secondPart : firstPart)}";
             }
 
             var list = theorem.InvolvedObjects.Select(TheoremObjectToString).ToList();
 
             list.Sort();
 
-            return $"[{containersNumbersString}] {theorem.Type}: {string.Join(", ", list)}";
+            return $"[{picturesNumbersString}] {theorem.Type}: {string.Join(", ", list)}";
         }
 
         private string ConstructedObjectToString(ConstructedConfigurationObject constructedObject)

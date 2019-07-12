@@ -13,43 +13,43 @@ namespace GeoGen.Analyzer
     public class ConcurrentObjectsAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Find new circles. Either a new line or a new circle must be included in every new theorem
-            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var newCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeCirces = true
             }).ToList();
 
             // Find new lines. Either a new line or a new circle must be included in every new theorem
-            var newLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var newLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeLines = true,
             }).ToList();
 
             // Find old circles.
-            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var oldCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).ToList();
 
             // Find old lines.
-            var oldLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var oldLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludeLines = true,
             }).ToList();
 
             // A local helper function for combining triples consisting of
             // lines and circles, where at least one is new
-            IEnumerable<(GeometricalObject, GeometricalObject, GeometricalObject)> NewTriplesOfObjects()
+            IEnumerable<(GeometricObject, GeometricObject, GeometricObject)> NewTriplesOfObjects()
             {
                 #region 3 lines
 
@@ -132,20 +132,20 @@ namespace GeoGen.Analyzer
             foreach (var (object1, object2, object3) in NewTriplesOfObjects())
             {
                 // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                bool Verify(IPicture picture)
                 {
                     // Cast the objects to their analytic versions
-                    var analyticObject1 = container.GetAnalyticObject<IAnalyticObject>(object1, objectsContainer);
-                    var analyticObject2 = container.GetAnalyticObject<IAnalyticObject>(object2, objectsContainer);
-                    var analyticObject3 = container.GetAnalyticObject<IAnalyticObject>(object3, objectsContainer);
+                    var analyticObject1 = contextualPicture.GetAnalyticObject<IAnalyticObject>(object1, picture);
+                    var analyticObject2 = contextualPicture.GetAnalyticObject<IAnalyticObject>(object2, picture);
+                    var analyticObject3 = contextualPicture.GetAnalyticObject<IAnalyticObject>(object3, picture);
 
                     // Let the helper function intersection them
                     var intersections = AnalyticHelpers.Intersect(analyticObject1, analyticObject2, analyticObject3);
 
-                    // Return true if and only if there is an intersection that doesn't exist in this container
+                    // Return true if and only if there is an intersection that doesn't exist in this picture
                     // Thanks to that we can be sure that we don't return very trivial theorems stating that
                     // three objects are concurrent at some point that is part of the definition of each of them
-                    return intersections.Any(intersection => !objectsContainer.Contains(intersection));
+                    return intersections.Any(intersection => !picture.Contains(intersection));
                 };
 
                 // Lazily return the output

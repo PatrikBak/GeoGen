@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="IRelevantTheoremsAnalyzer.cs~RFf880dfe.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />

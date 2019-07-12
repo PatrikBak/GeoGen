@@ -3,7 +3,7 @@
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a geometrical circle that can be defined by three <see cref="PointObject"/>. 
+    /// Represents a geometric circle that can be defined by three <see cref="PointObject"/>. 
     /// It contains all the <see cref="PointObject"/>s that lie on it.
     /// </summary>
     public class CircleObject : DefinableByPoints
@@ -22,7 +22,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initialize a new instance of the <see cref="CircleObject"/> class wrapping a given circle <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="configurationObject">The circle configuration object represented by this geometrical object.</param>
+        /// <param name="configurationObject">The circle configuration object represented by this geometric object.</param>
         public CircleObject(ConfigurationObject configurationObject)
                 : base(configurationObject)
         {

@@ -7,7 +7,7 @@ namespace GeoGen.Constructor
     /// <see cref="Core.ConfigurationObject"/>, but doesn't necessary have to and also can be 
     /// defined implicitly by <see cref="PointObject"/>s (see <see cref="DefinableByPoints"/>).
     /// </summary>
-    public abstract class GeometricalObject
+    public abstract class GeometricObject
     {
         #region Public properties
 
@@ -22,10 +22,10 @@ namespace GeoGen.Constructor
         #region Constructor
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="GeometricalObject"/> class wrapping a given <see cref="Core.ConfigurationObject"/>.
+        /// Initialize a new instance of the <see cref="GeometricObject"/> class wrapping a given <see cref="Core.ConfigurationObject"/>.
         /// </summary>
-        /// <param name="configurationObject">The configuration object represented by this geometrical object.</param>
-        protected GeometricalObject(ConfigurationObject configurationObject)
+        /// <param name="configurationObject">The configuration object represented by this geometric object.</param>
+        protected GeometricObject(ConfigurationObject configurationObject)
         {
             ConfigurationObject = configurationObject;
         }

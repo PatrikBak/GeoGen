@@ -19,9 +19,9 @@ namespace GeoGen.Constructor
         private readonly IConstructorsResolver _constructionResolver;
 
         /// <summary>
-        /// The factory for creating objects containers in which we're constructing the internal configuration of the composed construction.
+        /// The factory for creating pictures in which we're constructing the internal configuration of the composed construction.
         /// </summary>
-        private readonly IObjectsContainerFactory _containersFactory;
+        private readonly IPictureFactory _pictureFactory;
 
         #endregion
 
@@ -41,12 +41,12 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="construction">The composed construction performed by the constructor.</param>
         /// <param name="constructionResolver">The resolver of constructors used while constructing the internal configuration of the composed construction.</param>
-        /// <param name="containersFactory">The factory for creating objects containers in which we're constructing the internal configuration of the composed construction.</param>
-        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IObjectsContainerFactory containersFactory)
+        /// <param name="picturesFactory">The factory for creating pictures in which we're constructing the internal configuration of the composed construction.</param>
+        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IPictureFactory picturesFactory)
         {
             _construction = construction ?? throw new ArgumentNullException(nameof(construction));
             _constructionResolver = constructionResolver ?? throw new ArgumentNullException(nameof(constructionResolver));
-            _containersFactory = containersFactory ?? throw new ArgumentNullException(nameof(containersFactory));
+            _pictureFactory = picturesFactory ?? throw new ArgumentNullException(nameof(picturesFactory));
         }
 
         #endregion
@@ -61,16 +61,16 @@ namespace GeoGen.Constructor
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
-            // Initialize an internal container in which we're going to construct
+            // Initialize an internal picture in which we're going to construct
             // the configuration that defines our composed construction
-            var internalContainer = _containersFactory.CreateContainer();
+            var internalPicture = _pictureFactory.CreatePicture();
 
             // Pull the loose objects of this configuration
             var looseObjects = _construction.Configuration.LooseObjectsHolder.LooseObjects;
 
-            // Add these objects to the internal container
+            // Add these objects to the internal picture
             // Their analytic versions should correspond to the passed input
-            internalContainer.Add(looseObjects, () => input.ToList());
+            internalPicture.Add(looseObjects, () => input.ToList());
 
             // Add the constructed objects as well
             foreach (var constructedObject in _construction.Configuration.ConstructedObjects)
@@ -78,8 +78,8 @@ namespace GeoGen.Constructor
                 // For each one create the construction function
                 var constructorFunction = _constructionResolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
-                // Add the object to the container using this function that gets passed the internal container
-                internalContainer.TryAdd(constructedObject, () => constructorFunction(internalContainer), out var objectConstructed, out var equalObject);
+                // Add the object to the picture using this function that gets passed the internal picture
+                internalPicture.TryAdd(constructedObject, () => constructorFunction(internalPicture), out var objectConstructed, out var equalObject);
 
                 // Find out if we have a correct result
                 var correctResult = objectConstructed && equalObject == null;
@@ -90,9 +90,9 @@ namespace GeoGen.Constructor
             }
 
             // If we are here, then the construction should be fine and the result
-            // will be in the internal container corresponding to the last object 
+            // will be in the internal picture corresponding to the last object 
             // of the configuration that defines our composed construction
-            return internalContainer.Get(_construction.Configuration.ConstructedObjects.Last());
+            return internalPicture.Get(_construction.Configuration.ConstructedObjects.Last());
         }
 
         #endregion

@@ -12,9 +12,9 @@ namespace GeoGen.Theorems
 
         public Theorem ExaminedTheorem { get; set; }
 
-        public IObjectsContainersManager ExaminedConfigurationManager { get; set; }
+        public IPicturesManager ExaminedConfigurationManager { get; set; }
 
-        public IContextualContainer ExaminedConfigurationContexualContainer { get; set; }
+        public IContextualPicture ExaminedConfigurationContexualPicture { get; set; }
 
         public IContainer<ConfigurationObject> ExaminedConfigurationObjectsContainer { get; set; }
     }

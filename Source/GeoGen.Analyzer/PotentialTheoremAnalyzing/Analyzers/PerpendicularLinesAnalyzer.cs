@@ -13,23 +13,23 @@ namespace GeoGen.Analyzer
     public class PerpendicularLinesAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Find new lines. At least one of them must be included in every new theorem
-            var newLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var newLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeLines = true
             }).ToList();
 
             // Find old lines.
-            var oldLines = container.GetGeometricalObjects<LineObject>(new ContextualContainerQuery
+            var oldLines = contextualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludeLines = true
             }).ToList();
 
@@ -51,11 +51,11 @@ namespace GeoGen.Analyzer
             foreach (var (line1, line2) in NewPairsOfLines())
             {
                 // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                bool Verify(IPicture picture)
                 {
                     // Cast the lines to their analytic versions
-                    var analyticLine1 = container.GetAnalyticObject<Line>(line1, objectsContainer);
-                    var analyticLine2 = container.GetAnalyticObject<Line>(line2, objectsContainer);
+                    var analyticLine1 = contextualPicture.GetAnalyticObject<Line>(line1, picture);
+                    var analyticLine2 = contextualPicture.GetAnalyticObject<Line>(line2, picture);
 
                     // Return if there are perpendicular
                     return analyticLine1.IsPerpendicularTo(analyticLine2);

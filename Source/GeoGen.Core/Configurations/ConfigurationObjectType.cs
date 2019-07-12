@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents an actual geometrical object type.
+    /// Represents an actual geometric object type.
     /// </summary>
     public enum ConfigurationObjectType
     {

@@ -13,23 +13,23 @@ namespace GeoGen.Analyzer
     public class EqualLineSegmentsAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Find new points.  At least one of them must be included in every new theorem
-            var newPoints = container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
+            var newPoints = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludePoints = true
             }).ToList();
 
             // Find old points. 
-            var oldPoints = container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
+            var oldPoints = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludePoints = true
             }).ToList();
 
@@ -74,13 +74,13 @@ namespace GeoGen.Analyzer
             foreach (var ((point1, point2), (point3, point4)) in NewPairsOfLineSegments())
             {
                 // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                bool Verify(IPicture picture)
                 {
                     // Cast the points to their analytic versions
-                    var analyticPoint1 = container.GetAnalyticObject<Point>(point1, objectsContainer);
-                    var analyticPoint2 = container.GetAnalyticObject<Point>(point2, objectsContainer);
-                    var analyticPoint3 = container.GetAnalyticObject<Point>(point3, objectsContainer);
-                    var analyticPoint4 = container.GetAnalyticObject<Point>(point4, objectsContainer);
+                    var analyticPoint1 = contextualPicture.GetAnalyticObject<Point>(point1, picture);
+                    var analyticPoint2 = contextualPicture.GetAnalyticObject<Point>(point2, picture);
+                    var analyticPoint3 = contextualPicture.GetAnalyticObject<Point>(point3, picture);
+                    var analyticPoint4 = contextualPicture.GetAnalyticObject<Point>(point4, picture);
 
                     // Return if their lengths match
                     return analyticPoint1.DistanceTo(analyticPoint2).Rounded() == analyticPoint3.DistanceTo(analyticPoint4).Rounded();

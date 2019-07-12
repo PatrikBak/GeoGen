@@ -13,9 +13,9 @@ namespace GeoGen.Analyzer
         /// Performs the theorem analysis for a given configuration.
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
-        /// <param name="manager">The manager of all the containers where the theorems should be tested.</param>
-        /// <param name="container">The contextual container where the configuration is drawn.</param>
+        /// <param name="manager">The manager of all the pictures where the theorems should be tested.</param>
+        /// <param name="contextualPicture">The contextual picture where the configuration is drawn.</param>
         /// <returns>The output of the analyzer holding the theorems.</returns>
-        TheoremAnalysisOutput Analyze(Configuration configuration, IObjectsContainersManager manager, IContextualContainer container);
+        TheoremAnalysisOutput Analyze(Configuration configuration, IPicturesManager manager, IContextualPicture contextualPicture);
     }
 }

@@ -3,7 +3,7 @@
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a geometrical line that can be defined by two <see cref="PointObject"/>. 
+    /// Represents a geometric line that can be defined by two <see cref="PointObject"/>. 
     /// It contains all the <see cref="PointObject"/>s that lie on it.
     /// </summary>
     public class LineObject : DefinableByPoints
@@ -22,7 +22,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initialize a new instance of the <see cref="LineObject"/> class wrapping a given line <see cref="ConfigurationObject"/>.
         /// </summary>
-        /// <param name="configurationObject">The line configuration object represented by this geometrical object.</param>
+        /// <param name="configurationObject">The line configuration object represented by this geometric object.</param>
         public LineObject(ConfigurationObject configurationObject)
                 : base(configurationObject)
         {

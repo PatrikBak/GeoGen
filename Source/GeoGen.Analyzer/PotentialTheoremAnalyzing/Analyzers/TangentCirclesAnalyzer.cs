@@ -13,23 +13,23 @@ namespace GeoGen.Analyzer
     public class TangentCirclesAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Find new circles. At least one of them must be included in every new theorem
-            var newCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var newCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludeCirces = true
             }).ToList();
 
             // Find old circles.
-            var oldCircles = container.GetGeometricalObjects<CircleObject>(new ContextualContainerQuery
+            var oldCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.Old,
+                Type = ContextualPictureQuery.ObjectsType.Old,
                 IncludeCirces = true
             }).ToList();
 
@@ -51,11 +51,11 @@ namespace GeoGen.Analyzer
             foreach (var (circle1, circle2) in NewPairOfCircles())
             {
                 // Construct the verifier function
-                bool Verify(IObjectsContainer objectsContainer)
+                bool Verify(IPicture picture)
                 {
                     // Cast the circles to their analytic versions
-                    var analyticCircle1 = container.GetAnalyticObject<Circle>(circle1, objectsContainer);
-                    var analyticCircle2 = container.GetAnalyticObject<Circle>(circle2, objectsContainer);
+                    var analyticCircle1 = contextualPicture.GetAnalyticObject<Circle>(circle1, picture);
+                    var analyticCircle2 = contextualPicture.GetAnalyticObject<Circle>(circle2, picture);
 
                     // Return if there are tangent to each other
                     return analyticCircle1.IsTangentTo(analyticCircle2);

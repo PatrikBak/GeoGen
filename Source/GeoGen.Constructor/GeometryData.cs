@@ -25,8 +25,8 @@ namespace GeoGen.Constructor
         public ConfigurationObject InconstructibleObject { get; set; }
 
         /// <summary>
-        /// Gets or sets the manager of all objects containers where the configuration was drawn to.
+        /// Gets or sets the manager of all the pictures where the configuration was drawn to.
         /// </summary>
-        public IObjectsContainersManager Manager { get; set; }
+        public IPicturesManager Manager { get; set; }
     }
 }

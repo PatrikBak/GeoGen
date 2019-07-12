@@ -15,7 +15,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// Gets or sets the manager holding the geometric representation of the configuration.
         /// </summary>
-        public IObjectsContainersManager Manager { get; set; }
+        public IPicturesManager Manager { get; set; }
 
         /// <summary>
         /// Gets the index of the iteration on which the output was produces, starting with 0.

@@ -14,18 +14,18 @@ namespace GeoGen.Constructor
         #region IObjectsConstructor implementation
 
         /// <summary>
-        /// Creates a function that can perform the actual geometrical construction of a given
-        /// constructed configuration object, finding the needed objects in a given container.
+        /// Creates a function that can perform the actual geometric construction of a given
+        /// constructed configuration object, finding the needed objects in a given picture.
         /// </summary>
         /// <param name="constructedObjects">The object to be constructed.</param>
-        /// <returns>The function that can perform the actual construction using the context from a given container.</returns>
-        public Func<IObjectsContainer, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject)
+        /// <returns>The function that can perform the actual construction using the context from a given picture.</returns>
+        public Func<IPicture, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject)
         {
-            // Return the function that takes a container as an input and returns the result of a construction
-            return container =>
+            // Return the function that takes a picture as an input and returns the result of a construction
+            return picture =>
             {
                 // Get the analytic versions of the objects passed in the arguments       
-                var analyticObjects = configurationObject.PassedArguments.FlattenedList.Select(container.Get).ToArray();
+                var analyticObjects = configurationObject.PassedArguments.FlattenedList.Select(picture.Get).ToArray();
 
                 try
                 {

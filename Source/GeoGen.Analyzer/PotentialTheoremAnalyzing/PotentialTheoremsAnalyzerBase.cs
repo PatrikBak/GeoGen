@@ -51,11 +51,11 @@ namespace GeoGen.Analyzer
         #region IPotentialTheoremsAnalyzer abstract implementation
 
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public abstract IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container);
+        public abstract IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture);
 
         #endregion
     }

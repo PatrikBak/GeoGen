@@ -6,8 +6,11 @@ using System.Linq;
 
 namespace GeoGen.AnalyticGeometry.Tests
 {
+    /// <summary>
+    /// The test class for <see cref="AnalyticHelpers"/>.
+    /// </summary>
     [TestFixture]
-    public class AnalyticalHelperTest
+    public class AnalyticHelpersTest
     {
         [Test]
         public void Test_Lies_On_With_Line()

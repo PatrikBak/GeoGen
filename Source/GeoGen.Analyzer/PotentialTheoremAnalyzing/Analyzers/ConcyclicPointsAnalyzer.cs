@@ -12,16 +12,16 @@ namespace GeoGen.Analyzer
     public class ConcyclicPointsAnalyzer : PotentialTheoremsAnalyzerBase
     {
         /// <summary>
-        /// Finds all potential (unverified) theorems in a given contextual container.
+        /// Finds all potential (unverified) theorems in a given contextual picture.
         /// </summary>
-        /// <param name="container">The container from which we get the actual geometric objects.</param>
+        /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualContainer container)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
             // Take the new points. At least one of the involved points must be new
-            return container.GetGeometricalObjects<PointObject>(new ContextualContainerQuery
+            return contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
-                Type = ContextualContainerQuery.ObjectsType.New,
+                Type = ContextualPictureQuery.ObjectsType.New,
                 IncludePoints = true,
             })
             // And find all the circles that pass through it
@@ -30,7 +30,7 @@ namespace GeoGen.Analyzer
             .Where(pair => pair.circle.Points.Count >= 4)
             // And for every such a circle take those quadruples of points that contain the new one we're interested in
             .SelectMany(pair => pair.circle.Points.Subsets(4).Where(points => points.Contains(pair.point)))
-            // Each such a quadruples represents a theorem (not even potential, the contextual container made sure it's true)
+            // Each such a quadruples represents a theorem (not even potential, the contextual picture made sure it's true)
             .Select(quadruple => new PotentialTheorem
             {
                 // Set the type using the base property
