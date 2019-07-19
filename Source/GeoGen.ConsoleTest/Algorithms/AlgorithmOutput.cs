@@ -1,5 +1,5 @@
-﻿using GeoGen.TheoremsFinder;
-using GeoGen.Generator;
+﻿using GeoGen.Generator;
+using GeoGen.TheoremsFinder;
 
 namespace GeoGen.ConsoleTest
 {

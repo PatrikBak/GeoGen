@@ -1,6 +1,6 @@
-﻿using GeoGen.TheoremsFinder;
-using GeoGen.Constructor;
+﻿using GeoGen.Constructor;
 using GeoGen.Generator;
+using GeoGen.TheoremsFinder;
 using System;
 using System.Collections.Generic;
 using System.Linq;

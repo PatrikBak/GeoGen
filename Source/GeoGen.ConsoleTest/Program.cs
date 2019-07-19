@@ -1,7 +1,7 @@
-﻿using GeoGen.TheoremsFinder;
-using GeoGen.Constructor;
+﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
+using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -54,7 +54,7 @@ namespace GeoGen.ConsoleTest
             {
                 InitialConfiguration = InitialConfiguration(),
                 Constructions = Constructions(),
-                NumberOfIterations = 1,
+                NumberOfIterations = 2,
             };
 
             var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Execute(input);
@@ -68,37 +68,39 @@ namespace GeoGen.ConsoleTest
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+            var D = new ConstructedConfigurationObject(PredefinedConstructions.InternalAngleBisector, A, B, C);
+            var E = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLineAndLineFromPoints, D, B, C);
 
-            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, D, E);
         }
 
         private static List<Construction> Constructions() => new List<Construction>
         {
-            PredefinedConstructions.CenterOfCircle,
-            PredefinedConstructions.CircleWithCenterThroughPoint,
-            PredefinedConstructions.Circumcircle,
-            PredefinedConstructions.InternalAngleBisector,
-            PredefinedConstructions.IntersectionOfLines,
-            PredefinedConstructions.LineFromPoints,
-            PredefinedConstructions.Midpoint,
-            PredefinedConstructions.PerpendicularLine,
-            PredefinedConstructions.PerpendicularProjection,
-            PredefinedConstructions.PointReflection,
-            PredefinedConstructions.SecondIntersectionOfCircleAndLineFromPoints,
-            PredefinedConstructions.SecondIntersectionOfCircleWithCenterAndLineFromPoints,
-            PredefinedConstructions.SecondIntersectionOfTwoCircumcircles,
-            ComposedConstructions.Centroid,
-            ComposedConstructions.Incenter,
+            //PredefinedConstructions.CenterOfCircle,
+            //PredefinedConstructions.CircleWithCenterThroughPoint,
+            //PredefinedConstructions.Circumcircle,
+            //PredefinedConstructions.InternalAngleBisector,
+            //PredefinedConstructions.IntersectionOfLines,
+            //PredefinedConstructions.LineFromPoints,
+            //PredefinedConstructions.Midpoint,
+            //PredefinedConstructions.PerpendicularLine,
+            //PredefinedConstructions.PerpendicularProjection,
+            //PredefinedConstructions.PointReflection,
+            //PredefinedConstructions.SecondIntersectionOfCircleAndLineFromPoints,
+            //PredefinedConstructions.SecondIntersectionOfCircleWithCenterAndLineFromPoints,
+            //PredefinedConstructions.SecondIntersectionOfTwoCircumcircles,
+            //ComposedConstructions.Centroid,
+            //ComposedConstructions.Incenter,
             ComposedConstructions.Circumcenter,
             ComposedConstructions.PerpendicularProjectionOnLineFromPoints,
-            ComposedConstructions.Orthocenter,
+            //ComposedConstructions.Orthocenter,
             ComposedConstructions.IntersectionOfLinesFromPoints,
-            ComposedConstructions.IntersectionOfLineAndLineFromPoints,
-            ComposedConstructions.Parallelogram,
-            ComposedConstructions.PerpendicularLineAtPointOfLine,
-            ComposedConstructions.PerpendicularLineToLineFromPoints,
-            ComposedConstructions.ReflectionInLine,
-            ComposedConstructions.ReflectionInLineFromPoints
+            //ComposedConstructions.IntersectionOfLineAndLineFromPoints,
+            //ComposedConstructions.Parallelogram,
+            //ComposedConstructions.PerpendicularLineAtPointOfLine,
+            //ComposedConstructions.PerpendicularLineToLineFromPoints,
+            //ComposedConstructions.ReflectionInLine,
+            //ComposedConstructions.ReflectionInLineFromPoints
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,

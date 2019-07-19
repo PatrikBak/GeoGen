@@ -1,7 +1,7 @@
-﻿using GeoGen.TheoremsFinder;
-using GeoGen.Constructor;
+﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
+using GeoGen.TheoremsFinder;
 using Ninject;
 using Ninject.Extensions.ContextPreservation;
 using Ninject.Extensions.Factory;
