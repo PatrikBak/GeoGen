@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
-using GeoGen.ConsoleTest;
 using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
 using GeoGen.Utilities;
 using NUnit.Framework;
@@ -33,11 +33,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
 
         #region SetUp
 
-        [SetUp]
-        public void InitializeAnalyzer()
+        [OneTimeSetUp]
+        public void Initialize()
         {
             // Initialize IoC
-            IoC.Bootstrap();
+            IoC.Kernel.AddGenerator().AddConstructor().AddTheoremsFinder();
 
             // Get the constructor
             _constructor = IoC.Get<IGeometryConstructor>(new PicturesManagerSettings

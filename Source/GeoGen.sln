@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer.Test", "GeoGen.TheoremsAnalyzer.Test\GeoGen.TheoremsAnalyzer.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.DependenciesResolver", "GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj", "{AEFD477E-2418-45D4-9637-23C95A7C5817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AEFD477E-2418-45D4-9637-23C95A7C5817}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AEFD477E-2418-45D4-9637-23C95A7C5817}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AEFD477E-2418-45D4-9637-23C95A7C5817}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AEFD477E-2418-45D4-9637-23C95A7C5817}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

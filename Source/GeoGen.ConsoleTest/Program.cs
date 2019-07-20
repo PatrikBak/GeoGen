@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
 using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
@@ -26,7 +27,7 @@ namespace GeoGen.ConsoleTest
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             // Prepare IoC
-            IoC.Bootstrap();
+            IoC.Kernel.AddGenerator().AddConstructor().AddTheoremsFinder().AddLocalBindings();
 
             // Prepare theorem analyzer settings
             var theoremAnalysisSettings = new TheoremAnalysisSettings

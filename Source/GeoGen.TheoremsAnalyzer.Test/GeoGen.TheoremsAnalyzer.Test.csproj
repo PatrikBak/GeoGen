@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GeoGen.ConsoleTest\GeoGen.ConsoleTest.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremsAnalyzer\GeoGen.TheoremsAnalyzer.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />

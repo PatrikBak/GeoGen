@@ -3,7 +3,7 @@ using Ninject.Parameters;
 using Ninject.Planning.Targets;
 using System;
 
-namespace GeoGen.ConsoleTest
+namespace GeoGen.IoC
 {
     /// <summary>
     /// Represents a <see cref="IParameter"/> that holds an object with dynamic settings
@@ -38,7 +38,7 @@ namespace GeoGen.ConsoleTest
         /// <param name="value">The value of the settings.</param>
         public DynamicSettingsParameter(object value)
         {
-            Value = value;
+            Value = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         #endregion

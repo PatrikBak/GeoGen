@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="Ninject.Extensions.ContextPreservation" Version="3.3.1" />
+    <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
+    <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremsAnalyzer\GeoGen.TheoremsAnalyzer.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremsFinder\GeoGen.TheoremsFinder.csproj" />
+  </ItemGroup>
+
+</Project>
