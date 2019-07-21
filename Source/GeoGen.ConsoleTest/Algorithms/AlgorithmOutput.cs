@@ -1,5 +1,6 @@
-﻿using GeoGen.Generator;
-using GeoGen.TheoremsFinder;
+﻿using GeoGen.Core;
+using GeoGen.Generator;
+using System.Collections.Generic;
 
 namespace GeoGen.ConsoleTest
 {
@@ -14,8 +15,8 @@ namespace GeoGen.ConsoleTest
         public GeneratorOutput GeneratorOutput { get; set; }
 
         /// <summary>
-        /// The output of the analyzer module.
+        /// The output of the theorems finder module.
         /// </summary>
-        public TheoremAnalysisOutput AnalyzerOutput { get; set; }
+        public List<Theorem> Theorems { get; set; }
     }
 }

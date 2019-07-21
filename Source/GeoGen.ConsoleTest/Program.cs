@@ -29,19 +29,6 @@ namespace GeoGen.ConsoleTest
             // Prepare IoC
             IoC.Kernel.AddGenerator().AddConstructor().AddTheoremsFinder().AddLocalBindings();
 
-            // Prepare theorem analyzer settings
-            var theoremAnalysisSettings = new TheoremAnalysisSettings
-            {
-                MinimalNumberOfTruePictures = 5,
-                MinimalNumberOfTruePicturesToRevalidate = 5,
-            };
-
-            // Prepare contextual picture settings
-            var contextualPictureSettings = new ContextualPictureSettings
-            {
-                MaximalNumberOfAttemptsToReconstruct = 5,
-            };
-
             // Prepare pictures manager settings
             var picturesManagerSettings = new PicturesManagerSettings
             {
@@ -58,10 +45,10 @@ namespace GeoGen.ConsoleTest
                 NumberOfIterations = 2,
             };
 
-            var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Execute(input);
+            var result = IoC.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
 
             // Perform the algorithm
-            GenerateAndPrintResults(input, theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings, "output.txt");
+            GenerateAndPrintResults(input, picturesManagerSettings, fileName: "output.txt");
         }
 
         private static Configuration InitialConfiguration()
@@ -105,8 +92,6 @@ namespace GeoGen.ConsoleTest
         };
 
         private static void GenerateAndPrintResults(GeneratorInput input,
-                                                    TheoremAnalysisSettings theoremAnalysisSettings,
-                                                    ContextualPictureSettings contextualPictureSettings,
                                                     PicturesManagerSettings picturesManagerSettings,
                                                     string fileName,
                                                     bool measureTime = false,
@@ -123,36 +108,25 @@ namespace GeoGen.ConsoleTest
                 writer.WriteLine("------------------------------------------------");
                 writer.WriteLine(initialFormatter.FormatConfiguration());
 
-                void FormatOutput(OutputFormatter formatter, TheoremAnalysisOutput output)
+                void FormatOutput(OutputFormatter formatter, List<Theorem> theorems)
                 {
-                    var theorems = output.Theorems;
                     if (theorems.Count != 0)
                     {
                         writer.WriteLine("\nTheorems:\n");
                         writer.WriteLine(formatter.FormatTheorems(theorems));
                     }
-
-                    var possibleFalseNegatives = output.PotentialFalseNegatives;
-                    if (possibleFalseNegatives.Count != 0)
-                    {
-                        writer.WriteLine("\nPossible false negatives:\n");
-                        writer.WriteLine(formatter.FormatTheorems(possibleFalseNegatives));
-                    }
                 }
 
                 if (analyzeInitialTheorems)
                 {
-                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Analyze(initialConfigurationCopy);
+                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(picturesManagerSettings).Analyze(initialConfigurationCopy);
 
-                    writer.WriteLine();
                     FormatOutput(initialFormatter, initialOutput);
                     writer.WriteLine("------------------------------------------------");
                     writer.WriteLine();
 
                     writer.WriteLine($"Iterations: {input.NumberOfIterations}");
                     writer.WriteLine($"Pictures per configuration: {picturesManagerSettings.NumberOfPictures}");
-                    writer.WriteLine($"Number of pictures where a theorem must hold: {theoremAnalysisSettings.MinimalNumberOfTruePictures}");
-                    writer.WriteLine($"Number of pictures where a theorem must hold before revalidation: {theoremAnalysisSettings.MinimalNumberOfTruePicturesToRevalidate}");
                     writer.WriteLine();
                     writer.WriteLine($"Constructions:");
                     writer.WriteLine();
@@ -160,7 +134,7 @@ namespace GeoGen.ConsoleTest
                     writer.WriteLine();
                 }
 
-                var result = IoC.Get<IAlgorithm>(theoremAnalysisSettings, contextualPictureSettings, picturesManagerSettings).Execute(input);
+                var result = IoC.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
 
                 if (measureTime)
                 {
@@ -175,24 +149,21 @@ namespace GeoGen.ConsoleTest
                                                            .ToJoinedString();
 
                     writer.WriteLine($"Elapsed milliseconds: {stopwatch.ElapsedMilliseconds}");
-                    writer.WriteLine($"Configurations generated on particular iterations: {generatedConfiguratonsString}");
+                    writer.WriteLine($"Configurations generated in particular iterations: {generatedConfiguratonsString}");
                     writer.WriteLine($"Total number of generated configuration: {list.Count}");
-                    writer.WriteLine($"Generated configuration with theorems: {list.Count(r => r.AnalyzerOutput.Theorems.Any())}");
-                    writer.WriteLine($"Total number of theorems: {list.Sum(output => output.AnalyzerOutput.Theorems.Count)}");
+                    writer.WriteLine($"Generated configuration with theorems: {list.Count(r => r.Theorems.Any())}");
+                    writer.WriteLine($"Total number of theorems: {list.Sum(output => output.Theorems.Count)}");
                     writer.WriteLine();
                 }
 
                 writer.WriteLine($"Results:");
-                writer.WriteLine();
-                writer.WriteLine("[8] means the theorem was true in this 8 pictures");
-                writer.WriteLine("[7,8] means the theorem was initially true in 7 pictures, and after revalidation in 8 pictures");
                 writer.WriteLine();
 
                 var i = 1;
 
                 foreach (var algorithmOutput in result)
                 {
-                    if (skipConfigurationsWithoutTheormems && algorithmOutput.AnalyzerOutput.Theorems.Count == 0)
+                    if (skipConfigurationsWithoutTheormems && algorithmOutput.Theorems.Count == 0)
                         continue;
 
                     var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
@@ -202,7 +173,7 @@ namespace GeoGen.ConsoleTest
                     writer.WriteLine("------------------------------------------------\n");
                     writer.WriteLine(formatter.FormatConfiguration());
 
-                    FormatOutput(formatter, algorithmOutput.AnalyzerOutput);
+                    FormatOutput(formatter, algorithmOutput.Theorems);
                     writer.WriteLine();
                 }
             }

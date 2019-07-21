@@ -90,11 +90,8 @@ namespace GeoGen.Constructor.Tests
 
             #endregion
 
-            // Mock the settings
-            var settings = new Mock<ContextualPictureSettings>();
-
-            // And create the final result
-            return new ContextualPicture(new Configuration(new LooseObjectsHolder(looseObjects), new ConstructedConfigurationObject[0]), manager.Object, settings.Object);
+            // Create the final result
+            return new ContextualPicture(new Configuration(new LooseObjectsHolder(looseObjects), new ConstructedConfigurationObject[0]), manager.Object);
         }
 
         #endregion

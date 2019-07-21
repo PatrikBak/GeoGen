@@ -61,7 +61,7 @@ namespace GeoGen.ConsoleTest
         /// </summary>
         /// <param name="configuration">The configuration.</param>
         /// <returns>The analysis output.</returns>
-        public TheoremAnalysisOutput Analyze(Configuration configuration)
+        public List<Theorem> Analyze(Configuration configuration)
         {
             #region Construction
 
@@ -102,7 +102,7 @@ namespace GeoGen.ConsoleTest
                 {
                     try
                     {
-                        // Safely create the picture
+                        // Create a contextual picture
                         var picture = _factory.Create(_configuration, geometryData.Manager);
 
                         // Run the analysis
@@ -117,18 +117,8 @@ namespace GeoGen.ConsoleTest
                 // Enumerate for further processing
                 .ToList();
 
-            // Local function to take theorems ordered by type for prettier result
-            List<AnalyzedTheorem> Order(IEnumerable<AnalyzedTheorem> input) => input.Distinct(Theorem.EquivalencyComparer).Cast<AnalyzedTheorem>().OrderBy(t => t.Type).ToList();
-
             // Create a single output that merges the results
-            return new TheoremAnalysisOutput
-            {
-                // Merge all the theorems
-                Theorems = Order(theorems.SelectMany(output => output.Theorems)),
-
-                // Merge all the potential false negatives
-                PotentialFalseNegatives = Order(theorems.SelectMany(output => output.PotentialFalseNegatives))
-            };
+            return theorems.Flatten().Distinct(Theorem.EquivalencyComparer).Cast<Theorem>().OrderBy(t => t.Type).ToList();
         }
 
         #endregion

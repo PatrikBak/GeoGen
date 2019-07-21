@@ -15,15 +15,5 @@ namespace GeoGen.ConsoleTest
         {
             Console.WriteLine($"[Error] Contextual picture construction failed: {message}");
         }
-
-        public void TraceReconstructionFailure(Configuration configuration, string message)
-        {
-            Console.WriteLine($"[Error] Contextual picture reconstruction failure: {message}");
-        }
-
-        public void TraceUnsuccessfulAttemptToReconstruct(Configuration configuration, string message)
-        {
-            Console.WriteLine($"[Warning] Contextual picture reconstruction failure: {message}");
-        }
     }
 }

@@ -18,11 +18,5 @@ namespace GeoGen.Constructor
         /// <param name="function">The action to be executed.</param>
         /// <param name="exceptionCallback">The action called after an <see cref="InconsistentPicturesException"/> occurs.</param>
         void ExecuteAndResolvePossibleIncosistencies(Action action, Action<InconsistentPicturesException> exceptionCallback);
-
-        /// <summary>
-        /// Tries to reconstruct all the pictures that this manager manages. 
-        /// If the exception couldn't be handled, throws an <see cref="UnresolvedInconsistencyException"/>.
-        /// </summary>
-        void TryReconstructPictures();
     }
 }

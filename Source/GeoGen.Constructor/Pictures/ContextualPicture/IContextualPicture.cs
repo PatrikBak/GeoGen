@@ -35,12 +35,5 @@ namespace GeoGen.Constructor
         /// <param name="picture">The picture.</param>
         /// <returns>The analytic object represented by the given geometric object in the given picture.</returns>
         T GetAnalyticObject<T>(GeometricObject geometricObject, IPicture picture) where T : IAnalyticObject;
-
-        /// <summary>
-        /// Recreates the underlying analytic objects that this contextual picture maps to <see cref="GeometricObject"/>s.
-        /// This method doesn't delete the <see cref="GeometricObject"/>s that this picture already created.
-        /// </summary>
-        /// <param name="successful">true, if the reconstruction was successful; false otherwise.</param>
-        void TryReconstruct(out bool successful);
     }
 }

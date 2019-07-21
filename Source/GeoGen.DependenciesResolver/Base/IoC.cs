@@ -1,6 +1,7 @@
 ﻿using Ninject;
 using Ninject.Extensions.ContextPreservation;
 using Ninject.Extensions.Factory;
+using Ninject.Planning.Bindings.Resolvers;
 using System.Linq;
 
 namespace GeoGen.DependenciesResolver
@@ -34,6 +35,9 @@ namespace GeoGen.DependenciesResolver
             // I like this better than the NullObject pattern, because
             // of '?' operator that can be used to prevent null-checks
             Kernel.Settings.AllowNullInjection = true;
+
+            // Make sure NInject doesn't create instances that haven't been bound
+            Kernel.Components.Remove<IMissingBindingResolver, SelfBindingResolver>();
         }
 
         #endregion

@@ -66,11 +66,6 @@ namespace GeoGen.Constructor
         private readonly IContexualPictureConstructionFailureTracer _tracer;
 
         /// <summary>
-        /// The settings of the contextual picture.
-        /// </summary>
-        private readonly ContextualPictureSettings _settings;
-
-        /// <summary>
         /// The configuration that this contextual pictures represents.
         /// </summary>
         private readonly Configuration _configuration;
@@ -86,10 +81,9 @@ namespace GeoGen.Constructor
         /// <param name="manager">The pictures manager that holds all the representations of the objects inside this contextual picture.</param>
         /// <param name="settings">The settings of the contextual picture.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        public ContextualPicture(Configuration configuration, IPicturesManager manager, ContextualPictureSettings settings, IContexualPictureConstructionFailureTracer tracer = null)
+        public ContextualPicture(Configuration configuration, IPicturesManager manager,  IContexualPictureConstructionFailureTracer tracer = null)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _tracer = tracer;
 
@@ -245,45 +239,6 @@ namespace GeoGen.Constructor
         /// <param name="picture">The picture.</param>
         /// <returns>The analytic object represented by the given geometric object in the given picture.</returns>
         public T GetAnalyticObject<T>(GeometricObject geometricObject, IPicture picture) where T : IAnalyticObject => (T) _objects[picture].GetRightValue(geometricObject);
-
-        /// <summary>
-        /// Recreates the underlying analytic objects that this contextual picture maps to <see cref="GeometricObject"/>s.
-        /// This method doesn't delete the <see cref="GeometricObject"/>s that this picture already created.
-        /// </summary>
-        /// <param name="successful">true, if the reconstruction was successful; false otherwise.</param>
-        public void TryReconstruct(out bool successful)
-        {
-            // Prepare a variable holding the current number of attempts
-            var numberOfAttempts = 0;
-
-            // While we are supposed to try...
-            while (numberOfAttempts < _settings.MaximalNumberOfAttemptsToReconstruct)
-            {
-                // Mark an attempt
-                numberOfAttempts++;
-
-                try
-                {
-                    // Perform the reconstruction
-                    Reconstruct();
-
-                    // If we got here, we're happy
-                    break;
-                }
-                catch (InconsistentPicturesException e)
-                {
-                    // It might happen that it failed. Trace it
-                    _tracer?.TraceUnsuccessfulAttemptToReconstruct(_configuration, e.Message);
-                }
-            }
-
-            // We did it if and only if we didn't reach the maximal number of attempts
-            successful = numberOfAttempts != _settings.MaximalNumberOfAttemptsToReconstruct;
-
-            // Trace unsuccessful reconstruction
-            if (!successful)
-                _tracer?.TraceReconstructionFailure(_configuration, $"The total number of attempts ({_settings.MaximalNumberOfAttemptsToReconstruct}) has been reached.");
-        }
 
         #endregion
 
@@ -741,128 +696,6 @@ namespace GeoGen.Constructor
 
             // Finally we can return the result
             return result.Value;
-        }
-
-        #endregion
-
-        #region Reconstructing picture
-
-        /// <summary>
-        /// Performs the actual reconstruction of the picture and throws an 
-        /// <see cref="InconsistentPicturesException"/>, if it's not successful.
-        /// </summary>
-        private void Reconstruct()
-        {
-            try
-            {
-                // Let the manager reconstruct its pictures
-                _manager.TryReconstructPictures();
-            }
-            catch (UnresolvedInconsistencyException e)
-            {
-                // If we cannot do so, we're doomed
-                throw new InconstructibleContextualPicture($"The reconstruction of the contextual picture failed because of inability to reconstruct the objects manager. The inner message: {e.Message}");
-            }
-
-            // Prepare a new objects map
-            var newMap = new Dictionary<IPicture, Map<GeometricObject, IAnalyticObject>>();
-
-            // Add the pictures to it
-            _manager.ForEach(picture => newMap.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
-
-            // Go through all the original pairs of [picture, objects] map...
-            _objects.ForEach(pair =>
-            {
-                // Get the current picture
-                var picture = pair.Key;
-
-                // Go through all the geometric objects in this picture
-                pair.Value.Select(tuple => tuple.item1).ForEach(geometricObject =>
-                {
-                    // We're going to find the current analytic representation of it
-                    IAnalyticObject analyticObject;
-
-                    // If the configuration object is set, then we can ask the picture directly
-                    if (geometricObject.ConfigurationObject != null)
-                        analyticObject = picture.Get(geometricObject.ConfigurationObject);
-                    else
-                    {
-                        // Otherwise we need to reconstruct the object from points
-                        var definableByPoints = (DefinableByPoints) geometricObject;
-
-                        // We get the needed numbers of points (which is 2 for line, 3 for circle)
-                        // We could have tried get all pair and triples to be sure they make the same
-                        // line/circle 
-                        var points = definableByPoints.Points.Take(definableByPoints.NumberOfNeededPoints)
-                                // Get their analytic representations in the picture
-                                .Select(point => picture.Get(point.ConfigurationObject))
-                                // Cast to the right type
-                                .Cast<Point>()
-                                // Enumerate to an array
-                                .ToArray();
-
-                        // Decide according to the object
-                        switch (geometricObject)
-                        {
-                            // Line case
-                            case LineObject line:
-
-                                try
-                                {
-                                    // Construct a line from our points
-                                    analyticObject = new Line(points[0], points[1]);
-                                }
-                                catch (AnalyticException)
-                                {
-                                    // Since we didn't care about inconsistencies, it might happen that
-                                    // in the new picture the points can't make a line anymore
-                                    // because of some very slight imprecision. This is a very rare case though.
-                                    throw new InconsistentPicturesException("Analytic points that could make a line are no longer able to do so (this should be very rare).");
-                                }
-
-                                break;
-
-                            // Circle case
-                            case CircleObject circle:
-
-                                try
-                                {
-                                    // Construct a circle from our points
-                                    analyticObject = new Circle(points[0], points[1], points[2]);
-                                }
-                                catch (AnalyticException)
-                                {
-                                    // Since we didn't care about inconsistencies, it might happen that
-                                    // in the new picture the points can't make a circle anymore
-                                    // because of some very slight imprecision. This is a very rare case though.
-                                    throw new InconsistentPicturesException("Analytic points that could make a circle are no longer able to do so (this should be very rare).");
-                                }
-
-                                break;
-
-                            // There shouldn't be any other cases
-                            default:
-                                throw new ConstructorException("Unknown type of geometric object");
-                        }
-                    }
-
-                    try
-                    {
-                        // Finally we can add a new mapping between the objects
-                        newMap[picture].Add(geometricObject, analyticObject);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // Since we didn't care about inconsistencies, it might happen that
-                        // an almost equal version of this object is already added because
-                        // of some very slight imprecision. This is a very rare case though.
-                        throw new InconsistentPicturesException("Analytic objects that were distinct before are not longer like this (this should be very rare).");
-                    }
-                });
-            });
-
-            // Reset the objects map to the new one
-            _objects = newMap;
         }
 
         #endregion

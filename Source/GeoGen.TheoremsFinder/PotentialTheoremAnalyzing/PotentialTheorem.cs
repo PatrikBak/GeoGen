@@ -99,6 +99,43 @@ namespace GeoGen.TheoremsFinder
                 .Any(definition => definition.Flatten().Distinct().Count() < expectedMinimalNumberOfNeededObjects);
         }
 
+        /// <summary>
+        /// Converts this potential theorem to an actual theorem.
+        /// </summary>
+        /// <param name="configuration">The configuration where the theorem holds.</param>
+        /// <returns>The theorem.</returns>
+        public Theorem ToTheorem(Configuration configuration)
+        {
+            // Create theorem objects using our geometry objects
+            var theoremObjects = InvolvedObjects.Select(geometricObject =>
+            {
+                // If we have a point, then we have the only option...
+                if (geometricObject is PointObject)
+                    return new TheoremPointObject(geometricObject.ConfigurationObject) as TheoremObject;
+
+                // Otherwise the object is either a line, or a circle, so its definable by points
+                var objectWithPoints = (DefinableByPoints) geometricObject;
+
+                // Let's find the configuration objects corresponding to these points 
+                var points = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
+
+                // Determine the right type of the theorem object 
+                // We're using that it's either a line, or a circle, so 
+                // if it's not a line, then it's a circle
+                var objectType = objectWithPoints is LineObject
+                        ? ConfigurationObjectType.Line
+                        : ConfigurationObjectType.Circle;
+
+                // Construct the final theorem object
+                return new TheoremObjectWithPoints(objectType, geometricObject.ConfigurationObject, points);
+            })
+            // Enumerate to a list
+            .ToList();
+
+            // Create a new theorem using the created theorem objects
+            return new Theorem(configuration, TheoremType, theoremObjects);
+        }
+
         #endregion
     }
 }

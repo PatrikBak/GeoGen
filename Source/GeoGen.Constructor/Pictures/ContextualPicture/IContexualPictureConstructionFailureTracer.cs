@@ -23,19 +23,5 @@ namespace GeoGen.Constructor
         /// <param name="configuration">The configuration for which the picture was being constructed.</param>
         /// <param name="message">The message containing more information about the construction failure.</param>
         void TraceConstructionFailure(Configuration configuration, string message);
-
-        /// <summary>
-        /// Traces that the reconstruction of the picture representing a given configuration was unsuccessful.
-        /// </summary>
-        /// <param name="configuration">The configuration for which the picture was being reconstructed.</param>
-        /// <param name="message">The message containing more information about the reconstruction.</param>
-        void TraceUnsuccessfulAttemptToReconstruct(Configuration configuration, string message);
-
-        /// <summary>
-        /// Traces that the reconstruction of the picture representing a given configuration failed.
-        /// </summary>
-        /// <param name="configuration">The configuration for which the picture was being reconstructed.</param>
-        /// <param name="message">The message containing more information about the failure.</param>
-        void TraceReconstructionFailure(Configuration configuration, string message);
     }
 }

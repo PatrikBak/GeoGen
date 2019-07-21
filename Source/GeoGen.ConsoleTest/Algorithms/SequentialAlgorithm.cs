@@ -86,7 +86,7 @@ namespace GeoGen.ConsoleTest
                 GeneratorOutput = pair.output,
 
                 // Perform the theorem analysis
-                AnalyzerOutput = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.picture)
+                Theorems = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.picture)
             });
         }
 

@@ -71,11 +71,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 throw new GeoGenException("Incorrect configuration");
 
             // Draw the contextual picture
-            var contextualPicture = IoC.Get<IContextualPictureFactory>(new ContextualPictureSettings
-            {
-                MaximalNumberOfAttemptsToReconstruct = 100
-            })
-            .Create(examinedTheorem.Configuration, geometryData.Manager);
+            var contextualPicture = IoC.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration, geometryData.Manager);
 
             // Create the container
             var objectsContainer = IoC.Get<IConfigurationObjectsContainerFactory>().CreateContainer();

@@ -35,6 +35,19 @@ namespace GeoGen.Constructor
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
+            #region Make sure the settings have correct values
+
+            if (_settings.NumberOfPictures <= 0)
+                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.NumberOfPictures), settings.NumberOfPictures, "There has to be at least one picture.");
+
+            if (_settings.MaximalAttemptsToReconstructOnePicture < 0)
+                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.MaximalAttemptsToReconstructOnePicture), settings.MaximalAttemptsToReconstructOnePicture, "The value cannot be negative.");
+
+            if (_settings.MaximalAttemptsToReconstructAllPictures < 0)
+                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.MaximalAttemptsToReconstructAllPictures), settings.MaximalAttemptsToReconstructAllPictures, "The value cannot be negative.");
+
+            #endregion
+
             // Create the requested number of pictures
             _pictures = Enumerable.Range(0, settings.NumberOfPictures).Select(i => factory.CreatePicture()).ToList();
         }
@@ -76,7 +89,17 @@ namespace GeoGen.Constructor
                     attempts++;
 
                     // Try to reconstruct all the pictures
-                    TryReconstructPictures();
+                    foreach (var picture in _pictures)
+                    {
+                        // Reconstruct the given one
+                        TryReconstruct(picture, out var success);
+
+                        // If it failed, the whole reconstruction has
+                        if (!success)
+                            throw new UnresolvedInconsistencyException(
+                                "The reconstruction of the pictures failed, because the maximum number of attempts " +
+                               $"{_settings.MaximalAttemptsToReconstructOnePicture} to reconstructed a picture has been reached.");
+                    }
                 }
             }
 
@@ -84,27 +107,7 @@ namespace GeoGen.Constructor
             if (attempts == _settings.MaximalAttemptsToReconstructAllPictures)
                 throw new UnresolvedInconsistencyException(
                     "The reconstruction of the pictures failed, because the maximum number of attempts " +
-                   $"({_settings.MaximalAttemptsToReconstructAllPictures}) to do so has been reached.");
-        }
-
-        /// <summary>
-        /// Tries to reconstruct all the pictures that this manager manages. 
-        /// If the exception couldn't be handled, throws an <see cref="UnresolvedInconsistencyException"/>.
-        /// </summary>
-        public void TryReconstructPictures()
-        {
-            // Go through all the pictures
-            foreach (var picture in _pictures)
-            {
-                // Reconstruct the given one
-                TryReconstruct(picture, out var success);
-
-                // If it failed, the whole reconstruction has
-                if (!success)
-                    throw new UnresolvedInconsistencyException(
-                        "The reconstruction of the pictures failed, because the maximum number of attempts " +
-                       $"{_settings.MaximalAttemptsToReconstructOnePicture} to reconstructed a picture has been reached.");
-            }
+                   $"{_settings.MaximalAttemptsToReconstructAllPictures} to do so has been reached.");
         }
 
         #endregion

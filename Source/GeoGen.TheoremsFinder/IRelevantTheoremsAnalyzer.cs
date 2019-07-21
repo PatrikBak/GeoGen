@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
+using System.Collections.Generic;
 
 namespace GeoGen.TheoremsFinder
 {
@@ -15,7 +16,7 @@ namespace GeoGen.TheoremsFinder
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
         /// <param name="manager">The manager of all the pictures where the theorems should be tested.</param>
         /// <param name="contextualPicture">The contextual picture where the configuration is drawn.</param>
-        /// <returns>The output of the analyzer holding the theorems.</returns>
-        TheoremAnalysisOutput Analyze(Configuration configuration, IPicturesManager manager, IContextualPicture contextualPicture);
+        /// <returns>The list of theorems that are true in the configuration.</returns>
+        List<Theorem> Analyze(Configuration configuration, IPicturesManager manager, IContextualPicture contextualPicture);
     }
 }

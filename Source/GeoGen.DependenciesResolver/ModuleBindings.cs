@@ -25,6 +25,7 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>();
             kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>();
             kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf();
+            kernel.Bind<FullConfigurationToStringConverter>().ToSelf();
             kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf();
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
             kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>();
@@ -55,9 +56,9 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
             kernel.Bind<IPicture>().To<Picture>();
+            kernel.Bind<IContextualPicture>().To<ContextualPicture>();
 
             // Bindings with dynamic settings
-            kernel.BindsWithDynamicSettings<IContextualPicture, ContextualPicture, ContextualPictureSettings>();
             kernel.BindsWithDynamicSettings<IPicturesManager, PicturesManager, PicturesManagerSettings>();
 
             // Predefined constructors
@@ -97,7 +98,7 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsFinder(this IKernel kernel)
         {
-            kernel.BindsWithDynamicSettings<IRelevantTheoremsAnalyzer, RelevantTheoremsAnalyzer, TheoremAnalysisSettings>();
+            kernel.Bind<IRelevantTheoremsAnalyzer>().To<RelevantTheoremsAnalyzer>();
 
             // Potential theorem analyzers
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>();
