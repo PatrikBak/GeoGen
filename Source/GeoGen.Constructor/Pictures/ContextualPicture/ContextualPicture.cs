@@ -81,7 +81,7 @@ namespace GeoGen.Constructor
         /// <param name="manager">The pictures manager that holds all the representations of the objects inside this contextual picture.</param>
         /// <param name="settings">The settings of the contextual picture.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        public ContextualPicture(Configuration configuration, IPicturesManager manager,  IContexualPictureConstructionFailureTracer tracer = null)
+        public ContextualPicture(Configuration configuration, IPicturesManager manager, IContexualPictureConstructionFailureTracer tracer = null)
         {
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));

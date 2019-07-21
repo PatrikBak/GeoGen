@@ -2,8 +2,8 @@
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
-using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
+using Ninject;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,6 +19,11 @@ namespace GeoGen.ConsoleTest
     public static class Program
     {
         /// <summary>
+        /// The single instance of IoC kernel.
+        /// </summary>
+        private static IKernel _kernel;
+
+        /// <summary>
         /// The entry point of the application.
         /// </summary>
         public static void Main()
@@ -27,7 +32,7 @@ namespace GeoGen.ConsoleTest
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             // Prepare IoC
-            IoC.Kernel.AddGenerator().AddConstructor().AddTheoremsFinder().AddLocalBindings();
+            _kernel = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder().AddLocalBindings();
 
             // Prepare pictures manager settings
             var picturesManagerSettings = new PicturesManagerSettings
@@ -45,7 +50,7 @@ namespace GeoGen.ConsoleTest
                 NumberOfIterations = 2,
             };
 
-            var result = IoC.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
+            var result = _kernel.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
 
             // Perform the algorithm
             GenerateAndPrintResults(input, picturesManagerSettings, fileName: "output.txt");
@@ -119,7 +124,7 @@ namespace GeoGen.ConsoleTest
 
                 if (analyzeInitialTheorems)
                 {
-                    var initialOutput = IoC.Get<SimpleCompleteTheoremAnalyzer>(picturesManagerSettings).Analyze(initialConfigurationCopy);
+                    var initialOutput = _kernel.Get<SimpleCompleteTheoremAnalyzer>(picturesManagerSettings).Analyze(initialConfigurationCopy);
 
                     FormatOutput(initialFormatter, initialOutput);
                     writer.WriteLine("------------------------------------------------");
@@ -134,7 +139,7 @@ namespace GeoGen.ConsoleTest
                     writer.WriteLine();
                 }
 
-                var result = IoC.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
+                var result = _kernel.Get<IAlgorithm>(picturesManagerSettings).Execute(input);
 
                 if (measureTime)
                 {

@@ -48,5 +48,19 @@ namespace GeoGen.DependenciesResolver
                              return (TSettings) parameters[0].Value;
                          });
         }
+
+        /// <summary>
+        /// Gets the given service from the kernel, with possible dynamic configuration objects.
+        /// </summary>
+        /// <typeparam name="T">The type of the retrieved service.</typeparam>
+        /// <param name="kernel">The NInject kernel.</param>
+        /// <param name="dynamicConfiguration">The dynamic configuration.</param>
+        /// <returns>The retrieved service.</returns>
+        public static T Get<T>(this IKernel kernel, params object[] dynamicConfiguration)
+        {
+            // Delegate the call to the kernel with the passed objects cast to dynamic parameter
+            // NOTE: We cannot call the extension method directly, because it would be resolved to this method, i.e. an infinite loop
+            return ResolutionExtensions.Get<T>(kernel, dynamicConfiguration.Select(obj => new DynamicSettingsParameter(obj)).ToArray());
+        }
     }
 }

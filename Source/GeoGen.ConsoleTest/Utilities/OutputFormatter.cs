@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremsFinder;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;

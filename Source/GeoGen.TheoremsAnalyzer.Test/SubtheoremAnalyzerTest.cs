@@ -4,6 +4,7 @@ using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
 using GeoGen.Utilities;
+using Ninject;
 using NUnit.Framework;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
@@ -17,6 +18,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
     [TestFixture]
     public class SubtheoremAnalyzerTest
     {
+        #region IoC container
+
+        /// <summary>
+        /// The NInject kernel
+        /// </summary>
+        private IKernel _kernel;
+
+        #endregion
+
         #region Service instances
 
         /// <summary>
@@ -37,10 +47,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
         public void Initialize()
         {
             // Initialize IoC
-            IoC.Kernel.AddGenerator().AddConstructor().AddTheoremsFinder();
+            _kernel = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder();
 
-            // Get the constructor
-            _constructor = IoC.Get<IGeometryConstructor>(new PicturesManagerSettings
+            // Create the constructor
+            _constructor = _kernel.Get<IGeometryConstructor>(new PicturesManagerSettings
             {
                 NumberOfPictures = 8,
                 MaximalAttemptsToReconstructOnePicture = 100,
@@ -71,10 +81,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 throw new GeoGenException("Incorrect configuration");
 
             // Draw the contextual picture
-            var contextualPicture = IoC.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration, geometryData.Manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration, geometryData.Manager);
 
             // Create the container
-            var objectsContainer = IoC.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
+            var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
 
             // Fill it with objects of the examined configuration
             examinedTheorem.Configuration.ObjectsMap.AllObjects.ForEach(objectsContainer.Add);

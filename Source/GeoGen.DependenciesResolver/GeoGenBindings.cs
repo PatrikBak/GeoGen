@@ -10,7 +10,7 @@ namespace GeoGen.DependenciesResolver
     /// <summary>
     /// The class containing bindings for all GeoGen modules.
     /// </summary>
-    public static class ModuleBindings
+    public static class GeoGenBindings
     {
         /// <summary>
         /// Bindings the dependencies from the Generator module.
