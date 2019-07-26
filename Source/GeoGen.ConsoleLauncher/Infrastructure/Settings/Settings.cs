@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Constructor;
+using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -11,5 +12,20 @@ namespace GeoGen.ConsoleLauncher
         /// The list of the loggers settings.
         /// </summary>
         public List<BaseLoggerSettings> Loggers { get; set; }
+
+        /// <summary>
+        /// The settings for the <see cref="PicturesManager"/> used in the algorithm.
+        /// </summary>
+        public PicturesManagerSettings PicturesManagerSettings { get; set; }
+
+        /// <summary>
+        /// The settings of the folder containing inputs.
+        /// </summary>
+        public FolderSettings FolderSettings { get; set; }
+
+        /// <summary>
+        /// The settings for the algorithm runner.
+        /// </summary>
+        public AlgorithmRunnerSettings AlgorithmRunnerSettings { get; set; }
     }
 }

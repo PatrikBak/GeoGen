@@ -1,33 +1,45 @@
-﻿namespace GeoGen.Core
+﻿using System.Collections.Generic;
+using static GeoGen.Core.ConfigurationObjectType;
+
+namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a way in which the loose objects of a configuration are arranged.  
+    /// Extension methods for <see cref="LooseObjectsLayout"/>.
     /// </summary>
-    public enum LooseObjectsLayout
+    public static class LooseObjectsLayoutExtentions
     {
-        /// Represents an empty layout, i.e. objects are arranged with no rules.
-        None,
-
         /// <summary>
-        /// Represented a triangle whose angles are all acute and distinct.
+        /// Gets the type of objects required by this layout. The layout cannot be <see cref="LooseObjectsLayout.NoLayout"/>.
         /// </summary>
-        ScaleneAcuteAngledTriangled,
+        /// <param name="layout">The layout.</param>
+        /// <returns>The list of object types.</returns>
+        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectsLayout layout)
+        {
+            switch (layout)
+            {
+                // With no layout we cannot specify the types
+                case LooseObjectsLayout.NoLayout:
+                    throw new GeoGenException("Objects with no layout don't have predefined types.");
 
-        /// <summary>
-        /// Represents points A, B, C, D, E, F such that there are three circles
-        /// (ABCD), (CDEF), (EFAB) (from the radical axis theorem this means that
-        /// lines AB, CD, EF are concurrent).
-        /// </summary>
-        ThreeCyclicQuadrilatersOnSixPoints,
+                // 3 points
+                case LooseObjectsLayout.ScaleneAcuteTriangle:
+                    return new List<ConfigurationObjectType> { Point, Point, Point };
 
-        /// <summary>
-        /// Represents points A, B, C, D such that AB is parallel to CD.
-        /// </summary>
-        Trapezoid,
+                // 6 points
+                case LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints:
+                    return new List<ConfigurationObjectType> { Point, Point, Point, Point, Point, Point };
 
-        /// <summary>
-        /// Represents a circle and two points A, B such that line AB is tangent to the circle.
-        /// </summary>
-        CircleAndItsTangentLine
+                // 4 points
+                case LooseObjectsLayout.Trapezoid:
+                    return new List<ConfigurationObjectType> { Point, Point, Point, Point };
+
+                // 1 circle, 2 points
+                case LooseObjectsLayout.CircleAndItsTangentLine:
+                    return new List<ConfigurationObjectType> { Circle, Point, Point };
+
+                default:
+                    throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined.");
+            }
+        }
     }
 }

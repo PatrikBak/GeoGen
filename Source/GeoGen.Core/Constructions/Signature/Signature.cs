@@ -21,10 +21,16 @@ namespace GeoGen.Core
         public IReadOnlyList<ConstructionParameter> Parameters { get; }
 
         /// <summary>
-        /// Gets or sets the dictionary mapping configuration objects types to the number of 
+        /// Gets the dictionary mapping configuration objects types to the number of 
         /// objects of that type that are needed to create corresponding <see cref="Arguments"/>.
         /// </summary>
         public IReadOnlyDictionary<ConfigurationObjectType, int> ObjectTypesToNeededCount { get; }
+
+        /// <summary>
+        /// Gets the list representing what types of objects should be pass to create 
+        /// <see cref="Arguments"/> corresponding to this signature.
+        /// </summary>
+        public IReadOnlyList<ConfigurationObjectType> ObjectTypes { get; }
 
         #endregion
 
@@ -37,7 +43,12 @@ namespace GeoGen.Core
         public Signature(IReadOnlyList<ConstructionParameter> parameters)
         {
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
-            ObjectTypesToNeededCount = DetermineObjectTypesToCount();
+
+            // Use the helper method to find object types represented by the parameters
+            ObjectTypes = DetermineObjectTypes(parameters);
+
+            // Derive the dictionary mapping types to their count from the objects types list
+            ObjectTypesToNeededCount = ObjectTypes.GroupBy(t => t).ToDictionary(group => group.Key, group => group.Count());
         }
 
         #endregion
@@ -77,18 +88,18 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Constructs construction arguments that match the given construction 
-        /// parameters. The objects that are actually passed to the arguments 
-        /// are given in a configuration objects map.
+        /// Constructs construction arguments that match the given construction parameters. 
         /// </summary>
-        /// <param name="parameters">The parameters to be matched.</param>
-        /// <param name="objectsMap">The configuration objects used in the created arguments.</param>
+        /// <param name="objects">The configuration objects used in the created arguments.</param>
         /// <returns>The created arguments matching the parameters.</returns>
-        public Arguments Match(ConfigurationObjectsMap objectsMap)
+        public Arguments Match(IReadOnlyList<ConfigurationObject> objects)
         {
-            // Create a dictionary mapping object types to the current index of the object of that type
-            // that is ready to be passed to the next object argument. Initially, these indices are 0.
-            var indices = objectsMap.ToDictionary(keyValue => keyValue.Key, keyValue => 0);
+            // Make sure the counts are fine
+            if (objects.Count != ObjectTypes.Count)
+                throw new GeoGenException($"The number of required objects {ObjectTypes.Count} is not equal to the number of passed objects {objects.Count}.");
+
+            // Prepare the variable indicating the current index of the object being matched
+            var index = 0;
 
             // Local function that creates an argument matching a given parameter
             ConstructionArgument CreateArgument(ConstructionParameter parameter)
@@ -96,34 +107,18 @@ namespace GeoGen.Core
                 // If the parameter is an object parameter...
                 if (parameter is ObjectConstructionParameter objectParameter)
                 {
-                    // Prepare a variable holding the next index
-                    var nextIndex = default(int);
+                    // Get the object
+                    var currentObject = objects[index];
 
-                    // Prepare a variable holding the list of objects of the current type
-                    var objects = default(IReadOnlyList<ConfigurationObject>);
+                    // Make sure the type matches
+                    if (currentObject.ObjectType != ObjectTypes[index])
+                        throw new GeoGenException($"The object on the index {index} should have the type {ObjectTypes[index]}, but has {currentObject.ObjectType}.");
 
-                    try
-                    {
-                        // Get and increment the index of the current object
-                        nextIndex = indices[objectParameter.ObjectType]++;
+                    // Increase the index
+                    index++;
 
-                        // Get the objects from the objects map
-                        objects = objectsMap[objectParameter.ObjectType];
-                    }
-                    catch (KeyNotFoundException)
-                    {
-                        throw new GeoGenException($"The signature requires an object of type {objectParameter.ObjectType}, but no such object has been passed.");
-                    }
-
-                    try
-                    {
-                        // Try to return the object...
-                        return new ObjectConstructionArgument(objects[nextIndex]);
-                    }
-                    catch (ArgumentOutOfRangeException)
-                    {
-                        throw new GeoGenException($"The number of required objects of type {objectParameter.ObjectType} is {ObjectTypesToNeededCount[objectParameter.ObjectType]}, but their count is {objects.Count}.");
-                    }
+                    // Return the object argument
+                    return new ObjectConstructionArgument(currentObject);
                 }
 
                 // Otherwise we have a set construction parameter
@@ -152,6 +147,48 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region Private methods
+
+        /// <summary>
+        /// Finds the list of object types where each type represents to the i-th object 
+        /// that should be passed in order to match this signature.
+        /// </summary>
+        /// <param name="parameters">The parameters representing the signature.</param>
+        /// <returns>The list of object types of particular objects to be passed.</returns>
+        private IReadOnlyList<ConfigurationObjectType> DetermineObjectTypes(IReadOnlyList<ConstructionParameter> parameters)
+        {
+            // Prepare a result
+            var result = new List<ConfigurationObjectType>();
+
+            // Local function that handles a single parameter
+            void HandleParameter(ConstructionParameter parameter)
+            {
+                // If we have an object parameter...
+                if (parameter is ObjectConstructionParameter objectParameter)
+                {
+                    // We simply add its type
+                    result.Add(objectParameter.ObjectType);
+
+                    // And terminate
+                    return;
+                }
+
+                // Otherwise we have a set parameter
+                var setParameter = (SetConstructionParameter) parameter;
+
+                // We recursively perform this function the needed number of times on the repeated parameters
+                GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () => HandleParameter(setParameter.TypeOfParameters));
+            }
+
+            // Handle every parameter
+            Parameters.ForEach(HandleParameter);
+
+            // Return the result
+            return result;
+        }
+
+        #endregion
+
         #region IEnumerable implementation
 
         /// <summary>
@@ -165,56 +202,6 @@ namespace GeoGen.Core
         /// </summary>
         /// <returns>A non-generic enumerator.</returns>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Gets a dictionary mapping object types to the number of objects of that type 
-        /// that this construction requires.
-        /// </summary>
-        /// <returns>The dictionary mapping object types to the needed counts.</returns>
-        private Dictionary<ConfigurationObjectType, int> DetermineObjectTypesToCount()
-        {
-            // Initialize the resulting dictionary
-            var dictionary = new Dictionary<ConfigurationObjectType, int>();
-
-            // Local function that calculates the needed object types for one parameter
-            // and updates the dictionary
-            void Examine(ConstructionParameter parameter)
-            {
-                // If we have an object parameter...
-                if (parameter is ObjectConstructionParameter objectParameter)
-                {
-                    // Then we get this type
-                    var type = objectParameter.ObjectType;
-
-                    // Make sure it's in the dictionary...
-                    if (!dictionary.ContainsKey(type))
-                        dictionary.Add(type, 0);
-
-                    // Mark its occurrence
-                    dictionary[type]++;
-
-                    // And finish the method
-                    return;
-                }
-
-                // Otherwise we have a set parameter
-                var setParameter = (SetConstructionParameter) parameter;
-
-                // We perform this examination on the inner parameters the given number of times
-                // (not the most efficient way, but it definitely doesn't matter here)
-                GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () => Examine(setParameter.TypeOfParameters));
-            }
-
-            // Perform the examination on the individual parameters
-            Parameters.ForEach(Examine);
-
-            // Return the resulting dictionary
-            return dictionary;
-        }
 
         #endregion
 

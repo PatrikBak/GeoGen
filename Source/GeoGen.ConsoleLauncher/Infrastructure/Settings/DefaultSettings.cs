@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Constructor;
+using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -20,7 +21,7 @@ namespace GeoGen.ConsoleLauncher
                 {
                     IncludeLoggingOrigin = false,
                     IncludeTime = true,
-                    LogOutputLevel = LogOutputLevel.Info
+                    LogOutputLevel = LogOutputLevel.Debug
                 },
 
                 // File logger
@@ -31,6 +32,31 @@ namespace GeoGen.ConsoleLauncher
                     LogOutputLevel = LogOutputLevel.Debug,
                     FileLogPath = "log.txt"
                 }
+            };
+
+            // Create default manager settings
+            PicturesManagerSettings = new PicturesManagerSettings
+            {
+                NumberOfPictures = 5,
+                MaximalAttemptsToReconstructOnePicture = 5,
+                MaximalAttemptsToReconstructAllPictures = 5
+            };
+
+            // Create default folder settings
+            FolderSettings = new FolderSettings
+            {
+                WorkingFolder = "Data",
+                TemplateTheoremsFolder = "TemplateTheorems",
+                FilesExtention = "txt",
+                InputFilePrefix = "input",
+                OutputFilePrefix = "output"
+            };
+
+            // Create default algorithm runner settings
+            AlgorithmRunnerSettings = new AlgorithmRunnerSettings
+            {
+                GenerationProgresLoggingFrequency = 100,
+                LogProgress = true
             };
         }
     }

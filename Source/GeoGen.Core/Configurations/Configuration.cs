@@ -50,11 +50,11 @@ namespace GeoGen.Core
         /// <summary>
         /// Initializes  a new instance of the <see cref="Configuration"/> class that consists of given objects.
         /// The loose objects will be automatically detected and will have a specified layout, which is 
-        /// <see cref="LooseObjectsLayout.None"/> by default.
+        /// <see cref="LooseObjectsLayout.NoLayout"/> by default.
         /// </summary>
-        /// <param name="layout">The layout of the loose objects, with the default value <see cref="LooseObjectsLayout.None"/>.</param>
+        /// <param name="layout">The layout of the loose objects, with the default value <see cref="LooseObjectsLayout.NoLayout"/>.</param>
         /// <param name="objects">The objects of the configuration.</param>
-        public Configuration(LooseObjectsLayout layout = LooseObjectsLayout.None, params ConfigurationObject[] objects)
+        public Configuration(LooseObjectsLayout layout = LooseObjectsLayout.NoLayout, params ConfigurationObject[] objects)
             : this(new LooseObjectsHolder(objects.OfType<LooseConfigurationObject>().ToList(), layout), objects.OfType<ConstructedConfigurationObject>().ToList())
         {
         }
@@ -74,11 +74,11 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Creates a configuration that simulates the construction of given constructed objects.
-        /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.None"/> layout.
+        /// The loose objects will be automatically detected and will have <see cref="LooseObjectsLayout.NoLayout"/> layout.
         /// </summary>
         /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
-        public static Configuration DeriveFromObjects(params ConfigurationObject[] objects) => DeriveFromObjects(LooseObjectsLayout.None, objects);
+        public static Configuration DeriveFromObjects(params ConfigurationObject[] objects) => DeriveFromObjects(LooseObjectsLayout.NoLayout, objects);
 
         #endregion
 

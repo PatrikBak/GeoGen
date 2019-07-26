@@ -1,0 +1,11 @@
+﻿Iterations: 2
+
+Constructions:
+
+ Incenter
+ Midpoint
+ Orthocenter
+
+Initial configuration:
+ 
+ ScaleneAcuteTriangle: A, B, C

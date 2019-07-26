@@ -124,7 +124,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var N = new ConstructedConfigurationObject(Midpoint, A, M);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, N);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, N);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.EqualLineSegments, N, A, N, M);
@@ -160,7 +160,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var M = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, O, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, M);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, M);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.EqualLineSegments, M, B, M, C);
@@ -208,7 +208,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var O = new ConstructedConfigurationObject(Circumcenter, A, D, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, O);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, O);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.EqualAngles, new[]
@@ -260,7 +260,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var O = new ConstructedConfigurationObject(IntersectionOfLines, o1, o2);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, O);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, O);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.EqualAngles, new[]
@@ -316,7 +316,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var G = new ConstructedConfigurationObject(Midpoint, D, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, E, F, G);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, E, F, G);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ConcurrentObjects, new[]
@@ -367,7 +367,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, O, A, B);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, D, E, F);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ConcurrentObjects, new[]
@@ -416,7 +416,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var M = new ConstructedConfigurationObject(Midpoint, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, M, D, H);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, M, D, H);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.CollinearPoints, H, D, M);
@@ -466,7 +466,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var X = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, A, E, D, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, X);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, X);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ConcyclicPoints, A, X, D, E);
@@ -508,7 +508,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var E = new ConstructedConfigurationObject(Midpoint, A, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, D, E);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, D, E);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.TangentCircles, new[]
@@ -565,7 +565,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var l2 = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, G, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, l1, l2);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, l1, l2);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ParallelLines, l1, l2);
@@ -607,7 +607,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var H = new ConstructedConfigurationObject(ReflectionInLineFromPoints, D, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, H);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, H);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.PerpendicularLines, new[]
@@ -660,7 +660,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F = new ConstructedConfigurationObject(Midpoint, C, A);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, D, E, F);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ConcurrentObjects, new[]
@@ -710,7 +710,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var C1 = new ConstructedConfigurationObject(PointReflection, C, I);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, B1, C1, c);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, B1, C1, c);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.LineTangentToCircle, new[]
@@ -772,7 +772,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var D = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, H, H1, A, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, D);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, D);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TheoremType.ConcurrentObjects, new[]
@@ -830,7 +830,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F = new ConstructedConfigurationObject(Midpoint, A, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, F);
 
             // Create the examined theorem
             var examinedTheorems = new[]

@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -40,7 +39,7 @@ namespace GeoGen.Core
 
             // Make sure the object is not a point
             if (objectType == ConfigurationObjectType.Point)
-                throw new ArgumentException("The object type cannot be a point");
+                throw new GeoGenException("The object type cannot be a point");
 
             // Find the number of needed points to define this object
             // We're using that if we don't have a line, then we must have a circle
@@ -48,7 +47,7 @@ namespace GeoGen.Core
 
             // Make sure we have enough points in the case where the object is not defined
             if (configurationObject == null && NumberOfNeededPoints > Points.Count)
-                throw new ArgumentException("There are not enough distinct points to define this object.");
+                throw new GeoGenException("There are not enough distinct points to define this object.");
         }
 
         /// <summary>

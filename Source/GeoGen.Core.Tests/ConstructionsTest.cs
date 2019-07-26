@@ -7,9 +7,10 @@ using System.Linq;
 namespace GeoGen.Core.Tests
 {
     /// <summary>
-    /// The test class for <see cref="PredefinedConstructions"/>
+    /// The test class for <see cref="Constructions"/>
     /// </summary>
-    public class PredefinedConstructionsFactoryTest
+    [TestFixture]
+    public class ConstructionsTest
     {
         [Test]
         public void Test_That_All_Predefined_Constructions_Are_Accessible()
@@ -22,7 +23,7 @@ namespace GeoGen.Core.Tests
                 .ForEach(type =>
                 {
                     // Get the construction
-                    var construction = PredefinedConstructions.Get(type);
+                    var construction = Constructions.GetPredefinedconstruction(type);
 
                     // Assert
                     construction.Should().NotBeNull();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -8,30 +7,6 @@ namespace GeoGen.Core
     /// </summary>
     public static class PredefinedConstructions
     {
-        #region Get method
-
-        /// <summary>
-        /// Gets the predefined construction from a <see cref="PredefinedConstructionType"/>.
-        /// </summary>
-        /// <param name="type">The type</param>
-        /// <returns>The construction</returns>
-        public static PredefinedConstruction Get(PredefinedConstructionType type)
-        {
-            // Find the property info for the property handling our predefined type
-            var propertyInfo = typeof(PredefinedConstructions).GetProperty(type.ToString());
-
-            // Check if it's not null
-            if (propertyInfo == null)
-                throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
-
-            // Otherwise we invoke it and return the casted result
-            return (PredefinedConstruction) propertyInfo.GetMethod.Invoke(obj: null, parameters: null);
-        }
-
-        #endregion
-
-        #region Constructions
-
         /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.CenterOfCircle"/> construction.
         /// </summary>
@@ -375,7 +350,5 @@ namespace GeoGen.Core
             // Create the actual construction, which has no parameters
             get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, new ConstructionParameter[0], ConfigurationObjectType.Point);
         }
-
-        #endregion
     }
 }

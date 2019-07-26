@@ -181,8 +181,8 @@ namespace GeoGen.TheoremsAnalyzer
             // Return the answer based on the layout of the template theorem
             switch (input.TemplateTheorem.Configuration.LooseObjectsHolder.Layout)
             {
-                case LooseObjectsLayout.None:
-                    return GenerateInitialMappingsForNoneLayout(input);
+                case LooseObjectsLayout.NoLayout:
+                    return GenerateInitialMappingsForNoLayout(input);
 
                 case LooseObjectsLayout.CircleAndItsTangentLine:
                     return GenerateInitialMappingsForCircleAndItsTangentLineLayout(input);
@@ -201,11 +201,11 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.None"/>.
+        /// configuration is <see cref="LooseObjectsLayout.NoLayout"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private IEnumerable<MappingData> GenerateInitialMappingsForNoneLayout(SubtheoremAnalyzerInput input)
+        private IEnumerable<MappingData> GenerateInitialMappingsForNoLayout(SubtheoremAnalyzerInput input)
         {
             // Get the template configuration's objects map for shorter access
             var templateLooseObjectsMap = input.TemplateTheorem.Configuration.LooseObjectsHolder.ObjectsMap;
@@ -448,7 +448,7 @@ namespace GeoGen.TheoremsAnalyzer
                         // Within a single group we first categorize these lines be their angle
                         // with respect to the current picture (two lines are parallel if and
                         // only if their angles are the same). 
-                        return currentGroup.GroupBy(line => input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(line, picture).Angle)
+                        return currentGroup.GroupBy(line => input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(line, picture).Angle.Rounded())
                                       // We clearly only those groups where there are at least two lines
                                       // (that are parallel to each other)
                                       .Where(innerGroup => innerGroup.Count() >= 2);
@@ -510,7 +510,7 @@ namespace GeoGen.TheoremsAnalyzer
                 return Enumerable.Empty<MappingData>();
 
             // Create new arguments for the remapped object.
-            var newArguments = constructedObject.Construction.Signature.Match(new ConfigurationObjectsMap(mappedObjects));
+            var newArguments = constructedObject.Construction.Signature.Match(mappedObjects);
 
             // Finally create it
             var mappedObject = new ConstructedConfigurationObject(constructedObject.Construction, newArguments);

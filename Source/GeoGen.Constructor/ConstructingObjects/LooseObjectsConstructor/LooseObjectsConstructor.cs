@@ -7,7 +7,7 @@ namespace GeoGen.Constructor
 {
     /// <summary>
     /// The default implementation of <see cref="ILooseObjectsConstructor"/>. Currently there is only 
-    /// one supported layout <see cref="LooseObjectsLayout.ScaleneAcuteAngledTriangled"/>.
+    /// one supported layout <see cref="LooseObjectsLayout.ScaleneAcuteTriangle"/>.
     /// </summary>
     public class LooseObjectsConstructor : ILooseObjectsConstructor
     {
@@ -21,11 +21,11 @@ namespace GeoGen.Constructor
             switch (looseObjectsHolder.Layout)
             {
                 // Don't allow none layout in this scenario 
-                case LooseObjectsLayout.None:
+                case LooseObjectsLayout.NoLayout:
                     throw new ConstructorException("The loose objects constructor doesn't allow the loose objects layout to be 'null'.");
 
                 // For a triangle let the helper constructor to the job and create a random triangle
-                case LooseObjectsLayout.ScaleneAcuteAngledTriangled:
+                case LooseObjectsLayout.ScaleneAcuteTriangle:
                     return AnalyticHelpers.ConstructRandomScaleneAcuteTriangle().Cast<IAnalyticObject>().ToList();
 
                 // If we got here, we have an unsupported layout :/

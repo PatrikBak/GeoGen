@@ -67,9 +67,20 @@ namespace GeoGen.Generator
                     // then there are 20 ways of combining these pairs. The result of this call will be an enumerable
                     // where each element is an array of options (each array representing an option for some particular type)
                     .Combine()
-                    // We wrap each option into an objects map. Before doing so to flatten the arrays, which basically
-                    // means putting more arrays (of objects of different types) into a single one
-                    .Select(arrays => new ConfigurationObjectsMap(arrays.Flatten()))
+                    // We need to create a single array representing an input for the signature.Match method
+                    .Select(arrays =>
+                    {
+                        // Create a helper dictionary mapping types to an array of objects of these types
+                        var typeToObjects = arrays.ToDictionary(objects => objects[0].ObjectType, objects => objects);
+
+                        // Create a helper dictionary mapping types to the current index (pointer) on the next object
+                        // of this type that should be returned
+                        var typeToIndex = arrays.ToDictionary(objects => objects[0].ObjectType, objects => 0);
+
+                        // We go through the requested types and for each we take the object of the given type
+                        // and at the same moment increase the index so that it points out to the next object of this type
+                        return signature.ObjectTypes.Select(type => typeToObjects[type][typeToIndex[type]++]).ToArray();
+                    })
                     // After we have the map, we'll use the signature's method to create the corresponding arguments 
                     .Select(signature.Match);
 

@@ -42,22 +42,9 @@ namespace GeoGen.Core
             ObjectsMap = new ConfigurationObjectsMap(looseObjects);
             Layout = layout;
 
-            // Verify the objects match the layout
-            switch (layout)
-            {
-                case LooseObjectsLayout.None:
-
-                    // Specifying no layout is allowed
-                    return;
-
-                case LooseObjectsLayout.ScaleneAcuteAngledTriangled:
-
-                    // Verify that we have exactly 3 objects and all points...
-                    if (LooseObjects.Count != 3 || LooseObjects.Any(obj => obj.ObjectType != ConfigurationObjectType.Point))
-                        throw new GeoGenException($"The loose objects don't match the {layout}");
-
-                    return;
-            }
+            // If the layout is specified make sure the objects match it 
+            if (layout != LooseObjectsLayout.NoLayout && !LooseObjects.Select(o => o.ObjectType).SequenceEqual(layout.ObjectTypes()))
+                throw new GeoGenException($"The loose objects don't match the specified layout.");
         }
 
         #endregion

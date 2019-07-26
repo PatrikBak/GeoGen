@@ -69,6 +69,13 @@ namespace GeoGen.ConsoleLauncher
 
             // Add GeoGen modules
             Kernel.AddGenerator().AddConstructor().AddTheoremsFinder();
+
+            // Add local dependencies
+            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>().WithDynamicParameter(settings.PicturesManagerSettings);
+            Kernel.Bind<ICompleteTheoremsFinder>().To<SimpleCompleteTheoremFinder>().WithDynamicParameter(settings.PicturesManagerSettings);
+            Kernel.Bind<IFolderScanner>().To<FolderScanner>().WithConstructorArgument(settings.FolderSettings);
+            Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
+            Kernel.Bind<IParser>().To<Parser>();
         }
 
         #endregion

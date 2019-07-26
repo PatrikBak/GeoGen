@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Ninject;
+using System;
+using System.Globalization;
+using System.Threading;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
 
@@ -9,17 +12,30 @@ namespace GeoGen.ConsoleLauncher
     /// </summary>
     public static class Startup
     {
+        #region Main method
+
         /// <summary>
         /// The main function.
         /// </summary>
         private static void Main()
         {
+            // This makes sure that doubles in the VS debugger will be displayed with a decimal point
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
+
             // Initialize the IoC system
             IoC.Initialize();
 
             // Log that we're ready
             LoggingManager.LogInfo("The application has started.");
+
+            // Run the algorithm asynchronously
+            RunTaskAndHandleExceptions(() => IoC.Kernel.Get<IFolderScanner>().ScanAsync());
+
+            // Log that we're done
+            LoggingManager.LogInfo("The application has finished.\n");
         }
+
+        #endregion
 
         #region RunAndHandleExceptions methods
 
@@ -41,10 +57,7 @@ namespace GeoGen.ConsoleLauncher
             catch (Exception e)
             {
                 // Log it
-                LoggingManager.LogFatal("An unexpected exception has occurred. Contact the developer and send him the log file.");
-
-                // Log the exception for debugging
-                LoggingManager.LogDebug(e.ToString());
+                LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
             }
         }
 

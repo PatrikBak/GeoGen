@@ -64,7 +64,7 @@ namespace GeoGen.ConsoleTest
             var D = new ConstructedConfigurationObject(PredefinedConstructions.InternalAngleBisector, A, B, C);
             var E = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLineAndLineFromPoints, D, B, C);
 
-            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteAngledTriangled, A, B, C, D, E);
+            return Configuration.DeriveFromObjects(LooseObjectsLayout.ScaleneAcuteTriangle, A, B, C, D, E);
         }
 
         private static List<Construction> Constructions() => new List<Construction>

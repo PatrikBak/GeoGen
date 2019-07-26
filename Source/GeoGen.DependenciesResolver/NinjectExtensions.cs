@@ -50,6 +50,15 @@ namespace GeoGen.DependenciesResolver
         }
 
         /// <summary>
+        /// Adds a <see cref="DynamicSettingsParameter"/> with a given value to the binding.
+        /// </summary>
+        /// <typeparam name="T">The service being bound.</typeparam>
+        /// <param name="syntax">The syntax.</param>
+        /// <param name="value">The vale that should make a <see cref="DynamicSettingsParameter"/>.</param>
+        /// <returns>The syntax for chaining.</returns>
+        public static IBindingWithOrOnSyntax<T> WithDynamicParameter<T>(this IBindingWithSyntax<T> syntax, object value) => syntax.WithParameter(new DynamicSettingsParameter(value));
+
+        /// <summary>
         /// Gets the given service from the kernel, with possible dynamic configuration objects.
         /// </summary>
         /// <typeparam name="T">The type of the retrieved service.</typeparam>

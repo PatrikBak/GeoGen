@@ -99,36 +99,8 @@ namespace GeoGen.Core
             if (theorem1.Type != theorem2.Type)
                 return false;
 
-            // Local helper function that checks if two theorem objects are equivalent
-            bool AreTheoremObjectsEquivalent(TheoremObject theoremObject1, TheoremObject theoremObject2)
-            {
-                // Check their types
-                if (theoremObject1.Type != theoremObject2.Type)
-                    return false;
-
-                // Handle the point case in which we need to have equal configuration objects
-                if (theoremObject1 is TheoremPointObject)
-                    return theoremObject1.ConfigurationObject == theoremObject2.ConfigurationObject;
-
-                // Otherwise we have the line/circle case
-                var lineOrCircle1 = (TheoremObjectWithPoints) theoremObject1;
-                var lineOrCircle2 = (TheoremObjectWithPoints) theoremObject2;
-
-                // If their configuration objects are defined and matches, then they are equivalent
-                if (lineOrCircle1.ConfigurationObject != null && lineOrCircle1.ConfigurationObject == lineOrCircle2.ConfigurationObject)
-                    return true;
-
-                // If the number of their common points is enough to define them, then they are equivalent
-                if (lineOrCircle1.Points.Intersect(lineOrCircle2.Points).Count() >= lineOrCircle1.NumberOfNeededPoints)
-                    return true;
-
-                // Otherwise we don't have enough information to say they are equivalent for sure
-                return false;
-            }
-
-            // Prepare a simple comparer for hash set of theorem objects that uses our defined equivalence
-            // It uses a trivial hash-code function which makes it inefficient, but at this scale it doesn't matter
-            var comparer = new SimpleEqualityComparer<TheoremObject>((o1, o2) => AreTheoremObjectsEquivalent(o1, o2), o => 0);
+            // Get the instance of the equality comparer of theorem objects
+            var comparer = TheoremObject.EquivalencyComparer;
 
             // We need to take care particular types since they might have specific signatures
             switch (theorem1.Type)

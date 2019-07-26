@@ -41,7 +41,7 @@
         /// <param name="type">The type of the predefined construction to be performed.</param>
         /// <param name="input">The input objects in the flattened order (see <see cref="Arguments.FlattenedList")/></param>
         public ConstructedConfigurationObject(PredefinedConstructionType type, params ConfigurationObject[] input)
-            : this(PredefinedConstructions.Get(type), input)
+            : this(Constructions.GetPredefinedconstruction(type), input)
         {
         }
 
@@ -52,7 +52,7 @@
         /// <param name="construction">The construction that should be used to draw this object.</param>
         /// <param name="input">The input objects in the flattened order (see <see cref="Arguments.FlattenedList")/></param>
         public ConstructedConfigurationObject(Construction construction, params ConfigurationObject[] input)
-            : this(construction, construction.Signature.Match(new ConfigurationObjectsMap(input)))
+            : this(construction, construction.Signature.Match(input))
         {
         }
 
