@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Generator;
+using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
 using System;
 using System.Collections.Generic;
@@ -16,19 +17,29 @@ namespace GeoGen.ConsoleLauncher
         #region Dependencies
 
         /// <summary>
-        /// The generator that generates configurations.
+        /// The generator of configurations.
         /// </summary>
         private readonly IGenerator _generator;
 
         /// <summary>
-        /// The analyzer of relevant theorems in generated configurations.
+        /// The finder of theorems in generated configurations.
         /// </summary>
-        private readonly IRelevantTheoremsAnalyzer _analyzer;
+        private readonly IRelevantTheoremsAnalyzer _finder;
 
         /// <summary>
-        /// The factory for creating contextual pictures that are required by the relevant theorem analyzer.
+        /// The factory for creating contextual pictures.
         /// </summary>
-        private readonly IContextualPictureFactory _factory;
+        private readonly IContextualPictureFactory _pictureFactory;
+
+        /// <summary>
+        /// The analyzer of theorem providing feedback whether they are olympiad or not.
+        /// </summary>
+        private readonly ITheoremsAnalyzer _analyzer;
+
+        /// <summary>
+        /// The factory for creating objects containers.
+        /// </summary>
+        private readonly IConfigurationObjectsContainerFactory _containerFactory;
 
         #endregion
 
@@ -37,14 +48,18 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="SequentialAlgorithm"/> class.
         /// </summary>
-        /// <param name="generator">The generator that generates configurations.</param>
-        /// <param name="analyzer">The analyzer of relevant theorems in generated configurations.</param>
-        /// <param name="factory">The factory for creating contextual pictures that are required by the relevant theorem analyzer.</param>
-        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer analyzer, IContextualPictureFactory factory)
+        /// <param name="generator">The generator of configurations.</param>
+        /// <param name="finder">The finder of theorems in generated configurations.</param>
+        /// <param name="pictureFactory">The factory for creating contextual pictures.</param>
+        /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
+        /// <param name="containerFactory">The factory for creating objects containers.</param>
+        public SequentialAlgorithm(IGenerator generator, IRelevantTheoremsAnalyzer finder, IContextualPictureFactory pictureFactory, ITheoremsAnalyzer analyzer, IConfigurationObjectsContainerFactory containerFactory)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
+            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
+            _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _containerFactory = containerFactory ?? throw new ArgumentNullException(nameof(containerFactory));
         }
 
         #endregion
@@ -67,7 +82,7 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Let the manager safely create an instance of the contextual picture
-                    picture = _factory.Create(output.Configuration, output.Manager);
+                    picture = _pictureFactory.Create(output.Configuration, output.Manager);
                 }
                 catch (InconstructibleContextualPicture)
                 {
@@ -80,13 +95,34 @@ namespace GeoGen.ConsoleLauncher
             // Take only such pairs where the picture was successfully created
             .Where(pair => pair.picture != null)
             // For each such pair perform the theorem analysis
-            .Select(pair => new AlgorithmOutput
+            .Select(pair =>
             {
-                // Set the generator output
-                GeneratorOutput = pair.output,
+                // Deconstruct
+                var (output, picture) = pair;
 
-                // Perform the theorem analysis
-                Theorems = _analyzer.Analyze(pair.output.Configuration, pair.output.Manager, pair.picture)
+                // Find theorems
+                var theorems = _finder.Analyze(output.Configuration, output.Manager, picture);
+
+                // Create a container holding the objects of the configuration
+                var container = _containerFactory.CreateContainer(output.Configuration);
+
+                // Analyze them
+                var analysisResult = _analyzer.Analyze(new TheoremAnalyzerInput
+                {
+                    Configuration = output.Configuration,
+                    ContextualPicture = picture,
+                    Manager = output.Manager,
+                    Theorems = theorems,
+                    ConfigurationObjectsContainer = container
+                });
+
+                // Return the final output
+                return new AlgorithmOutput
+                {
+                    GeneratorOutput = output,
+                    Theorems = theorems,
+                    AnalyzerOutput = analysisResult
+                };
             });
         }
 

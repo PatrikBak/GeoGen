@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,13 +24,13 @@ namespace GeoGen.TheoremsFinder
                 IncludePoints = true,
             })
             // And find all the lines that pass through it
-            .SelectMany(point => point.Lines.Select(line => (point, line)))
-            // Take only those lines that contain at least three points
-            .Where(pair => pair.line.Points.Count >= 3)
-            // And for every such a line take those triples of points that contain the new one we're interested in
-            .SelectMany(pair => pair.line.Points.Subsets(3).Where(points => points.Contains(pair.point)))
-            // Each such a triple represents a theorem (not even potential, the contextual picture made sure it's true)
-            .Select(triple => new PotentialTheorem
+            .SelectMany(point => point.Lines)
+            // That contain at least 3 points
+            .Where(line => line.Points.Count >= 3)
+            // Take distinct ones
+            .Distinct()
+            // Each line makes a theorem
+            .Select(line => new PotentialTheorem
             {
                 // Set the type using the base property
                 TheoremType = Type,
@@ -40,7 +39,7 @@ namespace GeoGen.TheoremsFinder
                 VerificationFunction = _ => true,
 
                 // Set the involved objects to the these triple of points
-                InvolvedObjects = triple
+                InvolvedObjects = line.Points
             });
         }
     }

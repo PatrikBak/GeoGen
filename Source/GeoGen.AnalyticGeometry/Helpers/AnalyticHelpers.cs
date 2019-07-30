@@ -108,65 +108,6 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
-        /// Constructs a random scalene acute-angled triangle.
-        /// </summary>
-        /// <returns>An array of three points that make the triangle.</returns>
-        public static Point[] ConstructRandomScaleneAcuteTriangle()
-        {
-            // First we normally place two points
-            var a = new Point(0, 0);
-            var b = new Point(1, 0);
-
-            // In order to generate a third point C, we need to establish the rules. We want each two 
-            // angles <A, <B, <C to have the absolute difference at least d, where d is a constant. Now 
-            // we WLOG assume that <A is the largest angle and <C the smallest angle. We also want to have 
-            // <C to be at least 'd' and 90 - <A to be at least 'd'. In that way we get a triangle that is 
-            // acute, isn't too flat, isn't too close to a right-angled triangle and isn't close to an 
-            // isosceles triangle. It can be shown that if we generate <A from the interval (60+d, 90-d)
-            // and then <B from the interval ((180+d-A)/2, A-d), that we will get the wanted result (simple
-            // math). In order to be able to generate <A, we need to have d from the interval (0,15). 
-            // Generally the bigger, the better, but not very close to 15, because in that case  we might 
-            // limit the variety of possible triangles (alpha would always be very close to 75). 
-            const double d = 5;
-
-            // Let us generate angles according to our formulas
-            var alpha = RandomnessHelper.NextDouble(60 + d, 90 - d);
-            var beta = RandomnessHelper.NextDouble((180 + d - alpha) / 2, alpha - d);
-
-            // Now we need to construct a triangle with these angles (and our starting points A, B)
-            // A simple way to achieve this is to use tangents. Let C = (x, y). Then the vector
-            // C - A = (x, y) has the slope <A and the vector C - B = (x-1, y) has the slope 180 - <B.
-            // From this we have two equations:
-            //
-            // y/x = tan(<A)
-            // y/(x-1) = tan(180-<B)
-            //
-            // One can easy derive that 
-            //
-            // x = tan(<A) / (tan(<A) - tan(180-<B))
-            // y = tan(<A) tan(180-<B) / (tan(<A) - tan(180-<B))
-            //
-            // It's also easy to see that the denominator can't be 0.
-            // (in short, we would have either <A + <B = 180, or 180 - <B = 90 - <A, both are impossible)
-            // 
-            // Therefore we may happily generate point C
-
-            // First calculate tangents
-            var tanAlpha = Math.Tan(MathematicalHelpers.ToRadians(alpha));
-            var tan180MinusBeta = Math.Tan(MathematicalHelpers.ToRadians(180 - beta));
-
-            // Then calculate the coordinates
-            var x = tan180MinusBeta / (tan180MinusBeta - tanAlpha);
-            var y = tanAlpha * tan180MinusBeta / (tan180MinusBeta - tanAlpha);
-
-            // Construct the point
-            var c = new Point(x, y);
-
-            // And return all of them
-            return new[] { a, b, c };
-        }
-
-        /// <summary>
         /// Constructs the perpendicular bisector of the line defined by given distinct points.
         /// </summary>
         /// <param name="point1">The first point.</param>
@@ -240,6 +181,128 @@ namespace GeoGen.AnalyticGeometry
             // In order to find the angle between two lines we can simply find the angle
             // between its normal vectors. This yields a very simple formula:
             return Math.Acos(Math.Abs(line1.A * line2.A + line1.B * line2.B));
+        }
+
+        /// <summary>
+        /// Constructs a random scalene acute-angled triangle.
+        /// </summary>
+        /// <returns>Three points that make the triangle.</returns>
+        public static (Point, Point, Point) ConstructRandomScaleneAcuteTriangle()
+        {
+            // First we normally place two points
+            var a = new Point(0, 0);
+            var b = new Point(1, 0);
+
+            // In order to generate a third point C, we need to establish the rules. We want each two 
+            // angles <A, <B, <C to have the absolute difference at least d, where d is a constant. Now 
+            // we WLOG assume that <A is the largest angle and <C the smallest angle. We also want to have 
+            // <C to be at least 'd' and 90 - <A to be at least 'd'. In that way we get a triangle that is 
+            // acute, isn't too flat, isn't too close to a right-angled triangle and isn't close to an 
+            // isosceles triangle. It can be shown that if we generate <A from the interval (60+d, 90-d)
+            // and then <B from the interval ((180+d-A)/2, A-d), that we will get the wanted result (simple
+            // math). In order to be able to generate <A, we need to have d from the interval (0,15). 
+            // Generally the bigger, the better, but not very close to 15, because in that case  we might 
+            // limit the variety of possible triangles (alpha would always be very close to 75). 
+            const double d = 5;
+
+            // Let us generate angles according to our formulas
+            var alpha = RandomnessHelper.NextDouble(60 + d, 90 - d);
+            var beta = RandomnessHelper.NextDouble((180 + d - alpha) / 2, alpha - d);
+
+            // Now we need to construct a triangle with these angles (and our starting points A, B)
+            // A simple way to achieve this is to use tangents. Let C = (x, y). Then the vector
+            // C - A = (x, y) has the slope <A and the vector C - B = (x-1, y) has the slope 180 - <B.
+            // From this we have two equations:
+            //
+            // y/x = tan(<A)
+            // y/(x-1) = tan(180-<B)
+            //
+            // One can easy derive that 
+            //
+            // x = tan(<A) / (tan(<A) - tan(180-<B))
+            // y = tan(<A) tan(180-<B) / (tan(<A) - tan(180-<B))
+            //
+            // It's also easy to see that the denominator can't be 0.
+            // (in short, we would have either <A + <B = 180, or 180 - <B = 90 - <A, both are impossible)
+            // 
+            // Therefore we may happily generate point C
+
+            // First calculate tangents
+            var tanAlpha = Math.Tan(MathematicalHelpers.ToRadians(alpha));
+            var tan180MinusBeta = Math.Tan(MathematicalHelpers.ToRadians(180 - beta));
+
+            // Then calculate the coordinates
+            var x = tan180MinusBeta / (tan180MinusBeta - tanAlpha);
+            var y = tanAlpha * tan180MinusBeta / (tan180MinusBeta - tanAlpha);
+
+            // Construct the point
+            var c = new Point(x, y);
+
+            // And return all of them
+            return (a, b, c);
+        }
+
+        /// <summary>
+        /// Construct a random convex quadrilateral that is guaranteed to have
+        /// its sides not parallel to each other.
+        /// </summary>
+        /// <returns>The four points making a convex quadrilateral.</returns>
+        public static (Point, Point, Point, Point) ConstructRandomConvexQuadrilateral()
+        {
+            // This is a cheat, but first we construct an acute scalene triangle ABC
+            var (A, B, C) = ConstructRandomScaleneAcuteTriangle();
+
+            // On each side CA and CB we find a point, let's name them
+            // D and E, respectively. Then ABED is a convex quadrilateral.
+            // In order for it not to have sides AB and ED parallel we will
+            // make 'D' closer to AB than 'E'
+            var D = A + RandomnessHelper.NextDouble(0.3, 0.5) * (C - A);
+            var E = B + RandomnessHelper.NextDouble(0.6, 0.8) * (C - B);
+
+            // Return all the points
+            return (A, B, E, D);
+        }
+
+        /// <summary>
+        /// Constructs a line and a point that does not lie on it. 
+        /// </summary>
+        /// <returns>The line and the point.</returns>
+        public static (Line, Point) ConstructLineAndRandomPointNotLyingOnIt()
+        {
+            // Let the line by just the x-axis
+            var line = new Line(new Point(0, 0), new Point(1, 0));
+
+            // The point will have its coordinates from the intervals
+            // [0,0.5], [0.5,1], so it's not too close to the line
+            var point = new Point(RandomnessHelper.NextDouble(0, 0.5), RandomnessHelper.NextDouble(0.5, 1));
+
+            // Return them
+            return (line, point);
+        }
+
+        /// <summary>
+        /// Constructs a line 'l' and two random points that don't lie on it, 
+        /// that are fairly distanced from each other, and that make a line 
+        /// whose angle with the 'l' is not close to 0, nor 90 degrees.
+        /// </summary>
+        /// <returns>The line and the two points.</returns>
+        public static (Line, Point, Point) ConstructLineAndTwoRandomPointsNotLyingOnIt()
+        {
+            // Let the line by just the x-axis
+            var line = new Line(new Point(0, 0), new Point(1, 0));
+
+            // The first point will have its coordinates from the intervals
+            // [0,0.5], [0.5,1], so it's not too close to the line
+            var point1 = new Point(RandomnessHelper.NextDouble(0, 0.5), RandomnessHelper.NextDouble(0.5, 1));
+
+            // The second point will have its coordinates from the intervals
+            // [1,1.5], [1.5,2], so it's far from the line and from the first point too.
+            // These numbers also make sure that the angle between the line and the line from 
+            // our points is between 45 and about 71.57 degrees (precisely arctan(3)).
+            var point2 = new Point(RandomnessHelper.NextDouble(1.5, 2), RandomnessHelper.NextDouble(1.5, 2));
+
+            // Return them
+            return (line, point1, point2);
         }
     }
 }

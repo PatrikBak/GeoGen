@@ -1,6 +1,7 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
+using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -13,7 +14,7 @@ namespace GeoGen.DependenciesResolver
     public static class GeoGenBindings
     {
         /// <summary>
-        /// Bindings the dependencies from the Generator module.
+        /// Bindings for the dependencies from the Generator module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <returns>The kernel for chaining.</returns>
@@ -45,14 +46,13 @@ namespace GeoGen.DependenciesResolver
         }
 
         /// <summary>
-        /// Bindings the dependencies from the Constructor module.
+        /// Bindings for the dependencies from the Constructor module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddConstructor(this IKernel kernel)
         {
             kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
-            kernel.Bind<ILooseObjectsConstructor>().To<LooseObjectsConstructor>();
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
             kernel.Bind<IPicture>().To<Picture>();
@@ -92,7 +92,7 @@ namespace GeoGen.DependenciesResolver
         }
 
         /// <summary>
-        /// Bindings the dependencies from the Theorems Finder module.
+        /// Bindings for the dependencies from the Theorems Finder module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <returns>The kernel for chaining.</returns>
@@ -110,6 +110,20 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<ParallelLinesAnalyzer>();
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<PerpendicularLinesAnalyzer>();
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<TangentCirclesAnalyzer>();
+
+            // Return the kernel for chaining
+            return kernel;
+        }
+
+        /// <summary>
+        /// Bindings for the dependencies from the Analyzer module.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        /// <returns>The kernel for chaining.</returns>
+        public static IKernel AddTheoremsAnalyzer(this IKernel kernel)
+        {
+            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>();
+            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
 
             // Return the kernel for chaining
             return kernel;

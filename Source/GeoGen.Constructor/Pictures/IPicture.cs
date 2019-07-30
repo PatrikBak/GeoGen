@@ -19,7 +19,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="objects">The configuration objects to be added to the picture.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic versions of the objects.</param>
-        void Add(IEnumerable<ConfigurationObject> objects, Func<List<IAnalyticObject>> constructor);
+        void Add(IEnumerable<ConfigurationObject> objects, Func<IReadOnlyList<IAnalyticObject>> constructor);
 
         /// <summary>
         /// Tries to add a given configuration object to the picture. The analytic version of the object is 

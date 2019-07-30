@@ -54,7 +54,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="layout">The layout of the loose objects, with the default value <see cref="LooseObjectsLayout.NoLayout"/>.</param>
         /// <param name="objects">The objects of the configuration.</param>
-        public Configuration(LooseObjectsLayout layout = LooseObjectsLayout.NoLayout, params ConfigurationObject[] objects)
+        private Configuration(LooseObjectsLayout layout = LooseObjectsLayout.NoLayout, params ConfigurationObject[] objects)
             : this(new LooseObjectsHolder(objects.OfType<LooseConfigurationObject>().ToList(), layout), objects.OfType<ConstructedConfigurationObject>().ToList())
         {
         }

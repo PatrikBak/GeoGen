@@ -75,48 +75,42 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Creates a formatted string describing the configuration.
+        /// Creates a formatted string describing a given theorem.
         /// </summary>
-        /// <param name="theorems">The theorems.</param>
-        /// <returns>The string representing the theorems.</returns>
-        public string FormatTheorems(IEnumerable<Theorem> theorems)
+        /// <param name="theorems">The theorem.</param>
+        /// <returns>The string representing the theorem.</returns>
+        public string FormatTheorem(Theorem theorem)
         {
-            // Convert individual theorems to a string
-            return theorems.Select(theorem =>
+            // Switch based on the type
+            switch (theorem.Type)
             {
-                // Switch based on the type
-                switch (theorem.Type)
-                {
-                    // Handle the case where the first two objects are exchangeable
-                    case TheoremType.EqualAngles:
-                    case TheoremType.EqualLineSegments:
+                // Handle the case where the first two objects are exchangeable
+                case TheoremType.EqualAngles:
+                case TheoremType.EqualLineSegments:
 
-                        // Convert the first two and the second to in an ordered way.
-                        var firstTwo = theorem.InvolvedObjects.Take(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
-                        var secondTwo = theorem.InvolvedObjects.Skip(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
+                    // Convert the first two and the second to in an ordered way.
+                    var firstTwo = theorem.InvolvedObjects.Take(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
+                    var secondTwo = theorem.InvolvedObjects.Skip(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
 
-                        // Get the smaller and the larger
-                        var smaller = firstTwo.CompareTo(secondTwo) < 0 ? firstTwo : secondTwo;
-                        var larger = smaller == firstTwo ? secondTwo : firstTwo;
+                    // Get the smaller and the larger
+                    var smaller = firstTwo.CompareTo(secondTwo) < 0 ? firstTwo : secondTwo;
+                    var larger = smaller == firstTwo ? secondTwo : firstTwo;
 
-                        // Compose the final string
-                        return $" - {theorem.Type}: {smaller}, {larger}";
+                    // Compose the final string
+                    return $"{theorem.Type}: {smaller}, {larger}";
 
-                    // Handle the case where the objects should not be sorted
-                    case TheoremType.LineTangentToCircle:
+                // Handle the case where the objects should not be sorted
+                case TheoremType.LineTangentToCircle:
 
-                        // Simply convert each object to a string
-                        return $" - {theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).ToJoinedString()}";
+                    // Simply convert each object to a string
+                    return $"{theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).ToJoinedString()}";
 
-                    // In every other case...
-                    default:
+                // In every other case...
+                default:
 
-                        // Convert each object and sort them
-                        return $" - {theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString()}";
-                }
-            })
-            // Make each on a separate line
-            .ToJoinedString("\n");
+                    // Convert each object and sort them
+                    return $"{theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString()}";
+            }
         }
 
         #endregion

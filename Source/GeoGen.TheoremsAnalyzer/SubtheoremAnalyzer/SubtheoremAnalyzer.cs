@@ -104,45 +104,12 @@ namespace GeoGen.TheoremsAnalyzer
                 // Now we have only correct mappings. We try to match the theorems
                 .Select(data =>
                 {
-                    #region Create remapped theorem
-
-                    // Helper function to remap a TheoremObject
-                    TheoremObject Remap(TheoremObject theoremObject)
-                    {
-                        // If we have a point, then we just remap the internal object
-                        if (theoremObject.Type == ConfigurationObjectType.Point)
-                            return new TheoremPointObject(data.Mapping[theoremObject.ConfigurationObject]);
-
-                        // Otherwise we have a theorem object with points
-                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
-
-                        // We need to remap them
-                        var points = objectWithPoints.Points.Select(p => data.Mapping[p]).ToSet();
-
-                        // If there is no internal object and not enough points, the mapping couldn't be done
-                        if (theoremObject.ConfigurationObject == null && points.Count < objectWithPoints.NumberOfNeededPoints)
-                            return null;
-
-                        // We need to remap the internal object as well, if it's present
-                        var internalObject = theoremObject.ConfigurationObject == null ? null : data.Mapping[theoremObject.ConfigurationObject];
-
-                        // And we're done
-                        return new TheoremObjectWithPoints(theoremObject.Type, internalObject, points);
-                    }
-
-                    // Remap the involved objects
-                    var remappedInvolvedObjects = input.TemplateTheorem.InvolvedObjects.Select(Remap).ToArray();
-
-                    // If there is an object that could not be mapped, for example
-                    // because of the fact that two distinct points making a line are
-                    // mapped to the same object, then we won't have a correct theorem
-                    if (remappedInvolvedObjects.Any(o => o == null))
-                        return null;
-
                     // Reconstruct the original theorem with respect to the mapping
-                    var remappedTheorem = new Theorem(input.ExaminedTheorem.Configuration, input.TemplateTheorem.Type, remappedInvolvedObjects);
+                    var remappedTheorem = input.TemplateTheorem.Remap(data.Mapping);
 
-                    #endregion
+                    // If the mapping cannot be done, then the mapping is not correct
+                    if (remappedTheorem == null)
+                        return null;
 
                     // Find out if the theorems express the same fact (that is assumed to be true)
                     return Theorem.AreTheoremsEquivalent(remappedTheorem, input.ExaminedTheorem)
@@ -184,7 +151,7 @@ namespace GeoGen.TheoremsAnalyzer
                 case LooseObjectsLayout.NoLayout:
                     return GenerateInitialMappingsForNoLayout(input);
 
-                case LooseObjectsLayout.CircleAndItsTangentLine:
+                case LooseObjectsLayout.CircleAndItsTangentLineFromPoints:
                     return GenerateInitialMappingsForCircleAndItsTangentLineLayout(input);
 
                 case LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints:
@@ -246,7 +213,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.CircleAndItsTangentLine"/>.
+        /// configuration is <see cref="LooseObjectsLayout.CircleAndItsTangentLineFromPoints"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>

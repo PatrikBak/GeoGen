@@ -44,7 +44,7 @@ namespace GeoGen.Core
 
             // If the layout is specified make sure the objects match it 
             if (layout != LooseObjectsLayout.NoLayout && !LooseObjects.Select(o => o.ObjectType).SequenceEqual(layout.ObjectTypes()))
-                throw new GeoGenException($"The loose objects don't match the specified layout.");
+                throw new GeoGenException($"The loose objects don't match the specified layout {layout}.");
         }
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,13 +24,13 @@ namespace GeoGen.TheoremsFinder
                 IncludePoints = true,
             })
             // And find all the circles that pass through it
-            .SelectMany(point => point.Circles.Select(circle => (point, circle)))
-            // Take only those circles that contain at least 4 points
-            .Where(pair => pair.circle.Points.Count >= 4)
-            // And for every such a circle take those quadruples of points that contain the new one we're interested in
-            .SelectMany(pair => pair.circle.Points.Subsets(4).Where(points => points.Contains(pair.point)))
-            // Each such a quadruples represents a theorem (not even potential, the contextual picture made sure it's true)
-            .Select(quadruple => new PotentialTheorem
+            .SelectMany(point => point.Circles)
+            // That contain at least 4 points
+            .Where(circle => circle.Points.Count >= 4)
+            // Take distinct ones
+            .Distinct()
+            // Each circle makes a theorem
+            .Select(circle => new PotentialTheorem
             {
                 // Set the type using the base property
                 TheoremType = Type,
@@ -39,8 +38,8 @@ namespace GeoGen.TheoremsFinder
                 // Set the verifier function to a constant function returning always true
                 VerificationFunction = _ => true,
 
-                // Set the involved objects to the these quadruples of points
-                InvolvedObjects = quadruple
+                // Set the involved objects to the these triple of points
+                InvolvedObjects = circle.Points
             });
         }
     }

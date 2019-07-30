@@ -1,11 +1,10 @@
-﻿Iterations: 2
+﻿Iterations: 3
 
 Constructions:
 
  Incenter
  Midpoint
- Orthocenter
 
 Initial configuration:
  
- ScaleneAcuteTriangle: A, B, C
+ ThreePoints: A, B, C

@@ -1,9 +1,11 @@
 ﻿using GeoGen.Core;
+using GeoGen.TheoremsAnalyzer;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -43,6 +45,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
         /// <param name="finder">The finder of all theorems used in the initial configuration.</param>
+        /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
         public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithm algorithm, ICompleteTheoremsFinder finder)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
@@ -61,31 +64,26 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="outputWriter">The writer where the results are written.</param>
         public void Run(AlgorithmInput input, TextWriter outputWriter)
         {
-            // Helper function that writes theorems if there are any
-            void WriteTheorems(OutputFormatter formatter, List<Theorem> theorems)
-            {
-                // If there are theorems
-                if (theorems.Count != 0)
-                {
-                    // Write them
-                    outputWriter.WriteLine("\nTheorems:\n");
-                    outputWriter.WriteLine(formatter.FormatTheorems(theorems));
-                    outputWriter.WriteLine();
-                }
-            }
-
             // Prepare the formatter for the initial configuration
             var initialFormatter = new OutputFormatter(input.GeneratorInput.InitialConfiguration);
 
-            // Write it with theorems
+            // Find its theorem
+            var initialTheorems = _finder.FindAllTheorems(input.GeneratorInput.InitialConfiguration);
+
+            // Write it
             outputWriter.WriteLine("Initial configuration:");
-            outputWriter.WriteLine("------------------------------------------------");
-            outputWriter.WriteLine(initialFormatter.FormatConfiguration());
-            WriteTheorems(initialFormatter, _finder.FindAllTheorems(input.GeneratorInput.InitialConfiguration));
             outputWriter.WriteLine();
+            outputWriter.WriteLine(initialFormatter.FormatConfiguration());
+
+            // Write its theorems, if there are any
+            if (initialTheorems.Any())
+            {
+                outputWriter.WriteLine("\nTheorems:\n");
+                outputWriter.WriteLine(initialTheorems.Select(initialFormatter.FormatTheorem).Select(s => $" - {s}").ToJoinedString("\n"));
+            }
 
             // Write iterations
-            outputWriter.WriteLine($"Iterations: {input.GeneratorInput.NumberOfIterations}\n");
+            outputWriter.WriteLine($"\nIterations: {input.GeneratorInput.NumberOfIterations}\n");
 
             // Write constructions
             outputWriter.WriteLine($"Constructions:\n");
@@ -93,7 +91,7 @@ namespace GeoGen.ConsoleLauncher
             outputWriter.WriteLine();
 
             // Write results header
-            outputWriter.WriteLine($"Results:\n");
+            outputWriter.WriteLine($"Results:");
             outputWriter.WriteLine();
 
             // Log that we've started
@@ -125,17 +123,47 @@ namespace GeoGen.ConsoleLauncher
                 // Prepare the formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
 
-                // Write the configuration with its theorems
+                // Write the configuration
                 outputWriter.WriteLine("------------------------------------------------");
                 outputWriter.WriteLine($"{generatedConfigurations}.");
                 outputWriter.WriteLine("------------------------------------------------");
                 outputWriter.WriteLine();
                 outputWriter.WriteLine(formatter.FormatConfiguration());
-                WriteTheorems(formatter, algorithmOutput.Theorems);
+
+                // Write theorems
+                outputWriter.WriteLine("\nTheorems:\n");
+                outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput));
+                outputWriter.WriteLine();
             }
 
             // Log that we're done
             Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
+        }
+
+        /// <summary>
+        /// Writes given theorems as a string with potential feedback.
+        /// </summary>
+        /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
+        /// <param name="theorems">The theorems to be written.</param>
+        /// <param name="feedback">The feedback from the theorems analyzer.</param>
+        /// <returns>The string representing the theorems.</returns>
+        private string TheoremsToString(OutputFormatter formatter, List<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback)
+        {
+            // Convert all theorems
+            return theorems.Select(theorem =>
+            {
+                // Get the basic string from the formatter
+                var theoremString = formatter.FormatTheorem(theorem);
+
+                // Find the feedback part (this will be changed later)
+                var feedbackString = !feedback.ContainsKey(theorem) ? "" : " - trivial theorem";
+
+                // Construct the final string
+                return $" - {theoremString}{feedbackString}";
+
+            })
+            // Make each on a separate line
+            .ToJoinedString("\n");
         }
 
         #endregion

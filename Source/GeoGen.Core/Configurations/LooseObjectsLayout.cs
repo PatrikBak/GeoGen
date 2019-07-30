@@ -1,45 +1,57 @@
-﻿using System.Collections.Generic;
-using static GeoGen.Core.ConfigurationObjectType;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Extension methods for <see cref="LooseObjectsLayout"/>.
+    /// Represents a way in which the loose objects of a configuration are arranged.  
     /// </summary>
-    public static class LooseObjectsLayoutExtentions
+    public enum LooseObjectsLayout
     {
         /// <summary>
-        /// Gets the type of objects required by this layout. The layout cannot be <see cref="LooseObjectsLayout.NoLayout"/>.
+        /// Represents a layout with arbitrary number of objects of any type.
         /// </summary>
-        /// <param name="layout">The layout.</param>
-        /// <returns>The list of object types.</returns>
-        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectsLayout layout)
-        {
-            switch (layout)
-            {
-                // With no layout we cannot specify the types
-                case LooseObjectsLayout.NoLayout:
-                    throw new GeoGenException("Objects with no layout don't have predefined types.");
+        NoLayout,
 
-                // 3 points
-                case LooseObjectsLayout.ScaleneAcuteTriangle:
-                    return new List<ConfigurationObjectType> { Point, Point, Point };
+        /// <summary>
+        /// Represents 2 points.
+        /// </summary>
+        TwoPoints,
 
-                // 6 points
-                case LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints:
-                    return new List<ConfigurationObjectType> { Point, Point, Point, Point, Point, Point };
+        /// <summary>
+        /// Represents three points that are not collinear. When drawn, the triangle they
+        /// make have all its angles are acute.
+        /// </summary>
+        ThreePoints,
 
-                // 4 points
-                case LooseObjectsLayout.Trapezoid:
-                    return new List<ConfigurationObjectType> { Point, Point, Point, Point };
+        /// <summary>
+        /// Represents 4 points, where no 3 of them are collinear. When drawn they make 
+        /// a convex quadrilateral. 
+        /// </summary>
+        FourPoints,
 
-                // 1 circle, 2 points
-                case LooseObjectsLayout.CircleAndItsTangentLine:
-                    return new List<ConfigurationObjectType> { Circle, Point, Point };
+        /// <summary>
+        /// Represents a line and a point that doesn't lie on it.
+        /// </summary>
+        LineAndPoint,
 
-                default:
-                    throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined.");
-            }
-        }
+        /// <summary>
+        /// Represents a line l and two points A, B  where A and B don't lie on l.
+        /// </summary>
+        LineAndTwoPoints,
+
+        /// <summary>
+        /// Represents points A, B, C, D such that AB is parallel to CD.
+        /// </summary>
+        Trapezoid,
+
+        /// <summary>
+        /// Represents points A, B, C, D, E, F such that there are three circles
+        /// (ABCD), (CDEF), (EFAB) (from the radical axis theorem this means that
+        /// lines AB, CD, EF are concurrent).
+        /// </summary>
+        ThreeCyclicQuadrilatersOnSixPoints,
+
+        /// <summary>
+        /// Represents a circle and two points A, B such that line AB is tangent to the circle.
+        /// </summary>
+        CircleAndItsTangentLineFromPoints
     }
 }

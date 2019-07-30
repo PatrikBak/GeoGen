@@ -11,6 +11,55 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Projects each element of the source using a given select selector, but
+        /// only if the selector does not return the default value of <typeparamref name="TResult"/>.
+        /// In that gets returns null.
+        /// </summary>
+        /// <typeparam name="TSource">The type of source items.</typeparam>
+        /// <typeparam name="TResult">The type of result items.</typeparam>
+        /// <param name="source">The source enumerable.</param>
+        /// <param name="selector">The selector function.</param>
+        /// <returns>The projected enumerable, if the selector doesn't return the default value; otherwise null.</returns>
+        public static List<TResult> SelectIfNotDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        {
+            // Prepare a list of results
+            var results = new List<TResult>();
+
+            // Go through the source
+            foreach (var element in source)
+            {
+                // Apply the selector
+                var result = selector(element);
+
+                // If the selector return the default value, cut it
+                if (result == default)
+                    return null;
+
+                // Otherwise add the element
+                results.Add(result);
+            }
+
+            // Return the results
+            return results;
+        }
+
+        /// <summary>
+        /// Maps given keys to the given values as a dictionary.
+        /// </summary>
+        /// <typeparam name="TKey">The key type.</typeparam>
+        /// <typeparam name="TValue">The value type.</typeparam>
+        /// <param name="keys">The keys.</param>
+        /// <param name="values">The values.</param>
+        /// <returns>The dictionary sequentially mapping the elements from <paramref name="keys"/> to the elements from <paramref name="values"/></returns>
+        public static Dictionary<TKey, TValue> ZipToDictionary<TKey, TValue>(this IEnumerable<TKey> keys, IEnumerable<TValue> values)
+        {
+            // First use Zip to connect those sequences into a sequence of pairs
+            return keys.Zip(values, (key, value) => (key, value))
+                // And then simply make a dictionary 
+                .ToDictionary(pair => pair.key, pair => pair.value);
+        }
+
+        /// <summary>
         /// Flattens the enumerable of enumerables into a single enumerable.
         /// </summary>
         /// <typeparam name="T">The type of the elements.</typeparam>

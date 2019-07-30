@@ -42,6 +42,15 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region Private properties
+
+        /// <summary>
+        /// The list of <see cref="InvolvedObjects"/> excluding equal ones.
+        /// </summary>
+        public IReadOnlyList<TheoremObject> DistinctObjects { get; }
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -55,6 +64,18 @@ namespace GeoGen.Core
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
             InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
+            DistinctObjects = InvolvedObjects.Distinct().ToList();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Theorem"/> object.
+        /// </summary>
+        /// <param name="configuration">The configuration in which the theorem holds.</param>
+        /// <param name="type">The type of the theorem.</param>
+        /// <param name="involvedObjects">The list of theorem objects that this theorem is about.</param>
+        public Theorem(Configuration configuration, TheoremType type, params TheoremObject[] involvedObjects)
+            : this(configuration, type, (IReadOnlyList<TheoremObject>) involvedObjects)
+        {
         }
 
         /// <summary>
@@ -78,6 +99,98 @@ namespace GeoGen.Core
                 : new TheoremObjectWithPoints(o))
                 // Enumerate to an array
                 .ToArray();
+
+            // Set distinct objects
+            DistinctObjects = InvolvedObjects;
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Recreates the theorem by applying a given mapping of the inner configuration objects.
+        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem must be
+        /// present in the mapping. If the mapping cannot be done (for example because 2 points
+        /// making a line are mapped to the same point), then null is returned.
+        /// </summary>
+        /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
+        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        {
+            // Helper function that tries to map an object
+            ConfigurationObject Map(ConfigurationObject configurationObject) =>
+                // Try to get it from the mapping
+                mapping.GetOrDefault(configurationObject)
+                // If it can't be done, make the developer aware
+                ?? throw new GeoGenException("Cannot create a remapped theorem, because the passed mapping doesn't contain its object.");
+
+            // Use other function to do the job. In that case we just need to remap a single theorem object
+            return Remap(theoremObject =>
+            {
+                // Switch based on its type
+                switch (theoremObject.Type)
+                {
+                    // If it's a point, then we just remap the internal object
+                    case ConfigurationObjectType.Point:
+                        return new TheoremPointObject(Map(theoremObject.ConfigurationObject));
+
+                    // If we have a line or circle...
+                    case ConfigurationObjectType.Line:
+                    case ConfigurationObjectType.Circle:
+
+                        // We know the object has points
+                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
+
+                        // We need to remap them
+                        var points = objectWithPoints.Points.Select(Map).ToSet();
+
+                        // If there is no internal object and not enough points, the mapping couldn't be done
+                        if (theoremObject.ConfigurationObject == null && points.Count < objectWithPoints.NumberOfNeededPoints)
+                            return null;
+
+                        // We need to remap the internal object as well, if it's present
+                        var internalObject = theoremObject.ConfigurationObject == null ? null : Map(theoremObject.ConfigurationObject);
+
+                        // And we're done
+                        return new TheoremObjectWithPoints(theoremObject.Type, internalObject, points);
+
+                    // Otherwise make the developer aware
+                    default:
+                        throw new GeoGenException($"Unhandled theorem object type: {theoremObject.Type}");
+                }
+            });
+        }
+
+        /// <summary>
+        /// Remaps this theorem using a custom function for remapping <see cref="TheoremObject"/>.
+        /// If this function returns null for some theorem object, then the whole theorem is not remapped.
+        /// This function makes sure that objects that had the same instances will have them
+        /// even after the remapping.
+        /// </summary>
+        /// <param name="theoremObjectRemapper">The remapping function for theorem objects.</param>
+        /// <returns>The remapped theorem, if it can be done; null otherwise.</returns>
+        public Theorem Remap(Func<TheoremObject, TheoremObject> theoremObjectRemapper)
+        {
+            // Remap all distinct theoremObjects, but only if none of them is null
+            var remappedDistinctObjects = DistinctObjects.SelectIfNotDefault(theoremObjectRemapper);
+
+            // If the remapped objects are null, then the theorem cannot be remapped
+            if (remappedDistinctObjects == null)
+                return null;
+
+            // If none two were equal, we can return the theorem directly
+            if (remappedDistinctObjects.Count == InvolvedObjects.Count)
+                return new Theorem(Configuration, Type, remappedDistinctObjects);
+
+            // Otherwise we make a dictionary mapping objects to their remapped version
+            var mappingDictionary = DistinctObjects.ZipToDictionary(remappedDistinctObjects);
+
+            // Use it to create remapped involved objects
+            var remappedInvolvedObjects = InvolvedObjects.Select(o => mappingDictionary[o]).ToList();
+
+            // And finally create the theorem
+            return new Theorem(Configuration, Type, remappedInvolvedObjects);
         }
 
         #endregion

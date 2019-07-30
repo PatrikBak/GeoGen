@@ -40,25 +40,42 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// Gets all <see cref="PredefinedConstruction"/> defined in the <see cref="PredefinedConstructions"/> class.
+        /// </summary>
+        /// <returns>The predefined constructions.</returns>
+        public static IEnumerable<PredefinedConstruction> GetPredefinedConstructions() => ConstructionsFromClass<PredefinedConstruction>(typeof(PredefinedConstructions));
+
+        /// <summary>
+        /// Gets all <see cref="ComposedConstruction"/> defined in the <see cref="ComposedConstructions"/> class.
+        /// </summary>
+        /// <returns>The composed constructions.</returns>
+        public static IEnumerable<ComposedConstruction> GetComposedConstructions() => ConstructionsFromClass<ComposedConstruction>(typeof(ComposedConstructions));
+
+        /// <summary>
         /// Gets all constructions defined in <see cref="PredefinedConstructions"/> 
         /// and <see cref="ComposedConstructions"/> classes.
         /// </summary>
         /// <returns>The constructions</returns>
-        public static List<Construction> GetAll()
-        {
-            // Helper function that gets all construction from a class
-            IEnumerable<Construction> ConstructionFromClass(Type typeOfClass)
-            {
-                // Get all properties
-                return typeOfClass.GetProperties()
-                    // Perform the get method of each
-                    .Select(p => p.GetGetMethod().Invoke(null, null))
-                    // Cast to a construction
-                    .Cast<Construction>();
-            }
+        public static IEnumerable<Construction> GetAllConstructions() => GetPredefinedConstructions().Cast<Construction>().Concat(GetComposedConstructions());
 
-            // Merge the predefined and composed ones
-            return ConstructionFromClass(typeof(PredefinedConstructions)).Concat(ConstructionFromClass(typeof(ComposedConstructions))).ToList();
+        #region Private methods
+
+        /// <summary>
+        /// Finds all constructions of given type in a given class.
+        /// </summary>
+        /// <typeparam name="T">The type of constructions.</typeparam>
+        /// <param name="typeOfClass">The class where the constructions should be.</param>
+        /// <returns>The constructions.</returns>
+        private static IEnumerable<T> ConstructionsFromClass<T>(Type typeOfClass) where T : Construction
+        {
+            // Get all properties
+            return typeOfClass.GetProperties()
+                // Perform the get method of each
+                .Select(p => p.GetGetMethod().Invoke(null, null))
+                // Cast to the requested type
+                .Cast<T>();
         }
+
+        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Core;
 using System;
 using System.Linq;
 
@@ -15,11 +16,6 @@ namespace GeoGen.Constructor
         /// The factory for creating picture managers that hold the actual geometry.
         /// </summary>
         private readonly IPicturesManagerFactory _factory;
-
-        /// <summary>
-        /// The constructor of loose objects.
-        /// </summary>
-        private readonly ILooseObjectsConstructor _constructor;
 
         /// <summary>
         /// The resolver of object constructors for particular constructions.
@@ -39,14 +35,12 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="GeometryConstructor"/> class.
         /// </summary>
         /// <param name="factory">The factory for creating picture managers that hold the actual geometry.</param>
-        /// <param name="constructor">The constructor of loose objects.</param>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
         /// <param name="tracer">The tracer for objects that couldn't be constructed because of inconsistencies between pictures.</param>
-        public GeometryConstructor(IPicturesManagerFactory factory, ILooseObjectsConstructor constructor, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
+        public GeometryConstructor(IPicturesManagerFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _tracer = tracer;
         }
 
@@ -68,7 +62,7 @@ namespace GeoGen.Constructor
             foreach (var pictures in manager)
             {
                 // Objects are constructed using the loose objects constructor
-                pictures.Add(configuration.LooseObjectsHolder.LooseObjects, () => _constructor.Construct(configuration.LooseObjectsHolder));
+                pictures.Add(configuration.LooseObjectsHolder.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
             }
 
             // Then we add all the constructed object
@@ -233,6 +227,69 @@ namespace GeoGen.Constructor
                 // Set the manager
                 Manager = manager
             };
+        }
+
+        /// <summary>
+        /// Constructs analytic objects having a given layout.
+        /// </summary>
+        /// <param name="layout">The layout of loose objects.</param>
+        /// <returns>The constructed analytic objects.</returns>
+        private IAnalyticObject[] Construct(LooseObjectsLayout layout)
+        {
+            switch (layout)
+            {
+                // Don't allow none layout in this scenario 
+                case LooseObjectsLayout.NoLayout:
+                    throw new ConstructorException($"The loose objects constructor doesn't allow the layout {LooseObjectsLayout.NoLayout}.");
+
+                // With two points all options are equivalent
+                case LooseObjectsLayout.TwoPoints:
+                    return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };
+
+                // With three points we'll create an acute scalene triangle
+                case LooseObjectsLayout.ThreePoints:
+                {
+                    // Create the points
+                    var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { point1, point2, point3 };
+                }
+
+                // With four points we'll create a convex quadrilateral
+                case LooseObjectsLayout.FourPoints:
+                {
+                    // Create the points
+                    var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { point1, point2, point3, point4 };
+                }
+
+                // In this case the line is fixed and the point is arbitrary
+                case LooseObjectsLayout.LineAndPoint:
+                {
+                    // Create the points
+                    var (point, line) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { point, line };
+                }
+
+                // In this case the line is fixed and points are arbitrary
+                case LooseObjectsLayout.LineAndTwoPoints:
+                {
+                    // Create the points
+                    var (line, point1, point2) = AnalyticHelpers.ConstructLineAndTwoRandomPointsNotLyingOnIt();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { line, point1, point2 };
+                }
+
+                // If we got here, we have an unsupported layout :/
+                default:
+                    throw new ConstructorException($"Unsupported loose objects layout: {layout}");
+            }
         }
 
         #endregion

@@ -248,6 +248,5 @@ namespace GeoGen.ConsoleLauncher
         }
 
         #endregion
-
     }
 }
