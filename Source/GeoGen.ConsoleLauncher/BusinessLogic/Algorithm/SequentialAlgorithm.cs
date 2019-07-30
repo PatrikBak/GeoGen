@@ -71,10 +71,10 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
         /// <returns>A lazy enumerable of all the generated output.</returns>
-        public IEnumerable<AlgorithmOutput> GenerateOutputs(AlgorithmInput input)
+        public IEnumerable<AlgorithmOutput> GenerateOutputs(GeneratorInput input)
         {
             // Perform the generation
-            return _generator.Generate(input.GeneratorInput).Select(output =>
+            return _generator.Generate(input).Select(output =>
             {
                 // Prepare a variable holding the contextual picture to be used by the analyzers
                 IContextualPicture picture = null;

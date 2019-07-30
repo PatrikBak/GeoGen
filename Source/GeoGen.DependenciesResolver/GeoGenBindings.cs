@@ -122,7 +122,7 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsAnalyzer(this IKernel kernel)
         {
-            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>();
+            kernel.BindsWithDynamicSettings<ITheoremsAnalyzer, TheoremsAnalyzer.TheoremsAnalyzer, TheoremsAnalyzerData>();
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
 
             // Return the kernel for chaining

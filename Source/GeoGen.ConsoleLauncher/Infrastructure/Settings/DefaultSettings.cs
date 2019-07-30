@@ -43,20 +43,28 @@ namespace GeoGen.ConsoleLauncher
             };
 
             // Create default folder settings
-            FolderSettings = new FolderSettings
+            InputFolderSettings = new InputFolderSettings
             {
-                WorkingFolder = "Data",
-                TemplateTheoremsFolder = "TemplateTheorems",
-                FilesExtention = "txt",
+                InputFolderPath = "Data",
                 InputFilePrefix = "input",
-                OutputFilePrefix = "output"
+                FilesExtention = "txt",
             };
 
             // Create default algorithm runner settings
             AlgorithmRunnerSettings = new AlgorithmRunnerSettings
             {
+                OutputFolder = "Data",
+                OutputFileExtention = "txt",
+                OutputFilePrefix = "output",
                 GenerationProgresLoggingFrequency = 100,
                 LogProgress = true
+            };
+
+            // Create default template theorems folder settings
+            TemplateTheoremsFolderSettings = new TemplateTheoremsFolderSettings
+            {
+                TheoremsFolderPath = "Data/TemplateTheorems",
+                FilesExtention = "txt"
             };
         }
     }

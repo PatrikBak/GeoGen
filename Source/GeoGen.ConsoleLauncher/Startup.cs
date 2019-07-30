@@ -23,13 +23,10 @@ namespace GeoGen.ConsoleLauncher
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
             // Initialize the IoC system
-            IoC.Initialize();
+            RunTaskAndHandleExceptions(() => IoC.InitializeAsync(), exitOnException: true);
 
-            // Log that we're ready
-            LoggingManager.LogInfo("The application has started.");
-
-            // Run the algorithm asynchronously
-            RunTaskAndHandleExceptions(() => IoC.Kernel.Get<IFolderScanner>().ScanAsync());
+            // Run the algorithm
+            RunTaskAndHandleExceptions(() => IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunAlgorithmsAsync());
 
             // Log that we're done
             LoggingManager.LogInfo("The application has finished.\n");
@@ -43,7 +40,8 @@ namespace GeoGen.ConsoleLauncher
         /// Runs the given task and handles all possible exception it may produce.
         /// </summary>
         /// <param name="task">The task.</param>
-        private static void RunTaskAndHandleExceptions(Func<Task> task)
+        /// <param name="exitOnException">Indicates whether we should exist when an exception occurs.</param>
+        private static void RunTaskAndHandleExceptions(Func<Task> task, bool exitOnException = false)
         {
             try
             {
@@ -58,6 +56,10 @@ namespace GeoGen.ConsoleLauncher
             {
                 // Log it
                 LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
+
+                // If we should terminate, do so
+                if (exitOnException)
+                    Environment.Exit(-1);
             }
         }
 

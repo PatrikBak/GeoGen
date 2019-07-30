@@ -20,14 +20,25 @@ namespace GeoGen.TheoremsAnalyzer
 
         #endregion
 
+        #region Private fields
+
+        /// <summary>
+        /// The data for the analyzer.
+        /// </summary>
+        private readonly TheoremsAnalyzerData _data;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremsAnalyzer"/> class.
         /// </summary>
+        /// <param name="data">The data for the analyzer.</param>
         /// <param name="trivialTheoremsProducer">The producer of trivial theorems.</param>
-        public TheoremsAnalyzer(ITrivialTheoremsProducer trivialTheoremsProducer)
+        public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer)
         {
+            _data = data ?? throw new ArgumentNullException(nameof(data));
             _trivialTheoremsProducer = trivialTheoremsProducer ?? throw new ArgumentNullException(nameof(trivialTheoremsProducer));
         }
 

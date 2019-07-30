@@ -21,11 +21,16 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings of the folder containing inputs.
         /// </summary>
-        public FolderSettings FolderSettings { get; set; }
+        public InputFolderSettings InputFolderSettings { get; set; }
 
         /// <summary>
         /// The settings for the algorithm runner.
         /// </summary>
         public AlgorithmRunnerSettings AlgorithmRunnerSettings { get; set; }
+
+        /// <summary>
+        /// The settings for the folder containing template theorems.
+        /// </summary>
+        public TemplateTheoremsFolderSettings TemplateTheoremsFolderSettings { get; set; }
     }
 }

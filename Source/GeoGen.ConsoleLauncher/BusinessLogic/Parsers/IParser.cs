@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// Represents a parser for <see cref="GeneratorInput"/> and template <see cref="Theorem"/>
+    /// Represents a parser for <see cref="GeneratorInput"/> and <see cref="Theorem"/>s.
     /// </summary>
     public interface IParser
     {

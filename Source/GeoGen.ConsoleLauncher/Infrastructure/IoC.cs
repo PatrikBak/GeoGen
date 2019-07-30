@@ -1,6 +1,8 @@
 ﻿using GeoGen.DependenciesResolver;
+using GeoGen.TheoremsAnalyzer;
 using Ninject;
 using System;
+using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -23,7 +25,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes the <see cref="Kernel"/> and all the dependencies.
         /// </summary>
-        public static void Initialize()
+        public static async Task InitializeAsync()
         {
             // Load the settings
             var settings = SettingsLoader.Load();
@@ -71,11 +73,27 @@ namespace GeoGen.ConsoleLauncher
             Kernel.AddGenerator().AddConstructor().AddTheoremsFinder().AddTheoremsAnalyzer();
 
             // Add local dependencies
-            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>().WithDynamicParameter(settings.PicturesManagerSettings);
-            Kernel.Bind<ICompleteTheoremsFinder>().To<SimpleCompleteTheoremFinder>().WithDynamicParameter(settings.PicturesManagerSettings);
-            Kernel.Bind<IFolderScanner>().To<FolderScanner>().WithConstructorArgument(settings.FolderSettings);
-            Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
             Kernel.Bind<IParser>().To<Parser>();
+            Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
+            Kernel.Bind<IGeneratorInputsProvider>().To<GeneratorInputsProvider>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
+
+            // Bind the complete theorems finder
+            Kernel.Bind<ICompleteTheoremsFinder>().To<SimpleCompleteTheoremFinder>()
+                // With settings for the internally needed pictures manager
+                .WithDynamicParameter(settings.PicturesManagerSettings);
+
+            // Bind the algorithm
+            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>()
+                // With settings for the internally needed pictures manager
+                .WithDynamicParameter(settings.PicturesManagerSettings)
+                // With data needed by the analyzer
+                .WithDynamicParameter(new TheoremsAnalyzerData
+                {
+                    // Template theorems are loaded at the beginning
+                    TemplateTheorems = await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
+                });
         }
 
         #endregion

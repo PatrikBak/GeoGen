@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Generator;
+using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -12,6 +13,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
         /// <returns>A lazy enumerable of all the generated output.</returns>
-        IEnumerable<AlgorithmOutput> GenerateOutputs(AlgorithmInput input);
+        IEnumerable<AlgorithmOutput> GenerateOutputs(GeneratorInput input);
     }
 }

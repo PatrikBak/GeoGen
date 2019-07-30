@@ -42,7 +42,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// Only theorems that can be then remapped to trivial theorem are stored, i.e. the ones
         /// that can be stated with just the loose objects of the <see cref="ComposedConstruction.Configuration"/>.
         /// </summary>
-        private Dictionary<string, List<Theorem>> _composedConstructionsTheorems = new Dictionary<string, List<Theorem>>();
+        private Dictionary<ComposedConstruction, List<Theorem>> _composedConstructionsTheorems;
 
         #endregion
 
@@ -59,6 +59,11 @@ namespace GeoGen.TheoremsAnalyzer
             _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
+
+            // Create the dictionary 
+            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>(
+                // That compares composed constructions by their names
+                new SimpleEqualityComparer<ComposedConstruction>((c1, c2) => c1.Name == c2.Name, c => c.GetHashCode()));
         }
 
         #endregion
@@ -236,7 +241,7 @@ namespace GeoGen.TheoremsAnalyzer
                 case ComposedConstruction composedConstruction:
 
                     // Get the theorems for it 
-                    var theorems = _composedConstructionsTheorems.GetOrAdd(composedConstruction.Name, () => FindTheoremsForComposedConstruction(composedConstruction));
+                    var theorems = _composedConstructionsTheorems.GetOrAdd(composedConstruction, () => FindTheoremsForComposedConstruction(composedConstruction));
 
                     // Create mapping of loose objects of the template configuration + the constructed object
                     var mapping = composedConstruction.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(composedConstruction.ConstructionOutput)
@@ -245,7 +250,6 @@ namespace GeoGen.TheoremsAnalyzer
 
                     // Remap all the theorems
                     return theorems.Select(t => t.Remap(mapping)).ToList();
-
 
                 // There shouldn't be any other case
                 default:

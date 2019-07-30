@@ -58,86 +58,92 @@ namespace GeoGen.ConsoleLauncher
         #region IAlgorithmRunner implementation
 
         /// <summary>
-        /// Runs the algorithm on a given output and outputs the results to a given text writer.
+        /// Runs the algorithm on a given output.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        /// <param name="outputWriter">The writer where the results are written.</param>
-        public void Run(AlgorithmInput input, TextWriter outputWriter)
+        public void Run(LoadedGeneratorInput input)
         {
-            // Prepare the formatter for the initial configuration
-            var initialFormatter = new OutputFormatter(input.GeneratorInput.InitialConfiguration);
+            // Prepare the output path
+            var outputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}.{_settings.OutputFileExtention}");
 
-            // Find its theorem
-            var initialTheorems = _finder.FindAllTheorems(input.GeneratorInput.InitialConfiguration);
-
-            // Write it
-            outputWriter.WriteLine("Initial configuration:");
-            outputWriter.WriteLine();
-            outputWriter.WriteLine(initialFormatter.FormatConfiguration());
-
-            // Write its theorems, if there are any
-            if (initialTheorems.Any())
+            // Prepare the writer for the output
+            using (var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write)))
             {
-                outputWriter.WriteLine("\nTheorems:\n");
-                outputWriter.WriteLine(initialTheorems.Select(initialFormatter.FormatTheorem).Select(s => $" - {s}").ToJoinedString("\n"));
-            }
+                // Prepare the formatter for the initial configuration
+                var initialFormatter = new OutputFormatter(input.InitialConfiguration);
 
-            // Write iterations
-            outputWriter.WriteLine($"\nIterations: {input.GeneratorInput.NumberOfIterations}\n");
+                // Find its theorem
+                var initialTheorems = _finder.FindAllTheorems(input.InitialConfiguration);
 
-            // Write constructions
-            outputWriter.WriteLine($"Constructions:\n");
-            input.GeneratorInput.Constructions.ForEach(construction => outputWriter.WriteLine($" - {construction}"));
-            outputWriter.WriteLine();
-
-            // Write results header
-            outputWriter.WriteLine($"Results:");
-            outputWriter.WriteLine();
-
-            // Log that we've started
-            Log.LoggingManager.LogInfo("Algorithm has started.");
-
-            // Prepare the number of generated configurations
-            var generatedConfigurations = 0;
-
-            // Prepare a stopwatch to measure the time
-            var stopwatch = new Stopwatch();
-
-            // Start it
-            stopwatch.Start();
-
-            // Run the algorithm
-            foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
-            {
-                // Mark the configuration
-                generatedConfigurations++;
-
-                // Find out if we should log and if yes, do it
-                if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
-                    Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
-
-                // Skip configurations without theorems
-                if (algorithmOutput.Theorems.Count == 0)
-                    continue;
-
-                // Prepare the formatter for the generated configuration
-                var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
-
-                // Write the configuration
-                outputWriter.WriteLine("------------------------------------------------");
-                outputWriter.WriteLine($"{generatedConfigurations}.");
-                outputWriter.WriteLine("------------------------------------------------");
+                // Write it
+                outputWriter.WriteLine("Initial configuration:");
                 outputWriter.WriteLine();
-                outputWriter.WriteLine(formatter.FormatConfiguration());
+                outputWriter.WriteLine(initialFormatter.FormatConfiguration());
 
-                // Write theorems
-                outputWriter.WriteLine("\nTheorems:\n");
-                outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput));
+                // Write its theorems, if there are any
+                if (initialTheorems.Any())
+                {
+                    outputWriter.WriteLine("\nTheorems:\n");
+                    outputWriter.WriteLine(initialTheorems.Select(initialFormatter.FormatTheorem).Select(s => $" - {s}").ToJoinedString("\n"));
+                }
+
+                // Write iterations
+                outputWriter.WriteLine($"\nIterations: {input.NumberOfIterations}\n");
+
+                // Write constructions
+                outputWriter.WriteLine($"Constructions:\n");
+                input.Constructions.ForEach(construction => outputWriter.WriteLine($" - {construction}"));
                 outputWriter.WriteLine();
-            }
 
-            // Log that we're done
-            Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
+                // Write results header
+                outputWriter.WriteLine($"Results:");
+                outputWriter.WriteLine();
+
+                // Log that we've started
+                Log.LoggingManager.LogInfo("Algorithm has started.");
+
+                // Prepare the number of generated configurations
+                var generatedConfigurations = 0;
+
+                // Prepare a stopwatch to measure the time
+                var stopwatch = new Stopwatch();
+
+                // Start it
+                stopwatch.Start();
+
+                // Run the algorithm
+                foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
+                {
+                    // Mark the configuration
+                    generatedConfigurations++;
+
+                    // Find out if we should log and if yes, do it
+                    if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
+                        Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
+
+                    // Skip configurations without theorems
+                    if (algorithmOutput.Theorems.Count == 0)
+                        continue;
+
+                    // Prepare the formatter for the generated configuration
+                    var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
+
+                    // Write the configuration
+                    outputWriter.WriteLine("------------------------------------------------");
+                    outputWriter.WriteLine($"{generatedConfigurations}.");
+                    outputWriter.WriteLine("------------------------------------------------");
+                    outputWriter.WriteLine();
+                    outputWriter.WriteLine(formatter.FormatConfiguration());
+
+                    // Write theorems
+                    outputWriter.WriteLine("\nTheorems:\n");
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput));
+                    outputWriter.WriteLine();
+                }
+
+                // Log that we're done
+                Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.\n");
+            }
         }
 
         /// <summary>
