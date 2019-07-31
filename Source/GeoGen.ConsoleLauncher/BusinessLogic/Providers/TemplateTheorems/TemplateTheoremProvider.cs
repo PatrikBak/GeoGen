@@ -79,16 +79,13 @@ namespace GeoGen.ConsoleLauncher
                     // Log it
                     LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Log the exception
                     LoggingManager.LogError($"Couldn't read the theorems file {path}.");
 
-                    // Log the internal exception
-                    LoggingManager.LogDebug($"{e}\n");
-
-                    // Skip this file
-                    continue;
+                    // Throw further
+                    throw;
                 }
 
                 #endregion
@@ -105,13 +102,13 @@ namespace GeoGen.ConsoleLauncher
                     // Add all of them to our result
                     result.AddRange(theorems);
                 }
-                catch (ParserException e)
+                catch (ParserException)
                 {
                     // Log the exception
-                    LoggingManager.LogError($"Couldn't parse the input file {path}: {e.Message}");
+                    LoggingManager.LogError($"Couldn't parse the input file {path}");
 
-                    // Skip this file
-                    continue;
+                    // Throw further
+                    throw;
                 }
 
                 #endregion

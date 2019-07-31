@@ -303,7 +303,7 @@ namespace GeoGen.ConsoleLauncher
                     throw new ParserException($"Error while parsing '{line}'. The object with the name '{newObjectName}' has been already declared at least twice.");
 
                 // Match the construction and input objects from the definition
-                var definitionMatch = Regex.Match(nameDefinitionMatch.Groups[2].Value.Trim(), "^(.+)\\((.+)\\)$");
+                var definitionMatch = Regex.Match(nameDefinitionMatch.Groups[2].Value.Trim(), "^(.+)\\((.*)\\)$");
 
                 // Make sure there's a match...
                 if (!definitionMatch.Success)
@@ -324,7 +324,7 @@ namespace GeoGen.ConsoleLauncher
                 }
 
                 // Get the passed objects
-                var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Select(name =>
+                var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => s != "").Select(name =>
                 {
                     // Make sure the name has been declared before
                     if (!namesToObjects.ContainsKey(name))

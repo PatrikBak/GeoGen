@@ -142,7 +142,7 @@ namespace GeoGen.ConsoleLauncher
                 }
 
                 // Log that we're done
-                Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.\n");
+                Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
             }
         }
 
@@ -159,14 +159,32 @@ namespace GeoGen.ConsoleLauncher
             return theorems.Select(theorem =>
             {
                 // Get the basic string from the formatter
-                var theoremString = formatter.FormatTheorem(theorem);
+                var theoremString = $" - {formatter.FormatTheorem(theorem)}";
 
-                // Find the feedback part (this will be changed later)
-                var feedbackString = !feedback.ContainsKey(theorem) ? "" : " - trivial theorem";
+                // If the theorem has no feedback, we can't write more
+                if (!feedback.ContainsKey(theorem))
+                    return theoremString;
 
-                // Construct the final string
-                return $" - {theoremString}{feedbackString}";
+                // Otherwise switch on the feedback
+                switch (feedback[theorem])
+                {
+                    // Trivial theorem
+                    case TrivialTheoremFeedback _:
+                        return $"{theoremString} - trivial theorem";
 
+                    // Sub-theorem
+                    case SubtheoremFeedback subtheoremFeedback:
+
+                        // In this case we know the template theorem has our additional info
+                        var templateTheorem = (TemplateTheorem) subtheoremFeedback.TemplateTheorem;
+
+                        // We can now construct more descriptive string
+                        return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
+
+                    // Otherwise...
+                    default:
+                        throw new GeoGenException($"Unhandled type of feedback: {feedback[theorem].GetType()}");
+                }
             })
             // Make each on a separate line
             .ToJoinedString("\n");

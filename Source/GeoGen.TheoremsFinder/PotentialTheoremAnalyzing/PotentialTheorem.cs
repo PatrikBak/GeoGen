@@ -106,8 +106,8 @@ namespace GeoGen.TheoremsFinder
         /// <returns>The theorem.</returns>
         public Theorem ToTheorem(Configuration configuration)
         {
-            // Create theorem objects using our geometry objects
-            var theoremObjects = InvolvedObjects.Select(geometricObject =>
+            // Map distinct theorem objects to a dictionary
+            var theoremObjectsDictionary = InvolvedObjects.Distinct().ToDictionary(key => key, geometricObject =>
             {
                 // If we have a point, then we have the only option...
                 if (geometricObject is PointObject)
@@ -128,9 +128,10 @@ namespace GeoGen.TheoremsFinder
 
                 // Construct the final theorem object
                 return new TheoremObjectWithPoints(objectType, geometricObject.ConfigurationObject, points);
-            })
-            // Enumerate to a list
-            .ToList();
+            });
+
+            // Create the theorem objects using the created dictionary
+            var theoremObjects = InvolvedObjects.Select(geometricObject => theoremObjectsDictionary[geometricObject]).ToList();
 
             // Create a new theorem using the created theorem objects
             return new Theorem(configuration, TheoremType, theoremObjects);

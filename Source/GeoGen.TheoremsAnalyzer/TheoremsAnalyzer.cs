@@ -18,6 +18,11 @@ namespace GeoGen.TheoremsAnalyzer
         /// </summary>
         private readonly ITrivialTheoremsProducer _trivialTheoremsProducer;
 
+        /// <summary>
+        /// The sub-theorems analyzer. It gets template theorems from the <see cref="_data"/>.
+        /// </summary>
+        private readonly ISubtheoremAnalyzer _subtheoremAnalyzer;
+
         #endregion
 
         #region Private fields
@@ -36,10 +41,12 @@ namespace GeoGen.TheoremsAnalyzer
         /// </summary>
         /// <param name="data">The data for the analyzer.</param>
         /// <param name="trivialTheoremsProducer">The producer of trivial theorems.</param>
-        public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer)
+        /// <param name="subtheoremAnalyzer">The sub-theorems analyzer. It gets template theorems from the <see cref="data"/>.</param>
+        public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer, ISubtheoremAnalyzer subtheoremAnalyzer)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _trivialTheoremsProducer = trivialTheoremsProducer ?? throw new ArgumentNullException(nameof(trivialTheoremsProducer));
+            _subtheoremAnalyzer = subtheoremAnalyzer ?? throw new ArgumentNullException(nameof(subtheoremAnalyzer));
         }
 
         #endregion
@@ -66,6 +73,29 @@ namespace GeoGen.TheoremsAnalyzer
             input.Theorems.Where(theorem => trivialTheorems.Any(trivialTheorem => Theorem.AreTheoremsEquivalent(trivialTheorem, theorem)))
                 // can be marked as trivial
                 .ForEach(theorem => result.Add(theorem, new TrivialTheoremFeedback()));
+
+            // Try to match remaining theorems...
+            input.Theorems.Where(theorem => !result.ContainsKey(theorem)).ForEach(theorem =>
+            {
+                // Find possible theorems that might imply this one
+                var match = _data.TemplateTheorems.Where(templateTheorem => theorem.Type == templateTheorem.Type)
+                    // Try to match
+                    .Select(templateTheorem => (templateTheorem, output: _subtheoremAnalyzer.Analyze(new SubtheoremAnalyzerInput
+                    {
+                        ExaminedTheorem = theorem,
+                        TemplateTheorem = templateTheorem,
+                        ExaminedConfigurationObjectsContainer = input.ConfigurationObjectsContainer,
+                        ExaminedConfigurationContexualPicture = input.ContextualPicture,
+                        ExaminedConfigurationManager = input.Manager
+                    })))
+                    // Get the first that matches
+                    .FirstOrDefault(pair => pair.output.IsSubtheorem);
+
+                // If there is a match, add feedback
+                if (match != default)
+                    result.Add(theorem, new SubtheoremFeedback { TemplateTheorem = match.templateTheorem });
+                
+            });
 
             // Return the result
             return result;

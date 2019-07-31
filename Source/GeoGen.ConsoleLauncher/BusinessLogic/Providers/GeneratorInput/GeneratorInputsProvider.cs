@@ -105,16 +105,13 @@ namespace GeoGen.ConsoleLauncher
                     // Log the content
                     LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Log the exception
                     LoggingManager.LogError($"Couldn't read the input file {path}.");
 
-                    // Log the internal exception
-                    LoggingManager.LogDebug($"{e}\n");
-
-                    // Continue on the next file
-                    continue;
+                    // Throw further
+                    throw;
                 }
 
                 #endregion
@@ -129,13 +126,13 @@ namespace GeoGen.ConsoleLauncher
                     // Try to parse it
                     generatorInput = _parser.ParseInput(fileContent);
                 }
-                catch (ParserException e)
+                catch (ParserException)
                 {
                     // Log the exception
-                    LoggingManager.LogError($"Couldn't parse the input file {path}: {e.Message}");
+                    LoggingManager.LogError($"Couldn't parse the input file {path}.");
 
-                    // Continue on the next file
-                    continue;
+                    // Throw further
+                    throw;
                 }
 
                 #endregion

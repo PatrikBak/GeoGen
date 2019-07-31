@@ -124,6 +124,7 @@ namespace GeoGen.DependenciesResolver
         {
             kernel.BindsWithDynamicSettings<ITheoremsAnalyzer, TheoremsAnalyzer.TheoremsAnalyzer, TheoremsAnalyzerData>();
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
+            kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>();
 
             // Return the kernel for chaining
             return kernel;
