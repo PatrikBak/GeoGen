@@ -48,8 +48,6 @@ namespace GeoGen.TheoremsFinder
             return _theoremsAnalyzers.SelectMany(verifier => verifier.FindPotentialTheorems(contextualPicture))
                     // Take only those that are true in every picture
                     .Where(potentialTheorem => manager.All(potentialTheorem.VerificationFunction))
-                    // Take those potential theorems that turn out not to contain needless objects
-                    .Where(potentialTheorem => !potentialTheorem.ContainsNeedlessObjects(expectedMinimalNumberOfNeededObjects: configuration.ObjectsMap.AllObjects.Count))
                     // Make them theorems
                     .Select(potentialTheorem => potentialTheorem.ToTheorem(configuration))
                     // Enumerate them to a list

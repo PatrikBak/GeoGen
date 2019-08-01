@@ -109,6 +109,60 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
+        /// Finds out if this theorem can be stated without explicitly mentioning
+        /// some of its internal configuration objects.
+        /// </summary>
+        /// <returns>true, if it cannot be stated in a smaller configuration; false otherwise.</returns>
+        public bool CanBeStatedInSmallerConfiguration()
+        {
+            // Local function that enumerated all possible definitions of a given theorem object
+            IEnumerable<IEnumerable<ConfigurationObject>> AllDefinitions(TheoremObject theoremObject)
+            {
+                // Pull the configuration object 
+                var configurationObject = theoremObject.ConfigurationObject;
+
+                // If the configuration version is set, then its defining objects are
+                // one of the possible definitions
+                if (configurationObject != null)
+                    yield return configurationObject.GetDefiningObjects();
+
+                // If this is a point, then there is no other definition
+                if (theoremObject is TheoremPointObject)
+                    yield break;
+
+                // Otherwise we have a line or a circle, i.e. something definable by points
+                // Let's find how many of them we need
+                var definableByPoints = (TheoremObjectWithPoints) theoremObject;
+
+                // Each pair or triple (given by the object's property) together with internal objects is a definition
+                // If there are not enough points, we can't do much
+                if (definableByPoints.Points.Count < definableByPoints.NumberOfNeededPoints)
+                    yield break;
+
+                // Otherwise we have some definition of this type
+                // Let's prepare them. First we take all the subsets (all pairs / triples) of points
+                var remainingdefinitions = definableByPoints.Points.Subsets(definableByPoints.NumberOfNeededPoints)
+                    // For each of these subjects we have a definition
+                    .Select(points => points.GetDefiningObjects());
+
+                // And return them
+                foreach (var definition in remainingdefinitions)
+                    yield return definition;
+            }
+
+            // Now we're finally ready to combine all possible definitions of particular objects
+            // First take distinct involved objects
+            return DistinctObjects
+                // For each object find all the definitions
+                .Select(AllDefinitions)
+                // Combine them into a single one in every possible ways
+                .Combine()
+                // We have needless objects if and only if there is a definition
+                // containing fewer objects than we're expecting
+                .Any(definition => definition.Flatten().Distinct().Count() < Configuration.ObjectsMap.AllObjects.Count);
+        }
+
+        /// <summary>
         /// Recreates the theorem by applying a given mapping of the inner configuration objects.
         /// Every <see cref="ConfigurationObject"/> internally contained in this theorem must be
         /// present in the mapping. If the mapping cannot be done (for example because 2 points
@@ -192,6 +246,16 @@ namespace GeoGen.Core
             // And finally create the theorem
             return new Theorem(Configuration, Type, remappedInvolvedObjects);
         }
+
+        /// <summary>
+        /// Determines if two theorems are equivalent, i.e. if they have the same type and geometrically
+        /// represent the same statements in the same geometric situation. The way this is determined
+        /// depends on their type, because different types have different semantics of their involved 
+        /// theorem objects.
+        /// </summary>
+        /// <param name="theorem">The theorem.</param>
+        /// <returns>true, if they are equivalent; false otherwise.</returns>
+        public bool IsEquivalentTo(Theorem theorem) => AreTheoremsEquivalent(this, theorem);
 
         #endregion
 

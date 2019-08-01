@@ -22,11 +22,11 @@ namespace GeoGen.Core.Tests
                 // For each...
                 .ForEach(layout =>
                 {
-                    // Act
-                    Action act = () => layout.ObjectTypes();
+                    // Action of getting types
+                    Action getTypes = () => layout.ObjectTypes();
 
                     // Assert there's no error
-                    act.Should().NotThrow<GeoGenException>();
+                    getTypes.Should().NotThrow<GeoGenException>();
                 });
         }
     }
