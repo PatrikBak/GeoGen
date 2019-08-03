@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,35 +41,33 @@ namespace GeoGen.TheoremsFinder
         /// <returns>The theorem.</returns>
         public Theorem ToTheorem(Configuration configuration)
         {
-            // Map distinct theorem objects to a dictionary
-            var theoremObjectsDictionary = InvolvedObjects.Distinct().ToDictionary(key => key, geometricObject =>
+            // Map geometric objects to theorem objects
+            var allTheoremObjects = InvolvedObjects.Select<GeometricObject, TheoremObject>(geometricObject =>
             {
-                // If we have a point, then we have the only option...
-                if (geometricObject is PointObject)
-                    return new TheoremPointObject(geometricObject.ConfigurationObject) as TheoremObject;
+                // Switch based on the type
+                switch (geometricObject)
+                {
+                    // In point case we have just the object
+                    case PointObject point:
+                        return new PointTheoremObject(geometricObject.ConfigurationObject);
 
-                // Otherwise the object is either a line, or a circle, so its definable by points
-                var objectWithPoints = (DefinableByPoints) geometricObject;
+                    // In line case we need to take points into account
+                    case LineObject line:
+                        return new LineTheoremObject(geometricObject.ConfigurationObject, line.Points.Select(p => p.ConfigurationObject));
 
-                // Let's find the configuration objects corresponding to these points 
-                var points = objectWithPoints.Points.Select(point => point.ConfigurationObject).ToArray();
+                    // In circle case we need to take points into account
+                    case CircleObject circle:
+                        return new CircleTheoremObject(geometricObject.ConfigurationObject, circle.Points.Select(p => p.ConfigurationObject));
 
-                // Determine the right type of the theorem object 
-                // We're using that it's either a line, or a circle, so 
-                // if it's not a line, then it's a circle
-                var objectType = objectWithPoints is LineObject
-                        ? ConfigurationObjectType.Line
-                        : ConfigurationObjectType.Circle;
+                    default:
+                        throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}");
+                }
+            })
+            // Enumerate to an array
+            .ToArray();
 
-                // Construct the final theorem object
-                return new TheoremObjectWithPoints(objectType, geometricObject.ConfigurationObject, points);
-            });
-
-            // Create the theorem objects using the created dictionary
-            var theoremObjects = InvolvedObjects.Select(geometricObject => theoremObjectsDictionary[geometricObject]).ToList();
-
-            // Create a new theorem using the created theorem objects
-            return new Theorem(configuration, TheoremType, theoremObjects);
+            // Use helper method to construct the theorem
+            return Theorem.DeriveFromFlattenedObjects(configuration, TheoremType, allTheoremObjects);
         }
 
         #endregion

@@ -88,13 +88,13 @@ namespace GeoGen.ConsoleLauncher
                 case TheoremType.EqualAngles:
                 case TheoremType.EqualLineSegments:
 
-                    // Convert the first two and the second to in an ordered way.
-                    var firstTwo = theorem.InvolvedObjects.Take(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
-                    var secondTwo = theorem.InvolvedObjects.Skip(2).Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString();
+                    // Convert the first two 
+                    var first = TheoremObjectToString(theorem.InvolvedObjects[0]);
+                    var second = TheoremObjectToString(theorem.InvolvedObjects[1]);
 
                     // Get the smaller and the larger
-                    var smaller = firstTwo.CompareTo(secondTwo) < 0 ? firstTwo : secondTwo;
-                    var larger = smaller == firstTwo ? secondTwo : firstTwo;
+                    var smaller = first.CompareTo(second) < 0 ? first : second;
+                    var larger = smaller == first ? second : first;
 
                     // Compose the final string
                     return $"{theorem.Type}: {smaller}, {larger}";
@@ -205,27 +205,64 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>The resulting string.</returns>
         private string TheoremObjectToString(TheoremObject theoremObject)
         {
-            // Prepare the object name part
-            var objectNamePart = theoremObject.ConfigurationObject == null ? "" : _objectNames[theoremObject.ConfigurationObject];
+            // Switch on the type
+            switch (theoremObject)
+            {
+                // Base objects might have an object part
+                case BaseTheoremObject baseObject:
 
-            // If the object is a point, then there is no other part
-            if (theoremObject.Type == ConfigurationObjectType.Point)
-                return objectNamePart;
+                    // Try to find the string version of the object, if it is specified
+                    var objectPart = baseObject.ConfigurationObject != null ? _objectNames[baseObject.ConfigurationObject] : "";
 
-            // Otherwise we have a line or circle
-            var lineOrCircle = (TheoremObjectWithPoints) theoremObject;
+                    // We need to dig deeper to find the points part too
+                    switch (baseObject)
+                    {
+                        // If we have a point object, we don't have more information
+                        case PointTheoremObject _:
+                            return objectPart;
 
-            // Find out if it's a line
-            var isLine = lineOrCircle.Type == ConfigurationObjectType.Line;
+                        // If we have an object with points...
+                        case TheoremObjectWithPoints objectWithPoints:
 
-            // Prepare the points list
-            var pointsList = lineOrCircle.Points.Select(o => _objectNames[o]).OrderBy(s => s).ToJoinedString();
+                            // Prepare the list describing individual points
+                            var pointsList = objectWithPoints.Points.Select(o => _objectNames[o]).OrderBy(s => s).ToJoinedString();
 
-            // Prepare the points part
-            var pointsPart = lineOrCircle.Points.Count == 0 ? "" : $"{(isLine ? "[" : "(")}{pointsList}{(isLine ? "]" : ")")}";
+                            // Prepare the points part of the string
+                            var pointsPart = objectWithPoints.Points.Count == 0 ? "" : pointsList;
 
-            // Compose the fink string
-            return $"{objectNamePart}{pointsPart}";
+                            // Dig further to provide information whether it is a line or circle
+                            switch (objectWithPoints)
+                            {
+                                // If we have a line, add [] around points 
+                                case LineTheoremObject _:
+                                    return $"{objectPart}[{pointsPart}]";
+
+                                // If we have a line, add [] around points
+                                case CircleTheoremObject _:
+                                    return $"{objectPart}({pointsPart})";
+
+                                // Unhandled case
+                                default:
+                                    throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}");
+                            }
+
+                        // If something else
+                        default:
+                            throw new GeoGenException($"Unhandled type of base theorem object: {baseObject.GetType()}");
+                    }
+
+                // For a line segment we convert individual points
+                case LineSegmentTheoremObject line:
+                    return $"{TheoremObjectToString(line.Object1)}, {TheoremObjectToString(line.Object2)}";
+
+                // For an angle we convert individual lines
+                case AngleTheoremObject angle:
+                    return $"{TheoremObjectToString(angle.Object1)}, {TheoremObjectToString(angle.Object2)}";
+
+                // If something else
+                default:
+                    throw new GeoGenException($"Unhandled type of theorem object: {theoremObject.GetType()}");
+            }
         }
 
         #endregion

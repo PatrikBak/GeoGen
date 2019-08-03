@@ -1,12 +1,10 @@
 ﻿using GeoGen.Utilities;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a geometric object of certain <see cref="ConfigurationObjectType"/> 
-    /// that is be used to express a <see cref="Theorem"/>.
+    /// Represents a geometric object that is be used to express <see cref="Theorem"/>s.
     /// </summary>
     public abstract class TheoremObject
     {
@@ -14,81 +12,59 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Gets the single instance of the equality comparer of two theorem objects that uses the 
-        /// <see cref="AreTheoremObjectsEquivalent(TheoremObject, TheoremObject)"/> method and 
-        /// a constant hash code function (i.e. using it together with a hash map / hash set would 
-        /// make all the operations O(n)).
+        /// <see cref="IsEquivalentTo(TheoremObject)"/> method and a constant hash code function 
+        /// (i.e. using it together with a dictionary / hash set would make all the operations O(n)).
         /// </summary>
-        public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>((t1, t2) => AreTheoremObjectsEquivalent(t1, t2), t => 0);
+        public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>((t1, t2) => t1.IsEquivalentTo(t2), t => 0);
 
         #endregion
 
-        #region Public properties
+        #region Public abstract properties
 
         /// <summary>
-        /// Gets the type of the object.
+        /// Enumerates every possible set of objects that are altogether needed to define this object (this includes even 
+        /// defining objects of objects, see <see cref="ConfigurationObjectsExtentions.GetDefiningObjects(ConfigurationObject)"/>.
+        /// For example: If we have a line 'l' with points A, B, C on it, then this line has 4 possible definitions: 
+        /// l, [A, B], [A, C], [B, C]. 
         /// </summary>
-        public ConfigurationObjectType Type { get; }
+        /// <returns>The enumerable of objects representing a definition.</returns>
+        public abstract IEnumerable<IEnumerable<ConfigurationObject>> GetAllDefinitions();
 
         /// <summary>
-        /// Gets the object that directly represents this theorem object. This value
-        /// can't be null for a point, but can be null for a line or a circle. 
+        /// Determines if a given theorem object is equivalent to this one,
+        /// i.e. if they represent the same object of a configuration.
         /// </summary>
-        public ConfigurationObject ConfigurationObject { get; }
+        /// <param name="otherObject">The theorem object.</param>
+        /// <returns>true if they are equivalent; false otherwise.</returns>
+        public abstract bool IsEquivalentTo(TheoremObject otherObject);
+
+        /// <summary>
+        /// Recreates the theorem object by applying a given mapping of the inner configuration objects.
+        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem object must be
+        /// present in the mapping. If the mapping cannot be done (for example because 2 points
+        /// making a line are mapped to the same point), then null is returned.
+        /// </summary>
+        /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
+        public abstract TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping);
 
         #endregion
 
-        #region Constructors
+        #region Protected helper methods
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TheoremObject"/> class.
+        /// Tries to find the object corresponding to a given one with respect to a given mapping.
+        /// If the object is not present in the mapping, throws a <see cref="GeoGenException"/>.
         /// </summary>
-        /// <param name="type">The type of the theorem object.</param>
-        /// <param name="configurationObject">The configuration object.</param>
-        protected TheoremObject(ConfigurationObjectType type, ConfigurationObject configurationObject = null)
+        /// <param name="configurationObject">The configuration object to be mapped.</param>
+        /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <returns>The remapped configuration object.</returns>
+        protected ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
-            Type = type;
-            ConfigurationObject = configurationObject;
-
-            // Make sure the types are consistent, if the configuration object is specified
-            if (ConfigurationObject != null && ConfigurationObject.ObjectType != type)
-                throw new GeoGenException("The type of the inner configuration object doesn't match the type of the theorem object");
-        }
-
-        #endregion
-
-        #region Public static methods
-
-        /// <summary>
-        /// Determines if two theorem objects are equivalent, i.e. if they have the same type and geometrically
-        /// represent the same statements in the same geometric situation. 
-        /// </summary>
-        /// <param name="theoremObject1">The first theorem object.</param>
-        /// <param name="theoremObject2">The second theorem object.</param>
-        /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public static bool AreTheoremObjectsEquivalent(TheoremObject theoremObject1, TheoremObject theoremObject2)
-        {
-            // Check their types
-            if (theoremObject1.Type != theoremObject2.Type)
-                return false;
-
-            // Handle the point case in which we need to have equal configuration objects
-            if (theoremObject1 is TheoremPointObject)
-                return theoremObject1.ConfigurationObject == theoremObject2.ConfigurationObject;
-
-            // Otherwise we have the line/circle case
-            var lineOrCircle1 = (TheoremObjectWithPoints) theoremObject1;
-            var lineOrCircle2 = (TheoremObjectWithPoints) theoremObject2;
-
-            // If their configuration objects are defined and matches, then they are equivalent
-            if (lineOrCircle1.ConfigurationObject != null && lineOrCircle1.ConfigurationObject == lineOrCircle2.ConfigurationObject)
-                return true;
-
-            // If the number of their common points is enough to define them, then they are equivalent
-            if (lineOrCircle1.Points.Intersect(lineOrCircle2.Points).Count() >= lineOrCircle1.NumberOfNeededPoints)
-                return true;
-
-            // Otherwise we don't have enough information to say they are equivalent for sure
-            return false;
+            // Try to get it from the mapping    
+            return mapping.GetOrDefault(configurationObject)
+                // If it can't be done, make the developer aware
+                ?? throw new GeoGenException("Cannot create a remapped theorem, because the passed mapping doesn't contain its object.");
         }
 
         #endregion

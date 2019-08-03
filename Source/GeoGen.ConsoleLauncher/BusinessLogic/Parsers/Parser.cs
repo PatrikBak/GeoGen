@@ -423,143 +423,136 @@ namespace GeoGen.ConsoleLauncher
             var theoremObjectsStrings = definitionCopy.ToString().Split(';').Select(s => s.Trim());
 
             // Parse the objects
-            var theoremObjects = ParseTheoremObjects(theoremObjectsStrings, namesToObjects);
+            var theoremObjects = theoremObjectsStrings.Select(theoremObject => ParseTheoremObject(theoremObject, namesToObjects)).ToList();
 
             #endregion
 
             // Finally construct the theorem
-            return new Theorem(configuration, theoremType, theoremObjects);
+            return Theorem.DeriveFromFlattenedObjects(configuration, theoremType, theoremObjects);
         }
 
         /// <summary>
-        /// Parses theorem objects from given strings. This method makes sure that equivalent theorem objects
-        /// will get the same instances.
+        /// Parses theorem object from a given string.
         /// </summary>
-        /// <param name="objectStrings">The strings containing object definitions.</param>
+        /// <param name="objectString">The string containing the object's definition.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
-        /// <returns>The parsed theorem objects.</returns>
-        private List<TheoremObject> ParseTheoremObjects(IEnumerable<string> objectStrings, Dictionary<string, ConfigurationObject> namesToObjects)
+        /// <returns>The parsed theorem object.</returns>
+        private TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
         {
-            // Prepare the list of created theorem objects
-            var theoremObjects = new List<TheoremObject>();
+            // Try to match a line defined implicitly
+            var implicitLineMatch = Regex.Match(objectString, "^\\[(.+)\\]$");
 
-            // Handle every object string
-            objectStrings.ForEach(objectString =>
+            // Try to match a circle defined implicitly
+            var implicitCircleMatch = Regex.Match(objectString, "^\\((.+)\\)$");
+
+            // Try to match a line with both explicit and implicit definitions
+            var explicitImplicitLineMatch = Regex.Match(objectString, "^(.+)\\[(.+)\\]$");
+
+            // Try to match a circle with both explicit and implicit definitions
+            var explicitImplicitCircleMatch = Regex.Match(objectString, "^(.+)\\((.+)\\)$");
+
+            // Get the implicit points names. 
+            var pointNames = implicitLineMatch.Success ? implicitLineMatch.Groups[1].Value :
+                             implicitCircleMatch.Success ? implicitCircleMatch.Groups[1].Value :
+                             explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[2].Value :
+                             explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[2].Value
+                             // There might not be defined at all
+                             : null;
+
+            // Get the explicit object name. 
+            var objectName = explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[1].Value :
+                             explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[1].Value :
+                             implicitLineMatch.Success ? null :
+                             implicitCircleMatch.Success ? null :
+                             // If there is no match, we assume the whole string is the name
+                             objectString;
+
+
+            // Parse the points, if there are any
+            var theoremPoints = pointNames?.Split(",").Select(s => s.Trim()).Select(pointName =>
             {
-                // Try to match a line defined implicitly
-                var implicitLineMatch = Regex.Match(objectString, "^\\[(.+)\\]$");
+                // Make sure such a point exist 
+                if (!namesToObjects.ContainsKey(pointName))
+                    throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{pointName}'.");
 
-                // Try to match a circle defined implicitly
-                var implicitCircleMatch = Regex.Match(objectString, "^\\((.+)\\)$");
+                // Get the corresponding object
+                var pointObject = namesToObjects[pointName];
 
-                // Try to match a line with both explicit and implicit definitions
-                var explicitImplicitLineMatch = Regex.Match(objectString, "^(.+)\\[(.+)\\]$");
+                // Make sure it is a point
+                if (pointObject.ObjectType != ConfigurationObjectType.Point)
+                    throw new ParserException($"Error while parsing '{objectString}'. Object {pointName} is not a point.");
 
-                // Try to match a circle with both explicit and implicit definitions
-                var explicitImplicitCircleMatch = Regex.Match(objectString, "^(.+)\\((.+)\\)$");
+                // Return it
+                return pointObject;
+            })
+            // Enumerate
+            .ToArray();
 
-                // Get the implicit points names. 
-                var pointNames = implicitLineMatch.Success ? implicitLineMatch.Groups[1].Value :
-                                 implicitCircleMatch.Success ? implicitCircleMatch.Groups[1].Value :
-                                 explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[2].Value :
-                                 explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[2].Value
-                                 // There might not be defined at all
-                                 : null;
+            // Make sure the points are mutually distinct
+            if (theoremPoints != null && theoremPoints.Distinct().Count() != theoremPoints.Length)
+                throw new ParserException($"Error while parsing '{objectString}'. Points are not mutually distinct.");
 
-                // Get the explicit object name. 
-                var objectName = explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[1].Value :
-                                 explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[1].Value :
-                                 implicitLineMatch.Success ? null :
-                                 implicitCircleMatch.Success ? null :
-                                 // If there is no match, we assume the whole string is the name
-                                 objectString;
+            // Prepare a configuration object
+            var configurationObject = default(ConfigurationObject);
 
+            // Find the type of the object we're currently parsing
+            var type = default(ConfigurationObjectType);
 
-                // Parse the points, if there are any
-                var theoremPoints = pointNames?.Split(",").Select(s => s.Trim()).Select(pointName =>
-                {
-                    // Make sure such a point exist 
-                    if (!namesToObjects.ContainsKey(pointName))
-                        throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{pointName}'.");
+            // If the object is specified...
+            if (objectName != null)
+            {
+                // Make sure the name has been defined
+                if (!namesToObjects.ContainsKey(objectName))
+                    throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{objectName}'.");
 
-                    // Get the corresponding object
-                    var pointObject = namesToObjects[pointName];
+                // Set the corresponding object
+                configurationObject = namesToObjects[objectName];
 
-                    // Make sure it is a point
-                    if (pointObject.ObjectType != ConfigurationObjectType.Point)
-                        throw new ParserException($"Error while parsing '{objectString}'. Object {pointName} is not a point.");
+                // Set the type
+                type = configurationObject.ObjectType;
 
-                    // Return it
-                    return pointObject;
-                })
-                // Enumerate
-                .ToArray();
+                // Make sure the explicit circle is declared correctly
+                if (explicitImplicitCircleMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Line)
+                    throw new ParserException($"Error while parsing '{objectString}'. Line {objectName} should have had its points specified in [].");
 
-                // Make sure the points are mutually distinct
-                if (theoremPoints != null && theoremPoints.Distinct().Count() != theoremPoints.Length)
-                    throw new ParserException($"Error while parsing '{objectString}'. Points are not mutually distinct.");
+                // Make sure the explicit circle is declared correctly
+                if (explicitImplicitLineMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Circle)
+                    throw new ParserException($"Error while parsing '{objectString}'. Circle {objectName} should have had its points specified in ().");
 
-                // Prepare a resulting theorem object
-                var theoremObject = default(TheoremObject);
+                // Make sure point does not have points specified
+                if (explicitImplicitCircleMatch.Success || explicitImplicitLineMatch.Success || configurationObject.ObjectType == ConfigurationObjectType.Point)
+                    throw new ParserException($"Error while parsing '{objectString}'. Point names cannot be followed by brackets.");
+            }
+            // If the object isn't specified...
+            else
+            {
+                // Then we must have a line or circle defined implicitly by points
+                // Figure out the type
+                type = implicitLineMatch.Success ? ConfigurationObjectType.Line : ConfigurationObjectType.Circle;
 
-                // If the object is specified...
-                if (objectName != null)
-                {
-                    // Make sure the name has been defined
-                    if (!namesToObjects.ContainsKey(objectName))
-                        throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{objectName}'.");
+                // Find the number of needed points
+                var numberOfNeededPoints = type == ConfigurationObjectType.Line ? 2 : 3;
 
-                    // Get the corresponding object
-                    var configurationObject = namesToObjects[objectName];
+                // We need to make sure there are enough points
+                if (theoremPoints.Length < numberOfNeededPoints)
+                    throw new ParserException($"Error while parsing '{objectString}'. {type} needs at least {numberOfNeededPoints} points.");
+            }
 
-                    // Make sure the explicit circle is declared correctly
-                    if (explicitImplicitCircleMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Line)
-                        throw new ParserException($"Error while parsing '{objectString}'. Line {objectName} should have had its points specified in [].");
+            // Switch based on the figured type which constructor we'll use
+            switch (type)
+            {
+                case ConfigurationObjectType.Point:
+                    return new PointTheoremObject(configurationObject);
 
-                    // Make sure the explicit circle is declared correctly
-                    if (explicitImplicitLineMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Circle)
-                        throw new ParserException($"Error while parsing '{objectString}'. Circle {objectName} should have had its points specified in ().");
+                case ConfigurationObjectType.Line:
+                    return new LineTheoremObject(configurationObject, theoremPoints);
 
-                    // Make sure point does not have points specified
-                    if (explicitImplicitCircleMatch.Success || explicitImplicitLineMatch.Success || configurationObject.ObjectType == ConfigurationObjectType.Point)
-                        throw new ParserException($"Error while parsing '{objectString}'. Point names cannot be followed by brackets.");
+                case ConfigurationObjectType.Circle:
+                    return new CircleTheoremObject(configurationObject, theoremPoints);
 
-                    // In any other cases we should be fine
-                    theoremObject = configurationObject.ObjectType == ConfigurationObjectType.Point
-                        // Handle the points case
-                        ? (TheoremObject) new TheoremPointObject(configurationObject)
-                        // Otherwise we have a line or a circle, i.e. an object potentially with points                        
-                        : new TheoremObjectWithPoints(configurationObject.ObjectType, configurationObject, theoremPoints);
-                }
-                // If the object isn't specified...
-                else
-                {
-                    // Then we must have a line or circle defined implicitly by points
-                    // Figure out the type
-                    var type = implicitLineMatch.Success ? ConfigurationObjectType.Line : ConfigurationObjectType.Circle;
-
-                    // Find the number of needed points
-                    var numberOfNeededPoints = type == ConfigurationObjectType.Line ? 2 : 3;
-
-                    // We need to make sure there are enough points
-                    if (theoremPoints.Length < numberOfNeededPoints)
-                        throw new ParserException($"Error while parsing '{objectString}'. {type} needs at least {numberOfNeededPoints} points.");
-
-                    // Otherwise we're fine
-                    theoremObject = new TheoremObjectWithPoints(type, theoremPoints);
-                }
-
-                // After the theorem object is created, we need to 
-                // make sure equivalent objects are reused
-                var equivalentObject = theoremObjects.FirstOrDefault(t => TheoremObject.EquivalencyComparer.Equals(t, theoremObject));
-
-                // Add the theorem object to the list based on the fact whether 
-                // there is an equivalent object, otherwise re-use this object
-                theoremObjects.Add(equivalentObject ?? theoremObject);
-            });
-
-            // Return the parse objects
-            return theoremObjects;
+                default:
+                    throw new GeoGenException($"Unhandled type of configuration object: {type}");
+            }
         }
     }
 }

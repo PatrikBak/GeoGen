@@ -285,10 +285,10 @@ namespace GeoGen.TheoremsAnalyzer
                        // Set that we used the fact that the line from our points is tangent to our circle
                        UsedFacts = new List<Theorem>
                        {
-                            new Theorem(input.ExaminedTheorem.Configuration, TheoremType.LineTangentToCircle, new[]
+                            new Theorem(input.ExaminedTheorem.Configuration, TheoremType.LineTangentToCircle, new TheoremObject[]
                             {
-                                new TheoremObjectWithPoints(ConfigurationObjectType.Line, points[0].ConfigurationObject, points[1].ConfigurationObject),
-                                new TheoremObjectWithPoints(ConfigurationObjectType.Circle, circleLine[0].ConfigurationObject)
+                                new LineTheoremObject(points[0].ConfigurationObject, points[1].ConfigurationObject),
+                                new CircleTheoremObject(circleLine[0].ConfigurationObject, points: null)
                             })
                        },
 
@@ -347,24 +347,24 @@ namespace GeoGen.TheoremsAnalyzer
                 {
                      new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
                      {
-                         new TheoremPointObject(commonPoints[0][0]),
-                         new TheoremPointObject(commonPoints[0][1]),
-                         new TheoremPointObject(commonPoints[1][0]),
-                         new TheoremPointObject(commonPoints[1][1])
+                         new PointTheoremObject(commonPoints[0][0]),
+                         new PointTheoremObject(commonPoints[0][1]),
+                         new PointTheoremObject(commonPoints[1][0]),
+                         new PointTheoremObject(commonPoints[1][1])
                      }),
                      new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
                      {
-                         new TheoremPointObject(commonPoints[0][0]),
-                         new TheoremPointObject(commonPoints[0][1]),
-                         new TheoremPointObject(commonPoints[2][0]),
-                         new TheoremPointObject(commonPoints[2][1])
+                         new PointTheoremObject(commonPoints[0][0]),
+                         new PointTheoremObject(commonPoints[0][1]),
+                         new PointTheoremObject(commonPoints[2][0]),
+                         new PointTheoremObject(commonPoints[2][1])
                      }),
                      new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
                      {
-                         new TheoremPointObject(commonPoints[1][0]),
-                         new TheoremPointObject(commonPoints[1][1]),
-                         new TheoremPointObject(commonPoints[2][0]),
-                         new TheoremPointObject(commonPoints[2][1])
+                         new PointTheoremObject(commonPoints[1][0]),
+                         new PointTheoremObject(commonPoints[1][1]),
+                         new PointTheoremObject(commonPoints[2][0]),
+                         new PointTheoremObject(commonPoints[2][1])
                      })
                 },
 
@@ -447,8 +447,8 @@ namespace GeoGen.TheoremsAnalyzer
                     {
                          new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ParallelLines, new[]
                          {
-                             new TheoremObjectWithPoints(ConfigurationObjectType.Line, trapezoidPoints[0], trapezoidPoints[1]),
-                             new TheoremObjectWithPoints(ConfigurationObjectType.Line, trapezoidPoints[2], trapezoidPoints[3])
+                             new LineTheoremObject(trapezoidPoints[0], trapezoidPoints[1]),
+                             new LineTheoremObject(trapezoidPoints[2], trapezoidPoints[3])
                          })
                     },
 

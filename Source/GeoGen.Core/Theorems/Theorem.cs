@@ -42,15 +42,6 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Private properties
-
-        /// <summary>
-        /// The list of <see cref="InvolvedObjects"/> excluding equal ones.
-        /// </summary>
-        public IReadOnlyList<TheoremObject> DistinctObjects { get; }
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
@@ -64,7 +55,6 @@ namespace GeoGen.Core
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
             InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
-            DistinctObjects = InvolvedObjects.Distinct().ToList();
         }
 
         /// <summary>
@@ -72,36 +62,33 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
-        /// <param name="involvedObjects">The list of theorem objects that this theorem is about.</param>
-        public Theorem(Configuration configuration, TheoremType type, params TheoremObject[] involvedObjects)
-            : this(configuration, type, (IReadOnlyList<TheoremObject>) involvedObjects)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Theorem"/> object.
-        /// </summary>
-        /// <param name="configuration">The configuration in which the theorem holds.</param>
-        /// <param name="type">The type of the theorem.</param>
-        /// <param name="involvedObjects">The list of theorem objects that will be wrapped directly in theorem objects.</param>
+        /// <param name="involvedObjects">The list of theorem objects that will be wrapped directly in particular theorem objects.</param>
         public Theorem(Configuration configuration, TheoremType type, params ConfigurationObject[] objects)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
 
             // Create involved objects
-            InvolvedObjects = objects.Select(
-                // If the current object is a point
-                o => o.ObjectType == ConfigurationObjectType.Point
-                // Create a point object
-                ? (TheoremObject) new TheoremPointObject(o)
-                // Otherwise create a line/circle object
-                : new TheoremObjectWithPoints(o))
-                // Enumerate to an array
-                .ToArray();
+            InvolvedObjects = objects.Select<ConfigurationObject, TheoremObject>(configurationObject =>
+            {
+                // Switch based on the type
+                switch (configurationObject.ObjectType)
+                {
+                    case ConfigurationObjectType.Point:
+                        return new PointTheoremObject(configurationObject);
 
-            // Set distinct objects
-            DistinctObjects = InvolvedObjects;
+                    case ConfigurationObjectType.Line:
+                        return new LineTheoremObject(configurationObject);
+
+                    case ConfigurationObjectType.Circle:
+                        return new CircleTheoremObject(configurationObject);
+
+                    default:
+                        throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}");
+                }
+            })
+            // Enumerate to an array
+           .ToArray();
         }
 
         #endregion
@@ -115,46 +102,11 @@ namespace GeoGen.Core
         /// <returns>true, if it cannot be stated in a smaller configuration; false otherwise.</returns>
         public bool CanBeStatedInSmallerConfiguration()
         {
-            // Local function that enumerated all possible definitions of a given theorem object
-            IEnumerable<IEnumerable<ConfigurationObject>> AllDefinitions(TheoremObject theoremObject)
-            {
-                // Pull the configuration object 
-                var configurationObject = theoremObject.ConfigurationObject;
-
-                // If the configuration version is set, then its defining objects are
-                // one of the possible definitions
-                if (configurationObject != null)
-                    yield return configurationObject.GetDefiningObjects();
-
-                // If this is a point, then there is no other definition
-                if (theoremObject is TheoremPointObject)
-                    yield break;
-
-                // Otherwise we have a line or a circle, i.e. something definable by points
-                // Let's find how many of them we need
-                var definableByPoints = (TheoremObjectWithPoints) theoremObject;
-
-                // Each pair or triple (given by the object's property) together with internal objects is a definition
-                // If there are not enough points, we can't do much
-                if (definableByPoints.Points.Count < definableByPoints.NumberOfNeededPoints)
-                    yield break;
-
-                // Otherwise we have some definition of this type
-                // Let's prepare them. First we take all the subsets (all pairs / triples) of points
-                var remainingdefinitions = definableByPoints.Points.Subsets(definableByPoints.NumberOfNeededPoints)
-                    // For each of these subjects we have a definition
-                    .Select(points => points.GetDefiningObjects());
-
-                // And return them
-                foreach (var definition in remainingdefinitions)
-                    yield return definition;
-            }
-
             // Now we're finally ready to combine all possible definitions of particular objects
             // First take distinct involved objects
-            return DistinctObjects
+            return InvolvedObjects
                 // For each object find all the definitions
-                .Select(AllDefinitions)
+                .Select(theoremObject => theoremObject.GetAllDefinitions())
                 // Combine them into a single one in every possible ways
                 .Combine()
                 // We have needless objects if and only if there is a definition
@@ -172,79 +124,15 @@ namespace GeoGen.Core
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
         public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
-            // Helper function that tries to map an object
-            ConfigurationObject Map(ConfigurationObject configurationObject) =>
-                // Try to get it from the mapping
-                mapping.GetOrDefault(configurationObject)
-                // If it can't be done, make the developer aware
-                ?? throw new GeoGenException("Cannot create a remapped theorem, because the passed mapping doesn't contain its object.");
-
-            // Use other function to do the job. In that case we just need to remap a single theorem object
-            return Remap(theoremObject =>
-            {
-                // Switch based on its type
-                switch (theoremObject.Type)
-                {
-                    // If it's a point, then we just remap the internal object
-                    case ConfigurationObjectType.Point:
-                        return new TheoremPointObject(Map(theoremObject.ConfigurationObject));
-
-                    // If we have a line or circle...
-                    case ConfigurationObjectType.Line:
-                    case ConfigurationObjectType.Circle:
-
-                        // We know the object has points
-                        var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
-
-                        // We need to remap them
-                        var points = objectWithPoints.Points.Select(Map).ToSet();
-
-                        // If there is no internal object and not enough points, the mapping couldn't be done
-                        if (theoremObject.ConfigurationObject == null && points.Count < objectWithPoints.NumberOfNeededPoints)
-                            return null;
-
-                        // We need to remap the internal object as well, if it's present
-                        var internalObject = theoremObject.ConfigurationObject == null ? null : Map(theoremObject.ConfigurationObject);
-
-                        // And we're done
-                        return new TheoremObjectWithPoints(theoremObject.Type, internalObject, points);
-
-                    // Otherwise make the developer aware
-                    default:
-                        throw new GeoGenException($"Unhandled theorem object type: {theoremObject.Type}");
-                }
-            });
-        }
-
-        /// <summary>
-        /// Remaps this theorem using a custom function for remapping <see cref="TheoremObject"/>.
-        /// If this function returns null for some theorem object, then the whole theorem is not remapped.
-        /// This function makes sure that objects that had the same instances will have them
-        /// even after the remapping.
-        /// </summary>
-        /// <param name="theoremObjectRemapper">The remapping function for theorem objects.</param>
-        /// <returns>The remapped theorem, if it can be done; null otherwise.</returns>
-        public Theorem Remap(Func<TheoremObject, TheoremObject> theoremObjectRemapper)
-        {
-            // Remap all distinct theoremObjects, but only if none of them is null
-            var remappedDistinctObjects = DistinctObjects.SelectIfNotDefault(theoremObjectRemapper);
+            // Remap objects, but only if none of them is null
+            var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping));
 
             // If the remapped objects are null, then the theorem cannot be remapped
-            if (remappedDistinctObjects == null)
+            if (remappedObjects == null)
                 return null;
 
-            // If none two were equal, we can return the theorem directly
-            if (remappedDistinctObjects.Count == InvolvedObjects.Count)
-                return new Theorem(Configuration, Type, remappedDistinctObjects);
-
-            // Otherwise we make a dictionary mapping objects to their remapped version
-            var mappingDictionary = DistinctObjects.ZipToDictionary(remappedDistinctObjects);
-
-            // Use it to create remapped involved objects
-            var remappedInvolvedObjects = InvolvedObjects.Select(o => mappingDictionary[o]).ToList();
-
-            // And finally create the theorem
-            return new Theorem(Configuration, Type, remappedInvolvedObjects);
+            // Otherwise construct the remapped theorem
+            return new Theorem(Configuration, Type, remappedObjects);
         }
 
         /// <summary>
@@ -260,6 +148,72 @@ namespace GeoGen.Core
         #endregion
 
         #region Public static methods
+
+        /// <summary>
+        /// Derives theorem from a list of flattened theorem objects. The idea is to accommodate the fact
+        /// that <see cref="TheoremType.EqualAngles"/> and <see cref="TheoremType.EqualLineSegments"/>
+        /// require <see cref="AngleTheoremObject"/> and <see cref="LineSegmentTheoremObject"/>, which
+        /// internally consist of two lines and two points, i.e. their 'flattened' version have 4 lines
+        /// and 4 points.
+        /// </summary>
+        /// <param name="configuration">The configuration in which the theorem holds.</param>
+        /// <param name="type">The type of the theorem.</param>
+        /// <param name="involvedObjects">The list of flattened theorem objects that this theorem is about.</param>
+        /// <returns>The derived theorem.</returns>
+        public static Theorem DeriveFromFlattenedObjects(Configuration configuration, TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
+        {
+            // Prepare the final theorem objects
+            var finalTheoremObjects = default(IReadOnlyList<TheoremObject>);
+
+            // Switch based on the theorem type
+            switch (type)
+            {
+                // The cases where objects are simply
+                case TheoremType.CollinearPoints:
+                case TheoremType.ConcyclicPoints:
+                case TheoremType.ParallelLines:
+                case TheoremType.PerpendicularLines:
+                case TheoremType.LineTangentToCircle:
+                case TheoremType.TangentCircles:
+                case TheoremType.ConcurrentObjects:
+
+                    // In those we simply take all created objects
+                    finalTheoremObjects = flattenedObjects;
+
+                    break;
+
+                // Case with angles
+                case TheoremType.EqualAngles:
+
+                    // Here the first two lines make one angle and the next one the other one
+                    finalTheoremObjects = new TheoremObject[]
+                    {
+                        new AngleTheoremObject((LineTheoremObject)flattenedObjects[0], (LineTheoremObject)flattenedObjects[1]),
+                        new AngleTheoremObject((LineTheoremObject)flattenedObjects[2], (LineTheoremObject)flattenedObjects[3])
+                    };
+
+                    break;
+
+                // Case with line segments
+                case TheoremType.EqualLineSegments:
+
+                    // Here the first two points make one line segment and the next one the other one
+                    finalTheoremObjects = new TheoremObject[]
+                    {
+                        new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[0], (PointTheoremObject)flattenedObjects[1]),
+                        new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[2], (PointTheoremObject)flattenedObjects[3])
+                    };
+
+                    break;
+
+                // Default case
+                default:
+                    throw new GeoGenException($"Unhandled type of theorem: {type}");
+            }
+
+            // Create a new theorem using the found objects
+            return new Theorem(configuration, type, finalTheoremObjects);
+        }
 
         /// <summary>
         /// Determines if two theorems are equivalent, i.e. if they have the same type and geometrically
@@ -293,32 +247,20 @@ namespace GeoGen.Core
                     // Check if there is at least the needed number of common objects
                     return theorem1.InvolvedObjects.ToSet(comparer).Intersect(theorem2.InvolvedObjects, comparer).Count() >= neededPoints;
 
+                // The cases where we have two objects
                 case TheoremType.ParallelLines:
                 case TheoremType.PerpendicularLines:
                 case TheoremType.TangentCircles:
                 case TheoremType.LineTangentToCircle:
+                case TheoremType.EqualAngles:
+                case TheoremType.EqualLineSegments:
 
                     // Check if the sets of their internal objects are equal
                     return theorem1.InvolvedObjects.ToSet(comparer).SetEquals(theorem2.InvolvedObjects);
 
-                // The cases where we basically have the signature {{x, x}, {x, x}} 
-                // (i.e. objects in pair can be in any order, and the pairs itself as well)
-                case TheoremType.EqualAngles:
-                case TheoremType.EqualLineSegments:
-
-                    // Get the pairs for each object
-                    var obj1Set1 = new HashSet<TheoremObject>(comparer) { theorem1.InvolvedObjects[0], theorem1.InvolvedObjects[1] };
-                    var obj1Set2 = new HashSet<TheoremObject>(comparer) { theorem1.InvolvedObjects[2], theorem1.InvolvedObjects[3] };
-                    var obj2Set1 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[0], theorem2.InvolvedObjects[1] };
-                    var obj2Set2 = new HashSet<TheoremObject>(comparer) { theorem2.InvolvedObjects[2], theorem2.InvolvedObjects[3] };
-
-                    // This boring condition should do the job
-                    return obj1Set1.SetEquals(obj2Set1) && obj1Set2.SetEquals(obj2Set2) ||
-                           obj1Set1.SetEquals(obj2Set2) && obj1Set2.SetEquals(obj2Set1);
-
-                // Default case
+                // If something else
                 default:
-                    throw new GeoGenException("Unhandled type");
+                    throw new GeoGenException($"Unhandled type of theorem: {theorem1.Type}");
             }
         }
 
@@ -331,7 +273,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"{Type}: {string.Join(", ", InvolvedObjects)}";
+        public override string ToString() => $"{Type}: {InvolvedObjects.ToJoinedString()}";
 
         #endregion
     }

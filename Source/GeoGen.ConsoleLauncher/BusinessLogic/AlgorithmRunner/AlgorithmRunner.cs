@@ -164,7 +164,7 @@ namespace GeoGen.ConsoleLauncher
                 // If the theorem has no feedback, we can't write more
                 if (!feedback.ContainsKey(theorem))
                     return theoremString;
-                
+
                 // Otherwise switch on the feedback
                 switch (feedback[theorem])
                 {

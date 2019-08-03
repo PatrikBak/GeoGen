@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.PredefinedConstructionType;
 
@@ -21,9 +22,9 @@ namespace GeoGen.Core.Tests
             var D = new ConstructedConfigurationObject(Midpoint, A, B);
             var E = new ConstructedConfigurationObject(Midpoint, B, C);
             var F = new ConstructedConfigurationObject(Midpoint, C, A);
-            var G = new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints, B, F, C, D);
+            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, F, C, D);
             var c = new ConstructedConfigurationObject(Circumcircle, E, F, G);
-            var X = new ConstructedConfigurationObject(ComposedConstructions.Circumcenter, A, B, C);
+            var X = new ConstructedConfigurationObject(Circumcenter, A, B, C);
             var Y = new ConstructedConfigurationObject(Midpoint, X, G);
 
             // Check loose object

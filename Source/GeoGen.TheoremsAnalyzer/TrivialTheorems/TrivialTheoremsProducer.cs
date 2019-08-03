@@ -5,6 +5,8 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.PredefinedConstructionType;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.TheoremsAnalyzer
 {
@@ -97,139 +99,140 @@ namespace GeoGen.TheoremsAnalyzer
                     switch (predefinedConstruction.Type)
                     {
                         // An angle bisector makes equal angles
-                        case PredefinedConstructionType.InternalAngleBisector:
+                        case InternalAngleBisector:
                         {
                             // Create theorem objects
-                            var line1 = new TheoremObjectWithPoints(ConfigurationObjectType.Line, objects[0], objects[1]);
-                            var line2 = new TheoremObjectWithPoints(ConfigurationObjectType.Line, objects[0], objects[2]);
-                            var bisector = new TheoremObjectWithPoints(ConfigurationObjectType.Line, constructedObject, objects[0].ToEnumerable());
+                            var line1 = new LineTheoremObject(objects[0], objects[1]);
+                            var line2 = new LineTheoremObject(objects[0], objects[2]);
+                            var bisector = new LineTheoremObject(constructedObject, points: new[] { objects[0] });
 
                             // Create the theorem
-                            return new[] { new Theorem(configuration, TheoremType.EqualAngles, line1, bisector, line2, bisector) };
-                        }
-
-                        // Point reflection makes collinear points and equally distances points
-                        case PredefinedConstructionType.PointReflection:
-                        {
-                            // Create theorem objects
-                            var point1 = new TheoremPointObject(objects[0]);
-                            var point2 = new TheoremPointObject(objects[1]);
-                            var reflectedPoint = new TheoremPointObject(constructedObject);
-
-                            // Create the theorems
                             return new[]
                             {
-                                // Collinearity
-                                new Theorem(configuration, TheoremType.CollinearPoints, point1, point2, reflectedPoint),
-
-                                // Equal distances
-                                new Theorem(configuration, TheoremType.EqualLineSegments, point2, point1, point2, reflectedPoint)
+                                new Theorem(configuration, EqualAngles, new []
+                                {
+                                    new AngleTheoremObject(line1, bisector),
+                                    new AngleTheoremObject(line2, bisector)
+                                })
                             };
                         }
 
                         // Point reflection makes collinear points and equally distances points
-                        case PredefinedConstructionType.Midpoint:
-                        {
-                            // Create theorem objects
-                            var point1 = new TheoremPointObject(objects[0]);
-                            var point2 = new TheoremPointObject(objects[1]);
-                            var midpoint = new TheoremPointObject(constructedObject);
+                        case PointReflection:
 
                             // Create the theorems
                             return new[]
                             {
                                 // Collinearity
-                                new Theorem(configuration, TheoremType.CollinearPoints, point1, point2, midpoint),
+                                new Theorem(configuration, CollinearPoints, objects[0], objects[1], constructedObject),
 
                                 // Equal distances
-                                new Theorem(configuration, TheoremType.EqualLineSegments, point1, midpoint, point2, midpoint)
+                                new Theorem(configuration, EqualLineSegments, new TheoremObject[]
+                                {
+                                    new LineSegmentTheoremObject(objects[1], objects[0]),
+                                    new LineSegmentTheoremObject(objects[1], constructedObject)
+                                })
+                            };
+
+                        // Point reflection makes collinear points and equally distances points
+                        case Midpoint:
+
+                            // Create the theorems
+                            return new[]
+                            {
+                                // Collinearity
+                                new Theorem(configuration, CollinearPoints, objects[0], objects[1], constructedObject),
+
+                                // Equal distances
+                                new Theorem(configuration, EqualLineSegments, new TheoremObject[]
+                                {
+                                    new LineSegmentTheoremObject(objects[0], constructedObject),
+                                    new LineSegmentTheoremObject(objects[1], constructedObject)
+                                })
                              };
-                        }
 
                         // Perpendicular projection makes perpendicular lines
-                        case PredefinedConstructionType.PerpendicularProjection:
+                        case PerpendicularProjection:
 
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.PerpendicularLines, new TheoremObject[]
+                                new Theorem(configuration, PerpendicularLines, new TheoremObject[]
                                 {
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, objects[1]),
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, constructedObject, objects[0])
+                                    new LineTheoremObject(objects[0], constructedObject),
+                                    new LineTheoremObject(objects[1], points: new[] {constructedObject })
                                 })
                             };
 
                         // Perpendicular line makes (surprisingly) perpendicular lines
-                        case PredefinedConstructionType.PerpendicularLine:
+                        case PerpendicularLine:
 
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.PerpendicularLines, new TheoremObject[]
+                                new Theorem(configuration, PerpendicularLines, new TheoremObject[]
                                 {
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, constructedObject),
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, objects[1], objects[0].ToEnumerable())
+                                    new LineTheoremObject(constructedObject, points: new[] {objects[0] }),
+                                    new LineTheoremObject(objects[1])
                                 })
                             };
 
                         // Parallel line makes (surprisingly) parallel lines
-                        case PredefinedConstructionType.ParallelLine:
+                        case ParallelLine:
 
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.ParallelLines, new TheoremObject[]
+                                new Theorem(configuration, ParallelLines, new TheoremObject[]
                                 {
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, constructedObject),
-                                    new TheoremObjectWithPoints(ConfigurationObjectType.Line, objects[1], objects[0].ToEnumerable())
+                                    new LineTheoremObject(constructedObject, points: new[] { objects[0] }),
+                                    new LineTheoremObject(objects[1])
                                 })
                             };
 
                         // Second intersection of two circumcircles makes concyclic points
-                        case PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles:
+                        case SecondIntersectionOfTwoCircumcircles:
 
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2]),
-                                new Theorem(configuration, TheoremType.ConcyclicPoints, constructedObject, objects[0], objects[3], objects[4])
+                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2]),
+                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[3], objects[4])
                             };
 
                         // Second intersection of a circle and line from point make collinear and concyclic points
-                        case PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints:
+                        case SecondIntersectionOfCircleAndLineFromPoints:
 
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.CollinearPoints, objects[0], objects[1], constructedObject),
-                                new Theorem(configuration, TheoremType.ConcyclicPoints, objects[0], objects[2], objects[3], constructedObject)
+                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1]),
+                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[2], objects[3])
                             };
 
 
                         // Second intersection of a circle with center and line from points makes collinear and equally distanced points
-                        case PredefinedConstructionType.SecondIntersectionOfCircleWithCenterAndLineFromPoints:
-
-                            // Create theorem objects
-                            var A = new TheoremPointObject(objects[0]);
-                            var B = new TheoremPointObject(objects[1]);
-                            var C = new TheoremPointObject(objects[2]);
-                            var D = new TheoremPointObject(constructedObject);
+                        case SecondIntersectionOfCircleWithCenterAndLineFromPoints:
 
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.CollinearPoints, A, B, D),
-                                new Theorem(configuration, TheoremType.EqualLineSegments, C, A, C, D)
+                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1]),
+                                new Theorem(configuration, EqualLineSegments, new[]
+                                {
+                                    new LineSegmentTheoremObject(objects[2], objects[0]),
+                                    new LineSegmentTheoremObject(objects[2], constructedObject)
+                                })
                             };
 
 
                         // Random point on a line makes collinear points
-                        case PredefinedConstructionType.RandomPointOnLineFromPoints:
+                        case RandomPointOnLineFromPoints:
 
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, TheoremType.CollinearPoints, objects[0], objects[1], constructedObject)
+                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1])
                             };
 
                         // In all the other cases we can't say anything useful :/
@@ -272,7 +275,7 @@ namespace GeoGen.TheoremsAnalyzer
             // Create an array of loose objects of the defining configuration
             var looseObjects = composedConstruction.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().ToArray();
 
-            // Create a constructed object representing this construction
+            // Create a constructed object representing this construction, i.e. the one that gets passed the loose objects
             var constructedObject = new ConstructedConfigurationObject(composedConstruction, looseObjects);
 
             // Create a configuration holding the same loose objects, and the final constructed one
@@ -305,41 +308,20 @@ namespace GeoGen.TheoremsAnalyzer
                 // object with the original one from the defining configuration
                 .Select(theorem =>
                 {
-                    // Use the remap method. In that case we just need to remap a single theorem object
-                    return theorem.Remap(theoremObject =>
-                    {
-                        // Helper function that replaces an object, if it is the one to be replaced,
-                        // and otherwise returns the original object
-                        ConfigurationObject Replace(ConfigurationObject o) => o == constructedObject ? composedConstruction.ConstructionOutput : o;
+                    // We will create a mapping that maps loose objects to itself
+                    // and the artificial constructed object to the last object of 
+                    // the defining configuration. Take the loose objects first...
+                    var mapping = configuration.LooseObjectsHolder.LooseObjects
+                        // Cast each to an identity tuple
+                        .Select(looseObject => ((ConfigurationObject) looseObject, (ConfigurationObject) looseObject))
+                        // Add the tuple of the constructed and last object
+                        .Concat((constructedObject, composedConstruction.ConstructionOutput))
+                        // Make a mapping
+                        .ToDictionary(pair => pair.Item1, pair => pair.Item2);
 
-                        // Switch based on the type
-                        switch (theoremObject.Type)
-                        {
-                            // If we have a point, then we replace its object 
-                            case ConfigurationObjectType.Point:
-                                return new TheoremPointObject(Replace(theoremObject.ConfigurationObject));
-
-                            // If we have a line or circle...
-                            case ConfigurationObjectType.Line:
-                            case ConfigurationObjectType.Circle:
-
-                                // The object is an object with points
-                                var objectWithPoints = (TheoremObjectWithPoints) theoremObject;
-
-                                // We replace its points
-                                var points = objectWithPoints.Points.Select(Replace).ToList();
-
-                                // And create it with a replaced object
-                                return new TheoremObjectWithPoints(theoremObject.Type, Replace(theoremObject.ConfigurationObject), points);
-
-                            // Otherwise make the developer aware
-                            default:
-                                throw new GeoGenException($"Unhandled theorem object type: {theoremObject.Type}");
-                        }
-                    });
+                    // Use theorems method to do the job
+                    return theorem.Remap(mapping);
                 })
-                // Take only remaining theorems
-                .Where(theorem => theorem != null)
                 // Enumerate
                 .ToList();
         }

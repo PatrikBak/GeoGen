@@ -1,10 +1,10 @@
-﻿using NUnit.Framework;
-using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Core.PredefinedConstructionType;
-using static GeoGen.Core.LooseObjectsLayout;
-using static GeoGen.Core.TheoremType;
+﻿using FluentAssertions;
+using NUnit.Framework;
 using static GeoGen.Core.ComposedConstructions;
-using FluentAssertions;
+using static GeoGen.Core.ConfigurationObjectType;
+using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.PredefinedConstructionType;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.Core.Tests
 {
@@ -31,9 +31,9 @@ namespace GeoGen.Core.Tests
             // This couldn't be stated in a smaller configuration
             new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
             {
-                new TheoremObjectWithPoints(Line, A, mBC),
-                new TheoremObjectWithPoints(Line, B, mAC),
-                new TheoremObjectWithPoints(Line, C, mAB)
+                new LineTheoremObject(A, mBC),
+                new LineTheoremObject(B, mAC),
+                new LineTheoremObject(C, mAB)
             })
             .CanBeStatedInSmallerConfiguration().Should().BeFalse();
         }
@@ -52,9 +52,21 @@ namespace GeoGen.Core.Tests
             // Create the configuration
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
-            // That couldn't be stated in a smaller configuration either
-            new Theorem(configuration, EqualLineSegments, mAB, mAC, B, mBC).CanBeStatedInSmallerConfiguration().Should().BeFalse();
-            new Theorem(configuration, EqualLineSegments, mAB, mAC, C, mBC).CanBeStatedInSmallerConfiguration().Should().BeFalse();
+            // This couldn't be stated in a smaller configuration either
+            new Theorem(configuration, EqualLineSegments, new[]
+            {
+                new LineSegmentTheoremObject(mAB, mAC),
+                new LineSegmentTheoremObject(B, mBC)
+            })
+            .CanBeStatedInSmallerConfiguration().Should().BeFalse();
+
+            // Equivalently this couldn't be stated in a smaller configuration either
+            new Theorem(configuration, EqualLineSegments, new[]
+            {
+                new LineSegmentTheoremObject(mAB, mAC),
+                new LineSegmentTheoremObject(C, mBC)
+            })
+            .CanBeStatedInSmallerConfiguration().Should().BeFalse();
         }
 
         [Test]
@@ -74,8 +86,8 @@ namespace GeoGen.Core.Tests
             // This theorem can be stated without the midpoint of BC
             new Theorem(configuration, ParallelLines, new TheoremObject[]
             {
-                new TheoremObjectWithPoints(Line, B, C, mBC),
-                new TheoremObjectWithPoints(Line, mAC, mBC)
+                new LineTheoremObject(B, C, mBC),
+                new LineTheoremObject(mAC, mBC)
             })
             .CanBeStatedInSmallerConfiguration().Should().BeTrue();
         }
@@ -96,8 +108,8 @@ namespace GeoGen.Core.Tests
             // This theorem can be stated without explicitly having line 'l'
             new Theorem(configuration, ParallelLines, new TheoremObject[]
             {
-                new TheoremObjectWithPoints(Line, l, new ConfigurationObject[] { A, B }),
-                new TheoremObjectWithPoints(Line, C, D)
+                new LineTheoremObject(l, points: new[] { A, B }),
+                new LineTheoremObject(C, D)
             })
             .CanBeStatedInSmallerConfiguration().Should().BeTrue();
         }
@@ -116,15 +128,15 @@ namespace GeoGen.Core.Tests
             var configuration = Configuration.DeriveFromObjects(Trapezoid, A, B, C, D, P);
 
             // Create line ACP that will be reused in the theorem
-            var lineACP = new TheoremObjectWithPoints(Line, A, C, P);
+            var lineACP = new LineTheoremObject(A, C, P);
 
             // This theorem can be stated without P
             new Theorem(configuration, EqualAngles, new TheoremObject[]
             {
                 lineACP,
-                new TheoremObjectWithPoints(Line, A, B),
+                new LineTheoremObject(A, B),
                 lineACP,
-                new TheoremObjectWithPoints(Line, C, D),
+                new LineTheoremObject(C, D),
             })
             .CanBeStatedInSmallerConfiguration().Should().BeTrue();
         }

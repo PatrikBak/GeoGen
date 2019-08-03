@@ -31,9 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer.Test", "GeoGen.TheoremsAnalyzer.Test\GeoGen.TheoremsAnalyzer.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.DependenciesResolver", "GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj", "{AEFD477E-2418-45D4-9637-23C95A7C5817}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.DependenciesResolver", "GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj", "{AEFD477E-2418-45D4-9637-23C95A7C5817}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.ConsoleLauncher", "GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConsoleLauncher", "GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

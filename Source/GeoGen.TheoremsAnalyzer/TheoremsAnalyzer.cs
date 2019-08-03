@@ -70,7 +70,7 @@ namespace GeoGen.TheoremsAnalyzer
             var trivialTheorems = _trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(input.Configuration);
 
             // All theorems equivalent to them 
-            input.Theorems.Where(theorem => trivialTheorems.Any(trivialTheorem => Theorem.AreTheoremsEquivalent(trivialTheorem, theorem)))
+            input.Theorems.Where(theorem => trivialTheorems.Any(trivialTheorem => trivialTheorem.IsEquivalentTo(theorem)))
                 // can be marked as trivial
                 .ForEach(theorem => result.Add(theorem, new TrivialTheoremFeedback()));
 
@@ -94,7 +94,6 @@ namespace GeoGen.TheoremsAnalyzer
                 // If there is a match, add feedback
                 if (match != default)
                     result.Add(theorem, new SubtheoremFeedback { TemplateTheorem = match.templateTheorem });
-                
             });
 
             // Return the result
