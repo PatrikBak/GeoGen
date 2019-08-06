@@ -27,20 +27,17 @@ namespace GeoGen.ConsoleLauncher
             var name = item["Name"].Value<string>();
 
             // Distinguish between loggers
-            switch (name)
+            return name switch
             {
                 // If it's console logger...
-                case "ConsoleLogger":
-                    return item.ToObject<ConsoleLoggerSettings>();
+                "ConsoleLogger" => item.ToObject<ConsoleLoggerSettings>() as BaseLoggerSettings,
 
                 // If it's file logger...
-                case "FileLogger":
-                    return item.ToObject<FileLoggerSettings>();
+                "FileLogger" => item.ToObject<FileLoggerSettings>(),
 
                 // Otherwise we failed...
-                default:
-                    throw new Exception("Unable to parse the settings file");
-            }
+                _ => throw new Exception("Unable to parse the settings file"),
+            };
         }
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
@@ -49,7 +46,7 @@ namespace GeoGen.ConsoleLauncher
             var loggerName = ExtractLoggerName(value);
 
             // Get the JSON object from the passed value
-            var jsonObject = (JObject) JToken.FromObject(value);
+            var jsonObject = (JObject)JToken.FromObject(value);
 
             // Add the name property
             jsonObject.AddFirst(new JProperty("Name", new JValue(loggerName)));

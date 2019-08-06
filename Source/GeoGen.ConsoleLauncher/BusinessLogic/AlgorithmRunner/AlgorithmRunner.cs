@@ -84,7 +84,7 @@ namespace GeoGen.ConsoleLauncher
                 if (initialTheorems.Any())
                 {
                     outputWriter.WriteLine("\nTheorems:\n");
-                    outputWriter.WriteLine(initialTheorems.Select(initialFormatter.FormatTheorem).Select(s => $" - {s}").ToJoinedString("\n"));
+                    outputWriter.WriteLine(initialTheorems.Select(t => initialFormatter.FormatTheorem(t)).Select(s => $" - {s}").ToJoinedString("\n"));
                 }
 
                 // Write iterations
@@ -156,10 +156,10 @@ namespace GeoGen.ConsoleLauncher
         private string TheoremsToString(OutputFormatter formatter, List<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback)
         {
             // Convert all theorems
-            return theorems.Select(theorem =>
+            return theorems.Select((theorem, index) =>
             {
                 // Get the basic string from the formatter
-                var theoremString = $" - {formatter.FormatTheorem(theorem)}";
+                var theoremString = $" {index + 1,2}. {formatter.FormatTheorem(theorem)}";
 
                 // If the theorem has no feedback, we can't write more
                 if (!feedback.ContainsKey(theorem))
@@ -176,10 +176,34 @@ namespace GeoGen.ConsoleLauncher
                     case SubtheoremFeedback subtheoremFeedback:
 
                         // In this case we know the template theorem has our additional info
-                        var templateTheorem = (TemplateTheorem) subtheoremFeedback.TemplateTheorem;
+                        var templateTheorem = (TemplateTheorem)subtheoremFeedback.TemplateTheorem;
 
                         // We can now construct more descriptive string
                         return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
+
+                    // Definable in a simpler configuration
+                    case DefineableSimplerFeedback _:
+                        return $"{theoremString} - can be defined in a simpler configuration";
+
+                    // Transitivity
+                    case TransitivityFeedback transitivityFeedback:
+
+                        // Local function that converts a fact to a string
+                        string FactToString(Theorem fact)
+                        {
+                            // Try to find it in our theorems
+                            var equalTheoremIndex = theorems.IndexOf(fact, Theorem.EquivalencyComparer);
+
+                            // If it's found, i.e. not -1, then return just the number
+                            if (equalTheoremIndex != -1)
+                                return $"{equalTheoremIndex + 1}";
+
+                            // Otherwise Convert the fact
+                            return $"{formatter.FormatTheorem(fact, includeType: false)} (this is true in a simpler configuration)";
+                        }
+
+                        // Compose the final string
+                        return $"{theoremString} - is true because of {FactToString(transitivityFeedback.Fact1)} and {FactToString(transitivityFeedback.Fact2)}";
 
                     // Otherwise...
                     default:

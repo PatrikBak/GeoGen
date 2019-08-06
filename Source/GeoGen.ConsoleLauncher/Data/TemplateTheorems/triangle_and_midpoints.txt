@@ -1,0 +1,11 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = Midpoint(A, B)
+ E = Midpoint(A, C)
+ F = Midpoint(B, C)
+
+Theorems:
+
+ EqualLineSegments: D, E, B, F
+ ConcurrentObjects: [A, F], [B, E], [C, D]

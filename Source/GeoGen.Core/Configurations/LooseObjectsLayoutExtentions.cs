@@ -13,49 +13,44 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="layout">The layout.</param>
         /// <returns>The list of object types.</returns>
-        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectsLayout layout)
-        {
-            switch (layout)
+        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectsLayout layout) =>
+
+            // Switch based on the layout
+            layout switch
             {
                 // With no layout we cannot specify the types
-                case LooseObjectsLayout.NoLayout:
-                    throw new GeoGenException("Objects with no layout don't have predefined types.");
+                LooseObjectsLayout.NoLayout => throw new GeoGenException("Objects with no layout don't have predefined types."),
 
                 // 3 points
-                case LooseObjectsLayout.ThreePoints:
-                    return new List<ConfigurationObjectType> { Point, Point, Point };
+                LooseObjectsLayout.ThreePoints => new List<ConfigurationObjectType> { Point, Point, Point },
 
                 // 6 points
-                case LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints:
-                    return new List<ConfigurationObjectType> { Point, Point, Point, Point, Point, Point };
+                LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints => new List<ConfigurationObjectType> { Point, Point, Point, Point, Point, Point },
 
                 // 4 points
-                case LooseObjectsLayout.Trapezoid:
-                    return new List<ConfigurationObjectType> { Point, Point, Point, Point };
+                LooseObjectsLayout.Trapezoid => new List<ConfigurationObjectType> { Point, Point, Point, Point },
 
                 // 1 circle, 2 points
-                case LooseObjectsLayout.CircleAndItsTangentLineFromPoints:
-                    return new List<ConfigurationObjectType> { Circle, Point, Point };
+                LooseObjectsLayout.CircleAndItsTangentLineFromPoints => new List<ConfigurationObjectType> { Circle, Point, Point },
 
                 // 4 points
-                case LooseObjectsLayout.FourPoints:
-                    return new List<ConfigurationObjectType> { Point, Point, Point, Point };
+                LooseObjectsLayout.FourPoints => new List<ConfigurationObjectType> { Point, Point, Point, Point },
 
                 // 1 line, 1 point
-                case LooseObjectsLayout.LineAndPoint:
-                    return new List<ConfigurationObjectType> { Line, Point };
+                LooseObjectsLayout.LineAndPoint => new List<ConfigurationObjectType> { Line, Point },
 
                 // 1 line, 2 points
-                case LooseObjectsLayout.LineAndTwoPoints:
-                    return new List<ConfigurationObjectType> { Line, Point, Point };
+                LooseObjectsLayout.LineAndTwoPoints => new List<ConfigurationObjectType> { Line, Point, Point },
 
                 // 2 points
-                case LooseObjectsLayout.TwoPoints:
-                    return new List<ConfigurationObjectType> { Point, Point };
+                LooseObjectsLayout.TwoPoints => new List<ConfigurationObjectType> { Point, Point },
 
-                default:
-                    throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined.");
-            }
-        }
+                // 3 points
+                LooseObjectsLayout.IsoscelesTriangle => new List<ConfigurationObjectType> { Point, Point, Point },
+
+                // Default case
+                _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),
+            };
+
     }
 }

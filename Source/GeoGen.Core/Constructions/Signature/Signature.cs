@@ -122,7 +122,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set construction parameter
-                var setParameter = (SetConstructionParameter) parameter;
+                var setParameter = (SetConstructionParameter)parameter;
 
                 // Create arguments list that we're going to fill
                 var arguments = new List<ConstructionArgument>();
@@ -174,7 +174,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set parameter
-                var setParameter = (SetConstructionParameter) parameter;
+                var setParameter = (SetConstructionParameter)parameter;
 
                 // We recursively perform this function the needed number of times on the repeated parameters
                 GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () => HandleParameter(setParameter.TypeOfParameters));

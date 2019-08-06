@@ -5,7 +5,7 @@ namespace GeoGen.Core
     /// <summary>
     /// Represents a line segment defined by two <see cref="PointTheoremObject"/>s.
     /// </summary>
-    public class LineSegmentTheoremObject : PairTheoremObject<PointTheoremObject>
+    public class LineSegmentTheoremObject : PairTheoremObject
     {
         #region Constructors
 
@@ -47,7 +47,7 @@ namespace GeoGen.Core
             var objects = RemapObjects(mapping);
 
             // Reconstruct based on the fact whether remapping could be done
-            return objects != default ? new LineSegmentTheoremObject(objects.Item1, objects.Item2) : null;
+            return objects != default ? new LineSegmentTheoremObject((PointTheoremObject)objects.Item1, (PointTheoremObject)objects.Item2) : null;
         }
 
         #endregion

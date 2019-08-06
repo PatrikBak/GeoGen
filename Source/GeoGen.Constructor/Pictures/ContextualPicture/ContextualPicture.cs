@@ -229,7 +229,7 @@ namespace GeoGen.Constructor
         /// <typeparam name="T">The type of the geometric object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The corresponding geometric object.</returns>
-        public T GetGeometricObject<T>(ConfigurationObject configurationObject) where T : GeometricObject => (T) _configurationObjectsMap[configurationObject];
+        public T GetGeometricObject<T>(ConfigurationObject configurationObject) where T : GeometricObject => (T)_configurationObjectsMap[configurationObject];
 
         /// <summary>
         /// Gets the analytic representation of a given geometric object in a given picture.
@@ -238,7 +238,7 @@ namespace GeoGen.Constructor
         /// <param name="geometricObject">The geometric object.</param>
         /// <param name="picture">The picture.</param>
         /// <returns>The analytic object represented by the given geometric object in the given picture.</returns>
-        public T GetAnalyticObject<T>(GeometricObject geometricObject, IPicture picture) where T : IAnalyticObject => (T) _objects[picture].GetRightValue(geometricObject);
+        public T GetAnalyticObject<T>(GeometricObject geometricObject, IPicture picture) where T : IAnalyticObject => (T)_objects[picture].GetRightValue(geometricObject);
 
         #endregion
 
@@ -276,20 +276,20 @@ namespace GeoGen.Constructor
 
             // If this object isn't null, it means that this object doesn't exist 
             // Let's create it based on the configuration object's type
-            switch (configurationObject.ObjectType)
+            geometricObject = configurationObject.ObjectType switch
             {
-                case ConfigurationObjectType.Point:
-                    geometricObject = new PointObject(configurationObject);
-                    break;
-                case ConfigurationObjectType.Line:
-                    geometricObject = new LineObject(configurationObject);
-                    break;
-                case ConfigurationObjectType.Circle:
-                    geometricObject = new CircleObject(configurationObject);
-                    break;
-                default:
-                    throw new ConstructorException("Unknown type of configuration object.");
-            }
+                // Point case
+                ConfigurationObjectType.Point => new PointObject(configurationObject) as GeometricObject,
+
+                // Line case
+                ConfigurationObjectType.Line => new LineObject(configurationObject),
+
+                // Circle case
+                ConfigurationObjectType.Circle => new CircleObject(configurationObject),
+
+                // Defult case 
+                _ => throw new ConstructorException("Unknown type of configuration object."),
+            };
 
             // We add the geometric object to all the dictionaries
             _objects.Keys.ForEach(picture => _objects[picture].Add(geometricObject, picture.Get(configurationObject)));
@@ -301,7 +301,7 @@ namespace GeoGen.Constructor
             if (configurationObject.ObjectType == ConfigurationObjectType.Point)
             {
                 // Let the helper method add it as a point
-                AddPoint((PointObject) geometricObject, isNew);
+                AddPoint((PointObject)geometricObject, isNew);
 
                 // And terminate
                 return;
@@ -460,7 +460,7 @@ namespace GeoGen.Constructor
                 try
                 {
                     // Let's try doing so
-                    analyticLine = new Line((Point) map.GetRightValue(point1), (Point) map.GetRightValue(point2));
+                    analyticLine = new Line((Point)map.GetRightValue(point1), (Point)map.GetRightValue(point2));
                 }
                 catch (AnalyticException)
                 {
@@ -485,7 +485,7 @@ namespace GeoGen.Constructor
                         throw new InconsistentPicturesException("A line object couldn't be set consistently within more pictures (this should be very rare).");
 
                     // Otherwise we can update the result
-                    result = (LineObject) newResult;
+                    result = (LineObject)newResult;
                 }
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
@@ -539,9 +539,9 @@ namespace GeoGen.Constructor
                 var map = _objects[picture];
 
                 // Get the analytic versions of the points from the map
-                var analyticPoint1 = (Point) map.GetRightValue(point1);
-                var analyticPoint2 = (Point) map.GetRightValue(point2);
-                var analyticPoint3 = (Point) map.GetRightValue(point3);
+                var analyticPoint1 = (Point)map.GetRightValue(point1);
+                var analyticPoint2 = (Point)map.GetRightValue(point2);
+                var analyticPoint3 = (Point)map.GetRightValue(point3);
 
                 // Check if they are collinear...
                 var areCollinear = AnalyticHelpers.AreCollinear(analyticPoint1, analyticPoint2, analyticPoint3);
@@ -586,7 +586,7 @@ namespace GeoGen.Constructor
                         throw new InconsistentPicturesException("A circle object couldn't be set consistently with more pictures (this should be very rare).");
 
                     // Otherwise we can update the result
-                    result = (CircleObject) newResult;
+                    result = (CircleObject)newResult;
                 }
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
@@ -679,7 +679,7 @@ namespace GeoGen.Constructor
             foreach (var picture in _manager)
             {
                 // Pull the analytic representations of the point and the line/circle
-                var point = (Point) _objects[picture].GetRightValue(pointObject);
+                var point = (Point)_objects[picture].GetRightValue(pointObject);
                 var lineOrCircle = _objects[picture].GetRightValue(geometricObject);
 
                 // Let the helper decide if the point lies on the object

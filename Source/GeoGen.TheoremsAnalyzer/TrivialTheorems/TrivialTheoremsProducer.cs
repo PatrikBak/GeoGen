@@ -313,7 +313,7 @@ namespace GeoGen.TheoremsAnalyzer
                     // the defining configuration. Take the loose objects first...
                     var mapping = configuration.LooseObjectsHolder.LooseObjects
                         // Cast each to an identity tuple
-                        .Select(looseObject => ((ConfigurationObject) looseObject, (ConfigurationObject) looseObject))
+                        .Select(looseObject => ((ConfigurationObject)looseObject, (ConfigurationObject)looseObject))
                         // Add the tuple of the constructed and last object
                         .Concat((constructedObject, composedConstruction.ConstructionOutput))
                         // Make a mapping

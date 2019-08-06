@@ -22,6 +22,11 @@
         ThreePoints,
 
         /// <summary>
+        /// Represents three points A, B, C, where AB is supposed to be equal to AC.
+        /// </summary>
+        IsoscelesTriangle,
+
+        /// <summary>
         /// Represents 4 points, where no 3 of them are collinear. When drawn they make 
         /// a convex quadrilateral. 
         /// </summary>

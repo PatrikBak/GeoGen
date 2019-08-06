@@ -25,7 +25,7 @@ namespace GeoGen.Core
                 throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
 
             // Otherwise we invoke it and return the casted result
-            return (PredefinedConstruction) propertyInfo.GetMethod.Invoke(obj: null, parameters: null);
+            return (PredefinedConstruction)propertyInfo.GetMethod.Invoke(obj: null, parameters: null);
         }
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace GeoGen.Core
         public static ComposedConstruction GetComposedConstruction(string constructionName)
         {
             // Use reflection to find the property with the needed name
-            return (ComposedConstruction) typeof(ComposedConstructions).GetProperty(constructionName)?.GetMethod.Invoke(null, null);
+            return (ComposedConstruction)typeof(ComposedConstructions).GetProperty(constructionName)?.GetMethod.Invoke(null, null);
         }
 
         /// <summary>

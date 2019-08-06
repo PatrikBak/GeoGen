@@ -188,7 +188,7 @@ namespace GeoGen.Generator
                             // used with more than one instance. The objects that we 
                             // will re-assign shouldn't be used elsewhere and thus 
                             // will be eventually eaten by the garbage collector. 
-                            newObject = (ConstructedConfigurationObject) equalObject;
+                            newObject = (ConstructedConfigurationObject)equalObject;
                         }
 
                         // Return the new object

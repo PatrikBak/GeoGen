@@ -35,17 +35,20 @@ namespace GeoGen.Constructor.Tests
                 .Select(i =>
                 {
                     // Decide what to create according to the type of the analytic object
-                    switch (allObjects[0][i])
+                    return allObjects[0][i] switch
                     {
-                        case Point _:
-                            return new LooseConfigurationObject(ConfigurationObjectType.Point);
-                        case Line _:
-                            return new LooseConfigurationObject(ConfigurationObjectType.Line);
-                        case Circle _:
-                            return new LooseConfigurationObject(ConfigurationObjectType.Circle);
-                        default:
-                            throw new GeoGenException($"Unknown type of analytic object");
-                    }
+                        // Point case
+                        Point _ => new LooseConfigurationObject(ConfigurationObjectType.Point),
+
+                        // Line case
+                        Line _ => new LooseConfigurationObject(ConfigurationObjectType.Line),
+
+                        // Circle case
+                        Circle _ => new LooseConfigurationObject(ConfigurationObjectType.Circle),
+
+                        // Default case
+                        _ => throw new GeoGenException($"Unknown type of analytic object"),
+                    };
                 })
                 // Enumerate to a list
                 .ToList();

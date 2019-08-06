@@ -17,8 +17,8 @@ namespace GeoGen.Constructor
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             // Get the point and the line
-            var A = (Point) input[0];
-            var l = (Line) input[1];
+            var A = (Point)input[0];
+            var l = (Line)input[1];
 
             // Construct the result
             return l.PerpendicularLine(A);

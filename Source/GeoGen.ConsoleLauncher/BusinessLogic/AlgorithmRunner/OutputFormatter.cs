@@ -78,9 +78,13 @@ namespace GeoGen.ConsoleLauncher
         /// Creates a formatted string describing a given theorem.
         /// </summary>
         /// <param name="theorems">The theorem.</param>
+        /// <param name="includeType">Indicates whether the type of the theorem should be included.</param>
         /// <returns>The string representing the theorem.</returns>
-        public string FormatTheorem(Theorem theorem)
+        public string FormatTheorem(Theorem theorem, bool includeType = true)
         {
+            // Prepare the type string
+            var typeString = includeType ? $"{theorem.Type}: " : "";
+
             // Switch based on the type
             switch (theorem.Type)
             {
@@ -97,19 +101,19 @@ namespace GeoGen.ConsoleLauncher
                     var larger = smaller == first ? second : first;
 
                     // Compose the final string
-                    return $"{theorem.Type}: {smaller}, {larger}";
+                    return $"{typeString}{smaller}, {larger}";
 
                 // Handle the case where the objects should not be sorted
                 case TheoremType.LineTangentToCircle:
 
                     // Simply convert each object to a string
-                    return $"{theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).ToJoinedString()}";
+                    return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).ToJoinedString()}";
 
                 // In every other case...
                 default:
 
                     // Convert each object and sort them
-                    return $"{theorem.Type}: {theorem.InvolvedObjects.Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString()}";
+                    return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString()}";
             }
         }
 
@@ -145,7 +149,7 @@ namespace GeoGen.ConsoleLauncher
                     case ConfigurationObjectType.Point:
 
                         // Compose the name
-                        name = $"{(char) ('A' + namedPoints)}";
+                        name = $"{(char)('A' + namedPoints)}";
 
                         // Count it 
                         namedPoints++;
@@ -192,7 +196,7 @@ namespace GeoGen.ConsoleLauncher
                 return _objectNames[objectArgument.PassedObject];
 
             // Otherwise we have a set argument
-            var setArgument = (SetConstructionArgument) argument;
+            var setArgument = (SetConstructionArgument)argument;
 
             // We wrap the result in curly braces and convert the inner arguments
             return $"{{{setArgument.PassedArguments.Select(ArgumentToString).OrderBy(s => s).ToJoinedString()}}}";
@@ -231,33 +235,26 @@ namespace GeoGen.ConsoleLauncher
                             var pointsPart = objectWithPoints.Points.Count == 0 ? "" : pointsList;
 
                             // Dig further to provide information whether it is a line or circle
-                            switch (objectWithPoints)
+                            return objectWithPoints switch
                             {
                                 // If we have a line, add [] around points 
-                                case LineTheoremObject _:
-                                    return $"{objectPart}[{pointsPart}]";
+                                LineTheoremObject _ => $"{objectPart}[{pointsPart}]",
 
                                 // If we have a line, add [] around points
-                                case CircleTheoremObject _:
-                                    return $"{objectPart}({pointsPart})";
+                                CircleTheoremObject _ => $"{objectPart}({pointsPart})",
 
                                 // Unhandled case
-                                default:
-                                    throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}");
-                            }
+                                _ => throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}"),
+                            };
 
                         // If something else
                         default:
                             throw new GeoGenException($"Unhandled type of base theorem object: {baseObject.GetType()}");
                     }
 
-                // For a line segment we convert individual points
-                case LineSegmentTheoremObject line:
-                    return $"{TheoremObjectToString(line.Object1)}, {TheoremObjectToString(line.Object2)}";
-
-                // For an angle we convert individual lines
-                case AngleTheoremObject angle:
-                    return $"{TheoremObjectToString(angle.Object1)}, {TheoremObjectToString(angle.Object2)}";
+                // For a line segment / angle we convert individual objects
+                case PairTheoremObject pairObject:
+                    return $"{TheoremObjectToString(pairObject.Object1)}, {TheoremObjectToString(pairObject.Object2)}";
 
                 // If something else
                 default:

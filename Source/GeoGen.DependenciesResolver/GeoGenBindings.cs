@@ -38,8 +38,8 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IConfigurationsContainerFactory>().ToFactory();
 
             // Tracers
-            kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer) null);
-            kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer) null);
+            kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer)null);
+            kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer)null);
 
             // Return the kernel for chaining
             return kernel;
@@ -84,8 +84,8 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IContextualPictureFactory>().ToFactory();
 
             // Tracers
-            kernel.Bind<IGeometryConstructionFailureTracer>().ToConstant((IGeometryConstructionFailureTracer) null);
-            kernel.Bind<IContexualPictureConstructionFailureTracer>().ToConstant((IContexualPictureConstructionFailureTracer) null);
+            kernel.Bind<IGeometryConstructionFailureTracer>().ToConstant((IGeometryConstructionFailureTracer)null);
+            kernel.Bind<IContexualPictureConstructionFailureTracer>().ToConstant((IContexualPictureConstructionFailureTracer)null);
 
             // Return the kernel for chaining
             return kernel;
@@ -125,6 +125,7 @@ namespace GeoGen.DependenciesResolver
             kernel.BindsWithDynamicSettings<ITheoremsAnalyzer, TheoremsAnalyzer.TheoremsAnalyzer, TheoremsAnalyzerData>();
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
             kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>();
+            kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>();
 
             // Return the kernel for chaining
             return kernel;

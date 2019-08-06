@@ -216,19 +216,12 @@ namespace GeoGen.ConsoleLauncher
                     // Trim
                     .Select(s => s.Trim())
                     // Handle all cases
-                    .Select(typeMark =>
+                    .Select(typeMark => typeMark switch
                     {
-                        switch (typeMark)
-                        {
-                            case "P":
-                                return ConfigurationObjectType.Point;
-                            case "C":
-                                return ConfigurationObjectType.Circle;
-                            case "L":
-                                return ConfigurationObjectType.Line;
-                            default:
-                                throw new ParserException($"Cannot determine the type of loose object. Incorrect mark '{typeMark}', the values should be 'P', or 'C', or 'L' ");
-                        }
+                        "P" => ConfigurationObjectType.Point,
+                        "C" => ConfigurationObjectType.Circle,
+                        "L" => ConfigurationObjectType.Line,
+                        _ => throw new ParserException($"Cannot determine the type of loose object. Incorrect mark '{typeMark}', the values should be 'P', or 'C', or 'L' "),
                     })
                     // Enumerate
                     .ToList();
@@ -520,7 +513,7 @@ namespace GeoGen.ConsoleLauncher
                     throw new ParserException($"Error while parsing '{objectString}'. Circle {objectName} should have had its points specified in ().");
 
                 // Make sure point does not have points specified
-                if (explicitImplicitCircleMatch.Success || explicitImplicitLineMatch.Success || configurationObject.ObjectType == ConfigurationObjectType.Point)
+                if ((explicitImplicitCircleMatch.Success || explicitImplicitLineMatch.Success) && configurationObject.ObjectType == ConfigurationObjectType.Point)
                     throw new ParserException($"Error while parsing '{objectString}'. Point names cannot be followed by brackets.");
             }
             // If the object isn't specified...
@@ -539,20 +532,20 @@ namespace GeoGen.ConsoleLauncher
             }
 
             // Switch based on the figured type which constructor we'll use
-            switch (type)
+            return type switch
             {
-                case ConfigurationObjectType.Point:
-                    return new PointTheoremObject(configurationObject);
+                // Point case
+                ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
 
-                case ConfigurationObjectType.Line:
-                    return new LineTheoremObject(configurationObject, theoremPoints);
+                // Line case
+                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject, theoremPoints),
 
-                case ConfigurationObjectType.Circle:
-                    return new CircleTheoremObject(configurationObject, theoremPoints);
+                // Circle case
+                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject, theoremPoints),
 
-                default:
-                    throw new GeoGenException($"Unhandled type of configuration object: {type}");
-            }
+                // Default case
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {type}"),
+            };
         }
     }
 }

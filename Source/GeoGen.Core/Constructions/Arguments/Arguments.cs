@@ -67,7 +67,7 @@ namespace GeoGen.Core
                 }
 
                 // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument) argument;
+                var setArgument = (SetConstructionArgument)argument;
 
                 // We recursively call this function for its internal arguments
                 setArgument.PassedArguments.ForEach(Extract);

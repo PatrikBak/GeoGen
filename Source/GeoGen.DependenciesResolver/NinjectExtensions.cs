@@ -45,7 +45,7 @@ namespace GeoGen.DependenciesResolver
                                  throw new IoCException($"There cannot be more than one dynamic parameter of type {typeof(TSettings)}.");
 
                              // Get the value from the single suitable parameter
-                             return (TSettings) parameters[0].Value;
+                             return (TSettings)parameters[0].Value;
                          });
         }
 

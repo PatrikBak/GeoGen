@@ -79,8 +79,12 @@ namespace GeoGen.TheoremsFinder
                     var analyticLine3 = contextualPicture.GetAnalyticObject<Line>(line3, picture);
                     var analyticLine4 = contextualPicture.GetAnalyticObject<Line>(line4, picture);
 
-                    // Return if the angles between them match
-                    return AnalyticHelpers.AngleBetweenLines(analyticLine1, analyticLine2).Rounded() == AnalyticHelpers.AngleBetweenLines(analyticLine3, analyticLine4).Rounded();
+                    // Find their angles
+                    var angle1 = AnalyticHelpers.AngleBetweenLines(analyticLine1, analyticLine2).Rounded();
+                    var angle2 = AnalyticHelpers.AngleBetweenLines(analyticLine3, analyticLine4).Rounded();
+
+                    // Return if they match and are not equal to 0 (i.e. parallelity)
+                    return angle1 == angle2 && angle1 != 0;
                 }
 
                 // Lazily return the output

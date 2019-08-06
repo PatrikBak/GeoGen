@@ -146,23 +146,26 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappings(SubtheoremAnalyzerInput input)
         {
             // Return the answer based on the layout of the template theorem
-            switch (input.TemplateTheorem.Configuration.LooseObjectsHolder.Layout)
+            return input.TemplateTheorem.Configuration.LooseObjectsHolder.Layout switch
             {
-                case LooseObjectsLayout.NoLayout:
-                    return GenerateInitialMappingsForNoLayout(input);
+                LooseObjectsLayout.NoLayout => GenerateInitialMappingsForNoLayout(input),
 
-                case LooseObjectsLayout.CircleAndItsTangentLineFromPoints:
-                    return GenerateInitialMappingsForCircleAndItsTangentLineLayout(input);
+                LooseObjectsLayout.CircleAndItsTangentLineFromPoints => GenerateInitialMappingsForCircleAndItsTangentLineLayout(input),
 
-                case LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints:
-                    return GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(input);
+                LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints => GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(input),
 
-                case LooseObjectsLayout.Trapezoid:
-                    return GenerateInitialMappingsForTrapezoidLayout(input);
+                LooseObjectsLayout.Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
-                default:
-                    throw new GeoGenException("Unhandled layout");
-            }
+                LooseObjectsLayout.ThreePoints => input.ExaminedTheorem.Configuration.ObjectsMap[ConfigurationObjectType.Point]
+                        .Variations(3).Select(points => new MappingData
+                        {
+                            EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
+                            UsedFacts = new List<Theorem>(),
+                            Mapping = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>())
+                        }),
+
+                _ => throw new GeoGenException("Unhandled layout"),
+            };
         }
 
         /// <summary>
@@ -394,7 +397,7 @@ namespace GeoGen.TheoremsAnalyzer
             return input.ExaminedConfigurationManager.Aggregate(
 
                 // Initially we work with one group 
-                (IEnumerable<IEnumerable<LineObject>>) new[]
+                (IEnumerable<IEnumerable<LineObject>>)new[]
                 {
                     // This group contains all lines
                     input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
@@ -421,15 +424,21 @@ namespace GeoGen.TheoremsAnalyzer
                                       .Where(innerGroup => innerGroup.Count() >= 2);
                     });
                 })
+                .Select(x =>
+                {
+                    var y = x.ToList();
+                    return x;
+                })
                 // Each found groups contains only lines parallel to each other in every picture
                 // For each we consider every pair of the lines from the group
                 .SelectMany(parallelLines => parallelLines.ToArray().UnorderedPairs())
                 // For each such a pair of lines we combine pair of points from one line
                 // with pairs of points from the other one
-                .Select(pairOfParellelLines => new[] { pairOfParellelLines.Item1.Points.Subsets(2), pairOfParellelLines.Item2.Points.Subsets(2) }.Combine())
-                // This way we get pairs of pairs of points, i.e. four points, which we flatten 
-                // into a single array
-                .Select(pairOfPairOfPoints => pairOfPairOfPoints.Flatten().Flatten().Select(point => point.ConfigurationObject).ToArray())
+                .Select(pairOfParellelLines => new[] { pairOfParellelLines.Item1.Points.Variations(2), pairOfParellelLines.Item2.Points.Variations(2) }.Combine())
+                // This way we get enumerable of pairs of pairs of points, so we flatten it
+                .Flatten()
+                // And now we work with pairs of pairs of points that can be directly flattened to an array
+                .Select(pairOfPairOfPoints => pairOfPairOfPoints.Flatten().Select(point => point.ConfigurationObject).ToArray())
                 // These points finally represent one of our sought trapezoids
                 .Select(trapezoidPoints => new MappingData
                 {

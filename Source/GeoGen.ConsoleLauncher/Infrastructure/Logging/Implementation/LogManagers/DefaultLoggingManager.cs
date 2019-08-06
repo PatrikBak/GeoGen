@@ -50,7 +50,7 @@ namespace GeoGen.ConsoleLauncher
                 var time = DateTimeOffset.Now;
 
                 // Take the loggers with the right logging level
-                _loggers.Where(logger => (int) logger.LogOutputLevel <= (int) level)
+                _loggers.Where(logger => (int)logger.LogOutputLevel <= (int)level)
                     // And log the message to them
                     .ForEach(_loggers => _loggers.Log(message, level, time, origin, filePath, lineNumber));
             }

@@ -46,19 +46,22 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // If this is console settings...
                     case ConsoleLoggerSettings consoleLoggersettings:
+
                         // Bind it
                         Kernel.Bind<ILogger>().ToConstant(new ConsoleLogger(consoleLoggersettings));
-                        // And terminate
+
                         break;
 
                     // If this is file logger settings...
                     case FileLoggerSettings fileLoggersettings:
+
                         // Bind it
                         Kernel.Bind<ILogger>().ToConstant(new FileLogger(fileLoggersettings));
-                        // And terminate
+
                         break;
 
                     default:
+
                         // Otherwise we forgot something
                         throw new Exception($"Unhandled type of the settings ('{loggersettings.GetType()}') in the NInject settings.");
                 }

@@ -14,7 +14,7 @@
         public static unsafe double Rounded(this double number, int precision = 25)
         {
             // Get the IEEE 754 bits of the number. 
-            var bits = *(long*) &number;
+            var bits = *(long*)&number;
 
             // The number is represented in the form:
             // 
@@ -57,7 +57,7 @@
 
             // Since the first bit is sign and another 11 ones represent the exponent, 
             // our interesting part starts 1 + 11 = 12 bits further
-            var importantBits = (int) (12 + importantPlaces);
+            var importantBits = (int)(12 + importantPlaces);
 
             // We create the mask having exactly importantBits ones. If this 
             // number is not 64 then it's 2^importantBits - 1. In the 64 case 
@@ -81,7 +81,7 @@
                 bits += 1L << (64 - importantBits);
 
             // Finally we can convert the adjusted bits to a double number
-            return *(double*) &bits;
+            return *(double*)&bits;
         }
 
         /// <summary>

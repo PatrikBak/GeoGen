@@ -11,7 +11,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Intersection of line l and other line AB (signature l, {A, B}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction IntersectionOfLineAndLineFromPoints
         {
             get
@@ -41,7 +40,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Intersection of lines AB and CD (signature {{A, B}, {C, D}}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction IntersectionOfLinesFromPoints
         {
             get
@@ -72,7 +70,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Perpendicular projection of points A on line BC (signature A, {B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction PerpendicularProjectionOnLineFromPoints
         {
             get
@@ -102,7 +99,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Perpendicular line to line AB passing through A (signature A, B).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction PerpendicularLineAtPointOfLine
         {
             get
@@ -131,7 +127,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Perpendicular line to line BC passing through A (signature A, {B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction PerpendicularLineToLineFromPoints
         {
             get
@@ -161,7 +156,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Reflection of point A in line l (signature l, A).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction ReflectionInLine
         {
             get
@@ -190,7 +184,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Reflection of point A in line BC (signature A, {B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction ReflectionInLineFromPoints
         {
             get
@@ -220,7 +213,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Perpendicular bisector of line segment AB (signature {A, B}).
         /// </summary>
-        /// <returns>The construction</returns>
         public static ComposedConstruction PerpendicularBisector
         {
             get
@@ -248,7 +240,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Line parallel to line BC passing through A (signature A, {B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction ParallelLineToLineFromPoints
         {
             get
@@ -278,7 +269,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Point A' such that ABA'C is a parallelogram (signature A, {B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Parallelogram
         {
             get
@@ -308,7 +298,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Orthocenter of triangle ABC (signature {A, B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Orthocenter
         {
             get
@@ -338,7 +327,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Centroid of triangle ABC (signature {A, B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Centroid
         {
             get
@@ -368,7 +356,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Incenter of triangle ABC (signature {A, B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Incenter
         {
             get
@@ -398,7 +385,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Incircle of triangle ABC (signature {A, B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Incircle
         {
             get
@@ -428,7 +414,6 @@ namespace GeoGen.Core
         /// <summary>
         /// Circumcircle of triangle ABC (signature {A, B, C}).
         /// </summary>
-        /// <returns>The construction.</returns>
         public static ComposedConstruction Circumcenter
         {
             get
@@ -451,6 +436,36 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(Circumcenter), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The midpoint of arc opposite to BAC (signature A, {B, C}).
+        /// </summary>
+        /// <returns></returns>
+        public static ComposedConstruction MidpointOfOppositeArc
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+                var M = new ConstructedConfigurationObject(Circumcenter, B, C, I);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, M);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(MidpointOfOppositeArc), configuration, parameters);
             }
         }
     }

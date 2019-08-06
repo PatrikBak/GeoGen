@@ -42,29 +42,21 @@ namespace GeoGen.TheoremsFinder
         public Theorem ToTheorem(Configuration configuration)
         {
             // Map geometric objects to theorem objects
-            var allTheoremObjects = InvolvedObjects.Select<GeometricObject, TheoremObject>(geometricObject =>
-            {
-                // Switch based on the type
-                switch (geometricObject)
+            var allTheoremObjects = InvolvedObjects.Select(geometricObject => geometricObject switch
                 {
                     // In point case we have just the object
-                    case PointObject point:
-                        return new PointTheoremObject(geometricObject.ConfigurationObject);
+                    PointObject point => new PointTheoremObject(geometricObject.ConfigurationObject) as TheoremObject,
 
                     // In line case we need to take points into account
-                    case LineObject line:
-                        return new LineTheoremObject(geometricObject.ConfigurationObject, line.Points.Select(p => p.ConfigurationObject));
+                    LineObject line => new LineTheoremObject(geometricObject.ConfigurationObject, line.Points.Select(p => p.ConfigurationObject)),
 
                     // In circle case we need to take points into account
-                    case CircleObject circle:
-                        return new CircleTheoremObject(geometricObject.ConfigurationObject, circle.Points.Select(p => p.ConfigurationObject));
+                    CircleObject circle => new CircleTheoremObject(geometricObject.ConfigurationObject, circle.Points.Select(p => p.ConfigurationObject)),
 
-                    default:
-                        throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}");
-                }
-            })
-            // Enumerate to an array
-            .ToArray();
+                    _ => throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}"),
+                })
+                // Enumerate to an array
+                .ToArray();
 
             // Use helper method to construct the theorem
             return Theorem.DeriveFromFlattenedObjects(configuration, TheoremType, allTheoremObjects);

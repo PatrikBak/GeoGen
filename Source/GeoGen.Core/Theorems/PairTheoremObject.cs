@@ -8,31 +8,30 @@ namespace GeoGen.Core
     /// <summary>
     /// Represents a theorem object that consists of two unordered theorem objects of some type.
     /// </summary>
-    /// <typeparam name="T">The type of theorem objects this pair consists of.</typeparam>
-    public abstract class PairTheoremObject<T> : TheoremObject where T : TheoremObject
+    public abstract class PairTheoremObject : TheoremObject
     {
         #region Public properties
 
         /// <summary>
         /// Gets the first object of this pair.
         /// </summary>
-        public T Object1 { get; }
+        public TheoremObject Object1 { get; }
 
         /// <summary>
         /// Gets the second object of this pair.
         /// </summary>
-        public T Object2 { get; }
+        public TheoremObject Object2 { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PairTheoremObject{T}"/> class.
+        /// Initializes a new instance of the <see cref="PairTheoremObject"/> class.
         /// </summary>
         /// <param name="object1">The first object of the pair.</param>
         /// <param name="object2">The second object of the pair.</param>
-        protected PairTheoremObject(T object1, T object2)
+        protected PairTheoremObject(TheoremObject object1, TheoremObject object2)
         {
             Object1 = object1 ?? throw new ArgumentNullException(nameof(object1));
             Object2 = object2 ?? throw new ArgumentNullException(nameof(object2));
@@ -68,7 +67,7 @@ namespace GeoGen.Core
             // Either the instances are the same
             return this == otherObject ||
                 // Or the passed object is of this type
-                otherObject is PairTheoremObject<T> otherPairObject &&
+                otherObject is PairTheoremObject otherPairObject &&
                 // And either the first and second objects are equivalent
                 ((Object1.IsEquivalentTo(otherPairObject.Object1) && Object2.IsEquivalentTo(otherPairObject.Object2)) ||
                 // Or the first one is equivalent to the second and vice versa
@@ -85,11 +84,11 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped objects, if mapping can be done; (null, null) otherwise.</returns>
-        protected (T, T) RemapObjects(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected (TheoremObject, TheoremObject) RemapObjects(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Map particular objects
-            var o1 = (T) Object1.Remap(mapping);
-            var o2 = (T) Object2.Remap(mapping);
+            var o1 = Object1.Remap(mapping);
+            var o2 = Object2.Remap(mapping);
 
             // Return tuple only if none of them is null
             return o1 != null && o2 != null ? (o1, o2) : default;

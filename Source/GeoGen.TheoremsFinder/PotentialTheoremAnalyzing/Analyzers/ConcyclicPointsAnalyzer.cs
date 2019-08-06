@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,30 +18,37 @@ namespace GeoGen.TheoremsFinder
         /// <returns>An enumerable of found potential theorems.</returns>
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
-            // Take the new points. At least one of the involved points must be new
-            return contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
+            // Take the new point
+            var point = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
                 Type = ContextualPictureQuery.ObjectsType.New,
                 IncludePoints = true,
             })
-            // And find all the circles that pass through it
-            .SelectMany(point => point.Circles)
-            // That contain at least 4 points
-            .Where(circle => circle.Points.Count >= 4)
-            // Take distinct ones
-            .Distinct()
-            // Each circle makes a theorem
-            .Select(circle => new PotentialTheorem
-            {
-                // Set the type using the base property
-                TheoremType = Type,
+            // There should be at most one
+            .SingleOrDefault();
 
-                // Set the verifier function to a constant function returning always true
-                VerificationFunction = _ => true,
+            // If there's none, we can't do more
+            if (point == null)
+                return new PotentialTheorem[0];
 
-                // Set the involved objects to the these triple of points
-                InvolvedObjects = circle.Points
-            });
+            // Take its circles 
+            return point.Circles
+                // That have at least four points
+                .Where(circle => circle.Points.Count >= 4)
+                // For each take all triples of its points distinct from our point + append our point
+                .SelectMany(circle => circle.Points.Where(_point => _point != point).Subsets(3).Select(subset => subset.Concat(point)))
+                // Each of these quadruples makes a theorem
+                .Select(points => new PotentialTheorem
+                {
+                    // Set the type using the base property
+                    TheoremType = Type,
+
+                    // Set the verifier function to a constant function returning always true
+                    VerificationFunction = _ => true,
+
+                    // Set the involved objects to the these triple of points
+                    InvolvedObjects = points
+                });
         }
     }
 }

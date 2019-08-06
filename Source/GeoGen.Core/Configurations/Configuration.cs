@@ -91,26 +91,20 @@ namespace GeoGen.Core
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString()
         {
-            // Join all the objects to a single string
-            return string.Join("; ", ObjectsMap.AllObjects.Select(obj =>
-            {
-                // Switch according to the type
-                switch (obj)
+            // Go through all the objects
+            return ObjectsMap.AllObjects.Select(obj => obj switch
                 {
-                    case LooseConfigurationObject _:
+                    // With loose object we include the id and type
+                    LooseConfigurationObject _ => $"{obj.Id}={obj.ObjectType}",
 
-                        // For a loose object we include just the name and the type
-                        return $"{obj.Id}={obj.ObjectType}";
+                    // With construct we include the id + definition
+                    ConstructedConfigurationObject constructedObject => $"{obj.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})",
 
-                    case ConstructedConfigurationObject constructedObject:
-
-                        // For a constructed object construct the final string with the name of the construction + passed arguments
-                        return $"{obj.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})";
-
-                    default:
-                        throw new GeoGenException("Unhandled object type");
-                }
-            }));
+                    // Default case
+                    _ => throw new GeoGenException("Unhandled object type"),
+                })
+                // Join to a single string
+                .ToJoinedString("; ");
         }
 
         #endregion

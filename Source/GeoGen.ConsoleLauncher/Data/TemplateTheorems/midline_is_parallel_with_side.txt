@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = Midpoint(A, B)
+ E = Midpoint(A, C)
+
+Theorems:
+
+ ParallelLines: [B, C], [D, E]

@@ -75,23 +75,21 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="analyticObject">The analytic object.</param>
         /// <param name="point">The point.</param>
         /// <returns>true, if the point lies on the object; false otherwise.</returns>
-        public static bool LiesOn(IAnalyticObject analyticObject, Point point)
-        {
-            switch (analyticObject)
+        public static bool LiesOn(IAnalyticObject analyticObject, Point point) =>
+
+            // Switch based on the analytic object
+            analyticObject switch
             {
                 // The line case
-                case Line line:
-                    return line.Contains(point);
+                Line line => line.Contains(point),
 
                 // The circle case
-                case Circle circle:
-                    return circle.Contains(point);
+                Circle circle => circle.Contains(point),
 
                 // Otherwise we have a problem....
-                default:
-                    throw new AnalyticException("Incorrect analytic object.");
-            }
-        }
+                _ => throw new AnalyticException("Incorrect analytic object."),
+            };
+
 
         /// <summary>
         /// Finds out if given points are collinear.

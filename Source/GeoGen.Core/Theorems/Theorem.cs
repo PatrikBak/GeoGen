@@ -69,26 +69,22 @@ namespace GeoGen.Core
             Type = type;
 
             // Create involved objects
-            InvolvedObjects = objects.Select<ConfigurationObject, TheoremObject>(configurationObject =>
-            {
-                // Switch based on the type
-                switch (configurationObject.ObjectType)
+            InvolvedObjects = objects.Select(configurationObject => configurationObject.ObjectType switch
                 {
-                    case ConfigurationObjectType.Point:
-                        return new PointTheoremObject(configurationObject);
+                    // Point case
+                    ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
 
-                    case ConfigurationObjectType.Line:
-                        return new LineTheoremObject(configurationObject);
+                    // Line case
+                    ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
 
-                    case ConfigurationObjectType.Circle:
-                        return new CircleTheoremObject(configurationObject);
+                    // Circle case
+                    ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
-                    default:
-                        throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}");
-                }
-            })
-            // Enumerate to an array
-           .ToArray();
+                    // Default case 
+                    _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
+                })
+                // Enumerate to an array
+                .ToArray();
         }
 
         #endregion
@@ -163,7 +159,7 @@ namespace GeoGen.Core
         public static Theorem DeriveFromFlattenedObjects(Configuration configuration, TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
         {
             // Prepare the final theorem objects
-            var finalTheoremObjects = default(IReadOnlyList<TheoremObject>);
+            IReadOnlyList<TheoremObject> finalTheoremObjects;
 
             // Switch based on the theorem type
             switch (type)

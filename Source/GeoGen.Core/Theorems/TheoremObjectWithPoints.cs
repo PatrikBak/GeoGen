@@ -118,7 +118,7 @@ namespace GeoGen.Core
         public override string ToString()
         {
             // If there is a specific configuration object, we include it 
-            var objectPart = ConfigurationObject == null ? " " : $" object: {ConfigurationObject.Id}, ";
+            var objectPart = ConfigurationObject == null ? "" : $" object: {ConfigurationObject.Id}, ";
 
             // Construct the final string including the ids of the points
             return $"{objectPart}{Points.Select(p => p.Id).ToJoinedString("--")}";

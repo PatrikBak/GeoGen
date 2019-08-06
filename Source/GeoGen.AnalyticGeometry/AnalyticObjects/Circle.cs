@@ -7,7 +7,7 @@ namespace GeoGen.AnalyticGeometry
     /// <summary>
     /// Represents a geometric 2D circle. This circle is defined by its center and radius.
     /// </summary>
-    public class Circle : IAnalyticObject, IEquatable<Circle>
+    public struct Circle : IAnalyticObject, IEquatable<Circle>
     {
         #region Public properties
 

@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,30 +18,37 @@ namespace GeoGen.TheoremsFinder
         /// <returns>An enumerable of found potential theorems.</returns>
         public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
         {
-            // Take the new points. At least one of the involved points must be new
-            return contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
+            // Take the new point
+            var point = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
                 Type = ContextualPictureQuery.ObjectsType.New,
                 IncludePoints = true,
             })
-            // And find all the lines that pass through it
-            .SelectMany(point => point.Lines)
-            // That contain at least 3 points
-            .Where(line => line.Points.Count >= 3)
-            // Take distinct ones
-            .Distinct()
-            // Each line makes a theorem
-            .Select(line => new PotentialTheorem
-            {
-                // Set the type using the base property
-                TheoremType = Type,
+            // There should be at most one
+            .SingleOrDefault();
 
-                // Set the verifier function to a constant function returning always true
-                VerificationFunction = _ => true,
+            // If there's none, we can't do more
+            if (point == null)
+                return new PotentialTheorem[0];
 
-                // Set the involved objects to the these triple of points
-                InvolvedObjects = line.Points
-            });
+            // Take its lines 
+            return point.Lines
+                // That have at least three points
+                .Where(line => line.Points.Count >= 3)
+                // For each take all pairs of its points distinct from our point + append our point
+                .SelectMany(line => line.Points.Where(_point => _point != point).Subsets(2).Select(subset => subset.Concat(point)))
+                // Each of these triples makes a theorem
+                .Select(points => new PotentialTheorem
+                {
+                    // Set the type using the base property
+                    TheoremType = Type,
+
+                    // Set the verifier function to a constant function returning always true
+                    VerificationFunction = _ => true,
+
+                    // Set the involved objects to the these triple of points
+                    InvolvedObjects = points
+                });
         }
     }
 }

@@ -516,15 +516,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var C = new LooseConfigurationObject(Point);
             var D = new ConstructedConfigurationObject(Midpoint, A, B);
             var E = new ConstructedConfigurationObject(Midpoint, A, C);
+            var F = new ConstructedConfigurationObject(Midpoint, B, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E);
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
 
             // Create the examined theorem
             var examinedTheorem = new Theorem(examinedConfiguration, TangentCircles, new[]
             {
-                new CircleTheoremObject(A, D, E),
-                new CircleTheoremObject(A, B, C)
+                new CircleTheoremObject(A, B, E),
+                new CircleTheoremObject(B, D, F)
             });
 
             // Analyze
@@ -534,17 +535,17 @@ namespace GeoGen.TheoremsAnalyzer.Test
             result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
-                // When the algorithm construct mapped E_, it intersects BD and CE
-                // After constructing this intersection it finds out that it is actually A
-                (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
+                // When the algorithm construct mapped E_, it intersects AD and EF
+                // After constructing this intersection it finds out that it is actually B
+                (B, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, D, E, F))
             });
             result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
-                // We need to use the fact that BC || DE 
+                // We need to use the fact that AEC || DF 
                 new Theorem(examinedConfiguration, ParallelLines, new[]
                 {
-                    new LineTheoremObject(B, C),
-                    new LineTheoremObject(D, E)
+                    new LineTheoremObject(A, E, C),
+                    new LineTheoremObject(D, F)
                 })
             }).Should().BeTrue();
         }
