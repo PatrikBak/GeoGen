@@ -31,5 +31,14 @@
         /// </summary>
         public bool LogProgress { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether we should generate a report containing even resolved theorems.
+        /// </summary>
+        public bool GenerateFullReport { get; set; }
+
+        /// <summary>
+        /// Gets or sets the suffix for the file containg the full report.
+        /// </summary>
+        public string FullReportSuffix { get; set; }
     }
 }

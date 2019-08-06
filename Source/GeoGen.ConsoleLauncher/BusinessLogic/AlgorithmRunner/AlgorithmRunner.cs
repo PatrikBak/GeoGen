@@ -63,87 +63,123 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="input">The input for the algorithm.</param>
         public void Run(LoadedGeneratorInput input)
         {
+            #region Prepare writers
+
             // Prepare the output path
             var outputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}.{_settings.OutputFileExtention}");
 
             // Prepare the writer for the output
-            using (var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write)))
+            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write));
+
+            // Prepare the path for the full output
+            var fullOutputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}{_settings.FullReportSuffix}.{_settings.OutputFileExtention}");
+
+            // Prepare the writer for the full output, if it's requested
+            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.Write)) : null;
+
+            // Helper function that writes to both writes
+            void WriteLineToBoth(string line = "")
             {
-                // Prepare the formatter for the initial configuration
-                var initialFormatter = new OutputFormatter(input.InitialConfiguration);
+                // Write to the default
+                outputWriter.WriteLine(line);
 
-                // Find its theorem
-                var initialTheorems = _finder.FindAllTheorems(input.InitialConfiguration);
-
-                // Write it
-                outputWriter.WriteLine("Initial configuration:");
-                outputWriter.WriteLine();
-                outputWriter.WriteLine(initialFormatter.FormatConfiguration());
-
-                // Write its theorems, if there are any
-                if (initialTheorems.Any())
-                {
-                    outputWriter.WriteLine("\nTheorems:\n");
-                    outputWriter.WriteLine(initialTheorems.Select(t => initialFormatter.FormatTheorem(t)).Select(s => $" - {s}").ToJoinedString("\n"));
-                }
-
-                // Write iterations
-                outputWriter.WriteLine($"\nIterations: {input.NumberOfIterations}\n");
-
-                // Write constructions
-                outputWriter.WriteLine($"Constructions:\n");
-                input.Constructions.ForEach(construction => outputWriter.WriteLine($" - {construction}"));
-                outputWriter.WriteLine();
-
-                // Write results header
-                outputWriter.WriteLine($"Results:");
-                outputWriter.WriteLine();
-
-                // Log that we've started
-                Log.LoggingManager.LogInfo("Algorithm has started.");
-
-                // Prepare the number of generated configurations
-                var generatedConfigurations = 0;
-
-                // Prepare a stopwatch to measure the time
-                var stopwatch = new Stopwatch();
-
-                // Start it
-                stopwatch.Start();
-
-                // Run the algorithm
-                foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
-                {
-                    // Mark the configuration
-                    generatedConfigurations++;
-
-                    // Find out if we should log and if yes, do it
-                    if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
-                        Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
-
-                    // Skip configurations without theorems
-                    if (algorithmOutput.Theorems.Count == 0)
-                        continue;
-
-                    // Prepare the formatter for the generated configuration
-                    var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
-
-                    // Write the configuration
-                    outputWriter.WriteLine("------------------------------------------------");
-                    outputWriter.WriteLine($"{generatedConfigurations}.");
-                    outputWriter.WriteLine("------------------------------------------------");
-                    outputWriter.WriteLine();
-                    outputWriter.WriteLine(formatter.FormatConfiguration());
-
-                    // Write theorems
-                    outputWriter.WriteLine("\nTheorems:\n");
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput));
-                    outputWriter.WriteLine();
-                }
-
-                // Log that we're done
-                Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
+                // Write to the full, if it's specified
+                fullOutputWriter?.WriteLine(line);
             }
+
+            // Helper function that writes to the full writer
+            void WriteLineToFull(string line = "") => fullOutputWriter?.WriteLine(line);
+
+            #endregion            
+
+            #region Initial configuration
+
+            // Prepare the formatter for the initial configuration
+            var initialFormatter = new OutputFormatter(input.InitialConfiguration);
+
+            // Find its theorem
+            var initialTheorems = _finder.FindAllTheorems(input.InitialConfiguration);
+
+            // Write it
+            WriteLineToBoth("Initial configuration:");
+            WriteLineToBoth();
+            WriteLineToBoth(initialFormatter.FormatConfiguration());
+
+            // Write its theorems, if there are any
+            if (initialTheorems.Any())
+            {
+                WriteLineToBoth("\nTheorems:\n");
+                WriteLineToBoth(initialTheorems.Select(t => initialFormatter.FormatTheorem(t)).Select(s => $" - {s}").ToJoinedString("\n"));
+            }
+
+            #endregion
+
+            // Write iterations
+            WriteLineToBoth($"\nIterations: {input.NumberOfIterations}\n");
+
+            // Write constructions
+            WriteLineToBoth($"Constructions:\n");
+            input.Constructions.ForEach(construction => WriteLineToBoth($" - {construction}"));
+            WriteLineToBoth();
+
+            // Write results header
+            WriteLineToBoth($"Results:");
+
+            // Log that we've started
+            Log.LoggingManager.LogInfo("Algorithm has started.");
+
+            // Prepare the number of generated configurations
+            var generatedConfigurations = 0;
+
+            // Prepare a stopwatch to measure the time
+            var stopwatch = new Stopwatch();
+
+            // Start it
+            stopwatch.Start();
+
+            // Run the algorithm
+            foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
+            {
+                // Mark the configuration
+                generatedConfigurations++;
+
+                // Find out if we should log and if yes, do it
+                if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
+                    Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
+
+                // Skip configurations without theorems
+                if (algorithmOutput.Theorems.Count == 0)
+                    continue;
+
+                // Find out if there is any interesting theorem
+                var anyInterestingTheorem = algorithmOutput.AnalyzerOutput.Count != algorithmOutput.Theorems.Count;
+
+                // Prepare the formatter for the generated configuration
+                var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
+
+                // Prepare the writing function for this case
+                Action<string> WriteLine = anyInterestingTheorem ? (Action<string>)WriteLineToBoth : WriteLineToFull;
+
+                // Write the configuration
+                WriteLine("\n------------------------------------------------");
+                WriteLine($"{generatedConfigurations}.");
+                WriteLine("------------------------------------------------");
+                WriteLine("");
+                WriteLine(formatter.FormatConfiguration());
+
+                // Write the title
+                WriteLine("\nTheorems:\n");
+
+                // Write the basic theorem string to the default output
+                if (anyInterestingTheorem)
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: false));
+
+                // If we're requested, write the full too
+                WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: true));
+            }
+
+            // Log that we're done
+            Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
         }
 
         /// <summary>
@@ -152,11 +188,12 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
         /// <param name="theorems">The theorems to be written.</param>
         /// <param name="feedback">The feedback from the theorems analyzer.</param>
+        /// <param name="includeResolved">Indicates if we should include the resolved theorems as well.</param>
         /// <returns>The string representing the theorems.</returns>
-        private string TheoremsToString(OutputFormatter formatter, List<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback)
+        private string TheoremsToString(OutputFormatter formatter, List<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
         {
-            // Convert all theorems
-            return theorems.Select((theorem, index) =>
+            // Convert either all theorems, if we should include resolved, or only not resolved ones
+            return theorems.Where(theorem => includeResolved || !feedback.ContainsKey(theorem)).Select((theorem, index) =>
             {
                 // Get the basic string from the formatter
                 var theoremString = $" {index + 1,2}. {formatter.FormatTheorem(theorem)}";

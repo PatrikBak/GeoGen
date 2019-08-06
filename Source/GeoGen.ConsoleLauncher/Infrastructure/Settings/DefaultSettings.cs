@@ -57,7 +57,9 @@ namespace GeoGen.ConsoleLauncher
                 OutputFileExtention = "txt",
                 OutputFilePrefix = "output",
                 GenerationProgresLoggingFrequency = 100,
-                LogProgress = true
+                LogProgress = true,
+                GenerateFullReport = true,
+                FullReportSuffix = " (full)"
             };
 
             // Create default template theorems folder settings
