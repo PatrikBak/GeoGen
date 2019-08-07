@@ -238,10 +238,6 @@ namespace GeoGen.Constructor
         {
             switch (layout)
             {
-                // Don't allow none layout in this scenario 
-                case LooseObjectsLayout.NoLayout:
-                    throw new ConstructorException($"The loose objects constructor doesn't allow the layout {LooseObjectsLayout.NoLayout}.");
-
                 // With two points all options are equivalent
                 case LooseObjectsLayout.TwoPoints:
                     return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };

@@ -4,6 +4,8 @@ using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Utilities;
 using NUnit.Framework;
+using System;
+using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
@@ -162,6 +164,34 @@ namespace GeoGen.TheoremsAnalyzer.Test
                     new Theorem(configuration, ConcyclicPoints, A, B, C, M),
                 })
                 .Should().BeTrue();
+        }
+
+        [Test]
+        public void Test_That_All_Constructed_Objects_Can_Be_Examined()
+        {
+            // Get all composed construction
+            Constructions.GetComposedConstructions()
+                // For each prepare a configuration with the last object simulating it
+                .Select(construction =>
+                {
+                    // Get the loose objects
+                    var looseObjects = construction.Configuration.LooseObjectsHolder;
+
+                    // Get the constructed object
+                    var constructedObject = new ConstructedConfigurationObject(construction, looseObjects.LooseObjects.ToArray());
+
+                    // Create the configuration
+                    return new Configuration(looseObjects, new[] { constructedObject });
+                })
+                // For each execute the algorithm
+                .ForEach(configuration =>
+                {
+                    // Prepare the action executing the algorithm
+                    Action action = () => _producer.DeriveTrivialTheoremsFromLastObject(configuration);
+
+                    // Make sure there is no exception
+                    action.Should().NotThrow($"The construction {configuration.ConstructedObjects[0].Construction} has a problem.");
+                });
         }
     }
 }

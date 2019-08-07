@@ -181,9 +181,6 @@ namespace GeoGen.ConsoleLauncher
 
             #region Parse loose objects
 
-            // Prepare the parsed objects
-            var looseObjects = new List<LooseConfigurationObject>();
-
             // The loose objects should be specified in the first line
             var looseObjectsMatch = Regex.Match(configurationLines[0], "^(.+):(.+)$");
 
@@ -194,58 +191,22 @@ namespace GeoGen.ConsoleLauncher
             // Get the layout string
             var layoutString = looseObjectsMatch.Groups[1].Value.Trim();
 
-            // Prepare the layout
-            var layout = default(LooseObjectsLayout);
-
-            // Prepare the needed object types for this layout
-            var neededObjectTypes = default(IReadOnlyList<ConfigurationObjectType>);
-
-            // Handle the case where there is the NoLayout layout, which should have the types defined in brackets
-            var noneLayoutMatch = Regex.Match(layoutString, "^NoLayout\\((.+)\\)$");
-
-            // If there a match...
-            if (noneLayoutMatch.Success)
-            {
-                // Set the layout
-                layout = LooseObjectsLayout.NoLayout;
-
-                // Parse the object types from the string
-                neededObjectTypes = noneLayoutMatch.Groups[1].Value
-                    // Split by commas
-                    .Split(",")
-                    // Trim
-                    .Select(s => s.Trim())
-                    // Handle all cases
-                    .Select(typeMark => typeMark switch
-                    {
-                        "P" => ConfigurationObjectType.Point,
-                        "C" => ConfigurationObjectType.Circle,
-                        "L" => ConfigurationObjectType.Line,
-                        _ => throw new ParserException($"Cannot determine the type of loose object. Incorrect mark '{typeMark}', the values should be 'P', or 'C', or 'L' "),
-                    })
-                    // Enumerate
-                    .ToList();
-            }
-            // If there is no match, i.e. there is some specific layout...
-            else
-            {
-                // Try to parse it
-                if (!Enum.TryParse(looseObjectsMatch.Groups[1].Value, out layout))
-                    throw new ParserException($"Cannot parse the loose objects layout '{looseObjectsMatch.Groups[1].Value}'");
-
-                // Find the needed types of loose objects for the layout
-                neededObjectTypes = layout.ObjectTypes();
-            }
+            // Try to parse the layout
+            if (!Enum.TryParse(looseObjectsMatch.Groups[1].Value, out LooseObjectsLayout layout))
+                throw new ParserException($"Cannot parse the loose objects layout '{looseObjectsMatch.Groups[1].Value}'");
 
             // Get the loose objects names, separated by commas
             var looseObjectsNames = looseObjectsMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).ToList();
+
+            // Find the needed types of loose objects for the layout
+            var neededObjectTypes = layout.ObjectTypes();
 
             // Make sure the number of found objects matches the number of needed ones
             if (neededObjectTypes.Count != looseObjectsNames.Count)
                 throw new ParserException("The number of parsed loose objects doesn't match the layout.");
 
             // Create real loose objects from names
-            looseObjects = looseObjectsNames.Select((name, index) =>
+            var looseObjects = looseObjectsNames.Select((name, index) =>
             {
                 // Make sure the name hasn't been used
                 if (namesToObjects.ContainsKey(name))

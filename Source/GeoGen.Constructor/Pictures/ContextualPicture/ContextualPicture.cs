@@ -65,11 +65,6 @@ namespace GeoGen.Constructor
         /// </summary>
         private readonly IContexualPictureConstructionFailureTracer _tracer;
 
-        /// <summary>
-        /// The configuration that this contextual pictures represents.
-        /// </summary>
-        private readonly Configuration _configuration;
-
         #endregion
 
         #region Constructor
@@ -77,13 +72,12 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextualPicture"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration that this contextual pictures represents.</param>
+        /// <param name="objects">The objects that this contextual pictures represents.</param>
         /// <param name="manager">The pictures manager that holds all the representations of the objects inside this contextual picture.</param>
         /// <param name="settings">The settings of the contextual picture.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        public ContextualPicture(Configuration configuration, IPicturesManager manager, IContexualPictureConstructionFailureTracer tracer = null)
+        public ContextualPicture(IReadOnlyList<ConfigurationObject> objects, IPicturesManager manager, IContexualPictureConstructionFailureTracer tracer = null)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _tracer = tracer;
 
@@ -91,9 +85,6 @@ namespace GeoGen.Constructor
             _manager.ForEach(picture => _objects.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
 
             #region Adding objects
-
-            // Get the objects list of the configuration
-            var objects = configuration.ObjectsMap.AllObjects;
 
             // Prepare a variable holding the currently added object so we can access
             // it the inconsistency exception callback
@@ -116,7 +107,7 @@ namespace GeoGen.Constructor
                     e =>
                     {
                         // Trace possible inconsistency exceptions
-                        _tracer?.TraceInconsistencyWhileConstructingPicture(configuration, currentObject, e.Message);
+                        _tracer?.TraceInconsistencyWhileConstructingPicture(objects, currentObject, e.Message);
 
                         // Reset fields
                         _objects.Values.ForEach(map => map.Clear());
@@ -132,7 +123,7 @@ namespace GeoGen.Constructor
             catch (UnresolvedInconsistencyException e)
             {
                 // If we are unable to resolve inconsistencies, we trace it
-                _tracer?.TraceConstructionFailure(_configuration, e.Message);
+                _tracer?.TraceConstructionFailure(objects, e.Message);
 
                 // And say the picture is not constructible
                 throw new InconstructibleContextualPicture($"The construction of the contextual picture failed. The inner reason: {e.Message}.");

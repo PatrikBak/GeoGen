@@ -294,7 +294,7 @@ namespace GeoGen.TheoremsAnalyzer
             try
             {
                 // Try to construct it
-                contextualPicture = _pictureFactory.Create(configuration, geometryData.Manager);
+                contextualPicture = _pictureFactory.Create(configuration.ObjectsMap.AllObjects, geometryData.Manager);
             }
             catch (InconstructibleContextualPicture)
             {

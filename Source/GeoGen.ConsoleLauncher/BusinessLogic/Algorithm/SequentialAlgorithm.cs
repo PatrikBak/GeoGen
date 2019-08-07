@@ -82,7 +82,7 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Let the manager safely create an instance of the contextual picture
-                    picture = _pictureFactory.Create(output.Configuration, output.Manager);
+                    picture = _pictureFactory.Create(output.Configuration.ObjectsMap.AllObjects, output.Manager);
                 }
                 catch (InconstructibleContextualPicture)
                 {

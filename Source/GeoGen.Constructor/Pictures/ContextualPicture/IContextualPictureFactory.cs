@@ -1,10 +1,11 @@
 ﻿using GeoGen.Core;
+using System.Collections.Generic;
 
 namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a factory for creating new instances of <see cref="IContextualPicture"/>, 
-    /// that should represent given <see cref="Configuration"/>s and get the actual 
+    /// that should represent already drawn <see cref="ConfigurationObject"/>s. It gets the actual 
     /// geometric version of its objects from a <see cref="IPicturesManager"/>.
     /// <para>The implementation is supposed to be provided by the dependency injection management system.</para>
     /// </summary>
@@ -15,9 +16,9 @@ namespace GeoGen.Constructor
         /// analytic representations from a given pictures manager. If the construction cannot
         /// be done, then the method raises an <see cref="InconstructibleContextualPicture"/> exception.
         /// </summary>
-        /// <param name="configuration">The configuration that will be drawn in the picture.</param>
+        /// <param name="objects">The objects that will be drawn.</param>
         /// <param name="manager">The manager of all the pictures where our objects are drawn.</param>
         /// <returns>A contextual picture holding the given objects.</returns>
-        IContextualPicture Create(Configuration configuration, IPicturesManager manager);
+        IContextualPicture Create(IReadOnlyList<ConfigurationObject> objects, IPicturesManager manager);
     }
 }

@@ -83,7 +83,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 throw new GeoGenException("Incorrect configuration");
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration, geometryData.Manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration.ObjectsMap.AllObjects, geometryData.Manager);
 
             // Create the container
             var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
@@ -113,7 +113,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var M_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(M_);
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, EqualLineSegments, new[]
@@ -157,7 +157,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var M_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(M_);
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, EqualLineSegments, new[]
@@ -206,7 +206,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var O_ = new ConstructedConfigurationObject(Circumcenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(O_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, O_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, EqualAngles, new[]
@@ -252,7 +252,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var O_ = new ConstructedConfigurationObject(Circumcenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(O_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, O_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, EqualAngles, new[]
@@ -306,7 +306,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create original configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, ConcurrentObjects, new[]
@@ -357,7 +357,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, ConcurrentObjects, new[]
@@ -411,7 +411,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var B_ = new ConstructedConfigurationObject(PointReflection, A_, M_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(B_);
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, B_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, CollinearPoints, A_, B_, M_);
@@ -448,46 +448,6 @@ namespace GeoGen.TheoremsAnalyzer.Test
             }
             .Should().ContainEquivalentOf(result.UsedEqualities[0]);
 
-        }
-
-        [Test]
-        public void Test_Second_Intersection_Of_Two_Circumcircles_Creates_Concyclic_Points()
-        {
-            // Create the template configuration's objects
-            var A_ = new LooseConfigurationObject(Point);
-            var B_ = new LooseConfigurationObject(Point);
-            var C_ = new LooseConfigurationObject(Point);
-            var D_ = new LooseConfigurationObject(Point);
-            var E_ = new LooseConfigurationObject(Point);
-            var X_ = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, A_, B_, C_, D_, E_);
-
-            // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(X_);
-
-            // Create the template theorem
-            var templateTheorem = new Theorem(templateConfiguration, ConcyclicPoints, A_, B_, C_, X_);
-
-            // Create the examined configuration's objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var D = new ConstructedConfigurationObject(Midpoint, B, C);
-            var E = new ConstructedConfigurationObject(Midpoint, A, B);
-            var X = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, A, E, D, B, C);
-
-            // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, X);
-
-            // Create the examined theorem
-            var examinedTheorem = new Theorem(examinedConfiguration, ConcyclicPoints, A, X, D, E);
-
-            // Analyze
-            var result = Run(templateTheorem, examinedTheorem);
-
-            // Assert
-            result.IsSubtheorem.Should().BeTrue();
-            result.UsedEqualities.Should().BeEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -562,7 +522,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var l2_ = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, B_, C_, D_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(l1_, l2_);
+            var templateConfiguration = Configuration.DeriveFromObjects(FourPoints, l1_, l2_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, ParallelLines, l1_, l2_);
@@ -600,7 +560,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var H_ = new ConstructedConfigurationObject(Orthocenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(H_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, H_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, PerpendicularLines, new[]
@@ -652,7 +612,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var F_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, C_, A_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
 
             // Create the template theorem
             var templateTheorem = new Theorem(templateConfiguration, ConcurrentObjects, new[]
@@ -881,5 +841,69 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 }).Should().BeTrue();
             });
         }
+
+        [Test]
+        public void Test_Trapezoid_Layout_With_Concurrency_Theorem()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+            var E_ = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A_, C_, B_, D_);
+            var M_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(Trapezoid, A_, B_, C_, D_, E_, M_);
+
+            // Create the template theorem
+            var templateTheorem = new Theorem(templateConfiguration, ConcurrentObjects, new[]
+            {
+                new LineTheoremObject(E_, M_),
+                new LineTheoremObject(A_, D_),
+                new LineTheoremObject(B_, C_)
+            });
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, A, C);
+            var F = new ConstructedConfigurationObject(Midpoint, D, E);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+
+            // Create the examined theorem
+            var examinedTheorem = new Theorem(examinedConfiguration, ConcurrentObjects, new[]
+            {
+                new LineTheoremObject(A, F),
+                new LineTheoremObject(B, E),
+                new LineTheoremObject(C, D)
+            });
+
+            // Analyze
+            var result = Run(templateTheorem, examinedTheorem);
+
+            // Assert
+            result.IsSubtheorem.Should().BeTrue();
+            result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
+            {
+                // When the algorithm construct mapped E_, it intersects AD and EF
+                // After constructing this intersection it finds out that it is actually B
+                (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
+            });
+            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            {
+                // We need to use the fact that BC || DE
+                new Theorem(examinedConfiguration, ParallelLines, new[]
+                {
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(D, E)
+                })
+            }).Should().BeTrue();
+        }
     }
 }
+

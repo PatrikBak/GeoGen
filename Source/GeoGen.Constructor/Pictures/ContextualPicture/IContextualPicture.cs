@@ -7,7 +7,7 @@ namespace GeoGen.Constructor
     /// <summary>
     /// Represents a picture that holds <see cref="GeometricObject"/>s. This picture
     /// is responsible for creating them and mapping them between <see cref="IAnalyticObject"/>s
-    /// with respect to <see cref="IPicture"/>s.
+    /// with respect to <see cref="IPicture"/>s from  <see cref="IPicturesManager"/>.
     /// </summary>
     public interface IContextualPicture
     {

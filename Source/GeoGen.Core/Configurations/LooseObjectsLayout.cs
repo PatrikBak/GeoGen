@@ -6,11 +6,6 @@
     public enum LooseObjectsLayout
     {
         /// <summary>
-        /// Represents a layout with arbitrary number of objects of any type.
-        /// </summary>
-        NoLayout,
-
-        /// <summary>
         /// Represents 2 points.
         /// </summary>
         TwoPoints,

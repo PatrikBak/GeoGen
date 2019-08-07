@@ -77,7 +77,8 @@ namespace GeoGen.Constructor.Tests
 
                 // Return the final picture
                 return picture;
-            }).ToList();
+            })
+            .ToList();
 
             #region IPicturesManager mock
 
@@ -94,7 +95,7 @@ namespace GeoGen.Constructor.Tests
             #endregion
 
             // Create the final result
-            return new ContextualPicture(new Configuration(new LooseObjectsHolder(looseObjects), new ConstructedConfigurationObject[0]), manager.Object);
+            return new ContextualPicture(looseObjects, manager.Object);
         }
 
         #endregion
@@ -566,14 +567,16 @@ namespace GeoGen.Constructor.Tests
             {
                 Type = ContextualPictureQuery.ObjectsType.All,
                 IncludeCirces = true,
-            }).Count(circle => circle.Points.Count == 6).Should().Be(1);
+            })
+            .Count(circle => circle.Points.Count == 6).Should().Be(1);
 
             // Test the number of circles passing through 4 points
             picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
             {
                 Type = ContextualPictureQuery.ObjectsType.All,
                 IncludeCirces = true,
-            }).Count(circle => circle.Points.Count == 4).Should().Be(3, "two vertices and corresponding feet are concyclic");
+            })
+            .Count(circle => circle.Points.Count == 4).Should().Be(3, "two vertices and corresponding feet are concyclic");
         }
 
         [Test]

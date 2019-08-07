@@ -92,7 +92,7 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion            
 
-            #region Initial configuration
+            #region Writing initial configuration
 
             // Prepare the formatter for the initial configuration
             var initialFormatter = new OutputFormatter(input.InitialConfiguration);
@@ -114,6 +114,8 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
+            #region Writing Iterations, Constructions and Results title
+
             // Write iterations
             WriteLineToBoth($"\nIterations: {input.NumberOfIterations}\n");
 
@@ -123,19 +125,35 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToBoth();
 
             // Write results header
-            WriteLineToBoth($"Results:");
+            WriteLineToBoth($"Results:"); 
+
+            #endregion
 
             // Log that we've started
             Log.LoggingManager.LogInfo("Algorithm has started.");
 
+            #region Tracking variables
+            
             // Prepare the number of generated configurations
             var generatedConfigurations = 0;
+
+            // Prepare the total number of theorems
+            var totalTheorems = 0;
+
+            // Prepare the number of interesting theorems
+            var interestingTheorems = 0;
+
+            #endregion
+
+            #region Start stopwatch
 
             // Prepare a stopwatch to measure the time
             var stopwatch = new Stopwatch();
 
             // Start it
-            stopwatch.Start();
+            stopwatch.Start(); 
+
+            #endregion
 
             // Run the algorithm
             foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
@@ -151,6 +169,12 @@ namespace GeoGen.ConsoleLauncher
                 if (algorithmOutput.Theorems.Count == 0)
                     continue;
 
+                // Count all theorems
+                totalTheorems += algorithmOutput.Theorems.Count;
+
+                // Count interesting theorems
+                interestingTheorems += algorithmOutput.Theorems.Count - algorithmOutput.AnalyzerOutput.Count;
+
                 // Find out if there is any interesting theorem
                 var anyInterestingTheorem = algorithmOutput.AnalyzerOutput.Count != algorithmOutput.Theorems.Count;
 
@@ -162,7 +186,7 @@ namespace GeoGen.ConsoleLauncher
 
                 // Write the configuration
                 WriteLine("\n------------------------------------------------");
-                WriteLine($"{generatedConfigurations}.");
+                WriteLine($"Configuration {generatedConfigurations}");
                 WriteLine("------------------------------------------------");
                 WriteLine("");
                 WriteLine(formatter.FormatConfiguration());
@@ -178,8 +202,15 @@ namespace GeoGen.ConsoleLauncher
                 WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: true));
             }
 
+            // Write end
+            WriteLineToBoth("\n------------------------------------------------");
+            WriteLineToBoth($"Generated configurations: {generatedConfigurations}");
+            WriteLineToBoth($"Theorems: {totalTheorems}");
+            WriteLineToBoth($"Interesting theorems: {interestingTheorems}");
+            WriteLineToBoth($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
+
             // Log that we're done
-            Log.LoggingManager.LogInfo($"Algorithm has finished, the number of generated configurations is {generatedConfigurations}, the running time {stopwatch.ElapsedMilliseconds} milliseconds.");
+            Log.LoggingManager.LogInfo($"Algorithm has finished.");
         }
 
         /// <summary>

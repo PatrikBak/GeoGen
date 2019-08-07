@@ -18,9 +18,6 @@ namespace GeoGen.Core
             // Switch based on the layout
             layout switch
             {
-                // With no layout we cannot specify the types
-                LooseObjectsLayout.NoLayout => throw new GeoGenException("Objects with no layout don't have predefined types."),
-
                 // 3 points
                 LooseObjectsLayout.ThreePoints => new List<ConfigurationObjectType> { Point, Point, Point },
 

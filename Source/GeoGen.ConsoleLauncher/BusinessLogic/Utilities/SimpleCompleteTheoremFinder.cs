@@ -106,7 +106,7 @@ namespace GeoGen.ConsoleLauncher
                     try
                     {
                         // Create a contextual picture
-                        var picture = _factory.Create(_configuration, geometryData.Manager);
+                        var picture = _factory.Create(_configuration.ObjectsMap.AllObjects, geometryData.Manager);
 
                         // Run the analysis
                         return _analyzer.Analyze(_configuration, geometryData.Manager, picture);

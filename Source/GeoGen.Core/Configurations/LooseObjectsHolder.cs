@@ -36,14 +36,14 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="looseObjects">The actual loose configurations objects.</param>
         /// <param name="layout">The layout of these loose objects.</param>
-        public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout layout = default)
+        public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout layout)
         {
             LooseObjects = looseObjects?.ToList() ?? throw new ArgumentNullException(nameof(looseObjects));
             ObjectsMap = new ConfigurationObjectsMap(looseObjects);
             Layout = layout;
 
-            // If the layout is specified make sure the objects match it 
-            if (layout != LooseObjectsLayout.NoLayout && !LooseObjects.Select(o => o.ObjectType).SequenceEqual(layout.ObjectTypes()))
+            // Make sure the objects match the layout
+            if (!LooseObjects.Select(o => o.ObjectType).SequenceEqual(layout.ObjectTypes()))
                 throw new GeoGenException($"The loose objects don't match the specified layout {layout}.");
         }
 

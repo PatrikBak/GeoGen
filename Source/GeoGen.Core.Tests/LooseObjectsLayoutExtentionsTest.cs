@@ -17,8 +17,6 @@ namespace GeoGen.Core.Tests
         {
             // Take all layouts
             Enum.GetValues(typeof(LooseObjectsLayout)).Cast<LooseObjectsLayout>()
-                // That are distinct from NoLayout
-                .Where(layout => layout != LooseObjectsLayout.NoLayout)
                 // For each...
                 .ForEach(layout =>
                 {

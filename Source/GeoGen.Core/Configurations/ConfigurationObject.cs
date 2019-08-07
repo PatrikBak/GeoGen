@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -74,21 +73,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
-        public override string ToString()
-        {
-            // Find the list of objects that define this one
-            var definingObjects = this.GetDefiningObjects();
-
-            // Separate the loose and the constructed ones
-            var looseObjects = definingObjects.OfType<LooseConfigurationObject>().ToList();
-            var constructedObjects = definingObjects.OfType<ConstructedConfigurationObject>().ToList();
-
-            // Create a configuration simulating a definition of the object
-            var configuration = new Configuration(new LooseObjectsHolder(looseObjects), constructedObjects);
-
-            // And use the configuration converter
-            return $"{Id} (Full definition: {configuration})";
-        }
+        public override string ToString() => $"{ObjectType}({Id})";
 
         #endregion
     }

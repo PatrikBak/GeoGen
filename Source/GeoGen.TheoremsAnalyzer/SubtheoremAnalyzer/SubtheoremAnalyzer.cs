@@ -5,6 +5,8 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.TheoremsAnalyzer
 {
@@ -148,75 +150,69 @@ namespace GeoGen.TheoremsAnalyzer
             // Return the answer based on the layout of the template theorem
             return input.TemplateTheorem.Configuration.LooseObjectsHolder.Layout switch
             {
-                LooseObjectsLayout.NoLayout => GenerateInitialMappingsForNoLayout(input),
+                // Circle and its tangent line
+                CircleAndItsTangentLineFromPoints => GenerateInitialMappingsForCircleAndItsTangentLineLayout(input),
 
-                LooseObjectsLayout.CircleAndItsTangentLineFromPoints => GenerateInitialMappingsForCircleAndItsTangentLineLayout(input),
+                // Three cyclic quadruples on six points
+                ThreeCyclicQuadrilatersOnSixPoints => GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(input),
 
-                LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints => GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(input),
+                // Trapezoid
+                Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
-                LooseObjectsLayout.Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
+                // Triangle
+                ThreePoints => GenerateInitialMappingsWithPoints(input),
 
-                LooseObjectsLayout.ThreePoints => input.ExaminedTheorem.Configuration.ObjectsMap[ConfigurationObjectType.Point]
-                        .Variations(3).Select(points => new MappingData
-                        {
-                            EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
-                            UsedFacts = new List<Theorem>(),
-                            Mapping = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>())
-                        }),
+                // Quadrilater
+                FourPoints => GenerateInitialMappingsWithPoints(input),
 
-                _ => throw new GeoGenException("Unhandled layout"),
+                // Line segment
+                TwoPoints => GenerateInitialMappingsWithPoints(input),
+
+                // Default case
+                _ => throw new GeoGenException($"Unhandled case")
             };
         }
 
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.NoLayout"/>.
+        /// configuration consists of points only.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private IEnumerable<MappingData> GenerateInitialMappingsForNoLayout(SubtheoremAnalyzerInput input)
+        private IEnumerable<MappingData> GenerateInitialMappingsWithPoints(SubtheoremAnalyzerInput input)
         {
-            // Get the template configuration's objects map for shorter access
-            var templateLooseObjectsMap = input.TemplateTheorem.Configuration.LooseObjectsHolder.ObjectsMap;
+            // Get the template loose objects for shorter access
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
 
-            // Get the examined configuration's objects map for shorter access
-            var examinedObjectsMap = input.ExaminedTheorem.Configuration.ObjectsMap;
-
-            // Make sure all the needed object types are there
-            if (!templateLooseObjectsMap.Keys.All(examinedObjectsMap.ContainsKey))
-                return Enumerable.Empty<MappingData>();
-
-            // We take every pair of type / objects
-            return templateLooseObjectsMap.Select(typeObjectsPair =>
+            // Take the points 
+            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
             {
-                // For every pair we look at the examined configuration's objects
-                return examinedObjectsMap[typeObjectsPair.Key]
-                            // Take the needed number of objects of this type
-                            .Variations(typeObjectsPair.Value.Count)
-                            // Create pairs using one-to-one mapping (zipping)
-                            .Select(variation => variation.Zip(typeObjectsPair.Value, (examinedObject, templateObject) => (examinedObject, templateObject)));
+                IncludePoints = true,
+                Type = ContextualPictureQuery.ObjectsType.All
             })
-            // These mapping of objects of particular types are then combined
-            .Combine()
-            // And each such a combination represents a correct result
-            .Select(mapping => new MappingData
-            {
-                // Set the final mapping by flattening the combined mappings for particular types
-                Mapping = mapping.Flatten().ToDictionary(pair => pair.templateObject, pair => pair.examinedObject),
+                // And their n-tuples, where n is the inferred number of points
+                .Variations(templateLooseObjects.Count)
+                // Unwrap configuration objects
+                .Select(points => points.Select(point => point.ConfigurationObject))
+                // Each represents a mapping
+                .Select(points => new MappingData
+                {
+                    // That we can get by zipping the loose template objects and these points
+                    Mapping = templateLooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>()),
 
-                // No equal objects have been used
-                EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
+                    // No equal objects
+                    EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
 
-                // No facts have been used
-                UsedFacts = new List<Theorem>()
-            });
+                    // No used facts
+                    UsedFacts = new List<Theorem>(),
+                });
         }
 
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.CircleAndItsTangentLineFromPoints"/>.
+        /// configuration is <see cref="CircleAndItsTangentLineFromPoints"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
@@ -288,7 +284,7 @@ namespace GeoGen.TheoremsAnalyzer
                        // Set that we used the fact that the line from our points is tangent to our circle
                        UsedFacts = new List<Theorem>
                        {
-                            new Theorem(input.ExaminedTheorem.Configuration, TheoremType.LineTangentToCircle, new TheoremObject[]
+                            new Theorem(input.ExaminedTheorem.Configuration, LineTangentToCircle, new TheoremObject[]
                             {
                                 new LineTheoremObject(points[0].ConfigurationObject, points[1].ConfigurationObject),
                                 new CircleTheoremObject(circleLine[0].ConfigurationObject, points: null)
@@ -304,7 +300,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.ThreeCyclicQuadrilatersOnSixPoints"/>.
+        /// configuration is <see cref="ThreeCyclicQuadrilatersOnSixPoints"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
@@ -348,21 +344,21 @@ namespace GeoGen.TheoremsAnalyzer
                 // Set that we used the fact that three quadruples of points are concyclic
                 UsedFacts = new List<Theorem>
                 {
-                     new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                     new Theorem(input.ExaminedTheorem.Configuration, ConcyclicPoints, new[]
                      {
                          new PointTheoremObject(commonPoints[0][0]),
                          new PointTheoremObject(commonPoints[0][1]),
                          new PointTheoremObject(commonPoints[1][0]),
                          new PointTheoremObject(commonPoints[1][1])
                      }),
-                     new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                     new Theorem(input.ExaminedTheorem.Configuration, ConcyclicPoints, new[]
                      {
                          new PointTheoremObject(commonPoints[0][0]),
                          new PointTheoremObject(commonPoints[0][1]),
                          new PointTheoremObject(commonPoints[2][0]),
                          new PointTheoremObject(commonPoints[2][1])
                      }),
-                     new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ConcyclicPoints, new[]
+                     new Theorem(input.ExaminedTheorem.Configuration, ConcyclicPoints, new[]
                      {
                          new PointTheoremObject(commonPoints[1][0]),
                          new PointTheoremObject(commonPoints[1][1]),
@@ -379,7 +375,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="LooseObjectsLayout.Trapezoid"/>.
+        /// configuration is <see cref="Trapezoid"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
@@ -424,11 +420,6 @@ namespace GeoGen.TheoremsAnalyzer
                                       .Where(innerGroup => innerGroup.Count() >= 2);
                     });
                 })
-                .Select(x =>
-                {
-                    var y = x.ToList();
-                    return x;
-                })
                 // Each found groups contains only lines parallel to each other in every picture
                 // For each we consider every pair of the lines from the group
                 .SelectMany(parallelLines => parallelLines.ToArray().UnorderedPairs())
@@ -437,27 +428,33 @@ namespace GeoGen.TheoremsAnalyzer
                 .Select(pairOfParellelLines => new[] { pairOfParellelLines.Item1.Points.Variations(2), pairOfParellelLines.Item2.Points.Variations(2) }.Combine())
                 // This way we get enumerable of pairs of pairs of points, so we flatten it
                 .Flatten()
+                // In each we might even exchange points from the line, like (A,B,C,D) --> (C,D,A,B)
+                .SelectMany(points => new[]
+                {
+                    new[] { points[0][0], points[0][1], points[1][0], points[1][1] },
+                    new[] { points[1][0], points[1][1], points[0][0], points[0][1] }
+                })
                 // And now we work with pairs of pairs of points that can be directly flattened to an array
-                .Select(pairOfPairOfPoints => pairOfPairOfPoints.Flatten().Select(point => point.ConfigurationObject).ToArray())
+                .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
                 // These points finally represent one of our sought trapezoids
-                .Select(trapezoidPoints => new MappingData
+                .Select(points => new MappingData
                 {
                     // Set the mapping of the template points to the found points
                     Mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
                     {
-                        { templateLooseObjects[0], trapezoidPoints[0] },
-                        { templateLooseObjects[1], trapezoidPoints[1] },
-                        { templateLooseObjects[2], trapezoidPoints[2] },
-                        { templateLooseObjects[3], trapezoidPoints[3] }
+                        { templateLooseObjects[0], points[0] },
+                        { templateLooseObjects[1], points[1] },
+                        { templateLooseObjects[2], points[2] },
+                        { templateLooseObjects[3], points[3] }
                     },
 
                     // Set that we used the fact that these four points make parallel lines
                     UsedFacts = new List<Theorem>
                     {
-                         new Theorem(input.ExaminedTheorem.Configuration, TheoremType.ParallelLines, new[]
+                         new Theorem(input.ExaminedTheorem.Configuration, ParallelLines, new[]
                          {
-                             new LineTheoremObject(trapezoidPoints[0], trapezoidPoints[1]),
-                             new LineTheoremObject(trapezoidPoints[2], trapezoidPoints[3])
+                             new LineTheoremObject(points[0], points[1]),
+                             new LineTheoremObject(points[2], points[3])
                          })
                     },
 
