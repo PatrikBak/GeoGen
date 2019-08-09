@@ -770,6 +770,88 @@ namespace GeoGen.TheoremsAnalyzer.Test
         }
 
         [Test]
+        public void Test_Equal_Angles_Because_Of_Concylic_Points()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(FourConcyclicPoints, A_, B_, C_, D_);
+
+            // Create the template theorem
+            var templateTheorem = new Theorem(templateConfiguration, EqualAngles, new[]
+            {
+                new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(A_, D_)),
+                new AngleTheoremObject(new LineTheoremObject(C_, B_), new LineTheoremObject(C_, D_)),
+            });
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var H = new ConstructedConfigurationObject(Orthocenter, A, B, C);
+            var D = new ConstructedConfigurationObject(ReflectionInLineFromPoints, H, B, C);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D);
+
+            // Create the examined theorem
+            var examinedTheorems = new[]
+            {
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, C)),
+                    new AngleTheoremObject(new LineTheoremObject(D, B), new LineTheoremObject(D, C))
+                }),
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(C, D)),
+                    new AngleTheoremObject(new LineTheoremObject(B, A), new LineTheoremObject(B, D))
+                }),
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(D, A), new LineTheoremObject(D, C)),
+                    new AngleTheoremObject(new LineTheoremObject(B, A), new LineTheoremObject(B, C))
+                }),
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(D, A), new LineTheoremObject(D, B)),
+                    new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(C, B))
+                }),
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(A, D)),
+                    new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(B, D))
+                }),
+                new Theorem(examinedConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, D)),
+                    new AngleTheoremObject(new LineTheoremObject(C, B), new LineTheoremObject(C, D))
+                }),
+            };
+
+            // Analyze all theorems
+            examinedTheorems.ForEach(examinedTheorem =>
+            {
+                // Analyze
+                var result = Run(templateTheorem, examinedTheorem);
+
+                // Assert
+                result.IsSubtheorem.Should().BeTrue();
+                result.UsedEqualities.Should().BeNullOrEmpty();
+                result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+                {
+                    // We're using that A, B, C, D are concyclic
+                    new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                })
+                .Should().BeTrue();
+            });
+        }
+
+        [Test]
         public void Test_Equal_Angles_Because_Of_Parallel_Lines()
         {
             // Create the template configuration's objects

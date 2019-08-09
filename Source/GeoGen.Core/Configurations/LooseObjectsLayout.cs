@@ -28,6 +28,11 @@
         FourPoints,
 
         /// <summary>
+        /// Represents 4 points, where no 3 of them are collinear, that lie on a single circle.
+        /// </summary>
+        FourConcyclicPoints,
+
+        /// <summary>
         /// Represents a line and a point that doesn't lie on it.
         /// </summary>
         LineAndPoint,

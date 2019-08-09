@@ -33,6 +33,9 @@ namespace GeoGen.Core
                 // 4 points
                 LooseObjectsLayout.FourPoints => new List<ConfigurationObjectType> { Point, Point, Point, Point },
 
+                // 4 points
+                LooseObjectsLayout.FourConcyclicPoints => new List<ConfigurationObjectType> { Point, Point, Point, Point },
+
                 // 1 line, 1 point
                 LooseObjectsLayout.LineAndPoint => new List<ConfigurationObjectType> { Line, Point },
 

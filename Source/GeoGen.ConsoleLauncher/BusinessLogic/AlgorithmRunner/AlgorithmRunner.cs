@@ -125,7 +125,7 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToBoth();
 
             // Write results header
-            WriteLineToBoth($"Results:"); 
+            WriteLineToBoth($"Results:");
 
             #endregion
 
@@ -133,7 +133,7 @@ namespace GeoGen.ConsoleLauncher
             Log.LoggingManager.LogInfo("Algorithm has started.");
 
             #region Tracking variables
-            
+
             // Prepare the number of generated configurations
             var generatedConfigurations = 0;
 
@@ -151,7 +151,7 @@ namespace GeoGen.ConsoleLauncher
             var stopwatch = new Stopwatch();
 
             // Start it
-            stopwatch.Start(); 
+            stopwatch.Start();
 
             #endregion
 

@@ -165,6 +165,9 @@ namespace GeoGen.TheoremsAnalyzer
                 // Quadrilater
                 FourPoints => GenerateInitialMappingsWithPoints(input),
 
+                // Concyclic points
+                FourConcyclicPoints => GenerateInitialMappingsForFourConcyclicPoints(input),
+
                 // Line segment
                 TwoPoints => GenerateInitialMappingsWithPoints(input),
 
@@ -207,6 +210,47 @@ namespace GeoGen.TheoremsAnalyzer
                     // No used facts
                     UsedFacts = new List<Theorem>(),
                 });
+        }
+
+        /// <summary>
+        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
+        /// and the loose objects the template theorem in case where the layout of the template
+        /// configuration is <see cref="FourConcyclicPoints"/>.
+        /// </summary>
+        /// <param name="input">The algorithm input.</param>
+        /// <returns>The mappings.</returns>
+        private IEnumerable<MappingData> GenerateInitialMappingsForFourConcyclicPoints(SubtheoremAnalyzerInput input)
+        {
+            // Get the template loose objects for shorter access
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+
+            // Take all circles
+            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
+            {
+                IncludeCirces = true,
+                Type = ContextualPictureQuery.ObjectsType.All
+            })
+            // That have at least four points
+            .Where(circle => circle.Points.Count >= 4)
+            // Take all 4-elements variations for each of them
+            .SelectMany(circle => circle.Points.Variations(4))
+            // Get plain configuration objects from these quadruples
+            .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
+            // Each represents a possible mapping
+            .Select(points => new MappingData
+            {
+                // That we can get by zipping the loose template objects and these points
+                Mapping = templateLooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>()),
+
+                // No equal objects
+                EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
+
+                // We're using that our points are concyclic
+                UsedFacts = new List<Theorem>
+                {
+                    new Theorem(input.ExaminedTheorem.Configuration, ConcyclicPoints, points)
+                }
+            });
         }
 
         /// <summary>

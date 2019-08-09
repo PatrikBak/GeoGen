@@ -1,0 +1,7 @@
+﻿Configuration:
+
+ FourConcyclicPoints: A, B, C, D
+
+Theorems:
+
+ EqualAngles: [A, B], [A, D], [C, B], [C, D]
