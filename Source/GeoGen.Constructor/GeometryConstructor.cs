@@ -62,7 +62,7 @@ namespace GeoGen.Constructor
             foreach (var pictures in manager)
             {
                 // Objects are constructed using the loose objects constructor
-                pictures.Add(configuration.LooseObjectsHolder.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
+                pictures.Add(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
             }
 
             // Then we add all the constructed object

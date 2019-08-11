@@ -83,13 +83,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 throw new GeoGenException("Incorrect configuration");
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration.ObjectsMap.AllObjects, geometryData.Manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration.AllObjects, geometryData.Manager);
 
             // Create the container
             var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
 
             // Fill it with objects of the examined configuration
-            examinedTheorem.Configuration.ObjectsMap.AllObjects.ForEach(objectsContainer.Add);
+            examinedTheorem.Configuration.AllObjects.ForEach(objectsContainer.Add);
 
             // Run the algorithm
             return _analyzer.Analyze(new SubtheoremAnalyzerInput

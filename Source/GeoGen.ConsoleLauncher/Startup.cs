@@ -63,23 +63,6 @@ namespace GeoGen.ConsoleLauncher
             }
         }
 
-        /// <summary>
-        /// Runs the given action and handles all possible exception it may produce.
-        /// </summary>
-        /// <param name="action">The action.</param>
-        private static void RunActionAndHandleExceptions(Action action)
-        {
-            // Fake the action as a task
-            RunTaskAndHandleExceptions(() =>
-            {
-                // Run it
-                action();
-
-                // And return a completed task
-                return Task.CompletedTask;
-            });
-        }
-
         #endregion
     }
 }

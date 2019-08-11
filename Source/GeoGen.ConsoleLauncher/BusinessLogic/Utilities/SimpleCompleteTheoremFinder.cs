@@ -91,22 +91,22 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // We will find this out by having look at the number of distinct 
                     // objects of the potential configuration
-                    var numberOfObjects = configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().GetDefiningObjects().Count();
+                    var numberOfObjects = configuration.LooseObjects.Cast<ConfigurationObject>().GetDefiningObjects().Count();
 
                     // There shouldn't be any leftover objects
-                    return numberOfObjects <= configuration.LooseObjectsHolder.LooseObjects.Count + objects.ToArray().Length;
+                    return numberOfObjects <= configuration.LooseObjects.Count + objects.ToArray().Length;
                 })
                 // Make a configuration. The constructed objects should be ordered correctly
                 .Select(objects => new Configuration(configuration.LooseObjectsHolder, objects.ToArray()))
                 // Select only distinct ones
-                .Distinct(new SimpleEqualityComparer<Configuration>((c1, c2) => c1.ObjectsMap.AllObjects.ToSet().SetEquals(c2.ObjectsMap.AllObjects)))
+                .Distinct(new SimpleEqualityComparer<Configuration>((c1, c2) => c1.AllObjects.ToSet().SetEquals(c2.AllObjects)))
                 // Find its theorems
                 .Select(_configuration =>
                 {
                     try
                     {
                         // Create a contextual picture
-                        var picture = _factory.Create(_configuration.ObjectsMap.AllObjects, geometryData.Manager);
+                        var picture = _factory.Create(_configuration.AllObjects, geometryData.Manager);
 
                         // Run the analysis
                         return _analyzer.Analyze(_configuration, geometryData.Manager, picture);
@@ -122,7 +122,7 @@ namespace GeoGen.ConsoleLauncher
                 // Exclude equal ones
                 .Distinct(Theorem.EquivalencyComparer)
                 // Order them by type
-                .OrderBy(t => t.Type)
+                .OrderBy(theorem => theorem.Type)
                 // Enumerate to a list
                 .ToList();
         }

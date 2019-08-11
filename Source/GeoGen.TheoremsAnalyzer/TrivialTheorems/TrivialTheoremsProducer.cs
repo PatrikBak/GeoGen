@@ -247,7 +247,7 @@ namespace GeoGen.TheoremsAnalyzer
                     var theorems = _composedConstructionsTheorems.GetOrAdd(composedConstruction, () => FindTheoremsForComposedConstruction(composedConstruction));
 
                     // Create mapping of loose objects of the template configuration + the constructed object
-                    var mapping = composedConstruction.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(composedConstruction.ConstructionOutput)
+                    var mapping = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>().Concat(composedConstruction.ConstructionOutput)
                         // to the actual objects that created the constructed object + the constructed object
                         .ZipToDictionary(objects.Concat(constructedObject));
 
@@ -273,7 +273,7 @@ namespace GeoGen.TheoremsAnalyzer
         private List<Theorem> FindTheoremsForComposedConstruction(ComposedConstruction composedConstruction)
         {
             // Create an array of loose objects of the defining configuration
-            var looseObjects = composedConstruction.Configuration.LooseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().ToArray();
+            var looseObjects = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>().ToArray();
 
             // Create a constructed object representing this construction, i.e. the one that gets passed the loose objects
             var constructedObject = new ConstructedConfigurationObject(composedConstruction, looseObjects);
@@ -294,7 +294,7 @@ namespace GeoGen.TheoremsAnalyzer
             try
             {
                 // Try to construct it
-                contextualPicture = _pictureFactory.Create(configuration.ObjectsMap.AllObjects, geometryData.Manager);
+                contextualPicture = _pictureFactory.Create(configuration.AllObjects, geometryData.Manager);
             }
             catch (InconstructibleContextualPicture)
             {
@@ -311,7 +311,7 @@ namespace GeoGen.TheoremsAnalyzer
                     // We will create a mapping that maps loose objects to itself
                     // and the artificial constructed object to the last object of 
                     // the defining configuration. Take the loose objects first...
-                    var mapping = configuration.LooseObjectsHolder.LooseObjects
+                    var mapping = configuration.LooseObjects
                         // Cast each to an identity tuple
                         .Select(looseObject => ((ConfigurationObject)looseObject, (ConfigurationObject)looseObject))
                         // Add the tuple of the constructed and last object

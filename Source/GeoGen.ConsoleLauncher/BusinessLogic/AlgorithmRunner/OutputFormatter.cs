@@ -55,7 +55,7 @@ namespace GeoGen.ConsoleLauncher
             var result = new StringBuilder();
 
             // Compose the loose objects string
-            var looseObjects = _configuration.LooseObjectsHolder.LooseObjects.Select(o => _objectNames[o]).ToJoinedString();
+            var looseObjects = _configuration.LooseObjects.Select(looseObject => _objectNames[looseObject]).ToJoinedString();
 
             // Add the first line with loose objects
             result.Append($"{_configuration.LooseObjectsHolder.Layout}: {looseObjects}\n");
@@ -77,7 +77,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Creates a formatted string describing a given theorem.
         /// </summary>
-        /// <param name="theorems">The theorem.</param>
+        /// <param name="theorem">The theorem.</param>
         /// <param name="includeType">Indicates whether the type of the theorem should be included.</param>
         /// <returns>The string representing the theorem.</returns>
         public string FormatTheorem(Theorem theorem, bool includeType = true)
@@ -113,7 +113,7 @@ namespace GeoGen.ConsoleLauncher
                 default:
 
                     // Convert each object and sort them
-                    return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).OrderBy(s => s).ToJoinedString()}";
+                    return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).Ordered().ToJoinedString()}";
             }
         }
 
@@ -133,11 +133,11 @@ namespace GeoGen.ConsoleLauncher
             var namedLines = 0;
 
             // Helper values of the total numbers of points and lines
-            var numberOfLines = _configuration.ObjectsMap.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Line);
-            var numberOfCircles = _configuration.ObjectsMap.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Circle);
+            var numberOfLines = _configuration.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Line);
+            var numberOfCircles = _configuration.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Circle);
 
             // Go through all the objects
-            foreach (var configurationObject in _configuration.ObjectsMap.AllObjects)
+            foreach (var configurationObject in _configuration.AllObjects)
             {
                 // Prepare the name
                 var name = default(string);
@@ -199,7 +199,7 @@ namespace GeoGen.ConsoleLauncher
             var setArgument = (SetConstructionArgument)argument;
 
             // We wrap the result in curly braces and convert the inner arguments
-            return $"{{{setArgument.PassedArguments.Select(ArgumentToString).OrderBy(s => s).ToJoinedString()}}}";
+            return $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}";
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace GeoGen.ConsoleLauncher
                         case TheoremObjectWithPoints objectWithPoints:
 
                             // Prepare the list describing individual points
-                            var pointsList = objectWithPoints.Points.Select(o => _objectNames[o]).OrderBy(s => s).ToJoinedString();
+                            var pointsList = objectWithPoints.Points.Select(point => _objectNames[point]).Ordered().ToJoinedString();
 
                             // Prepare the points part of the string
                             var pointsPart = objectWithPoints.Points.Count == 0 ? "" : pointsList;

@@ -66,7 +66,7 @@ namespace GeoGen.Constructor
             var internalPicture = _pictureFactory.CreatePicture();
 
             // Pull the loose objects of this configuration
-            var looseObjects = _construction.Configuration.LooseObjectsHolder.LooseObjects;
+            var looseObjects = _construction.Configuration.LooseObjects;
 
             // Add these objects to the internal picture
             // Their analytic versions should correspond to the passed input
@@ -92,7 +92,7 @@ namespace GeoGen.Constructor
             // If we are here, then the construction should be fine and the result
             // will be in the internal picture corresponding to the last object 
             // of the configuration that defines our composed construction
-            return internalPicture.Get(_construction.Configuration.ConstructedObjects.Last());
+            return internalPicture.Get(_construction.Configuration.LastConstructedObject);
         }
 
         #endregion

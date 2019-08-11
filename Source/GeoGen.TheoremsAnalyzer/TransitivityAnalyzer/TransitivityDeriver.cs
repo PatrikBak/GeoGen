@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.TheoremsAnalyzer
 {
     /// <summary>
-    /// The default implemention of <see cref="ITransitivityDeriver"/>.
+    /// The default implementation of <see cref="ITransitivityDeriver"/>.
     /// </summary>
     public class TransitivityDeriver : ITransitivityDeriver
     {
@@ -19,8 +19,8 @@ namespace GeoGen.TheoremsAnalyzer
         /// <returns>The enumerable of tuples consisting of two used fact to draw a conclusion and the conclusion itself.</returns>
         public IEnumerable<(Theorem fact1, Theorem fact2, Theorem conclusion)> Derive(Configuration configuration, IEnumerable<Theorem> trueTheorems, IEnumerable<Theorem> assumedTheorems)
         {
-            // First find equivalencies of old objects that are assumed true
-            var oldEquivalencies = OldObjectsEquivalencies(trueTheorems, configuration.ConstructedObjects.Last());
+            // First find equivalences of old objects that are assumed true
+            var oldEquivalencies = OldObjectsEquivalencies(trueTheorems, configuration.LastConstructedObject);
 
             // Go through all the theorems
             foreach (var theorem in assumedTheorems)
@@ -36,7 +36,7 @@ namespace GeoGen.TheoremsAnalyzer
                     case TheoremType.ConcyclicPoints:
                     {
                         // Get the new point
-                        var newPoint = configuration.ConstructedObjects.Last();
+                        var newPoint = configuration.LastConstructedObject;
 
                         // If it's not a point, we can't do more
                         if (newPoint.ObjectType != ConfigurationObjectType.Point)
@@ -58,16 +58,16 @@ namespace GeoGen.TheoremsAnalyzer
                         if (set.Contains(newTheoremObject))
                             continue;
 
-                        // Otherwise we generate the subsets of collinear / concylic points with this point
+                        // Otherwise we generate the subsets of collinear / concyclic points with this point
                         foreach (var subset in set.Subsets(type == TheoremType.CollinearPoints ? 2 : 3))
                         {
-                            // The fact that old objects are colliner / concylic
+                            // The fact that old objects are collinear / concyclic
                             var fact1 = new Theorem(configuration, type, set.ToArray());
 
                             // Together with the current fact
                             var fact2 = theorem;
 
-                            // Gives us the conclusion the the points from the subset are collinear with the new one
+                            // Gives us the conclusion the points from the subset are collinear with the new one
                             var conclusion = new Theorem(configuration, type, subset.Concat(newTheoremObject).ToArray());
 
                             // We can return it
@@ -212,7 +212,7 @@ namespace GeoGen.TheoremsAnalyzer
         }
 
         /// <summary>
-        /// Finds the equivalency classes of old objects based on the true theorems of the configuration.
+        /// Finds the equivalence classes of old objects based on the true theorems of the configuration.
         /// </summary>
         /// <param name="theorems">All theorems that are true in the configuration.</param>
         /// <param name="newObject">The new object of the configuration (all the other objects are old).</param>
@@ -238,7 +238,7 @@ namespace GeoGen.TheoremsAnalyzer
                     _ => 0
                 };
 
-                // If the theorem type doesn't support transivitivy, we can't do more
+                // If the theorem type doesn't support transitivity, we can't do more
                 if (neededObjects == 0)
                     return;
 
@@ -248,7 +248,7 @@ namespace GeoGen.TheoremsAnalyzer
                 // Find the first set that is identified by some n-tuples
                 // of the current theorem objects, where 'n' is 'neededObjects'
                 var (subset, currentSet) = theorem.InvolvedObjects.Subsets(neededObjects)
-                    // For each n-typle we try to find the group
+                    // For each n-tuple we try to find the group
                     .Select(subset => (subset, set: equivalencySets.FirstOrDefault(set => set.IsSupersetOf(subset))))
                     // Take the first successful one
                     .FirstOrDefault(pair => pair.set != null);
@@ -275,7 +275,7 @@ namespace GeoGen.TheoremsAnalyzer
                 currentSet.Add(newObject);
 
                 // Adding this element might have caused some sets represents
-                // the same equivalency class. We need to gradually merge them
+                // the same equivalence class. We need to gradually merge them
                 equivalencySets.Where(set => set != currentSet
                     // Merging happen based on the number of needed common objects
                     && currentSet.Intersect(set).Count() >= neededObjects).ForEach(set =>

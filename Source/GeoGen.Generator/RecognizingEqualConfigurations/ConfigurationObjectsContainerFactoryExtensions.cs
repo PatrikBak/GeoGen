@@ -20,7 +20,7 @@ namespace GeoGen.Generator
             var container = factory.CreateContainer();
 
             // Add all the objects to it
-            configuration.ObjectsMap.AllObjects.ForEach(container.Add);
+            configuration.AllObjects.ForEach(container.Add);
 
             // Return it
             return container;

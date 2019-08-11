@@ -186,7 +186,7 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappingsWithPoints(SubtheoremAnalyzerInput input)
         {
             // Get the template loose objects for shorter access
-            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // Take the points 
             return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
@@ -222,7 +222,7 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappingsForFourConcyclicPoints(SubtheoremAnalyzerInput input)
         {
             // Get the template loose objects for shorter access
-            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // Take all circles
             return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
@@ -263,7 +263,7 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappingsForCircleAndItsTangentLineLayout(SubtheoremAnalyzerInput input)
         {
             // Get the template loose objects for shorter access
-            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // We need to make sure the result are the same across the pictures.
             // We're going to use aggregation. Each picture gets a list of (circle,line)
@@ -351,7 +351,7 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(SubtheoremAnalyzerInput input)
         {
             // Get the template loose objects for shorter access
-            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // We start with getting all circles
             return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
@@ -426,7 +426,7 @@ namespace GeoGen.TheoremsAnalyzer
         private IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremAnalyzerInput input)
         {
             // Get the template loose objects for shorter access
-            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjectsHolder.LooseObjects;
+            var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // We need to make sure the result are the same across the pictures.
             // We're going to use aggregation. Each picture gets a list of lists of lines

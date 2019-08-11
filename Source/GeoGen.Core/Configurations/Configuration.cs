@@ -22,14 +22,29 @@ namespace GeoGen.Core
         public LooseObjectsHolder LooseObjectsHolder { get; }
 
         /// <summary>
+        /// Gets the loose object of the configuration.
+        /// </summary>
+        public IReadOnlyList<LooseConfigurationObject> LooseObjects => LooseObjectsHolder.LooseObjects;
+
+        /// <summary>
         /// Gets the list of constructed configuration objects ordered in a way that we can construct them in this order.
         /// </summary>
         public IReadOnlyList<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         /// <summary>
+        /// Gets the last constructed object of the configuration.
+        /// </summary>
+        public ConstructedConfigurationObject LastConstructedObject => ConstructedObjects.LastOrDefault() ?? throw new GeoGenException("No constructed objects");
+
+        /// <summary>
         /// Gets the configuration objects map containing all the objects of the configuration.
         /// </summary>
         public ConfigurationObjectsMap ObjectsMap { get; }
+
+        /// <summary>
+        /// Gets all configuration objects of the configuration.
+        /// </summary>
+        public IReadOnlyList<ConfigurationObject> AllObjects => ObjectsMap.AllObjects;
 
         #endregion
 
@@ -44,7 +59,7 @@ namespace GeoGen.Core
         {
             LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
-            ObjectsMap = new ConfigurationObjectsMap(looseObjectsHolder.LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
+            ObjectsMap = new ConfigurationObjectsMap(LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
         }
 
         /// <summary>
@@ -83,19 +98,19 @@ namespace GeoGen.Core
         public override string ToString()
         {
             // Go through all the objects
-            return ObjectsMap.AllObjects.Select(obj => obj switch
-                {
-                    // With loose object we include the id and type
-                    LooseConfigurationObject _ => $"{obj.Id}={obj.ObjectType}",
+            return AllObjects.Select(configurationObject => configurationObject switch
+            {
+                // With loose object we include the id and type
+                LooseConfigurationObject _ => $"{configurationObject.Id}={configurationObject.ObjectType}",
 
-                    // With construct we include the id + definition
-                    ConstructedConfigurationObject constructedObject => $"{obj.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})",
+                // With construct we include the id + definition
+                ConstructedConfigurationObject constructedObject => $"{constructedObject.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})",
 
-                    // Default case
-                    _ => throw new GeoGenException("Unhandled object type"),
-                })
-                // Join to a single string
-                .ToJoinedString("; ");
+                // Default case
+                _ => throw new GeoGenException("Unhandled object type"),
+            })
+            // Join to a single string
+            .ToJoinedString("; ");
         }
 
         #endregion

@@ -81,7 +81,7 @@ namespace GeoGen.Generator
             return _convertersMap.GetOrAdd(configuration.LooseObjectsHolder, () =>
                 {
                     // Get the loose objects list
-                    var looseObjects = configuration.LooseObjectsHolder.LooseObjects;
+                    var looseObjects = configuration.LooseObjects;
 
                     // Construct all possible to string converters, each representing
                     // a single order of loose objects (in other words, a single remapping of loose objects)

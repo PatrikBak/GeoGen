@@ -28,7 +28,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the constructed configuration object that represents the output of this construction.
         /// </summary>
-        public ConstructedConfigurationObject ConstructionOutput => Configuration.ConstructedObjects.Last();
+        public ConstructedConfigurationObject ConstructionOutput => Configuration.LastConstructedObject;
 
         #endregion
 
@@ -41,7 +41,7 @@ namespace GeoGen.Core
         /// <param name="configuration">The configuration that defines the construction steps. The output of the construction is its last constructed object.</param>
         /// <param name="parameters">The parameters representing the signature of the construction. They must match the loose objects of the defining configuration.</param>
         public ComposedConstruction(string name, Configuration configuration, IReadOnlyList<ConstructionParameter> parameters)
-            : base(name, parameters, configuration.ConstructedObjects.Last().ObjectType)
+            : base(name, parameters, configuration.LastConstructedObject.ObjectType)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 
@@ -51,7 +51,7 @@ namespace GeoGen.Core
             void ThrowException() => throw new GeoGenException("Incorrect composed construction: The loose objects don't correspond to the parameters");
 
             // Wrap the loose objects in a map and for each pair of [type, objects]....
-            var looseObjectsMap = new ConfigurationObjectsMap(configuration.LooseObjectsHolder.LooseObjects);
+            var looseObjectsMap = new ConfigurationObjectsMap(configuration.LooseObjects);
 
             // Make sure the number of the actual object types is the same as the number of the needed object types
             // If not, throw an exception...

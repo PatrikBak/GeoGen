@@ -11,6 +11,23 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Sorts the elements of a sequence in ascending order
+        /// </summary>
+        /// <typeparam name="T">The type of the elements of the enumerable.</typeparam>
+        /// <param name="enumerable">The numerable.</param>
+        /// <returns>The sorter enumerable.</returns>
+        public static IOrderedEnumerable<T> Ordered<T>(this IEnumerable<T> enumerable) => enumerable.OrderBy(element => element);
+
+        /// <summary>
+        /// A fluent version of the string.Join method.
+        /// </summary>
+        /// <typeparam name="T">The type of the elements.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="separator">The separator of elements.</param>
+        /// <returns>The elements joined with the operator.</returns>
+        public static string ToJoinedString<T>(this IEnumerable<T> enumerable, string separator = ", ") => string.Join(separator, enumerable);
+
+        /// <summary>
         /// Projects each element of the source using a given select selector, but
         /// only if the selector does not return the default value of <typeparamref name="TResult"/>.
         /// In that gets returns null.
@@ -82,11 +99,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of the elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="action">The action to invoke.</param>
-        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
-        {
-            // Invoke the method that uses even index and ignore it
-            enumerable.ForEach((element, index) => action(element));
-        }
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) => enumerable.ForEach((element, index) => action(element));
 
         /// <summary>
         /// Invokes a given action for each element in the enumerable.
@@ -148,10 +161,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of the element.</typeparam>
         /// <param name="item">The item.</param>
         /// <returns>The enumerable containing the single given item.</returns>
-        public static IEnumerable<T> ToEnumerable<T>(this T item)
-        {
-            yield return item;
-        }
+        public static IEnumerable<T> ToEnumerable<T>(this T item) => new[] { item };
 
         /// <summary>
         /// Converts an enumerable to a <see cref="HashSet{T}"/>.
@@ -176,10 +186,7 @@ namespace GeoGen.Utilities
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="equalityComparer">The equality comparer.</param>
         /// <returns>The hash set of the enumerable's items.</returns>
-        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> equalityComparer)
-        {
-            return new HashSet<T>(enumerable, equalityComparer);
-        }
+        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> equalityComparer) => new HashSet<T>(enumerable, equalityComparer);
 
         /// <summary>
         /// Converts an enumerable to a <see cref="Dictionary{TKey, TValue}"/> using a custom key selector and a custom value selector.
@@ -401,14 +408,5 @@ namespace GeoGen.Utilities
             // Merge the subsets of every possible size
             return Enumerable.Range(0, items.Length + 1).SelectMany(size => items.Subsets(size));
         }
-
-        /// <summary>
-        /// A fluent version of the string.Join method.
-        /// </summary>
-        /// <typeparam name="T">The type of the elements.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="separator">The separator of elements.</param>
-        /// <returns>The elements joined with the operator.</returns>
-        public static string ToJoinedString<T>(this IEnumerable<T> enumerable, string separator = ", ") => string.Join(separator, enumerable);
     }
 }

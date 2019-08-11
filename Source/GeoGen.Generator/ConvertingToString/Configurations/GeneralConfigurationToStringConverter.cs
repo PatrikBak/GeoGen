@@ -75,7 +75,7 @@ namespace GeoGen.Generator
                 result = new SortedSet<string>(configurationsCache[configuration.PreviousConfiguration]);
 
                 // Convert the new object
-                var newObjectsString = objectToString.ConvertToString(configuration.ConstructedObjects.Last());
+                var newObjectsString = objectToString.ConvertToString(configuration.LastConstructedObject);
 
                 // Add it to the set. Adding an object is O(log n) 
                 result.Add(newObjectsString);

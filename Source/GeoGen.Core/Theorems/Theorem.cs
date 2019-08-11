@@ -107,7 +107,7 @@ namespace GeoGen.Core
                 .Combine()
                 // We have needless objects if and only if there is a definition
                 // containing fewer objects than we're expecting
-                .Any(definition => definition.Flatten().Distinct().Count() < Configuration.ObjectsMap.AllObjects.Count);
+                .Any(definition => definition.Flatten().Distinct().Count() < Configuration.AllObjects.Count);
         }
 
         /// <summary>

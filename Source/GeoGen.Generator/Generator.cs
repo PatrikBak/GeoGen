@@ -110,7 +110,7 @@ namespace GeoGen.Generator
             #region Initialize the initial objects
 
             // For each object...
-            input.InitialConfiguration.ObjectsMap.AllObjects.ForEach(obj =>
+            input.InitialConfiguration.AllObjects.ForEach(obj =>
             {
                 // Make sure it's added to the container
                 objectsContainer.TryAdd(obj, out var equalObject);
@@ -200,11 +200,11 @@ namespace GeoGen.Generator
                     .Where(configuration =>
                     {
                         // Check if the last object is constructible
-                        if (inconstructibleObjects.Contains(configuration.ConstructedObjects.Last()))
+                        if (inconstructibleObjects.Contains(configuration.LastConstructedObject))
                             return false;
 
                         // Make sure the last object is not equal to any previous ones
-                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj == configuration.ConstructedObjects.Last()))
+                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj == configuration.LastConstructedObject))
                             return false;
 
                         // We're sure the configuration is formally correct (no duplicates)
