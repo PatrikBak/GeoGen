@@ -72,30 +72,25 @@ namespace GeoGen.Constructor.Tests
                     // Constructed will be true. Equal object might not be
                     // Just in case...
                     if (equalObject != null)
-                        throw new GeoGenException("Don't add two equal objects to a picture :(");
+                      throw new GeoGenException("Don't add two equal objects to a picture :(");
                 }
 
                 // Return the final picture
                 return picture;
             })
             .ToList();
+            return null;
 
-            #region IPicturesManager mock
-
-            // Mock a manager that doesn't care about inconsistencies
-            var manager = new Mock<IPicturesManager>();
-
-            // Setup enumerator so it returns out pictures
-            manager.Setup(s => s.GetEnumerator()).Returns(() => pictures.GetEnumerator());
-
-            // Setup function executing a given action so that it ignores inconsistencies (unlike the name says)
-            manager.Setup(s => s.ExecuteAndResolvePossibleIncosistencies(It.IsAny<Action>(), It.IsAny<Action<InconsistentPicturesException>>()))
-                   .Callback<Action, Action<InconsistentPicturesException>>((a, c) => a());
-
-            #endregion
-
-            // Create the final result
-            return new ContextualPicture(looseObjects, manager.Object);
+            //// Create a manager
+            //var manager = new Pictures(new PicturesSettings
+            //{
+            //    MaximalAttemptsToReconstructAllPictures = 2,
+            //    MaximalAttemptsToReconstructOnePicture = 2,
+            //    NumberOfPictures = allObjects.Count
+            //});
+            //
+            //// Create the final result
+            //return new ContextualPicture(looseObjects, manager);
         }
 
         #endregion

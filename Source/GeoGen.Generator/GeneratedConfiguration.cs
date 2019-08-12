@@ -28,8 +28,9 @@ namespace GeoGen.Generator
         /// <param name="currentConfiguration">The configuration that was extended.</param>
         /// <param name="newObject">The new object with which this configuration was extended.</param>
         public GeneratedConfiguration(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject newObject)
-            : base(currentConfiguration.LooseObjectsHolder, currentConfiguration.ConstructedObjects.Concat(newObject.ToEnumerable()).ToList())
+            : base(currentConfiguration.LooseObjectsHolder, currentConfiguration.ConstructedObjects.Concat(newObject).ToList())
         {
+            PreviousConfiguration = currentConfiguration;
         }
 
         /// <summary>

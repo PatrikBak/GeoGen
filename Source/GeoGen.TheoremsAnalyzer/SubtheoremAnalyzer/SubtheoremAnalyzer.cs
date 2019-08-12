@@ -616,11 +616,8 @@ namespace GeoGen.TheoremsAnalyzer
             if (equalObject == null)
             {
                 // We need to examine this object with respect to the examined configuration
-                var newObjectData = _constructor.Examine(input.ExaminedTheorem.Configuration, input.ExaminedConfigurationManager, mappedObject);
-
-                // Make sure the examination went fine. If not, we can't do much
-                if (!newObjectData.SuccessfullyExamined)
-                    return Enumerable.Empty<MappingData>();
+                // TODO: Handle exception
+                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationManager, mappedObject);
 
                 // If the object is not constructible, then the mapping is incorrect
                 if (newObjectData.InconstructibleObject != default)

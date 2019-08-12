@@ -9,9 +9,11 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The default implementation of <see cref="IPicture"/>.
+    /// Represents a picture that handles mapping of <see cref="ConfigurationObject"/> to their analytic 
+    /// representations, i.e. <see cref="IAnalyticObject"/>s. This picture assumes each object is present
+    /// exactly ones and doesn't allow duplicity. It is also able to reconstruct all its objects.
     /// </summary>
-    public class Picture : IPicture
+    public class Picture : IEnumerable<(ConfigurationObject configurationObject, IAnalyticObject analyticObject)>
     {
         #region Private fields
 
@@ -52,7 +54,58 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region IObjectsPicture implementation
+        #region Public methods
+
+        /// <summary>
+        /// Gets the analytic representation of a given configuration object. 
+        /// </summary>
+        /// <param name="configurationObject">The configuration object.</param>
+        /// <returns>The analytic object of a given configuration object.</returns>
+        public IAnalyticObject Get(ConfigurationObject configurationObject) => _content.GetRightValue(configurationObject);
+
+        /// <summary>
+        /// Gets the configuration object corresponding to a given analytic object.
+        /// </summary>
+        /// <param name="analyticObject">The analytic object.</param>
+        /// <returns>The configuration object of a given analytic object.</returns>
+        public ConfigurationObject Get(IAnalyticObject analyticObject) => _content.GetLeftValue(analyticObject);
+
+        /// <summary>
+        /// Finds out if a given analytic object is present if the picture.
+        /// </summary>
+        /// <param name="analyticObject">The analytic object.</param>
+        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
+        public bool Contains(IAnalyticObject analyticObject) => _content.ContainsRightKey(analyticObject);
+
+        /// <summary>
+        /// Finds out if a given configuration object is present if the picture.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object.</param>
+        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
+        public bool Contains(ConfigurationObject configurationObject) => _content.ContainsLeftKey(configurationObject);
+
+        /// <summary>
+        /// Clones the picture.
+        /// </summary>
+        /// <returns>The cloned picture.</returns>
+        public Picture Clone()
+        {
+            // Create an empty picture
+            var clonedPicture = new Picture();
+
+            // Copy the content
+            _content.ForEach(pair => clonedPicture._content.Add(pair.item1, pair.item2));
+
+            // Copy the reconstructors
+            _reconstructors.ForEach(clonedPicture._reconstructors.Add);
+
+            // Return it
+            return clonedPicture;
+        }
+
+        #endregion
+
+        #region Internal methods
 
         /// <summary>
         /// Adds given configuration objects to the picture. Their analytic versions are constructed
@@ -61,7 +114,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="objects">The configuration objects to be added to the picture.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic versions of the objects.</param>
-        public void Add(IEnumerable<ConfigurationObject> objects, Func<IReadOnlyList<IAnalyticObject>> constructor)
+        internal void Add(IEnumerable<ConfigurationObject> objects, Func<IReadOnlyList<IAnalyticObject>> constructor)
         {
             // Prepare the constructor function
             bool Construct()
@@ -110,7 +163,7 @@ namespace GeoGen.Constructor
         /// <param name="constructor">The constructor function that performs the construction of the analytic version of the object.</param>
         /// <param name="equalObject">If there already is the same object in the picture, this value will be set to that object. Otherwise it will be null.</param>
         /// <param name="objectConstructed">Indicates if the construction was successful.</param>
-        public void TryAdd(ConfigurationObject configurationObject, Func<IAnalyticObject> constructor, out bool objectConstructed, out ConfigurationObject equalObject)
+        internal void TryAdd(ConfigurationObject configurationObject, Func<IAnalyticObject> constructor, out bool objectConstructed, out ConfigurationObject equalObject)
         {
             // Local function that does the construction and returns whether it's constructible and possibly an equal object
             (bool successful, ConfigurationObject equalObject) Construct()
@@ -142,39 +195,11 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Gets the analytic representation of a given configuration object. 
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytic object of a given configuration object.</returns>
-        public IAnalyticObject Get(ConfigurationObject configurationObject) => _content.GetRightValue(configurationObject);
-
-        /// <summary>
-        /// Gets the configuration object corresponding to a given analytic object.
-        /// </summary>
-        /// <param name="analyticObject">The analytic object.</param>
-        /// <returns>The configuration object of a given analytic object.</returns>
-        public ConfigurationObject Get(IAnalyticObject analyticObject) => _content.GetLeftValue(analyticObject);
-
-        /// <summary>
-        /// Finds out if a given analytic object is present if the picture.
-        /// </summary>
-        /// <param name="analyticObject">The analytic object.</param>
-        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
-        public bool Contains(IAnalyticObject analyticObject) => _content.ContainsRightKey(analyticObject);
-
-        /// <summary>
-        /// Finds out if a given configuration object is present if the picture.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>true, if the object is present in the picture; false otherwise.</returns>
-        public bool Contains(ConfigurationObject configurationObject) => _content.ContainsLeftKey(configurationObject);
-
-        /// <summary>
         /// Tries to reconstruct all the objects in the picture. If the reconstruction fails, 
         /// the content of the picture will remain unchanged.
         /// </summary>
         /// <param name="reconstructionSuccessful">true, if the reconstruction was successful; false otherwise.</param>
-        public void TryReconstruct(out bool reconstructionSuccessful)
+        internal void TryReconstruct(out bool reconstructionSuccessful)
         {
             // Cache the content so we can revert it if the reconstruction fails
             var cachedContent = _content.ToList();
@@ -205,22 +230,6 @@ namespace GeoGen.Constructor
             // If we got here, the reconstruction went fine
             reconstructionSuccessful = true;
         }
-
-        #endregion
-
-        #region IEnumerable implementation
-
-        /// <summary>
-        /// Gets a generic enumerator.
-        /// </summary>
-        /// <returns>A generic enumerator.</returns>
-        public IEnumerator<(ConfigurationObject configurationObject, IAnalyticObject analyticObject)> GetEnumerator() => _content.GetEnumerator();
-
-        /// <summary>
-        /// Gets a non-generic enumerator.
-        /// </summary>
-        /// <returns>A non-generic enumerator.</returns>
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 
@@ -257,6 +266,22 @@ namespace GeoGen.Constructor
             // And set that there is not equal object
             equalObject = default;
         }
+
+        #endregion
+
+        #region IEnumerable implementation
+
+        /// <summary>
+        /// Gets a generic enumerator.
+        /// </summary>
+        /// <returns>A generic enumerator.</returns>
+        public IEnumerator<(ConfigurationObject configurationObject, IAnalyticObject analyticObject)> GetEnumerator() => _content.GetEnumerator();
+
+        /// <summary>
+        /// Gets a non-generic enumerator.
+        /// </summary>
+        /// <returns>A non-generic enumerator.</returns>
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

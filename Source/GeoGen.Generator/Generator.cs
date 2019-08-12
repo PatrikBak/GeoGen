@@ -25,12 +25,12 @@ namespace GeoGen.Generator
         /// <summary>
         /// The factory for creating a container for configuration objects that recognizes equal ones.
         /// </summary>
-        private IConfigurationObjectsContainerFactory _objectsContainerFactory;
+        private readonly IConfigurationObjectsContainerFactory _objectsContainerFactory;
 
         /// <summary>
         /// The factory for creating a container for generated configurations that recognizes equal ones.
         /// </summary>
-        private IConfigurationsContainerFactory _configurationsContainerFactory;
+        private readonly IConfigurationsContainerFactory _configurationsContainerFactory;
 
         /// <summary>
         /// The generator of arguments that are passed to newly created constructed objects.
@@ -94,7 +94,7 @@ namespace GeoGen.Generator
             #region Prepare variables
 
             // The configurations that are to be extended
-            var currentLayer = new List<GeneratedConfiguration>();
+            var currentLayer = new List<GeneratorOutput>();
 
             // The set containing inconstructible objects. 
             var inconstructibleObjects = new HashSet<ConfigurationObject>();
@@ -110,10 +110,10 @@ namespace GeoGen.Generator
             #region Initialize the initial objects
 
             // For each object...
-            input.InitialConfiguration.AllObjects.ForEach(obj =>
+            input.InitialConfiguration.AllObjects.ForEach(configurtionObject =>
             {
                 // Make sure it's added to the container
-                objectsContainer.TryAdd(obj, out var equalObject);
+                objectsContainer.TryAdd(configurtionObject, out var equalObject);
 
                 // Make sure there are no duplicates...
                 if (equalObject != null)
@@ -130,23 +130,30 @@ namespace GeoGen.Generator
             // Add it to the container
             configurationsContainer.Add(firstConfiguration);
 
-            // Add it to the first layer
-            currentLayer.Add(firstConfiguration);
-
-            // Construct it 
-            var firstConfigurationGeoemtryData = _geometryConstructor.Construct(firstConfiguration);
-
-            // Make sure it's been examined correctly
-            if (!firstConfigurationGeoemtryData.SuccessfullyExamined)
-                throw new InitializationException("Drawing of the initial configuration failed.");
+            // Safely execute
+            var (manager, constructionData) = GeneralUtilities.TryExecute(
+                // Constructing the configuration
+                () => _geometryConstructor.Construct(firstConfiguration),
+                // Make sure the exception is caught and re-thrown
+                (GeometryConstructionException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
 
             // Make sure it is constructible
-            if (firstConfigurationGeoemtryData.InconstructibleObject != null)
+            if (constructionData.InconstructibleObject != default)
                 throw new InitializationException($"The initial configuration contains an inconstructible object.");
 
             // Make sure there are no duplicates...
-            if (firstConfigurationGeoemtryData.Duplicates != (null, null))
+            if (constructionData.Duplicates != default)
                 throw new InitializationException($"The initial configuration contains duplicate objects.");
+
+            // Add it to the first layer
+            currentLayer.Add(new GeneratorOutput
+            {
+                Configuration = firstConfiguration,
+                Manager = manager,
+                IterationIndex = 0
+            });
+
+            yield return currentLayer[0];
 
             #endregion
 
@@ -155,11 +162,6 @@ namespace GeoGen.Generator
             // Execute the requested number of iterations
             for (var iterationIndex = 0; iterationIndex < input.NumberOfIterations; iterationIndex++)
             {
-                // In each iteration we initialize a list for new configurations that will be extended
-                // in the next iteration. We're gonna fill it with our the configurations generated
-                // from the current layer
-                var generatedConfigurations = new List<GeneratedConfiguration>();
-
                 // Prepare the enumerable that performs the algorithm that takes a configuration
                 // and extends it with new objects. Each configuration will be projected into one or more generator outputs
                 var generatedOutputEnumerable = currentLayer.SelectMany(currentConfiguration =>
@@ -168,10 +170,9 @@ namespace GeoGen.Generator
                     return input.Constructions.SelectMany(construction =>
                     {
                         // For a given construction first generate all possible arguments
-                        var generatedArguments = _argumentsGenerator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature);
-
-                        // Cast each arguments to a new constructed object
-                        return generatedArguments.Select(arguments => new ConstructedConfigurationObject(construction, arguments));
+                        return _argumentsGenerator.GenerateArguments(currentConfiguration.Configuration.ObjectsMap, construction.Signature)
+                            // Cast each arguments to a new constructed object
+                            .Select(arguments => new ConstructedConfigurationObject(construction, arguments));
                     })
                     // Make sure each constructed object are added to the container so we can recognize equal ones
                     .Select(newObject =>
@@ -181,7 +182,7 @@ namespace GeoGen.Generator
                         objectsContainer.TryAdd(newObject, out var equalObject);
 
                         // If there is an equal object already in the container
-                        if (equalObject != null)
+                        if (equalObject != default)
                         {
                             // Then we'll re-assign the value to be returned further
                             // This also step makes sure that equal objects won't be 
@@ -195,7 +196,7 @@ namespace GeoGen.Generator
                         return newObject;
                     })
                     // For each new object creates a new generated configuration
-                    .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject))
+                    .Select(newObject => new GeneratedConfiguration(currentConfiguration.Configuration, newObject))
                     // Take only valid ones
                     .Where(configuration =>
                     {
@@ -204,7 +205,8 @@ namespace GeoGen.Generator
                             return false;
 
                         // Make sure the last object is not equal to any previous ones
-                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(obj => obj == configuration.LastConstructedObject))
+                        // TODO: Replace with Indexers once they're out
+                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(configurationObject => configurationObject == configuration.LastConstructedObject))
                             return false;
 
                         // We're sure the configuration is formally correct (no duplicates)
@@ -216,7 +218,7 @@ namespace GeoGen.Generator
                         configurationsContainer.TryAdd(configuration, out var equalConfiguration);
 
                         // If there already is an equal version of it, this one is invalid
-                        if (equalConfiguration != null)
+                        if (equalConfiguration != default)
                             return false;
 
                         // We're sure the configuration is new, i.e. we haven't seen an equal version of it yet
@@ -227,38 +229,49 @@ namespace GeoGen.Generator
                         return true;
                     })
                     // Construct them
-                    .Select(configuration => (configuration, geometryData: _geometryConstructor.Construct(configuration)))
+                    .Select(configuration =>
+                    {
+                        // Safely execute
+                        var (manager, data) = GeneralUtilities.TryExecute(
+                            // Constructing of the new object
+                            () => _geometryConstructor.ConstructByCloning(currentConfiguration.Manager, configuration),
+                            // Ignoring a possible failure (such configurations will be discarded anyway)
+                            (GeometryConstructionException e) => { });
+
+                        // Return the result, if the construction worked out, otherwise the default value
+                        return data != default ? (configuration, manager, data) : default;
+                    })
                     // Take only geometrically valid ones
                     .Where(tuple =>
                     {
-                        // Deconstruct 
-                        var (configuration, geometryData) = tuple;
-
                         // If the construction didn't work out, then we have to say the configuration is invalid
-                        if (!geometryData.SuccessfullyExamined)
+                        if (tuple == default)
                             return false;
 
-                        // Find out if there is an inconstructible object
-                        var anyInconstructibleObject = geometryData.InconstructibleObject != null;
+                        // Otherwise deconstruct 
+                        var (configuration, manager, constructionData) = tuple;
+
+                        // Find out if the constructed object is inconstructible 
+                        var anyInconstructibleObject = constructionData.InconstructibleObject != default;
 
                         // Find out if there are any duplicates
-                        var anyDuplicates = geometryData.Duplicates != (null, null);
+                        var anyDuplicates = constructionData.Duplicates != default;
 
                         // If there is an inconstructible object
                         if (anyInconstructibleObject)
                         {
                             // Then we want to remember it
-                            inconstructibleObjects.Add(geometryData.InconstructibleObject);
+                            inconstructibleObjects.Add(constructionData.InconstructibleObject);
 
                             // And trace it
-                            _inconstructibleObjectsTracer?.TraceInconstructibleObject(geometryData.InconstructibleObject);
+                            _inconstructibleObjectsTracer?.TraceInconstructibleObject(constructionData.InconstructibleObject);
                         }
 
                         // If there are duplicates...
                         if (anyDuplicates)
                         {
                             // We deconstruct the older and newer objects
-                            var (olderObject, newerObject) = geometryData.Duplicates;
+                            var (olderObject, newerObject) = constructionData.Duplicates;
 
                             // And trace them
                             _equalObjectsTracer?.TraceEqualObjects(olderObject, newerObject);
@@ -268,35 +281,37 @@ namespace GeoGen.Generator
                         if (anyInconstructibleObject || anyDuplicates)
                             return false;
 
-                        // After all the validations passed, we will extend it further in the next iteration
-                        generatedConfigurations.Add(configuration);
-
                         // Return that it's valid
                         return true;
                     })
                     // Finally construct the output for each of them
                     .Select(tuple => new GeneratorOutput
                     {
-                        // Set the configuration
                         Configuration = tuple.configuration,
-
-                        // Set the manager
-                        Manager = tuple.geometryData.Manager,
-
-                        // Set the iteration index
+                        Manager = tuple.manager,
                         IterationIndex = iterationIndex + 1
                     });
                 });
 
-                // Perform the generation by enumerating the enumerable 
-                // and lazily return the output. This generation will
-                // gradually fill the 'generatedConfigurations' list
-                foreach (var output in generatedOutputEnumerable)
-                    yield return output;
+                #region Output enumeration
 
-                // At this point the next layer is prepared
-                // We can set our generated configurations to be the next layer
-                currentLayer = new List<GeneratedConfiguration>(generatedConfigurations);
+                // Prepare a new layer
+                var newLayer = new List<GeneratorOutput>();
+
+                // Enumerate the output enumerable
+                foreach (var output in generatedOutputEnumerable)
+                {
+                    // Add the output to the new layer
+                    newLayer.Add(output);
+
+                    // Return it
+                    yield return output;
+                }
+
+                // Set the current layer to the new one
+                currentLayer = newLayer;
+
+                #endregion
             }
 
             #endregion

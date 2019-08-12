@@ -52,14 +52,15 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddConstructor(this IKernel kernel)
         {
-            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
-            kernel.Bind<IPicture>().To<Picture>();
-            kernel.Bind<IContextualPicture>().To<ContextualPicture>();
+            kernel.Bind<ContextualPicture>().ToSelf();
+
+            kernel.BindsWithDynamicSettings<Pictures, Pictures, PicturesSettings>();
+            kernel.Bind<IPicturesFactory>().ToFactory();
 
             // Bindings with dynamic settings
-            kernel.BindsWithDynamicSettings<IPicturesManager, PicturesManager, PicturesManagerSettings>();
+            kernel.BindsWithDynamicSettings<IGeometryConstructor, GeometryConstructor, PicturesSettings>();
 
             // Predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
@@ -79,8 +80,6 @@ namespace GeoGen.DependenciesResolver
 
             // Factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory();
-            kernel.Bind<IPicturesManagerFactory>().ToFactory();
-            kernel.Bind<IPictureFactory>().ToFactory();
             kernel.Bind<IContextualPictureFactory>().ToFactory();
 
             // Tracers

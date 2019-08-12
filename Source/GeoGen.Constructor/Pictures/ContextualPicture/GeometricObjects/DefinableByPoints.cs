@@ -9,12 +9,31 @@ namespace GeoGen.Constructor
     /// </summary>
     public abstract class DefinableByPoints : GeometricObject
     {
+        #region Private fields
+
+        /// <summary>
+        /// The points that lie on this object.
+        /// </summary>
+        private readonly HashSet<PointObject> _points;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
         /// Gets the points that lie on this object.
         /// </summary>
-        public HashSet<PointObject> Points { get; }
+        public IReadOnlyCollection<PointObject> Points => _points;
+
+        #endregion
+
+        #region Internal methods
+
+        /// <summary>
+        /// Adds the points to the object.
+        /// </summary>
+        /// <param name="point">The point.</param>
+        internal void AddPoint(PointObject point) => _points.Add(point);
 
         #endregion
 
@@ -38,26 +57,17 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region Constructors
+        #region Constructor
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="DefinableByPoints"/> class wrapping a given circle <see cref="ConfigurationObject"/>.
+        /// Initialize a new instance of the <see cref="DefinableByPoints"/> class.
         /// </summary>
         /// <param name="configurationObject">The configuration object represented by this geometric object.</param>
-        protected DefinableByPoints(ConfigurationObject configurationObject)
+        /// <param name="points">The points that define this object.</param>
+        protected DefinableByPoints(ConfigurationObject configurationObject, IEnumerable<PointObject> points)
                 : base(configurationObject)
         {
-            Points = new HashSet<PointObject>();
-        }
-
-        /// <summary>
-        /// Initialize a new instance of the <see cref="DefinableByPoints"/> class by <see cref="PointObject"/>s.
-        /// </summary>
-        /// <param name="points">The points that define this object.</param>
-        protected DefinableByPoints(params PointObject[] points)
-                : base(configurationObject: null)
-        {
-            Points = new HashSet<PointObject>(points);
+            _points = new HashSet<PointObject>(points);
         }
 
         #endregion

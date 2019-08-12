@@ -17,7 +17,7 @@ namespace GeoGen.TheoremsFinder
         /// </summary>
         /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(ContextualPicture contextualPicture)
         {
             // Find new circles. At least one of them must be included in every new theorem
             var newCircles = contextualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
@@ -51,7 +51,7 @@ namespace GeoGen.TheoremsFinder
             foreach (var (circle1, circle2) in NewPairOfCircles())
             {
                 // Construct the verifier function
-                bool Verify(IPicture picture)
+                bool Verify(Picture picture)
                 {
                     // Cast the circles to their analytic versions
                     var analyticCircle1 = contextualPicture.GetAnalyticObject<Circle>(circle1, picture);

@@ -28,7 +28,7 @@ namespace GeoGen.TheoremsFinder
         /// <summary>
         /// Gets or sets the function that is able to tell if the theorem is true in a given picture.
         /// </summary>
-        public Func<IPicture, bool> VerificationFunction { get; set; }
+        public Func<Picture, bool> VerificationFunction { get; set; }
 
         #endregion
 

@@ -14,9 +14,9 @@ namespace GeoGen.ConsoleLauncher
         public List<BaseLoggerSettings> Loggers { get; set; }
 
         /// <summary>
-        /// The settings for the <see cref="PicturesManager"/> used in the algorithm.
+        /// The settings for the <see cref="Pictures"/> used in the algorithm.
         /// </summary>
-        public PicturesManagerSettings PicturesManagerSettings { get; set; }
+        public PicturesSettings PicturesManagerSettings { get; set; }
 
         /// <summary>
         /// The settings of the folder containing inputs.

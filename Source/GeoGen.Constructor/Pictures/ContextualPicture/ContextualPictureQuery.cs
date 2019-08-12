@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a query that can be asked of a <see cref="IContextualPicture"/>.
+    /// Represents a query that can be asked of a <see cref="ContextualPicture"/>s.
     /// </summary>
     public class ContextualPictureQuery
     {

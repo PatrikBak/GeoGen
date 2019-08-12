@@ -1,7 +1,9 @@
 ﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
+using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +43,8 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly IConfigurationObjectsContainerFactory _containerFactory;
 
+        private readonly IPicturesFactory _factory;
+
         #endregion
 
         #region Constructor
@@ -73,27 +77,57 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>A lazy enumerable of all the generated output.</returns>
         public IEnumerable<AlgorithmOutput> GenerateOutputs(GeneratorInput input)
         {
+            // Prepare the map for pictures
+            var picturesMap = new Dictionary<Configuration, ContextualPicture>();
+
+            var first = false;
+
             // Perform the generation
             return _generator.Generate(input).Select(output =>
             {
-                // Prepare a variable holding the contextual picture to be used by the analyzers
-                IContextualPicture picture = null;
+                // Get the configuration for comfort
+                var configuration = output.Configuration;
 
-                try
+                // Prepare a picture
+                var picture = default(ContextualPicture);
+
+                // If this is the initial configuration
+                if (configuration.PreviousConfiguration == null)
+                //if(true)
                 {
-                    // Let the manager safely create an instance of the contextual picture
-                    picture = _pictureFactory.Create(output.Configuration.AllObjects, output.Manager);
+                  // Safely execute
+                  picture = GeneralUtilities.TryExecute(
+                       // Creating of the picture
+                       () => _pictureFactory.Create(output.Manager),
+                       // While ignoring potential issues (such a configuration will be discarded anyway)
+                       (InconstructibleContextualPicture _) => { });
                 }
-                catch (InconstructibleContextualPicture)
+                // If this is not an initial one
+                else
                 {
-                    // If we cannot create a contextual picture, we cannot do much
+                    // Get the cached picture from the map
+                    picture = picturesMap[configuration.PreviousConfiguration].ConstructByCloning(output.Manager);
                 }
+                
+                // Add it to the map
+                picturesMap.Add(configuration, picture);
 
                 // Return the output together with the constructed picture
                 return (output, picture);
             })
             // Take only such pairs where the picture was successfully created
             .Where(pair => pair.picture != null)
+            // Skip the initial one
+            .Where(pair =>
+            {
+                if (!first)
+                {
+                    first = true;
+                    return false;
+                }
+
+                return true;
+            })
             // For each such pair perform the theorem analysis
             .Select(pair =>
             {

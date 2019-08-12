@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using System.Collections.Generic;
 
 namespace GeoGen.Constructor
 {
@@ -20,20 +21,30 @@ namespace GeoGen.Constructor
         #region Constructors
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="LineObject"/> class wrapping a given line <see cref="ConfigurationObject"/>.
+        /// Initialize a new instance of the <see cref="LineObject"/> class.
         /// </summary>
-        /// <param name="configurationObject">The line configuration object represented by this geometric object.</param>
-        public LineObject(ConfigurationObject configurationObject)
-                : base(configurationObject)
+        /// <param name="points">The points that define this line.</param>
+        public LineObject(params PointObject[] points)
+                : base(configurationObject: null, points)
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="LineObject"/> class by at least 2 <see cref="PointObject"/>s that it passes through.
+        /// Initialize a new instance of the <see cref="LineObject"/> class.
         /// </summary>
+        /// <param name="configurationObject">The configuration object represented by this line.</param>
         /// <param name="points">The points that define this line.</param>
-        public LineObject(params PointObject[] points)
-                : base(points)
+        public LineObject(ConfigurationObject configurationObject, IEnumerable<PointObject> points)
+                : base(configurationObject, points)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="LineObject"/> class.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object represented by this line.</param>
+        public LineObject(ConfigurationObject configurationObject)
+                : base(configurationObject, new PointObject[0])
         {
         }
 

@@ -1,3 +1,5 @@
+using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,64 +8,70 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The default implementation of <see cref="IPicturesManager"/>. 
+    /// Represents a collection of <see cref="Picture"/>s. 
     /// </summary>
-    public class PicturesManager : IPicturesManager
+    public class Pictures : IEnumerable<Picture>
     {
         #region Private fields
 
         /// <summary>
-        /// The list of all the pictures managed by this manager.
+        /// The list of pictures that are contained in this collection.
         /// </summary>
-        private readonly List<IPicture> _pictures;
+        private readonly IReadOnlyList<Picture> _pictures;
 
         /// <summary>
-        /// The settings for the manager.
+        /// The settings.
         /// </summary>
-        private readonly PicturesManagerSettings _settings;
+        private readonly PicturesSettings _settings;
+
+        #endregion
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the configuration that is drawn in the pictures.
+        /// </summary>
+        public Configuration Configuration { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PicturesManager"/> class.
+        /// Initializes a new instance of the <see cref="Pictures"/> class.
         /// </summary>
-        /// <param name="settings">The settings for the manager.</param>
-        /// <param name="factory">The factory for creating empty pictures.</param>
-        public PicturesManager(PicturesManagerSettings settings, IPictureFactory factory)
+        /// <param name="configuration">The configuration that is drawn in the pictures.</param>
+        /// <param name="settings">The settings.</param>
+        public Pictures(Configuration configuration, PicturesSettings settings)
+            : this(configuration, settings, GeneralUtilities.ExecuteNTimes(settings.NumberOfPictures, () => new Picture()).ToList())
         {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Pictures"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration that is drawn in the pictures.</param>
+        /// <param name="settings">The settings.</param>
+        /// <param name="pictures">The list of pictures that are contained in this collection.</param>
+        private Pictures(Configuration configuration, PicturesSettings settings, IReadOnlyList<Picture> pictures)
+        {
+            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-
-            #region Make sure the settings have correct values
-
-            if (_settings.NumberOfPictures <= 0)
-                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.NumberOfPictures), settings.NumberOfPictures, "There has to be at least one picture.");
-
-            if (_settings.MaximalAttemptsToReconstructOnePicture < 0)
-                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.MaximalAttemptsToReconstructOnePicture), settings.MaximalAttemptsToReconstructOnePicture, "The value cannot be negative.");
-
-            if (_settings.MaximalAttemptsToReconstructAllPictures < 0)
-                throw new ArgumentOutOfRangeException(nameof(PicturesManagerSettings.MaximalAttemptsToReconstructAllPictures), settings.MaximalAttemptsToReconstructAllPictures, "The value cannot be negative.");
-
-            #endregion
-
-            // Create the requested number of pictures
-            _pictures = Enumerable.Range(0, settings.NumberOfPictures).Select(i => factory.CreatePicture()).ToList();
+            _pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
         }
 
         #endregion
 
-        #region IObjectsPicturesManager implementation
+        #region Internal methods
 
         /// <summary>
         /// Performs a given function that might cause an <see cref="InconsistentPicturesException"/> and tries 
         /// to handle it by reconstructing all the pictures. If the exception couldn't be handled, throws an
         /// <see cref="UnresolvedInconsistencyException"/>.
         /// </summary>
-        /// <param name="function">The action to be executed.</param>
+        /// <param name="action">The action to be executed.</param>
         /// <param name="exceptionCallback">The action called after an <see cref="InconsistentPicturesException"/> occurs.</param>
-        public void ExecuteAndResolvePossibleIncosistencies(Action action, Action<InconsistentPicturesException> exceptionCallback)
+        internal void ExecuteAndReconstructAtIncosistencies(Action action, Action<InconsistentPicturesException> exceptionCallback)
         {
             // Prepare a variable holding the number of attempts to reconstruct all the pictures
             var attempts = 0;
@@ -96,18 +104,41 @@ namespace GeoGen.Constructor
 
                         // If it failed, the whole reconstruction has
                         if (!success)
+                        {
+                            // Make sure it's noted
                             throw new UnresolvedInconsistencyException(
                                 "The reconstruction of the pictures failed, because the maximum number of attempts " +
                                $"{_settings.MaximalAttemptsToReconstructOnePicture} to reconstructed a picture has been reached.");
+                        }
                     }
                 }
             }
 
             // If we reached the maximal number of reconstructions, we've failed as well
             if (attempts == _settings.MaximalAttemptsToReconstructAllPictures)
+            {
+                // Make sure it's noted
                 throw new UnresolvedInconsistencyException(
                     "The reconstruction of the pictures failed, because the maximum number of attempts " +
                    $"{_settings.MaximalAttemptsToReconstructAllPictures} to do so has been reached.");
+            }
+        }
+
+        /// <summary>
+        /// Clones the pictures.
+        /// </summary>
+        /// <param name="configuration">The configuration that should be represented by the cloned pictures.</param>
+        /// <returns>The cloned pictures.</returns>
+        internal Pictures Clone(Configuration configuration)
+        {
+            // Clone the pictures
+            var picturesList = _pictures.Select(picture => picture.Clone()).ToList();
+
+            // Create a pictures instance with the cloned pictures
+            var pictures = new Pictures(configuration, _settings, picturesList);
+
+            // Return it
+            return pictures;
         }
 
         #endregion
@@ -119,7 +150,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="picture">The picture to be reconstructed.</param>
         /// <param name="success">The parameter indicating if the reconstruction was successful.</param>
-        private void TryReconstruct(IPicture picture, out bool success)
+        private void TryReconstruct(Picture picture, out bool success)
         {
             // Prepare a variable holding the number of attempts to reconstruct
             var attempts = 0;
@@ -150,7 +181,7 @@ namespace GeoGen.Constructor
         /// Gets a generic enumerator.
         /// </summary>
         /// <returns>A generic enumerator.</returns>
-        public IEnumerator<IPicture> GetEnumerator() => _pictures.GetEnumerator();
+        public IEnumerator<Picture> GetEnumerator() => _pictures.GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.

@@ -63,6 +63,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="input">The input for the algorithm.</param>
         public void Run(LoadedGeneratorInput input)
         {
+
             #region Prepare writers
 
             // Prepare the output path
@@ -202,6 +203,8 @@ namespace GeoGen.ConsoleLauncher
                 WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: true));
             }
 
+
+
             // Write end
             WriteLineToBoth("\n------------------------------------------------");
             WriteLineToBoth($"Generated configurations: {generatedConfigurations}");
@@ -210,7 +213,7 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToBoth($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log that we're done
-            Log.LoggingManager.LogInfo($"Algorithm has finished.");
+            Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
         }
 
         /// <summary>

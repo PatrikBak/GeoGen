@@ -24,12 +24,12 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The analyzer of relevant theorems that is reused.
         /// </summary>
-        private IRelevantTheoremsAnalyzer _analyzer;
+        private readonly IRelevantTheoremsAnalyzer _analyzer;
 
         /// <summary>
         /// The constructor of configurations.
         /// </summary>
-        private IGeometryConstructor _constructor;
+        private readonly IGeometryConstructor _constructor;
 
         /// <summary>
         /// The factory for creating contextual pictures that are required by the relevant theorem analyzer.
@@ -67,19 +67,7 @@ namespace GeoGen.ConsoleLauncher
             #region Construction
 
             // Construct the configuration
-            var geometryData = _constructor.Construct(configuration);
-
-            // Make sure it's correct
-            if (!geometryData.SuccessfullyExamined)
-                throw new GeoGenException("The configuration couldn't be examined.");
-
-            // Make sure it is constructible
-            if (geometryData.InconstructibleObject != null)
-                throw new GeoGenException("The configuration contains inconstructible objects.");
-
-            // Make sure it has no duplicates
-            if (geometryData.Duplicates != (null, null))
-                throw new GeoGenException("The configurations contains duplicate objects.");
+            var (manager, constructionData) = _constructor.Construct(configuration);
 
             #endregion
 
@@ -106,10 +94,10 @@ namespace GeoGen.ConsoleLauncher
                     try
                     {
                         // Create a contextual picture
-                        var picture = _factory.Create(_configuration.AllObjects, geometryData.Manager);
+                        var picture = _factory.Create(manager);
 
                         // Run the analysis
-                        return _analyzer.Analyze(_configuration, geometryData.Manager, picture);
+                        return _analyzer.Analyze(_configuration, manager, picture);
                     }
                     catch (InconstructibleContextualPicture)
                     {

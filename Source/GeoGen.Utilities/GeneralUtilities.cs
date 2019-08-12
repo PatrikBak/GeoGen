@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Utilities
 {
@@ -31,6 +32,38 @@ namespace GeoGen.Utilities
             {
                 // Perform the action
                 action();
+            }
+        }
+
+        /// <summary>
+        /// Executes a given function a given number of times and returns the results.
+        /// </summary>
+        /// <param name="numberOfTimes">The number of times to execute the function.</param>
+        /// <param name="function">The function to be executed.</param>
+        public static IEnumerable<T> ExecuteNTimes<T>(int numberOfTimes, Func<T> function)
+        {
+            // For the given number of times
+            for (var i = 0; i < numberOfTimes; i++)
+            {
+                // Execute the function
+                yield return function();
+            }
+        }
+
+        public static TResult TryExecute<TResult, TException>(Func<TResult> function, Action<TException> exceptionHandler) where TException : Exception
+        {
+            try
+            {
+                // Try to call the function
+                return function();
+            }
+            catch (TException e)
+            {
+                // Handle the exception
+                exceptionHandler(e);
+
+                // Return the default value
+                return default;
             }
         }
     }

@@ -16,7 +16,7 @@ namespace GeoGen.TheoremsFinder
         /// </summary>
         /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(ContextualPicture contextualPicture)
         {
             // Take the new point
             var point = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery

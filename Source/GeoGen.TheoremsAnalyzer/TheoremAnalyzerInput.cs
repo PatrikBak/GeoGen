@@ -22,12 +22,12 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Gets or sets the manager of pictures where the configuration is drawn.
         /// </summary>
-        public IPicturesManager Manager { get; set; }
+        public Pictures Manager { get; set; }
 
         /// <summary>
         /// Gets or sets the contextual picture where the configuration is drawn.
         /// </summary>
-        public IContextualPicture ContextualPicture { get; set; }
+        public ContextualPicture ContextualPicture { get; set; }
 
         /// <summary>
         /// Gets or sets the container where the objects of the examined configuration should be contained.

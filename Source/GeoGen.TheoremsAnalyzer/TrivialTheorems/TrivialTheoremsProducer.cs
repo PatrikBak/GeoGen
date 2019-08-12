@@ -20,11 +20,6 @@ namespace GeoGen.TheoremsAnalyzer
         #region Dependencies
 
         /// <summary>
-        /// The factory for creating contextual pictures used to determine theorems of composed constructions.
-        /// </summary>
-        private readonly IContextualPictureFactory _pictureFactory;
-
-        /// <summary>
         /// The constructor used to determine theorems of composed constructions.
         /// </summary>
         private readonly IGeometryConstructor _constructor;
@@ -44,7 +39,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// Only theorems that can be then remapped to trivial theorem are stored, i.e. the ones
         /// that can be stated with just the loose objects of the <see cref="ComposedConstruction.Configuration"/>.
         /// </summary>
-        private Dictionary<ComposedConstruction, List<Theorem>> _composedConstructionsTheorems;
+        private readonly Dictionary<ComposedConstruction, List<Theorem>> _composedConstructionsTheorems;
 
         #endregion
 
@@ -53,12 +48,10 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="TrivialTheoremsProducer"/> class.
         /// </summary>
-        /// <param name="pictureFactory">The factory for creating contextual pictures used to determine theorems of composed constructions.</param>
         /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
         /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
-        public TrivialTheoremsProducer(IContextualPictureFactory pictureFactory, IGeometryConstructor constructor, IRelevantTheoremsAnalyzer finder)
+        public TrivialTheoremsProducer(IGeometryConstructor constructor, IRelevantTheoremsAnalyzer finder)
         {
-            _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
 
@@ -281,29 +274,33 @@ namespace GeoGen.TheoremsAnalyzer
             // Create a configuration holding the same loose objects, and the final constructed one
             var configuration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { constructedObject });
 
-            // Construct the defining configuration
-            var geometryData = _constructor.Construct(configuration);
+            // Local function that throws an exception informing about the examination failure
+            void ThrowIncorrectConstructionException(string message, Exception e = null) => throw new GeoGenException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
 
-            // Make sure it is correct
-            if (!geometryData.SuccessfullyExamined || geometryData.InconstructibleObject != null || geometryData.Duplicates != (null, null))
-                throw new GeoGenException($"Cannot examine construction {composedConstruction.Name}.");
+            // Safely execute
+            var (manager, data) = GeneralUtilities.TryExecute(
+                // Constructing of the new object
+                () => _constructor.Construct(configuration),
+                // Make sure the exception is caught and re-thrown
+                (GeometryConstructionException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.",e));
 
-            // Prepare its contextual picture
-            var contextualPicture = default(IContextualPicture);
+            // Make sure it has no inconstructible objects
+            if (data.InconstructibleObject != default)
+                ThrowIncorrectConstructionException("The defining configuration contains an inconstructible object.");
 
-            try
-            {
-                // Try to construct it
-                contextualPicture = _pictureFactory.Create(configuration.AllObjects, geometryData.Manager);
-            }
-            catch (InconstructibleContextualPicture)
-            {
-                // Make the developer aware
-                throw new GeoGenException($"Cannot examine construction {composedConstruction.Name}.");
-            }
+            // Make sure it has no duplicates
+             if(data.Duplicates != default)
+                ThrowIncorrectConstructionException("The defining configuration contains duplicate objects.");
+
+            // Safely execute
+            var contextualPicture = GeneralUtilities.TryExecute(
+                // Construct of the contextual picture
+                () => new ContextualPicture(manager),
+                // Make sure the exception is caught and re-thrown
+                (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
-            return _finder.Analyze(configuration, geometryData.Manager, contextualPicture)
+            return _finder.Analyze(configuration, manager, contextualPicture)
                 // For each theorem we need to replace the artificially created
                 // object with the original one from the defining configuration
                 .Select(theorem =>

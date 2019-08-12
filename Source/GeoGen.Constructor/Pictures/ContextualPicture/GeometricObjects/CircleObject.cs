@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using System.Collections.Generic;
 
 namespace GeoGen.Constructor
 {
@@ -20,20 +21,30 @@ namespace GeoGen.Constructor
         #region Constructors
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="CircleObject"/> class wrapping a given circle <see cref="ConfigurationObject"/>.
+        /// Initialize a new instance of the <see cref="CircleObject"/> class.
         /// </summary>
-        /// <param name="configurationObject">The circle configuration object represented by this geometric object.</param>
-        public CircleObject(ConfigurationObject configurationObject)
-                : base(configurationObject)
+        /// <param name="points">The points that define this circle.</param>
+        public CircleObject(params PointObject[] points)
+                : base(configurationObject:null, points)
         {
         }
 
         /// <summary>
-        /// Initialize a new instance of the <see cref="CircleObject"/> class by at least 3 <see cref="PointObject"/>s that it passes through.
+        /// Initialize a new instance of the <see cref="CircleObject"/> class.
         /// </summary>
+        /// <param name="configurationObject">The configuration object represented by this circle.</param>
         /// <param name="points">The points that define this circle.</param>
-        public CircleObject(params PointObject[] points)
-                : base(points)
+        public CircleObject(ConfigurationObject configurationObject, IEnumerable<PointObject> points)
+                : base(configurationObject, points)
+        {
+        }
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="CircleObject"/> class.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object represented by this circle.</param>
+        public CircleObject(ConfigurationObject configurationObject)
+                : base(configurationObject, new PointObject[0])
         {
         }
 

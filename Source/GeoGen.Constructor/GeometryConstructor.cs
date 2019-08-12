@@ -13,9 +13,9 @@ namespace GeoGen.Constructor
         #region Dependencies
 
         /// <summary>
-        /// The factory for creating picture managers that hold the actual geometry.
+        /// The factory for creating pictures.
         /// </summary>
-        private readonly IPicturesManagerFactory _factory;
+        private readonly IPicturesFactory _factory;
 
         /// <summary>
         /// The resolver of object constructors for particular constructions.
@@ -28,16 +28,16 @@ namespace GeoGen.Constructor
         private readonly IGeometryConstructionFailureTracer _tracer;
 
         #endregion
-
+        
         #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeometryConstructor"/> class.
         /// </summary>
-        /// <param name="factory">The factory for creating picture managers that hold the actual geometry.</param>
+        /// <param name="factory">The factory for creating pictures.</param>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
         /// <param name="tracer">The tracer for objects that couldn't be constructed because of inconsistencies between pictures.</param>
-        public GeometryConstructor(IPicturesManagerFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
+        public GeometryConstructor(IPicturesFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
@@ -49,34 +49,35 @@ namespace GeoGen.Constructor
         #region IGeometryConstructor implementation
 
         /// <summary>
-        /// Constructs a given configuration.
+        /// Constructs a given <see cref="Configuration"/>. Throws a <see cref="GeometryConstructionException"/>
+        /// if the construction couldn't be carried out.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
-        /// <returns>The geometry data of the configuration.</returns>
-        public GeometryData Construct(Configuration configuration)
+        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        public (Pictures pictures, ConstructionData data) Construct(Configuration configuration)
         {
-            // Create a manager for the configuration
-            var manager = _factory.CreatePicturesManager();
-
+            // Create pictures for the configuration
+            var pictures = _factory.CreatePicturesManager(configuration);
+            
             // First we add loose objects to all pictures
-            foreach (var pictures in manager)
+            foreach (var picture in pictures)
             {
-                // Objects are constructed using the loose objects constructor
-                pictures.Add(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
+                // Objects are constructed using the private helper method
+                picture.Add(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
             }
 
             // Then we add all the constructed object
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
                 // Prepare the variable holding the final result
-                GeometryData data = null;
+                ConstructionData data = null;
 
                 try
                 {
                     // Execute the construction using our helper function
-                    manager.ExecuteAndResolvePossibleIncosistencies(
+                    pictures.ExecuteAndReconstructAtIncosistencies(
                         // Call the internal construction function
-                        () => data = ConstructObject(constructedObject, manager, addToPictures: true),
+                        () => data = ConstructObject(constructedObject, pictures, addToPictures: true),
                         // Trace any inconsistency exception
                         e => _tracer?.TraceInconsistencyWhileDrawingConfiguration(configuration, constructedObject, e.Message));
                 }
@@ -86,52 +87,84 @@ namespace GeoGen.Constructor
                     // We trace it
                     _tracer?.TraceUnresolvedInconsistencyWhileDrawingConfiguration(configuration, e.Message);
 
-                    // And return failure
-                    return new GeometryData { SuccessfullyExamined = false };
+                    // And re-throw the exception
+                    throw new GeometryConstructionException("The configuration couldn't be constructed.", e);
                 }
 
                 // At this point the construction of the object is completed
                 // Find out if the result is correct
-                var correctResult = data.InconstructibleObject == null && data.Duplicates == (null, null);
+                var correctResult = data.InconstructibleObject == null && data.Duplicates == default;
 
                 // If it's not, we directly return the current data without dealing with the remaining objects
                 if (!correctResult)
-                    return data;
+                    return default;
             }
 
             // If we got here, then there are no inconstructible objects and no duplicates
-            return new GeometryData
-            {
-                // Set that we drew it
-                SuccessfullyExamined = true,
-
-                // Set the manager
-                Manager = manager
-            };
+            return (pictures, new ConstructionData());
         }
 
         /// <summary>
-        /// Performs geometric examination of a given constructed object with respect to a given pictures manager
-        /// that represents a given configuration.
-        /// The object will be constructed, but won't be added to the manager's pictures.
+        /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
+        /// It is assumed that the new configuration differs only by the last object from the already 
+        /// constructed one. Thus only the last object is constructed. Throws a 
+        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
         /// </summary>
-        /// <param name="configuration">The configuration that is drawn in the manager's pictures.</param>
-        /// <param name="manager">The manager of pictures where all the needed objects for the constructed object should be drawn.</param>
-        /// <param name="constructedObject">The constructed configuration object to be examined.</param>
-        /// <returns>The geometry data of the object.</returns>
-        public GeometryData Examine(Configuration configuration, IPicturesManager manager, ConstructedConfigurationObject constructedObject)
+        /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
+        /// <param name="newConfiguration">The new configuration that should be drawn.</param>
+        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        public (Pictures pictures, ConstructionData data) ConstructByCloning(Pictures oldConfigurationPictures, Configuration newConfiguration)
+        {
+            // Clone the pictures
+            var pictures = oldConfigurationPictures.Clone(newConfiguration);
+
+            try
+            {
+                // Prepare the result
+                var data = default(ConstructionData);
+
+                // Execute the construction without adding the object to the picture
+                pictures.ExecuteAndReconstructAtIncosistencies(
+                    // Call the internal construction function
+                    () => data = ConstructObject(newConfiguration.LastConstructedObject, pictures, addToPictures: true),
+                    // Trace any inconsistency exception
+                    e => _tracer?.TraceInconsistencyWhileDrawingConfiguration(newConfiguration, newConfiguration.LastConstructedObject, e.Message));
+
+                // Return the data
+                return (pictures, data);
+            }
+            // If there are unresolvable inconsistencies...
+            catch (UnresolvedInconsistencyException e)
+            {
+                // We trace it
+                _tracer?.TraceInconsistencyWhileDrawingConfiguration(newConfiguration, newConfiguration.LastConstructedObject, e.Message);
+
+                // And re-throw the exception
+                throw new GeometryConstructionException("The configuration couldn't be constructed.", e);
+            }
+        }
+
+        /// <summary>
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
+        /// It is assumed that the constructed object can be construed in the passed pictures. Throws a 
+        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// </summary>
+        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <returns>The construction data.</returns>
+        public ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject)
         {
             try
             {
                 // Prepare the result
-                var data = default(GeometryData);
+                var data = default(ConstructionData);
 
                 // Execute the construction without adding the object to the picture
-                manager.ExecuteAndResolvePossibleIncosistencies(
+                pictures.ExecuteAndReconstructAtIncosistencies(
                     // Call the internal construction function
-                    () => data = ConstructObject(constructedObject, manager, addToPictures: false),
+                    () => data = ConstructObject(constructedObject, pictures, addToPictures: false),
                     // Trace any inconsistency exception
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(configuration, constructedObject, e.Message));
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
 
                 // Return the data
                 return data;
@@ -140,10 +173,10 @@ namespace GeoGen.Constructor
             catch (UnresolvedInconsistencyException e)
             {
                 // We trace it
-                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(configuration, constructedObject, e.Message);
+                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message);
 
-                // And return failure
-                return new GeometryData { SuccessfullyExamined = false };
+                // And re-throw the exception
+                throw new GeometryConstructionException("The object couldn't be examined.", e);
             }
         }
 
@@ -152,13 +185,13 @@ namespace GeoGen.Constructor
         #region Private methods
 
         /// <summary>
-        /// Performs the construction of a given constructed object with respect to all the pictures of a given manager.
+        /// Performs the construction of a given constructed object with respect to all the pictures of given pictures.
         /// </summary>
         /// <param name="constructedObject">The object to be constructed.</param>
-        /// <param name="manager">The manager of all the pictures.</param>
+        /// <param name="pictures">The pictures where the input for the construction is drawn.</param>
         /// <param name="addToPictures">Indicates if the object should be added to the pictures.</param>
         /// <returns>The result of the construction.</returns>
-        private GeometryData ConstructObject(ConstructedConfigurationObject constructedObject, IPicturesManager manager, bool addToPictures)
+        private ConstructionData ConstructObject(ConstructedConfigurationObject constructedObject, Pictures pictures, bool addToPictures)
         {
             // Initialize a variable indicating if the construction is possible
             bool canBeConstructed = default;
@@ -170,7 +203,7 @@ namespace GeoGen.Constructor
             var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
             // Add the object to all the pictures
-            foreach (var picture in manager)
+            foreach (var picture in pictures)
             {
                 // Prepare value indicating whether the object was constructed in the picture
                 var objectConstructed = default(bool);
@@ -199,12 +232,12 @@ namespace GeoGen.Constructor
 
                 // We need to first check if some other picture didn't mark constructibility in the opposite way
                 // If yes, we have an inconsistency
-                if (picture != manager.First() && canBeConstructed != objectConstructed)
+                if (picture != pictures.First() && canBeConstructed != objectConstructed)
                     throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
 
                 // Now we need to check if some other picture didn't find a different duplicate 
                 // If yes, we have an inconsistency
-                if (picture != manager.First() && duplicate != equalObject)
+                if (picture != pictures.First() && duplicate != equalObject)
                     throw new InconsistentPicturesException("The fact whether the object has an equal version was not determined consistently.");
 
                 // Set the found values
@@ -213,26 +246,20 @@ namespace GeoGen.Constructor
             }
 
             //  Now the object is handled with respect to all the pictures
-            return new GeometryData
+            return new ConstructionData
             {
-                // Set that the object was examined correctly
-                SuccessfullyExamined = true,
-
                 // Set the inconstructible object to the given one, if it can't be constructed
                 InconstructibleObject = !canBeConstructed ? constructedObject : default,
 
                 // Set the duplicates to the pair of this object and the found duplicate, if there's any
-                Duplicates = duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default,
-
-                // Set the manager
-                Manager = manager
+                Duplicates = duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default
             };
         }
 
         /// <summary>
         /// Constructs analytic objects having a given layout.
         /// </summary>
-        /// <param name="layout">The layout of loose objects.</param>
+        /// <param name="layout">The layout of loose objects.</param>2
         /// <returns>The constructed analytic objects.</returns>
         private IAnalyticObject[] Construct(LooseObjectsLayout layout)
         {

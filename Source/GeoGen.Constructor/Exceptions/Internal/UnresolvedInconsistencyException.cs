@@ -4,11 +4,11 @@ namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents an <see cref="ConstructorException"/> that is thrown when there are inconsistencies
-    /// between <see cref="IPicture"/>s of a <see cref="IPicturesManager"/> that
+    /// between <see cref="Picture"/>s of a <see cref="Pictures"/> that
     /// couldn't be automatically resolved. For more details about inconsistencies see the documentation
     /// of <see cref="InconsistentPicturesException"/>. This exception should be handled internally.
     /// </summary>
-    public class UnresolvedInconsistencyException : ConstructorException
+    internal class UnresolvedInconsistencyException : ConstructorException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="UnresolvedInconsistencyException"/> class.

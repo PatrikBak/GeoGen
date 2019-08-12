@@ -15,6 +15,6 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="constructedObjects">The object to be constructed.</param>
         /// <returns>The function that can perform the actual construction using the context from a given picture.</returns>
-        Func<IPicture, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject);
+        Func<Picture, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject);
     }
 }

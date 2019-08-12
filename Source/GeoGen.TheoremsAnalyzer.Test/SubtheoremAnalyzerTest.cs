@@ -52,7 +52,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             _kernel = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder();
 
             // Create the constructor
-            _constructor = _kernel.Get<IGeometryConstructor>(new PicturesManagerSettings
+            _constructor = _kernel.Get<IGeometryConstructor>(new PicturesSettings
             {
                 NumberOfPictures = 8,
                 MaximalAttemptsToReconstructOnePicture = 100,
@@ -76,14 +76,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
         private SubtheoremAnalyzerOutput Run(Theorem templateTheorem, Theorem examinedTheorem)
         {
             // Draw the examined configuration
-            var geometryData = _constructor.Construct(examinedTheorem.Configuration);
-
-            // Make sure the configuration is okay
-            if (geometryData.Manager == null)
-                throw new GeoGenException("Incorrect configuration");
+            var (manager, data) = _constructor.Construct(examinedTheorem.Configuration);
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(examinedTheorem.Configuration.AllObjects, geometryData.Manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(manager);
 
             // Create the container
             var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
@@ -96,7 +92,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             {
                 TemplateTheorem = templateTheorem,
                 ExaminedTheorem = examinedTheorem,
-                ExaminedConfigurationManager = geometryData.Manager,
+                ExaminedConfigurationManager = manager,
                 ExaminedConfigurationContexualPicture = contextualPicture,
                 ExaminedConfigurationObjectsContainer = objectsContainer
             });

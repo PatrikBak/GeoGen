@@ -42,7 +42,7 @@ namespace GeoGen.TheoremsFinder
         /// <param name="manager">The manager of all the pictures where the theorems should be tested.</param>
         /// <param name="contextualPicture">The contextual picture where the configuration is drawn.</param>
         /// <returns>The list of theorems that are true in the configuration.</returns>
-        public List<Theorem> Analyze(Configuration configuration, IPicturesManager manager, IContextualPicture contextualPicture)
+        public List<Theorem> Analyze(Configuration configuration, Pictures manager, ContextualPicture contextualPicture)
         {
             // Perform the verification of the theorems.
             return _theoremsAnalyzers.SelectMany(verifier => verifier.FindPotentialTheorems(contextualPicture))

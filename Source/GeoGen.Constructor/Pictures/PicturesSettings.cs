@@ -1,9 +1,9 @@
 ﻿namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents the configuration for <see cref="PicturesManager"/>.
+    /// Represents the configuration for <see cref="Pictures"/>.
     /// </summary>
-    public class PicturesManagerSettings
+    public class PicturesSettings
     {
         /// <summary>
         /// The number of pictures to which a configuration is drawn and tested for theorems.

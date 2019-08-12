@@ -55,7 +55,7 @@ namespace GeoGen.TheoremsFinder
         /// </summary>
         /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public abstract IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture);
+        public abstract IEnumerable<PotentialTheorem> FindPotentialTheorems(ContextualPicture contextualPicture);
 
         #endregion
     }

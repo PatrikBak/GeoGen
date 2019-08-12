@@ -18,11 +18,6 @@ namespace GeoGen.Constructor
         /// </summary>
         private readonly IConstructorsResolver _constructionResolver;
 
-        /// <summary>
-        /// The factory for creating pictures in which we're constructing the internal configuration of the composed construction.
-        /// </summary>
-        private readonly IPictureFactory _pictureFactory;
-
         #endregion
 
         #region Private fields
@@ -41,12 +36,10 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="construction">The composed construction performed by the constructor.</param>
         /// <param name="constructionResolver">The resolver of constructors used while constructing the internal configuration of the composed construction.</param>
-        /// <param name="picturesFactory">The factory for creating pictures in which we're constructing the internal configuration of the composed construction.</param>
-        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IPictureFactory picturesFactory)
+        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver)
         {
             _construction = construction ?? throw new ArgumentNullException(nameof(construction));
             _constructionResolver = constructionResolver ?? throw new ArgumentNullException(nameof(constructionResolver));
-            _pictureFactory = picturesFactory ?? throw new ArgumentNullException(nameof(picturesFactory));
         }
 
         #endregion
@@ -63,7 +56,7 @@ namespace GeoGen.Constructor
         {
             // Initialize an internal picture in which we're going to construct
             // the configuration that defines our composed construction
-            var internalPicture = _pictureFactory.CreatePicture();
+            var internalPicture = new Picture();
 
             // Pull the loose objects of this configuration
             var looseObjects = _construction.Configuration.LooseObjects;

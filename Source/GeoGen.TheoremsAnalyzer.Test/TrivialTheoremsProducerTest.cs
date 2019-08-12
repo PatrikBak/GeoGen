@@ -37,7 +37,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var kernl = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder().AddTheoremsAnalyzer();
 
             // Create the producer
-            _producer = kernl.Get<ITrivialTheoremsProducer>(new PicturesManagerSettings
+            _producer = kernl.Get<ITrivialTheoremsProducer>(new PicturesSettings
             {
                 NumberOfPictures = 8,
                 MaximalAttemptsToReconstructOnePicture = 100,

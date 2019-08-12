@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.TheoremsFinder
 {
     /// <summary>
-    /// Represents a service that is able find <see cref="PotentialTheorem"/>s in a <see cref="IContextualPicture"/>.
+    /// Represents a service that is able find <see cref="PotentialTheorem"/>s in a <see cref="ContextualPicture"/>.
     /// </summary>
     public interface IPotentialTheoremsAnalyzer
     {
@@ -13,6 +13,6 @@ namespace GeoGen.TheoremsFinder
         /// </summary>
         /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture);
+        IEnumerable<PotentialTheorem> FindPotentialTheorems(ContextualPicture contextualPicture);
     }
 }

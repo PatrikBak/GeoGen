@@ -17,7 +17,7 @@ namespace GeoGen.TheoremsFinder
         /// </summary>
         /// <param name="contextualPicture">The picture from which we get the actual geometric objects.</param>
         /// <returns>An enumerable of found potential theorems.</returns>
-        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(IContextualPicture contextualPicture)
+        public override IEnumerable<PotentialTheorem> FindPotentialTheorems(ContextualPicture contextualPicture)
         {
             // Find new points.  At least one of them must be included in every new theorem
             var newPoints = contextualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
@@ -74,7 +74,7 @@ namespace GeoGen.TheoremsFinder
             foreach (var ((point1, point2), (point3, point4)) in NewPairsOfLineSegments())
             {
                 // Construct the verifier function
-                bool Verify(IPicture picture)
+                bool Verify(Picture picture)
                 {
                     // Cast the points to their analytic versions
                     var analyticPoint1 = contextualPicture.GetAnalyticObject<Point>(point1, picture);

@@ -9,21 +9,32 @@ namespace GeoGen.Constructor
     public interface IGeometryConstructor
     {
         /// <summary>
-        /// Constructs a given configuration.
+        /// Constructs a given <see cref="Configuration"/>. Throws a <see cref="GeometryConstructionException"/>
+        /// if the construction couldn't be carried out.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
-        /// <returns>The geometry data of the configuration.</returns>
-        GeometryData Construct(Configuration configuration);
+        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        (Pictures pictures, ConstructionData data) Construct(Configuration configuration);
 
         /// <summary>
-        /// Performs geometric examination of a given constructed object with respect to a given pictures manager
-        /// that represents a given configuration.
-        /// The object will be constructed, but won't be added to the manager's pictures.
+        /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
+        /// It is assumed that the new configuration differs only by the last object from the already 
+        /// constructed one. Thus only the last object is constructed. Throws a 
+        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
         /// </summary>
-        /// <param name="configuration">The configuration that is drawn in the manager's pictures.</param>
-        /// <param name="manager">The manager of pictures where all the needed objects for the constructed object should be drawn.</param>
-        /// <param name="constructedObject">The constructed configuration object to be examined.</param>
-        /// <returns>The geometry data of the object.</returns>
-        GeometryData Examine(Configuration configuration, IPicturesManager manager, ConstructedConfigurationObject constructedObject);
+        /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
+        /// <param name="newConfiguration">The new configuration that should be drawn.</param>
+        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        (Pictures pictures, ConstructionData data) ConstructByCloning(Pictures oldConfigurationPictures, Configuration newConfiguration);
+
+        /// <summary>
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
+        /// It is assumed that the constructed object can be construed in the passed pictures. Throws a 
+        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// </summary>
+        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <returns>The construction data.</returns>
+        ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject);
     }
 }
