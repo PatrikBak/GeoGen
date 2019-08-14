@@ -13,6 +13,6 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configuration">The configuration to be represented by the pictures.</param>
         /// <returns>The pictures.</returns>
-        Pictures CreatePicturesManager(Configuration configuration);
+        Pictures CreatePictures(Configuration configuration);
     }
 }

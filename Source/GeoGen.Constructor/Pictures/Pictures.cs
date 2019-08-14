@@ -76,22 +76,31 @@ namespace GeoGen.Constructor
             // Prepare a variable holding the number of attempts to reconstruct all the pictures
             var attempts = 0;
 
-            // Try to perform the function until we reach the maximal number of attempts
-            while (attempts < _settings.MaximalAttemptsToReconstructAllPictures)
+            // Repeat until we break
+            while (true)
             {
                 try
                 {
-                    // Call the action
+                    // Try to call the action
                     action();
 
-                    // If we got here, we're happy and we can break the cycle
-                    break;
+                    // If we got here, the action was successful
+                    return;
                 }
                 // If there was an inconsistency...
                 catch (InconsistentPicturesException e)
                 {
                     // Call the callback
                     exceptionCallback(e);
+
+                    // If we reached the maximal number of reconstructions, we can't do more
+                    if (attempts == _settings.MaximalAttemptsToReconstructAllPictures)
+                    {
+                        // Make sure it's noted
+                        throw new UnresolvedInconsistencyException(
+                            "The reconstruction of the pictures failed, because the maximum number of attempts " +
+                           $"{_settings.MaximalAttemptsToReconstructAllPictures} to do so has been reached.");
+                    }
 
                     // Mark an attempt 
                     attempts++;
@@ -112,15 +121,6 @@ namespace GeoGen.Constructor
                         }
                     }
                 }
-            }
-
-            // If we reached the maximal number of reconstructions, we've failed as well
-            if (attempts == _settings.MaximalAttemptsToReconstructAllPictures)
-            {
-                // Make sure it's noted
-                throw new UnresolvedInconsistencyException(
-                    "The reconstruction of the pictures failed, because the maximum number of attempts " +
-                   $"{_settings.MaximalAttemptsToReconstructAllPictures} to do so has been reached.");
             }
         }
 

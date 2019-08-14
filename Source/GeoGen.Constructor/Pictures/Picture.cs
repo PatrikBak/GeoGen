@@ -114,7 +114,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="objects">The configuration objects to be added to the picture.</param>
         /// <param name="constructor">The constructor function that performs the construction of the analytic versions of the objects.</param>
-        internal void Add(IEnumerable<ConfigurationObject> objects, Func<IReadOnlyList<IAnalyticObject>> constructor)
+        internal void AddObjects(IEnumerable<ConfigurationObject> objects, Func<IReadOnlyList<IAnalyticObject>> constructor)
         {
             // Prepare the constructor function
             bool Construct()
@@ -133,7 +133,7 @@ namespace GeoGen.Constructor
 
                         // If there is an equal object, we have a problem...
                         if (equalObject != null)
-                            throw new AnalyticException("Couldn't add objects to the picture because of the duplicity.");
+                            throw new ConstructorException("Couldn't add objects to the picture because of the duplicity.");
                     });
 
                     // If we got here, the construction went fine after all

@@ -123,16 +123,39 @@ namespace GeoGen.Constructor
                 PointObject point => (oldObject: geometricObject, newObject: new PointObject(point.ConfigurationObject) as GeometricObject),
 
                 // Point
-                LineObject line => (oldObject: geometricObject, newObject: new LineObject(line.ConfigurationObject, line.Points)),
+                LineObject line => (oldObject: geometricObject, newObject: new LineObject(line.ConfigurationObject)),
 
                 // Circle
-                CircleObject circle => (oldObject: geometricObject, newObject: new CircleObject(circle.ConfigurationObject, circle.Points)),
+                CircleObject circle => (oldObject: geometricObject, newObject: new CircleObject(circle.ConfigurationObject)),
 
                 // Default case
                 _ => throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}")
             })
             // Wrap them in a dictionary
             .ToDictionary(pair => pair.oldObject, pair => pair.newObject);
+
+            // Make sure the lines and circles know about its points
+            // Take the pairs where we have a line/circle
+            geometricObjectsMap.Where(pair => pair.Key is DefinableByPoints)
+                // For every such pair take the points 
+                .ForEach(pair => ((DefinableByPoints)pair.Key).Points
+                    // And add the corresponding point to the corresponding object
+                    .ForEach(point => ((DefinableByPoints)pair.Value).AddPoint((PointObject)geometricObjectsMap[point])));
+
+            // Make sure the points know about its lines and circles
+            // Take the pairs where we have a point
+            geometricObjectsMap.Where(pair => pair.Key is PointObject)
+                // For every such pair
+                .ForEach(pair =>
+                {
+                    // Cast the particular points for comfort
+                    var oldPoint = (PointObject)pair.Key;
+                    var newPoint = (PointObject)pair.Value;
+
+                    // Add the lines / circles corresponding to the old ones to the new point
+                    oldPoint.Lines.ForEach(line => newPoint.AddLine((LineObject)geometricObjectsMap[line]));
+                    oldPoint.Circles.ForEach(circle => newPoint.AddCircle((CircleObject)geometricObjectsMap[circle]));
+                });
 
             // Clone the configuration objects map
             _configurationObjectsMap.ForEach(pair => newPicture._configurationObjectsMap.Add(pair.Key, geometricObjectsMap[pair.Value]));
@@ -229,16 +252,7 @@ namespace GeoGen.Constructor
                         break;
                 }
             }
-
-            // If we should take into account some points...
-            if (query.ContainingPoints != null)
-            {
-                // Then we take those line and circles...
-                result = result.Where(o => o is DefinableByPoints lineOrCircle
-                    // Whose points are superset of the points that should be contained in this object
-                    && lineOrCircle.Points.Select(p => p.ConfigurationObject).ToSet().IsSupersetOf(query.ContainingPoints));
-            }
-
+            
             // Return the result casted to the wanted type
             return result.Cast<T>();
         }
@@ -472,7 +486,7 @@ namespace GeoGen.Constructor
                     lineObject.AddPoint(pointObject);
 
                     // Make sure the point knows about the line
-                    pointObject.Lines.Add(lineObject);
+                    pointObject.AddLine(lineObject);
                 }
             }
 
@@ -486,7 +500,7 @@ namespace GeoGen.Constructor
                     circleObject.AddPoint(pointObject);
 
                     // Make sure the point knows about the circle
-                    pointObject.Circles.Add(circleObject);
+                    pointObject.AddCircle(circleObject);
                 }
             }
 
@@ -585,8 +599,8 @@ namespace GeoGen.Constructor
             result = new LineObject(point1, point2);
 
             // Make sure the points know about the line as well
-            point1.Lines.Add(result);
-            point2.Lines.Add(result);
+            point1.AddLine(result);
+            point2.AddLine(result);
 
             // Add the line to the particular lines set 
             (isNew ? _newLines : _oldLines).Add(result);
@@ -690,9 +704,9 @@ namespace GeoGen.Constructor
             result = new CircleObject(point1, point2, point3);
 
             // Make sure the points know about the circle as well
-            point1.Circles.Add(result);
-            point2.Circles.Add(result);
-            point3.Circles.Add(result);
+            point1.AddCircle(result);
+            point2.AddCircle(result);
+            point3.AddCircle(result);
 
             // Add the circle to the particular circles set 
             (isNew ? _newCircles : _oldCircles).Add(result);
@@ -714,28 +728,28 @@ namespace GeoGen.Constructor
             var circle = geometricObject as CircleObject;
 
             // Iterate over all the points 
-            foreach (var pointObject in _oldPoints.Concat(_newPoints))
+            foreach (var point in _oldPoints.Concat(_newPoints))
             {
                 // If the current point lies on the line / circle, we want to mark it
-                if (IsPointOnLineOrCircle(pointObject, geometricObject))
+                if (IsPointOnLineOrCircle(point, geometricObject))
                 {
                     // If it's a line
                     if (line != null)
                     {
                         // Make sure the line knows about the point
-                        line.AddPoint(pointObject);
+                        line.AddPoint(point);
 
                         // Make sure the point knows about the line
-                        pointObject.Lines.Add(line);
+                        point.AddLine(line);
                     }
                     // Or if it's a circle
                     else if (circle != null)
                     {
                         // Make sure the circle knows about the point
-                        circle.AddPoint(pointObject);
+                        circle.AddPoint(point);
 
                         // Make sure the point knows about the circle
-                        pointObject.Circles.Add(circle);
+                        point.AddCircle(circle);
                     }
                 }
             }

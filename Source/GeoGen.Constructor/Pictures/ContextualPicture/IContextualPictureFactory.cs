@@ -16,6 +16,6 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="pictures">The pictures that should be drawn in the contextual picture.</param>
         /// <returns>The contextual picture.</returns>
-        ContextualPicture Create(Pictures pictures);
+        ContextualPicture CreateContextualPicture(Pictures pictures);
     }
 }

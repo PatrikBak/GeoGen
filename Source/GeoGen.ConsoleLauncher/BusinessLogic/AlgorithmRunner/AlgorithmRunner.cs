@@ -70,13 +70,13 @@ namespace GeoGen.ConsoleLauncher
             var outputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}.{_settings.OutputFileExtention}");
 
             // Prepare the writer for the output
-            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write));
+            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite));
 
             // Prepare the path for the full output
             var fullOutputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}{_settings.FullReportSuffix}.{_settings.OutputFileExtention}");
 
             // Prepare the writer for the full output, if it's requested
-            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.Write)) : null;
+            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.ReadWrite)) : null;
 
             // Helper function that writes to both writes
             void WriteLineToBoth(string line = "")
@@ -202,8 +202,6 @@ namespace GeoGen.ConsoleLauncher
                 // If we're requested, write the full too
                 WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: true));
             }
-
-
 
             // Write end
             WriteLineToBoth("\n------------------------------------------------");

@@ -162,7 +162,7 @@ namespace GeoGen.TheoremsAnalyzer
                 // Triangle
                 ThreePoints => GenerateInitialMappingsWithPoints(input),
 
-                // Quadrilater
+                // Quadrilateral
                 FourPoints => GenerateInitialMappingsWithPoints(input),
 
                 // Concyclic points
@@ -589,13 +589,16 @@ namespace GeoGen.TheoremsAnalyzer
                             // If we have a random point on a line defined by points...
                             case PredefinedConstructionType.RandomPointOnLineFromPoints:
 
-                                // Then the result is the single line containing the examined points
+                                // In order to find the result take all lines
                                 lineOrCircle = input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
                                 {
                                     IncludeLines = true,
                                     Type = ContextualPictureQuery.ObjectsType.All,
-                                    ContainingPoints = mappedObject.PassedArguments.FlattenedList
-                                }).Single();
+                                })
+                                // That contain the two points that should make the arguments of the line
+                                .Where(line => line.Points.Select(p => p.ConfigurationObject).ToSet().IsSupersetOf(mappedObject.PassedArguments.FlattenedList))
+                                // There should be exactly one line like this
+                                .Single();
 
                                 break;
                         }

@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -13,6 +14,9 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public DefaultSettings()
         {
+            // The folder in which we're working by default
+            var workingFolder = "..\\..\\..\\Data";
+
             // Create the loggers
             Loggers = new List<BaseLoggerSettings>
             {
@@ -45,7 +49,7 @@ namespace GeoGen.ConsoleLauncher
             // Create default folder settings
             InputFolderSettings = new InputFolderSettings
             {
-                InputFolderPath = "Data",
+                InputFolderPath = workingFolder,
                 InputFilePrefix = "input",
                 FilesExtention = "txt",
             };
@@ -53,7 +57,7 @@ namespace GeoGen.ConsoleLauncher
             // Create default algorithm runner settings
             AlgorithmRunnerSettings = new AlgorithmRunnerSettings
             {
-                OutputFolder = "Data",
+                OutputFolder = workingFolder,
                 OutputFileExtention = "txt",
                 OutputFilePrefix = "output",
                 GenerationProgresLoggingFrequency = 100,
@@ -65,7 +69,7 @@ namespace GeoGen.ConsoleLauncher
             // Create default template theorems folder settings
             TemplateTheoremsFolderSettings = new TemplateTheoremsFolderSettings
             {
-                TheoremsFolderPath = "Data/TemplateTheorems",
+                TheoremsFolderPath = Path.Combine(workingFolder, "TemplateTheorems"),
                 FilesExtention = "txt"
             };
         }

@@ -23,9 +23,10 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initializes a new instance of the <see cref="PredefinedConstructorBase"/> class.
         /// </summary>
-        protected PredefinedConstructorBase()
+        /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
+        protected PredefinedConstructorBase(IConstructorFailureTracer tracer)
+            : base(tracer)
         {
-            // Find the type
             Type = FindTypeFromClassName();
         }
 

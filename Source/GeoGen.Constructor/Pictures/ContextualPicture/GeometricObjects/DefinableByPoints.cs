@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using System.Collections.Generic;
+using GeoGen.Utilities;
 using System.Linq;
 
 namespace GeoGen.Constructor
@@ -84,11 +85,8 @@ namespace GeoGen.Constructor
             // Create the configuration object part, if there is any
             var configurationObject = ConfigurationObject == null ? "" : $"{ConfigurationObject} ";
 
-            // Create the points part
-            var points = string.Join("; ", Points);
-
-            // Concatenate them
-            return $"{configurationObject}Points: {points}";
+            // Concatenate it with points
+            return $"{configurationObject}Points: {Points.ToJoinedString("; ")}";
         }
 
         #endregion

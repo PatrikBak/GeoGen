@@ -19,23 +19,23 @@ namespace GeoGen.AnalyticGeometry
         public static double[] SolveQuadraticEquation(double a, double b, double c)
         {
             // Calculate the discriminant
-            var d = b * b - 4 * a * c;
+            var D = b * b - 4 * a * c;
 
             // If it less than zero, then we have no solutions
-            if (d.Rounded() < 0)
+            if (D.Rounded() < 0)
                 return new double[0];
 
             // If it's exactly zero, then we have exactly one solution
-            if (d.Rounded() == 0)
+            if (D.Rounded() == 0)
                 return new[] { -b / (2 * a) };
 
-            // Otherwise we have 2 solution. Let's calculate sqrt(d).
-            var squareRoot = Math.Sqrt(d);
+            // Otherwise we have 2 solution. Let's calculate sqrt(D).
+            var sqrtD = Math.Sqrt(D);
 
-            // The solutions are then give by the formula (-b +- sqrt(d)) / (2a)
+            // The solutions are then give by the formula (-b +- sqrt(D)) / (2a)
             // This can be easily concluded using the completion to square.
-            var root1 = (-b - squareRoot) / (2 * a);
-            var root2 = (-b + squareRoot) / (2 * a);
+            var root1 = (-b - sqrtD) / (2 * a);
+            var root2 = (-b + sqrtD) / (2 * a);
 
             // Return them in an array
             return new[] { root1, root2 };

@@ -9,17 +9,31 @@ namespace GeoGen.Constructor
     /// </summary>
     public class PointObject : GeometricObject
     {
+        #region Private fields
+
+        /// <summary>
+        /// The lines passing through this point.
+        /// </summary>
+        private readonly HashSet<LineObject> _lines = new HashSet<LineObject>();
+
+        /// <summary>
+        /// The circles passing through this point.
+        /// </summary>
+        private readonly HashSet<CircleObject> _circles = new HashSet<CircleObject>();
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
         /// Gets all the lines passing through this point.
         /// </summary>
-        public HashSet<LineObject> Lines { get; } = new HashSet<LineObject>();
+        public IReadOnlyCollection<LineObject> Lines => _lines;
 
         /// <summary>
         /// Gets all the circles passing through this point.
         /// </summary>
-        public HashSet<CircleObject> Circles { get; } = new HashSet<CircleObject>();
+        public IReadOnlyCollection<CircleObject> Circles => _circles;
 
         #endregion
 
@@ -33,6 +47,22 @@ namespace GeoGen.Constructor
                 : base(configurationObject)
         {
         }
+
+        #endregion
+
+        #region Internal methods
+
+        /// <summary>
+        /// Adds a line to the collection of lines passing through this point.
+        /// </summary>
+        /// <param name="line">The passing line</param>
+        internal void AddLine(LineObject line) => _lines.Add(line);
+
+        /// <summary>
+        /// Adds a circle to the collection of circles passing through this point.
+        /// </summary>
+        /// <param name="circle">The passing circle</param>
+        internal void AddCircle(CircleObject circle) => _circles.Add(circle);
 
         #endregion
 

@@ -63,10 +63,10 @@ namespace GeoGen.AnalyticGeometry
             }
 
             // Now we find the remaining (non-intersected) objects
-            var remaningObjects = objects.Where(obj => !intersected.Contains(obj)).ToArray();
+            var remaningObjects = objects.Where(analyticObject => !intersected.Contains(analyticObject)).ToArray();
 
             // And select those intersection points that lie on all the remaining objects
-            return intersections.Where(point => remaningObjects.All(obj => LiesOn(obj, point))).ToArray();
+            return intersections.Where(point => remaningObjects.All(analyticObject => LiesOn(analyticObject, point))).ToArray();
         }
 
         /// <summary>
@@ -80,14 +80,14 @@ namespace GeoGen.AnalyticGeometry
             // Switch based on the analytic object
             analyticObject switch
             {
-                // The line case
+                // Line
                 Line line => line.Contains(point),
 
-                // The circle case
+                // Circle
                 Circle circle => circle.Contains(point),
 
-                // Otherwise we have a problem....
-                _ => throw new AnalyticException("Incorrect analytic object."),
+                // Default case
+                _ => throw new AnalyticException($"Unhandled type of analytic object: {analyticObject.GetType()}"),
             };
 
 
@@ -148,7 +148,7 @@ namespace GeoGen.AnalyticGeometry
 
             // Make sure their sum is not null...
             if ((distanceAB + distanceAC).Rounded() == 0)
-                throw new AnalyticException("Cannot construct the angle bisector using equal points");
+                throw new AnalyticException("Cannot construct the angle bisector from equal points.");
 
             // Construct point X according to the formula
             var X = rayPoint1 + distanceAB / (distanceAB + distanceAC) * (rayPoint2 - rayPoint1);

@@ -36,7 +36,9 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="construction">The composed construction performed by the constructor.</param>
         /// <param name="constructionResolver">The resolver of constructors used while constructing the internal configuration of the composed construction.</param>
-        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver)
+        /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
+        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IConstructorFailureTracer tracer = null)
+            : base(tracer)
         {
             _construction = construction ?? throw new ArgumentNullException(nameof(construction));
             _constructionResolver = constructionResolver ?? throw new ArgumentNullException(nameof(constructionResolver));
@@ -58,23 +60,19 @@ namespace GeoGen.Constructor
             // the configuration that defines our composed construction
             var internalPicture = new Picture();
 
-            // Pull the loose objects of this configuration
-            var looseObjects = _construction.Configuration.LooseObjects;
-
-            // Add these objects to the internal picture
-            // Their analytic versions should correspond to the passed input
-            internalPicture.Add(looseObjects, () => input.ToList());
+            // Add the loose objects to the picture
+            internalPicture.AddObjects(_construction.Configuration.LooseObjects, () => input.ToList());
 
             // Add the constructed objects as well
             foreach (var constructedObject in _construction.Configuration.ConstructedObjects)
             {
-                // For each one create the construction function
+                // For each one find the construction function
                 var constructorFunction = _constructionResolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
                 // Add the object to the picture using this function that gets passed the internal picture
                 internalPicture.TryAdd(constructedObject, () => constructorFunction(internalPicture), out var objectConstructed, out var equalObject);
 
-                // Find out if we have a correct result
+                // Find out if we have a correct result, i.e. object was constructed without any duplicate
                 var correctResult = objectConstructed && equalObject == null;
 
                 // If not, the construction failed

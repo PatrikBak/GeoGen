@@ -94,7 +94,7 @@ namespace GeoGen.ConsoleLauncher
                     try
                     {
                         // Create a contextual picture
-                        var picture = _factory.Create(manager);
+                        var picture = _factory.CreateContextualPicture(manager);
 
                         // Run the analysis
                         return _analyzer.Analyze(_configuration, manager, picture);

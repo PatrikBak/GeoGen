@@ -43,8 +43,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly IConfigurationObjectsContainerFactory _containerFactory;
 
-        private readonly IPicturesFactory _factory;
-
         #endregion
 
         #region Constructor
@@ -80,8 +78,6 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the map for pictures
             var picturesMap = new Dictionary<Configuration, ContextualPicture>();
 
-            var first = false;
-
             // Perform the generation
             return _generator.Generate(input).Select(output =>
             {
@@ -93,14 +89,13 @@ namespace GeoGen.ConsoleLauncher
 
                 // If this is the initial configuration
                 if (configuration.PreviousConfiguration == null)
-                //if(true)
                 {
-                  // Safely execute
-                  picture = GeneralUtilities.TryExecute(
-                       // Creating of the picture
-                       () => _pictureFactory.Create(output.Manager),
-                       // While ignoring potential issues (such a configuration will be discarded anyway)
-                       (InconstructibleContextualPicture _) => { });
+                    // Safely execute
+                    picture = GeneralUtilities.TryExecute(
+                         // Creating of the picture
+                         () => _pictureFactory.CreateContextualPicture(output.Manager),
+                         // While ignoring potential issues (such a configuration will be discarded anyway)
+                         (InconstructibleContextualPicture _) => { });
                 }
                 // If this is not an initial one
                 else
@@ -108,26 +103,17 @@ namespace GeoGen.ConsoleLauncher
                     // Get the cached picture from the map
                     picture = picturesMap[configuration.PreviousConfiguration].ConstructByCloning(output.Manager);
                 }
-                
+
                 // Add it to the map
                 picturesMap.Add(configuration, picture);
 
                 // Return the output together with the constructed picture
                 return (output, picture);
             })
-            // Take only such pairs where the picture was successfully created
-            .Where(pair => pair.picture != null)
             // Skip the initial one
-            .Where(pair =>
-            {
-                if (!first)
-                {
-                    first = true;
-                    return false;
-                }
-
-                return true;
-            })
+            .Where(pair => pair.output.Configuration.PreviousConfiguration != null)
+            // Take only such pairs where the picture was successfully created
+            .Where(pair => pair.picture != null)            
             // For each such pair perform the theorem analysis
             .Select(pair =>
             {

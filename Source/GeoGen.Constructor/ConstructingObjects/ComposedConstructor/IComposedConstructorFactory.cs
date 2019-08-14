@@ -3,7 +3,8 @@
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// Represents a factory for creating new instances of <see cref="IComposedConstructor"/>, for a given <see cref="ComposedConstruction"/>.
+    /// Represents a factory for creating new instances of <see cref="IComposedConstructor"/>, 
+    /// for a given <see cref="ComposedConstruction"/>.
     /// <para>The implementation is supposed to be provided by the dependency injection management system.</para>
     /// </summary>
     public interface IComposedConstructorFactory

@@ -57,13 +57,13 @@ namespace GeoGen.Constructor
         public (Pictures pictures, ConstructionData data) Construct(Configuration configuration)
         {
             // Create pictures for the configuration
-            var pictures = _factory.CreatePicturesManager(configuration);
+            var pictures = _factory.CreatePictures(configuration);
             
             // First we add loose objects to all pictures
             foreach (var picture in pictures)
             {
                 // Objects are constructed using the private helper method
-                picture.Add(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
+                picture.AddObjects(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
             }
 
             // Then we add all the constructed object

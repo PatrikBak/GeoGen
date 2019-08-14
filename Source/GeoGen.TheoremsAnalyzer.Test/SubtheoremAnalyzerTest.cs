@@ -79,7 +79,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var (manager, data) = _constructor.Construct(examinedTheorem.Configuration);
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().Create(manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().CreateContextualPicture(manager);
 
             // Create the container
             var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();

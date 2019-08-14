@@ -4,6 +4,9 @@ using System.Text;
 
 namespace GeoGen.Constructor
 {
+    /// <summary>
+    /// An exception thrown by <see cref="IGeometryConstructor"/> when a construction of geometry objects fails.
+    /// </summary>
     public class GeometryConstructionException : ConstructorException
     {
         /// <summary>

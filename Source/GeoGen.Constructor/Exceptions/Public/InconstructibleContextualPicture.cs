@@ -3,7 +3,7 @@
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// An exception thrown when a reconstruction of a <see cref="ContextualPicture"/> fails.
+    /// An exception thrown when a construction of a <see cref="ContextualPicture"/> fails.
     /// </summary>
     public class InconstructibleContextualPicture : ConstructorException
     {

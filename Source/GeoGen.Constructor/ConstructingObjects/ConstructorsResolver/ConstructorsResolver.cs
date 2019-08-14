@@ -60,26 +60,33 @@ namespace GeoGen.Constructor
         /// <returns>A constructor that performs the given construction.</returns>
         public IObjectsConstructor Resolve(Construction construction)
         {
-            // If we have a predefined constructor...
-            if (construction is PredefinedConstruction predefinedConstruction)
+            // Switch based on the type of construction
+            switch (construction)
             {
-                try
-                {
-                    // We simply look into the dictionary assuming it's there
-                    return _predefinedConstructors[predefinedConstruction.Type];
-                }
-                catch (KeyNotFoundException)
-                {
-                    // If not, we have a problem...
-                    throw new ConstructorException($"Unresolvable predefined constructor of type {predefinedConstruction.Type}.");
-                }
+                // If we have a predefined construction...
+                case PredefinedConstruction predefinedConstruction:
+
+                    try
+                    {
+                        // We simply look into the dictionary assuming it's there
+                        return _predefinedConstructors[predefinedConstruction.Type];
+                    }
+                    catch (KeyNotFoundException)
+                    {
+                        // If not, we have a problem...
+                        throw new ConstructorException($"Unresolvable predefined constructor of type {predefinedConstruction.Type}.");
+                    }
+
+                // If we have a composed construction...
+                case ComposedConstruction composedConstruction:
+
+                    // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
+                    return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));
+
+                // Default case
+                default:
+                    throw new ConstructorException($"Unhandled type of construction: {construction.GetType()}");
             }
-
-            // Otherwise we have a composed construction
-            var composedConstruction = (ComposedConstruction)construction;
-
-            // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
-            return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));
         }
 
         #endregion

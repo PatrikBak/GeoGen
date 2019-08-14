@@ -8,8 +8,8 @@ namespace GeoGen.Constructor
     /// if there is an object that is constructible in one of them, and not in the
     /// other. The other cases of inconsistency might be: two objects are not duplicates
     /// in all pictures, three points are not collinear in all pictures, etc. 
-    /// Inconsistencies are a pretty natural, though rare thing to happen (because we 
-    /// are using a limited precision model) and they should by handled internally.
+    /// Inconsistencies are caused due to our limited precision model and they should by 
+    /// handled internally.
     /// </summary>
     internal class InconsistentPicturesException : ConstructorException
     {

@@ -8,6 +8,21 @@ namespace GeoGen.Constructor
     /// </summary>
     public class InternalAngleBisectorConstructor : PredefinedConstructorBase
     {
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CircleWithCenterThroughPointConstructor"/> class.
+        /// </summary>
+        /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
+        public InternalAngleBisectorConstructor(IConstructorFailureTracer tracer = null)
+            : base(tracer)
+        {
+        }
+
+        #endregion
+
+        #region Construct implementation
+
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
         /// The order of the objects of the input is based on the <see cref="Arguments.FlattenedList"/>.
@@ -30,5 +45,7 @@ namespace GeoGen.Constructor
             // Otherwise construct the result
             return AnalyticHelpers.InternalAngleBisector(A, B, C);
         }
+
+        #endregion
     }
 }

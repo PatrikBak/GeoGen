@@ -9,6 +9,21 @@ namespace GeoGen.Constructor
     /// </summary>
     public class SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor : PredefinedConstructorBase
     {
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor"/> class.
+        /// </summary>
+        /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
+        public SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor(IConstructorFailureTracer tracer = null)
+            : base(tracer)
+        {
+        }
+
+        #endregion
+
+        #region Construct implementation
+
         /// <summary>
         /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
         /// The order of the objects of the input is based on the <see cref="Arguments.FlattenedList"/>.
@@ -42,5 +57,7 @@ namespace GeoGen.Constructor
             // Otherwise we can take the only intersection as the result
             return intersections[0];
         }
+
+        #endregion
     }
 }

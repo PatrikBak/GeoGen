@@ -37,10 +37,6 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IConfigurationObjectsContainerFactory>().ToFactory();
             kernel.Bind<IConfigurationsContainerFactory>().ToFactory();
 
-            // Tracers
-            kernel.Bind<IInconstructibleObjectsTracer>().ToConstant((IInconstructibleObjectsTracer)null);
-            kernel.Bind<IEqualObjectsTracer>().ToConstant((IEqualObjectsTracer)null);
-
             // Return the kernel for chaining
             return kernel;
         }
@@ -81,10 +77,6 @@ namespace GeoGen.DependenciesResolver
             // Factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory();
             kernel.Bind<IContextualPictureFactory>().ToFactory();
-
-            // Tracers
-            kernel.Bind<IGeometryConstructionFailureTracer>().ToConstant((IGeometryConstructionFailureTracer)null);
-            kernel.Bind<IContexualPictureConstructionFailureTracer>().ToConstant((IContexualPictureConstructionFailureTracer)null);
 
             // Return the kernel for chaining
             return kernel;

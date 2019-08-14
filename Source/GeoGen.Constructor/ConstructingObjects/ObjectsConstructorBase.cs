@@ -11,6 +11,28 @@ namespace GeoGen.Constructor
     /// </summary>
     public abstract class ObjectsConstructorBase : IObjectsConstructor
     {
+        #region Private fields
+
+        /// <summary>
+        /// The tracer for unexpected analytic exceptions.
+        /// </summary>
+        private readonly IConstructorFailureTracer _tracer;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ObjectsConstructorBase"/> class.
+        /// </summary>
+        /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
+        protected ObjectsConstructorBase(IConstructorFailureTracer tracer)
+        {
+            _tracer = tracer;
+        }
+
+        #endregion
+
         #region IObjectsConstructor implementation
 
         /// <summary>
@@ -32,12 +54,13 @@ namespace GeoGen.Constructor
                     // Try to call the abstract function to get the actual result
                     return Construct(analyticObjects);
                 }
-                // Just in case, if there is an analytic exception, which it normally shouldn't, we will 
-                // return null indicating the construct has failed. These exception are possible, because
-                // it would be very hard to predict every possible outcome of the fact that the numerical
-                // system is not precise. Other exceptions would be a bigger deal and we won't hide them
-                catch (AnalyticException)
+                // Just in case, if there is an analytic exception
+                catch (AnalyticException e)
                 {
+                    // We trace it
+                    _tracer?.TraceUnexpectedConstructionFailure(configurationObject, analyticObjects, e.Message);
+
+                    // And return null indicating the constructor didn't work out
                     return null;
                 }
             };
