@@ -1,4 +1,5 @@
-﻿using GeoGen.Generator;
+﻿using GeoGen.Core;
+using GeoGen.Generator;
 using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
@@ -12,7 +13,7 @@ namespace GeoGen.ConsoleLauncher
         /// Executes the algorithm for a given generator input.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        /// <returns>A lazy enumerable of all the generated output.</returns>
-        IEnumerable<AlgorithmOutput> GenerateOutputs(GeneratorInput input);
+        /// <returns>The theorems in the initial configuration and a lazy enumerable of all the generated output.</returns>
+        (TheoremsMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(GeneratorInput input);
     }
 }

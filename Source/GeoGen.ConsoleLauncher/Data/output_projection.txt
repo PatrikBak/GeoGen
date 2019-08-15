@@ -1,0 +1,17 @@
+Initial configuration:
+
+ThreePoints: A, B, C
+
+Iterations: 3
+
+Constructions:
+
+ - PerpendicularProjectionOnLineFromPoints (P, {P, P})
+
+Results:
+
+------------------------------------------------
+Generated configurations: 23
+Theorems: 0
+Interesting theorems: 0
+Run-time: 140 ms

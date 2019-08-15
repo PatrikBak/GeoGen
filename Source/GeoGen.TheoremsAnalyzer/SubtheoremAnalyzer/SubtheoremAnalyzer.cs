@@ -271,7 +271,7 @@ namespace GeoGen.TheoremsAnalyzer
             // or all these pairs at the beginning. For every such a list each picture
             // takes only those pairs that are tangent with respect to it. This way we are sure that 
             // at the end we have only those that are tangent to each other in every picture
-            return input.ExaminedConfigurationManager.Aggregate(
+            return input.ExaminedConfigurationContexualPicture.Pictures.Aggregate(
 
                // Initially we take all circles and lines
                new IEnumerable<DefinableByPoints>[]
@@ -434,7 +434,7 @@ namespace GeoGen.TheoremsAnalyzer
             // all lines at the beginning. For every such a list it groups its elements into 
             // sublists such that lines in each sublist are parallel. This way we are sure that 
             // at the end all our lists contains lines that are parallel to each other in every picture
-            return input.ExaminedConfigurationManager.Aggregate(
+            return input.ExaminedConfigurationContexualPicture.Pictures.Aggregate(
 
                 // Initially we work with one group 
                 (IEnumerable<IEnumerable<LineObject>>)new[]
@@ -620,7 +620,7 @@ namespace GeoGen.TheoremsAnalyzer
             {
                 // We need to examine this object with respect to the examined configuration
                 // TODO: Handle exception
-                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationManager, mappedObject);
+                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationContexualPicture.Pictures, mappedObject);
 
                 // If the object is not constructible, then the mapping is incorrect
                 if (newObjectData.InconstructibleObject != default)

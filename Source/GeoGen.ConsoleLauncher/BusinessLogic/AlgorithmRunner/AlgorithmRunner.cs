@@ -21,11 +21,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly IAlgorithm _algorithm;
 
-        /// <summary>
-        /// The finder of all theorems used in the initial configuration.
-        /// </summary>
-        private readonly ICompleteTheoremsFinder _finder;
-
         #endregion
 
         #region Private fields
@@ -44,12 +39,9 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
-        /// <param name="finder">The finder of all theorems used in the initial configuration.</param>
-        /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
-        public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithm algorithm, ICompleteTheoremsFinder finder)
+        public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithm algorithm)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
-            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
@@ -63,6 +55,8 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="input">The input for the algorithm.</param>
         public void Run(LoadedGeneratorInput input)
         {
+            // Call the algorithm
+            var (initialTheorems, outputs) = _algorithm.Run(input);
 
             #region Prepare writers
 
@@ -98,9 +92,6 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the formatter for the initial configuration
             var initialFormatter = new OutputFormatter(input.InitialConfiguration);
 
-            // Find its theorem
-            var initialTheorems = _finder.FindAllTheorems(input.InitialConfiguration);
-
             // Write it
             WriteLineToBoth("Initial configuration:");
             WriteLineToBoth();
@@ -110,7 +101,7 @@ namespace GeoGen.ConsoleLauncher
             if (initialTheorems.Any())
             {
                 WriteLineToBoth("\nTheorems:\n");
-                WriteLineToBoth(initialTheorems.Select(t => initialFormatter.FormatTheorem(t)).Select(s => $" - {s}").ToJoinedString("\n"));
+                WriteLineToBoth(initialTheorems.AllObjects.Select(t => $" - {initialFormatter.FormatTheorem(t)}").ToJoinedString("\n"));
             }
 
             #endregion
@@ -156,8 +147,10 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
+            // Get the 
+
             // Run the algorithm
-            foreach (var algorithmOutput in _algorithm.GenerateOutputs(input))
+            foreach (var algorithmOutput in outputs)
             {
                 // Mark the configuration
                 generatedConfigurations++;
@@ -180,7 +173,7 @@ namespace GeoGen.ConsoleLauncher
                 var anyInterestingTheorem = algorithmOutput.AnalyzerOutput.Count != algorithmOutput.Theorems.Count;
 
                 // Prepare the formatter for the generated configuration
-                var formatter = new OutputFormatter(algorithmOutput.GeneratorOutput.Configuration);
+                var formatter = new OutputFormatter(algorithmOutput.Configuration);
 
                 // Prepare the writing function for this case
                 Action<string> WriteLine = anyInterestingTheorem ? (Action<string>)WriteLineToBoth : WriteLineToFull;
@@ -222,7 +215,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="feedback">The feedback from the theorems analyzer.</param>
         /// <param name="includeResolved">Indicates if we should include the resolved theorems as well.</param>
         /// <returns>The string representing the theorems.</returns>
-        private string TheoremsToString(OutputFormatter formatter, List<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
+        private string TheoremsToString(OutputFormatter formatter, IReadOnlyList<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
         {
             // Convert either all theorems, if we should include resolved, or only not resolved ones
             return theorems.Where(theorem => includeResolved || !feedback.ContainsKey(theorem)).Select((theorem, index) =>

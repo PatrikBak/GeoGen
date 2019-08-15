@@ -31,7 +31,7 @@ namespace GeoGen.ConsoleLauncher
             var settings = SettingsLoader.Load();
 
             // Initialize the container
-            Kernel = IoCUtilities.CreateKernel();
+            Kernel = DependenciesResolver.IoC.CreateKernel();
 
             #region Bind logging system
 
@@ -72,9 +72,6 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Add GeoGen modules
-            Kernel.AddGenerator().AddConstructor().AddTheoremsFinder().AddTheoremsAnalyzer();
-
             // Add local dependencies
             Kernel.Bind<IParser>().To<Parser>();
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
@@ -82,21 +79,21 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<IGeneratorInputsProvider>().To<GeneratorInputsProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
 
-            // Bind the complete theorems finder
-            Kernel.Bind<ICompleteTheoremsFinder>().To<SimpleCompleteTheoremFinder>()
-                // With settings for the internally needed pictures manager
-                .WithDynamicParameter(settings.PicturesManagerSettings);
-
-            // Bind the algorithm
-            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>()
-                // With settings for the internally needed pictures manager
-                .WithDynamicParameter(settings.PicturesManagerSettings)
-                // With data needed by the analyzer
-                .WithDynamicParameter(new TheoremsAnalyzerData
+            // Add generator
+            Kernel.AddGenerator()
+                // With constructor that uses loaded settings
+                .AddConstructor(settings.PicturesManagerSettings)
+                // With theorems finder
+                .AddTheoremsFinder()
+                // With analyzer and its data
+                .AddTheoremsAnalyzer(new TheoremsAnalyzerData
                 {
                     // Template theorems are loaded at the beginning
                     TemplateTheorems = await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
                 });
+
+            // Bind the algorithm
+            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
         }
 
         #endregion

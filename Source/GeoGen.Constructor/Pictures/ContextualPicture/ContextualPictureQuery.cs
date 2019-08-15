@@ -1,7 +1,4 @@
-﻿using GeoGen.Core;
-using System.Collections.Generic;
-
-namespace GeoGen.Constructor
+﻿namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a query that can be asked of a <see cref="ContextualPicture"/>s.

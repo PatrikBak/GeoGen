@@ -11,14 +11,14 @@ namespace GeoGen.ConsoleLauncher
     public class AlgorithmOutput
     {
         /// <summary>
-        /// The output of the generator module.
+        /// The generated configuration.
         /// </summary>
-        public GeneratorOutput GeneratorOutput { get; set; }
+        public GeneratedConfiguration Configuration { get; set; }
 
         /// <summary>
-        /// The output of the theorems finder module.
+        /// The found theorems for the configurations.
         /// </summary>
-        public List<Theorem> Theorems { get; set; }
+        public IReadOnlyList<Theorem> Theorems { get; set; }
 
         /// <summary>
         /// The dictionary mapping non-olympiad theorems to their feedback. The ones that are not presents are hopefully olympiad.

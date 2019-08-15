@@ -1,12 +1,12 @@
 ﻿using GeoGen.Core;
 using System;
 
-namespace GeoGen.Generator
+namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeneratorException"/> that is thrown
-    /// when the <see cref="Generator"/> couldn't be initialized because of
-    /// the incorrect <see cref="GeneratorInput"/>.
+    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
+    /// when <see cref="IAlgorithm"/> couldn't be performed because of an incorrect
+    /// input.
     /// </summary>
     public class InitializationException : GeoGenException
     {

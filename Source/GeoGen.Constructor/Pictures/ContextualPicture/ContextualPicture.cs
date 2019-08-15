@@ -58,14 +58,18 @@ namespace GeoGen.Constructor
         private readonly Dictionary<ConfigurationObject, GeometricObject> _configurationObjectsMap = new Dictionary<ConfigurationObject, GeometricObject>();
 
         /// <summary>
-        /// The pictures that hold all the representations of the configuration.
-        /// </summary>
-        private Pictures _pictures;
-
-        /// <summary>
         /// The tracer of unsuccessful attempts to reconstruct the contextual picture.
         /// </summary>
-        private IContexualPictureConstructionFailureTracer _tracer;
+        private readonly IContexualPictureConstructionFailureTracer _tracer;
+
+        #endregion
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the pictures that hold all the representations of the configuration.
+        /// </summary>
+        public Pictures Pictures { get; }
 
         #endregion
 
@@ -78,21 +82,32 @@ namespace GeoGen.Constructor
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
         public ContextualPicture(Pictures pictures, IContexualPictureConstructionFailureTracer tracer = null)
+            : this(pictures, addObjects: true, tracer)
         {
-            _pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
-            _tracer = tracer;
-
-            // Initialize the dictionary mapping pictures to the object maps
-            _pictures.ForEach(picture => _objects.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
-
-            // Add all objects
-            AddObjects(pictures.Configuration.AllObjects);
         }
 
         /// <summary>
-        /// Initializes a new empty instance of the <see cref="ContextualPicture"/> class.
+        /// Initializes a new instance of the <see cref="ContextualPicture"/> class. Throws
+        /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
         /// </summary>
-        private ContextualPicture() { }
+        /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
+        /// <param name="addObjects">Indicates if we should all the objects to the picture immediately.</param>
+        /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
+        protected ContextualPicture(Pictures pictures, bool addObjects, IContexualPictureConstructionFailureTracer tracer = null)
+        {
+            Pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
+            _tracer = tracer;
+
+            // If we should add objects, do it
+            if (addObjects)
+            {
+                // Initialize the dictionary mapping pictures to the object maps
+                Pictures.ForEach(picture => _objects.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
+
+                // Add them
+                AddObjects(pictures.Configuration.AllObjects);
+            }
+        }
 
         #endregion
 
@@ -104,15 +119,11 @@ namespace GeoGen.Constructor
         /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
         /// </summary>
         /// <param name="newPictures">The pictures that should be used to construct the contextual picture.</param>
-        /// <returns>The cloned contextual </returns>
-        public ContextualPicture ConstructByCloning(Pictures newPictures)
+        /// <returns>The hierarchical contextual picture containing a cloned this picture.</returns>
+        public HierarchicalContextualPicture ConstructByCloning(Pictures newPictures)
         {
             // Create an empty picture
-            var newPicture = new ContextualPicture
-            {
-                _pictures = newPictures,
-                _tracer = _tracer
-            };
+            var newPicture = new HierarchicalContextualPicture(this, newPictures, _tracer);
 
             // We need to have geometric objects cloned
             // Thus we prepare a dictionary mapping old to newly created ones
@@ -161,7 +172,7 @@ namespace GeoGen.Constructor
             _configurationObjectsMap.ForEach(pair => newPicture._configurationObjectsMap.Add(pair.Key, geometricObjectsMap[pair.Value]));
 
             // Prepare a map that maps old picture instances to corresponding new ones
-            var picturesMap = _pictures.ZipToDictionary(newPictures);
+            var picturesMap = Pictures.ZipToDictionary(newPictures);
 
             // Clone the objects
             _objects.ForEach(pair =>
@@ -252,7 +263,7 @@ namespace GeoGen.Constructor
                         break;
                 }
             }
-            
+
             // Return the result casted to the wanted type
             return result.Cast<T>();
         }
@@ -292,7 +303,7 @@ namespace GeoGen.Constructor
             try
             {
                 // Add all objects, safely through the pictures handling inconsistencies
-                _pictures.ExecuteAndReconstructAtIncosistencies(
+                Pictures.ExecuteAndReconstructAtIncosistencies(
                     // Add all the objects
                     () => objects.ForEach((configurationObject, index) =>
                     {
@@ -306,7 +317,7 @@ namespace GeoGen.Constructor
                     e =>
                     {
                         // Trace possible inconsistency exceptions
-                        _tracer?.TraceInconsistencyWhileConstructingPicture(_pictures.Configuration, currentObject, e.Message);
+                        _tracer?.TraceInconsistencyWhileConstructingPicture(Pictures.Configuration, currentObject, e.Message);
 
                         // Reset fields
                         _objects.Values.ForEach(map => map.Clear());
@@ -322,7 +333,7 @@ namespace GeoGen.Constructor
             catch (UnresolvedInconsistencyException e)
             {
                 // If we are unable to resolve inconsistencies, we trace it
-                _tracer?.TraceConstructionFailure(_pictures.Configuration, e.Message);
+                _tracer?.TraceConstructionFailure(Pictures.Configuration, e.Message);
 
                 // And say the picture is not constructible
                 throw new InconstructibleContextualPicture($"The construction of the contextual picture failed. The inner reason: {e.Message}.");
@@ -432,7 +443,7 @@ namespace GeoGen.Constructor
             GeometricObject result = null;
 
             // We're gonna check all the pictures
-            foreach (var picture in _pictures)
+            foreach (var picture in Pictures)
             {
                 // Pull the analytic representation of this object. 
                 var analyticObject = picture.Get(configurationObject);
@@ -442,7 +453,7 @@ namespace GeoGen.Constructor
                 {
                     // If this is not the first picture and our results
                     // don't match, then we have an inconsistency
-                    if (picture != _pictures.First() && result != null)
+                    if (picture != Pictures.First() && result != null)
                         throw new InconsistentPicturesException("The geometric object corresponding to a configuration object could not be determined consistently.");
 
                     // Otherwise we'll try another picture
@@ -454,7 +465,7 @@ namespace GeoGen.Constructor
 
                 // If this is not the first picture and our results
                 // don't match, then we have an inconsistency
-                if (picture != _pictures.First() && result != geometricObject)
+                if (picture != Pictures.First() && result != geometricObject)
                     throw new InconsistentPicturesException("The geometric object corresponding to a configuration object could not be determined consistently.");
 
                 // If we're fine, we can set the result and test the next picture
@@ -546,7 +557,7 @@ namespace GeoGen.Constructor
             LineObject result = null;
 
             // Try to find or construct the line in every picture
-            foreach (var picture in _pictures)
+            foreach (var picture in Pictures)
             {
                 // Pull the map between geometric and analytic objects for this picture
                 var map = _objects[picture];
@@ -578,7 +589,7 @@ namespace GeoGen.Constructor
 
                     // If this is not the first picture and our results 
                     // don't match, then we have an inconsistency
-                    if (picture != _pictures.First() && result != newResult)
+                    if (picture != Pictures.First() && result != newResult)
                         throw new InconsistentPicturesException("A line object couldn't be set consistently within more pictures (this should be very rare).");
 
                     // Otherwise we can update the result
@@ -586,7 +597,7 @@ namespace GeoGen.Constructor
                 }
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
-                else if (picture != _pictures.First() && result != null)
+                else if (picture != Pictures.First() && result != null)
                     throw new InconsistentPicturesException("A line object couldn't be set consistently within more pictures (this should be very rare).");
             }
 
@@ -630,7 +641,7 @@ namespace GeoGen.Constructor
             bool? collinear = null;
 
             // Iterate over pictures
-            foreach (var picture in _pictures)
+            foreach (var picture in Pictures)
             {
                 // Pull the map between geometric and analytic objects for this picture
                 var map = _objects[picture];
@@ -679,7 +690,7 @@ namespace GeoGen.Constructor
 
                     // If this is not the first picture and our results 
                     // don't match, then we have an inconsistency
-                    if (picture != _pictures.First() && result != newResult)
+                    if (picture != Pictures.First() && result != newResult)
                         throw new InconsistentPicturesException("A circle object couldn't be set consistently with more pictures (this should be very rare).");
 
                     // Otherwise we can update the result
@@ -687,7 +698,7 @@ namespace GeoGen.Constructor
                 }
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
-                else if (picture != _pictures.First() && result != null)
+                else if (picture != Pictures.First() && result != null)
                     throw new InconsistentPicturesException("A circle object couldn't be set consistently with more pictures (this should be very rare).");
             }
 
@@ -773,7 +784,7 @@ namespace GeoGen.Constructor
             bool? result = null;
 
             // Iterate over pictures
-            foreach (var picture in _pictures)
+            foreach (var picture in Pictures)
             {
                 // Pull the analytic representations of the point and the line/circle
                 var point = (Point)_objects[picture].GetRightValue(pointObject);

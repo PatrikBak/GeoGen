@@ -38,7 +38,7 @@ namespace GeoGen.Constructor
             // Construct the result
             return l.PerpendicularLine(A).PerpendicularLine(A);
         }
-        
+
         #endregion
     }
 }

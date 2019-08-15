@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Utilities;
+using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -6,62 +7,28 @@ namespace GeoGen.Core
     /// Represents a dictionary mapping <see cref="ConfigurationObjectType"/> to lists of <see cref="ConfigurationObject"/>
     /// of that type.
     /// </summary>
-    public class ConfigurationObjectsMap : Dictionary<ConfigurationObjectType, IReadOnlyList<ConfigurationObject>>
+    public class ConfigurationObjectsMap : ObjectsMap<ConfigurationObjectType, ConfigurationObject>
     {
-        #region Public properties
-
-        /// <summary>
-        /// Gets the list of all configuration objects contained in this map.
-        /// </summary>
-        public IReadOnlyList<ConfigurationObject> AllObjects { get; }
-
-        #endregion
-
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigurationObjectsMap"/> map wrapping given objects.
+        /// Initializes a new instance of the <see cref="ConfigurationObjectsMap"/> class.
         /// </summary>
         /// <param name="objects">The objects to be contained in the map.</param>
-        public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> objects)
+        public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> objects) : base(objects)
         {
-            // Prepare the list of all objects
-            var allObjects = new List<ConfigurationObject>();
-
-            // Add all objects
-            foreach (var configurationObject in objects)
-            {
-                // Find the type of the current object
-                var type = configurationObject.ObjectType;
-
-                // Prepare the list of objects of this type
-                List<ConfigurationObject> list;
-
-                // If we don't have this type yet
-                if (!ContainsKey(type))
-                {
-                    // Initialize the list
-                    list = new List<ConfigurationObject>();
-
-                    // And add to the dictionary
-                    Add(type, list);
-                }
-                else
-                {
-                    // Otherwise take the list from the dictionary
-                    list = (List<ConfigurationObject>)base[type];
-                }
-
-                // Finally add the object to it
-                list.Add(configurationObject);
-
-                // Add it to the list of all objects as well
-                allObjects.Add(configurationObject);
-            }
-
-            // Set the list of all objects
-            AllObjects = allObjects;
         }
+
+        #endregion
+
+        #region GetKey implementation
+
+        /// <summary>
+        /// Gets the key for a given value.
+        /// </summary>
+        /// <param name="value">The value</param>
+        /// <returns>The key.</returns>
+        protected override ConfigurationObjectType GetKey(ConfigurationObject value) => value.ObjectType;
 
         #endregion
     }

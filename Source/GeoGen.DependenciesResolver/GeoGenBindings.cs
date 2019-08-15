@@ -3,8 +3,10 @@ using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
+using GeoGen.TheoremsFinder.new_stuff;
 using Ninject;
 using Ninject.Extensions.Factory;
+using System.Linq;
 
 namespace GeoGen.DependenciesResolver
 {
@@ -45,18 +47,20 @@ namespace GeoGen.DependenciesResolver
         /// Bindings for the dependencies from the Constructor module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
+        /// <param name="settings">The settings for <see cref="Pictures"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddConstructor(this IKernel kernel)
+        public static IKernel AddConstructor(this IKernel kernel, PicturesSettings settings)
         {
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
+            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
             kernel.Bind<ContextualPicture>().ToSelf();
+            kernel.Bind<Pictures>().ToSelf().WithConstructorArgument(settings);
 
-            kernel.BindsWithDynamicSettings<Pictures, Pictures, PicturesSettings>();
+            // Factories
+            kernel.Bind<IComposedConstructorFactory>().ToFactory();
+            kernel.Bind<IContextualPictureFactory>().ToFactory();
             kernel.Bind<IPicturesFactory>().ToFactory();
-
-            // Bindings with dynamic settings
-            kernel.BindsWithDynamicSettings<IGeometryConstructor, GeometryConstructor, PicturesSettings>();
 
             // Predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
@@ -74,10 +78,6 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>();
 
-            // Factories
-            kernel.Bind<IComposedConstructorFactory>().ToFactory();
-            kernel.Bind<IContextualPictureFactory>().ToFactory();
-
             // Return the kernel for chaining
             return kernel;
         }
@@ -89,7 +89,7 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsFinder(this IKernel kernel)
         {
-            kernel.Bind<IRelevantTheoremsAnalyzer>().To<RelevantTheoremsAnalyzer>();
+            kernel.Bind<ITheoremsFinder>().To<T>();
 
             // Potential theorem analyzers
             kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>();
@@ -110,16 +110,32 @@ namespace GeoGen.DependenciesResolver
         /// Bindings for the dependencies from the Analyzer module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
+        /// <param name="analyzerData">The data for the theorems analyzer.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremsAnalyzer(this IKernel kernel)
+        public static IKernel AddTheoremsAnalyzer(this IKernel kernel, TheoremsAnalyzerData analyzerData)
         {
-            kernel.BindsWithDynamicSettings<ITheoremsAnalyzer, TheoremsAnalyzer.TheoremsAnalyzer, TheoremsAnalyzerData>();
+            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>().WithConstructorArgument(analyzerData);
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
             kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>();
             kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>();
 
             // Return the kernel for chaining
             return kernel;
+        }
+
+
+    }
+
+    public class T : ITheoremsFinder
+    {
+        public TheoremsMap FindAllTheorems(ContextualPicture picture)
+        {
+            return new TheoremsMap(Enumerable.Empty<Theorem>());
+        }
+
+        public TheoremsMap FindNewTheorems(HierarchicalContextualPicture picture)
+        {
+            return new TheoremsMap(Enumerable.Empty<Theorem>());
         }
     }
 }

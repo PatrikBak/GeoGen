@@ -19,11 +19,6 @@ namespace GeoGen.TheoremsAnalyzer
         public Theorem ExaminedTheorem { get; set; }
 
         /// <summary>
-        /// Gets or sets the manager of pictures where the examined configuration is drawn.
-        /// </summary>
-        public Pictures ExaminedConfigurationManager { get; set; }
-
-        /// <summary>
         /// Gets or sets the contextual picture where the examined configuration is drawn.
         /// </summary>
         public ContextualPicture ExaminedConfigurationContexualPicture { get; set; }

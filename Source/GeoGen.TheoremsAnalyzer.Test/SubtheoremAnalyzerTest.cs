@@ -49,15 +49,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
         public void Initialize()
         {
             // Initialize IoC
-            _kernel = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder();
-
-            // Create the constructor
-            _constructor = _kernel.Get<IGeometryConstructor>(new PicturesSettings
+            _kernel = IoC.CreateKernel().AddGenerator().AddConstructor(new PicturesSettings
             {
                 NumberOfPictures = 8,
                 MaximalAttemptsToReconstructOnePicture = 100,
                 MaximalAttemptsToReconstructAllPictures = 1000
             });
+
+            // Create the constructor
+            _constructor = _kernel.Get<IGeometryConstructor>();
 
             // Create the analyzer
             _analyzer = new SubtheoremAnalyzer(_constructor);
@@ -76,10 +76,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
         private SubtheoremAnalyzerOutput Run(Theorem templateTheorem, Theorem examinedTheorem)
         {
             // Draw the examined configuration
-            var (manager, data) = _constructor.Construct(examinedTheorem.Configuration);
+            var (pictures, data) = _constructor.Construct(examinedTheorem.Configuration);
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().CreateContextualPicture(manager);
+            var contextualPicture = _kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
 
             // Create the container
             var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
@@ -92,7 +92,6 @@ namespace GeoGen.TheoremsAnalyzer.Test
             {
                 TemplateTheorem = templateTheorem,
                 ExaminedTheorem = examinedTheorem,
-                ExaminedConfigurationManager = manager,
                 ExaminedConfigurationContexualPicture = contextualPicture,
                 ExaminedConfigurationObjectsContainer = objectsContainer
             });

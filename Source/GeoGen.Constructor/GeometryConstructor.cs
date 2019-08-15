@@ -28,7 +28,7 @@ namespace GeoGen.Constructor
         private readonly IGeometryConstructionFailureTracer _tracer;
 
         #endregion
-        
+
         #region Constructor
 
         /// <summary>
@@ -58,7 +58,7 @@ namespace GeoGen.Constructor
         {
             // Create pictures for the configuration
             var pictures = _factory.CreatePictures(configuration);
-            
+
             // First we add loose objects to all pictures
             foreach (var picture in pictures)
             {

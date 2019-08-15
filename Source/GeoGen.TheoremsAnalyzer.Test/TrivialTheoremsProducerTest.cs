@@ -3,6 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Utilities;
+using Ninject;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -34,15 +35,21 @@ namespace GeoGen.TheoremsAnalyzer.Test
         public void Initialize()
         {
             // Initialize IoC
-            var kernl = IoCUtilities.CreateKernel().AddGenerator().AddConstructor().AddTheoremsFinder().AddTheoremsAnalyzer();
+            var kernel = IoC.CreateKernel();
 
-            // Create the producer
-            _producer = kernl.Get<ITrivialTheoremsProducer>(new PicturesSettings
-            {
-                NumberOfPictures = 8,
-                MaximalAttemptsToReconstructOnePicture = 100,
-                MaximalAttemptsToReconstructAllPictures = 1000
-            });
+            // Add the constructor
+            kernel.AddTheoremsFinder().AddConstructor(new PicturesSettings
+             {
+                 NumberOfPictures = 8,
+                 MaximalAttemptsToReconstructOnePicture = 100,
+                 MaximalAttemptsToReconstructAllPictures = 1000
+             });
+
+            // Bind producer
+            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
+
+            // Get it the producer
+            _producer = kernel.Get<ITrivialTheoremsProducer>();
         }
 
         #endregion

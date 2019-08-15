@@ -23,6 +23,9 @@ namespace GeoGen.TheoremsAnalyzer
         /// </summary>
         private readonly ISubtheoremAnalyzer _subtheoremAnalyzer;
 
+        /// <summary>
+        /// The deriver of new theorems based on the transitivity rule.
+        /// </summary>
         private readonly ITransitivityDeriver _transitivityDeriver;
 
         #endregion
@@ -44,7 +47,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <param name="data">The data for the analyzer.</param>
         /// <param name="trivialTheoremsProducer">The producer of trivial theorems.</param>
         /// <param name="subtheoremAnalyzer">The sub-theorems analyzer. It gets template theorems from the <see cref="data"/>.</param>
-        /// <
+        /// <param name="transitivityDeriver">The deriver of new theorems based on the transitivity rule.</param>
         public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer, ISubtheoremAnalyzer subtheoremAnalyzer, ITransitivityDeriver transitivityDeriver)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
@@ -70,11 +73,14 @@ namespace GeoGen.TheoremsAnalyzer
             // Prepare the result
             var result = new Dictionary<Theorem, TheoremFeedback>();
 
+            // Get the configuration
+            var configuration = input.ContextualPicture.Pictures.Configuration;
+
             // Get the trivial theorems first
-            var trivialTheorems = _trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(input.Configuration);
+            var trivialTheorems = _trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(configuration);
 
             // Go through all the theorems
-            input.Theorems.ForEach(theorem =>
+            input.NewTheorems.AllObjects.ForEach(theorem =>
             {
                 #region Can be stated in a smaller configuration?
 
@@ -116,7 +122,6 @@ namespace GeoGen.TheoremsAnalyzer
                         TemplateTheorem = templateTheorem,
                         ExaminedConfigurationObjectsContainer = input.ConfigurationObjectsContainer,
                         ExaminedConfigurationContexualPicture = input.ContextualPicture,
-                        ExaminedConfigurationManager = input.Manager
                     })))
                     // Get the first that matches
                     .FirstOrDefault(pair => pair.output.IsSubtheorem);
@@ -135,14 +140,14 @@ namespace GeoGen.TheoremsAnalyzer
             });
 
             // Now we'll try to use the transitivity rule for the rest
-            _transitivityDeriver.Derive(input.Configuration, input.Theorems, result.Keys.ToList()).ForEach(triple =>
+            _transitivityDeriver.Derive(configuration, input.NewTheorems.AllObjects, result.Keys.ToList()).ForEach(triple =>
             {
                 // Unwrap the result
                 var (fact1, fact2, concludedFact) = triple;
 
                 // Local function that finds an equivalent theorem from the input, 
                 // or returns the current one, if there is no such theorem
-                Theorem FindEquivalent(Theorem theorem) => input.Theorems.FirstOrDefault(_theorem => _theorem.IsEquivalentTo(theorem)) ?? theorem;
+                Theorem FindEquivalent(Theorem theorem) => input.NewTheorems.AllObjects.FirstOrDefault(_theorem => _theorem.IsEquivalentTo(theorem)) ?? theorem;
 
                 // Find an equivalent to the concluded thing
                 concludedFact = FindEquivalent(concludedFact);

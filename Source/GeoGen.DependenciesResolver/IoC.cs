@@ -8,16 +8,19 @@ namespace GeoGen.DependenciesResolver
     /// <summary>
     /// Utilities for the IoC module.
     /// </summary>
-    public static class IoCUtilities
+    public static class IoC
     {
         /// <summary>
-        /// Creates a kernel with all needed modules for GeoGen bindings.
+        /// Creates a kernel with all needed modules for <see cref="GeoGenBindings"/>.
         /// </summary>
         /// <returns>The kernel.</returns>
         public static IKernel CreateKernel()
         {
+            // Create the function module (that is disposable)
+            using var funcModule = new FuncModule();
+
             // Create a kernel that will perform the resolution
-            var kernel = new StandardKernel(new FuncModule(), new ContextPreservationModule());
+            var kernel = new StandardKernel(funcModule, new ContextPreservationModule());
 
             // Make sure we can bind to null 
             // This is used only for tracers, that are not compulsory

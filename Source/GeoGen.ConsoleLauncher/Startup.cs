@@ -1,9 +1,6 @@
 ﻿using Ninject;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
@@ -14,7 +11,7 @@ namespace GeoGen.ConsoleLauncher
     /// The entry point of the application.
     /// </summary>
     public static class Startup
-    {        
+    {
         #region Main method
 
         /// <summary>

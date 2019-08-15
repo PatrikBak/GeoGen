@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using System.Collections.Generic;
 
 namespace GeoGen.TheoremsAnalyzer
 {
@@ -10,21 +9,6 @@ namespace GeoGen.TheoremsAnalyzer
     public class TheoremAnalyzerInput
     {
         /// <summary>
-        /// Gets or sets the configuration that should be analyzed with its theorems.
-        /// </summary>
-        public Configuration Configuration { get; set; }
-
-        /// <summary>
-        /// Gets or sets the list of theorems that hold true in the configuration.
-        /// </summary>
-        public List<Theorem> Theorems { get; set; }
-
-        /// <summary>
-        /// Gets or sets the manager of pictures where the configuration is drawn.
-        /// </summary>
-        public Pictures Manager { get; set; }
-
-        /// <summary>
         /// Gets or sets the contextual picture where the configuration is drawn.
         /// </summary>
         public ContextualPicture ContextualPicture { get; set; }
@@ -33,5 +17,17 @@ namespace GeoGen.TheoremsAnalyzer
         /// Gets or sets the container where the objects of the examined configuration should be contained.
         /// </summary>
         public IContainer<ConfigurationObject> ConfigurationObjectsContainer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of theorems that hold true in the configuration and 
+        /// cannot be stated without the last object of it.
+        /// </summary>
+        public TheoremsMap NewTheorems { get; set; }
+
+        /// <summary>
+        /// Gets or sets the list of theorems that hold true in the configuration and don't
+        /// use the last object of it.
+        /// </summary>
+        public TheoremsMap OldTheorems { get; set; }
     }
 }

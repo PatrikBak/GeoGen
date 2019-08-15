@@ -9,7 +9,7 @@ namespace GeoGen.TheoremsFinder
     /// <summary>
     /// The default implementation of <see cref="IRelevantTheoremsAnalyzer"/>. 
     /// </summary>
-    public class RelevantTheoremsAnalyzer : IRelevantTheoremsAnalyzer
+    public class RelevantTheoremsAnalyzer : IRelevantTheoremsAnalyzerx
     {
         #region Dependencies
 

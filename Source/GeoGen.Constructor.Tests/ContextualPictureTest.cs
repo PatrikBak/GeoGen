@@ -1,15 +1,13 @@
 ﻿using FluentAssertions;
 using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
-using Moq;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using GeoGen.Utilities;
+using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructions;
-using static GeoGen.Core.ComposedConstructions;
 
 namespace GeoGen.Constructor.Tests
 {

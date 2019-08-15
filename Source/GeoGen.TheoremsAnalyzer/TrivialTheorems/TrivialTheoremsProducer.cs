@@ -1,6 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremsFinder.new_stuff;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// The finder used to determine theorems of composed constructions.
         /// </summary>
-        private readonly IRelevantTheoremsAnalyzer _finder;
+        private readonly ITheoremsFinder _finder;
 
         #endregion
 
@@ -50,7 +50,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// </summary>
         /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
         /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
-        public TrivialTheoremsProducer(IGeometryConstructor constructor, IRelevantTheoremsAnalyzer finder)
+        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremsFinder finder)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
@@ -278,29 +278,29 @@ namespace GeoGen.TheoremsAnalyzer
             void ThrowIncorrectConstructionException(string message, Exception e = null) => throw new GeoGenException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
 
             // Safely execute
-            var (manager, data) = GeneralUtilities.TryExecute(
+            var (pictures, data) = GeneralUtilities.TryExecute(
                 // Constructing of the new object
                 () => _constructor.Construct(configuration),
                 // Make sure the exception is caught and re-thrown
-                (GeometryConstructionException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.",e));
+                (GeometryConstructionException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 
             // Make sure it has no inconstructible objects
             if (data.InconstructibleObject != default)
                 ThrowIncorrectConstructionException("The defining configuration contains an inconstructible object.");
 
             // Make sure it has no duplicates
-             if(data.Duplicates != default)
+            if (data.Duplicates != default)
                 ThrowIncorrectConstructionException("The defining configuration contains duplicate objects.");
 
             // Safely execute
             var contextualPicture = GeneralUtilities.TryExecute(
                 // Construct of the contextual picture
-                () => new ContextualPicture(manager),
+                () => new ContextualPicture(pictures),
                 // Make sure the exception is caught and re-thrown
                 (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
-            return _finder.Analyze(configuration, manager, contextualPicture)
+            return _finder.FindAllTheorems(contextualPicture).AllObjects
                 // For each theorem we need to replace the artificially created
                 // object with the original one from the defining configuration
                 .Select(theorem =>

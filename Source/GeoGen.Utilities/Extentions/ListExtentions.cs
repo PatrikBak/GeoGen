@@ -44,7 +44,7 @@ namespace GeoGen.Utilities
         /// <param name="item">The item that we are looking for.</param>
         /// <param name="comparer">The equality comparer used to compare items.</param>
         /// <returns>The index of the found item, if it exists; -1 otherwise.</returns>
-        public static int IndexOf<T>(this IList<T> list, T item, IEqualityComparer<T> comparer)
+        public static int IndexOf<T>(this IReadOnlyList<T> list, T item, IEqualityComparer<T> comparer)
         {
             // Go through the list
             for (var index = 0; index < list.Count; index++)

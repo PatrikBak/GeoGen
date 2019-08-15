@@ -8,7 +8,7 @@ namespace GeoGen.TheoremsFinder
     /// Represents a service that is able to find theorems in an already drawn configuration. This service
     /// should only find those theorems that can't be defined in any sub-configuration of the given one.
     /// </summary>
-    public interface IRelevantTheoremsAnalyzer
+    public interface IRelevantTheoremsAnalyzerx
     {
         /// <summary>
         /// Performs the theorem analysis for a given configuration.

@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core;
-using System.Collections.Generic;
 using GeoGen.Utilities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Constructor

@@ -25,7 +25,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="points">The points that define this circle.</param>
         public CircleObject(params PointObject[] points)
-                : base(configurationObject:null, points)
+                : base(configurationObject: null, points)
         {
         }
 
