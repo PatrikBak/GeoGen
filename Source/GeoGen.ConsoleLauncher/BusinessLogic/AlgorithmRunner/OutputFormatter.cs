@@ -191,15 +191,18 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>The resulting string.</returns>
         private string ArgumentToString(ConstructionArgument argument)
         {
-            // If we have an object argument, ask directly for the name of its object
-            if (argument is ObjectConstructionArgument objectArgument)
-                return _objectNames[objectArgument.PassedObject];
+            // Switch based on the argument type
+            return argument switch
+            {
+                // If we have an object argument, ask directly for the name of its object
+                ObjectConstructionArgument objectArgument => _objectNames[objectArgument.PassedObject],
 
-            // Otherwise we have a set argument
-            var setArgument = (SetConstructionArgument)argument;
+                // For set argument we wrap the result in curly braces and convert the inner arguments
+                SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}",
 
-            // We wrap the result in curly braces and convert the inner arguments
-            return $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}";
+                // Default
+                _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
+            };
         }
 
         /// <summary>

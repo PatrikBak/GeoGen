@@ -42,8 +42,8 @@ namespace GeoGen.ConsoleLauncher
             PicturesManagerSettings = new PicturesSettings
             {
                 NumberOfPictures = 5,
-                MaximalAttemptsToReconstructOnePicture = 5,
-                MaximalAttemptsToReconstructAllPictures = 5
+                MaximalAttemptsToReconstructOnePicture = 0,
+                MaximalAttemptsToReconstructAllPictures = 0
             };
 
             // Create default folder settings

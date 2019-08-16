@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.136
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities", "GeoGen.Utilities\GeoGen.Utilities.csproj", "{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D}"
 EndProject
@@ -34,6 +34,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.DependenciesResolver", "GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj", "{AEFD477E-2418-45D4-9637-23C95A7C5817}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConsoleLauncher", "GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Algorithm", "GeoGen.Algorithm\GeoGen.Algorithm.csproj", "{887FB427-45A2-4471-8635-7F7630F14A47}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm.Tests", "GeoGen.Algorithm.Tests\GeoGen.Algorithm.Tests.csproj", "{0693E390-7513-4148-9255-648A69A09303}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,6 +109,14 @@ Global
 		{5E230759-F78E-4BFF-BDC8-664DDC30F57E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E230759-F78E-4BFF-BDC8-664DDC30F57E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E230759-F78E-4BFF-BDC8-664DDC30F57E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{887FB427-45A2-4471-8635-7F7630F14A47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{887FB427-45A2-4471-8635-7F7630F14A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{887FB427-45A2-4471-8635-7F7630F14A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{887FB427-45A2-4471-8635-7F7630F14A47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0693E390-7513-4148-9255-648A69A09303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0693E390-7513-4148-9255-648A69A09303}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0693E390-7513-4148-9255-648A69A09303}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0693E390-7513-4148-9255-648A69A09303}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

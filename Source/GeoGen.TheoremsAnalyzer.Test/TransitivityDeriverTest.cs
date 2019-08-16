@@ -17,12 +17,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
     [TestFixture]
     public class TransitivityDeriverTest
     {
-        #region Service instance
+        #region TransitivityDeriver instance
 
         /// <summary>
         /// The instance of the deriver.
         /// </summary>
-        private readonly TransitivityDeriver _deriver = new TransitivityDeriver();
+        private TransitivityDeriver Deriver => new TransitivityDeriver();
 
         #endregion
 
@@ -55,7 +55,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             theorems.Subsets(2).ForEach(assumedTheorems =>
             {
                 // Call the deriver
-                var result = _deriver.Derive(configuration, theorems, assumedTheorems).ToList();
+                var result = Deriver.Derive(configuration, theorems, assumedTheorems).ToList();
 
                 // There should be one derived theorems
                 result.Count.Should().Be(1);
@@ -106,7 +106,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             theorems.ForEach(assumedTheorem =>
             {
                 // Call the deriver
-                var result = _deriver.Derive(configuration, theorems, new[] { assumedTheorem }).ToList();
+                var result = Deriver.Derive(configuration, theorems, new[] { assumedTheorem }).ToList();
 
                 // There should be one derived theorems
                 result.Count.Should().Be(1);
@@ -155,7 +155,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // Assume all these theorems are assumed
-            var result = _deriver.Derive(configuration, theorems, theorems).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems).ToList();
 
             // We should be able to generate every equality
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -202,7 +202,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // For the assumed theorems takes only the second two
             // The first one should be assumed, cause it's true in 
             // a smaller configuration
-            var result = _deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // We should be able to generate every equality
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -263,7 +263,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // Find the result
-            var result = _deriver.Derive(configuration, theorems, assumedTheorems);
+            var result = Deriver.Derive(configuration, theorems, assumedTheorems);
 
             // Prepare all tuples of equalities of new and old objects
             var allEqualities = new[] { angles.Take(4), angles.Skip(4) }.Combine()
@@ -296,7 +296,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // We just need to assume the second one, the first one should be derived
-            var result = _deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // The result should contain the following theorems
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -345,7 +345,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // We just need to assume the last, the first two should be derived
-            var result = _deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
 
             // The result should contain the following theorems
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -396,7 +396,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // We just need to assume the second one, the first one should be derived
-            var result = _deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // The result should contain the following theorems
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -447,7 +447,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // We just need to assume the last one, the first two should be derived
-            var result = _deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
+            var result = Deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
 
             // The result should contain the following theorems
             result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
@@ -482,4 +482,3 @@ namespace GeoGen.TheoremsAnalyzer.Test
         }
     }
 }
-

@@ -3,7 +3,7 @@ using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
 using System.Collections.Generic;
 
-namespace GeoGen.ConsoleLauncher
+namespace GeoGen.Algorithm
 {
     /// <summary>
     /// Represents an output of the <see cref="IAlgorithm"/>.

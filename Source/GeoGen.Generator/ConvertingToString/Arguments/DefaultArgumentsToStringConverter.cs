@@ -47,7 +47,7 @@ namespace GeoGen.Generator
         {
             _argumentsToString = argumentsToString ?? throw new ArgumentNullException(nameof(argumentsToString));
 
-            // Create the converter that makes sure the object has an id in the dictionary and converts it to a string 
+            // Create the converter that makes sure the object has a unique id in the dictionary and converts it to a string 
             _converter = new FuncToStringConverter<ConfigurationObject>(obj => _objectIds.GetOrAdd(obj, () => _objectIds.Count).ToString());
         }
 

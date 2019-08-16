@@ -1,12 +1,10 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.Algorithm;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
-using GeoGen.TheoremsFinder;
-using GeoGen.TheoremsFinder.new_stuff;
 using Ninject;
 using Ninject.Extensions.Factory;
-using System.Linq;
 
 namespace GeoGen.DependenciesResolver
 {
@@ -22,22 +20,27 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddGenerator(this IKernel kernel)
         {
-            kernel.Bind<IGenerator>().To<Generator.Generator>();
-            kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>();
-            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>();
-            kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>();
-            kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>();
-            kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf();
-            kernel.Bind<FullConfigurationToStringConverter>().ToSelf();
-            kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf();
+            // Stateless services
+            kernel.Bind<IGenerator>().To<Generator.Generator>().InSingletonScope();
+            kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
+            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InSingletonScope();
+            kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>().InSingletonScope();
+            kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>().InSingletonScope();
+
+            // Factories
+            kernel.Bind<IArgumentsContainerFactory>().ToFactory().InSingletonScope();
+            kernel.Bind<IConfigurationObjectsContainerFactory>().ToFactory().InSingletonScope();
+            kernel.Bind<IConfigurationsContainerFactory>().ToFactory().InSingletonScope();
+
+            // Factory outputs
             kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
             kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>();
             kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>();
 
-            // Factories
-            kernel.Bind<IArgumentsContainerFactory>().ToFactory();
-            kernel.Bind<IConfigurationObjectsContainerFactory>().ToFactory();
-            kernel.Bind<IConfigurationsContainerFactory>().ToFactory();
+            // Converters used by factory outputs
+            kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf();
+            kernel.Bind<FullConfigurationToStringConverter>().ToSelf();
+            kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf();
 
             // Return the kernel for chaining
             return kernel;
@@ -51,32 +54,35 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddConstructor(this IKernel kernel, PicturesSettings settings)
         {
-            kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
-            kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
-            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
-            kernel.Bind<ContextualPicture>().ToSelf();
-            kernel.Bind<Pictures>().ToSelf().WithConstructorArgument(settings);
+            // Stateless services
+            kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InSingletonScope();
+            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>().InSingletonScope();
+
+            // Stateless predefined constructors
+            kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<CircleWithCenterThroughPointConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<CircumcircleConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<LineFromPointsConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<MidpointConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<ParallelLineConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<PerpendicularProjectionConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor>().InSingletonScope();
+            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>().InSingletonScope();
 
             // Factories
-            kernel.Bind<IComposedConstructorFactory>().ToFactory();
-            kernel.Bind<IContextualPictureFactory>().ToFactory();
-            kernel.Bind<IPicturesFactory>().ToFactory();
+            kernel.Bind<IComposedConstructorFactory>().ToFactory().InSingletonScope();
+            kernel.Bind<IContextualPictureFactory>().ToFactory().InSingletonScope();
+            kernel.Bind<IPicturesFactory>().ToFactory().InSingletonScope();
 
-            // Predefined constructors
-            kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<CircleWithCenterThroughPointConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<CircumcircleConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<LineFromPointsConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<MidpointConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<PerpendicularLineConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<ParallelLineConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<PerpendicularProjectionConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor>();
-            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>();
+            // Factory outputs
+            kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
+            kernel.Bind<ContextualPicture>().ToSelf();
+            kernel.Bind<Pictures>().ToSelf().WithConstructorArgument(settings);
 
             // Return the kernel for chaining
             return kernel;
@@ -89,19 +95,6 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsFinder(this IKernel kernel)
         {
-            kernel.Bind<ITheoremsFinder>().To<T>();
-
-            // Potential theorem analyzers
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<CollinearPointsAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcurrentObjectsAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ConcyclicPointsAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualAnglesAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<EqualLineSegmentsAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<LineTangentToCircleAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<ParallelLinesAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<PerpendicularLinesAnalyzer>();
-            kernel.Bind<IPotentialTheoremsAnalyzer>().To<TangentCirclesAnalyzer>();
-
             // Return the kernel for chaining
             return kernel;
         }
@@ -114,28 +107,28 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsAnalyzer(this IKernel kernel, TheoremsAnalyzerData analyzerData)
         {
-            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>().WithConstructorArgument(analyzerData);
-            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
-            kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>();
-            kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>();
+            // Stateless services
+            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>().InSingletonScope().WithConstructorArgument(analyzerData);
+            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>().InSingletonScope();
+            kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>().InSingletonScope();
+            kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;
         }
 
-
-    }
-
-    public class T : ITheoremsFinder
-    {
-        public TheoremsMap FindAllTheorems(ContextualPicture picture)
+        /// <summary>
+        /// Bindings for the dependencies from the Algorithm module.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        /// <returns>The kernel for chaining.</returns>
+        public static IKernel AddAlgorithm(this IKernel kernel)
         {
-            return new TheoremsMap(Enumerable.Empty<Theorem>());
-        }
+            // Stateless services
+            kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>().InSingletonScope();
 
-        public TheoremsMap FindNewTheorems(HierarchicalContextualPicture picture)
-        {
-            return new TheoremsMap(Enumerable.Empty<Theorem>());
+            // Return the kernel for chaining
+            return kernel;
         }
     }
 }

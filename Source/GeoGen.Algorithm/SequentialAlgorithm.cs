@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.ConsoleLauncher
+namespace GeoGen.Algorithm
 {
     /// <summary>
     /// Represents a simple version of the algorithm where each configuration is tested 
@@ -34,9 +34,9 @@ namespace GeoGen.ConsoleLauncher
         private readonly IContextualPictureFactory _pictureFactory;
 
         /// <summary>
-        /// The finder of theorems in generated configurations.
+        /// The finders of theorems in generated configurations.
         /// </summary>
-        private readonly ITheoremsFinder _finder;
+        private readonly ITheoremsFinder[] _finders;
 
         /// <summary>
         /// The factory for creating objects containers.
@@ -58,20 +58,20 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="generator">The generator of configurations.</param>
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="pictureFactory">The factory for creating contextual pictures.</param>
-        /// <param name="finder">The finder of theorems in generated configurations.</param>
+        /// <param name="finders">The finders of theorems in generated configurations.</param>
         /// <param name="containerFactory">The factory for creating objects containers.</param>
         /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
         public SequentialAlgorithm(IGenerator generator,
                                    IGeometryConstructor geometryConstructor,
                                    IContextualPictureFactory pictureFactory,
-                                   ITheoremsFinder finder,
+                                   ITheoremsFinder[] finders,
                                    IConfigurationObjectsContainerFactory containerFactory,
                                    ITheoremsAnalyzer analyzer)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
-            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
+            _finders = finders ?? throw new ArgumentNullException(nameof(finders));
             _containerFactory = containerFactory ?? throw new ArgumentNullException(nameof(containerFactory));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
         }
@@ -112,14 +112,14 @@ namespace GeoGen.ConsoleLauncher
                  (InconstructibleContextualPicture e) => throw new InitializationException("Drawing of the contextual container for the initial configuration failed.", e));
 
             // Find the initial theorems for the configuration
-            var initialTheorems = _finder.FindAllTheorems(initialContextualPicture);
+            var initialTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindAllTheorems(initialContextualPicture)));
 
             #endregion
 
             #region Preparing variables
 
             // Prepare the map for contextual pictures
-            var contextualPicturesMap = new Dictionary<GeneratedConfiguration, HierarchicalContextualPicture>();
+            var contextualPicturesMap = new Dictionary<GeneratedConfiguration, ContextualPicture>();
 
             // Prepare the map for pictures
             var picturesMap = new Dictionary<GeneratedConfiguration, Pictures>();
@@ -227,17 +227,17 @@ namespace GeoGen.ConsoleLauncher
                         var picture = contextualPicturesMap[configuration];
 
                         // Find new theorems
-                        var newTheorems = _finder.FindNewTheorems(picture);
+                        var newTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindNewTheorems(picture)));
 
                         // Create a container holding the objects of the configuration
-                        var container = _containerFactory.CreateContainer(configuration);
+                        //var container = _containerFactory.CreateContainer(configuration);
 
                         // Analyze the theorems
                         var analysisResult = _analyzer.Analyze(new TheoremAnalyzerInput
                         {
                             ContextualPicture = picture,
                             NewTheorems = newTheorems,
-                            ConfigurationObjectsContainer = container
+                            //ConfigurationObjectsContainer = container
                         });
 
                         // Return the final output

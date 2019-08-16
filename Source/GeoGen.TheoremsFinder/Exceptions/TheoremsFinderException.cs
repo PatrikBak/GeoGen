@@ -27,7 +27,7 @@ namespace GeoGen.TheoremsFinder
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeoGenException"/> class
+        /// Initializes a new instance of the <see cref="TheoremsFinderException"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <param name="message">The message about what happened.</param>

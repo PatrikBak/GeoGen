@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Linq;
 
 namespace GeoGen.Generator
@@ -41,28 +42,25 @@ namespace GeoGen.Generator
             // Local function that converts a single argument to a string
             string ArgumentToString(ConstructionArgument argument)
             {
-                // If we have an object argument
-                if (argument is ObjectConstructionArgument objectArgument)
+                // Switch based on the argument type
+                return argument switch
                 {
-                    // Then we simply convert its object using the passed object to string converter
-                    return objectToString.ConvertToString(objectArgument.PassedObject);
-                }
+                    // If we have an object argument, then we simply convert its object
+                    // using the passed converter
+                    ObjectConstructionArgument objectArgument => objectToString.ConvertToString(objectArgument.PassedObject),
 
-                // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument)argument;
+                    // For set argument we wrap the result in curly braces, convert the 
+                    // inner arguments, order them, and join with the separator
+                    SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString(ArgumentsSetSeparator)}}}",
 
-                // We'll recursively convert its individual arguments to strings
-                var individualArgs = setArgument.PassedArguments.Select(ArgumentToString).ToList();
-
-                // Sort them to obtain the unique result independent on the order
-                individualArgs.Sort();
-
-                // Join them using the set separator a wrap into curly braces
-                return $"{{{string.Join(ArgumentsSetSeparator, individualArgs)}}}";
+                    // Default
+                    _ => throw new GeneratorException($"Unhandled type of construction argument: {argument.GetType()}"),
+                };
             }
 
-            // Convert individual arguments using our local function, join them using the list separator, and wrap into regular braces
-            return $"({string.Join(ArgumentsListSeparator, arguments.Select(ArgumentToString))})";
+            // Convert individual arguments using our local function, join them using the
+            // list separator, and wrap into regular braces
+            return $"({arguments.Select(ArgumentToString).ToJoinedString(ArgumentsListSeparator)})";
         }
 
         #endregion

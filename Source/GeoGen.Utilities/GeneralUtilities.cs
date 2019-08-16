@@ -50,7 +50,16 @@ namespace GeoGen.Utilities
             }
         }
 
-        public static TResult TryExecute<TResult, TException>(Func<TResult> function, Action<TException> exceptionHandler) where TException : Exception
+        /// <summary>
+        /// Safely executes a given function while catching an exception of given type and handling it.
+        /// </summary>
+        /// <typeparam name="TResult">The return type of the function.</typeparam>
+        /// <typeparam name="TException">The type of exception to be caught.</typeparam>
+        /// <param name="function">The function to be executed.</param>
+        /// <param name="exceptionHandler">The handler for the exception of given type.</param>
+        /// <returns>Either the result of the function, if there is no exception, of the default value.</returns>
+        public static TResult TryExecute<TResult, TException>(Func<TResult> function, Action<TException> exceptionHandler)
+            where TException : Exception
         {
             try
             {

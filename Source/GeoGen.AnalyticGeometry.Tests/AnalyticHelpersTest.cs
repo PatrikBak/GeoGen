@@ -140,19 +140,19 @@ namespace GeoGen.AnalyticGeometry.Tests
             var line1 = new Line(new Point(0, 0), new Point(1, 1));
             var line2 = new Line(new Point(2, 2), new Point(3, 3));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
 
             // Vertical lines
             line1 = new Line(new Point(0, 1), new Point(0, 2));
             line2 = new Line(new Point(0, 3), new Point(0, 4));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
 
             // Horizontal lines
             line1 = new Line(new Point(1, 0), new Point(3, 0));
             line2 = new Line(new Point(2, 0), new Point(4, 0));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
         }
 
         [Test]
@@ -162,19 +162,19 @@ namespace GeoGen.AnalyticGeometry.Tests
             var line1 = new Line(new Point(0, 0), new Point(1, 1));
             var line2 = new Line(new Point(-1, 0), new Point(0, 1));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
 
             // Vertical lines
             line1 = new Line(new Point(0, 1), new Point(0, 2));
             line2 = new Line(new Point(1, 3), new Point(1, 4));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
 
             // Horizontal lines
             line1 = new Line(new Point(1, 1), new Point(3, 1));
             line2 = new Line(new Point(2, 0), new Point(4, 0));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line1).Rounded());
+            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
         }
 
         [Test]

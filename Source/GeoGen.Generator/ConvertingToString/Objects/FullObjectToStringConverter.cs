@@ -82,47 +82,54 @@ namespace GeoGen.Generator
         /// <returns>A string representation of the object.</returns>
         public string ConvertToString(ConfigurationObject configurationObject, LooseObjectsRemapping remapping)
         {
-            // If we have a loose object...
-            if (configurationObject is LooseConfigurationObject looseObject)
+            // Switch based on the objects type
+            switch (configurationObject)
             {
-                // We let the remapping map the current object
-                var resolvedObject = remapping.Map(looseObject);
+                // If we have a loose object...
+                case LooseConfigurationObject looseObject:
 
-                // Makes sure the object has an id in the dictionary and convert it to a string 
-                return _looseObjectsIds.GetOrAdd(resolvedObject, () => _looseObjectsIds.Count).ToString();
+                    // We let the remapping map the current object
+                    var resolvedObject = remapping.Map(looseObject);
+
+                    // Makes sure the object has an id in the dictionary and convert it to a string 
+                    return _looseObjectsIds.GetOrAdd(resolvedObject, () => _looseObjectsIds.Count).ToString();
+
+                // If we have a constructed object...
+                case ConstructedConfigurationObject constructedObject:
+
+                    // First get the cache dictionary corresponding to the current remapping, or add a new one and return it
+                    var cache = _stringsCache.GetOrAdd(remapping, () => new Dictionary<ConstructedConfigurationObject, string>());
+
+                    // Let's first try to hit the cache
+                    if (cache.ContainsKey(constructedObject))
+                        return cache[constructedObject];
+
+                    // At this point we know the object is not cached. 
+                    // We need to get the object converter corresponding to the
+                    // current remapping so we can pass it to the arguments to
+                    // string converter. This converter will do nothing but 
+                    // calling this method with our current remapping. 
+                    var converter = _convertersCache.GetOrAdd(remapping, () => new FuncToStringConverter<ConfigurationObject>(obj => ConvertToString(obj, remapping)));
+
+                    // Get the construction id, or add it if it doesn't exist
+                    var constructionId = _constructionIds.GetOrAdd(constructedObject.Construction.Name, () => _constructionIds.Count);
+
+                    // Now we construct the arguments string with the found converter
+                    var argumentsString = _argumentsToString.ConvertToString(constructedObject.PassedArguments, converter);
+
+                    // Construct the result
+                    var result = $"{constructionId}{argumentsString}";
+
+                    // Cache the result
+                    cache.Add(constructedObject, result);
+
+                    // And finally return it
+                    return result;
+
+                // Default case
+                default:
+                    throw new GeneratorException($"Unhandled type of configuration object: {configurationObject.GetType()}");
             }
-
-            // Otherwise the object must be a constructed one
-            var constructedObject = (ConstructedConfigurationObject)configurationObject;
-
-            // First get the cache dictionary corresponding to the current remapping, or add a new one and return it
-            var cache = _stringsCache.GetOrAdd(remapping, () => new Dictionary<ConstructedConfigurationObject, string>());
-
-            // Let's first try to hit the cache
-            if (cache.ContainsKey(constructedObject))
-                return cache[constructedObject];
-
-            // At this point we know the object is not cached. 
-            // We need to get the object converter corresponding to the
-            // current remapping so we can pass it to the arguments to
-            // string converter. This converter will do nothing but 
-            // calling this method with our current remapping. 
-            var converter = _convertersCache.GetOrAdd(remapping, () => new FuncToStringConverter<ConfigurationObject>(obj => ConvertToString(obj, remapping)));
-
-            // Get the construction id, or add it if it doesn't exist
-            var constructionId = _constructionIds.GetOrAdd(constructedObject.Construction.Name, () => _constructionIds.Count);
-
-            // Now we construct the arguments string with the found converter
-            var argumentsString = _argumentsToString.ConvertToString(constructedObject.PassedArguments, converter);
-
-            // Construct the result
-            var result = $"{constructionId}{argumentsString}";
-
-            // Cache the result
-            cache.Add(constructedObject, result);
-
-            // And finally return it
-            return result;
         }
 
         #endregion

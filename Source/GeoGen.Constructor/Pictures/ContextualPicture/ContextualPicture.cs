@@ -82,7 +82,7 @@ namespace GeoGen.Constructor
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
         public ContextualPicture(Pictures pictures, IContexualPictureConstructionFailureTracer tracer = null)
-            : this(pictures, addObjects: true, tracer)
+            : this(pictures, createEmpty: false, tracer)
         {
         }
 
@@ -91,15 +91,15 @@ namespace GeoGen.Constructor
         /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
         /// </summary>
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
-        /// <param name="addObjects">Indicates if we should all the objects to the picture immediately.</param>
+        /// <param name="createEmpty">Indicates if we should leave the picture empty without adding any objects or pictures.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        protected ContextualPicture(Pictures pictures, bool addObjects, IContexualPictureConstructionFailureTracer tracer = null)
+        private ContextualPicture(Pictures pictures, bool createEmpty, IContexualPictureConstructionFailureTracer tracer = null)
         {
             Pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
             _tracer = tracer;
 
             // If we should add objects, do it
-            if (addObjects)
+            if (!createEmpty)
             {
                 // Initialize the dictionary mapping pictures to the object maps
                 Pictures.ForEach(picture => _objects.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
@@ -119,11 +119,11 @@ namespace GeoGen.Constructor
         /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
         /// </summary>
         /// <param name="newPictures">The pictures that should be used to construct the contextual picture.</param>
-        /// <returns>The hierarchical contextual picture containing a cloned this picture.</returns>
-        public HierarchicalContextualPicture ConstructByCloning(Pictures newPictures)
+        /// <returns>The contextual picture containing this cloned picture.</returns>
+        public ContextualPicture ConstructByCloning(Pictures newPictures)
         {
             // Create an empty picture
-            var newPicture = new HierarchicalContextualPicture(this, newPictures, _tracer);
+            var newPicture = new ContextualPicture(newPictures, createEmpty: true, _tracer);
 
             // We need to have geometric objects cloned
             // Thus we prepare a dictionary mapping old to newly created ones

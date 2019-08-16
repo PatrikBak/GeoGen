@@ -2,7 +2,7 @@
 using GeoGen.Generator;
 using System.Collections.Generic;
 
-namespace GeoGen.ConsoleLauncher
+namespace GeoGen.Algorithm
 {
     /// <summary>
     /// Represents the main algorithm that generates geometric configurations together with theorems.

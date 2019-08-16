@@ -1,4 +1,5 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Algorithm;
+using GeoGen.Core;
 using GeoGen.TheoremsAnalyzer;
 using GeoGen.Utilities;
 using System;
@@ -147,8 +148,6 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Get the 
-
             // Run the algorithm
             foreach (var algorithmOutput in outputs)
             {
@@ -203,8 +202,11 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToBoth($"Interesting theorems: {interestingTheorems}");
             WriteLineToBoth($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
-            // Log that we're done
+            // Log this stats as well
             Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
+            Log.LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
+            Log.LoggingManager.LogInfo($"Theorems: {totalTheorems}");
+            Log.LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
         }
 
         /// <summary>

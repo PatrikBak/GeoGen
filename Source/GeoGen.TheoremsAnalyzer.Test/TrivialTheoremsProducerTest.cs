@@ -20,36 +20,32 @@ namespace GeoGen.TheoremsAnalyzer.Test
     [TestFixture]
     public class TrivialTheoremsProducerTest
     {
-        #region Service instance
+        #region TrivialTheoremsProducer instance
 
         /// <summary>
-        /// The instance of the producer.
+        /// Gets the trivial theorems producer.
         /// </summary>
-        private ITrivialTheoremsProducer _producer;
-
-        #endregion
-
-        #region SetUp
-
-        [OneTimeSetUp]
-        public void Initialize()
+        private ITrivialTheoremsProducer Producer
         {
-            // Initialize IoC
-            var kernel = IoC.CreateKernel();
+            get
+            {
+                // Initialize IoC
+                var kernel = IoC.CreateKernel();
 
-            // Add the constructor
-            kernel.AddTheoremsFinder().AddConstructor(new PicturesSettings
-             {
-                 NumberOfPictures = 8,
-                 MaximalAttemptsToReconstructOnePicture = 100,
-                 MaximalAttemptsToReconstructAllPictures = 1000
-             });
+                // Add the theorems finder and constructor
+                kernel.AddTheoremsFinder().AddConstructor(new PicturesSettings
+                {
+                    NumberOfPictures = 8,
+                    MaximalAttemptsToReconstructOnePicture = 100,
+                    MaximalAttemptsToReconstructAllPictures = 1000
+                });
 
-            // Bind producer
-            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
+                // Bind producer
+                kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
 
-            // Get it the producer
-            _producer = kernel.Get<ITrivialTheoremsProducer>();
+                // Get it
+                return kernel.Get<ITrivialTheoremsProducer>();
+            }
         }
 
         #endregion
@@ -67,7 +63,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var configuration = Configuration.DeriveFromObjects(ThreePoints, I);
 
             // Find the trivial theorems
-            _producer.DeriveTrivialTheoremsFromLastObject(configuration)
+            Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be only equal angles
                 .ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
                 {
@@ -122,7 +118,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // Find the trivial theorems
-            _producer.DeriveTrivialTheoremsFromLastObject(configuration)
+            Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be these theorems
                 .ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
                 {
@@ -194,7 +190,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 .ForEach(configuration =>
                 {
                     // Prepare the action executing the algorithm
-                    Action action = () => _producer.DeriveTrivialTheoremsFromLastObject(configuration);
+                    Action action = () => Producer.DeriveTrivialTheoremsFromLastObject(configuration);
 
                     // Make sure there is no exception
                     action.Should().NotThrow($"The construction {configuration.ConstructedObjects[0].Construction} has a problem.");

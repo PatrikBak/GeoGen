@@ -90,10 +90,9 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // Template theorems are loaded at the beginning
                     TemplateTheorems = await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
-                });
-
-            // Bind the algorithm
-            Kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>();
+                })
+                // And finally the algorithm
+                .AddAlgorithm();
         }
 
         #endregion

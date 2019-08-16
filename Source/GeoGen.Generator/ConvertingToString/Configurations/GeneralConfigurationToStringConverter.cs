@@ -85,7 +85,7 @@ namespace GeoGen.Generator
             configurationsCache.Add(configuration, result);
 
             // Join the converted objects using the default separator to get the final string
-            return string.Join(ObjectsSeparator, result);
+            return result.ToJoinedString(ObjectsSeparator);
         }
 
         #endregion

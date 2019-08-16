@@ -20,52 +20,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
     [TestFixture]
     public class SubtheoremAnalyzerTest
     {
-        #region IoC container
-
-        /// <summary>
-        /// The NInject kernel
-        /// </summary>
-        private IKernel _kernel;
-
-        #endregion
-
-        #region Service instances
-
-        /// <summary>
-        /// The instance of the analyzer.
-        /// </summary>
-        private ISubtheoremAnalyzer _analyzer;
-
-        /// <summary>
-        /// The instance of the objects constructor.
-        /// </summary>
-        private IGeometryConstructor _constructor;
-
-        #endregion
-
-        #region SetUp
-
-        [OneTimeSetUp]
-        public void Initialize()
-        {
-            // Initialize IoC
-            _kernel = IoC.CreateKernel().AddGenerator().AddConstructor(new PicturesSettings
-            {
-                NumberOfPictures = 8,
-                MaximalAttemptsToReconstructOnePicture = 100,
-                MaximalAttemptsToReconstructAllPictures = 1000
-            });
-
-            // Create the constructor
-            _constructor = _kernel.Get<IGeometryConstructor>();
-
-            // Create the analyzer
-            _analyzer = new SubtheoremAnalyzer(_constructor);
-        }
-
-        #endregion
-
-        #region Helper methods
+        #region Run method
 
         /// <summary>
         /// Runs the theorem analysis for a given template theorem and a given examined theorem.
@@ -75,20 +30,34 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// <returns>The output of the analysis.</returns>
         private SubtheoremAnalyzerOutput Run(Theorem templateTheorem, Theorem examinedTheorem)
         {
+            // Initialize IoC
+            var kernel = IoC.CreateKernel().AddGenerator().AddConstructor(new PicturesSettings
+            {
+                NumberOfPictures = 8,
+                MaximalAttemptsToReconstructOnePicture = 100,
+                MaximalAttemptsToReconstructAllPictures = 1000
+            });
+
+            // Create the constructor
+            var constructor = kernel.Get<IGeometryConstructor>();
+
+            // Create the analyzer
+            var analyzer = new SubtheoremAnalyzer(constructor);
+
             // Draw the examined configuration
-            var (pictures, data) = _constructor.Construct(examinedTheorem.Configuration);
+            var (pictures, data) = constructor.Construct(examinedTheorem.Configuration);
 
             // Draw the contextual picture
-            var contextualPicture = _kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
+            var contextualPicture = kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
 
             // Create the container
-            var objectsContainer = _kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
+            var objectsContainer = kernel.Get<IConfigurationObjectsContainerFactory>().CreateContainer();
 
             // Fill it with objects of the examined configuration
             examinedTheorem.Configuration.AllObjects.ForEach(objectsContainer.Add);
 
             // Run the algorithm
-            return _analyzer.Analyze(new SubtheoremAnalyzerInput
+            return analyzer.Analyze(new SubtheoremAnalyzerInput
             {
                 TemplateTheorem = templateTheorem,
                 ExaminedTheorem = examinedTheorem,

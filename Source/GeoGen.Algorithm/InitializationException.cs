@@ -1,7 +1,7 @@
 ﻿using GeoGen.Core;
 using System;
 
-namespace GeoGen.ConsoleLauncher
+namespace GeoGen.Algorithm
 {
     /// <summary>
     /// Represents a type of a <see cref="GeoGenException"/> that is thrown

@@ -25,9 +25,9 @@ namespace GeoGen.TheoremsAnalyzer
         private readonly IGeometryConstructor _constructor;
 
         /// <summary>
-        /// The finder used to determine theorems of composed constructions.
+        /// The finders used to determine theorems of composed constructions.
         /// </summary>
-        private readonly ITheoremsFinder _finder;
+        private readonly ITheoremsFinder[] _finders;
 
         #endregion
 
@@ -49,11 +49,11 @@ namespace GeoGen.TheoremsAnalyzer
         /// Initializes a new instance of the <see cref="TrivialTheoremsProducer"/> class.
         /// </summary>
         /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
-        /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
-        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremsFinder finder)
+        /// <param name="finders">The finders used to determine theorems of composed constructions.</param>
+        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremsFinder[] finders)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
+            _finders = finders ?? throw new ArgumentNullException(nameof(finders));
 
             // Create the dictionary 
             _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>(
@@ -300,7 +300,7 @@ namespace GeoGen.TheoremsAnalyzer
                 (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
-            return _finder.FindAllTheorems(contextualPicture).AllObjects
+            return _finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture))
                 // For each theorem we need to replace the artificially created
                 // object with the original one from the defining configuration
                 .Select(theorem =>

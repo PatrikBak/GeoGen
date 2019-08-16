@@ -12,7 +12,7 @@ namespace GeoGen.Utilities
         #region Private fields
 
         /// <summary>
-        /// The comparer of elements, i.e. a function takes takes two elements and returns if they are equal.
+        /// The comparer of elements, i.e. a function takes two elements and returns if they are equal.
         /// </summary>
         private readonly Func<T, T, bool> _comparer;
 
@@ -52,7 +52,7 @@ namespace GeoGen.Utilities
         /// Gets the hash code of the element.
         /// </summary>
         /// <param name="element">The element.</param>
-        /// <returns>The hash code of the elemeent.</returns>
+        /// <returns>The hash code of the element.</returns>
         public int GetHashCode(T element) => _hashCoder(element);
 
         #endregion
@@ -60,7 +60,7 @@ namespace GeoGen.Utilities
         #region Static helpers
 
         /// <summary>
-        /// Creates an equality comparer that uses given property selector. The equality is then determinedw
+        /// Creates an equality comparer that uses given property selector. The equality is then determined
         /// by the result of Equals(property(t1), property(t2)), and hash code is simply property(t).GetHashCode
         /// (or 0, if the property(t) is null).
         /// </summary>
@@ -68,7 +68,12 @@ namespace GeoGen.Utilities
         /// <returns>The comparer.</returns>
         public static SimpleEqualityComparer<T> Create(Func<T, object> propertySelector)
         {
-            return new SimpleEqualityComparer<T>((t1, t2) => Equals(propertySelector(t1), propertySelector(t2)), t => propertySelector(t)?.GetHashCode() ?? 0);
+            // Return a new comparer
+            return new SimpleEqualityComparer<T>(
+                // That compares the objects based on our equals method for the properties
+                (t1, t2) => Equals(propertySelector(t1), propertySelector(t2)),
+                // And gets the hash code from the property, or 0, is the property is null
+                t => propertySelector(t)?.GetHashCode() ?? 0);
         }
 
         #endregion
