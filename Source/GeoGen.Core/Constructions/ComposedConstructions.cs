@@ -442,7 +442,6 @@ namespace GeoGen.Core
         /// <summary>
         /// The midpoint of arc opposite to BAC (signature A, {B, C}).
         /// </summary>
-        /// <returns></returns>
         public static ComposedConstruction MidpointOfOppositeArc
         {
             get
@@ -466,6 +465,66 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(MidpointOfOppositeArc), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The A-excenter of triangle ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction Excenter
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+                var M = new ConstructedConfigurationObject(MidpointOfOppositeArc, A, B, C);
+                var J = new ConstructedConfigurationObject(PointReflection, I, M);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, J);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(Excenter), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The A-excircle of triangle ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction Excircle
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var J = new ConstructedConfigurationObject(Excenter, A, B, C);
+                var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, J, B, C);
+                var c = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, J, D);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, c);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(Excircle), configuration, parameters);
             }
         }
     }

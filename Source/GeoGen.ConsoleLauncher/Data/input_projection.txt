@@ -1,4 +1,4 @@
-﻿Iterations: 2
+﻿Iterations: 3
 
 Constructions:
 
@@ -6,4 +6,4 @@ Constructions:
 
 Initial configuration:
  
- LineAndTwoPoints: l, A, B
+ ThreePoints: A, B, C

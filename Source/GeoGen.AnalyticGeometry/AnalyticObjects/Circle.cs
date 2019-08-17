@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace GeoGen.AnalyticGeometry
@@ -341,7 +342,7 @@ namespace GeoGen.AnalyticGeometry
             if (Center.X == 0)
                 result += "x^2";
             else if (Center.X < 0)
-                result += $"(x + {(-Center.X).ToString()})^2";
+                result += $"(x + {(-Center.X).ToString(CultureInfo.InvariantCulture)})^2";
             else
                 result += $"(x - {Center.X})^2";
 
@@ -352,12 +353,12 @@ namespace GeoGen.AnalyticGeometry
             if (Center.Y == 0)
                 result += "y^2";
             else if (Center.Y < 0)
-                result += $"(y + {(-Center.Y).ToString()})^2";
+                result += $"(y + {(-Center.Y).ToString(CultureInfo.InvariantCulture)})^2";
             else
-                result += $"(y - {Center.Y})^2";
+                result += $"(y - {Center.Y.ToString(CultureInfo.InvariantCulture)})^2";
 
             // And the end
-            result += $" = {(Radius * Radius).ToString()}";
+            result += $" = {(Radius * Radius).ToString(CultureInfo.InvariantCulture)}";
 
             // Return it
             return result;

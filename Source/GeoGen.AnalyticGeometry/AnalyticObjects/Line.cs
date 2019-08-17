@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System;
+using System.Globalization;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -270,7 +271,7 @@ namespace GeoGen.AnalyticGeometry
                     result += "-x";
                 // Here it's something of type 2x or -2x, which is fine
                 else
-                    result += $"{A}x";
+                    result += $"{A.ToString(CultureInfo.InvariantCulture)}x";
             }
 
             // If there is an y-part...
@@ -289,7 +290,7 @@ namespace GeoGen.AnalyticGeometry
                     if (B == 1 || B == -1)
                         result += "y";
                     else
-                        result += $"{Math.Abs(B).ToString()}y";
+                        result += $"{Math.Abs(B).ToString(CultureInfo.InvariantCulture)}y";
                 }
                 // If there was not an x-part
                 else
@@ -301,12 +302,12 @@ namespace GeoGen.AnalyticGeometry
                     else if (B == -1)
                         result += "-y";
                     else
-                        result += $"{B}y";
+                        result += $"{B.ToString(CultureInfo.InvariantCulture)}y";
                 }
             }
 
             // Add the end, which is much less iffy (pun intended)
-            result += $" = {(-C).ToString()}";
+            result += $" = {(-C).ToString(CultureInfo.InvariantCulture)}";
 
             // We're here!
             return result;

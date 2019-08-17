@@ -92,103 +92,51 @@ namespace GeoGen.Constructor.Tests
             #region Lines
 
             // Test all lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeLines = true
-            }).Should().HaveCount(3);
+            picture.AllLines.Should().HaveCount(3);
 
             // Test new lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludeLines = true
-            }).Should().HaveCount(2);
+            picture.NewLines.Should().HaveCount(2);
 
             // Test old lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludeLines = true
-            }).Should().HaveCount(1);
+            picture.OldLines.Should().HaveCount(1);
 
             // Test that the lines knows about its 2 points
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeLines = true
-            }).All(line => line.Points.Count == 2).Should().BeTrue();
+            picture.AllLines.All(line => line.Points.Count == 2).Should().BeTrue();
 
             #endregion
 
             #region Circles
 
             // Test all circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true
-            }).Should().HaveCount(1);
+            picture.AllCircles.Should().HaveCount(1);
 
             // Test new circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludeCirces = true
-            }).Should().HaveCount(1);
+            picture.NewCircles.Should().HaveCount(1);
 
             // Test old circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludeCirces = true
-            }).Should().HaveCount(0);
+            picture.OldCircles.Should().HaveCount(0);
 
             // Test that the circle knows about its 3 points
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true
-            }).All(circle => circle.Points.Count == 3).Should().BeTrue();
+            picture.AllCircles.All(circle => circle.Points.Count == 3).Should().BeTrue();
 
             #endregion
 
             #region Points
 
             // Test all points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).Should().HaveCount(3);
+            picture.AllPoints.Should().HaveCount(3);
 
             // Test new points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludePoints = true
-            }).Should().HaveCount(1);
+            picture.NewPoints.Should().HaveCount(1);
 
             // Test old points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludePoints = true
-            }).Should().HaveCount(2);
+            picture.OldPoints.Should().HaveCount(2);
 
             // Test that the points know about 1 circle and 2 lines passing through it
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).All(point => point.Lines.Count == 2 && point.Circles.Count == 1).Should().BeTrue();
+            picture.AllPoints.All(point => point.Lines.Count == 2 && point.Circles.Count == 1).Should().BeTrue();
 
             // Test that the points have their configuration object set
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).All(point => point.ConfigurationObject != null).Should().BeTrue();
+            picture.AllPoints.All(point => point.ConfigurationObject != null).Should().BeTrue();
 
             #endregion
         }
@@ -236,124 +184,60 @@ namespace GeoGen.Constructor.Tests
             #region Lines
 
             // Test all lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeLines = true
-            }).Should().HaveCount(9);
+            picture.AllLines.Should().HaveCount(9);
 
             // Test new lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludeLines = true
-            }).Should().HaveCount(0);
+            picture.NewLines.Should().HaveCount(0);
 
             // Test old lines
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludeLines = true
-            }).Should().HaveCount(9);
+            picture.OldLines.Should().HaveCount(9);
 
             // Test that the number of lines with 3 points
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeLines = true
-            }).Count(line => line.Points.Count == 3).Should().Be(6);
+            picture.AllLines.Count(line => line.Points.Count == 3).Should().Be(6);
 
             // Test that the number of lines with 2 points
-            picture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeLines = true
-            }).Count(line => line.Points.Count == 2).Should().Be(3);
+            picture.AllLines.Count(line => line.Points.Count == 2).Should().Be(3);
 
             #endregion
 
             #region Circles
 
             // Test all circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true
-            }).Should().HaveCount(29, "there are binomial[7,3] - 6 of them");
+            picture.AllCircles.Should().HaveCount(29, "there are binomial[7,3] - 6 of them");
 
             // Test new circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludeCirces = true
-            }).Should().HaveCount(12, "no four points are concyclic and the centroid adds binomial[6,2] - 3");
+            picture.NewCircles.Should().HaveCount(12, "no four points are concyclic and the centroid adds binomial[6,2] - 3");
 
             // Test old circles
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludeCirces = true
-            }).Should().HaveCount(17, "there are 29 (all) - 12 (new) of them");
+            picture.OldCircles.Should().HaveCount(17, "there are 29 (all) - 12 (new) of them");
 
             // Test that all the circles pass through 3 points
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true
-            }).All(circle => circle.Points.Count == 3).Should().BeTrue();
+            picture.AllCircles.All(circle => circle.Points.Count == 3).Should().BeTrue();
 
             #endregion
 
             #region Points
 
             // Test all points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).Should().HaveCount(7);
+            picture.AllPoints.Should().HaveCount(7);
 
             // Test new points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.New,
-                IncludePoints = true
-            }).Should().HaveCount(1);
+            picture.NewPoints.Should().HaveCount(1);
 
             // Test old points
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.Old,
-                IncludePoints = true
-            }).Should().HaveCount(6);
+            picture.OldPoints.Should().HaveCount(6);
 
             // Test the number of points with 3 lines
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).Count(point => point.Lines.Count == 3).Should().Be(4);
+            picture.AllPoints.Count(point => point.Lines.Count == 3).Should().Be(4);
 
             // Test the number of points with 4 lines
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).Count(point => point.Lines.Count == 4).Should().Be(3);
+            picture.AllPoints.Count(point => point.Lines.Count == 4).Should().Be(3);
 
             // Test that 3 points (the midpoints) have binomial[6,2] - 2 circles
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).Count(point => point.Circles.Count == 13).Should().Be(3);
+            picture.AllPoints.Count(point => point.Circles.Count == 13).Should().Be(3);
 
             // Test that the points have their configuration object set
-            picture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludePoints = true
-            }).All(point => point.ConfigurationObject != null).Should().BeTrue();
+            picture.AllPoints.All(point => point.ConfigurationObject != null).Should().BeTrue();
 
             #endregion
         }
@@ -405,20 +289,10 @@ namespace GeoGen.Constructor.Tests
              });
 
             // Test that there is one circle which passes through 6 points (Feurbach circle)
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true,
-            })
-            .Count(circle => circle.Points.Count == 6).Should().Be(1);
+            picture.AllCircles.Count(circle => circle.Points.Count == 6).Should().Be(1);
 
             // Test the number of circles passing through 4 points
-            picture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                Type = ContextualPictureQuery.ObjectsType.All,
-                IncludeCirces = true,
-            })
-            .Count(circle => circle.Points.Count == 4).Should().Be(3, "two vertices and corresponding feet are concyclic");
+            picture.AllCircles.Count(circle => circle.Points.Count == 4).Should().Be(3, "two vertices and corresponding feet are concyclic");
         }
 
         [Test]

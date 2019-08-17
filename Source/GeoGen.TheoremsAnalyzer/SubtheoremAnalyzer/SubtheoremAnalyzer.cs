@@ -189,11 +189,7 @@ namespace GeoGen.TheoremsAnalyzer
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // Take the points 
-            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<PointObject>(new ContextualPictureQuery
-            {
-                IncludePoints = true,
-                Type = ContextualPictureQuery.ObjectsType.All
-            })
+            return input.ExaminedConfigurationContexualPicture.AllPoints
                 // And their n-tuples, where n is the inferred number of points
                 .Variations(templateLooseObjects.Count)
                 // Unwrap configuration objects
@@ -225,32 +221,28 @@ namespace GeoGen.TheoremsAnalyzer
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // Take all circles
-            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                IncludeCirces = true,
-                Type = ContextualPictureQuery.ObjectsType.All
-            })
-            // That have at least four points
-            .Where(circle => circle.Points.Count >= 4)
-            // Take all 4-elements variations for each of them
-            .SelectMany(circle => circle.Points.Variations(4))
-            // Get plain configuration objects from these quadruples
-            .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
-            // Each represents a possible mapping
-            .Select(points => new MappingData
-            {
-                // That we can get by zipping the loose template objects and these points
-                Mapping = templateLooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>()),
+            return input.ExaminedConfigurationContexualPicture.AllCircles
+                // That have at least four points
+                .Where(circle => circle.Points.Count >= 4)
+                // Take all 4-elements variations for each of them
+                .SelectMany(circle => circle.Points.Variations(4))
+                // Get plain configuration objects from these quadruples
+                .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
+                // Each represents a possible mapping
+                .Select(points => new MappingData
+                {
+                    // That we can get by zipping the loose template objects and these points
+                    Mapping = templateLooseObjects.Cast<ConfigurationObject>().ZipToDictionary(points.Cast<ConfigurationObject>()),
 
-                // No equal objects
-                EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
+                    // No equal objects
+                    EqualObjects = new List<(ConfigurationObject newerObject, ConfigurationObject olderObject)>(),
 
-                // We're using that our points are concyclic
-                UsedFacts = new List<Theorem>
+                    // We're using that our points are concyclic
+                    UsedFacts = new List<Theorem>
                 {
                     new Theorem(input.ExaminedTheorem.Configuration, ConcyclicPoints, points)
                 }
-            });
+                });
         }
 
         /// <summary>
@@ -277,21 +269,13 @@ namespace GeoGen.TheoremsAnalyzer
                new IEnumerable<DefinableByPoints>[]
                {
                     // Get the circles from the contextual picture
-                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-                    {
-                        IncludeCirces = true,
-                        Type = ContextualPictureQuery.ObjectsType.All
-                    })
+                    input.ExaminedConfigurationContexualPicture.AllCircles
                     // That have their configuration object set 
                     // (since it's one of the loose objects)
                     .Where(circle => circle.ConfigurationObject != null),
 
                     // Get the lines from the contextual picture
-                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-                    {
-                        IncludeLines = true,
-                        Type = ContextualPictureQuery.ObjectsType.All
-                    })
+                    input.ExaminedConfigurationContexualPicture.AllLines
                     // That contain at least two points
                     .Where(line => line.Points.Count >= 2)
                }
@@ -305,14 +289,14 @@ namespace GeoGen.TheoremsAnalyzer
                    return currentPairs.Where(pair =>
                    {
                        // Where the circle...
-                       return input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Circle>(pair[0], picture)
+                       return ((Circle)input.ExaminedConfigurationContexualPicture.GetAnalyticObject(pair[0], picture))
                             // Is tangent to the line
-                            .IsTangentTo(input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(pair[1], picture));
+                            .IsTangentTo((Line)input.ExaminedConfigurationContexualPicture.GetAnalyticObject(pair[1], picture));
                    });
                })
                // Now we have correct pairs that are tangent to each other in every picture
                // For each such a pair we take every possible pair of points on the line...
-               .SelectMany(circleLine => circleLine[1].Points.Subsets(2).Select(points => points.ToArray()).Select(points =>
+               .SelectMany(circleLine => circleLine[1].Points.Subsets(2).Select(points =>
                {
                    // For a given pair of points we finally have out mapping to return
                    return new MappingData
@@ -354,17 +338,11 @@ namespace GeoGen.TheoremsAnalyzer
             var templateLooseObjects = input.TemplateTheorem.Configuration.LooseObjects;
 
             // We start with getting all circles
-            return input.ExaminedConfigurationContexualPicture.GetGeometricObjects<CircleObject>(new ContextualPictureQuery
-            {
-                IncludeCirces = true,
-                Type = ContextualPictureQuery.ObjectsType.All
-            })
+            return input.ExaminedConfigurationContexualPicture.AllCircles
             // That contain at least three points
             .Where(circle => circle.Points.Count >= 4)
             // We take their unordered triples
             .Subsets(3)
-            // Cast each to an array so we can work with it better
-            .Select(subset => subset.ToArray())
             // For each triple of circles create three possible pairs of them
             .Select(triple => new[] { (triple[0], triple[1]), (triple[1], triple[2]), (triple[2], triple[0]) })
             // For each triple of these pairs find common points
@@ -440,11 +418,7 @@ namespace GeoGen.TheoremsAnalyzer
                 (IEnumerable<IEnumerable<LineObject>>)new[]
                 {
                     // This group contains all lines
-                    input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-                    {
-                        IncludeLines = true,
-                        Type = ContextualPictureQuery.ObjectsType.All
-                    })
+                    input.ExaminedConfigurationContexualPicture.AllLines
                     // That have at least two points
                     .Where(line => line.Points.Count >= 2)
                 },
@@ -458,7 +432,7 @@ namespace GeoGen.TheoremsAnalyzer
                         // Within a single group we first categorize these lines be their angle
                         // with respect to the current picture (two lines are parallel if and
                         // only if their angles are the same). 
-                        return currentGroup.GroupBy(line => input.ExaminedConfigurationContexualPicture.GetAnalyticObject<Line>(line, picture).Angle.Rounded())
+                        return currentGroup.GroupBy(line => ((Line)input.ExaminedConfigurationContexualPicture.GetAnalyticObject(line, picture)).Angle.Rounded())
                                       // We clearly only those groups where there are at least two lines
                                       // (that are parallel to each other)
                                       .Where(innerGroup => innerGroup.Count() >= 2);
@@ -581,8 +555,11 @@ namespace GeoGen.TheoremsAnalyzer
                             case PredefinedConstructionType.RandomPointOnCircle:
                             case PredefinedConstructionType.RandomPointOnLine:
 
-                                // Then we get the geometric object corresponding to it 
-                                lineOrCircle = input.ExaminedConfigurationContexualPicture.GetGeometricObject<DefinableByPoints>(mappedObject.PassedArguments.FlattenedList.Single());
+                                // Then we have passed line or circle
+                                var configurationLineOfCircle = mappedObject.PassedArguments.FlattenedList.First();
+
+                                // We get the geometric object
+                                lineOrCircle = (DefinableByPoints)input.ExaminedConfigurationContexualPicture.GetGeometricObject(configurationLineOfCircle);
 
                                 break;
 
@@ -590,15 +567,11 @@ namespace GeoGen.TheoremsAnalyzer
                             case PredefinedConstructionType.RandomPointOnLineFromPoints:
 
                                 // In order to find the result take all lines
-                                lineOrCircle = input.ExaminedConfigurationContexualPicture.GetGeometricObjects<LineObject>(new ContextualPictureQuery
-                                {
-                                    IncludeLines = true,
-                                    Type = ContextualPictureQuery.ObjectsType.All,
-                                })
-                                // That contain the two points that should make the arguments of the line
-                                .Where(line => line.Points.Select(p => p.ConfigurationObject).ToSet().IsSupersetOf(mappedObject.PassedArguments.FlattenedList))
-                                // There should be exactly one line like this
-                                .Single();
+                                lineOrCircle = input.ExaminedConfigurationContexualPicture.AllLines
+                                    // That contain the two points that should make the arguments of the line
+                                    .Where(line => line.Points.Select(p => p.ConfigurationObject).ToSet().IsSupersetOf(mappedObject.PassedArguments.FlattenedList))
+                                    // There should be exactly one line like this
+                                    .Single();
 
                                 break;
                         }

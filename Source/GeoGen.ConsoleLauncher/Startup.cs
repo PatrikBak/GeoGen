@@ -1,7 +1,5 @@
 ﻿using Ninject;
 using System;
-using System.Globalization;
-using System.Threading;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
 
@@ -19,9 +17,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private static void Main()
         {
-            // This makes sure that doubles in the VS debugger will be displayed with a decimal point
-            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-
             // Initialize the IoC system
             RunTaskAndHandleExceptions(() => IoC.InitializeAsync(), exitOnException: true);
 

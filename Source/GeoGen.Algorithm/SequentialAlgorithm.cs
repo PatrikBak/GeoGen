@@ -2,7 +2,7 @@
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
-using GeoGen.TheoremsFinder.new_stuff;
+using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -230,14 +230,14 @@ namespace GeoGen.Algorithm
                         var newTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindNewTheorems(picture)));
 
                         // Create a container holding the objects of the configuration
-                        //var container = _containerFactory.CreateContainer(configuration);
+                        var container = _containerFactory.CreateContainer(configuration);
 
                         // Analyze the theorems
                         var analysisResult = _analyzer.Analyze(new TheoremAnalyzerInput
                         {
                             ContextualPicture = picture,
                             NewTheorems = newTheorems,
-                            //ConfigurationObjectsContainer = container
+                            ConfigurationObjectsContainer = container
                         });
 
                         // Return the final output
@@ -245,7 +245,7 @@ namespace GeoGen.Algorithm
                         {
                             Configuration = configuration,
                             Theorems = newTheorems.AllObjects,
-                            AnalyzerOutput = analysisResult
+                            AnalyzerOutput = new Dictionary<Theorem, TheoremFeedback>()
                         };
                     }));
         }

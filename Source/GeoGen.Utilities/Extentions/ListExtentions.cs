@@ -3,7 +3,7 @@
 namespace GeoGen.Utilities
 {
     /// <summary>
-    /// Extension methods for <see cref="IList{T}"/>.
+    /// Extension methods for <see cref="IReadOnlyList{T}"/>.
     /// </summary>
     public static class ListExtentions
     {
@@ -13,7 +13,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="list">The list.</param>
         /// <returns>An enumerable of all the unordered pairs.</returns>
-        public static IEnumerable<(T, T)> UnorderedPairs<T>(this IList<T> list)
+        public static IEnumerable<(T, T)> UnorderedPairs<T>(this IReadOnlyList<T> list)
         {
             // Go through all the items twice
             for (var i = 0; i < list.Count; i++)
@@ -27,7 +27,7 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="list">The list.</param>
         /// <returns>An enumerable of all the unordered triples.</returns>
-        public static IEnumerable<(T, T, T)> UnorderedTriples<T>(this IList<T> list)
+        public static IEnumerable<(T, T, T)> UnorderedTriples<T>(this IReadOnlyList<T> list)
         {
             // Go through all the items twice
             for (var i = 0; i < list.Count; i++)

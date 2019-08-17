@@ -71,6 +71,66 @@ namespace GeoGen.Constructor
         /// </summary>
         public Pictures Pictures { get; }
 
+        /// <summary>
+        /// Gets all lines and circles of the picture.
+        /// </summary>
+        public IEnumerable<DefinableByPoints> AllLinesAndCircles => AllLines.Cast<DefinableByPoints>().Concat(AllCircles);
+
+        /// <summary>
+        /// Gets all old lines and circles of the picture.
+        /// </summary>
+        public IEnumerable<DefinableByPoints> OldLinesAndCircles => OldLines.Cast<DefinableByPoints>().Concat(OldCircles);
+
+        /// <summary>
+        /// Gets all new lines and circles of the picture.
+        /// </summary>
+        public IEnumerable<DefinableByPoints> NewLinesAndCircles => NewLines.Cast<DefinableByPoints>().Concat(NewCircles);
+
+        /// <summary>
+        /// Gets all lines of the pictures.
+        /// </summary>
+        public IEnumerable<LineObject> AllLines => _oldLines.Concat(_newLines);
+
+        /// <summary>
+        /// Gets all circles of the pictures.
+        /// </summary>
+        public IEnumerable<CircleObject> AllCircles => _oldCircles.Concat(_newCircles);
+
+        /// <summary>
+        /// Gets all points of the pictures.
+        /// </summary>
+        public IEnumerable<PointObject> AllPoints => _oldPoints.Concat(_newPoints);
+
+        /// <summary>
+        /// Gets old points of the pictures.
+        /// </summary>
+        public IEnumerable<PointObject> OldPoints => _oldPoints;
+
+        /// <summary>
+        /// Gets old lines of the pictures.
+        /// </summary>
+        public IEnumerable<LineObject> OldLines => _oldLines;
+
+        /// <summary>
+        /// Gets old circles of the pictures.
+        /// </summary>
+        public IEnumerable<CircleObject> OldCircles => _oldCircles;
+
+        /// <summary>
+        /// Gets new points of the pictures.
+        /// </summary>
+        public IEnumerable<PointObject> NewPoints => _newPoints;
+
+        /// <summary>
+        /// Gets new lines of the pictures.
+        /// </summary>
+        public IEnumerable<LineObject> NewLines => _newLines;
+
+        /// <summary>
+        /// Gets new circles of the pictures.
+        /// </summary>
+        public IEnumerable<CircleObject> NewCircles => _newCircles;
+
         #endregion
 
         #region Constructor
@@ -200,90 +260,19 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Gets the geometric objects matching a given query and casts them to a given type.
+        /// Gets the geometric objects that corresponds to a given configuration object.
         /// </summary>
-        /// <typeparam name="T">The type of objects.</typeparam>
-        /// <param name="query">The query that we want to perform.</param>
-        /// <returns>The queried objects.</returns>
-        public IEnumerable<T> GetGeometricObjects<T>(ContextualPictureQuery query) where T : GeometricObject
-        {
-            // Prepare the result
-            var result = Enumerable.Empty<GeometricObject>();
-
-            // If we should include points
-            if (query.IncludePoints)
-            {
-                // Then we decide based on the objects type
-                switch (query.Type)
-                {
-                    case ContextualPictureQuery.ObjectsType.New:
-                        result = result.Concat(_newPoints);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.Old:
-                        result = result.Concat(_oldPoints);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.All:
-                        result = result.Concat(_oldPoints).Concat(_newPoints);
-                        break;
-                }
-            }
-
-            // If we should include lines
-            if (query.IncludeLines)
-            {
-                // Then we decide based on the objects type
-                switch (query.Type)
-                {
-                    case ContextualPictureQuery.ObjectsType.New:
-                        result = result.Concat(_newLines);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.Old:
-                        result = result.Concat(_oldLines);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.All:
-                        result = result.Concat(_oldLines).Concat(_newLines);
-                        break;
-                }
-            }
-
-            // If we should include circles
-            if (query.IncludeCirces)
-            {
-                // Then we decide based on the objects type
-                switch (query.Type)
-                {
-                    case ContextualPictureQuery.ObjectsType.New:
-                        result = result.Concat(_newCircles);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.Old:
-                        result = result.Concat(_oldCircles);
-                        break;
-                    case ContextualPictureQuery.ObjectsType.All:
-                        result = result.Concat(_oldCircles).Concat(_newCircles);
-                        break;
-                }
-            }
-
-            // Return the result casted to the wanted type
-            return result.Cast<T>();
-        }
-
-        /// <summary>
-        /// Gets the geometric objects of the requested type that corresponds to a given configuration object.
-        /// </summary>
-        /// <typeparam name="T">The type of the geometric object.</typeparam>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The corresponding geometric object.</returns>
-        public T GetGeometricObject<T>(ConfigurationObject configurationObject) where T : GeometricObject => (T)_configurationObjectsMap[configurationObject];
+        public GeometricObject GetGeometricObject(ConfigurationObject configurationObject) => _configurationObjectsMap[configurationObject];
 
         /// <summary>
         /// Gets the analytic representation of a given geometric object in a given picture.
         /// </summary>
-        /// /// <typeparam name="T">The wanted type of the analytic object.</typeparam>
         /// <param name="geometricObject">The geometric object.</param>
         /// <param name="picture">The picture.</param>
-        /// <returns>The analytic object represented by the given geometric object in the given picture.</returns>
-        public T GetAnalyticObject<T>(GeometricObject geometricObject, Picture picture) where T : IAnalyticObject => (T)_objects[picture].GetRightValue(geometricObject);
+        /// <returns>The analytic object.</returns>
+        public IAnalyticObject GetAnalyticObject(GeometricObject geometricObject, Picture picture) => _objects[picture].GetRightValue(geometricObject);
 
         #endregion
 
@@ -348,7 +337,7 @@ namespace GeoGen.Constructor
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
             // Let the helper method get the geometric object that represents this object
-            var geometricObject = GetGeometricObject(configurationObject);
+            var geometricObject = FindGeometricObject(configurationObject);
 
             // If this object is not null (i.e. there already is it's representation)...
             if (geometricObject != null)
@@ -420,11 +409,11 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Gets the geometric object that corresponds to a given configuration object. 
+        /// Finds the geometric object that corresponds to a given configuration object. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The corresponding geometric object, if there is any; otherwise null.</returns>
-        private GeometricObject GetGeometricObject(ConfigurationObject configurationObject)
+        private GeometricObject FindGeometricObject(ConfigurationObject configurationObject)
         {
             // NOTE: We could have just taken one picture and look for the object
             // in it, but we didn't. There is a chance of inconsistency, that is 

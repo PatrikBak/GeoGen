@@ -11,6 +11,22 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Combines the items of this enumerable with the items of the other one.
+        /// </summary>
+        /// <typeparam name="TSource">The type of items in the source enumerable.</typeparam>
+        /// <typeparam name="TOther">The type of items in the other enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="otherEnumerable">The other enumerable.</param>
+        /// <returns>An enumerable of all the ordered pairs.</returns>
+        public static IEnumerable<(TSource, TOther)> CombinedWith<TSource, TOther>(this IEnumerable<TSource> enumerable, IEnumerable<TOther> otherEnumerable)
+        {
+            // Go through all the items of the first and the second enumerable
+            foreach (var element1 in enumerable)
+                foreach (var element2 in otherEnumerable)
+                    yield return (element1, element2);
+        }
+
+        /// <summary>
         /// Sorts the elements of a sequence in ascending order
         /// </summary>
         /// <typeparam name="T">The type of the elements of the enumerable.</typeparam>
@@ -215,7 +231,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <param name="numberOfElement">The number of elements in each variation.</param>
+        /// <param name="numberOfElements">The number of elements in each variation.</param>
         /// <returns>A lazy enumerable of all possible variations with a given size.</returns>
         public static IEnumerable<T[]> Variations<T>(this IEnumerable<T> enumerable, int numberOfElements)
         {
@@ -284,11 +300,11 @@ namespace GeoGen.Utilities
         /// <returns>A lazy enumerable of all possible permutations.</returns>
         public static IEnumerable<T[]> Permutations<T>(this IEnumerable<T> enumerable)
         {
-            // Enumerate the enumerable
-            var array = enumerable.ToArray();
+            // Enumerate the items to an array, if it's needed
+            var items = enumerable as IList<T> ?? enumerable.ToArray();
 
             // Permutations are variations of all the elements
-            return array.Variations(array.Length);
+            return items.Variations(items.Count);
         }
 
         /// <summary>
@@ -303,11 +319,11 @@ namespace GeoGen.Utilities
         /// <returns>A lazy enumerable of all possible combinations of elements.</returns>
         public static IEnumerable<T[]> Combine<T>(this IEnumerable<IEnumerable<T>> enumerable)
         {
-            // Enumerate the options
-            var optionsArray = enumerable.ToArray();
+            // Enumerate the items to an array, if it's needed
+            var optionsArray = enumerable as IList<IEnumerable<T>> ?? enumerable.ToArray();
 
             // Prepare the resulting array that will be returned whenever it's ready
-            var result = new T[optionsArray.Length];
+            var result = new T[optionsArray.Count];
 
             // Local function that performs the generation. It assumes we've already decided
             // for some elements from the options at the indices from the interval [0, optionsIndex-1],
@@ -316,7 +332,7 @@ namespace GeoGen.Utilities
             IEnumerable<T[]> Generate(int optionsIndex)
             {
                 // If we've been through all the option enumerables...
-                if (optionsIndex == optionsArray.Length)
+                if (optionsIndex == optionsArray.Count)
                 {
                     // Then we lazily return the result
                     yield return result;
@@ -352,19 +368,19 @@ namespace GeoGen.Utilities
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="numberOfElements">The size of each subset.</param>
         /// <returns>A lazy enumerable of all possible subsets with a given size.</returns>
-        public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> enumerable, int numberOfElements)
+        public static IEnumerable<T[]> Subsets<T>(this IEnumerable<T> enumerable, int numberOfElements)
         {
-            // Enumerate the items to an array
-            var items = enumerable.ToArray();
+            // Enumerate the items to an array, if it's needed
+            var items = enumerable as IList<T> ?? enumerable.ToArray();
 
             // Local function that performs a simple recursive algorithm that returns all the
-            // from the elements with indices from the interval [startIndex, items.Length-1] 
+            // from the elements with indices from the interval [startIndex, items.Count-1] 
             // with the requested size
-            IEnumerable<IEnumerable<T>> Generate(int startIndex, int requestedNumberOfElements)
+            IEnumerable<T[]> Generate(int startIndex, int requestedNumberOfElements)
             {
-                // Our available elements have indices from the interval [startIndex, items.Length-1],
-                // i.e. there are 'item.Length - startIndex' of them. If we're requesting more...
-                if (items.Length - startIndex < requestedNumberOfElements)
+                // Our available elements have indices from the interval [startIndex, items.Count-1],
+                // i.e. there are 'items.Count - startIndex' of them. If we're requesting more...
+                if (items.Count - startIndex < requestedNumberOfElements)
                 {
                     // We can break
                     yield break;
@@ -373,7 +389,7 @@ namespace GeoGen.Utilities
                 else if (requestedNumberOfElements == 0)
                 {
                     // Them we simply return an empty set
-                    yield return Enumerable.Empty<T>();
+                    yield return new T[0];
                 }
                 // Otherwise...
                 else
@@ -381,7 +397,7 @@ namespace GeoGen.Utilities
                     // We first assume the element at the 'startIndex' is in the subset. Then we need to 
                     // request one fewer elements from the remaining ones and include this one as well
                     foreach (var subset in Generate(startIndex + 1, requestedNumberOfElements - 1))
-                        yield return subset.Concat(items[startIndex]);
+                        yield return subset.Concat(items[startIndex]).ToArray();
 
                     // Now we assume we're not including the element at the 'startIndex'. Then we ask
                     // the same number of elements 
@@ -400,13 +416,13 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <returns>A lazy enumerable of all possible subsets.</returns>
-        public static IEnumerable<IEnumerable<T>> Subsets<T>(this IEnumerable<T> enumerable)
+        public static IEnumerable<T[]> Subsets<T>(this IEnumerable<T> enumerable)
         {
-            // Enumerate the items to an array
-            var items = enumerable.ToArray();
+            // Enumerate the items to an array, if it's needed
+            var items = enumerable as IList<T> ?? enumerable.ToArray();
 
             // Merge the subsets of every possible size
-            return Enumerable.Range(0, items.Length + 1).SelectMany(size => items.Subsets(size));
+            return Enumerable.Range(0, items.Count + 1).SelectMany(size => items.Subsets(size));
         }
     }
 }

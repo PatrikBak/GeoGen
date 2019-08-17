@@ -3,6 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremsFinder;
 using Ninject;
 using Ninject.Extensions.Factory;
 
@@ -95,6 +96,16 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremsFinder(this IKernel kernel)
         {
+            kernel.Bind<ITheoremsFinder>().To<CollinearPointsTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<ConcurrentObjectsTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<ConcyclicPointsTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<EqualAnglesTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<EqualLineSegmentsTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<LineTangentToCircleTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<ParallelLinesTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<PerpendicularLinesTheoremsFinder>().InSingletonScope();
+            kernel.Bind<ITheoremsFinder>().To<TangentCirclesTheoremsFinder>().InSingletonScope();
+
             // Return the kernel for chaining
             return kernel;
         }

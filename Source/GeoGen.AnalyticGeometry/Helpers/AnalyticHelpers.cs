@@ -302,5 +302,27 @@ namespace GeoGen.AnalyticGeometry
             // Return them
             return (line, point1, point2);
         }
+
+        /// <summary>
+        /// Constructs three points A, B, C such that angle BAC is right.
+        /// </summary>
+        /// <returns>The points making a right triangle.</returns>
+        public static (Point, Point, Point) ConstructRandomRightTriangle()
+        {
+            // Fix the first two points
+            var A = new Point(0, 0);
+            var B = new Point(1, 0);
+
+            // Let's make angle ABC between 8 and 37, so that it's not 
+            // close to 45, nor close to 0, and the other angle is not 
+            // close to 45 either, nor 90
+            var beta = MathematicalHelpers.ToRadians(RandomnessHelper.NextDouble(8, 37));
+
+            // Point C can then be then easily calculated
+            var C = new Point(0, Math.Tan(beta));
+
+            // Return the points
+            return (A, B, C);
+        }
     }
 }

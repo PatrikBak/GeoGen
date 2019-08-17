@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System;
+using System.Globalization;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -199,7 +200,7 @@ namespace GeoGen.AnalyticGeometry
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the point.</returns>
-        public override string ToString() => $"({X}, {Y})";
+        public override string ToString() => $"({X.ToString(CultureInfo.InvariantCulture)}, {Y.ToString(CultureInfo.InvariantCulture)})";
 
         #endregion
     }

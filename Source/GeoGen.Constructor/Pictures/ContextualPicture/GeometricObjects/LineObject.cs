@@ -49,5 +49,16 @@ namespace GeoGen.Constructor
         }
 
         #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts a given object to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the object.</returns>
+        public override string ToString() => $"Line: {base.ToString()}";
+
+        #endregion
     }
 }

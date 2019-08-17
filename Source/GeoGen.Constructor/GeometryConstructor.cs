@@ -97,7 +97,7 @@ namespace GeoGen.Constructor
 
                 // If it's not, we directly return the current data without dealing with the remaining objects
                 if (!correctResult)
-                    return default;
+                    return (null, data);
             }
 
             // If we got here, then there are no inconstructible objects and no duplicates
@@ -307,6 +307,16 @@ namespace GeoGen.Constructor
 
                     // Return them in an array 
                     return new IAnalyticObject[] { line, point1, point2 };
+                }
+
+                // In this case we have three points
+                case LooseObjectsLayout.RightTriangle:
+                {
+                    // Create the points
+                    var (point1, point2, point3) = AnalyticHelpers.ConstructRandomRightTriangle();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { point1, point2, point3 };
                 }
 
                 // If we got here, we have an unsupported layout :/

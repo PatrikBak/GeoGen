@@ -7,6 +7,7 @@ using GeoGen.TheoremsAnalyzer;
 using Ninject;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Algorithm.Tests
@@ -30,7 +31,10 @@ namespace GeoGen.Algorithm.Tests
                 var kernel = IoC.CreateKernel()
                     .AddGenerator()
                     .AddTheoremsFinder()
-                    .AddTheoremsAnalyzer(new TheoremsAnalyzerData())
+                    .AddTheoremsAnalyzer(new TheoremsAnalyzerData
+                    {
+                        TemplateTheorems = new List<Theorem>()
+                    })
                     .AddConstructor(new PicturesSettings
                     {
                         NumberOfPictures = 5,

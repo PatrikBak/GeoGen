@@ -73,7 +73,17 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
-        public override string ToString() => $"{ObjectType}({Id})";
+        public override string ToString() => this switch
+        {
+            // With loose object we include the id and type
+            LooseConfigurationObject _ => $"{Id}={ObjectType}",
+
+            // With construct we include the id + definition
+            ConstructedConfigurationObject constructedObject => $"{constructedObject.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})",
+
+            // Default case
+            _ => throw new GeoGenException($"Unhandled object type of configuration object: {GetType()}."),
+        };
 
         #endregion
     }

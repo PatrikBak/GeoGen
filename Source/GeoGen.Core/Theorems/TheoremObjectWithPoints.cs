@@ -74,7 +74,7 @@ namespace GeoGen.Core
             // They are either equivalent according to the base method 
             return base.IsEquivalentTo(otherObject) ||
                 // Or the other object is an object with points
-                otherObject is TheoremObjectWithPoints objectWithPoints &&
+                otherObject is TheoremObjectWithPoints objectWithPoints && objectWithPoints.GetType() == GetType() &&
                 // And the number of their common points is at least the number of the points that are needed to define them
                 Points.Intersect(objectWithPoints.Points).Count() >= NumberOfNeededPoints;
         }
@@ -121,7 +121,7 @@ namespace GeoGen.Core
             var objectPart = ConfigurationObject == null ? "" : $" object: {ConfigurationObject.Id}, ";
 
             // Construct the final string including the ids of the points
-            return $"{objectPart}{Points.Select(p => p.Id).ToJoinedString("--")}";
+            return $"{objectPart}{Points.Select(p => p.Id).Ordered().ToJoinedString("--")}";
         }
 
         #endregion

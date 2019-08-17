@@ -48,6 +48,12 @@ namespace GeoGen.Core
                 // 3 points
                 LooseObjectsLayout.IsoscelesTriangle => new List<ConfigurationObjectType> { Point, Point, Point },
 
+                // 3 points
+                LooseObjectsLayout.RightTriangle => new List<ConfigurationObjectType> { Point, Point, Point },
+
+                // 4 points
+                LooseObjectsLayout.LineSegmentBisectedByLineFromPoints => new List<ConfigurationObjectType> { Point, Point, Point, Point },
+
                 // Default case
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),
             };

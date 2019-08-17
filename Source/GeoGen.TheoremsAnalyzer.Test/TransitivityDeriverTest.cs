@@ -49,7 +49,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             };
 
             // Create all theorems about their equalities
-            var theorems = angles.Subsets(2).Select(subset => new Theorem(configuration, EqualAngles, subset.ToArray())).ToList();
+            var theorems = angles.Subsets(2).Select(subset => new Theorem(configuration, EqualAngles, subset)).ToList();
 
             // Any time we take two theorems, we can deduce the third
             theorems.Subsets(2).ForEach(assumedTheorems =>

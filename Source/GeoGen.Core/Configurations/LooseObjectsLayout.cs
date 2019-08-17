@@ -22,6 +22,16 @@
         IsoscelesTriangle,
 
         /// <summary>
+        /// Represents three points A, B, C such that angle BAC is right.
+        /// </summary>
+        RightTriangle,
+
+        /// <summary>
+        /// Represents four points A, B, C, D such that CD is the perpendicular bisector of AB.
+        /// </summary>
+        LineSegmentBisectedByLineFromPoints,
+
+        /// <summary>
         /// Represents 4 points, where no 3 of them are collinear. When drawn they make 
         /// a convex quadrilateral. 
         /// </summary>
