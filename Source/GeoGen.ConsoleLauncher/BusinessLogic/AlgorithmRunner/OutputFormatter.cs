@@ -243,7 +243,7 @@ namespace GeoGen.ConsoleLauncher
                                 // If we have a line, add [] around points 
                                 LineTheoremObject _ => $"{objectPart}[{pointsPart}]",
 
-                                // If we have a line, add [] around points
+                                // If we have a circle, add [] around points
                                 CircleTheoremObject _ => $"{objectPart}({pointsPart})",
 
                                 // Unhandled case

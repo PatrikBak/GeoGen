@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -55,6 +56,13 @@ namespace GeoGen.Constructor
         /// <param name="other">The given object.</param>
         /// <returns>A lazy enumerable of common points.</returns>
         public IEnumerable<PointObject> CommonPointsWith(DefinableByPoints other) => Points.Intersect(other.Points);
+
+        /// <summary>
+        /// Finds out if this object contains all passed points.
+        /// </summary>
+        /// <param name="points">The points to be checked.</param>
+        /// <returns>true, if it contains all the points; false otherwise.</returns>
+        public bool ContainsAll(IEnumerable<PointObject> points) => _points.IsSupersetOf(points);
 
         #endregion
 

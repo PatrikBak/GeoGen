@@ -102,7 +102,7 @@ namespace GeoGen.ConsoleLauncher
             if (initialTheorems.Any())
             {
                 WriteLineToBoth("\nTheorems:\n");
-                WriteLineToBoth(initialTheorems.AllObjects.Select(t => $" - {initialFormatter.FormatTheorem(t)}").ToJoinedString("\n"));
+                WriteLineToBoth(TheoremsToString(initialFormatter, initialTheorems.AllObjects, new Dictionary<Theorem, TheoremFeedback>(), includeResolved: true));
             }
 
             #endregion
@@ -220,62 +220,72 @@ namespace GeoGen.ConsoleLauncher
         private string TheoremsToString(OutputFormatter formatter, IReadOnlyList<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
         {
             // Convert either all theorems, if we should include resolved, or only not resolved ones
-            return theorems.Where(theorem => includeResolved || !feedback.ContainsKey(theorem)).Select((theorem, index) =>
-            {
-                // Get the basic string from the formatter
-                var theoremString = $" {index + 1,2}. {formatter.FormatTheorem(theorem)}";
-
-                // If the theorem has no feedback, we can't write more
-                if (!feedback.ContainsKey(theorem))
-                    return theoremString;
-
-                // Otherwise switch on the feedback
-                switch (feedback[theorem])
+            return theorems.Where(theorem => includeResolved || !feedback.ContainsKey(theorem))
+                // Convert a given one to a string
+                .Select(theorem => (theorem, theoremString: formatter.FormatTheorem(theorem)))
+                // Order them
+                .OrderBy(pair => pair.theoremString)
+                // Add feedback
+                .Select((pair, index) =>
                 {
-                    // Trivial theorem
-                    case TrivialTheoremFeedback _:
-                        return $"{theoremString} - trivial theorem";
+                    // Deconstruct
+                    var (theorem, theoremString) = pair;
 
-                    // Sub-theorem
-                    case SubtheoremFeedback subtheoremFeedback:
+                    // If the theorem has no feedback, we can't write more
+                    if (!feedback.ContainsKey(theorem))
+                        return theoremString;
 
-                        // In this case we know the template theorem has our additional info
-                        var templateTheorem = (TemplateTheorem)subtheoremFeedback.TemplateTheorem;
+                    // Otherwise switch on the feedback
+                    switch (feedback[theorem])
+                    {
+                        // Trivial theorem
+                        case TrivialTheoremFeedback _:
+                            return $"{theoremString} - trivial theorem";
 
-                        // We can now construct more descriptive string
-                        return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
+                        // Sub-theorem
+                        case SubtheoremFeedback subtheoremFeedback:
 
-                    // Definable in a simpler configuration
-                    case DefineableSimplerFeedback _:
-                        return $"{theoremString} - can be defined in a simpler configuration";
+                            // In this case we know the template theorem has our additional info
+                            var templateTheorem = (TemplateTheorem)subtheoremFeedback.TemplateTheorem;
 
-                    // Transitivity
-                    case TransitivityFeedback transitivityFeedback:
+                            // We can now construct more descriptive string
+                            return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
 
-                        // Local function that converts a fact to a string
-                        string FactToString(Theorem fact)
-                        {
-                            // Try to find it in our theorems
-                            var equalTheoremIndex = theorems.IndexOf(fact, Theorem.EquivalencyComparer);
+                        // Definable in a simpler configuration
+                        case DefineableSimplerFeedback _:
+                            return $"{theoremString} - can be defined in a simpler configuration";
 
-                            // If it's found, i.e. not -1, then return just the number
-                            if (equalTheoremIndex != -1)
-                                return $"{equalTheoremIndex + 1}";
+                        // Transitivity
+                        case TransitivityFeedback transitivityFeedback:
 
-                            // Otherwise Convert the fact
-                            return $"{formatter.FormatTheorem(fact, includeType: false)} (this is true in a simpler configuration)";
-                        }
+                            // Local function that converts a fact to a string
+                            string FactToString(Theorem fact)
+                            {
+                                // Try to find it in our theorems
+                                var equalTheoremIndex = theorems.IndexOf(fact, Theorem.EquivalencyComparer);
 
-                        // Compose the final string
-                        return $"{theoremString} - is true because of {FactToString(transitivityFeedback.Fact1)} and {FactToString(transitivityFeedback.Fact2)}";
+                                // If it's found, i.e. not -1, then return just the number
+                                if (equalTheoremIndex != -1)
+                                    return $"{equalTheoremIndex + 1}";
 
-                    // Otherwise...
-                    default:
-                        throw new GeoGenException($"Unhandled type of feedback: {feedback[theorem].GetType()}");
-                }
-            })
-            // Make each on a separate line
-            .ToJoinedString("\n");
+                                // Otherwise Convert the fact
+                                return $"{formatter.FormatTheorem(fact, includeType: false)} (this is true in a simpler configuration)";
+                            }
+
+                            // Compose the final string
+                            return $"{theoremString} - is true because of {FactToString(transitivityFeedback.Fact1)} and {FactToString(transitivityFeedback.Fact2)}";
+
+                        // Otherwise...
+                        default:
+                            throw new GeoGenException($"Unhandled type of feedback: {feedback[theorem].GetType()}");
+                    }
+                })
+                // Order them
+                .Ordered()
+                // Prepend the theorem number
+                .Select((s, index) => $" {index + 1,2}. {s}")
+                // Make each on a separate line
+                .ToJoinedString("\n");
         }
 
         #endregion

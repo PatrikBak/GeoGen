@@ -124,6 +124,9 @@ namespace GeoGen.Algorithm
             // Prepare the map for pictures
             var picturesMap = new Dictionary<GeneratedConfiguration, Pictures>();
 
+            // Prepare the map for theorems
+            var theoremsMap = new Dictionary<GeneratedConfiguration, TheoremsMap>();
+
             // Prepare a set containing inconstructible objects. 
             var inconstructibleObjects = new HashSet<ConfigurationObject>();
 
@@ -229,6 +232,24 @@ namespace GeoGen.Algorithm
                         // Find new theorems
                         var newTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindNewTheorems(picture)));
 
+                        // Get the old theorems
+                        // If the previous configuration is the initial one
+                        var oldTheorems = configuration.PreviousConfiguration.IterationIndex == 0 ?
+                            // Then we have them in a variable
+                            initialTheorems.AllObjects
+                            // Otherwise we take them from the map
+                            : theoremsMap[configuration.PreviousConfiguration].AllObjects;
+
+                        // We need to correct them so that theorem objects depict
+                        // the most recent situation
+                        oldTheorems = oldTheorems.Select(theorem => Recreate(picture, theorem)).ToList();
+
+                        // Now we can get all theorems
+                        var allTheorems = new TheoremsMap(newTheorems.AllObjects.Concat(oldTheorems));
+
+                        // And cache them
+                        theoremsMap.Add(configuration, allTheorems);
+
                         // Create a container holding the objects of the configuration
                         var container = _containerFactory.CreateContainer(configuration);
 
@@ -245,9 +266,124 @@ namespace GeoGen.Algorithm
                         {
                             Configuration = configuration,
                             Theorems = newTheorems.AllObjects,
-                            AnalyzerOutput = new Dictionary<Theorem, TheoremFeedback>()
+                            AnalyzerOutput = analysisResult
                         };
                     }));
+        }
+
+        /// <summary>
+        /// Makes sure a given theorem contains the most current theorem objects. For example,
+        /// if theorem is about line A, B, and there already is another point C on this line,
+        /// then we want to have this piece of information included in the theorem.
+        /// </summary>
+        /// <param name="picture">The contextual picture with data about lines, circles and points.</param>
+        /// <param name="theorem">To theorem to be (potentially) recreated.</param>
+        /// <returns>A recreated theorem with adjusted objects.</returns>
+        private Theorem Recreate(ContextualPicture picture, Theorem theorem)
+        {
+            // Local function that recreates an object
+            TheoremObject Recreate(TheoremObject theoremObject)
+            {
+                // Switch on the type
+                switch (theoremObject)
+                {
+                    // Base objects might have an object part
+                    case BaseTheoremObject baseObject:
+
+                        // Switch on type of base object
+                        switch (baseObject)
+                        {
+                            // Don't do anything with point
+                            case PointTheoremObject point:
+                                return point;
+
+                            // If we have an object with points...
+                            case TheoremObjectWithPoints objectWithPoints:
+
+                                #region Find the corresponding object in the contextual picture
+
+                                // Prepare the variable holding the result
+                                var geometricObject = default(DefinableByPoints);
+
+                                // It's easy if there is a configuration object specified
+                                if(objectWithPoints.ConfigurationObject != null)
+                                {
+                                    // Then we can get it directly
+                                    geometricObject = (DefinableByPoints)picture.GetGeometricObject(objectWithPoints.ConfigurationObject);
+                                }
+                                // Otherwise we need find it by points
+                                else
+                                {
+                                    // Take the needed number of representing the points of this theorem object
+                                    var points = objectWithPoints.Points.Take(objectWithPoints.NumberOfNeededPoints)
+                                        // Find their point objects
+                                        .Select(picture.GetGeometricObject).Cast<PointObject>()
+                                        // Enumerate
+                                        .ToList();
+
+                                    // Get possible candidates based on the type of this object
+                                    geometricObject = (objectWithPoints switch
+                                    {
+                                        // Line
+                                        LineTheoremObject _ => points[0].Lines as IEnumerable<DefinableByPoints>,
+
+                                        // Circle
+                                        CircleTheoremObject _ => points[0].Circles,
+
+                                        // Unhandled case
+                                        _ => throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}"),
+                                    })
+                                    // Take the first that contains all the points
+                                    .First(lineOrCircle => lineOrCircle.ContainsAll(points));
+                                }
+
+                                #endregion
+
+                                // Create new points
+                                var newPoints = geometricObject.Points.Select(point => point.ConfigurationObject);
+
+                                // Create the final result based on type
+                                return objectWithPoints switch
+                                {
+                                    // Line
+                                    LineTheoremObject _ => new LineTheoremObject(geometricObject.ConfigurationObject, newPoints) as TheoremObject,
+
+                                    // Circle
+                                    CircleTheoremObject _ => new CircleTheoremObject(geometricObject.ConfigurationObject, newPoints),
+
+                                    // Unhandled case
+                                    _ => throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}"),
+                                };
+
+                            // If something else
+                            default:
+                                throw new GeoGenException($"Unhandled type of base theorem object: {baseObject.GetType()}");
+                        }
+
+                    // Objects with two theorem objects
+                    case PairTheoremObject pairObject:
+
+                        // Switch based on type
+                        return pairObject switch
+                        {
+                            // Don't do anything with line segments
+                            LineSegmentTheoremObject lineSegment => lineSegment as TheoremObject,
+
+                            // With angle convert individual lines
+                            AngleTheoremObject angle => new AngleTheoremObject((LineTheoremObject)Recreate(angle.Object1), (LineTheoremObject)Recreate(angle.Object2)),
+
+                            // Default case
+                            _ => throw new GeoGenException($"Unhandled type of pair theorem object: {pairObject.GetType()}")
+                        };
+
+                    // If something else
+                    default:
+                        throw new GeoGenException($"Unhandled type of theorem object: {theoremObject.GetType()}");
+                }
+            }
+
+            // Return theorem with created objects
+            return new Theorem(theorem.Configuration, theorem.Type, theorem.InvolvedObjects.Select(Recreate).ToArray());
         }
 
         #endregion

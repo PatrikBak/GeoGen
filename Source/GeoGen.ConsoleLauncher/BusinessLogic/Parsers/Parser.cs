@@ -162,7 +162,7 @@ namespace GeoGen.ConsoleLauncher
             return Constructions.GetComposedConstruction(constructionName)
                 // if it's not found, make the user aware
                 ?? throw new ParserException($"Unknown construction '{constructionName}'. " +
-                    $"Available: \n\n{Constructions.GetAllConstructions().Select(c => $" - {c}").ToJoinedString("\n")}.\n");
+                    $"Available: \n\n{Constructions.GetAllConstructions().Select(c => $" - {c}").Ordered().ToJoinedString("\n")}.\n");
         }
 
         /// <summary>

@@ -1,0 +1,57 @@
+Initial configuration:
+
+ThreePoints: A, B, C
+
+Iterations: 3
+
+Constructions:
+
+ - Midpoint ({P, P})
+
+Results:
+
+------------------------------------------------
+Configuration 10
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, D})
+F = Midpoint({A, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (B, C, F), (C, D, E), [A, C]
+
+------------------------------------------------
+Configuration 11
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, D})
+F = Midpoint({B, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, C, E), (B, C, F), [C, D]
+  2. ConcurrentObjects: (A, C, F), (B, C, E), [C, D]
+
+------------------------------------------------
+Configuration 12
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, D})
+F = Midpoint({B, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, C, F), (C, D, E), [B, C]
+
+------------------------------------------------
+Generated configurations: 18
+Theorems: 186
+Interesting theorems: 4
+Run-time: 1397 ms

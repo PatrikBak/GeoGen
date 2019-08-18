@@ -1,0 +1,10 @@
+﻿Iterations: 2
+
+Constructions:
+
+ ReflectionInLineFromPoints
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C
+ H = Orthocenter(A, B, C)
