@@ -17,7 +17,7 @@ namespace GeoGen.Core
         /// </summary>
         public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>(
             // Reuse the abstract method on the object
-            (t1, t2) => t1.IsEquivalentTo(t2), 
+            (t1, t2) => t1.IsEquivalentTo(t2),
             // And the constant hash-code function
             t => 0);
 

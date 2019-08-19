@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 
 namespace GeoGen.Generator
 {

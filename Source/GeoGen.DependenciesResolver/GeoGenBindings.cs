@@ -4,6 +4,7 @@ using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
+using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
 

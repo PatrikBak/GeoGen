@@ -1,9 +1,8 @@
-﻿using GeoGen.Utilities;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a data structure that acts like a <see cref="Dictionary{TKey,TValue}"/>, but in both ways

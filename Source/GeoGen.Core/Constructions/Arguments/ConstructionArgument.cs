@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 
 namespace GeoGen.Core
@@ -33,7 +32,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="otherArgument">The other argument.</param>
         /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public abstract bool IsEquivalentTo(ConstructionArgument otherArgument); 
+        public abstract bool IsEquivalentTo(ConstructionArgument otherArgument);
 
         #endregion
     }

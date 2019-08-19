@@ -248,7 +248,7 @@ namespace GeoGen.Algorithm
                         {
                             ContextualPicture = picture,
                             NewTheorems = newTheorems,
-                            AllTheorems = allTheorems                           
+                            AllTheorems = allTheorems
                         });
 
                         // Return the final output
@@ -296,7 +296,7 @@ namespace GeoGen.Algorithm
                                 var geometricObject = default(DefinableByPoints);
 
                                 // It's easy if there is a configuration object specified
-                                if(objectWithPoints.ConfigurationObject != null)
+                                if (objectWithPoints.ConfigurationObject != null)
                                 {
                                     // Then we can get it directly
                                     geometricObject = (DefinableByPoints)picture.GetGeometricObject(objectWithPoints.ConfigurationObject);

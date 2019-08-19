@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Core
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Extension methods for <see cref="IContainer{T}"/>.

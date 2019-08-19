@@ -1,4 +1,4 @@
-﻿namespace GeoGen.Core
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a converter of objects to a string.

@@ -87,14 +87,14 @@ Theorems:
   5. ConcurrentObjects: (B, C, F), (D, E, F), [A, C, E] - sub-theorem implied from theorem 1 from file trapezoid_with_point_on_slant_line
   6. EqualAngles: [A, B, D, F], [C, D], [E, F], [A, B, D, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
   7. EqualAngles: [A, C, E], [C, D], [E, F], [A, C, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
-  8. EqualAngles:  - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
+  8. EqualAngles: [B, C], [C, D], [E, F], [B, C] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
   9. EqualAngles: [B, C], [C, D], [E, F], [D, E] - is true because of 15 and 8
  10. EqualAngles: [C, D], [B, E], [E, F], [B, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  11. EqualAngles: [C, D], [D, E], [E, F], [B, C] - is true because of 8 and [B, C], [C, D], [C, D], [D, E] (this is true in a simpler configuration)
  12. EqualAngles: [C, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  13. EqualAngles: [C, F], [B, C], [C, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  14. EqualAngles: [C, F], [C, D], [C, F], [E, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 15. EqualAngles:  - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
+ 15. EqualAngles: [E, F], [B, C], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  16. EqualLineSegments: F, A, F, D - can be defined in a simpler configuration
  17. ParallelLines: [C, D], [E, F] - sub-theorem implied from theorem 1 from file midline_is_parallel_with_side
  18. TangentCircles: (A, C, D), (A, E, F) - sub-theorem implied from theorem 1 from file trapezoid_with_intersection
@@ -411,4 +411,4 @@ Theorems:
 Generated configurations: 18
 Theorems: 186
 Interesting theorems: 4
-Run-time: 1547 ms
+Run-time: 2075 ms

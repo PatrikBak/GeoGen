@@ -1,9 +1,8 @@
-﻿using GeoGen.Utilities;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a <see cref="IContainer{T}"/> of distinct items that are compared based on their string versions.

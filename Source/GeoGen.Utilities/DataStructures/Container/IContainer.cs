@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a container of distinct items that is able to find the equal version of an item, if there is any.

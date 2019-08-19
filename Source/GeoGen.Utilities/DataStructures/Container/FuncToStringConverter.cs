@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.Core
+namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a <see cref="IToStringConverter{T}"/> that wraps a <see cref="Func{T, TResult}"/>, 
