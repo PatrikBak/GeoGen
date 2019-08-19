@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Core;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -51,17 +52,23 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Gets template theorems.
         /// </summary>
-        /// <returns>The template theorems.</returns>
-        public async Task<List<TemplateTheorem>> GetTemplateTheoremsAsync()
+        /// <returns>The list of loaded configuration with its theorems.</returns>
+        public async Task<List<(Configuration, TheoremsMap)>> GetTemplateTheoremsAsync()
         {
             // Log that we're starting
             LoggingManager.LogInfo($"Starting to search for template theorems in {_settings.TheoremsFolderPath}");
 
             // Prepare the result
-            var result = new List<TemplateTheorem>();
+            var result = new List<(Configuration, TheoremsMap)>();
 
-            // Go through all the files in the template theorems folder with the requested extension
-            foreach (var path in Directory.EnumerateFiles(_settings.TheoremsFolderPath, $"*.{_settings.FilesExtention}"))
+            // Prepare the enumerable of theorems files
+            // We go through the theorems folder
+            var theoremFiles = Directory.EnumerateFiles(_settings.TheoremsFolderPath, $"*.{_settings.FilesExtention}")
+                // And sort the results by their name (which should indicate the priority)
+                .OrderBy(Path.GetFileName);
+
+            // Go through all the files
+            foreach (var path in theoremFiles)
             {
                 // Log the current file
                 LoggingManager.LogInfo($"Processing theorems file {path}.");
@@ -99,8 +106,14 @@ namespace GeoGen.ConsoleLauncher
                         // Cast each theorem to a template theorem
                         .Select((theorem, i) => new TemplateTheorem(theorem, Path.GetFileNameWithoutExtension(path), i + 1));
 
-                    // Add all of them to our result
-                    result.AddRange(theorems);
+                    // Create a map from them
+                    var theoremsMap = new TheoremsMap(theorems);
+
+                    // They have the same configuration, take it from the first
+                    var configuration = theoremsMap.AllObjects[0].Configuration;
+
+                    // Add it to our result
+                    result.Add((configuration, theoremsMap));
                 }
                 catch (ParserException)
                 {

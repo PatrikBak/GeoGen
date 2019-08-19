@@ -11,7 +11,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Gets or sets the picture where we are trying to derive new theorems.
         /// </summary>
-        public ContextualPicture Picture { get; set; }
+        public ContextualPicture ContextualPicture { get; set; }
 
         /// <summary>
         /// Gets or sets the list of theorems that are true in the picture.

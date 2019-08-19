@@ -33,7 +33,7 @@ namespace GeoGen.Algorithm.Tests
                     .AddTheoremsFinder()
                     .AddTheoremsAnalyzer(new TheoremsAnalyzerData
                     {
-                        TemplateTheorems = new List<Theorem>()
+                        TemplateTheorems = new List<(Configuration, TheoremsMap)>()
                     })
                     .AddConstructor(new PicturesSettings
                     {

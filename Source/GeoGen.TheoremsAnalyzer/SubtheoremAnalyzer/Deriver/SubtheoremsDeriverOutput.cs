@@ -11,7 +11,12 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Gets or sets the derived theorems.
         /// </summary>
-        public Theorem Theorem { get; set; }
+        public Theorem DerivedTheorem { get; set; }
+
+        /// <summary>
+        /// Gets the theorem that was used to come up with this one.
+        /// </summary>
+        public Theorem TemplateTheorem { get; set; }
 
         /// <summary>
         /// Gets or sets the list of all objects equalities that were needed to derive this theorem.

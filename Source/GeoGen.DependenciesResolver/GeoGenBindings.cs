@@ -124,6 +124,7 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>().InSingletonScope();
             kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>().InSingletonScope();
             kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>().InSingletonScope();
+            kernel.Bind<ISubtheoremsDeriver>().To<SubtheoremsDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;

@@ -6,6 +6,7 @@ using GeoGen.Generator;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
+using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
@@ -15,10 +16,10 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremsAnalyzer.Test
 {
     /// <summary>
-    /// The test class for <see cref="SubtheoremAnalyzer"/>.
+    /// The test class for <see cref="SubtheoremsDeriver"/>.
     /// </summary>
     [TestFixture]
-    public class SubtheoremAnalyzerTest
+    public class SubtheoremsDeriverTest
     {
         #region Run method
 
@@ -28,7 +29,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// <param name="templateTheorem">The template theorem.</param>
         /// <param name="examinedTheorem">The examined theorem.</param>
         /// <returns>The output of the analysis.</returns>
-        private SubtheoremAnalyzerOutput Run(Theorem templateTheorem, Theorem examinedTheorem)
+        private SubtheoremsDeriverOutput Run(Theorem templateTheorem, Theorem examinedTheorem)
         {
             // Initialize IoC
             var kernel = IoC.CreateKernel().AddGenerator().AddConstructor(new PicturesSettings
@@ -41,8 +42,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Create the constructor
             var constructor = kernel.Get<IGeometryConstructor>();
 
-            // Create the analyzer
-            var analyzer = new SubtheoremAnalyzer(constructor);
+            // Create the deriver
+            var deriver = new SubtheoremsDeriver(constructor);
 
             // Draw the examined configuration
             var (pictures, data) = constructor.Construct(examinedTheorem.Configuration);
@@ -57,12 +58,14 @@ namespace GeoGen.TheoremsAnalyzer.Test
             examinedTheorem.Configuration.AllObjects.ForEach(objectsContainer.Add);
 
             // Run the algorithm
-            return analyzer.Analyze(new SubtheoremAnalyzerInput
+            return deriver.DeriveTheorems(new SubtheoremsDeriverInput
             {
-                TemplateTheorem = templateTheorem,
-                ExaminedTheorem = examinedTheorem,
-                ExaminedConfigurationContexualPicture = contextualPicture
-            });
+                ContextualPicture = contextualPicture,
+                PictureTheorems = null,
+                TemplateConfiguration = templateTheorem.Configuration,
+                TemplateTheorems = new TheoremsMap(templateTheorem.ToEnumerable())
+            })
+            .FirstOrDefault(output => output.DerivedTheorem.IsEquivalentTo(examinedTheorem));
         }
 
         #endregion
@@ -106,9 +109,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -150,13 +151,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // We need to discover M is the midpoint of BC
                 (M, new ConstructedConfigurationObject(Midpoint, B, C))
             });
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -200,9 +199,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -248,13 +245,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // We need to discover O is the circumcircle of ABC
                 (O, new ConstructedConfigurationObject(Circumcenter, A, B, C))
             });
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -303,9 +298,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -354,7 +347,6 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // We need to discover the projections of O on lines of ABC are midpoints 
@@ -362,7 +354,6 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 (E, new ConstructedConfigurationObject(Midpoint, C, A)),
                 (F, new ConstructedConfigurationObject(Midpoint, A, B))
             });
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -398,8 +389,6 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
-            result.UsedFacts.Should().BeNullOrEmpty();
             result.UsedEqualities.Should().HaveCount(1, "Exactly one of the following two potential reasons should hold true");
             new[]
             {
@@ -453,22 +442,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // When the algorithm construct mapped E_, it intersects BD and CE
                 // After constructing this intersection it finds out that it is actually A
                 (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
             });
-            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-            {
-                // We need to use the fact that DE || BC 
-                new Theorem(examinedConfiguration, ParallelLines, new[]
-                {
-                    new LineTheoremObject(D, E),
-                    new LineTheoremObject(B, C)
-                })
-            }).Should().BeTrue();
         }
 
         [Test]
@@ -506,9 +485,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -552,13 +529,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // We need to discover H is the orthocenter of ABC
                 (H, new ConstructedConfigurationObject(Orthocenter, A, B, C))
             });
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -606,9 +581,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.Should().BeNullOrEmpty();
         }
 
         [Test]
@@ -655,22 +628,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // We need to discover I is really the center of the incircle
                 (I, new ConstructedConfigurationObject(CenterOfCircle, c))
             });
-            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-            {
-                // We're using the fact that BC is tangent to 'c'
-                new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
-                {
-                    new LineTheoremObject(B, C),
-                    new CircleTheoremObject(c)
-                })
-            })
-            .Should().BeTrue();
         }
 
         [Test]
@@ -718,16 +680,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeNullOrEmpty();
-            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-            {
-                // We're using all these concyclic theorems 
-                new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, H, D),
-                new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, B, C),
-                new Theorem(examinedConfiguration, ConcyclicPoints, H, D, B, C),
-            })
-            .Should().BeTrue();
         }
 
         [Test]
@@ -801,14 +754,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 var result = Run(templateTheorem, examinedTheorem);
 
                 // Assert
-                result.IsSubtheorem.Should().BeTrue();
                 result.UsedEqualities.Should().BeNullOrEmpty();
-                result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-                {
-                    // We're using that A, B, C, D are concyclic
-                    new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
-                })
-                .Should().BeTrue();
             });
         }
 
@@ -871,17 +817,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 var result = Run(templateTheorem, examinedTheorem);
 
                 // Assert
-                result.IsSubtheorem.Should().BeTrue();
                 result.UsedEqualities.Should().BeNullOrEmpty();
-                result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-                {
-                    // We're using that BE || DF
-                    new Theorem(examinedConfiguration, ParallelLines, new[]
-                    {
-                        new LineTheoremObject(B, E),
-                        new LineTheoremObject(D, F)
-                    })
-                }).Should().BeTrue();
             });
         }
 
@@ -930,22 +866,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Run(templateTheorem, examinedTheorem);
 
             // Assert
-            result.IsSubtheorem.Should().BeTrue();
             result.UsedEqualities.Should().BeEquivalentTo(new (ConfigurationObject, ConfigurationObject)[]
             {
                 // When the algorithm construct mapped E_, it intersects AD and EF
                 // After constructing this intersection it finds out that it is actually B
                 (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
             });
-            result.UsedFacts.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
-            {
-                // We need to use the fact that BC || DE
-                new Theorem(examinedConfiguration, ParallelLines, new[]
-                {
-                    new LineTheoremObject(B, C),
-                    new LineTheoremObject(D, E)
-                })
-            }).Should().BeTrue();
         }
     }
 }

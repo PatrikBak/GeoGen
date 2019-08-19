@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Core;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
@@ -11,7 +12,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Gets template theorems.
         /// </summary>
-        /// <returns>The template theorems.</returns>
-        Task<List<TemplateTheorem>> GetTemplateTheoremsAsync();
+        /// <returns>The list of loaded configuration with its theorems.</returns>
+        Task<List<(Configuration, TheoremsMap)>> GetTemplateTheoremsAsync();
     }
 }

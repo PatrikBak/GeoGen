@@ -244,7 +244,7 @@ namespace GeoGen.Algorithm
                         theoremsMap.Add(configuration, allTheorems);
 
                         // Analyze the theorems
-                        var analysisResult = _analyzer.Analyze(new TheoremAnalyzerInput
+                        var analysisResults = _analyzer.Analyze(new TheoremAnalyzerInput
                         {
                             ContextualPicture = picture,
                             NewTheorems = newTheorems,
@@ -256,7 +256,7 @@ namespace GeoGen.Algorithm
                         {
                             Configuration = configuration,
                             Theorems = newTheorems,
-                            TheoremsFeedback = analysisResult
+                            TheoremsFeedback = analysisResults
                         };
                     }));
         }

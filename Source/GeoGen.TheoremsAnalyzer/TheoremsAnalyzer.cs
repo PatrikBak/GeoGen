@@ -19,9 +19,9 @@ namespace GeoGen.TheoremsAnalyzer
         private readonly ITrivialTheoremsProducer _trivialTheoremsProducer;
 
         /// <summary>
-        /// The sub-theorems analyzer. It gets template theorems from the <see cref="_data"/>.
+        /// The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.
         /// </summary>
-        private readonly ISubtheoremAnalyzer _subtheoremAnalyzer;
+        private readonly ISubtheoremsDeriver _subtheoremsDeriver;
 
         /// <summary>
         /// The deriver of new theorems based on the transitivity rule.
@@ -46,13 +46,13 @@ namespace GeoGen.TheoremsAnalyzer
         /// </summary>
         /// <param name="data">The data for the analyzer.</param>
         /// <param name="trivialTheoremsProducer">The producer of trivial theorems.</param>
-        /// <param name="subtheoremAnalyzer">The sub-theorems analyzer. It gets template theorems from the <see cref="data"/>.</param>
+        /// <param name="subtheoremsDeriver">The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.</param>
         /// <param name="transitivityDeriver">The deriver of new theorems based on the transitivity rule.</param>
-        public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer, ISubtheoremAnalyzer subtheoremAnalyzer, ITransitivityDeriver transitivityDeriver)
+        public TheoremsAnalyzer(TheoremsAnalyzerData data, ITrivialTheoremsProducer trivialTheoremsProducer, ISubtheoremsDeriver subtheoremsDeriver, ITransitivityDeriver transitivityDeriver)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _trivialTheoremsProducer = trivialTheoremsProducer ?? throw new ArgumentNullException(nameof(trivialTheoremsProducer));
-            _subtheoremAnalyzer = subtheoremAnalyzer ?? throw new ArgumentNullException(nameof(subtheoremAnalyzer));
+            _subtheoremsDeriver = subtheoremsDeriver ?? throw new ArgumentNullException(nameof(subtheoremsDeriver));
             _transitivityDeriver = transitivityDeriver ?? throw new ArgumentNullException(nameof(transitivityDeriver));
         }
 
@@ -73,95 +73,153 @@ namespace GeoGen.TheoremsAnalyzer
             // Prepare the result
             var result = new Dictionary<Theorem, TheoremFeedback>();
 
-            // Get the configuration
+            // Prepare a dictionary of resolved theorems
+            var unresolvedTheorems = new Dictionary<TheoremType, List<Theorem>>();
+
+            // Prepare a dictionary of unresolved theorems
+            var resolvedTheorems = new Dictionary<TheoremType, List<Theorem>>();
+
+            // Get the configuration for comfort
             var configuration = input.ContextualPicture.Pictures.Configuration;
 
-            // Get the trivial theorems first
-            var trivialTheorems = _trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(configuration);
+            #region Trivial and simplyfiable theorems
+
+            // Find trivial theorems ahead
+            var trivialTheorems = new TheoremsMap(_trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(configuration));
 
             // Go through all the theorems
-            input.NewTheorems.AllObjects.ForEach(theorem =>
+            input.NewTheorems.ForEach(pair =>
             {
-                #region Can be stated in a smaller configuration?
+                // Get the current type
+                var type = pair.Key;
 
-                // If it can be defined in a simpler configuration, 
-                if (theorem.CanBeStatedInSmallerConfiguration())
+                // Go through the theorems of this type
+                pair.Value.ForEach(theorem =>
                 {
-                    // Mark it
-                    result.Add(theorem, new DefineableSimplerFeedback());
+                    #region Can be stated in a smaller configuration?
 
-                    // Break
-                    return;
-                }
-
-                #endregion
-
-                #region Trivial theorem testing
-
-                // If they're is a trivial theorem equivalent to it
-                if (trivialTheorems.Any(trivialTheorem => trivialTheorem.IsEquivalentTo(theorem)))
-                {
-                    // Mark it
-                    result.Add(theorem, new TrivialTheoremFeedback());
-
-                    // Break
-                    return;
-                }
-
-                #endregion
-
-                #region Sub-theorem algorithm
-
-                // Otherwise try sub-theorem algorithm
-                // Find possible theorems that might imply this one
-                var match = _data.TemplateTheorems.Where(templateTheorem => theorem.Type == templateTheorem.Type)
-                    // Try to match
-                    .Select(templateTheorem => (templateTheorem, output: _subtheoremAnalyzer.Analyze(new SubtheoremAnalyzerInput
+                    // If it can be defined in a simpler configuration, 
+                    if (theorem.CanBeStatedInSmallerConfiguration())
                     {
-                        ExaminedTheorem = theorem,
-                        TemplateTheorem = templateTheorem,
-                        ExaminedConfigurationContexualPicture = input.ContextualPicture,
-                    })))
-                    // Get the first that matches
-                    .FirstOrDefault(pair => pair.output.IsSubtheorem);
+                        // Mark it in the result
+                        result.Add(theorem, new DefineableSimplerFeedback());
 
-                // If there is a match,
-                if (match != default)
+                        // Mark it in the dictionary
+                        resolvedTheorems.GetOrAdd(type, () => new List<Theorem>()).Add(theorem);
+
+                        // Break
+                        return;
+                    }
+
+                    #endregion
+
+                    #region Trivial theorem testing
+
+                    // If they're is a trivial theorem equivalent to it
+                    if (trivialTheorems.GetOrDefault(type)?.Any(trivialTheorem => trivialTheorem.IsEquivalentTo(theorem)) ?? false)
+                    {
+                        // Mark it in the result
+                        result.Add(theorem, new TrivialTheoremFeedback());
+
+                        // Mark it in the dictionary
+                        resolvedTheorems.GetOrAdd(type, () => new List<Theorem>()).Add(theorem);
+
+                        // Break
+                        return;
+                    }
+
+                    #endregion
+
+                    // Add this point the theorem is not resolved
+                    // Make sure the it's added to the dictionary
+                    unresolvedTheorems.GetOrAdd(type, () => new List<Theorem>()).Add(theorem);
+                });
+            }); 
+
+            #endregion
+
+            #region Sub-theorems deriver
+
+            // Go through the template theorems
+            _data.TemplateTheorems
+                // Take only those that contain any theorem of type that has an unresolved theorem
+                .Where(pair => pair.Item2.Keys.Any(unresolvedTheorems.ContainsKey))
+                // From each derive new theorems
+                .ForEach(pair =>
                 {
-                    // Mark it
-                    result.Add(theorem, new SubtheoremFeedback { TemplateTheorem = match.templateTheorem });
+                    // Deconstruct
+                    var (configuration, templateTheorems) = pair;
 
-                    // Break
-                    return;
-                }
+                    // Call the service
+                    _subtheoremsDeriver.DeriveTheorems(new SubtheoremsDeriverInput
+                    {
+                        ContextualPicture = input.ContextualPicture,
+                        PictureTheorems = input.AllTheorems,
+                        TemplateConfiguration = configuration,
+                        TemplateTheorems = templateTheorems
+                    })
+                    // Process each output
+                    .ForEach(output =>
+                    {
+                        // Get an equivalent version of our found theorem
+                        var foundTheorem = input.NewTheorems.FindEquivalentTheorem(output.DerivedTheorem);
 
-                #endregion
-            });
+                        // If this theorem is not new, or has been proven, don't do anything
+                        if (foundTheorem == null || result.ContainsKey(foundTheorem))
+                            return;
 
-            // Now we'll try to use the transitivity rule for the rest
-            _transitivityDeriver.Derive(configuration, input.NewTheorems.AllObjects, result.Keys.ToList()).ForEach(triple =>
+                        // Otherwise we have derived a valid theorem. Mark it in the result
+                        result.Add(foundTheorem, new SubtheoremFeedback
+                        {
+                            TemplateTheorem = output.TemplateTheorem
+                        });
+
+                        // Mark it in the dictionary
+                        resolvedTheorems.GetOrAdd(foundTheorem.Type, () => new List<Theorem>()).Add(foundTheorem);
+
+                        // Remove it from the unresolved theorems
+                        unresolvedTheorems[foundTheorem.Type].Remove(foundTheorem);
+                    });
+                });
+
+            #endregion
+
+            #region Transitivity deriver
+
+            // Get the type of theorems that are left to resolved
+            // Take all key-value pairs where there is any theorem
+            var unresolvedTheoremTypes = unresolvedTheorems.Select(pair => pair.Key).ToList();
+
+            // Get the corresponding new relevant theorems from the new theorems dictionary
+            var newRelevantTheorems = unresolvedTheoremTypes.SelectMany(type => input.NewTheorems[type]);
+
+            // Get the relevant theorems that have been resolved
+            var resolvedRelevantTheorems = unresolvedTheoremTypes.SelectMany(type => resolvedTheorems.GetOrDefault(type) ?? new List<Theorem>());
+
+            // Call the deriver and process its results
+            _transitivityDeriver.Derive(configuration, newRelevantTheorems, resolvedRelevantTheorems).ForEach(triple =>
             {
                 // Unwrap the result
                 var (fact1, fact2, concludedFact) = triple;
 
-                // Local function that finds an equivalent theorem from the input, 
-                // or returns the current one, if there is no such theorem
-                Theorem FindEquivalent(Theorem theorem) => input.NewTheorems.AllObjects.FirstOrDefault(_theorem => _theorem.IsEquivalentTo(theorem)) ?? theorem;
-
                 // Find an equivalent to the concluded thing
-                concludedFact = FindEquivalent(concludedFact);
+                concludedFact = input.NewTheorems.FindEquivalentTheorem(concludedFact);
 
-                // If it's been already proven, don't do a thing
-                if (result.ContainsKey(concludedFact))
+                // If such theorem isn't new or has already proven, don't do anything
+                if (concludedFact == null || result.ContainsKey(concludedFact))
                     return;
 
                 // Otherwise mark that we've concluded the theorem, using potentially theorems from our feedback
+                // We try to provided an equivalent theorems from the input, but it may not possible
+                // (they might be used in the conclusion, yet may not be new)
                 result.Add(concludedFact, new TransitivityFeedback
                 {
-                    Fact1 = FindEquivalent(fact1),
-                    Fact2 = FindEquivalent(fact2)
+                    Fact1 = input.NewTheorems.FindEquivalentTheorem(fact1) ?? fact1,
+                    Fact2 = input.NewTheorems.FindEquivalentTheorem(fact2) ?? fact2
                 });
             });
+
+            #endregion
 
             // Return the result
             return result;

@@ -1,0 +1,464 @@
+Initial configuration:
+
+ThreePoints: A, B, C
+
+Iterations: 3
+
+Constructions:
+
+ - PerpendicularProjectionOnLineFromPoints (P, {P, P})
+
+Results:
+
+------------------------------------------------
+Configuration 2
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+
+Theorems:
+
+  1. EqualAngles: [A, C, E], [B, C, D], [B, E], [A, D]
+
+------------------------------------------------
+Configuration 3
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, E), (B, C, E), [A, C]
+  2. EqualAngles: [A, B, E], [A, D], [D, E], [B, C, D]
+  3. EqualAngles: [A, B, E], [B, C, D], [D, E], [A, D]
+  4. EqualAngles: [B, C, D], [A, D], [D, E], [A, B, E]
+  5. LineTangentToCircle: [A, D], (B, D, E)
+  6. LineTangentToCircle: [B, C, D], (A, D, E)
+
+------------------------------------------------
+Configuration 4
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(A, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
+  2. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
+  3. ConcurrentObjects: (A, C, F), (B, E, F), [B, C, D]
+  4. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
+  5. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  6. EqualAngles: [A, B], [A, C, E], [A, F], [A, D]
+  7. EqualAngles: [A, B], [A, D], [A, F], [A, C, E]
+  8. EqualAngles: [A, B], [B, C, D], [A, F], [B, E]
+  9. EqualAngles: [A, B], [B, E], [A, F], [B, C, D]
+ 10. EqualAngles: [A, C, E], [B, E], [A, F], [D, E, F]
+ 11. EqualAngles: [A, C, E], [D, E, F], [A, F], [B, E]
+ 12. EqualAngles: [A, D], [D, E, F], [A, F], [B, C, D]
+ 13. EqualAngles: [A, F], [A, C, E], [B, E], [D, E, F]
+ 14. EqualAngles: [A, F], [A, D], [B, C, D], [D, E, F]
+ 15. EqualAngles: [A, F], [D, E, F], [B, C, D], [A, D]
+ 16. LineTangentToCircle: [B, C, D], (A, D, F)
+ 17. LineTangentToCircle: [B, E], (A, E, F)
+ 18. TangentCircles: (A, C, D), (A, E, F)
+
+------------------------------------------------
+Configuration 5
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, E, F), (B, D, F), [A, D]
+  2. ConcurrentObjects: (A, E, F), (B, D, F), [B, E]
+  3. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  4. ConcurrentObjects: (A, E, F), (C, D, E), [A, D]
+  5. ConcurrentObjects: (A, E, F), (C, D, E), [B, E]
+  6. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  7. ConcurrentObjects: (A, E, F), [A, D], [B, E]
+  8. ConcurrentObjects: (A, E, F), [A, D], [C, F]
+  9. ConcurrentObjects: (B, D, F), (C, D, E), [A, D]
+ 10. ConcurrentObjects: (B, D, F), (C, D, E), [B, E]
+ 11. ConcurrentObjects: (B, D, F), (C, D, E), [C, F]
+ 12. ConcurrentObjects: (B, D, F), [A, D], [B, E]
+ 13. ConcurrentObjects: (B, D, F), [B, E], [C, F]
+ 14. ConcurrentObjects: (C, D, E), [A, D], [C, F]
+ 15. ConcurrentObjects: (C, D, E), [B, E], [C, F]
+ 16. ConcurrentObjects: [A, D], [B, E], [C, F]
+
+------------------------------------------------
+Configuration 6
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
+  2. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
+  3. ConcurrentObjects: (A, C, F), (B, E, F), [A, B]
+  4. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  5. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  6. EqualAngles: [A, B], [A, C, E], [C, F], [A, D]
+  7. EqualAngles: [A, B], [A, D], [C, F], [A, C, E]
+  8. EqualAngles: [A, B], [B, C, D], [C, F], [B, E]
+  9. EqualAngles: [A, B], [B, E], [C, F], [B, C, D]
+ 10. EqualAngles: [A, C, E], [B, E], [C, F], [D, E, F]
+ 11. EqualAngles: [A, C, E], [D, E, F], [C, F], [B, E]
+ 12. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
+ 13. EqualAngles: [B, C, D], [A, D], [C, F], [D, E, F]
+ 14. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
+ 15. EqualAngles: [B, E], [D, E, F], [C, F], [A, C, E]
+ 16. LineTangentToCircle: [A, D], (C, D, F)
+ 17. LineTangentToCircle: [B, E], (C, E, F)
+ 18. TangentCircles: (A, C, D), (C, E, F)
+ 19. TangentCircles: (B, C, E), (C, D, F)
+
+------------------------------------------------
+Configuration 7
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
+  3. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  4. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  5. ConcurrentObjects: (A, E, F), [B, E], [D, F]
+  6. ConcurrentObjects: (B, D, F), (C, D, E), [C, F]
+  7. ConcurrentObjects: (B, E, F), [A, C, E], [D, F]
+  8. EqualAngles: [A, B, F], [A, C, E], [D, F], [B, E]
+  9. EqualAngles: [A, B, F], [B, E], [D, F], [A, C, E]
+ 10. EqualAngles: [A, D], [D, E], [D, F], [A, C, E]
+ 11. EqualAngles: [B, C, D], [D, E], [D, F], [B, E]
+ 12. TangentCircles: (B, C, E), (B, D, F)
+
+------------------------------------------------
+Configuration 8
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {B, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, C, D), (A, E, F), [C, F]
+  2. ConcurrentObjects: (A, C, D), (B, D, F), [C, F]
+  3. ConcurrentObjects: (A, C, D), (C, E, F), [A, F]
+  4. ConcurrentObjects: (A, D, F), (B, C, F), [A, C, E]
+  5. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  6. LineTangentToCircle: [A, D], (B, D, F)
+  7. ParallelLines: [A, C, E], [D, F]
+
+------------------------------------------------
+Configuration 9
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+
+Theorems:
+
+  1. ParallelLines: [B, E], [D, F]
+
+------------------------------------------------
+Configuration 10
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  2. LineTangentToCircle: [A, D], (C, D, F)
+  3. LineTangentToCircle: [B, C, D], (A, D, F)
+  4. ParallelLines: [B, E], [D, F]
+
+------------------------------------------------
+Configuration 11
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  2. LineTangentToCircle: [A, D], (C, D, F)
+  3. LineTangentToCircle: [B, C, D], (A, D, F)
+  4. ParallelLines: [B, E], [D, F]
+
+------------------------------------------------
+Configuration 12
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(A, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  3. ConcurrentObjects: (A, E, F), (B, C, F), (B, D, E)
+  4. ConcyclicPoints: A, C, D, F
+  5. EqualAngles: [A, B, E], [C, E, F], [A, F], [D, E]
+  6. EqualAngles: [A, D], [C, E, F], [A, F], [B, C, D]
+  7. EqualAngles: [A, F], [A, B, E], [C, E, F], [D, E]
+  8. LineTangentToCircle: [D, E], (A, E, F)
+  9. TangentCircles: (A, B, D), (A, E, F)
+
+------------------------------------------------
+Configuration 13
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(B, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (B, C, F), [A, C]
+  2. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  3. ConcurrentObjects: (A, C, D), (B, C, F), [A, B, E]
+  4. ConcurrentObjects: (A, D, E), (B, E, F), (C, D, F)
+  5. ConcurrentObjects: (B, D, F), [A, D], [C, E, F]
+  6. ConcurrentObjects: (C, D, F), [A, D], [B, F]
+  7. EqualAngles: [A, B, E], [C, E, F], [B, F], [D, E]
+  8. EqualAngles: [A, B, E], [D, E], [B, F], [C, E, F]
+  9. EqualAngles: [A, D], [C, E, F], [B, F], [B, C, D]
+ 10. EqualAngles: [B, C, D], [A, D], [B, F], [C, E, F]
+ 11. EqualAngles: [B, C, D], [C, E, F], [B, F], [A, D]
+ 12. EqualAngles: [B, F], [A, B, E], [C, E, F], [D, E]
+ 13. LineTangentToCircle: [D, E], (B, E, F)
+ 14. TangentCircles: (A, B, D), (B, E, F)
+ 15. TangentCircles: (B, C, F), (B, D, E)
+
+------------------------------------------------
+Configuration 14
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {B, E})
+
+Theorems:
+
+  1. ParallelLines: [C, F], [D, E]
+
+------------------------------------------------
+Configuration 15
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, E})
+
+Theorems:
+
+  1. ParallelLines: [C, F], [D, E]
+
+------------------------------------------------
+Configuration 16
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (A, E, F), [B, F]
+  2. ConcurrentObjects: (A, B, D), (B, E, F), (C, D, F)
+  3. ConcurrentObjects: (A, B, D), (B, E, F), [A, F]
+  4. ConcurrentObjects: (A, C, D), (A, E, F), [C, F]
+  5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  6. ConcurrentObjects: (A, D, E), (B, C, E), (C, D, F)
+  7. ConcurrentObjects: (A, D, F), (B, C, F), [A, B, E]
+  8. ConcurrentObjects: (B, C, E), (C, D, F), [A, C]
+  9. ConcurrentObjects: (B, E, F), (C, D, F), [A, F]
+ 10. LineTangentToCircle: [A, D], (C, D, F)
+ 11. ParallelLines: [A, B, E], [C, F]
+
+------------------------------------------------
+Configuration 17
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+
+Theorems:
+
+  1. ConcyclicPoints: A, D, E, F
+  2. ConcyclicPoints: B, C, E, F
+  3. EqualAngles: [A, C, F], [D, E], [D, F], [A, B, E]
+  4. EqualAngles: [B, F], [D, E], [D, F], [C, E]
+  5. EqualAngles: [B, F], [D, F], [C, E], [D, E]
+  6. TangentCircles: (B, D, E), (C, D, F)
+
+------------------------------------------------
+Configuration 18
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, E), (B, C, E), (C, D, F)
+  2. ConcurrentObjects: (A, D, E), (C, D, F), [A, C]
+  3. ConcurrentObjects: (A, D, F), (B, C, F), [A, B, E]
+  4. ConcurrentObjects: (B, C, E), (C, D, F), [A, C]
+  5. ConcurrentObjects: (B, E, F), (C, D, F), [A, F]
+  6. EqualAngles: [A, B, E], [C, E, F], [D, F], [D, E]
+  7. EqualAngles: [A, B, E], [D, E], [D, F], [C, E, F]
+  8. EqualAngles: [A, D], [C, E, F], [D, F], [B, C, D]
+  9. EqualAngles: [B, C, D], [A, D], [D, F], [C, E, F]
+ 10. EqualAngles: [B, C, D], [C, E, F], [D, F], [A, D]
+ 11. EqualAngles: [C, E, F], [D, E], [D, F], [A, B, E]
+ 12. LineTangentToCircle: [A, B, E], (D, E, F)
+ 13. LineTangentToCircle: [A, D], (C, D, F)
+ 14. TangentCircles: (B, D, E), (C, D, F)
+
+------------------------------------------------
+Configuration 19
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {B, C})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  3. LineTangentToCircle: [A, B, E], (D, E, F)
+  4. LineTangentToCircle: [D, E], (B, E, F)
+  5. ParallelLines: [A, D], [E, F]
+
+------------------------------------------------
+Configuration 20
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {B, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  3. LineTangentToCircle: [A, B, E], (D, E, F)
+  4. LineTangentToCircle: [D, E], (B, E, F)
+  5. ParallelLines: [A, D], [E, F]
+
+------------------------------------------------
+Configuration 21
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {C, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  3. LineTangentToCircle: [A, B, E], (D, E, F)
+  4. LineTangentToCircle: [D, E], (B, E, F)
+  5. ParallelLines: [A, D], [E, F]
+
+------------------------------------------------
+Configuration 22
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {A, C})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, D), (B, E, F), (C, D, F)
+  3. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  4. ConcurrentObjects: (A, C, D), (A, E, F), [C, E]
+  5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  6. ConcurrentObjects: (A, D, F), (B, C, F), (B, D, E)
+  7. ConcurrentObjects: (A, D, F), [B, C, D], [E, F]
+  8. ConcurrentObjects: (C, D, F), [A, D], [E, F]
+  9. EqualAngles: [A, B, E], [A, C, F], [E, F], [D, E]
+ 10. EqualAngles: [A, B, E], [D, E], [E, F], [A, C, F]
+ 11. EqualAngles: [A, C, F], [A, D], [E, F], [B, C, D]
+ 12. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, D]
+ 13. EqualAngles: [A, C, F], [D, E], [E, F], [A, B, E]
+ 14. EqualAngles: [B, C, D], [A, D], [E, F], [A, C, F]
+ 15. LineTangentToCircle: [D, E], (A, E, F)
+ 16. TangentCircles: (A, B, D), (A, E, F)
+
+------------------------------------------------
+Configuration 23
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {A, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, C), (C, D, E), [C, F]
+  3. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  4. ConcurrentObjects: (A, E, F), (B, D, E), [B, F]
+  5. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  6. ConcurrentObjects: (B, C, E), (D, E, F), [C, F]
+  7. LineTangentToCircle: [A, B, E], (D, E, F)
+  8. LineTangentToCircle: [D, E], (A, E, F)
+  9. ParallelLines: [B, C, D], [E, F]
+
+------------------------------------------------
+Generated configurations: 23
+Theorems: 486
+Interesting theorems: 185
+Run-time: 1357 ms
