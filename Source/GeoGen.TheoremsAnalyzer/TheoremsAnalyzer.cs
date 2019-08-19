@@ -120,7 +120,6 @@ namespace GeoGen.TheoremsAnalyzer
                     {
                         ExaminedTheorem = theorem,
                         TemplateTheorem = templateTheorem,
-                        ExaminedConfigurationObjectsContainer = input.ConfigurationObjectsContainer,
                         ExaminedConfigurationContexualPicture = input.ContextualPicture,
                     })))
                     // Get the first that matches

@@ -29,6 +29,24 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region Public abstract methods implementation
+
+        /// <summary>
+        /// Finds out if this argument is equivalent to another given one.
+        /// Constructed objects created from equivalent arguments are equivalent.
+        /// </summary>
+        /// <param name="otherArgument">The other argument.</param>
+        /// <returns>true, if they are equivalent; false otherwise.</returns>
+        public override bool IsEquivalentTo(ConstructionArgument otherArgument)
+        {
+            // The other argument must be an object argument
+            return otherArgument is ObjectConstructionArgument objectArgument
+                // And their passed objects must be the same
+                && PassedObject == objectArgument.PassedObject;
+        }
+
+        #endregion
+
         #region To String
 
         /// <summary>

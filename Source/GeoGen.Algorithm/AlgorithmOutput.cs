@@ -18,11 +18,11 @@ namespace GeoGen.Algorithm
         /// <summary>
         /// The found theorems for the configurations.
         /// </summary>
-        public IReadOnlyList<Theorem> Theorems { get; set; }
+        public TheoremsMap Theorems { get; set; }
 
         /// <summary>
         /// The dictionary mapping non-olympiad theorems to their feedback. The ones that are not presents are hopefully olympiad.
         /// </summary>
-        public Dictionary<Theorem, TheoremFeedback> AnalyzerOutput { get; set; }
+        public Dictionary<Theorem, TheoremFeedback> TheoremsFeedback { get; set; }
     }
 }

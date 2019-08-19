@@ -87,14 +87,14 @@ Theorems:
   5. ConcurrentObjects: (B, C, F), (D, E, F), [A, C, E] - sub-theorem implied from theorem 1 from file trapezoid_with_point_on_slant_line
   6. EqualAngles: [A, B, D, F], [C, D], [E, F], [A, B, D, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
   7. EqualAngles: [A, C, E], [C, D], [E, F], [A, C, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
-  8. EqualAngles: [B, C], [C, D], [E, F], [B, C] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
-  9. EqualAngles: [B, C], [C, D], [E, F], [D, E] - is true because of 8 and 11
+  8. EqualAngles:  - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
+  9. EqualAngles: [B, C], [C, D], [E, F], [D, E] - is true because of 15 and 8
  10. EqualAngles: [C, D], [B, E], [E, F], [B, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 11. EqualAngles: [C, D], [D, E], [E, F], [B, C] - is true because of 11 and [B, C], [C, D], [C, D], [D, E] (this is true in a simpler configuration)
+ 11. EqualAngles: [C, D], [D, E], [E, F], [B, C] - is true because of 8 and [B, C], [C, D], [C, D], [D, E] (this is true in a simpler configuration)
  12. EqualAngles: [C, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  13. EqualAngles: [C, F], [B, C], [C, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  14. EqualAngles: [C, F], [C, D], [C, F], [E, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 15. EqualAngles: [E, F], [B, C], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
+ 15. EqualAngles:  - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  16. EqualLineSegments: F, A, F, D - can be defined in a simpler configuration
  17. ParallelLines: [C, D], [E, F] - sub-theorem implied from theorem 1 from file midline_is_parallel_with_side
  18. TangentCircles: (A, C, D), (A, E, F) - sub-theorem implied from theorem 1 from file trapezoid_with_intersection
@@ -120,25 +120,25 @@ Theorems:
   8. ConcurrentObjects: (B, C, E), (B, D, F), [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_point_on_slant_line
   9. ConcurrentObjects: [A, F], [B, E], [C, D] - sub-theorem implied from theorem 1 from file trapezoid_with_intersection_and_midpoint
  10. EqualAngles: [A, B, D], [A, C, E], [D, F], [A, B, D] - can be defined in a simpler configuration
- 11. EqualAngles: [A, B, D], [A, C, E], [D, F], [E, F] - is true because of 12 and 19
+ 11. EqualAngles: [A, B, D], [A, C, E], [D, F], [E, F] - is true because of 28 and 10
  12. EqualAngles: [A, B, D], [A, C, E], [E, F], [A, C, E] - can be defined in a simpler configuration
  13. EqualAngles: [A, B, D], [B, C, F], [E, F], [B, C, F] - can be defined in a simpler configuration
- 14. EqualAngles: [A, B, D], [B, C, F], [E, F], [D, E] - is true because of 17 and 27
+ 14. EqualAngles: [A, B, D], [B, C, F], [E, F], [D, E] - is true because of 32 and 13
  15. EqualAngles: [A, B, D], [B, E], [E, F], [B, E] - can be defined in a simpler configuration
  16. EqualAngles: [A, B, D], [C, D], [E, F], [C, D] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 17. EqualAngles: [A, B, D], [D, E], [E, F], [B, C, F] - is true because of 27 and [A, B, D], [B, C, F], [A, B, D], [D, E] (this is true in a simpler configuration)
+ 17. EqualAngles: [A, B, D], [D, E], [E, F], [B, C, F] - is true because of 13 and [A, B, D], [B, C, F], [A, B, D], [D, E] (this is true in a simpler configuration)
  18. EqualAngles: [A, B, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  19. EqualAngles: [A, C, E], [B, C, F], [D, F], [B, C, F] - can be defined in a simpler configuration
- 20. EqualAngles: [A, C, E], [B, C, F], [D, F], [D, E] - is true because of 16 and 20
+ 20. EqualAngles: [A, C, E], [B, C, F], [D, F], [D, E] - is true because of 30 and 19
  21. EqualAngles: [A, C, E], [B, E], [D, F], [B, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  22. EqualAngles: [A, C, E], [C, D], [D, F], [C, D] - can be defined in a simpler configuration
- 23. EqualAngles: [A, C, E], [D, E], [D, F], [B, C, F] - is true because of 20 and [A, C, E], [B, C, F], [A, C, E], [D, E] (this is true in a simpler configuration)
+ 23. EqualAngles: [A, C, E], [D, E], [D, F], [B, C, F] - is true because of 19 and [A, C, E], [B, C, F], [A, C, E], [D, E] (this is true in a simpler configuration)
  24. EqualAngles: [A, C, E], [D, E], [D, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  25. EqualAngles: [A, F], [A, B, D], [A, F], [E, F] - can be defined in a simpler configuration
  26. EqualAngles: [A, F], [A, C, E], [A, F], [D, F] - can be defined in a simpler configuration
  27. EqualAngles: [A, F], [B, C, F], [A, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  28. EqualAngles: [D, F], [A, B, D], [D, F], [E, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 29. EqualAngles: [D, F], [A, B, D], [E, F], [A, C, E] - is true because of 12 and 13
+ 29. EqualAngles: [D, F], [A, B, D], [E, F], [A, C, E] - is true because of 28 and 31
  30. EqualAngles: [D, F], [B, C, F], [D, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  31. EqualAngles: [D, F], [E, F], [E, F], [A, C, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  32. EqualAngles: [E, F], [B, C, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
@@ -191,10 +191,10 @@ Theorems:
   5. ConcurrentObjects: (B, C, F), (D, E, F), [C, D] - sub-theorem implied from theorem 1 from file trapezoid_with_point_on_slant_line
   6. EqualAngles: [A, B, D], [A, C, E], [D, F], [A, B, D] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
   7. EqualAngles: [A, C, E], [B, C], [D, F], [B, C] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
-  8. EqualAngles: [A, C, E], [B, C], [D, F], [D, E] - is true because of 10 and 12
+  8. EqualAngles: [A, C, E], [B, C], [D, F], [D, E] - is true because of 17 and 7
   9. EqualAngles: [A, C, E], [B, E, F], [D, F], [B, E, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, C, E], [C, D], [D, F], [C, D] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
- 11. EqualAngles: [A, C, E], [D, E], [D, F], [B, C] - is true because of 12 and [A, C, E], [B, C], [A, C, E], [D, E] (this is true in a simpler configuration)
+ 11. EqualAngles: [A, C, E], [D, E], [D, F], [B, C] - is true because of 7 and [A, C, E], [B, C], [A, C, E], [D, E] (this is true in a simpler configuration)
  12. EqualAngles: [A, C, E], [D, E], [D, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  13. EqualAngles: [A, F], [A, C, E], [A, F], [D, F] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
  14. EqualAngles: [A, F], [B, C], [A, F], [D, E] - sub-theorem implied from theorem 1 from file trapezoid_with_two_arbitrary_points
@@ -386,9 +386,9 @@ F = Midpoint({C, E})
 
 Theorems:
 
-  1. CollinearPoints: C, D, F - is true because of C, D, E (this is true in a simpler configuration) and 3
+  1. CollinearPoints: C, D, F - is true because of C, D, E (this is true in a simpler configuration) and 2
   2. CollinearPoints: C, E, F - trivial theorem
-  3. CollinearPoints: D, E, F - is true because of C, D, E (this is true in a simpler configuration) and 3
+  3. CollinearPoints: D, E, F - is true because of C, D, E (this is true in a simpler configuration) and 2
   4. EqualLineSegments: F, C, F, E - trivial theorem
 
 ------------------------------------------------
@@ -402,8 +402,8 @@ F = Midpoint({D, E})
 
 Theorems:
 
-  1. CollinearPoints: C, D, F - is true because of C, D, E (this is true in a simpler configuration) and 2
-  2. CollinearPoints: C, E, F - is true because of C, D, E (this is true in a simpler configuration) and 2
+  1. CollinearPoints: C, D, F - is true because of C, D, E (this is true in a simpler configuration) and 3
+  2. CollinearPoints: C, E, F - is true because of C, D, E (this is true in a simpler configuration) and 3
   3. CollinearPoints: D, E, F - trivial theorem
   4. EqualLineSegments: F, D, F, E - trivial theorem
 
@@ -411,4 +411,4 @@ Theorems:
 Generated configurations: 18
 Theorems: 186
 Interesting theorems: 4
-Run-time: 1397 ms
+Run-time: 1547 ms

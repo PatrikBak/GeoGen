@@ -586,7 +586,7 @@ namespace GeoGen.TheoremsAnalyzer
 
             // At this point we are sure we have at most one option to map the object
             // First we check if it's not directly equal to some object
-            var equalObject = input.ExaminedConfigurationObjectsContainer.FindEqualItem(mappedObject);
+            var equalObject = (ConfigurationObject)input.ExaminedTheorem.Configuration.ConstructedObjects.FirstOrDefault(o => o.IsEquivalentTo(mappedObject));
 
             // If there is no equal real object...
             if (equalObject == null)

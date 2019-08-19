@@ -14,20 +14,15 @@ namespace GeoGen.TheoremsAnalyzer
         public ContextualPicture ContextualPicture { get; set; }
 
         /// <summary>
-        /// Gets or sets the container where the objects of the examined configuration should be contained.
+        /// Gets or sets the list of theorems that hold true in the configuration.
         /// </summary>
-        public IContainer<ConfigurationObject> ConfigurationObjectsContainer { get; set; }
+        public TheoremsMap AllTheorems { get; set; }
 
         /// <summary>
         /// Gets or sets the list of theorems that hold true in the configuration and 
-        /// cannot be stated without the last object of it.
+        /// cannot be stated without the last object of it. These theorems will be 
+        /// analyzed whether they are interesting or not.
         /// </summary>
         public TheoremsMap NewTheorems { get; set; }
-
-        /// <summary>
-        /// Gets or sets the list of theorems that hold true in the configuration and don't
-        /// use the last object of it.
-        /// </summary>
-        public TheoremsMap OldTheorems { get; set; }
     }
 }

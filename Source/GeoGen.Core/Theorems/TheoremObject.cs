@@ -15,7 +15,11 @@ namespace GeoGen.Core
         /// <see cref="IsEquivalentTo(TheoremObject)"/> method and a constant hash code function 
         /// (i.e. using it together with a dictionary / hash set would make all the operations O(n)).
         /// </summary>
-        public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>((t1, t2) => t1.IsEquivalentTo(t2), t => 0);
+        public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>(
+            // Reuse the abstract method on the object
+            (t1, t2) => t1.IsEquivalentTo(t2), 
+            // And the constant hash-code function
+            t => 0);
 
         #endregion
 

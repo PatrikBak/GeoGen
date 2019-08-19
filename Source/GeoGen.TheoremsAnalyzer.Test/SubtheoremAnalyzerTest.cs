@@ -61,8 +61,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             {
                 TemplateTheorem = templateTheorem,
                 ExaminedTheorem = examinedTheorem,
-                ExaminedConfigurationContexualPicture = contextualPicture,
-                ExaminedConfigurationObjectsContainer = objectsContainer
+                ExaminedConfigurationContexualPicture = contextualPicture
             });
         }
 

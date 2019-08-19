@@ -245,7 +245,7 @@ namespace GeoGen.TheoremsAnalyzer
                         .ZipToDictionary(objects.Concat(constructedObject));
 
                     // Remap all the theorems
-                    return theorems.Select(t => t.Remap(mapping)).ToList();
+                    return theorems.Select(theorem => theorem.Remap(mapping)).ToList();
 
                 // There shouldn't be any other case
                 default:

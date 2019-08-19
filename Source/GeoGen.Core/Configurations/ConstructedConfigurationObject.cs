@@ -1,4 +1,7 @@
-﻿namespace GeoGen.Core
+﻿using GeoGen.Utilities;
+using System.Linq;
+
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represent a <see cref="ConfigurationObject"/> that is composed of a <see cref="Core.Construction"/>, and 
@@ -57,5 +60,25 @@
         }
 
         #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Finds out if this object is equivalent to the other one.
+        /// </summary>
+        /// <param name="otherObject">The other object.</param>
+        /// <returns>true, if they are equivalent; false otherwise.</returns>
+        public bool IsEquivalentTo(ConstructedConfigurationObject otherObject)
+        {
+            // They have to have equally named constructions
+            if (Construction.Name != otherObject.Construction.Name)
+                return false;
+
+            // Otherwise return if the arguments are sequentially equivalent to each other
+            return PassedArguments.Zip(otherObject.PassedArguments).All(pair => pair.Item1.IsEquivalentTo(pair.Item2));
+        }
+
+        #endregion
     }
 }
+

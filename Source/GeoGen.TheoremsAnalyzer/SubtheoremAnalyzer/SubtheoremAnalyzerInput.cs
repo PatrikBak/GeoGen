@@ -22,10 +22,5 @@ namespace GeoGen.TheoremsAnalyzer
         /// Gets or sets the contextual picture where the examined configuration is drawn.
         /// </summary>
         public ContextualPicture ExaminedConfigurationContexualPicture { get; set; }
-
-        /// <summary>
-        /// Gets or sets the container where the objects of the examined configuration should be contained.
-        /// </summary>
-        public IContainer<ConfigurationObject> ExaminedConfigurationObjectsContainer { get; set; }
     }
 }

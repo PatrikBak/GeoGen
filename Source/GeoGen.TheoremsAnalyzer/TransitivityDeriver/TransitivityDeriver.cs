@@ -234,7 +234,7 @@ namespace GeoGen.TheoremsAnalyzer
                     TheoremType.EqualLineSegments => 1,
                     TheoremType.EqualAngles => 1,
 
-                    // All other cases doesn't support transitivity
+                    // All other cases don't support transitivity
                     _ => 0
                 };
 

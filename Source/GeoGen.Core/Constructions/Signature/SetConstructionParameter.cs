@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Linq;
 
 namespace GeoGen.Core
@@ -47,7 +48,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"{{{string.Join(", ", Enumerable.Repeat(TypeOfParameters.ToString(), NumberOfParameters))}}}";
+        public override string ToString() => $"{{{Enumerable.Repeat(TypeOfParameters.ToString(), NumberOfParameters).ToJoinedString()}}}";
 
         #endregion
     }

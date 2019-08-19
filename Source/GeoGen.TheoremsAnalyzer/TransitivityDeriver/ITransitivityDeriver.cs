@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.TheoremsAnalyzer
 {
     /// <summary>
-    /// Represents a service that is able derive new theorems using the transivity rule,
+    /// Represents a service that is able derive new theorems using the transitivity rule,
     /// i.e. if x = y and y = z, then x = z. 
     /// </summary>
     public interface ITransitivityDeriver

@@ -39,11 +39,6 @@ namespace GeoGen.Algorithm
         private readonly ITheoremsFinder[] _finders;
 
         /// <summary>
-        /// The factory for creating objects containers.
-        /// </summary>
-        private readonly IConfigurationObjectsContainerFactory _containerFactory;
-
-        /// <summary>
         /// The analyzer of theorem providing feedback whether they are olympiad or not.
         /// </summary>
         private readonly ITheoremsAnalyzer _analyzer;
@@ -59,20 +54,17 @@ namespace GeoGen.Algorithm
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="pictureFactory">The factory for creating contextual pictures.</param>
         /// <param name="finders">The finders of theorems in generated configurations.</param>
-        /// <param name="containerFactory">The factory for creating objects containers.</param>
         /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
         public SequentialAlgorithm(IGenerator generator,
                                    IGeometryConstructor geometryConstructor,
                                    IContextualPictureFactory pictureFactory,
                                    ITheoremsFinder[] finders,
-                                   IConfigurationObjectsContainerFactory containerFactory,
                                    ITheoremsAnalyzer analyzer)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _finders = finders ?? throw new ArgumentNullException(nameof(finders));
-            _containerFactory = containerFactory ?? throw new ArgumentNullException(nameof(containerFactory));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
         }
 
@@ -146,6 +138,7 @@ namespace GeoGen.Algorithm
             #region Configuration verification function
 
             // Prepare a function that does geometric verification of the configurations
+            // While doing so it construct pictures that we can reuse further for finding theorems
             bool VerifyConfigurationCorrectness(GeneratedConfiguration configuration)
             {
                 #region Pictures construction
@@ -250,23 +243,20 @@ namespace GeoGen.Algorithm
                         // And cache them
                         theoremsMap.Add(configuration, allTheorems);
 
-                        // Create a container holding the objects of the configuration
-                        var container = _containerFactory.CreateContainer(configuration);
-
                         // Analyze the theorems
                         var analysisResult = _analyzer.Analyze(new TheoremAnalyzerInput
                         {
                             ContextualPicture = picture,
                             NewTheorems = newTheorems,
-                            ConfigurationObjectsContainer = container
+                            AllTheorems = allTheorems                           
                         });
 
                         // Return the final output
                         return new AlgorithmOutput
                         {
                             Configuration = configuration,
-                            Theorems = newTheorems.AllObjects,
-                            AnalyzerOutput = analysisResult
+                            Theorems = newTheorems,
+                            TheoremsFeedback = analysisResult
                         };
                     }));
         }

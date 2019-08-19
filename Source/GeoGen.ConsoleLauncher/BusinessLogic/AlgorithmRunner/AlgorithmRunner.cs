@@ -102,7 +102,7 @@ namespace GeoGen.ConsoleLauncher
             if (initialTheorems.Any())
             {
                 WriteLineToBoth("\nTheorems:\n");
-                WriteLineToBoth(TheoremsToString(initialFormatter, initialTheorems.AllObjects, new Dictionary<Theorem, TheoremFeedback>(), includeResolved: true));
+                WriteLineToBoth(TheoremsToString(initialFormatter, initialTheorems, new Dictionary<Theorem, TheoremFeedback>(), includeResolved: true));
             }
 
             #endregion
@@ -163,13 +163,13 @@ namespace GeoGen.ConsoleLauncher
                     continue;
 
                 // Count all theorems
-                totalTheorems += algorithmOutput.Theorems.Count;
+                totalTheorems += algorithmOutput.Theorems.AllObjects.Count;
 
                 // Count interesting theorems
-                interestingTheorems += algorithmOutput.Theorems.Count - algorithmOutput.AnalyzerOutput.Count;
+                interestingTheorems += algorithmOutput.Theorems.AllObjects.Count - algorithmOutput.TheoremsFeedback.Count;
 
                 // Find out if there is any interesting theorem
-                var anyInterestingTheorem = algorithmOutput.AnalyzerOutput.Count != algorithmOutput.Theorems.Count;
+                var anyInterestingTheorem = algorithmOutput.TheoremsFeedback.Count != algorithmOutput.Theorems.AllObjects.Count;
 
                 // Prepare the formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration);
@@ -189,10 +189,10 @@ namespace GeoGen.ConsoleLauncher
 
                 // Write the basic theorem string to the default output
                 if (anyInterestingTheorem)
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: false));
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.TheoremsFeedback, includeResolved: false));
 
                 // If we're requested, write the full too
-                WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.AnalyzerOutput, includeResolved: true));
+                WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.TheoremsFeedback, includeResolved: true));
             }
 
             // Write end
@@ -217,75 +217,76 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="feedback">The feedback from the theorems analyzer.</param>
         /// <param name="includeResolved">Indicates if we should include the resolved theorems as well.</param>
         /// <returns>The string representing the theorems.</returns>
-        private string TheoremsToString(OutputFormatter formatter, IReadOnlyList<Theorem> theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
+        private string TheoremsToString(OutputFormatter formatter, TheoremsMap theorems, Dictionary<Theorem, TheoremFeedback> feedback, bool includeResolved)
         {
             // Convert either all theorems, if we should include resolved, or only not resolved ones
-            return theorems.Where(theorem => includeResolved || !feedback.ContainsKey(theorem))
+            var sortedTheorems = theorems.AllObjects.Where(theorem => includeResolved || !feedback.ContainsKey(theorem))
                 // Convert a given one to a string
                 .Select(theorem => (theorem, theoremString: formatter.FormatTheorem(theorem)))
-                // Order them
+                // Order them by these strings
                 .OrderBy(pair => pair.theoremString)
-                // Add feedback
-                .Select((pair, index) =>
+                // Enumerate
+                .ToList();
+
+            // Process every theorem
+            return sortedTheorems.Select((pair, index) =>
+            {
+                // Deconstruct
+                var (theorem, theoremString) = pair;
+
+                // If the theorem has no feedback, we can't write more
+                if (!feedback.ContainsKey(theorem))
+                    return theoremString;
+
+                // Otherwise switch on the feedback
+                switch (feedback[theorem])
                 {
-                    // Deconstruct
-                    var (theorem, theoremString) = pair;
+                    // Trivial theorem
+                    case TrivialTheoremFeedback _:
+                        return $"{theoremString} - trivial theorem";
 
-                    // If the theorem has no feedback, we can't write more
-                    if (!feedback.ContainsKey(theorem))
-                        return theoremString;
+                    // Sub-theorem
+                    case SubtheoremFeedback subtheoremFeedback:
 
-                    // Otherwise switch on the feedback
-                    switch (feedback[theorem])
-                    {
-                        // Trivial theorem
-                        case TrivialTheoremFeedback _:
-                            return $"{theoremString} - trivial theorem";
+                        // In this case we know the template theorem has our additional info
+                        var templateTheorem = (TemplateTheorem)subtheoremFeedback.TemplateTheorem;
 
-                        // Sub-theorem
-                        case SubtheoremFeedback subtheoremFeedback:
+                        // We can now construct more descriptive string
+                        return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
 
-                            // In this case we know the template theorem has our additional info
-                            var templateTheorem = (TemplateTheorem)subtheoremFeedback.TemplateTheorem;
+                    // Definable in a simpler configuration
+                    case DefineableSimplerFeedback _:
+                        return $"{theoremString} - can be defined in a simpler configuration";
 
-                            // We can now construct more descriptive string
-                            return $"{theoremString} - sub-theorem implied from theorem {templateTheorem.Number} from file {templateTheorem.FileName}";
+                    // Transitivity
+                    case TransitivityFeedback transitivityFeedback:
 
-                        // Definable in a simpler configuration
-                        case DefineableSimplerFeedback _:
-                            return $"{theoremString} - can be defined in a simpler configuration";
+                        // Local function that converts a fact to a string
+                        string FactToString(Theorem fact)
+                        {
+                            // Try to find it in our theorems
+                            var equalTheoremIndex = sortedTheorems.IndexOf(pair => pair.theorem, fact, Theorem.EquivalencyComparer);
 
-                        // Transitivity
-                        case TransitivityFeedback transitivityFeedback:
+                            // If it's found, i.e. not -1, then return just the number
+                            if (equalTheoremIndex != -1)
+                                return $"{equalTheoremIndex + 1}";
 
-                            // Local function that converts a fact to a string
-                            string FactToString(Theorem fact)
-                            {
-                                // Try to find it in our theorems
-                                var equalTheoremIndex = theorems.IndexOf(fact, Theorem.EquivalencyComparer);
+                            // Otherwise Convert the fact
+                            return $"{formatter.FormatTheorem(fact, includeType: false)} (this is true in a simpler configuration)";
+                        }
 
-                                // If it's found, i.e. not -1, then return just the number
-                                if (equalTheoremIndex != -1)
-                                    return $"{equalTheoremIndex + 1}";
+                        // Compose the final string
+                        return $"{theoremString} - is true because of {FactToString(transitivityFeedback.Fact1)} and {FactToString(transitivityFeedback.Fact2)}";
 
-                                // Otherwise Convert the fact
-                                return $"{formatter.FormatTheorem(fact, includeType: false)} (this is true in a simpler configuration)";
-                            }
-
-                            // Compose the final string
-                            return $"{theoremString} - is true because of {FactToString(transitivityFeedback.Fact1)} and {FactToString(transitivityFeedback.Fact2)}";
-
-                        // Otherwise...
-                        default:
-                            throw new GeoGenException($"Unhandled type of feedback: {feedback[theorem].GetType()}");
-                    }
-                })
-                // Order them
-                .Ordered()
-                // Prepend the theorem number
-                .Select((s, index) => $" {index + 1,2}. {s}")
-                // Make each on a separate line
-                .ToJoinedString("\n");
+                    // Otherwise...
+                    default:
+                        throw new GeoGenException($"Unhandled type of feedback: {feedback[theorem].GetType()}");
+                }
+            })
+            // Prepend the theorem number
+            .Select((s, index) => $" {index + 1,2}. {s}")
+            // Make each on a separate line
+            .ToJoinedString("\n");
         }
 
         #endregion

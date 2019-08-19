@@ -212,7 +212,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the signature.</returns>
-        public override string ToString() => string.Join(", ", Parameters);
+        public override string ToString() => Parameters.ToJoinedString();
 
         #endregion
     }
