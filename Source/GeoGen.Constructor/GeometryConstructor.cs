@@ -1,6 +1,7 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Constructor
@@ -164,10 +165,48 @@ namespace GeoGen.Constructor
                     // Call the internal construction function
                     () => data = ConstructObject(constructedObject, pictures, addToPictures: false),
                     // Trace any inconsistency exception
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message));
 
                 // Return the data
                 return data;
+            }
+            // If there are unresolvable inconsistencies...
+            catch (UnresolvedInconsistencyException e)
+            {
+                // We trace it
+                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message);
+
+                // And re-throw the exception
+                throw new GeometryConstructionException("The object couldn't be examined.", e);
+            }
+        }
+
+        /// <summary>
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
+        /// It is assumed that the constructed object can be construed in the passed pictures. The fact whether
+        /// the object is or is not already present in individual pictures is ignored. If the object is 
+        /// inconstructible, null is returned. Throws a <see cref="GeometryConstructionException"/> if the 
+        /// construction couldn't be carried out.
+        /// </summary>
+        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <returns>The dictionary mapping pictures to constructed objects, or null; if the object is inconstructible.</returns>
+        public IReadOnlyDictionary<Picture, IAnalyticObject> Construct(Pictures pictures, ConstructedConfigurationObject constructedObject)
+        {
+            try
+            {
+                // Prepare the result
+                var result = default(IReadOnlyDictionary<Picture, IAnalyticObject>);
+
+                // Execute the construction without adding the object to the picture
+                pictures.ExecuteAndReconstructAtIncosistencies(
+                    // Call the internal construction function
+                    () => result = ConstructObject(pictures, constructedObject),
+                    // Trace any inconsistency exception
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message));
+
+                // Return the data
+                return result;
             }
             // If there are unresolvable inconsistencies...
             catch (UnresolvedInconsistencyException e)
@@ -189,6 +228,48 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="constructedObject">The object to be constructed.</param>
         /// <param name="pictures">The pictures where the input for the construction is drawn.</param>
+        /// <returns>The map of pictures and construction results, if it can be performed; or null, if not.</returns>
+        private IReadOnlyDictionary<Picture, IAnalyticObject> ConstructObject(Pictures pictures, ConstructedConfigurationObject constructedObject)
+        {
+            // Prepare the result
+            var result = new Dictionary<Picture, IAnalyticObject>();
+
+            // Initialize a variable indicating if the construction is possible
+            bool canBeConstructed = default;
+
+            // Let the resolver find the constructor and let it create the constructor function
+            var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
+
+            // Construct it in every picture
+            foreach (var picture in pictures)
+            {
+                // Perform the construction
+                var analyticObject = constructorFunction(picture);
+
+                // Find out if it's been constructed
+                var objectConstructed = analyticObject != null;
+
+                // We need to first check if some other picture didn't mark constructibility in the opposite way
+                // If yes, we have an inconsistency
+                if (picture != pictures.First() && canBeConstructed != objectConstructed)
+                    throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
+
+                // Mark the construction result
+                canBeConstructed = objectConstructed;
+
+                // If the object can be constructed, add it to the result
+                result.Add(picture, analyticObject);
+            }
+
+            // If the object can be constructed, return the result, otherwise null
+            return canBeConstructed ? result : null;
+        }
+
+        /// <summary>
+        /// Performs the construction of a given constructed object with respect to all the pictures of given pictures.
+        /// </summary>
+        /// <param name="constructedObject">The object to be constructed.</param>
+        /// <param name="pictures">The pictures where the input for the construction is drawn.</param>
         /// <param name="addToPictures">Indicates if the object should be added to the pictures.</param>
         /// <returns>The result of the construction.</returns>
         private ConstructionData ConstructObject(ConstructedConfigurationObject constructedObject, Pictures pictures, bool addToPictures)
@@ -202,7 +283,7 @@ namespace GeoGen.Constructor
             // Let the resolver find the constructor and let it create the constructor function
             var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
-            // Add the object to all the pictures
+            // Construct it in every picture
             foreach (var picture in pictures)
             {
                 // Prepare value indicating whether the object was constructed in the picture

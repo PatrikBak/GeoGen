@@ -1,0 +1,8 @@
+﻿Configuration:
+
+ RightTriangle: A, B, C
+ D = RandomPointOnPerpendicularLineAtPointOfLine(B, C)
+
+Theorems:
+
+ LineTangentToCircle: [D, B], (A, B, C)

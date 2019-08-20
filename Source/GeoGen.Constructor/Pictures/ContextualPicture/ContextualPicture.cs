@@ -265,6 +265,40 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
+        /// Gets the geometric object corresponding to the object that can be constructed
+        /// via a given constructor.
+        /// </summary>
+        /// <param name="objectConstructor">The constructor for the objects in all pictures.</param>
+        /// <returns>The found object; or null, if such object is not present.</returns>
+        public GeometricObject GetGeometricObject(Func<IReadOnlyDictionary<Picture, IAnalyticObject>> objectConstructor)
+        {
+            try
+            {
+                // Prepare the result
+                var result = default(GeometricObject);
+
+                // Safely execute
+                GeneralUtilities.TryExecute(
+                    // Finding of the equivalent object
+                    () => result = FindEquivalentObject(objectConstructor),
+                    // While handling inconsistencies
+                    // TODO: Trace
+                    (InconsistentPicturesException e) => { });
+
+                // Return the result
+                return result;
+            }
+            catch (UnresolvedInconsistencyException e)
+            {
+                // If we are unable to resolve inconsistencies, we trace it
+                _tracer?.TraceConstructionFailure(Pictures.Configuration, e.Message);
+
+                // And say the picture is not constructible
+                throw new InconstructibleContextualPicture($"The reconstruction of the contextual picture failed. The inner reason: {e.Message}.");
+            }
+        }
+
+        /// <summary>
         /// Gets the geometric objects that corresponds to a given configuration object.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
@@ -798,6 +832,118 @@ namespace GeoGen.Constructor
 
             // Finally we can return the result
             return result.Value;
+        }
+
+        /// <summary>
+        /// Finds the geometric object corresponding to the object that can be constructed
+        /// via a given constructor. The result might be an object of the picture, but it
+        /// doesn't have to be -- in that case it will, however, contain information about
+        /// the objects of the picture (for example a line will know its points).
+        /// </summary>
+        /// <param name="objectConstructor">The constructor for the objects in all pictures.</param>
+        /// <returns>The found object; or null, if such object is not present.</returns>
+        private GeometricObject FindEquivalentObject(Func<IReadOnlyDictionary<Picture, IAnalyticObject>> objectConstructor)
+        {
+            // Perform the construction 
+            var pictureToObject = objectConstructor();
+
+            // If it cannot be done, then we can't do more
+            if (pictureToObject == null)
+                return null;
+
+            // Prepare the result
+            var foundObject = default(GeometricObject);
+
+            #region Searching already created objects
+
+            // Go through all the pairs of picture-object
+            foreach (var picture in Pictures)
+            {
+                // Find out if this object is present
+                var equalObject = _objects[picture].GetLeftValueOrDefault(pictureToObject[picture]);
+
+                // If this is not the first picture and we've marked the found object differently
+                // then we have an inconsistency
+                if (picture != Pictures.First() && foundObject != equalObject)
+                    throw new InconsistentPicturesException("Corresponding equal geometric object couldn't be determined consistently.");
+
+                // Otherwise set the found object
+                foundObject = equalObject;
+            }
+
+            // If we found the object, we can return it 
+            if (foundObject != null)
+                return foundObject;
+
+            #endregion
+
+            // If we couldn't find it, we need to construct it
+            // We switch based on the type of object that we're dealing with
+            switch (pictureToObject.First().Value)
+            {
+                // Line or circle
+                case Line _:
+                case Circle _:
+
+                    // We need to find points that lie on this object
+                    // Prepare them
+                    var points = new HashSet<PointObject>();
+
+                    // Search all the point of the picture individually
+                    foreach (var point in AllPoints)
+                    {
+                        // Prepare the variable indicating whether the point
+                        // lies on the object
+                        bool? liesOn = null;
+
+                        #region Handling pictures
+
+                        // Iterate over pictures
+                        foreach (var picture in Pictures)
+                        {
+                            // Pull the analytic representations of the point and the line/circle
+                            var analyticPoint = (Point)_objects[picture].GetRightValue(point);
+                            var lineOrCircle = pictureToObject[picture];
+
+                            // Let the helper decide if the point lies on the object
+                            var liesOnInThisPicture = AnalyticHelpers.LiesOn(lineOrCircle, analyticPoint);
+
+                            // If the result has been set and it differs from the currently 
+                            // found value, then we have an inconsistency
+                            if (liesOn != null && liesOn.Value != liesOnInThisPicture)
+                                throw new InconsistentPicturesException($"The fact whether a point lies on a {(lineOrCircle is Line ? "line" : "circle")} is not the same in every picture.");
+
+                            // Otherwise we update the result
+                            liesOn = liesOnInThisPicture;
+                        }
+
+                        #endregion
+
+                        // If the point lies on our object, add it to the points set
+                        if (liesOn.Value)
+                            points.Add(point);
+                    }
+
+                    // Return the object based on the type
+                    return pictureToObject.First().Value switch
+                    {
+                        // Line
+                        Line _ => new LineObject(configurationObject: null, points) as GeometricObject,
+
+                        // Circle
+                        Circle _ => new CircleObject(configurationObject: null, points),
+
+                        // Default
+                        _ => throw new ConstructorException("Impossible situation")
+                    };
+
+                // Point
+                case Point _:
+                    throw new ConstructorException("Finding equivalent point is currently not supported.");
+
+                default:
+                    throw new ConstructorException($"Unhandled type of analytic object: {pictureToObject.First().Value.GetType()}");
+            }
         }
 
         #endregion

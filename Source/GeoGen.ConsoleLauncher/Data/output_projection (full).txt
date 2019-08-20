@@ -56,10 +56,10 @@ Theorems:
 
   1. CollinearPoints: A, B, E - trivial theorem
   2. ConcurrentObjects: (A, D, E), (B, C, E), [A, C]
-  3. EqualAngles: [A, B, E], [A, D], [D, E], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
-  4. EqualAngles: [A, B, E], [B, C, D], [D, E], [A, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
-  5. LineTangentToCircle: [A, D], (B, D, E) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
-  6. LineTangentToCircle: [B, C, D], (A, D, E) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+  3. EqualAngles: [A, B, E], [A, D], [D, E], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+  4. EqualAngles: [A, B, E], [B, C, D], [D, E], [A, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+  5. LineTangentToCircle: [A, D], (B, D, E) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+  6. LineTangentToCircle: [B, C, D], (A, D, E) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
   7. PerpendicularLines: [A, B, E], [D, E] - trivial theorem
 
 ------------------------------------------------
@@ -74,7 +74,7 @@ F = PerpendicularProjectionOnLineFromPoints(A, {D, E})
 Theorems:
 
   1. CollinearPoints: D, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
   4. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
   5. ConcurrentObjects: (A, C, F), (B, E, F), [B, C, D]
@@ -88,8 +88,8 @@ Theorems:
  13. EqualAngles: [A, D], [D, E, F], [A, F], [B, C, D]
  14. EqualAngles: [A, F], [A, C, E], [B, E], [D, E, F]
  15. EqualAngles: [A, F], [A, D], [B, C, D], [D, E, F]
- 16. LineTangentToCircle: [B, C, D], (A, D, F)
- 17. LineTangentToCircle: [B, E], (A, E, F)
+ 16. LineTangentToCircle: [B, C, D], (A, D, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
+ 17. LineTangentToCircle: [B, E], (A, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  18. PerpendicularLines: [A, F], [D, E, F] - trivial theorem
  19. TangentCircles: (A, C, D), (A, E, F)
 
@@ -105,7 +105,7 @@ F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
 Theorems:
 
   1. CollinearPoints: A, B, F - can be defined in a simpler configuration
-  2. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, E, F), (B, D, F), [A, D]
   4. ConcurrentObjects: (A, E, F), (B, D, F), [B, E]
   5. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
@@ -170,7 +170,7 @@ F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
 Theorems:
 
   1. CollinearPoints: D, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
   4. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
   5. ConcurrentObjects: (A, C, F), (B, E, F), [A, B]
@@ -184,8 +184,8 @@ Theorems:
  13. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
  14. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
  15. EqualAngles: [B, E], [D, E, F], [C, F], [A, C, E]
- 16. LineTangentToCircle: [A, D], (C, D, F)
- 17. LineTangentToCircle: [B, E], (C, E, F)
+ 16. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
+ 17. LineTangentToCircle: [B, E], (C, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  18. PerpendicularLines: [C, F], [D, E, F] - trivial theorem
  19. TangentCircles: (A, C, D), (C, E, F)
  20. TangentCircles: (B, C, E), (C, D, F)
@@ -205,7 +205,7 @@ Theorems:
   2. ConcurrentObjects: (A, D, F), (B, C, F), [A, C, E] - can be defined in a simpler configuration
   3. ConcurrentObjects: (A, D, F), (B, E, F), (C, D, E)
   4. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
-  5. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  5. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   6. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
   7. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
   8. ConcurrentObjects: (A, E, F), [B, E], [D, F]
@@ -237,7 +237,7 @@ Theorems:
 
   1. CollinearPoints: B, E, F - trivial theorem
   2. ConcurrentObjects: (A, B, C), (B, D, F), [A, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
-  3. ConcurrentObjects: (A, C, D), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  3. ConcurrentObjects: (A, C, D), (A, E, F), (B, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   4. ConcurrentObjects: (A, C, D), (A, E, F), [C, F]
   5. ConcurrentObjects: (A, C, D), (B, D, F), [C, F]
   6. ConcurrentObjects: (A, C, D), (C, E, F), [A, F]
@@ -253,7 +253,7 @@ Theorems:
  16. EqualAngles: [B, C, D], [B, E, F], [D, F], [A, D] - is true because of [A, C, E], [A, D], [B, C, D], [B, E, F] (this is true in a simpler configuration) and 11
  17. EqualAngles: [B, C, D], [D, E], [D, F], [A, B] - is true because of [A, B], [A, C, E], [B, C, D], [D, E] (this is true in a simpler configuration) and 9
  18. EqualAngles: [C, F], [A, C, E], [C, F], [D, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 19. LineTangentToCircle: [A, D], (B, D, F)
+ 19. LineTangentToCircle: [A, D], (B, D, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  20. ParallelLines: [A, C, E], [D, F]
  21. PerpendicularLines: [B, E, F], [D, F] - trivial theorem
  22. TangentCircles: (B, C, E), (B, D, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -305,15 +305,15 @@ Theorems:
   4. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
   5. EqualAngles: [A, B], [A, D], [D, F], [D, E] - is true because of [A, B], [A, D], [B, E], [D, E] (this is true in a simpler configuration) and 12
   6. EqualAngles: [A, B], [B, E], [D, F], [A, B] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
-  7. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
-  8. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+  7. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+  8. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
   9. EqualAngles: [A, D], [B, E], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, D], [D, E], [D, F], [A, B] - is true because of [A, B], [B, E], [A, D], [D, E] (this is true in a simpler configuration) and 6
  11. EqualAngles: [B, C, D], [B, E], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  12. EqualAngles: [B, E], [D, E], [D, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  13. EqualAngles: [B, F], [B, E], [B, F], [D, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 14. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 15. LineTangentToCircle: [B, C, D], (A, D, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 14. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 15. LineTangentToCircle: [B, C, D], (A, D, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  16. ParallelLines: [B, E], [D, F]
  17. PerpendicularLines: [A, C, E, F], [D, F] - trivial theorem
  18. TangentCircles: (B, C, E), (C, D, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -335,15 +335,15 @@ Theorems:
   4. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
   5. EqualAngles: [A, B], [A, D], [D, F], [D, E] - is true because of [A, B], [A, D], [B, E], [D, E] (this is true in a simpler configuration) and 12
   6. EqualAngles: [A, B], [B, E], [D, F], [A, B] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
-  7. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
-  8. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+  7. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+  8. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
   9. EqualAngles: [A, D], [B, E], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, D], [D, E], [D, F], [A, B] - is true because of [A, B], [B, E], [A, D], [D, E] (this is true in a simpler configuration) and 6
  11. EqualAngles: [B, C, D], [B, E], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  12. EqualAngles: [B, E], [D, E], [D, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  13. EqualAngles: [B, F], [B, E], [B, F], [D, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 14. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 15. LineTangentToCircle: [B, C, D], (A, D, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 14. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 15. LineTangentToCircle: [B, C, D], (A, D, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  16. ParallelLines: [B, E], [D, F]
  17. PerpendicularLines: [A, C, E, F], [D, F] - trivial theorem
  18. TangentCircles: (B, C, E), (C, D, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -372,7 +372,7 @@ Theorems:
  11. EqualAngles: [A, F], [A, B, E], [C, E, F], [D, E]
  12. EqualAngles: [A, F], [A, C], [D, F], [B, C, D] - sub-theorem implied from theorem 1 from file 03_four_concylic_points
  13. EqualAngles: [A, F], [A, D], [B, C, D], [C, E, F] - sub-theorem implied from theorem 1 from file 03_four_concylic_points
- 14. LineTangentToCircle: [D, E], (A, E, F)
+ 14. LineTangentToCircle: [D, E], (A, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  15. PerpendicularLines: [A, F], [C, E, F] - trivial theorem
  16. TangentCircles: (A, B, D), (A, E, F)
 
@@ -388,7 +388,7 @@ F = PerpendicularProjectionOnLineFromPoints(B, {C, E})
 Theorems:
 
   1. CollinearPoints: C, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, B, D), (B, C, F), [A, C]
   4. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
   5. ConcurrentObjects: (A, C, D), (B, C, F), [A, B, E]
@@ -399,7 +399,7 @@ Theorems:
  10. EqualAngles: [A, D], [C, E, F], [B, F], [B, C, D]
  11. EqualAngles: [B, C, D], [C, E, F], [B, F], [A, D]
  12. EqualAngles: [B, F], [A, B, E], [C, E, F], [D, E]
- 13. LineTangentToCircle: [D, E], (B, E, F)
+ 13. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  14. PerpendicularLines: [B, F], [C, E, F] - trivial theorem
  15. TangentCircles: (A, B, D), (B, E, F)
  16. TangentCircles: (B, C, F), (B, D, E)
@@ -484,7 +484,7 @@ F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
 Theorems:
 
   1. CollinearPoints: D, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, B, D), (A, E, F), [B, F]
   4. ConcurrentObjects: (A, B, D), (B, E, F), (C, D, F)
   5. ConcurrentObjects: (A, B, D), (B, E, F), [A, F]
@@ -504,7 +504,7 @@ Theorems:
  19. EqualAngles: [A, F], [A, B, E], [A, F], [C, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  20. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D] - is true because of [A, B, E], [A, D], [B, C, D], [D, E, F] (this is true in a simpler configuration) and 15
  21. EqualAngles: [B, F], [A, B, E], [B, F], [C, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 22. LineTangentToCircle: [A, D], (C, D, F)
+ 22. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  23. ParallelLines: [A, B, E], [C, F]
  24. PerpendicularLines: [C, F], [D, E, F] - trivial theorem
  25. TangentCircles: (B, D, E), (C, D, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -557,7 +557,7 @@ F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
 Theorems:
 
   1. CollinearPoints: C, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  2. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   3. ConcurrentObjects: (A, D, E), (B, C, E), (C, D, F)
   4. ConcurrentObjects: (A, D, E), (C, D, F), [A, C]
   5. ConcurrentObjects: (A, D, F), (B, C, F), [A, B, E]
@@ -567,8 +567,8 @@ Theorems:
   9. EqualAngles: [A, D], [C, E, F], [D, F], [B, C, D]
  10. EqualAngles: [B, C, D], [C, E, F], [D, F], [A, D]
  11. EqualAngles: [C, E, F], [D, E], [D, F], [A, B, E]
- 12. LineTangentToCircle: [A, B, E], (D, E, F)
- 13. LineTangentToCircle: [A, D], (C, D, F)
+ 12. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
+ 13. LineTangentToCircle: [A, D], (C, D, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  14. PerpendicularLines: [C, E, F], [D, F] - trivial theorem
  15. TangentCircles: (B, D, E), (C, D, F)
 
@@ -590,14 +590,14 @@ Theorems:
   5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   6. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
   7. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
-  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
   9. EqualAngles: [A, C], [A, D], [E, F], [A, C] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, D], [C, E], [E, F], [C, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  11. EqualAngles: [A, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  12. EqualAngles: [A, F], [A, D], [A, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
- 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+ 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  16. ParallelLines: [A, D], [E, F]
  17. PerpendicularLines: [B, C, D, F], [E, F] - trivial theorem
  18. TangentCircles: (A, B, D), (B, E, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -620,14 +620,14 @@ Theorems:
   5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   6. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
   7. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
-  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
   9. EqualAngles: [A, C], [A, D], [E, F], [A, C] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, D], [C, E], [E, F], [C, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  11. EqualAngles: [A, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  12. EqualAngles: [A, F], [A, D], [A, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
- 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+ 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  16. ParallelLines: [A, D], [E, F]
  17. PerpendicularLines: [B, C, D, F], [E, F] - trivial theorem
  18. TangentCircles: (A, B, D), (B, E, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -650,14 +650,14 @@ Theorems:
   5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   6. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
   7. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
-  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+  8. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
   9. EqualAngles: [A, C], [A, D], [E, F], [A, C] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  10. EqualAngles: [A, D], [C, E], [E, F], [C, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  11. EqualAngles: [A, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  12. EqualAngles: [A, F], [A, D], [A, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
- 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 13. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
+ 14. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 15. LineTangentToCircle: [D, E], (B, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  16. ParallelLines: [A, D], [E, F]
  17. PerpendicularLines: [B, C, D, F], [E, F] - trivial theorem
  18. TangentCircles: (A, B, D), (B, E, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -681,13 +681,13 @@ Theorems:
   6. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
   7. ConcurrentObjects: (A, D, F), (B, C, F), (B, D, E)
   8. ConcurrentObjects: (A, D, F), [B, C, D], [E, F]
-  9. ConcurrentObjects: (A, E, F), (B, D, E), (C, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  9. ConcurrentObjects: (A, E, F), (B, D, E), (C, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
  10. ConcurrentObjects: (C, D, F), [A, D], [E, F]
  11. EqualAngles: [A, B, E], [A, C, F], [E, F], [D, E]
  12. EqualAngles: [A, C, F], [A, D], [E, F], [B, C, D]
  13. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, D]
  14. EqualAngles: [A, C, F], [D, E], [E, F], [A, B, E]
- 15. LineTangentToCircle: [D, E], (A, E, F)
+ 15. LineTangentToCircle: [D, E], (A, E, F) - sub-theorem implied from theorem 1 from file 05_right_angle_with_tangent_line
  16. PerpendicularLines: [A, C, F], [E, F] - trivial theorem
  17. TangentCircles: (A, B, D), (A, E, F)
 
@@ -708,20 +708,20 @@ Theorems:
   4. ConcurrentObjects: (A, B, C), (C, D, E), [C, F]
   5. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
   6. ConcurrentObjects: (A, C, D), (A, E, F), [C, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
-  7. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F) - sub-theorem implied from theorem 1 from file 05_miquels_theorem
+  7. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F) - sub-theorem implied from theorem 1 from file 06_miquels_theorem
   8. ConcurrentObjects: (A, E, F), (B, D, E), [B, F]
   9. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
  10. ConcurrentObjects: (B, C, E), (D, E, F), [C, F]
- 11. EqualAngles: [A, B, E], [A, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+ 11. EqualAngles: [A, B, E], [A, D, F], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
  12. EqualAngles: [A, B, E], [B, C, D], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  13. EqualAngles: [A, C], [B, C, D], [E, F], [A, C] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 14. EqualAngles: [A, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_angle_with_projected_vertex
+ 14. EqualAngles: [A, D, F], [D, E], [E, F], [A, B, E] - sub-theorem implied from theorem 1 from file 04_right_triangle_with_projected_vertex
  15. EqualAngles: [B, C, D], [C, E], [E, F], [C, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  16. EqualAngles: [B, C, D], [D, E], [E, F], [D, E] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  17. EqualAngles: [B, F], [B, C, D], [B, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  18. EqualAngles: [C, F], [B, C, D], [C, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
- 19. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
- 20. LineTangentToCircle: [D, E], (A, E, F) - sub-theorem implied from theorem 2 from file 04_right_angle_with_projected_vertex
+ 19. LineTangentToCircle: [A, B, E], (D, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
+ 20. LineTangentToCircle: [D, E], (A, E, F) - sub-theorem implied from theorem 2 from file 04_right_triangle_with_projected_vertex
  21. ParallelLines: [B, C, D], [E, F]
  22. PerpendicularLines: [A, D, F], [E, F] - trivial theorem
  23. TangentCircles: (A, B, D), (A, E, F) - sub-theorem implied from theorem 1 from file 02_trapezoid_with_intersection
@@ -729,5 +729,5 @@ Theorems:
 ------------------------------------------------
 Generated configurations: 23
 Theorems: 444
-Interesting theorems: 157
-Run-time: 1016 ms
+Interesting theorems: 146
+Run-time: 946 ms

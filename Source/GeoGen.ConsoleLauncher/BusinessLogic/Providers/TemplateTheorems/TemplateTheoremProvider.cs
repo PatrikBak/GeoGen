@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -110,6 +111,10 @@ namespace GeoGen.ConsoleLauncher
 
                     // Create a map from them
                     var theoremsMap = new TheoremsMap(theorems);
+
+                    // If there is no theorem, skip
+                    if (theoremsMap.AllObjects.IsEmpty())
+                        continue;
 
                     // They have the same configuration, take it from the first
                     var configuration = theoremsMap.AllObjects[0].Configuration;

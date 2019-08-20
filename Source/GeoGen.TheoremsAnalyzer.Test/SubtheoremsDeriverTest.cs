@@ -12,6 +12,7 @@ using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructionType;
+using static GeoGen.Core.RandomPointOnConstruction;
 using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.TheoremsAnalyzer.Test
@@ -374,6 +375,98 @@ namespace GeoGen.TheoremsAnalyzer.Test
                     {
                         (D, new ConstructedConfigurationObject(PointReflection, H, M))
                     }
+                }
+            });
+        }
+
+        [Test]
+        public void Test_Random_Point_On_Line_Segment_Bisector_With_O()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var M_ = new ConstructedConfigurationObject(RandomPointOn(PerpendicularBisector), A_, B_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(templateConfiguration, EqualLineSegments, new[]
+                {
+                    new LineSegmentTheoremObject(A_, M_),
+                    new LineSegmentTheoremObject(B_, M_)
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var M = new ConstructedConfigurationObject(Midpoint, B, C);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O, M);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckForEquivalncyOfResults(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(M, B),
+                            new LineSegmentTheoremObject(M, C)
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                },
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(O, B),
+                            new LineSegmentTheoremObject(O, C)
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                },
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(O, C),
+                            new LineSegmentTheoremObject(O, A)
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                },
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(O, A),
+                            new LineSegmentTheoremObject(O, B)
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
                 }
             });
         }
@@ -1365,14 +1458,14 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 {
                     DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(templateConfiguration, EqualAngles, new[]
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
                             new AngleTheoremObject(new LineTheoremObject(A, B, E), new LineTheoremObject(B, C, D)),
                             new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(A, D))
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(templateConfiguration, LineTangentToCircle, new TheoremObject[]
+                        (new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(A, D),
                             new CircleTheoremObject(B, D, E)
@@ -1384,18 +1477,74 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 {
                     DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(templateConfiguration, EqualAngles, new[]
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
                             new AngleTheoremObject(new LineTheoremObject(A, B, E), new LineTheoremObject(A, D)),
                             new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(B, C, D))
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(templateConfiguration, LineTangentToCircle, new TheoremObject[]
+                        (new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(B, C, D),
                             new CircleTheoremObject(A, D, E)
                         }), templateTheorems[1])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                }
+            });
+        }
+
+        [Test]
+        public void Test_With_Tangent_Circles_Because_Of_Right_Angles()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, B_, C_);
+            var E_ = new ConstructedConfigurationObject(RandomPointOn(CircleWithDiameter), D_, B_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(RightTriangle, A_, B_, C_, D_, E_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(templateConfiguration, TangentCircles, new TheoremObject[]
+                {
+                    new CircleTheoremObject(D_, B_, E_),
+                    new CircleTheoremObject(A_, B_, C_),
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, D, E);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckThatResultsContain(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, TangentCircles, new TheoremObject[]
+                        {
+                            new CircleTheoremObject(A, C, D),
+                            new CircleTheoremObject(A, E, F)
+                        }),
+                        templateTheorems[0])
                     },
                     UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
                 }

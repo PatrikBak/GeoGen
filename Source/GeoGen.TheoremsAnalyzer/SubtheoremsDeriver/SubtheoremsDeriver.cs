@@ -1,4 +1,5 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.AnalyticGeometry;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
@@ -367,53 +368,77 @@ namespace GeoGen.TheoremsAnalyzer
 
             #region Handling mapping if there are more options for mapping this object
 
-            // We need to have a predefined construction
-            if (mappedObject.Construction is PredefinedConstruction predefinedConstruction)
+            // Then we need to have a 'Random' construction:
+            switch (mappedObject.Construction)
             {
-                // Then we need to have a 'Random' construction:
-                switch (predefinedConstruction.Type)
-                {
-                    // If we can choose our point completely at random...
-                    case RandomPoint:
+                // If we can choose our point completely at random...
+                case PredefinedConstruction p when p.Type == RandomPoint:
 
-                        // Then we do so by pulling the pictures
-                        return input.ExaminedConfigurationPicture.Pictures.Configuration
-                            // Looking into its objects map
-                            .ObjectsMap.GetOrDefault(ConfigurationObjectType.Point)?
-                            // And using our helper function
-                            .Select(point => new MappingData(data, (constructedObject, point)))
-                            // In case there in no point (which I doubt every will), return nothing
-                            ?? Enumerable.Empty<MappingData>();
+                    // Then we do so by pulling the pictures
+                    return input.ExaminedConfigurationPicture.Pictures.Configuration
+                        // Looking into its objects map
+                        .ObjectsMap.GetOrDefault(ConfigurationObjectType.Point)?
+                        // And using our helper function
+                        .Select(point => new MappingData(data, (constructedObject, point)))
+                        // In case there in no point (which I doubt every will), return nothing
+                        ?? Enumerable.Empty<MappingData>();
 
-                    // If our points lie on a line / circle...
-                    case RandomPointOnLineFromPoints:
-                    case RandomPointOnCircleFromPoints:
+                // If the construction is predefined...
+                case PredefinedConstruction predefinedConstruction when
+                    // And it's a random point on line
+                    predefinedConstruction.Type == RandomPointOnLineFromPoints
+                    // Or a circle
+                    || predefinedConstruction.Type == RandomPointOnCircleFromPoints:
 
-                        // Get the geometric objects corresponding to the input points
-                        // Take the flattened arguments
-                        var geometricPoints = mappedObject.PassedArguments.FlattenedList
-                            // For each find the geometric point
-                            .Select(input.ExaminedConfigurationPicture.GetGeometricObject)
-                            // Cast
-                            .Cast<PointObject>()
-                            // Enumerate
-                            .ToArray();
+                    // Get the geometric objects corresponding to the input points
+                    // Take the flattened arguments
+                    var geometricPoints = mappedObject.PassedArguments.FlattenedList
+                        // For each find the geometric point
+                        .Select(input.ExaminedConfigurationPicture.GetGeometricObject)
+                        // Cast
+                        .Cast<PointObject>()
+                        // Enumerate
+                        .ToArray();
 
-                        // First find the geometric line/circle corresponding that pass through the found points
-                        return (predefinedConstruction.Type switch
-                        {
-                            // Looking for the line that contains our points
-                            RandomPointOnLineFromPoints => geometricPoints[0].Lines.First(line => line.ContainsAll(geometricPoints)) as DefinableByPoints,
+                    // First find the geometric line/circle corresponding that pass through the found points
+                    return (predefinedConstruction.Type switch
+                    {
+                        // Looking for the line that contains our points
+                        RandomPointOnLineFromPoints => geometricPoints[0].Lines.First(line => line.ContainsAll(geometricPoints)) as DefinableByPoints,
 
-                            // Looking for the circle that contains our points
-                            RandomPointOnCircleFromPoints => geometricPoints[0].Circles.First(circle => circle.ContainsAll(geometricPoints)),
+                        // Looking for the circle that contains our points
+                        RandomPointOnCircleFromPoints => geometricPoints[0].Circles.First(circle => circle.ContainsAll(geometricPoints)),
 
-                            // Impossible, we're down to these 2 cases
-                            _ => throw new TheoremsAnalyzerException("Impossible.")
-                        })
-                        // Now we take every possible point on this line / circle as an option
-                       .Points.Select(point => new MappingData(data, (constructedObject, point.ConfigurationObject)));
-                }
+                        // Impossible, we're down to these 2 cases
+                        _ => throw new TheoremsAnalyzerException("Impossible.")
+                    })
+                   // Now we take every possible point on this line / circle as an option
+                   .Points.Select(point => new MappingData(data, (constructedObject, point.ConfigurationObject)));
+
+                // If we have a random point on construction
+                case RandomPointOnConstruction randomPointConstruction:
+
+                    // We need to create the object which we're looking for a random point on
+                    var innerObject = new ConstructedConfigurationObject(randomPointConstruction.Construction, newArguments);
+
+                    // Now we prepare the constructor function of it for the contextual picture
+                    IReadOnlyDictionary<Picture, IAnalyticObject> ConstructorFunction() =>
+                        // That calls the constructor 
+                        _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject);
+
+                    // We pass this function to the contextual picture to get the resulting object
+                    var foundObject = input.ExaminedConfigurationPicture.GetGeometricObject(ConstructorFunction);
+
+                    // If the found object is null, i.e. the construction 
+                    // is not possible, then there is no mapping
+                    if (foundObject == null)
+                        return Enumerable.Empty<MappingData>();
+
+                    // Otherwise we have a line/circle, i.e. something that has points.
+                    // We take every possible point 
+                    return ((DefinableByPoints)foundObject).Points
+                        // and create a mapping for each
+                        .Select(point => new MappingData(data, (constructedObject, point.ConfigurationObject)));
             }
 
             #endregion

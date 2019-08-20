@@ -46,46 +46,51 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="key">The T2 key.</param>
         /// <returns>The corresponding T1 item.</returns>
-        public T1 GetLeftValue(T2 key)
-        {
-            return _rightToLeft[key];
-        }
+        public T1 GetLeftValue(T2 key) => _rightToLeft[key];
 
         /// <summary>
         /// Gets the T2 item corresponding to a given T1 key.
         /// </summary>
         /// <param name="key">The T1 key.</param>
         /// <returns>The corresponding T2 item.</returns>
-        public T2 GetRightValue(T1 key)
-        {
-            return _leftToRight[key];
-        }
+        public T2 GetRightValue(T1 key) => _leftToRight[key];
+
+        /// <summary>
+        /// Gets the T1 item corresponding to a given T2 key, or the default value,
+        /// if the key is not present.
+        /// </summary>
+        /// <param name="key">The T2 key.</param>
+        /// <returns>The corresponding T1 item, or null, if the key is not present.</returns>
+        public T1 GetLeftValueOrDefault(T2 key) => _rightToLeft.GetOrDefault(key);
+
+        /// <summary>
+        /// Gets the T2 item corresponding to a given T1 key, or the default value,
+        /// if the key is not present.
+        /// </summary>
+        /// <param name="key">The T1 key.</param>
+        /// <returns>The corresponding T2 item; or null, if the key is not present.</returns>
+        public T2 GetRightValueOrDefault(T1 key) => _leftToRight.GetOrDefault(key);
 
         /// <summary>
         /// Checks if the map contains a given T1 item.
         /// </summary>
         /// <param name="item">The T1 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsLeftKey(T1 item)
-        {
-            return _leftToRight.ContainsKey(item);
-        }
+        public bool ContainsLeftKey(T1 item) => _leftToRight.ContainsKey(item);
 
         /// <summary>
         /// Checks if the map contains a given T2 item.
         /// </summary>
         /// <param name="item">The T2 item.</param>
         /// <returns>true, if the map contains the item; false otherwise</returns>
-        public bool ContainsRightKey(T2 item)
-        {
-            return _rightToLeft.ContainsKey(item);
-        }
+        public bool ContainsRightKey(T2 item) => _rightToLeft.ContainsKey(item);
 
         /// <summary>
         /// Clears the content of the map.
         /// </summary>
         public void Clear()
         {
+            // Clear both dictionaries
             _leftToRight.Clear();
             _rightToLeft.Clear();
         }

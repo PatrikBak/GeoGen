@@ -142,7 +142,7 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Parse each theorem line
+            // Otherwise parse each theorem line
             return lines.Skip(theoremsLineIndex + 1).Select(line => ParseTheorem(line, namesToObjects, configuration)).ToList();
         }
 
@@ -151,11 +151,36 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="constructionName">The name of the construction.</param>
         /// <returns>The parsed construction.</returns>
-        private Construction ParseConstruction(string constructionName)
+        private static Construction ParseConstruction(string constructionName)
         {
             // Try to find if it is a predefined one
             if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var type))
                 return Constructions.GetPredefinedconstruction(type);
+
+            // Try to find if the construction doesn't start with RandomPointOn
+            var match = Regex.Match(constructionName, "^RandomPointOn(.*)$");
+
+            // If yes
+            if (match.Success)
+            {
+                // Get the rest of the name
+                var restOfName = match.Groups[1].Value;
+
+                // Try to parse it 
+                // If it worked out, wrap the result in the RandomPointOn construction
+                if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var _type))
+                    return RandomPointOnConstruction.RandomPointOn(_type);
+
+                // Try to get the composed one
+                var composedConstruction = Constructions.GetComposedConstruction(restOfName);
+
+                // If it worked out, wrap the result in the RandomPointOn construction 
+                if (composedConstruction != null)
+                    return RandomPointOnConstruction.RandomPointOn(composedConstruction);
+
+                // Otherwise we won't allow a composed construction with a name like this
+                throw new ParserException("If the name of a construction starts with RandomPointOn, then the rest must be a correct construction name.");
+            }
 
             // If not, it should be a composed one. 
             // Right now they are all stored in a static class. Try to find it there...

@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using static GeoGen.Core.ConfigurationObjectType;
+using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.Core
@@ -16,20 +18,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var l = new LooseConfigurationObject(ConfigurationObjectType.Line);
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var l = new LooseConfigurationObject(Line);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
                 var lineAB = new ConstructedConfigurationObject(LineFromPoints, A, B);
                 var intersection = new ConstructedConfigurationObject(IntersectionOfLines, l, lineAB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.LineAndTwoPoints, intersection);
+                var configuration = Configuration.DeriveFromObjects(LineAndTwoPoints, intersection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Line),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -45,21 +47,21 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var D = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var D = new LooseConfigurationObject(Point);
                 var lineAB = new ConstructedConfigurationObject(LineFromPoints, A, B);
                 var lineCD = new ConstructedConfigurationObject(LineFromPoints, C, D);
                 var intersection = new ConstructedConfigurationObject(IntersectionOfLines, lineAB, lineCD);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.FourPoints, A, B, C, D, intersection);
+                var configuration = Configuration.DeriveFromObjects(FourPoints, A, B, C, D, intersection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                     new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2)
+                     new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(Point), 2), 2)
                 };
 
                 // Create the actual construction
@@ -75,20 +77,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var lineBC = new ConstructedConfigurationObject(LineFromPoints, B, C);
                 var projection = new ConstructedConfigurationObject(PerpendicularProjection, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, projection);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, projection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                     new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                     new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                     new ObjectConstructionParameter(Point),
+                     new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -104,19 +106,19 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
                 var lineAB = new ConstructedConfigurationObject(LineFromPoints, A, B);
                 var perpendicularLine = new ConstructedConfigurationObject(PerpendicularLine, A, lineAB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.TwoPoints, A, B, perpendicularLine);
+                var configuration = Configuration.DeriveFromObjects(TwoPoints, A, B, perpendicularLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                     new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                     new ObjectConstructionParameter(ConfigurationObjectType.Point)
+                     new ObjectConstructionParameter(Point),
+                     new ObjectConstructionParameter(Point)
                 };
 
                 // Create the actual construction
@@ -132,20 +134,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var lineBC = new ConstructedConfigurationObject(LineFromPoints, B, C);
                 var perpendicularLine = new ConstructedConfigurationObject(PerpendicularLine, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, perpendicularLine);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, perpendicularLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -161,19 +163,19 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var l = new LooseConfigurationObject(ConfigurationObjectType.Line);
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var l = new LooseConfigurationObject(Line);
+                var A = new LooseConfigurationObject(Point);
                 var projectionA = new ConstructedConfigurationObject(PerpendicularProjection, A, l);
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, projectionA);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.LineAndPoint, l, A, reflection);
+                var configuration = Configuration.DeriveFromObjects(LineAndPoint, l, A, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point)
+                    new ObjectConstructionParameter(Line),
+                    new ObjectConstructionParameter(Point)
                 };
 
                 // Create the actual construction
@@ -189,20 +191,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var lineBC = new ConstructedConfigurationObject(LineFromPoints, B, C);
                 var reflection = new ConstructedConfigurationObject(ReflectionInLine, lineBC, A);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -218,18 +220,18 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
                 var midpointAB = new ConstructedConfigurationObject(Midpoint, A, B);
                 var bisector = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, midpointAB, A);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.TwoPoints, bisector);
+                var configuration = Configuration.DeriveFromObjects(TwoPoints, bisector);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -245,20 +247,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var lineBC = new ConstructedConfigurationObject(LineFromPoints, B, C);
                 var parallelLine = new ConstructedConfigurationObject(ParallelLine, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, parallelLine);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, parallelLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -274,20 +276,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var midpointBC = new ConstructedConfigurationObject(Midpoint, B, C);
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, midpointBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -303,20 +305,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var altitudeB = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, B, A, C);
                 var altitudeC = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, C, A, B);
                 var H = new ConstructedConfigurationObject(IntersectionOfLines, altitudeB, altitudeC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, H);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, H);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
@@ -332,20 +334,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var midpointAB = new ConstructedConfigurationObject(Midpoint, A, B);
                 var midpointAC = new ConstructedConfigurationObject(Midpoint, A, C);
                 var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, C, midpointAB, B, midpointAC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, G);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, G);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
@@ -361,20 +363,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var bisectorA = new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
                 var bisectorB = new ConstructedConfigurationObject(InternalAngleBisector, B, A, C);
                 var I = new ConstructedConfigurationObject(IntersectionOfLines, bisectorA, bisectorB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, I);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, I);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
@@ -390,20 +392,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var I = new ConstructedConfigurationObject(Incenter, A, B, C);
                 var projection = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
                 var incircle = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, I, projection);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, incircle);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, incircle);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                     new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                     new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
@@ -419,19 +421,19 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var c = new ConstructedConfigurationObject(Circumcircle, A, B, C);
                 var O = new ConstructedConfigurationObject(CenterOfCircle, c);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, O);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, O);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
@@ -447,20 +449,20 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var I = new ConstructedConfigurationObject(Incenter, A, B, C);
                 var M = new ConstructedConfigurationObject(Circumcenter, B, C, I);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, M);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -476,21 +478,21 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var I = new ConstructedConfigurationObject(Incenter, A, B, C);
                 var M = new ConstructedConfigurationObject(MidpointOfOppositeArc, A, B, C);
                 var J = new ConstructedConfigurationObject(PointReflection, I, M);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, J);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, J);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
@@ -506,25 +508,52 @@ namespace GeoGen.Core
             get
             {
                 // Create objects
-                var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-                var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
                 var J = new ConstructedConfigurationObject(Excenter, A, B, C);
                 var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, J, B, C);
                 var c = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, J, D);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C, c);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, c);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(Excircle), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The circle with a given diameter  (signature {A, B}).
+        /// </summary>
+        public static ComposedConstruction CircleWithDiameter
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var M = new ConstructedConfigurationObject(Midpoint, A, B);
+                var c = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, M, A);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(TwoPoints, A, B, c);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(CircleWithDiameter), configuration, parameters);
             }
         }
     }
