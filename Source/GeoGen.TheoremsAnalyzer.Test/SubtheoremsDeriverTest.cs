@@ -1681,6 +1681,143 @@ namespace GeoGen.TheoremsAnalyzer.Test
         }
 
         #endregion
+
+        #region Isosceles layout
+
+        [Test]
+        public void Test_Isosceles_Triangle_Has_Interesting_Midpoint_Of_Side()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var M_ = new ConstructedConfigurationObject(Midpoint, B_, C_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(IsoscelesTriangle, A_, B_, C_, M_);
+
+            // Create the template theorems
+            var templateTheorems = new[]
+            {
+                new Theorem(templateConfiguration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A_, M_),
+                    new LineTheoremObject(B_, C_)
+                }),
+                new Theorem(templateConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(B_, A_), new LineTheoremObject(A_, M_)),
+                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(A_, M_))
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var S = new ConstructedConfigurationObject(SecondIntersectionOfCircleAndLineFromPoints, A, I, B, C);
+            var M = new ConstructedConfigurationObject(Midpoint, B, C);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, I, S, M);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckForEquivalncyOfResults(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(S, M),
+                            new LineTheoremObject(B, C)
+                        }),
+                        templateTheorems[0]),
+
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        {
+                            new AngleTheoremObject(new LineTheoremObject(S, M), new LineTheoremObject(S, B)),
+                            new AngleTheoremObject(new LineTheoremObject(S, M), new LineTheoremObject(S, C))
+                        }),
+                        templateTheorems[1])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                }
+            });
+        }
+
+        [Test]
+        public void Test_Isosceles_Triangle_With_Two_Points_On_Its_Bisector()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new ConstructedConfigurationObject(RandomPointOn(PerpendicularLineToLineFromPoints), A_, B_, C_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(IsoscelesTriangle, A_, B_, C_, D_);
+
+            // Create the template theorems
+            var templateTheorems = new[]
+            {
+                new Theorem(templateConfiguration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A_, D_),
+                    new LineTheoremObject(B_, C_)
+                }),
+                new Theorem(templateConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(B_, D_)),
+                    new AngleTheoremObject(new LineTheoremObject(A_, C_), new LineTheoremObject(C_, D_))
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var O1 = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var O2 = new ConstructedConfigurationObject(Circumcenter, O1, B, C);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O2);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckThatResultsContain(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(O1, O2),
+                            new LineTheoremObject(B, C)
+                        }),
+                        templateTheorems[0]),
+
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        {
+                            new AngleTheoremObject(new LineTheoremObject(O1, B), new LineTheoremObject(B, O2)),
+                            new AngleTheoremObject(new LineTheoremObject(O1, C), new LineTheoremObject(C, O2))
+                        }),
+                        templateTheorems[1])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                }
+            });
+        }
+
+        #endregion
     }
 }
 

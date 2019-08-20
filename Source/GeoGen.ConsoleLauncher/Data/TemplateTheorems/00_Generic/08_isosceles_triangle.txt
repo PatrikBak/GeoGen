@@ -1,0 +1,7 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+
+Theorems:
+
+ EqualAngles: [A, B], [B, C], [A, C], [B, C]

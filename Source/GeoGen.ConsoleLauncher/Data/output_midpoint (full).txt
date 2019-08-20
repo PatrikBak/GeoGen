@@ -115,7 +115,7 @@ Theorems:
   3. ConcurrentObjects: (A, B, F), (A, D, E), [E, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   4. ConcurrentObjects: (A, C, D), (C, E, F), [D, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   5. ConcurrentObjects: (A, C, F), (A, D, E), [D, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
-  6. ConcurrentObjects: (A, D, E), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 07_miquels_theorem
+  6. ConcurrentObjects: (A, D, E), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 09_miquels_theorem
   7. ConcurrentObjects: (B, C, D), (C, E, F), [D, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   8. ConcurrentObjects: (B, C, E), (B, D, F), [D, E] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   9. ConcurrentObjects: [A, F], [B, E], [C, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_intersection_and_midpoint
@@ -186,7 +186,7 @@ Theorems:
 
   1. CollinearPoints: B, E, F - can be defined in a simpler configuration
   2. ConcurrentObjects: (A, B, C), (B, D, F), [C, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
-  3. ConcurrentObjects: (A, C, D), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 07_miquels_theorem
+  3. ConcurrentObjects: (A, C, D), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 09_miquels_theorem
   4. ConcurrentObjects: (B, C, E), (B, D, F), [C, D] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   5. ConcurrentObjects: (B, C, F), (D, E, F), [C, D] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   6. EqualAngles: [A, B, D], [A, C, E], [D, F], [A, B, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
@@ -219,7 +219,7 @@ Theorems:
   1. CollinearPoints: D, E, F - trivial theorem
   2. ConcurrentObjects: (A, B, C), (A, D, F), [C, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   3. ConcurrentObjects: (A, B, C), (A, E, F), [B, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
-  4. ConcurrentObjects: (A, B, C), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 07_miquels_theorem
+  4. ConcurrentObjects: (A, B, C), (B, D, F), (C, E, F) - sub-theorem implied from theorem 1 from file 09_miquels_theorem
   5. ConcurrentObjects: [A, F], [B, E], [C, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_intersection_and_midpoint
   6. EqualAngles: [A, F], [B, C], [A, F], [D, E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
   7. EqualAngles: [B, F], [B, C], [B, F], [D, E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
@@ -362,7 +362,7 @@ F = Midpoint({A, E})
 Theorems:
 
   1. CollinearPoints: A, E, F - trivial theorem
-  2. ConcurrentObjects: (A, B, F), (B, C, D), (C, E, F) - sub-theorem implied from theorem 1 from file 07_miquels_theorem
+  2. ConcurrentObjects: (A, B, F), (B, C, D), (C, E, F) - sub-theorem implied from theorem 1 from file 09_miquels_theorem
   3. ConcurrentObjects: (B, C, E), (C, D, F), [B, F] - sub-theorem implied from theorem 1 from file 01_trapezoid_with_point_on_slant_line
   4. EqualAngles: [A, B, D], [B, E], [D, F], [A, B, D] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
   5. EqualAngles: [A, C], [B, E], [D, F], [A, C] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
@@ -411,4 +411,4 @@ Theorems:
 Generated configurations: 18
 Theorems: 186
 Interesting theorems: 4
-Run-time: 901 ms
+Run-time: 886 ms

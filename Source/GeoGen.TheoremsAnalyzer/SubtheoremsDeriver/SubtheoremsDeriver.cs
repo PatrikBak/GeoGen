@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.TheoremType;
 using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.TheoremsAnalyzer
@@ -185,6 +186,9 @@ namespace GeoGen.TheoremsAnalyzer
                 // Tangent line 
                 CircleFromPointAndItsTangentLineAtOnePoint => GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(input),
 
+                // Isosceles triangle
+                IsoscelesTriangle => GenerateInitialMappingsForIsoscelesTriangleLayout(input),
+
                 // Default case
                 _ => throw new TheoremsAnalyzerException($"Unhandled type of loose objects layout: {input.TemplateConfiguration.LooseObjectsHolder.Layout}")
             };
@@ -277,7 +281,7 @@ namespace GeoGen.TheoremsAnalyzer
         private static IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremsDeriverInput input)
         {
             // Take the parallel lines theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.ParallelLines)
+            return input.ExaminedConfigurationTheorems.GetOrDefault(ParallelLines)
                 // From each theorem object unwrap points
                 ?.Select(theorem => new[]
                 {
@@ -311,7 +315,7 @@ namespace GeoGen.TheoremsAnalyzer
         private static IEnumerable<MappingData> GenerateInitialMappingsForRightTriangleLayout(SubtheoremsDeriverInput input)
         {
             // Take the perpendicular lines theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.PerpendicularLines)
+            return input.ExaminedConfigurationTheorems.GetOrDefault(PerpendicularLines)
                 // From each theorem object unwrap points
                 ?.Select(theorem => new[]
                 {
@@ -352,7 +356,7 @@ namespace GeoGen.TheoremsAnalyzer
         private static IEnumerable<MappingData> GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(SubtheoremsDeriverInput input)
         {
             // Take the line tangent to circle theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.LineTangentToCircle)
+            return input.ExaminedConfigurationTheorems.GetOrDefault(LineTangentToCircle)
                 // From each theorem object unwrap points
                 ?.Select(theorem => new[]
                 {
@@ -376,6 +380,63 @@ namespace GeoGen.TheoremsAnalyzer
                 // These points finally represent one of our sought situation
                 .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
                 // If there are no line tangent to circle theorems, we have no mapping
+                ?? Enumerable.Empty<MappingData>();
+        }
+
+        /// <summary>
+        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
+        /// and the loose objects of the template theorem in case where the layout of the template
+        /// configuration is <see cref="IsoscelesTriangle"/>.
+        /// </summary>
+        /// <param name="input">The algorithm input.</param>
+        /// <returns>The mappings.</returns>
+        private static IEnumerable<MappingData> GenerateInitialMappingsForIsoscelesTriangleLayout(SubtheoremsDeriverInput input)
+        {
+            // Take the equal line segments theorems from the configuration
+            return input.ExaminedConfigurationTheorems.GetOrDefault(EqualLineSegments)
+                // From each theorem object line segments
+                ?.Select(theorem => new[]
+                {
+                    (LineSegmentTheoremObject)theorem.InvolvedObjects[0],
+                    (LineSegmentTheoremObject)theorem.InvolvedObjects[1],
+                })
+                // And configuration objects from them
+                .Select(lineSegments => new[]
+                {
+                    new[] 
+                    {
+                        ((PointTheoremObject)lineSegments[0].Object1).ConfigurationObject,
+                        ((PointTheoremObject)lineSegments[0].Object2).ConfigurationObject
+                    },
+                    new[]
+                    {
+                        ((PointTheoremObject)lineSegments[1].Object1).ConfigurationObject,
+                        ((PointTheoremObject)lineSegments[1].Object2).ConfigurationObject
+                    }
+                })
+                // Find their common points (should be at most one)
+                .Select(pairOfPointArrays => (pointArrays: pairOfPointArrays, commonPoint: pairOfPointArrays[0].Intersect(pairOfPointArrays[1]).FirstOrDefault()))
+                // Take only those where there is a common point
+                .Where(tuple => tuple.commonPoint != null)
+                // Find the other point for 
+                .Select(tuple => (tuple.commonPoint, otherPoints: new[]
+                {
+                    tuple.pointArrays[0].Where(point => point != tuple.commonPoint).First(),
+                    tuple.pointArrays[1].Where(point => point != tuple.commonPoint).First()
+                }))
+                // Make a single array with possibly exchanged points
+                .SelectMany(tuple => new[]
+                {
+                    new[] {tuple.commonPoint, tuple.otherPoints[0], tuple.otherPoints[1]},
+                    new[] {tuple.commonPoint, tuple.otherPoints[1], tuple.otherPoints[0]}
+                })
+                .Select(x =>
+                {
+                    return x;
+                })
+                // These points finally represent one of our sought situation
+                .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
+                // If there are no equal line segments theorems, we have no mapping
                 ?? Enumerable.Empty<MappingData>();
         }
 

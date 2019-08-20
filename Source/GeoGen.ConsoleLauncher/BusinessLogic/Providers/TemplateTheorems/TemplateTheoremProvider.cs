@@ -107,7 +107,11 @@ namespace GeoGen.ConsoleLauncher
                     // Try to parse it
                     var theorems = _parser.ParseTheorems(fileContent)
                         // Cast each theorem to a template theorem
-                        .Select((theorem, i) => new TemplateTheorem(theorem, Path.GetFileNameWithoutExtension(path), i + 1));
+                        .Select((theorem, i) => new TemplateTheorem(theorem, 
+                            // To get file we look for relative path
+                            Path.GetRelativePath(_settings.TheoremsFolderPath, path), 
+                            // Set the theorem number according to the file
+                            i + 1));
 
                     // Create a map from them
                     var theoremsMap = new TheoremsMap(theorems);

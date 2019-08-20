@@ -9,4 +9,3 @@ Theorems:
  ConcyclicPoints: B, C, D, E
  ConcurrentObjects: (A, D, E), [B, D], [C, E]
  ConcurrentObjects: (A, B, D), (A, C, E), [B, C]
- EqualAngles: [B, D], [C, E], [A, B, E], [A, C, D]
