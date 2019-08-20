@@ -158,7 +158,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems).ToList();
 
             // We should be able to generate every equality
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, EqualAngles, new[] {angles[0], angles[2] }),
                 new Theorem(configuration, EqualAngles, new[] {angles[0], angles[3] }),
@@ -205,7 +205,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // We should be able to generate every equality
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, EqualAngles, new[] {angles[0], angles[2] }),
                 new Theorem(configuration, EqualAngles, new[] {angles[0], angles[3] }),
@@ -273,7 +273,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 .Where(theorem => !assumedTheorems.ToSet(Theorem.EquivalencyComparer).Contains(theorem));
 
             // Make sure the results derives everything
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(allEqualities);
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(allEqualities);
         }
 
         [Test]
@@ -299,7 +299,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // The result should contain the following theorems
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, A, B, D),
                 new Theorem(configuration, CollinearPoints, A, C, D),
@@ -308,7 +308,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
            .Should().BeTrue();
 
             // Every triple should have fact1 and fact2
-            result.Select(triple => new[] { triple.Item1, triple.Item2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
+            result.Select(triple => new[] { triple.fact1, triple.fact2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
             {
                 // Equal to 
                 set.SetEquals(new[]
@@ -348,7 +348,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
 
             // The result should contain the following theorems
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, A, B, E),
                 new Theorem(configuration, CollinearPoints, A, C, E),
@@ -360,7 +360,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
            .Should().BeTrue();
 
             // Every triple should have fact1 and fact2
-            result.Select(triple => new[] { triple.Item1, triple.Item2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
+            result.Select(triple => new[] { triple.fact1, triple.fact2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
             {
                 // Equal to 
                 set.SetEquals(new[]
@@ -399,7 +399,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems.Skip(1)).ToList();
 
             // The result should contain the following theorems
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, A, B, C, E),
                 new Theorem(configuration, ConcyclicPoints, A, B, D, E),
@@ -409,7 +409,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
            .Should().BeTrue();
 
             // Every triple should have fact1 and fact2
-            result.Select(triple => new[] { triple.Item1, triple.Item2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
+            result.Select(triple => new[] { triple.fact1, triple.fact2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
             {
                 // Equal to 
                 set.SetEquals(new[]
@@ -450,7 +450,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, theorems.Skip(2)).ToList();
 
             // The result should contain the following theorems
-            result.Select(triple => triple.Item3).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            result.Select(triple => triple.conclusion).ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, A, B, C, F),
                 new Theorem(configuration, ConcyclicPoints, A, B, D, F),
@@ -466,7 +466,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
            .Should().BeTrue();
 
             // Every triple should have fact1 and fact2
-            result.Select(triple => new[] { triple.Item1, triple.Item2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
+            result.Select(triple => new[] { triple.fact1, triple.fact2 }.ToSet(Theorem.EquivalencyComparer)).ForEach(set =>
             {
                 // Equal to 
                 set.SetEquals(new[]

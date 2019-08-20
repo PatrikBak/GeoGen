@@ -11,12 +11,12 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Gets or sets the picture where we are trying to derive new theorems.
         /// </summary>
-        public ContextualPicture ContextualPicture { get; set; }
+        public ContextualPicture ExaminedConfigurationPicture { get; set; }
 
         /// <summary>
         /// Gets or sets the list of theorems that are true in the picture.
         /// </summary>
-        public TheoremsMap PictureTheorems { get; set; }
+        public TheoremsMap ExaminedConfigurationTheorems { get; set; }
 
         /// <summary>
         /// Gets or sets the configuration where our template theorems hold.

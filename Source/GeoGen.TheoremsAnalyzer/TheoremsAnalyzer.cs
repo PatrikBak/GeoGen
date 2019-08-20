@@ -134,7 +134,7 @@ namespace GeoGen.TheoremsAnalyzer
                     // Make sure the it's added to the dictionary
                     unresolvedTheorems.GetOrAdd(type, () => new List<Theorem>()).Add(theorem);
                 });
-            }); 
+            });
 
             #endregion
 
@@ -153,16 +153,20 @@ namespace GeoGen.TheoremsAnalyzer
                     // Call the service
                     _subtheoremsDeriver.DeriveTheorems(new SubtheoremsDeriverInput
                     {
-                        ContextualPicture = input.ContextualPicture,
-                        PictureTheorems = input.AllTheorems,
+                        ExaminedConfigurationPicture = input.ContextualPicture,
+                        ExaminedConfigurationTheorems = input.AllTheorems,
                         TemplateConfiguration = configuration,
                         TemplateTheorems = templateTheorems
                     })
-                    // Process each output
-                    .ForEach(output =>
+                    // Process derived theorems from each output
+                    // (ignoring equal objects at the time)
+                    .ForEach(output => output.DerivedTheorems.ForEach(pair =>
                     {
+                        // Deconstruct
+                        var (derivedTheorem, templateTheorem) = pair;
+
                         // Get an equivalent version of our found theorem
-                        var foundTheorem = input.NewTheorems.FindEquivalentTheorem(output.DerivedTheorem);
+                        var foundTheorem = input.NewTheorems.FindEquivalentTheorem(derivedTheorem);
 
                         // If this theorem is not new, or has been proven, don't do anything
                         if (foundTheorem == null || result.ContainsKey(foundTheorem))
@@ -171,15 +175,22 @@ namespace GeoGen.TheoremsAnalyzer
                         // Otherwise we have derived a valid theorem. Mark it in the result
                         result.Add(foundTheorem, new SubtheoremFeedback
                         {
-                            TemplateTheorem = output.TemplateTheorem
+                            TemplateTheorem = templateTheorem
                         });
 
+                        // Get the theorem type for comfort
+                        var type = foundTheorem.Type;
+
                         // Mark it in the dictionary
-                        resolvedTheorems.GetOrAdd(foundTheorem.Type, () => new List<Theorem>()).Add(foundTheorem);
+                        resolvedTheorems.GetOrAdd(type, () => new List<Theorem>()).Add(foundTheorem);
 
                         // Remove it from the unresolved theorems
-                        unresolvedTheorems[foundTheorem.Type].Remove(foundTheorem);
-                    });
+                        unresolvedTheorems[type].Remove(foundTheorem);
+
+                        // Remove the type if there is no theorem left
+                        if (unresolvedTheorems[type].IsEmpty())
+                            unresolvedTheorems.Remove(type);
+                    }));
                 });
 
             #endregion

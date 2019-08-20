@@ -122,7 +122,6 @@ namespace GeoGen.DependenciesResolver
             // Stateless services
             kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>().InSingletonScope().WithConstructorArgument(analyzerData);
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>().InSingletonScope();
-            kernel.Bind<ISubtheoremAnalyzer>().To<SubtheoremAnalyzer>().InSingletonScope();
             kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>().InSingletonScope();
             kernel.Bind<ISubtheoremsDeriver>().To<SubtheoremsDeriver>().InSingletonScope();
 

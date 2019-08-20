@@ -81,14 +81,9 @@
         RandomPointOnLineFromPoints,
 
         /// <summary>
-        /// A random point lying on line l (signature l).
-        /// </summary>
-        RandomPointOnLine,
-
-        /// <summary>
         /// A random point lying on circle c (signature c).
         /// </summary>
-        RandomPointOnCircle,
+        RandomPointOnCircleFromPoints,
 
         /// <summary>
         /// A random point in a plane (empty signature).

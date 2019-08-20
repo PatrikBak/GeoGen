@@ -29,11 +29,11 @@ namespace GeoGen.Utilities
         /// Initializes a new instance of the <see cref="SimpleEqualityComparer{T}"/> class.
         /// </summary>
         /// <param name="comparer">The comparer of elements, i.e. a function takes two elements and returns if they are equal.</param>
-        /// <param name="hashCoder">The function that calculates the hash code of the item. If it's null, than the base function will be used.</param>
+        /// <param name="hashCoder">The function that calculates the hash code of the item. If it's null, then an identity function returning 0 is used.</param>
         public SimpleEqualityComparer(Func<T, T, bool> comparer, Func<T, int> hashCoder = null)
         {
             _comparer = comparer ?? throw new ArgumentNullException(nameof(comparer));
-            _hashCoder = hashCoder ?? (t => t.GetHashCode());
+            _hashCoder = hashCoder ?? (t => 0);
         }
 
         #endregion

@@ -26,7 +26,7 @@ namespace GeoGen.ConsoleLauncher
                 // Trimmed
                 .Select(s => s.Trim())
                 // That are not comments
-                .Where(line => !line.StartsWith('#') && line != string.Empty)
+                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
                 // As a list
                 .ToList();
 
@@ -114,7 +114,7 @@ namespace GeoGen.ConsoleLauncher
                 // Trimmed
                 .Select(s => s.Trim())
                 // That are not comments
-                .Where(line => !line.StartsWith('#') && line != string.Empty)
+                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
                 // As a list
                 .ToList();
 
@@ -278,7 +278,7 @@ namespace GeoGen.ConsoleLauncher
                 }
 
                 // Get the passed objects
-                var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => s != "").Select(name =>
+                var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => !s.IsNullOrEmpty()).Select(name =>
                 {
                     // Make sure the name has been declared before
                     if (!namesToObjects.ContainsKey(name))
@@ -391,7 +391,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="objectString">The string containing the object's definition.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
         /// <returns>The parsed theorem object.</returns>
-        private TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
+        private static TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
         {
             // Try to match a line defined implicitly
             var implicitLineMatch = Regex.Match(objectString, "^\\[(.+)\\]$");

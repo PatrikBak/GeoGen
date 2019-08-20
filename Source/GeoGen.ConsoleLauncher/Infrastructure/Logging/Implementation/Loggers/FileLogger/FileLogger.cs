@@ -41,11 +41,10 @@ namespace GeoGen.ConsoleLauncher
             try
             {
                 // Open the stream writer for the file
-                using (var streamWriter = new StreamWriter(_settings.FileLogPath, append: true))
-                {
-                    // Write the message to the file
-                    streamWriter.WriteLine(finalMessage);
-                }
+                using var streamWriter = new StreamWriter(_settings.FileLogPath, append: true);
+
+                // Write the message to the file
+                streamWriter.WriteLine(finalMessage);
             }
             // If there is any exception
             catch (Exception e)

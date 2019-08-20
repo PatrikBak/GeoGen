@@ -14,7 +14,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The path to the settings file.
         /// </summary>
-        private static readonly string _settingsFilePath = "settings.json";
+        private const string _settingsFilePath = "settings.json";
 
         #endregion
 

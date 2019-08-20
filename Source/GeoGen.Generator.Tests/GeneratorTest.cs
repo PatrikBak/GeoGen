@@ -17,7 +17,7 @@ namespace GeoGen.Generator.Tests
         /// <summary>
         /// Gets the instance of the generator
         /// </summary>
-        private IGenerator Generator => IoC.CreateKernel().AddGenerator().Get<IGenerator>();
+        private static IGenerator Generator => IoC.CreateKernel().AddGenerator().Get<IGenerator>();
 
         #endregion
 

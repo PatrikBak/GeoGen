@@ -58,7 +58,7 @@ namespace GeoGen.TheoremsAnalyzer
             // Create the dictionary 
             _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>(
                 // That compares composed constructions by their names
-                new SimpleEqualityComparer<ComposedConstruction>((c1, c2) => c1.Name == c2.Name, c => c.GetHashCode()));
+                SimpleEqualityComparer<ComposedConstruction>.Create(c => c.Name));
         }
 
         #endregion

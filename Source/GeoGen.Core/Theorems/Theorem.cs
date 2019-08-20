@@ -19,7 +19,9 @@ namespace GeoGen.Core
         /// <see cref="AreTheoremsEquivalent(Theorem, Theorem)"/> method and a constant hash code function
         /// (i.e. using it together with a hash map / hash set would make all the operations O(n)).
         /// </summary>
-        public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) => AreTheoremsEquivalent(t1, t2), t => 0);
+        public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) =>
+            // Reuse the static helper method
+            AreTheoremsEquivalent(t1, t2));
 
         #endregion
 

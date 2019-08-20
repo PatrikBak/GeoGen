@@ -9,19 +9,15 @@ namespace GeoGen.TheoremsAnalyzer
     public class SubtheoremsDeriverOutput
     {
         /// <summary>
-        /// Gets or sets the derived theorems.
+        /// Gets or sets the list of pairs of derived and template theorems (i.e. ones that
+        /// have been used to come up with the derived ones).
         /// </summary>
-        public Theorem DerivedTheorem { get; set; }
-
-        /// <summary>
-        /// Gets the theorem that was used to come up with this one.
-        /// </summary>
-        public Theorem TemplateTheorem { get; set; }
+        public List<(Theorem derivedTheorem, Theorem templateTheorem)> DerivedTheorems { get; set; }
 
         /// <summary>
         /// Gets or sets the list of all objects equalities that were needed to derive this theorem.
         /// This property is currently not used and is here for possible further use.
         /// </summary>
-        public List<(ConfigurationObject originalObject, ConfigurationObject equalObject)> UsedEqualities { get; set; }
+        public List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)> UsedEqualities { get; set; }
     }
 }

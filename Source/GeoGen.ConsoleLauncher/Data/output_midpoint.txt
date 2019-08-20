@@ -54,4 +54,4 @@ Theorems:
 Generated configurations: 18
 Theorems: 186
 Interesting theorems: 4
-Run-time: 1115 ms
+Run-time: 925 ms

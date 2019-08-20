@@ -45,7 +45,7 @@ namespace GeoGen.Core
             Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
             // Use the helper method to find object types represented by the parameters
-            ObjectTypes = DetermineObjectTypes(parameters);
+            ObjectTypes = DetermineObjectTypes();
 
             // Derive the dictionary mapping types to their count from the objects types list
             ObjectTypesToNeededCount = ObjectTypes.GroupBy(t => t).ToDictionary(group => group.Key, group => group.Count());
@@ -153,9 +153,8 @@ namespace GeoGen.Core
         /// Finds the list of object types where each type represents to the i-th object 
         /// that should be passed in order to match this signature.
         /// </summary>
-        /// <param name="parameters">The parameters representing the signature.</param>
         /// <returns>The list of object types of particular objects to be passed.</returns>
-        private IReadOnlyList<ConfigurationObjectType> DetermineObjectTypes(IReadOnlyList<ConstructionParameter> parameters)
+        private IReadOnlyList<ConfigurationObjectType> DetermineObjectTypes()
         {
             // Prepare a result
             var result = new List<ConfigurationObjectType>();

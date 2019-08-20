@@ -65,8 +65,8 @@
         ThreeCyclicQuadrilatersOnSixPoints,
 
         /// <summary>
-        /// Represents a circle and two points A, B such that line AB is tangent to the circle.
+        /// Represents points A, B, C, D such that DA is tangent to circle (ABC).
         /// </summary>
-        CircleAndItsTangentLineFromPoints
+        CircleFromPointAndItsTangentLineAtOnePoint
     }
 }

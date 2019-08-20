@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -285,25 +286,6 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLine"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnLine
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line)
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLine, parameters, ConfigurationObjectType.Point);
-            }
-        }
-
-        /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLineFromPoints"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>
@@ -323,21 +305,21 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircle"/> construction.
+        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircleFromPoints"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnCircle
+        public static PredefinedConstruction RandomPointOnCircleFromPoints
         {
             get
             {
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Circle)
+                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircle, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircleFromPoints, parameters, ConfigurationObjectType.Point);
             }
         }
 
@@ -348,7 +330,7 @@ namespace GeoGen.Core
         public static PredefinedConstruction RandomPoint
         {
             // Create the actual construction, which has no parameters
-            get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, new ConstructionParameter[0], ConfigurationObjectType.Point);
+            get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, Array.Empty<ConstructionParameter>(), ConfigurationObjectType.Point);
         }
     }
 }

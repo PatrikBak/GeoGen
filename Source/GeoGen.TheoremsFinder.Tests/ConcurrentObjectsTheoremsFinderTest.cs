@@ -108,8 +108,6 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            var a = newTheorems.ToSet(Theorem.EquivalencyComparer);
-
             // Assert new theorems
             newTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
             {

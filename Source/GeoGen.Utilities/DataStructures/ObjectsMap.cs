@@ -22,7 +22,7 @@ namespace GeoGen.Utilities
         /// Initializes a new instance of the <see cref="ObjectsMap"/> class wrapping given objects.
         /// </summary>
         /// <param name="objects">The objects to be contained in the map.</param>
-        public ObjectsMap(IEnumerable<TValue> objects)
+        protected ObjectsMap(IEnumerable<TValue> objects)
         {
             // Prepare the list of all objects
             var allObjects = new List<TValue>();

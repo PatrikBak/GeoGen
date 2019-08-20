@@ -48,7 +48,7 @@ namespace GeoGen.Core
             #region Checking if the passed parameters match the loose objects of the configuration
 
             // Local function that throws an exception if they don't
-            void ThrowException() => throw new GeoGenException("Incorrect composed construction: The loose objects don't correspond to the parameters");
+            static void ThrowException() => throw new GeoGenException("Incorrect composed construction: The loose objects don't correspond to the parameters");
 
             // Wrap the loose objects in a map and for each pair of [type, objects]....
             var looseObjectsMap = new ConfigurationObjectsMap(configuration.LooseObjects);
