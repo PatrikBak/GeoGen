@@ -1048,7 +1048,7 @@ Theorems:
  14. EqualAngles: [A, B], [B, D], [A, F], [E, F]
  15. EqualAngles: [A, B], [B, E], [A, F], [C, D]
  16. EqualAngles: [A, B], [B, E], [B, F], [B, E] - trivial theorem
- 17. EqualAngles: [A, B], [B, E], [E, F], [A, C, E]
+ 17. EqualAngles: [A, B], [B, E], [E, F], [A, C, E] - is true because of 16 and 45
  18. EqualAngles: [A, B], [D, E], [A, F], [B, C]
  19. EqualAngles: [A, C, E], [B, E], [A, F], [B, D]
  20. EqualAngles: [A, C, E], [B, E], [B, F], [E, F] - is true because of [A, B], [A, C, E], [A, C, E], [B, E] (this is true in a simpler configuration) and 10
@@ -1076,7 +1076,7 @@ Theorems:
  42. EqualAngles: [B, D], [C, D], [E, F], [B, E] - is true because of [A, C, E], [B, E], [B, D], [C, D] (this is true in a simpler configuration) and 21
  43. EqualAngles: [B, F], [A, C, E], [E, F], [A, B] - trivial theorem
  44. EqualAngles: [B, F], [B, D], [E, F], [C, D]
- 45. EqualAngles: [B, F], [B, E], [E, F], [A, C, E]
+ 45. EqualAngles: [B, F], [B, E], [E, F], [A, C, E] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  46. EqualAngles: [B, F], [E, F], [E, F], [B, E] - is true because of 20 and 21
  47. EqualAngles: [C, D], [B, E], [E, F], [B, D]
  48. EqualLineSegments: A, B, F, B - trivial theorem
@@ -1192,7 +1192,7 @@ Theorems:
  22. EqualAngles: [A, D], [C, D], [A, F], [B, E]
  23. EqualAngles: [A, D], [D, E], [A, F], [B, C]
  24. EqualAngles: [A, D], [D, E], [D, F], [D, E] - trivial theorem
- 25. EqualAngles: [A, D], [D, E], [E, F], [A, C, E]
+ 25. EqualAngles: [A, D], [D, E], [E, F], [A, C, E] - is true because of 24 and 46
  26. EqualAngles: [A, F], [A, B], [B, C], [B, E]
  27. EqualAngles: [A, F], [A, B], [C, D], [D, E]
  28. EqualAngles: [A, F], [A, C, E], [A, F], [E, F] - trivial theorem
@@ -1213,7 +1213,7 @@ Theorems:
  43. EqualAngles: [B, C], [D, E], [E, F], [B, D]
  44. EqualAngles: [D, F], [A, C, E], [E, F], [A, D] - trivial theorem
  45. EqualAngles: [D, F], [B, D], [E, F], [B, C]
- 46. EqualAngles: [D, F], [D, E], [E, F], [A, C, E]
+ 46. EqualAngles: [D, F], [D, E], [E, F], [A, C, E] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  47. EqualAngles: [D, F], [E, F], [E, F], [D, E] - is true because of 17 and 18
  48. EqualLineSegments: A, D, F, D - trivial theorem
  49. EqualLineSegments: A, E, F, E - trivial theorem
@@ -2312,7 +2312,7 @@ Theorems:
  17. EqualAngles: [A, B], [B, D], [A, F], [C, D] - is true because of 18 and 40
  18. EqualAngles: [A, B], [B, D], [A, F], [E, F] - is true because of 44 and 19
  19. EqualAngles: [A, B], [B, D], [E, F], [A, C, E] - is true because of 27 and [A, B], [B, D], [A, C, E], [C, D] (this is true in a simpler configuration)
- 20. EqualAngles: [A, B], [B, E], [A, F], [A, C, E]
+ 20. EqualAngles: [A, B], [B, E], [A, F], [A, C, E] - is true because of 21 and 32
  21. EqualAngles: [A, B], [B, E], [B, F], [A, B] - trivial theorem
  22. EqualAngles: [A, C, E], [B, E], [A, F], [A, B] - is true because of [A, B], [A, C, E], [A, C, E], [B, E] (this is true in a simpler configuration) and 12
  23. EqualAngles: [A, C, E], [B, E], [A, F], [B, F] - trivial theorem
@@ -2324,7 +2324,7 @@ Theorems:
  29. EqualAngles: [A, F], [A, B], [A, F], [B, F] - is true because of 13 and 12
  30. EqualAngles: [A, F], [A, B], [B, D], [C, D] - is true because of [A, B], [A, C, E], [B, D], [C, D] (this is true in a simpler configuration) and 12
  31. EqualAngles: [A, F], [A, B], [E, F], [B, D] - is true because of 30 and 48
- 32. EqualAngles: [A, F], [A, C, E], [B, F], [A, B]
+ 32. EqualAngles: [A, F], [A, C, E], [B, F], [A, B] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  33. EqualAngles: [A, F], [B, D], [B, F], [C, D]
  34. EqualAngles: [A, F], [B, D], [B, F], [E, F]
  35. EqualAngles: [A, F], [B, D], [C, D], [B, E]
@@ -2521,9 +2521,9 @@ Theorems:
  24. EqualAngles: [A, D], [B, D], [A, F], [E, F] - is true because of 44 and 25
  25. EqualAngles: [A, D], [B, D], [E, F], [A, C, E] - is true because of 19 and [A, C, E], [B, C], [A, D], [B, D] (this is true in a simpler configuration)
  26. EqualAngles: [A, D], [C, D], [E, F], [A, B] - is true because of [A, B], [B, C], [A, D], [C, D] (this is true in a simpler configuration) and 13
- 27. EqualAngles: [A, D], [D, E], [A, F], [A, C, E]
+ 27. EqualAngles: [A, D], [D, E], [A, F], [A, C, E] - is true because of 28 and 29
  28. EqualAngles: [A, D], [D, E], [D, F], [A, D] - trivial theorem
- 29. EqualAngles: [A, F], [A, C, E], [D, F], [A, D]
+ 29. EqualAngles: [A, F], [A, C, E], [D, F], [A, D] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  30. EqualAngles: [A, F], [A, D], [A, F], [D, F] - is true because of 15 and 14
  31. EqualAngles: [A, F], [A, D], [B, C], [B, D] - is true because of [A, C, E], [A, D], [B, C], [B, D] (this is true in a simpler configuration) and 14
  32. EqualAngles: [A, F], [A, D], [E, F], [B, D] - is true because of 31 and 45
@@ -2990,12 +2990,12 @@ Theorems:
  30. EqualAngles: [B, C], [B, E], [D, F], [E, F]
  31. EqualAngles: [B, D], [B, E], [B, F], [B, E] - trivial theorem
  32. EqualAngles: [B, D], [B, E], [D, F], [A, C]
- 33. EqualAngles: [B, D], [B, E], [E, F], [A, D, E]
+ 33. EqualAngles: [B, D], [B, E], [E, F], [A, D, E] - is true because of 31 and 38
  34. EqualAngles: [B, D], [C, E], [D, F], [A, B]
  35. EqualAngles: [B, F], [A, D, E], [E, F], [B, D] - trivial theorem
  36. EqualAngles: [B, F], [B, C], [E, F], [A, C]
  37. EqualAngles: [B, F], [B, E], [D, F], [A, C]
- 38. EqualAngles: [B, F], [B, E], [E, F], [A, D, E]
+ 38. EqualAngles: [B, F], [B, E], [E, F], [A, D, E] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  39. EqualAngles: [B, F], [D, F], [D, F], [B, D] - trivial theorem
  40. EqualAngles: [B, F], [D, F], [E, F], [B, C]
  41. EqualAngles: [B, F], [E, F], [D, F], [B, C]
@@ -3063,14 +3063,14 @@ Theorems:
  38. EqualAngles: [B, C], [B, E], [D, F], [E, F] - is true because of 58 and 39
  39. EqualAngles: [B, C], [B, E], [E, F], [A, D, E] - is true because of 17 and [A, C], [A, D, E], [B, C], [B, E] (this is true in a simpler configuration)
  40. EqualAngles: [B, D], [B, E], [B, F], [B, D] - trivial theorem
- 41. EqualAngles: [B, D], [B, E], [D, F], [A, D, E]
+ 41. EqualAngles: [B, D], [B, E], [D, F], [A, D, E] - is true because of 40 and 48
  42. EqualAngles: [B, D], [C, D], [E, F], [A, B] - is true because of [A, B], [A, C], [B, D], [C, D] (this is true in a simpler configuration) and 12
  43. EqualAngles: [B, E], [C, E], [E, F], [A, B] - is true because of [A, B], [A, C], [B, E], [C, E] (this is true in a simpler configuration) and 12
  44. EqualAngles: [B, F], [A, C], [B, F], [E, F] - sub-theorem implied from theorem 1 from file 00_trapezoid_with_two_arbitrary_points
  45. EqualAngles: [B, F], [A, C], [D, F], [B, C]
  46. EqualAngles: [B, F], [A, C], [E, F], [B, E] - is true because of 52 and 44
  47. EqualAngles: [B, F], [A, D, E], [D, F], [B, E] - trivial theorem
- 48. EqualAngles: [B, F], [B, D], [D, F], [A, D, E]
+ 48. EqualAngles: [B, F], [B, D], [D, F], [A, D, E] - sub-theorem implied from theorem 1 from file 04_tagent_lines_provide_angles
  49. EqualAngles: [B, F], [D, F], [D, F], [B, D] - is true because of 27 and 28
  50. EqualAngles: [B, F], [D, F], [E, F], [B, C] - is true because of 18 and 20
  51. EqualAngles: [B, F], [E, F], [D, F], [B, C]
@@ -3217,5 +3217,5 @@ Theorems:
 ------------------------------------------------
 Generated configurations: 45
 Theorems: 2654
-Interesting theorems: 947
-Run-time: 3605 ms
+Interesting theorems: 935
+Run-time: 3731 ms

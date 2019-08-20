@@ -182,6 +182,9 @@ namespace GeoGen.TheoremsAnalyzer
                 // Right triangle
                 RightTriangle => GenerateInitialMappingsForRightTriangleLayout(input),
 
+                // Tangent line 
+                CircleFromPointAndItsTangentLineAtOnePoint => GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(input),
+
                 // Default case
                 _ => throw new TheoremsAnalyzerException($"Unhandled type of loose objects layout: {input.TemplateConfiguration.LooseObjectsHolder.Layout}")
             };
@@ -335,7 +338,44 @@ namespace GeoGen.TheoremsAnalyzer
                 })
                 // These points finally represent one of our sought right triangle
                 .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
-                // If there are no parallel line theorems, we have no mapping
+                // If there are no perpendicular line theorems, we have no mapping
+                ?? Enumerable.Empty<MappingData>();
+        }
+
+        /// <summary>
+        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
+        /// and the loose objects of the template theorem in case where the layout of the template
+        /// configuration is <see cref="CircleFromPointAndItsTangentLineAtOnePoint"/>.
+        /// </summary>
+        /// <param name="input">The algorithm input.</param>
+        /// <returns>The mappings.</returns>
+        private static IEnumerable<MappingData> GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(SubtheoremsDeriverInput input)
+        {
+            // Take the line tangent to circle theorems from the configuration
+            return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.LineTangentToCircle)
+                // From each theorem object unwrap points
+                ?.Select(theorem => new[]
+                {
+                    ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
+                    ((CircleTheoremObject)theorem.InvolvedObjects[1]).Points
+                })
+                // Find their common points (should be at most one)
+                .Select(pairOfPointArrays => (pointArrays: pairOfPointArrays, commonPoint: pairOfPointArrays[0].Intersect(pairOfPointArrays[1]).FirstOrDefault()))
+                // Take only those where there is a common point
+                .Where(tuple => tuple.commonPoint != null)
+                // We need to combine points from the line with ordered pairs of points from the circle
+                .Select(tuple => (tuple.commonPoint, otherPoints: new[]
+                {
+                    tuple.pointArrays[0].Where(point => point != tuple.commonPoint).ToEnumerable(),
+                    tuple.pointArrays[1].Where(point => point != tuple.commonPoint).Variations(2)
+                }))
+                // With this array we can use the Combine method to do the combination
+                .SelectMany(tuple => tuple.otherPoints.Combine().Select(twoArrays => (tuple.commonPoint, twoArrays)))
+                // Finally each tuple represents points that we need to flatten
+                .Select(tuple => tuple.commonPoint.ToEnumerable().Concat(tuple.twoArrays.Flatten()))
+                // These points finally represent one of our sought situation
+                .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
+                // If there are no line tangent to circle theorems, we have no mapping
                 ?? Enumerable.Empty<MappingData>();
         }
 

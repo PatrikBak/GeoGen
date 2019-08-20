@@ -1552,6 +1552,81 @@ namespace GeoGen.TheoremsAnalyzer.Test
         }
 
         #endregion
+
+        #region Line tangent to circle layout
+
+        [Test]
+        public void Test_Line_Tangent_To_Circle_Produces_Equal_Angles()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(CircleFromPointAndItsTangentLineAtOnePoint, A_, B_, C_, D_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(templateConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A_, D_), new LineTheoremObject(A_, B_)),
+                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(C_, B_))
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var l = new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
+            var D = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, l, B, C);
+            var m = new ConstructedConfigurationObject(PerpendicularBisector, A, D);
+            var E = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, m, B, C);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckForEquivalncyOfResults(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        {
+                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(A, B)),
+                            new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(E, B, D, C))
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                },
+
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        {
+                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(A, C)),
+                            new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(E, B, D, C))
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                }
+            });
+        }
+
+
+        #endregion
     }
 }
 

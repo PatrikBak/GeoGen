@@ -443,31 +443,29 @@ Theorems:
  11. EqualAngles: [A, B], [B, D], [A, F], [A, C, E]
  12. EqualAngles: [A, B], [B, D], [A, F], [E, F]
  13. EqualAngles: [A, B], [B, E], [A, F], [C, D]
- 14. EqualAngles: [A, B], [B, E], [E, F], [A, C, E]
- 15. EqualAngles: [A, B], [D, E], [A, F], [B, C]
- 16. EqualAngles: [A, C, E], [B, E], [A, F], [B, D]
- 17. EqualAngles: [A, C, E], [C, D], [A, F], [A, C, E]
- 18. EqualAngles: [A, C, E], [C, D], [A, F], [E, F]
- 19. EqualAngles: [A, D], [B, E], [A, F], [B, C]
- 20. EqualAngles: [A, D], [C, D], [A, F], [D, E]
- 21. EqualAngles: [A, F], [A, B], [C, D], [B, E]
- 22. EqualAngles: [A, F], [A, B], [E, F], [B, D]
- 23. EqualAngles: [A, F], [A, C, E], [B, D], [B, E]
- 24. EqualAngles: [A, F], [A, D], [B, C], [B, E]
- 25. EqualAngles: [A, F], [A, D], [C, D], [D, E]
- 26. EqualAngles: [A, F], [B, D], [B, D], [C, D]
- 27. EqualAngles: [A, F], [B, D], [B, F], [E, F]
- 28. EqualAngles: [A, F], [B, D], [E, F], [B, E]
- 29. EqualAngles: [A, F], [B, F], [C, D], [B, E]
- 30. EqualAngles: [A, F], [B, F], [E, F], [B, D]
- 31. EqualAngles: [A, F], [C, D], [B, F], [B, E]
- 32. EqualAngles: [A, F], [C, D], [E, F], [A, C, E]
- 33. EqualAngles: [A, F], [E, F], [B, D], [B, E]
- 34. EqualAngles: [B, F], [B, D], [E, F], [C, D]
- 35. EqualAngles: [B, F], [B, E], [E, F], [A, C, E]
- 36. EqualAngles: [C, D], [B, E], [E, F], [B, D]
- 37. LineTangentToCircle: [A, C, E], (B, E, F)
- 38. LineTangentToCircle: [E, F], (A, B, E)
+ 14. EqualAngles: [A, B], [D, E], [A, F], [B, C]
+ 15. EqualAngles: [A, C, E], [B, E], [A, F], [B, D]
+ 16. EqualAngles: [A, C, E], [C, D], [A, F], [A, C, E]
+ 17. EqualAngles: [A, C, E], [C, D], [A, F], [E, F]
+ 18. EqualAngles: [A, D], [B, E], [A, F], [B, C]
+ 19. EqualAngles: [A, D], [C, D], [A, F], [D, E]
+ 20. EqualAngles: [A, F], [A, B], [C, D], [B, E]
+ 21. EqualAngles: [A, F], [A, B], [E, F], [B, D]
+ 22. EqualAngles: [A, F], [A, C, E], [B, D], [B, E]
+ 23. EqualAngles: [A, F], [A, D], [B, C], [B, E]
+ 24. EqualAngles: [A, F], [A, D], [C, D], [D, E]
+ 25. EqualAngles: [A, F], [B, D], [B, D], [C, D]
+ 26. EqualAngles: [A, F], [B, D], [B, F], [E, F]
+ 27. EqualAngles: [A, F], [B, D], [E, F], [B, E]
+ 28. EqualAngles: [A, F], [B, F], [C, D], [B, E]
+ 29. EqualAngles: [A, F], [B, F], [E, F], [B, D]
+ 30. EqualAngles: [A, F], [C, D], [B, F], [B, E]
+ 31. EqualAngles: [A, F], [C, D], [E, F], [A, C, E]
+ 32. EqualAngles: [A, F], [E, F], [B, D], [B, E]
+ 33. EqualAngles: [B, F], [B, D], [E, F], [C, D]
+ 34. EqualAngles: [C, D], [B, E], [E, F], [B, D]
+ 35. LineTangentToCircle: [A, C, E], (B, E, F)
+ 36. LineTangentToCircle: [E, F], (A, B, E)
 
 ------------------------------------------------
 Configuration 18
@@ -524,25 +522,23 @@ Theorems:
  17. EqualAngles: [A, D], [B, E], [A, F], [C, D]
  18. EqualAngles: [A, D], [C, D], [A, F], [B, E]
  19. EqualAngles: [A, D], [D, E], [A, F], [B, C]
- 20. EqualAngles: [A, D], [D, E], [E, F], [A, C, E]
- 21. EqualAngles: [A, F], [A, B], [B, C], [B, E]
- 22. EqualAngles: [A, F], [A, B], [C, D], [D, E]
- 23. EqualAngles: [A, F], [A, C, E], [B, D], [D, E]
- 24. EqualAngles: [A, F], [A, D], [B, C], [D, E]
- 25. EqualAngles: [A, F], [A, D], [E, F], [B, D]
- 26. EqualAngles: [A, F], [B, C], [D, F], [D, E]
- 27. EqualAngles: [A, F], [B, C], [E, F], [A, C, E]
- 28. EqualAngles: [A, F], [B, D], [B, C], [B, D]
- 29. EqualAngles: [A, F], [B, D], [D, F], [E, F]
- 30. EqualAngles: [A, F], [B, D], [E, F], [D, E]
- 31. EqualAngles: [A, F], [D, F], [B, C], [D, E]
- 32. EqualAngles: [A, F], [D, F], [E, F], [B, D]
- 33. EqualAngles: [A, F], [E, F], [B, D], [D, E]
- 34. EqualAngles: [B, C], [D, E], [E, F], [B, D]
- 35. EqualAngles: [D, F], [B, D], [E, F], [B, C]
- 36. EqualAngles: [D, F], [D, E], [E, F], [A, C, E]
- 37. LineTangentToCircle: [A, C, E], (D, E, F)
- 38. LineTangentToCircle: [E, F], (A, D, E)
+ 20. EqualAngles: [A, F], [A, B], [B, C], [B, E]
+ 21. EqualAngles: [A, F], [A, B], [C, D], [D, E]
+ 22. EqualAngles: [A, F], [A, C, E], [B, D], [D, E]
+ 23. EqualAngles: [A, F], [A, D], [B, C], [D, E]
+ 24. EqualAngles: [A, F], [A, D], [E, F], [B, D]
+ 25. EqualAngles: [A, F], [B, C], [D, F], [D, E]
+ 26. EqualAngles: [A, F], [B, C], [E, F], [A, C, E]
+ 27. EqualAngles: [A, F], [B, D], [B, C], [B, D]
+ 28. EqualAngles: [A, F], [B, D], [D, F], [E, F]
+ 29. EqualAngles: [A, F], [B, D], [E, F], [D, E]
+ 30. EqualAngles: [A, F], [D, F], [B, C], [D, E]
+ 31. EqualAngles: [A, F], [D, F], [E, F], [B, D]
+ 32. EqualAngles: [A, F], [E, F], [B, D], [D, E]
+ 33. EqualAngles: [B, C], [D, E], [E, F], [B, D]
+ 34. EqualAngles: [D, F], [B, D], [E, F], [B, C]
+ 35. LineTangentToCircle: [A, C, E], (D, E, F)
+ 36. LineTangentToCircle: [E, F], (A, D, E)
 
 ------------------------------------------------
 Configuration 20
@@ -1071,15 +1067,13 @@ Theorems:
   8. ConcurrentObjects: (A, E, F), (B, C, D, E), [A, D]
   9. ConcurrentObjects: (B, E, F), [A, F], [B, D]
  10. ConcurrentObjects: (C, E, F), [A, F], [C, D]
- 11. EqualAngles: [A, B], [B, E], [A, F], [A, C, E]
- 12. EqualAngles: [A, F], [A, C, E], [B, F], [A, B]
- 13. EqualAngles: [A, F], [B, D], [B, F], [C, D]
- 14. EqualAngles: [A, F], [B, D], [B, F], [E, F]
- 15. EqualAngles: [A, F], [B, D], [C, D], [B, E]
- 16. EqualAngles: [A, F], [B, D], [E, F], [B, E]
- 17. LineTangentToCircle: [A, C, E], (A, B, F)
- 18. LineTangentToCircle: [A, F], (A, B, E)
- 19. ParallelLines: [C, D], [E, F]
+ 11. EqualAngles: [A, F], [B, D], [B, F], [C, D]
+ 12. EqualAngles: [A, F], [B, D], [B, F], [E, F]
+ 13. EqualAngles: [A, F], [B, D], [C, D], [B, E]
+ 14. EqualAngles: [A, F], [B, D], [E, F], [B, E]
+ 15. LineTangentToCircle: [A, C, E], (A, B, F)
+ 16. LineTangentToCircle: [A, F], (A, B, E)
+ 17. ParallelLines: [C, D], [E, F]
 
 ------------------------------------------------
 Configuration 36
@@ -1162,15 +1156,13 @@ Theorems:
   8. ConcurrentObjects: (A, E, F), (B, C, D, E), [A, B]
   9. ConcurrentObjects: (C, E, F), [A, F], [B, C]
  10. ConcurrentObjects: (D, E, F), [A, F], [B, D]
- 11. EqualAngles: [A, D], [D, E], [A, F], [A, C, E]
- 12. EqualAngles: [A, F], [A, C, E], [D, F], [A, D]
- 13. EqualAngles: [A, F], [B, D], [B, C], [D, E]
- 14. EqualAngles: [A, F], [B, D], [D, F], [B, C]
- 15. EqualAngles: [A, F], [B, D], [D, F], [E, F]
- 16. EqualAngles: [A, F], [B, D], [E, F], [D, E]
- 17. LineTangentToCircle: [A, C, E], (A, D, F)
- 18. LineTangentToCircle: [A, F], (A, D, E)
- 19. ParallelLines: [B, C], [E, F]
+ 11. EqualAngles: [A, F], [B, D], [B, C], [D, E]
+ 12. EqualAngles: [A, F], [B, D], [D, F], [B, C]
+ 13. EqualAngles: [A, F], [B, D], [D, F], [E, F]
+ 14. EqualAngles: [A, F], [B, D], [E, F], [D, E]
+ 15. LineTangentToCircle: [A, C, E], (A, D, F)
+ 16. LineTangentToCircle: [A, F], (A, D, E)
+ 17. ParallelLines: [B, C], [E, F]
 
 ------------------------------------------------
 Configuration 38
@@ -1390,19 +1382,17 @@ Theorems:
  23. EqualAngles: [B, C], [B, E], [D, F], [A, D, E]
  24. EqualAngles: [B, C], [B, E], [D, F], [E, F]
  25. EqualAngles: [B, D], [B, E], [D, F], [A, C]
- 26. EqualAngles: [B, D], [B, E], [E, F], [A, D, E]
- 27. EqualAngles: [B, D], [C, E], [D, F], [A, B]
- 28. EqualAngles: [B, F], [B, C], [E, F], [A, C]
- 29. EqualAngles: [B, F], [B, E], [D, F], [A, C]
- 30. EqualAngles: [B, F], [B, E], [E, F], [A, D, E]
- 31. EqualAngles: [B, F], [D, F], [E, F], [B, C]
- 32. EqualAngles: [B, F], [E, F], [D, F], [B, C]
- 33. EqualAngles: [C, D], [B, E], [D, F], [A, B]
- 34. EqualAngles: [D, F], [A, C], [E, F], [A, D, E]
- 35. EqualAngles: [D, F], [B, C], [E, F], [B, E]
- 36. EqualAngles: [D, F], [B, D], [E, F], [B, C]
- 37. LineTangentToCircle: [A, D, E], (B, E, F)
- 38. LineTangentToCircle: [E, F], (B, D, E)
+ 26. EqualAngles: [B, D], [C, E], [D, F], [A, B]
+ 27. EqualAngles: [B, F], [B, C], [E, F], [A, C]
+ 28. EqualAngles: [B, F], [B, E], [D, F], [A, C]
+ 29. EqualAngles: [B, F], [D, F], [E, F], [B, C]
+ 30. EqualAngles: [B, F], [E, F], [D, F], [B, C]
+ 31. EqualAngles: [C, D], [B, E], [D, F], [A, B]
+ 32. EqualAngles: [D, F], [A, C], [E, F], [A, D, E]
+ 33. EqualAngles: [D, F], [B, C], [E, F], [B, E]
+ 34. EqualAngles: [D, F], [B, D], [E, F], [B, C]
+ 35. LineTangentToCircle: [A, D, E], (B, E, F)
+ 36. LineTangentToCircle: [E, F], (B, D, E)
 
 ------------------------------------------------
 Configuration 44
@@ -1426,14 +1416,12 @@ Theorems:
   9. ConcurrentObjects: (B, D, F), [B, C], [E, F]
  10. ConcurrentObjects: (B, E, F), [B, C], [D, F]
  11. EqualAngles: [A, C], [B, E], [D, F], [B, C]
- 12. EqualAngles: [B, D], [B, E], [D, F], [A, D, E]
- 13. EqualAngles: [B, F], [A, C], [D, F], [B, C]
- 14. EqualAngles: [B, F], [B, D], [D, F], [A, D, E]
- 15. EqualAngles: [B, F], [E, F], [D, F], [B, C]
- 16. EqualAngles: [D, F], [B, C], [E, F], [B, E]
- 17. LineTangentToCircle: [A, D, E], (B, D, F)
- 18. LineTangentToCircle: [D, F], (B, D, E)
- 19. ParallelLines: [A, C], [E, F]
+ 12. EqualAngles: [B, F], [A, C], [D, F], [B, C]
+ 13. EqualAngles: [B, F], [E, F], [D, F], [B, C]
+ 14. EqualAngles: [D, F], [B, C], [E, F], [B, E]
+ 15. LineTangentToCircle: [A, D, E], (B, D, F)
+ 16. LineTangentToCircle: [D, F], (B, D, E)
+ 17. ParallelLines: [A, C], [E, F]
 
 ------------------------------------------------
 Configuration 45
@@ -1498,5 +1486,5 @@ Theorems:
 ------------------------------------------------
 Generated configurations: 45
 Theorems: 2654
-Interesting theorems: 947
-Run-time: 3605 ms
+Interesting theorems: 935
+Run-time: 3731 ms
