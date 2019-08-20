@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ RightTriangle: A, B, C
+ D = PerpendicularProjectionOnLineFromPoints(A, B, C)
+
+Theorems:
+
+ EqualAngles: [A, B], [A, D], [A, C], [C, D]
+ LineTangentToCircle: [A, B], (A, C, D)

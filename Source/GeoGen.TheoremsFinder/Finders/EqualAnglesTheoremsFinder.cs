@@ -2,6 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -83,8 +84,12 @@ namespace GeoGen.TheoremsFinder
             var angle1 = AnalyticHelpers.AngleBetweenLines((Line)objects[0], (Line)objects[1]).Rounded();
             var angle2 = AnalyticHelpers.AngleBetweenLines((Line)objects[2], (Line)objects[3]).Rounded();
 
-            // Return if they match and are not equal to 0 (i.e. parallelity)
-            return angle1 == angle2 && angle1 != 0;
+            // Return if they match 
+            return angle1 == angle2
+                // and are not equal to 0 (i.e. parallelity)
+                && angle1 != 0
+                // and are not equal to PI / 2 (i.e. perpendicularity)
+                && angle1 != (Math.PI / 2).Rounded();
         }
     }
 }

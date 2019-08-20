@@ -70,7 +70,8 @@ namespace GeoGen.TheoremsFinder
                 // In circle case we need to take points into account
                 CircleObject circle => new CircleTheoremObject(geometricObject.ConfigurationObject, circle.Points.Select(p => p.ConfigurationObject)),
 
-                _ => throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}"),
+                // Default case
+                _ => throw new TheoremsFinderException($"Unhandled type of geometric object: {geometricObject.GetType()}"),
             })
             // Enumerate to an array
             .ToArray();

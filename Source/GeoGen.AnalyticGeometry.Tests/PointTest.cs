@@ -7,6 +7,9 @@ namespace GeoGen.AnalyticGeometry.Tests
 {
     /// <summary>
     /// The test class for <see cref="Point"/>.
+    /// 
+    /// TODO: Review
+    /// 
     /// </summary>
     [TestFixture]
     public class PointTest

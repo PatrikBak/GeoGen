@@ -90,6 +90,13 @@ namespace GeoGen.TheoremsAnalyzer
 
         #endregion
 
+        #region ISubtheoremsDeriver implementation
+
+        /// <summary>
+        /// Performs the sub-theorem derivation on a given input.
+        /// </summary>
+        /// <param name="input">The input for the deriver.</param>
+        /// <returns>The derived theorems wrapped in output objects.</returns>
         public IEnumerable<SubtheoremsDeriverOutput> DeriveTheorems(SubtheoremsDeriverInput input)
         {
             // Use the helper method to generate possible mappings between the loose objects of the
@@ -171,8 +178,11 @@ namespace GeoGen.TheoremsAnalyzer
                 // Line segment
                 TwoPoints => GenerateInitialMappingsWithPoints(input),
 
+                // Right triangle
+                RightTriangle => GenerateInitialMappingsForRightTriangleLayout(input),
+
                 // Default case
-                _ => throw new GeoGenException($"Unhandled case")
+                _ => throw new TheoremsAnalyzerException($"Unhandled type of loose objects layout: {input.TemplateConfiguration.LooseObjectsHolder.Layout}")
             };
         }
 
@@ -262,9 +272,9 @@ namespace GeoGen.TheoremsAnalyzer
         /// <returns>The mappings.</returns>
         private static IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremsDeriverInput input)
         {
-            // Take the parallel line theorems from the configuration
+            // Take the parallel lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.ParallelLines)
-                // From each theorem unwrap points
+                // From each theorem object unwrap points
                 ?.Select(theorem => new[]
                 {
                     ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
@@ -282,6 +292,47 @@ namespace GeoGen.TheoremsAnalyzer
                     new[] { points[1][0], points[1][1], points[0][0], points[0][1] }
                 })
                 // These points finally represent one of our sought trapezoids
+                .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
+                // If there are no parallel line theorems, we have no mapping
+                ?? Enumerable.Empty<MappingData>();
+        }
+
+        /// <summary>
+        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
+        /// and the loose objects of the template theorem in case where the layout of the template
+        /// configuration is <see cref="RightTriangle"/>.
+        /// </summary>
+        /// <param name="input">The algorithm input.</param>
+        /// <returns>The mappings.</returns>
+        private static IEnumerable<MappingData> GenerateInitialMappingsForRightTriangleLayout(SubtheoremsDeriverInput input)
+        {
+            // Take the perpendicular lines theorems from the configuration
+            return input.ExaminedConfigurationTheorems.GetOrDefault(TheoremType.PerpendicularLines)
+                // From each theorem object unwrap points
+                ?.Select(theorem => new[]
+                {
+                    ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
+                    ((LineTheoremObject)theorem.InvolvedObjects[1]).Points
+                })
+                // Find their common points (should be at most one)
+                .Select(pairOfPointArrays => (pointArrays: pairOfPointArrays, commonPoint: pairOfPointArrays[0].Intersect(pairOfPointArrays[1]).FirstOrDefault()))
+                // Take only those where there is a common point
+                .Where(tuple => tuple.commonPoint != null)
+                // Get those points on particular lines that are distinct from the common one
+                .Select(tuple => (tuple.commonPoint, otherPoints: new[]
+                {
+                    tuple.pointArrays[0].Where(point => point != tuple.commonPoint),
+                    tuple.pointArrays[1].Where(point => point != tuple.commonPoint)
+                }))
+                // Combine the points from the lines
+                .SelectMany(tuple => tuple.otherPoints.Combine().Select(twoPoints => (tuple.commonPoint, twoPoints)))
+                // Flatten the tuple to a single array + exchange the points
+                .SelectMany(tuple => new[]
+                {
+                    new[] { tuple.commonPoint, tuple.twoPoints[0], tuple.twoPoints[1] },
+                    new[] { tuple.commonPoint, tuple.twoPoints[1], tuple.twoPoints[0] }
+                })
+                // These points finally represent one of our sought right triangle
                 .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
                 // If there are no parallel line theorems, we have no mapping
                 ?? Enumerable.Empty<MappingData>();
@@ -358,7 +409,7 @@ namespace GeoGen.TheoremsAnalyzer
                             RandomPointOnCircleFromPoints => geometricPoints[0].Circles.First(circle => circle.ContainsAll(geometricPoints)),
 
                             // Impossible, we're down to these 2 cases
-                            _ => throw new GeoGenException("Impossible")
+                            _ => throw new TheoremsAnalyzerException("Impossible.")
                         })
                         // Now we take every possible point on this line / circle as an option
                        .Points.Select(point => new MappingData(data, (constructedObject, point.ConfigurationObject)));
@@ -378,7 +429,7 @@ namespace GeoGen.TheoremsAnalyzer
             if (equalObject == null)
             {
                 // We need to examine this object with respect to the examined configuration
-                // TODO: Handle exception
+                // TODO: Figure out how we want to handle a possible exception
                 var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationPicture.Pictures, mappedObject);
 
                 // If the object is not constructible, then the mapping is incorrect
@@ -404,5 +455,7 @@ namespace GeoGen.TheoremsAnalyzer
 
             #endregion
         }
+
+        #endregion
     }
 }

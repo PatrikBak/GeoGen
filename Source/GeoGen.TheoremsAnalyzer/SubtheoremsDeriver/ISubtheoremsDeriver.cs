@@ -12,7 +12,7 @@ namespace GeoGen.TheoremsAnalyzer
         /// Performs the sub-theorem derivation on a given input.
         /// </summary>
         /// <param name="input">The input for the deriver.</param>
-        /// <returns>The derived theorems wrap in output objects..</returns>
+        /// <returns>The derived theorems wrapped in output objects.</returns>
         IEnumerable<SubtheoremsDeriverOutput> DeriveTheorems(SubtheoremsDeriverInput input);
     }
 }

@@ -11,6 +11,11 @@ namespace GeoGen.Constructor
     /// Represents a picture that holds <see cref="GeometricObject"/>s. This picture
     /// is responsible for creating them and mapping them between <see cref="IAnalyticObject"/>s
     /// with respect to <see cref="Picture"/>s.
+    /// 
+    /// TODO: Whenever pictures are reconstructed, this becomes invalid. One solution might be
+    ///       to have an event of reconstruction in <see cref="Pictures"/>, and whenever it 
+    ///       happens, reconstruct this, without ruining the old objects.
+    ///       
     /// </summary>
     public class ContextualPicture
     {

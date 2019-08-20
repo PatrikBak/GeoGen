@@ -66,7 +66,7 @@ namespace GeoGen.AnalyticGeometry
 
             // If it's zero, then we have collinear points
             if (denominator.Rounded() == 0)
-                throw new AnalyticException("Cannot construct a circle from collinear points");
+                throw new AnalyticException("Cannot construct a circle from collinear points.");
 
             // Now calculate x and y
             var x = (x1.Squared() * (y2 - y3) + x2.Squared() * (y3 - y1) + x3.Squared() * (y1 - y2) - (y1 - y2) * (y2 - y3) * (y3 - y1)) / denominator;
@@ -149,11 +149,11 @@ namespace GeoGen.AnalyticGeometry
         {
             // Make sure they're not equal...
             if (this == otherCircle)
-                throw new AnalyticException("Cannot intersect equal circles");
+                throw new AnalyticException("Cannot intersect equal circles.");
 
             // Make sure they're not co-centric
             if (Center == otherCircle.Center)
-                return new Point[0];
+                return Array.Empty<Point>();
 
             // Otherwise we're solving the system:
             // 

@@ -8,6 +8,9 @@ namespace GeoGen.AnalyticGeometry.Tests
 {
     /// <summary>
     /// The test class for <see cref="Circle"/>.
+    /// 
+    /// TODO: Review
+    /// 
     /// </summary>
     [TestFixture]
     public class CircleTest

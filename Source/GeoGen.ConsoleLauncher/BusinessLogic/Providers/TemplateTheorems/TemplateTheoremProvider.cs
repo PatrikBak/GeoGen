@@ -61,11 +61,13 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the result
             var result = new List<(Configuration, TheoremsMap)>();
 
-            // Prepare the enumerable of theorems files
-            // We go through the theorems folder
-            var theoremFiles = Directory.EnumerateFiles(_settings.TheoremsFolderPath, $"*.{_settings.FilesExtention}")
-                // And sort the results by their name (which should indicate the priority)
-                .OrderBy(Path.GetFileName);
+            // Prepare the theorem files
+            // Load the theorem folders 
+            var theoremFiles = Directory.EnumerateDirectories(_settings.TheoremsFolderPath)
+                // Order them by names
+                .OrderBy(Path.GetDirectoryName)
+                // For each get the files ordered by name
+                .SelectMany(folder => Directory.EnumerateFiles(folder, $"*.{_settings.FilesExtention}").OrderBy(Path.GetFileName));
 
             // Go through all the files
             foreach (var path in theoremFiles)

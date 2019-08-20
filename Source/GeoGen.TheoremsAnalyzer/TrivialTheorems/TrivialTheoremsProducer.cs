@@ -249,7 +249,7 @@ namespace GeoGen.TheoremsAnalyzer
 
                 // There shouldn't be any other case
                 default:
-                    throw new GeoGenException($"Unhandled type of construction: {constructedObject.Construction.GetType()}");
+                    throw new TheoremsAnalyzerException($"Unhandled type of construction: {constructedObject.Construction.GetType()}");
             }
         }
 
@@ -275,7 +275,7 @@ namespace GeoGen.TheoremsAnalyzer
             var configuration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { constructedObject });
 
             // Local function that throws an exception informing about the examination failure
-            void ThrowIncorrectConstructionException(string message, Exception e = null) => throw new GeoGenException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
+            void ThrowIncorrectConstructionException(string message, Exception e = null) => throw new TheoremsAnalyzerException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
 
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(

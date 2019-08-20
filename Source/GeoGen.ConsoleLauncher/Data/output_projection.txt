@@ -11,18 +11,6 @@ Constructions:
 Results:
 
 ------------------------------------------------
-Configuration 2
-------------------------------------------------
-
-ThreePoints: A, B, C
-D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
-E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
-
-Theorems:
-
-  1. EqualAngles: [A, C, E], [B, C, D], [B, E], [A, D]
-
-------------------------------------------------
 Configuration 3
 ------------------------------------------------
 
@@ -33,11 +21,6 @@ E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
 Theorems:
 
   1. ConcurrentObjects: (A, D, E), (B, C, E), [A, C]
-  2. EqualAngles: [A, B, E], [A, D], [D, E], [B, C, D]
-  3. EqualAngles: [A, B, E], [B, C, D], [D, E], [A, D]
-  4. EqualAngles: [B, C, D], [A, D], [D, E], [A, B, E]
-  5. LineTangentToCircle: [A, D], (B, D, E)
-  6. LineTangentToCircle: [B, C, D], (A, D, E)
 
 ------------------------------------------------
 Configuration 4
@@ -59,15 +42,13 @@ Theorems:
   7. EqualAngles: [A, B], [A, D], [A, F], [A, C, E]
   8. EqualAngles: [A, B], [B, C, D], [A, F], [B, E]
   9. EqualAngles: [A, B], [B, E], [A, F], [B, C, D]
- 10. EqualAngles: [A, C, E], [B, E], [A, F], [D, E, F]
- 11. EqualAngles: [A, C, E], [D, E, F], [A, F], [B, E]
- 12. EqualAngles: [A, D], [D, E, F], [A, F], [B, C, D]
- 13. EqualAngles: [A, F], [A, C, E], [B, E], [D, E, F]
- 14. EqualAngles: [A, F], [A, D], [B, C, D], [D, E, F]
- 15. EqualAngles: [A, F], [D, E, F], [B, C, D], [A, D]
- 16. LineTangentToCircle: [B, C, D], (A, D, F)
- 17. LineTangentToCircle: [B, E], (A, E, F)
- 18. TangentCircles: (A, C, D), (A, E, F)
+ 10. EqualAngles: [A, C, E], [D, E, F], [A, F], [B, E]
+ 11. EqualAngles: [A, D], [D, E, F], [A, F], [B, C, D]
+ 12. EqualAngles: [A, F], [A, C, E], [B, E], [D, E, F]
+ 13. EqualAngles: [A, F], [A, D], [B, C, D], [D, E, F]
+ 14. LineTangentToCircle: [B, C, D], (A, D, F)
+ 15. LineTangentToCircle: [B, E], (A, E, F)
+ 16. TangentCircles: (A, C, D), (A, E, F)
 
 ------------------------------------------------
 Configuration 5
@@ -117,16 +98,14 @@ Theorems:
   7. EqualAngles: [A, B], [A, D], [C, F], [A, C, E]
   8. EqualAngles: [A, B], [B, C, D], [C, F], [B, E]
   9. EqualAngles: [A, B], [B, E], [C, F], [B, C, D]
- 10. EqualAngles: [A, C, E], [B, E], [C, F], [D, E, F]
- 11. EqualAngles: [A, C, E], [D, E, F], [C, F], [B, E]
- 12. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
- 13. EqualAngles: [B, C, D], [A, D], [C, F], [D, E, F]
- 14. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
- 15. EqualAngles: [B, E], [D, E, F], [C, F], [A, C, E]
- 16. LineTangentToCircle: [A, D], (C, D, F)
- 17. LineTangentToCircle: [B, E], (C, E, F)
- 18. TangentCircles: (A, C, D), (C, E, F)
- 19. TangentCircles: (B, C, E), (C, D, F)
+ 10. EqualAngles: [A, C, E], [D, E, F], [C, F], [B, E]
+ 11. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
+ 12. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
+ 13. EqualAngles: [B, E], [D, E, F], [C, F], [A, C, E]
+ 14. LineTangentToCircle: [A, D], (C, D, F)
+ 15. LineTangentToCircle: [B, E], (C, E, F)
+ 16. TangentCircles: (A, C, D), (C, E, F)
+ 17. TangentCircles: (B, C, E), (C, D, F)
 
 ------------------------------------------------
 Configuration 7
@@ -196,9 +175,7 @@ F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
 Theorems:
 
   1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
-  2. LineTangentToCircle: [A, D], (C, D, F)
-  3. LineTangentToCircle: [B, C, D], (A, D, F)
-  4. ParallelLines: [B, E], [D, F]
+  2. ParallelLines: [B, E], [D, F]
 
 ------------------------------------------------
 Configuration 11
@@ -212,9 +189,7 @@ F = PerpendicularProjectionOnLineFromPoints(D, {A, E})
 Theorems:
 
   1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
-  2. LineTangentToCircle: [A, D], (C, D, F)
-  3. LineTangentToCircle: [B, C, D], (A, D, F)
-  4. ParallelLines: [B, E], [D, F]
+  2. ParallelLines: [B, E], [D, F]
 
 ------------------------------------------------
 Configuration 12
@@ -255,14 +230,12 @@ Theorems:
   5. ConcurrentObjects: (B, D, F), [A, D], [C, E, F]
   6. ConcurrentObjects: (C, D, F), [A, D], [B, F]
   7. EqualAngles: [A, B, E], [C, E, F], [B, F], [D, E]
-  8. EqualAngles: [A, B, E], [D, E], [B, F], [C, E, F]
-  9. EqualAngles: [A, D], [C, E, F], [B, F], [B, C, D]
- 10. EqualAngles: [B, C, D], [A, D], [B, F], [C, E, F]
- 11. EqualAngles: [B, C, D], [C, E, F], [B, F], [A, D]
- 12. EqualAngles: [B, F], [A, B, E], [C, E, F], [D, E]
- 13. LineTangentToCircle: [D, E], (B, E, F)
- 14. TangentCircles: (A, B, D), (B, E, F)
- 15. TangentCircles: (B, C, F), (B, D, E)
+  8. EqualAngles: [A, D], [C, E, F], [B, F], [B, C, D]
+  9. EqualAngles: [B, C, D], [C, E, F], [B, F], [A, D]
+ 10. EqualAngles: [B, F], [A, B, E], [C, E, F], [D, E]
+ 11. LineTangentToCircle: [D, E], (B, E, F)
+ 12. TangentCircles: (A, B, D), (B, E, F)
+ 13. TangentCircles: (B, C, F), (B, D, E)
 
 ------------------------------------------------
 Configuration 14
@@ -348,14 +321,12 @@ Theorems:
   4. ConcurrentObjects: (B, C, E), (C, D, F), [A, C]
   5. ConcurrentObjects: (B, E, F), (C, D, F), [A, F]
   6. EqualAngles: [A, B, E], [C, E, F], [D, F], [D, E]
-  7. EqualAngles: [A, B, E], [D, E], [D, F], [C, E, F]
-  8. EqualAngles: [A, D], [C, E, F], [D, F], [B, C, D]
-  9. EqualAngles: [B, C, D], [A, D], [D, F], [C, E, F]
- 10. EqualAngles: [B, C, D], [C, E, F], [D, F], [A, D]
- 11. EqualAngles: [C, E, F], [D, E], [D, F], [A, B, E]
- 12. LineTangentToCircle: [A, B, E], (D, E, F)
- 13. LineTangentToCircle: [A, D], (C, D, F)
- 14. TangentCircles: (B, D, E), (C, D, F)
+  7. EqualAngles: [A, D], [C, E, F], [D, F], [B, C, D]
+  8. EqualAngles: [B, C, D], [C, E, F], [D, F], [A, D]
+  9. EqualAngles: [C, E, F], [D, E], [D, F], [A, B, E]
+ 10. LineTangentToCircle: [A, B, E], (D, E, F)
+ 11. LineTangentToCircle: [A, D], (C, D, F)
+ 12. TangentCircles: (B, D, E), (C, D, F)
 
 ------------------------------------------------
 Configuration 19
@@ -370,9 +341,7 @@ Theorems:
 
   1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
   2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
-  3. LineTangentToCircle: [A, B, E], (D, E, F)
-  4. LineTangentToCircle: [D, E], (B, E, F)
-  5. ParallelLines: [A, D], [E, F]
+  3. ParallelLines: [A, D], [E, F]
 
 ------------------------------------------------
 Configuration 20
@@ -387,9 +356,7 @@ Theorems:
 
   1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
   2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
-  3. LineTangentToCircle: [A, B, E], (D, E, F)
-  4. LineTangentToCircle: [D, E], (B, E, F)
-  5. ParallelLines: [A, D], [E, F]
+  3. ParallelLines: [A, D], [E, F]
 
 ------------------------------------------------
 Configuration 21
@@ -404,9 +371,7 @@ Theorems:
 
   1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
   2. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
-  3. LineTangentToCircle: [A, B, E], (D, E, F)
-  4. LineTangentToCircle: [D, E], (B, E, F)
-  5. ParallelLines: [A, D], [E, F]
+  3. ParallelLines: [A, D], [E, F]
 
 ------------------------------------------------
 Configuration 22
@@ -428,13 +393,11 @@ Theorems:
   7. ConcurrentObjects: (A, D, F), [B, C, D], [E, F]
   8. ConcurrentObjects: (C, D, F), [A, D], [E, F]
   9. EqualAngles: [A, B, E], [A, C, F], [E, F], [D, E]
- 10. EqualAngles: [A, B, E], [D, E], [E, F], [A, C, F]
- 11. EqualAngles: [A, C, F], [A, D], [E, F], [B, C, D]
- 12. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, D]
- 13. EqualAngles: [A, C, F], [D, E], [E, F], [A, B, E]
- 14. EqualAngles: [B, C, D], [A, D], [E, F], [A, C, F]
- 15. LineTangentToCircle: [D, E], (A, E, F)
- 16. TangentCircles: (A, B, D), (A, E, F)
+ 10. EqualAngles: [A, C, F], [A, D], [E, F], [B, C, D]
+ 11. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, D]
+ 12. EqualAngles: [A, C, F], [D, E], [E, F], [A, B, E]
+ 13. LineTangentToCircle: [D, E], (A, E, F)
+ 14. TangentCircles: (A, B, D), (A, E, F)
 
 ------------------------------------------------
 Configuration 23
@@ -453,12 +416,10 @@ Theorems:
   4. ConcurrentObjects: (A, E, F), (B, D, E), [B, F]
   5. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
   6. ConcurrentObjects: (B, C, E), (D, E, F), [C, F]
-  7. LineTangentToCircle: [A, B, E], (D, E, F)
-  8. LineTangentToCircle: [D, E], (A, E, F)
-  9. ParallelLines: [B, C, D], [E, F]
+  7. ParallelLines: [B, C, D], [E, F]
 
 ------------------------------------------------
 Generated configurations: 23
-Theorems: 486
-Interesting theorems: 185
-Run-time: 992 ms
+Theorems: 444
+Interesting theorems: 157
+Run-time: 1016 ms

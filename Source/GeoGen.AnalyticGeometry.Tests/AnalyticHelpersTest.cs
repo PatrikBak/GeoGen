@@ -8,6 +8,9 @@ namespace GeoGen.AnalyticGeometry.Tests
 {
     /// <summary>
     /// The test class for <see cref="AnalyticHelpers"/>.
+    /// 
+    /// TODO: Review
+    /// 
     /// </summary>
     [TestFixture]
     public class AnalyticHelpersTest

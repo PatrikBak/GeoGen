@@ -83,12 +83,10 @@ namespace GeoGen.Generator
                     // Get the loose objects list for comfort
                     var looseObjects = configuration.LooseObjects;
 
-                    // NOTE: This might not be the best solution. It works for layouts
+                    // TODO: This might not be the best solution. It works for layouts
                     //       where the objects can be in any order, but otherwise 
                     //       the behavior seems incorrect and random. 
                     // 
-                    // TODO: Fix this
-                    //
                     // Construct all possible to string converters, each representing
                     // a single order of loose objects (in other words, a single remapping of loose objects)
                     // We take all the permutations of the loose objects

@@ -104,6 +104,10 @@ namespace GeoGen.Generator
                 var generationEnumerable = currentLayer.SelectMany(currentConfiguration =>
                 {
                     // For a given configuration we create all possible objects that are use our constructions
+                    //
+                    // TODO: Consider not using every construction. Over-using constructions is not pretty
+                    //       Maybe another filter coming as a parameter?
+                    // 
                     return input.Constructions.SelectMany(construction =>
                     {
                         // For a given construction first generate all possible arguments

@@ -208,6 +208,9 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
+                // TODO: Further verification, for example whether
+                //       points aren't too close to each other?
+
                 // If we got here, everything's fine
                 return true;
             }

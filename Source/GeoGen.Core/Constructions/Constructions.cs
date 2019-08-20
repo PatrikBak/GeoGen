@@ -22,7 +22,7 @@ namespace GeoGen.Core
 
             // Check if it's not null
             if (propertyInfo == null)
-                throw new Exception($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
+                throw new GeoGenException($"The type {type} of constructions doesn't have the implementation in the {nameof(PredefinedConstruction)} class.");
 
             // Otherwise we invoke it and return the casted result
             return (PredefinedConstruction)propertyInfo.GetMethod.Invoke(obj: null, parameters: null);
