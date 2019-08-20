@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ RightTriangle: A, B, C
+ D = RandomPoint()
+ E = RandomPointOnPerpendicularLineAtPointOfLine(D, C)
+
+Theorems:
+
+ EqualAngles: [E, D], [A, B], [C, D], [C, A]

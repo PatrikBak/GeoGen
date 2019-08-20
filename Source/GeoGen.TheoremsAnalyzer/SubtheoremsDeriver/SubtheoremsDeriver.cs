@@ -366,8 +366,8 @@ namespace GeoGen.TheoremsAnalyzer
                 // We need to combine points from the line with ordered pairs of points from the circle
                 .Select(tuple => (tuple.commonPoint, otherPoints: new[]
                 {
-                    tuple.pointArrays[0].Where(point => point != tuple.commonPoint).ToEnumerable(),
-                    tuple.pointArrays[1].Where(point => point != tuple.commonPoint).Variations(2)
+                    tuple.pointArrays[1].Where(point => point != tuple.commonPoint).Variations(2),
+                    tuple.pointArrays[0].Where(point => point != tuple.commonPoint).Select(point => point.ToEnumerable())
                 }))
                 // With this array we can use the Combine method to do the combination
                 .SelectMany(tuple => tuple.otherPoints.Combine().Select(twoArrays => (tuple.commonPoint, twoArrays)))

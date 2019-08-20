@@ -1556,7 +1556,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
         #region Line tangent to circle layout
 
         [Test]
-        public void Test_Line_Tangent_To_Circle_Produces_Equal_Angles()
+        public void Test_Line_Tangent_To_Circle_Produces_Equal_Angles_In_Simple_Situation()
         {
             // Create the template configuration's objects
             var A_ = new LooseConfigurationObject(Point);
@@ -1625,6 +1625,60 @@ namespace GeoGen.TheoremsAnalyzer.Test
             });
         }
 
+        [Test]
+        public void Test_Line_Tangent_To_Circle_Produces_Equal_Angles_In_Complex_Situation()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var C_ = new LooseConfigurationObject(Point);
+            var D_ = new LooseConfigurationObject(Point);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(CircleFromPointAndItsTangentLineAtOnePoint, A_, B_, C_, D_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(templateConfiguration, EqualAngles, new[]
+                {
+                    new AngleTheoremObject(new LineTheoremObject(A_, D_), new LineTheoremObject(A_, B_)),
+                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(C_, B_))
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, D, E);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems);
+
+            // Check results
+            CheckThatResultsContain(results, new[]
+            {
+                new SubtheoremsDeriverOutput
+                {
+                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        {
+                            new AngleTheoremObject(new LineTheoremObject(A, F), new LineTheoremObject(A, D)),
+                            new AngleTheoremObject(new LineTheoremObject(B, C, D), new LineTheoremObject(D, E, F))
+                        }),
+                        templateTheorems[0])
+                    },
+                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
+                }
+            });
+        }
 
         #endregion
     }

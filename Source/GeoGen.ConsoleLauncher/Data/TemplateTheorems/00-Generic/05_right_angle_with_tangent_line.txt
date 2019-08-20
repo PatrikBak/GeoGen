@@ -6,3 +6,4 @@
 Theorems:
 
  LineTangentToCircle: [D, B], (A, B, C)
+ EqualAngles: [B, D], [A, C], [B, A], [B, C]

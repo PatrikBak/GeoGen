@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ RightTriangle: A, B, C
+ D = RandomPointOnLineFromPoints(B, C)
+ E = RandomPointOnCircleWithDiameter(D, B)
+
+Theorems:
+
+ TangentCircles: (D, B, E), (A, B, C)

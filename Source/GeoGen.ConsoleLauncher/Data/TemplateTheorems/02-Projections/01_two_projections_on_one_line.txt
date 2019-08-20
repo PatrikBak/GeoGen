@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ RightTriangle: A, B, C
+ D = RandomPoint()
+ E = PerpendicularProjectionOnLineFromPoints(D, A, B)
+
+Theorems:
+
+ ParallelLines: [D, E], [A, C]
