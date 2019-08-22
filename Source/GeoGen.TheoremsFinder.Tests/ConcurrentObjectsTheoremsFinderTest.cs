@@ -2,6 +2,7 @@
 using GeoGen.Core;
 using GeoGen.Utilities;
 using NUnit.Framework;
+using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;

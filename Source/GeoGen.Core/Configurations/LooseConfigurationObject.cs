@@ -1,4 +1,7 @@
-﻿namespace GeoGen.Core
+﻿using GeoGen.Utilities;
+using System.Collections.Generic;
+
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="ConfigurationObject"/> that is meant to be a general independent object
@@ -7,6 +10,8 @@
     /// </summary>
     public class LooseConfigurationObject : ConfigurationObject
     {
+        #region Constructor
+
         /// <summary>
         /// Initializes a new instance of the <see cref="LooseConfigurationObject"/> with a given type.
         /// </summary>
@@ -15,5 +20,33 @@
             : base(objectType)
         {
         }
+
+        #endregion
+
+        #region Public abstract methods implementation
+
+        /// <summary>
+        /// Recreates the object using a given mapping of loose objects.
+        /// </summary>
+        /// <param name="mapping">The mapping of the loose objects.</param>
+        /// <returns>The remapped object.</returns>
+        public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
+        {
+            // Simply access the object from the mapping (there's no need to recreate it)
+            return mapping.GetOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
+        }
+
+        #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts the loose configuration object to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the object.</returns>
+        public override string ToString() => $"{ObjectType}({Id})";
+
+        #endregion
     }
 }

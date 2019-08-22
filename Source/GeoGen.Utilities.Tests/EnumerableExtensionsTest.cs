@@ -10,7 +10,7 @@ namespace GeoGen.Utilities.Tests
     /// The test class for <see cref="EnumerableExtensions"/>.
     /// </summary>
     [TestFixture]
-    public class EnumerableExtentionsTest
+    public class EnumerableExtensionsTest
     {
         [Test]
         public void Test_Subsets()

@@ -1,0 +1,8 @@
+﻿Configuration:
+
+ Trapezoid: A, B, C, D
+ E = RandomPointOnPerpendicularLineToLineFromPoints(D, A, B)
+
+Theorems:
+
+ PerpendicularLines: [D, E], [D, C]

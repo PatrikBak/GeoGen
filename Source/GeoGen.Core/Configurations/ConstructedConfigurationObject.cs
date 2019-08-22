@@ -1,5 +1,4 @@
-﻿using GeoGen.Utilities;
-using System.Linq;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -61,22 +60,60 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Public methods
+        #region Public abstract methods implementation
 
         /// <summary>
-        /// Finds out if this object is equivalent to the other one.
+        /// Recreates the object using a given mapping of loose objects.
         /// </summary>
-        /// <param name="otherObject">The other object.</param>
-        /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public bool IsEquivalentTo(ConstructedConfigurationObject otherObject)
+        /// <param name="mapping">The mapping of the loose objects.</param>
+        /// <returns>The remapped object.</returns>
+        public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
         {
-            // They have to have equally named constructions
-            if (Construction.Name != otherObject.Construction.Name)
-                return false;
-
-            // Otherwise return if the arguments are sequentially equivalent to each other
-            return PassedArguments.Zip(otherObject.PassedArguments).All(pair => pair.Item1.IsEquivalentTo(pair.Item2));
+            // We reuse the construction and remap arguments
+            return new ConstructedConfigurationObject(Construction, PassedArguments.Remap(mapping));
         }
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => (Construction, PassedArguments).GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is a constructed object
+                && otherObject is ConstructedConfigurationObject constructedObject
+                // And neither of our two objects are 'Random' (such objects can't be ever equal)
+                && !Construction.IsRandom && !constructedObject.Construction.IsRandom
+                // And their constructions are equal
+                && constructedObject.Construction.Equals(Construction)
+                // And their arguments are equal
+                && constructedObject.PassedArguments.Equals(PassedArguments);
+        }
+
+        #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts the constructed configuration object to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the object.</returns>
+        public override string ToString() => $"{Id}={Construction.Name}({PassedArguments})";
 
         #endregion
     }

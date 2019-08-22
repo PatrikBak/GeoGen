@@ -1,9 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- E = RandomPoint()
- F = RandomPoint()
-
-Theorems:
-
- EqualAngles: [A, B], [E, F], [C, D], [E, F]

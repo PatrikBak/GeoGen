@@ -24,7 +24,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Gets the points that lie on this object.
         /// </summary>
-        public IReadOnlyCollection<PointObject> Points => _points;
+        public IReadOnlyHashSet<PointObject> Points { get; }
 
         #endregion
 
@@ -47,6 +47,22 @@ namespace GeoGen.Constructor
 
         #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// Initialize a new instance of the <see cref="DefinableByPoints"/> class.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object represented by this geometric object.</param>
+        /// <param name="points">The points that define this object.</param>
+        protected DefinableByPoints(ConfigurationObject configurationObject, IEnumerable<PointObject> points)
+                : base(configurationObject)
+        {
+            _points = new HashSet<PointObject>(points);
+            Points = _points.AsReadOnly();
+        }
+
+        #endregion
+
         #region Public methods
 
         /// <summary>
@@ -62,39 +78,6 @@ namespace GeoGen.Constructor
         /// <param name="points">The points to be checked.</param>
         /// <returns>true, if it contains all the points; false otherwise.</returns>
         public bool ContainsAll(IEnumerable<PointObject> points) => _points.IsSupersetOf(points);
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Initialize a new instance of the <see cref="DefinableByPoints"/> class.
-        /// </summary>
-        /// <param name="configurationObject">The configuration object represented by this geometric object.</param>
-        /// <param name="points">The points that define this object.</param>
-        protected DefinableByPoints(ConfigurationObject configurationObject, IEnumerable<PointObject> points)
-                : base(configurationObject)
-        {
-            _points = new HashSet<PointObject>(points);
-        }
-
-        #endregion
-
-        #region To String
-
-        /// <summary>
-        /// Converts a given object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the object.</returns>
-        public override string ToString()
-        {
-            // Create the configuration object part, if there is any
-            var configurationObject = ConfigurationObject == null ? "" : $"{ConfigurationObject} ";
-
-            // Concatenate it with points
-            return $"{configurationObject}Points: {Points.ToJoinedString("; ")}";
-        }
 
         #endregion
     }

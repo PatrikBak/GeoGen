@@ -21,16 +21,7 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Public abstract properties
-
-        /// <summary>
-        /// Enumerates every possible set of objects that are altogether needed to define this object (this includes even 
-        /// defining objects of objects, see <see cref="ConfigurationObjectsExtentions.GetDefiningObjects(ConfigurationObject)"/>.
-        /// For example: If we have a line 'l' with points A, B, C on it, then this line has 4 possible definitions: 
-        /// l, [A, B], [A, C], [B, C]. 
-        /// </summary>
-        /// <returns>The enumerable of objects representing a definition.</returns>
-        public abstract IEnumerable<IEnumerable<ConfigurationObject>> GetAllDefinitions();
+        #region Public abstract methods
 
         /// <summary>
         /// Determines if a given theorem object is equivalent to this one,
@@ -61,7 +52,7 @@ namespace GeoGen.Core
         /// <param name="configurationObject">The configuration object to be mapped.</param>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped configuration object.</returns>
-        protected ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected static ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Try to get it from the mapping    
             return mapping.GetOrDefault(configurationObject)

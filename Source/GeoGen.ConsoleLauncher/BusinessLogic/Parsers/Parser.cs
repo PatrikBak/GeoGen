@@ -153,6 +153,11 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>The parsed construction.</returns>
         private static Construction ParseConstruction(string constructionName)
         {
+            // Local helper that returns a string informing about available constructions
+            static string AvailableConstructions() => $"Available: \n\n" +
+                // Get all constructions, prepend -, sort, and make every on a single line
+                $"{Constructions.GetAllConstructions().Select(c => $" - {c}").Ordered().ToJoinedString("\n")}.\n";
+
             // Try to find if it is a predefined one
             if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var type))
                 return Constructions.GetPredefinedconstruction(type);
@@ -179,15 +184,15 @@ namespace GeoGen.ConsoleLauncher
                     return RandomPointOnConstruction.RandomPointOn(composedConstruction);
 
                 // Otherwise we won't allow a composed construction with a name like this
-                throw new ParserException("If the name of a construction starts with RandomPointOn, then the rest must be a correct construction name.");
+                throw new ParserException("If the name of a construction starts with RandomPointOn, " +
+                    $"then the rest must be a correct construction name. {AvailableConstructions()}");
             }
 
             // If not, it should be a composed one. 
             // Right now they are all stored in a static class. Try to find it there...
             return Constructions.GetComposedConstruction(constructionName)
                 // if it's not found, make the user aware
-                ?? throw new ParserException($"Unknown construction '{constructionName}'. " +
-                    $"Available: \n\n{Constructions.GetAllConstructions().Select(c => $" - {c}").Ordered().ToJoinedString("\n")}.\n");
+                ?? throw new ParserException($"Unknown construction '{constructionName}'. {AvailableConstructions()}");
         }
 
         /// <summary>

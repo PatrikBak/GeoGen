@@ -88,9 +88,12 @@ namespace GeoGen.TheoremsAnalyzer
                         // Get the equivalence set
                         var equivalencySets = oldEquivalencies[type];
 
-                        // Get the objects
-                        var object1 = theorem.InvolvedObjects[0];
-                        var object2 = theorem.InvolvedObjects[1];
+                        // Get the objects list
+                        var objects = theorem.InvolvedObjects.ToList();
+
+                        // Get particular objects for comfort
+                        var object1 = objects[0];
+                        var object2 = objects[1];
 
                         // Get the sets for the inner objects
                         var set1 = equivalencySets.FirstOrDefault(set => set.Contains(object1));

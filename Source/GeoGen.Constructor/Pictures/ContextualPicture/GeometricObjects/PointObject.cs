@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 using System.Collections.Generic;
 
 namespace GeoGen.Constructor
@@ -28,12 +29,12 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Gets all the lines passing through this point.
         /// </summary>
-        public IReadOnlyCollection<LineObject> Lines => _lines;
+        public IReadOnlyHashSet<LineObject> Lines { get; }
 
         /// <summary>
         /// Gets all the circles passing through this point.
         /// </summary>
-        public IReadOnlyCollection<CircleObject> Circles => _circles;
+        public IReadOnlyHashSet<CircleObject> Circles { get; }
 
         #endregion
 
@@ -46,6 +47,8 @@ namespace GeoGen.Constructor
         public PointObject(ConfigurationObject configurationObject)
                 : base(configurationObject)
         {
+            Lines = _lines.AsReadOnly();
+            Circles = _circles.AsReadOnly();
         }
 
         #endregion
@@ -69,11 +72,11 @@ namespace GeoGen.Constructor
         #region To String
 
         /// <summary>
-        /// Converts a given point to a string. 
+        /// Converts the point object to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
-        /// <returns>A human-readable string representation of the point.</returns>
-        public override string ToString() => ConfigurationObject.ToString();
+        /// <returns>A human-readable string representation of the configuration.</returns>
+        public override string ToString() => $"{ConfigurationObject.Id}";
 
         #endregion
     }

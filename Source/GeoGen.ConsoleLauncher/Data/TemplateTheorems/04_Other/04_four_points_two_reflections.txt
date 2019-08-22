@@ -1,0 +1,11 @@
+﻿Configuration:
+
+ FourPoints: A, B, C, D
+ E = ReflectionInLineFromPoints(A, C, D)
+ F = ReflectionInLineFromPoints(B, C, D)
+
+Theorems:
+
+ EqualLineSegments: A, B, F, E
+ ConcyclicPoints: A, B, F, E
+ ParallelLines: [A, E], [B, F]

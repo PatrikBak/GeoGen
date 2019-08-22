@@ -1,0 +1,9 @@
+﻿Iterations: 3
+
+Constructions:
+
+ ReflectionInLineFromPoints
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C

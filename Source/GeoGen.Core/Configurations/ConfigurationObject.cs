@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace GeoGen.Core
 {
@@ -20,12 +21,6 @@ namespace GeoGen.Core
         private static readonly object _lock = new object();
 
         /// <summary>
-        /// Gets the id of the configuration object.
-        /// This property should be used only for diagnostic purposes.
-        /// </summary>
-        internal int Id { get; private set; }
-
-        /// <summary>
         /// Sets up the id of the object in a thread-safe manner.
         /// </summary>
         private void SetupId()
@@ -37,6 +32,12 @@ namespace GeoGen.Core
                 Id = _id;
             }
         }
+
+        /// <summary>
+        /// Gets the id of the configuration object.
+        /// This property should be used only for diagnostic purposes.
+        /// </summary>
+        public int Id { get; private set; }
 
         #endregion
 
@@ -66,24 +67,14 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Public abstract methods
 
         /// <summary>
-        /// Converts the configuration object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
+        /// Recreates the object using a given mapping of loose objects.
         /// </summary>
-        /// <returns>A human-readable string representation of the object.</returns>
-        public override string ToString() => this switch
-        {
-            // With loose object we include the id and type
-            LooseConfigurationObject _ => $"{Id}={ObjectType}",
-
-            // With construct we include the id + definition
-            ConstructedConfigurationObject constructedObject => $"{constructedObject.Id}={constructedObject.Construction.Name}({constructedObject.PassedArguments})",
-
-            // Default case
-            _ => throw new GeoGenException($"Unhandled object type of configuration object: {GetType()}."),
-        };
+        /// <param name="mapping">The mapping of the loose objects.</param>
+        /// <returns>The remapped object.</returns>
+        public abstract ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping);
 
         #endregion
     }

@@ -65,13 +65,13 @@ namespace GeoGen.Core
         {
             // Let's have a look at each pair of [ObjectType, NeededCount] to find out
             // if we have enough objects from this type
-            foreach (var pair in ObjectTypesToNeededCount)
+            foreach (var keyValue in ObjectTypesToNeededCount)
             {
                 // Pull the objects type
-                var type = pair.Key;
+                var type = keyValue.Key;
 
                 // Pull the needed count
-                var neededCount = pair.Value;
+                var neededCount = keyValue.Value;
 
                 // If there is no object of the type, we certainly can't match the signature
                 if (!availableObjects.ContainsKey(type))
@@ -104,41 +104,48 @@ namespace GeoGen.Core
             // Local function that creates an argument matching a given parameter
             ConstructionArgument CreateArgument(ConstructionParameter parameter)
             {
-                // If the parameter is an object parameter...
-                if (parameter is ObjectConstructionParameter objectParameter)
+                // Switch based on the type
+                switch (parameter)
                 {
-                    // Get the object
-                    var currentObject = objects[index];
+                    // If we have an object parameter
+                    case ObjectConstructionParameter objectParameter:
 
-                    // Make sure the type matches
-                    if (currentObject.ObjectType != ObjectTypes[index])
-                        throw new GeoGenException($"The object on the index {index} should have the type {ObjectTypes[index]}, but has {currentObject.ObjectType}.");
+                        // Get the object for comfort
+                        var currentObject = objects[index];
 
-                    // Increase the index
-                    index++;
+                        // Make sure the type matches
+                        if (currentObject.ObjectType != ObjectTypes[index])
+                            throw new GeoGenException($"The object on the index {index} should have the type {ObjectTypes[index]}, but has {currentObject.ObjectType}.");
 
-                    // Return the object argument
-                    return new ObjectConstructionArgument(currentObject);
+                        // Increase the index so that the next time we match the next object
+                        index++;
+
+                        // Return the object argument
+                        return new ObjectConstructionArgument(currentObject);
+
+                    // If we have a set parameter
+                    case SetConstructionParameter setParameter:
+
+                        // Create arguments set that we're going to fill
+                        var arguments = new HashSet<ConstructionArgument>();
+
+                        // For the expected number of times...
+                        GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () =>
+                        {
+                            // Recursively call this function to obtain a new argument
+                            var newArgument = CreateArgument(setParameter.TypeOfParameters);
+
+                            // And update the arguments set
+                            arguments.Add(newArgument);
+                        });
+
+                        // Finally return the set construction argument wrapping the filled set
+                        return new SetConstructionArgument(arguments);
+
+                    // Default case
+                    default:
+                        throw new GeoGenException($"Unhandled type of construction parameter: {parameter.GetType()}");
                 }
-
-                // Otherwise we have a set construction parameter
-                var setParameter = (SetConstructionParameter)parameter;
-
-                // Create arguments list that we're going to fill
-                var arguments = new List<ConstructionArgument>();
-
-                // For the expected number of times...
-                GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () =>
-                {
-                    // Recursively call this function to obtain a new argument
-                    var newArgument = CreateArgument(setParameter.TypeOfParameters);
-
-                    // And update the arguments list
-                    arguments.Add(newArgument);
-                });
-
-                // Finally return the set construction argument wrapping the filled list
-                return new SetConstructionArgument(arguments);
             }
 
             // Execute the create arguments function for particular parameters and wrap the result into Arguments
@@ -162,21 +169,29 @@ namespace GeoGen.Core
             // Local function that handles a single parameter
             void HandleParameter(ConstructionParameter parameter)
             {
-                // If we have an object parameter...
-                if (parameter is ObjectConstructionParameter objectParameter)
+                // Switch based on the type
+                switch (parameter)
                 {
-                    // We simply add its type
-                    result.Add(objectParameter.ObjectType);
+                    // If we have an object parameter
+                    case ObjectConstructionParameter objectParameter:
 
-                    // And terminate
-                    return;
+                        // We simply add its type
+                        result.Add(objectParameter.ObjectType);
+
+                        break;
+
+                    // If we have a set parameter
+                    case SetConstructionParameter setParameter:
+
+                        // We recursively perform this function the needed number of times on the repeated parameters
+                        GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () => HandleParameter(setParameter.TypeOfParameters));
+
+                        break;
+
+                    // Default case
+                    default:
+                        throw new GeoGenException($"Unhandled type of construction parameter: {parameter.GetType()}");
                 }
-
-                // Otherwise we have a set parameter
-                var setParameter = (SetConstructionParameter)parameter;
-
-                // We recursively perform this function the needed number of times on the repeated parameters
-                GeneralUtilities.ExecuteNTimes(setParameter.NumberOfParameters, () => HandleParameter(setParameter.TypeOfParameters));
             }
 
             // Handle every parameter
@@ -211,7 +226,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the signature.</returns>
-        public override string ToString() => Parameters.ToJoinedString();
+        public override string ToString() => Parameters.ToJoinedString(",");
 
         #endregion
     }

@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GeoGen.Core.LooseObjectsLayout;
-using static GeoGen.Core.TheoremType;
 using static GeoGen.Core.PredefinedConstructionType;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.TheoremsAnalyzer
 {
@@ -282,11 +282,13 @@ namespace GeoGen.TheoremsAnalyzer
         {
             // Take the parallel lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(ParallelLines)
+                // Unwrap and order theorem objects
+                ?.Select(theorem => theorem.InvolvedObjects.ToArray())
                 // From each theorem object unwrap points
-                ?.Select(theorem => new[]
+                .Select(objects => new[]
                 {
-                    ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
-                    ((LineTheoremObject)theorem.InvolvedObjects[1]).Points
+                    ((LineTheoremObject)objects[0]).Points,
+                    ((LineTheoremObject)objects[1]).Points
                 })
                 // For each such a pair of lines we combine pair of points from one line
                 // with pairs of points from the other one
@@ -316,11 +318,13 @@ namespace GeoGen.TheoremsAnalyzer
         {
             // Take the perpendicular lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(PerpendicularLines)
+                // Unwrap and order theorem objects
+                ?.Select(theorem => theorem.InvolvedObjects.ToArray())
                 // From each theorem object unwrap points
-                ?.Select(theorem => new[]
+                .Select(objects => new[]
                 {
-                    ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
-                    ((LineTheoremObject)theorem.InvolvedObjects[1]).Points
+                    ((LineTheoremObject)objects[0]).Points,
+                    ((LineTheoremObject)objects[1]).Points
                 })
                 // Find their common points (should be at most one)
                 .Select(pairOfPointArrays => (pointArrays: pairOfPointArrays, commonPoint: pairOfPointArrays[0].Intersect(pairOfPointArrays[1]).FirstOrDefault()))
@@ -357,11 +361,13 @@ namespace GeoGen.TheoremsAnalyzer
         {
             // Take the line tangent to circle theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(LineTangentToCircle)
+                // Unwrap and order theorem objects
+                ?.Select(theorem => theorem.InvolvedObjects)
                 // From each theorem object unwrap points
-                ?.Select(theorem => new[]
+                .Select(objects => new[]
                 {
-                    ((LineTheoremObject)theorem.InvolvedObjects[0]).Points,
-                    ((CircleTheoremObject)theorem.InvolvedObjects[1]).Points
+                    objects.OfType<LineTheoremObject>().First().Points,
+                    objects.OfType<CircleTheoremObject>().First().Points
                 })
                 // Find their common points (should be at most one)
                 .Select(pairOfPointArrays => (pointArrays: pairOfPointArrays, commonPoint: pairOfPointArrays[0].Intersect(pairOfPointArrays[1]).FirstOrDefault()))
@@ -394,16 +400,18 @@ namespace GeoGen.TheoremsAnalyzer
         {
             // Take the equal line segments theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(EqualLineSegments)
-                // From each theorem object line segments
-                ?.Select(theorem => new[]
+                // Unwrap and order theorem objects
+                ?.Select(theorem => theorem.InvolvedObjects.ToArray())
+                // From each theorem object unwrap line segments
+                .Select(objects => new[]
                 {
-                    (LineSegmentTheoremObject)theorem.InvolvedObjects[0],
-                    (LineSegmentTheoremObject)theorem.InvolvedObjects[1],
+                    (LineSegmentTheoremObject)objects[0],
+                    (LineSegmentTheoremObject)objects[1],
                 })
                 // And configuration objects from them
                 .Select(lineSegments => new[]
                 {
-                    new[] 
+                    new[]
                     {
                         ((PointTheoremObject)lineSegments[0].Object1).ConfigurationObject,
                         ((PointTheoremObject)lineSegments[0].Object2).ConfigurationObject
@@ -429,10 +437,6 @@ namespace GeoGen.TheoremsAnalyzer
                 {
                     new[] {tuple.commonPoint, tuple.otherPoints[0], tuple.otherPoints[1]},
                     new[] {tuple.commonPoint, tuple.otherPoints[1], tuple.otherPoints[0]}
-                })
-                .Select(x =>
-                {
-                    return x;
                 })
                 // These points finally represent one of our sought situation
                 .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points))
@@ -535,8 +539,7 @@ namespace GeoGen.TheoremsAnalyzer
                     if (foundObject == null)
                         return Enumerable.Empty<MappingData>();
 
-                    // Otherwise we have a line/circle, i.e. something that has points.
-                    // We take every possible point 
+                    // Otherwise we have something that has points. We take every possible point 
                     return ((DefinableByPoints)foundObject).Points
                         // and create a mapping for each
                         .Select(point => new MappingData(data, (constructedObject, point.ConfigurationObject)));
@@ -549,7 +552,7 @@ namespace GeoGen.TheoremsAnalyzer
             // First dig down to the configuration
             var equalObject = (ConfigurationObject)input.ExaminedConfigurationPicture.Pictures.Configuration
                 // And look for an equivalent constructed object
-                .ConstructedObjects.FirstOrDefault(o => o.IsEquivalentTo(mappedObject));
+                .ConstructedObjects.FirstOrDefault(constructedObject => constructedObject.Equals(mappedObject));
 
             // If there is no equal object...
             if (equalObject == null)

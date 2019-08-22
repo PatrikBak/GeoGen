@@ -14,7 +14,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the point configuration objects that are contained in this object.
         /// </summary>
-        public IReadOnlyCollection<ConfigurationObject> Points { get; }
+        public IReadOnlyHashSet<ConfigurationObject> Points { get; }
 
         #endregion
 
@@ -37,7 +37,7 @@ namespace GeoGen.Core
         protected TheoremObjectWithPoints(ConfigurationObject configurationObject, IEnumerable<ConfigurationObject> points = null)
             : base(configurationObject)
         {
-            Points = points?.ToSet() ?? new HashSet<ConfigurationObject>();
+            Points = (points ?? Enumerable.Empty<ConfigurationObject>()).ToReadOnlyHashSet();
 
             // Make sure we have enough points in the case where the object is not defined
             if (configurationObject == null && NumberOfNeededPoints > Points.Count)
@@ -49,21 +49,6 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <summary>
-        /// Enumerates every possible set of objects that are altogether needed to define this object (this includes even 
-        /// defining objects of objects, see <see cref="ConfigurationObjectsExtentions.GetDefiningObjects(ConfigurationObject)"/>.
-        /// For example: If we have a line 'l' with points A, B, C on it, then this line has 4 possible definitions: 
-        /// l, [A, B], [A, C], [B, C]. 
-        /// </summary>
-        /// <returns>The enumerable of objects representing a definition.</returns>
-        public override IEnumerable<IEnumerable<ConfigurationObject>> GetAllDefinitions()
-        {
-            // Get the base definitions
-            return base.GetAllDefinitions()
-                // For every possible n-tuple of points consider its defining objects
-                .Concat(Points.Subsets(NumberOfNeededPoints).Select(points => points.GetDefiningObjects()));
-        }
-
-        /// <summary>
         /// Determines if a given theorem object is equivalent to this one,
         /// i.e. if they represent the same object of a configuration.
         /// </summary>
@@ -73,7 +58,7 @@ namespace GeoGen.Core
         {
             // They are either equivalent according to the base method 
             return base.IsEquivalentTo(otherObject) ||
-                // Or the other object is an object with points
+                // Or the other object is an object with points of the same type
                 otherObject is TheoremObjectWithPoints objectWithPoints && objectWithPoints.GetType() == GetType() &&
                 // And the number of their common points is at least the number of the points that are needed to define them
                 Points.Intersect(objectWithPoints.Points).Count() >= NumberOfNeededPoints;
@@ -104,24 +89,6 @@ namespace GeoGen.Core
                 ? (configurationObject, points)
                 // If not, return null
                 : default;
-        }
-
-        #endregion
-
-        #region To String
-
-        /// <summary>
-        /// Converts the theorem object with points to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString()
-        {
-            // If there is a specific configuration object, we include it 
-            var objectPart = ConfigurationObject == null ? "" : $" object: {ConfigurationObject.Id}, ";
-
-            // Construct the final string including the ids of the points
-            return $"{objectPart}{Points.Select(p => p.Id).Ordered().ToJoinedString("--")}";
         }
 
         #endregion

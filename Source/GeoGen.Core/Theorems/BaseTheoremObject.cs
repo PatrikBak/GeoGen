@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a <see cref="TheoremObject"/> that can be defined by a <see cref="Core.ConfigurationObject"/>.
@@ -32,21 +30,6 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <summary>
-        /// Enumerates every possible set of objects that are altogether needed to define this object (this includes even 
-        /// defining objects of objects, see <see cref="ConfigurationObjectsExtentions.GetDefiningObjects(ConfigurationObject)"/>.
-        /// For example: If we have a line 'l' with points A, B, C on it, then this line has 4 possible definitions: 
-        /// l, [A, B], [A, C], [B, C]. 
-        /// </summary>
-        /// <returns>The enumerable of objects representing a definition.</returns>
-        public override IEnumerable<IEnumerable<ConfigurationObject>> GetAllDefinitions()
-        {
-            // If the configuration version is set, then its defining objects are
-            // one of the possible definitions
-            if (ConfigurationObject != null)
-                yield return ConfigurationObject.GetDefiningObjects();
-        }
-
-        /// <summary>
         /// Determines if a given theorem object is equivalent to this one,
         /// i.e. if they represent the same object of a configuration.
         /// </summary>
@@ -61,7 +44,7 @@ namespace GeoGen.Core
                 // And both this and the other object have their configuration objects set
                 ConfigurationObject != null && baseObject.ConfigurationObject != null &&
                 // And these objects are the same
-                ConfigurationObject == baseObject.ConfigurationObject;
+                ConfigurationObject.Equals(baseObject.ConfigurationObject);
         }
 
         #endregion

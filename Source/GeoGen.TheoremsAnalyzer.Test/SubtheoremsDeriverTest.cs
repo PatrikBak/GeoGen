@@ -32,19 +32,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Method to say whether two objects are the same
             (o1, o2) =>
             {
-                // Prepare the comparer for object equality tuples. The first objects
-                // are compared by references. The constructed ones by equivalences
-                var equalityTuplesComparer = new SimpleEqualityComparer<(ConfigurationObject, ConstructedConfigurationObject)>(
-                     // Return that their objects are equivalent
-                     (t1, t2) => t1.Item1 == t2.Item1 && t1.Item2.IsEquivalentTo(t2.Item2));
-
                 // Prepare the comparer for theorem equality tuples
                 var theoremTuplesComparer = new SimpleEqualityComparer<(Theorem, Theorem)>(
                      // Return that their objects are equivalent
                      (t1, t2) => t1.Item1.IsEquivalentTo(t2.Item1) && t1.Item2.IsEquivalentTo(t2.Item2));
 
                 // Return true when used equalities are set-equals
-                return o1.UsedEqualities.ToSet(equalityTuplesComparer).SetEquals(o2.UsedEqualities)
+                return o1.UsedEqualities.ToSet().SetEquals(o2.UsedEqualities)
                      // As well as derived theorems are set-equals
                      && o1.DerivedTheorems.ToSet(theoremTuplesComparer).SetEquals(o2.DerivedTheorems);
             });

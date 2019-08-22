@@ -193,7 +193,7 @@ namespace GeoGen.Constructor
             // We need to have geometric objects cloned
             // Thus we prepare a dictionary mapping old to newly created ones
             // To get all the geometric objects we take some map from the _objects
-            var geometricObjectsMap = _objects.First().Value.Select(pair => pair.item1).Select(geometricObject => geometricObject switch
+            var geometricObjectsMap = _objects.First().Value.Select(pair => pair.Item1).Select(geometricObject => geometricObject switch
             {
                 // Point
                 PointObject point => (oldObject: geometricObject, newObject: new PointObject(point.ConfigurationObject) as GeometricObject),
@@ -249,7 +249,7 @@ namespace GeoGen.Constructor
                 newPicture._objects.Add(picturesMap[pair.Key], newMap);
 
                 // Fill the map
-                pair.Value.ForEach(tuple => newMap.Add(geometricObjectsMap[tuple.item1], tuple.item2));
+                pair.Value.ForEach(tuple => newMap.Add(geometricObjectsMap[tuple.Item1], tuple.Item2));
             });
 
             // Clone all objects while making them all old

@@ -42,21 +42,6 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <summary>
-        /// Enumerates every possible set of objects that are altogether needed to define this object (this includes even 
-        /// defining objects of objects, see <see cref="ConfigurationObjectsExtentions.GetDefiningObjects(ConfigurationObject)"/>.
-        /// For example: If we have a line 'l' with points A, B, C on it, then this line has 4 possible definitions: 
-        /// l, [A, B], [A, C], [B, C]. 
-        /// </summary>
-        /// <returns>The enumerable of objects representing a definition.</returns>
-        public override IEnumerable<IEnumerable<ConfigurationObject>> GetAllDefinitions()
-        {
-            // Combine definitions of particular objects
-            return new[] { Object1.GetAllDefinitions(), Object2.GetAllDefinitions() }.Combine()
-                 // Take definitions of these objects
-                 .Select(definition => definition.Flatten().Distinct());
-        }
-
-        /// <summary>
         /// Determines if a given theorem object is equivalent to this one,
         /// i.e. if they represent the same object of a configuration.
         /// </summary>
@@ -93,6 +78,17 @@ namespace GeoGen.Core
             // Return tuple only if none of them is null
             return o1 != null && o2 != null ? (o1, o2) : default;
         }
+
+        #endregion
+
+        #region To String
+
+        /// <summary>
+        /// Converts the pair theorem object to a string. 
+        /// NOTE: This method is used only for debugging purposes.
+        /// </summary>
+        /// <returns>A human-readable string representation of the configuration.</returns>
+        public override string ToString() => new[] { Object1, Object2 }.Select(o => o.ToString()).Ordered().ToJoinedString();
 
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using static GeoGen.Core.ConfigurationObjectType;
 
 namespace GeoGen.Core
 {
@@ -19,11 +20,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Circle)
+                    new ObjectConstructionParameter(Circle)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.CenterOfCircle, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.CenterOfCircle, parameters, Point, isRandom: false);
             }
         }
 
@@ -38,11 +39,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.Circumcircle, parameters, ConfigurationObjectType.Circle);
+                return new PredefinedConstruction(PredefinedConstructionType.Circumcircle, parameters, Circle, isRandom: false);
             }
         }
 
@@ -57,12 +58,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point),
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.CircleWithCenterThroughPoint, parameters, ConfigurationObjectType.Circle);
+                return new PredefinedConstruction(PredefinedConstructionType.CircleWithCenterThroughPoint, parameters, Circle, isRandom: false);
             }
         }
 
@@ -77,12 +78,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisector, parameters, ConfigurationObjectType.Line);
+                return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisector, parameters, Line, isRandom: false);
             }
         }
 
@@ -97,11 +98,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Line), 2)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Line), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, Point, isRandom: false);
             }
         }
 
@@ -116,11 +117,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.LineFromPoints, parameters, ConfigurationObjectType.Line);
+                return new PredefinedConstruction(PredefinedConstructionType.LineFromPoints, parameters, Line, isRandom: false);
             }
         }
 
@@ -135,11 +136,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.Midpoint, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.Midpoint, parameters, Point, isRandom: false);
             }
         }
 
@@ -154,12 +155,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line)
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Line)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularProjection, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularProjection, parameters, Point, isRandom: false);
             }
         }
 
@@ -174,12 +175,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line)
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Line)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLine, parameters, ConfigurationObjectType.Line);
+                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLine, parameters, Line, isRandom: false);
             }
         }
 
@@ -194,12 +195,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Line)
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Line)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.ParallelLine, parameters, ConfigurationObjectType.Line);
+                return new PredefinedConstruction(PredefinedConstructionType.ParallelLine, parameters, Line, isRandom: false);
             }
         }
 
@@ -214,12 +215,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point)
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PointReflection, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.PointReflection, parameters, Point, isRandom: false);
             }
         }
 
@@ -234,13 +235,13 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints, parameters, Point, isRandom: false);
             }
         }
 
@@ -255,13 +256,13 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point),
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleWithCenterAndLineFromPoints, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleWithCenterAndLineFromPoints, parameters, Point, isRandom: false);
             }
         }
 
@@ -276,12 +277,12 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new ObjectConstructionParameter(ConfigurationObjectType.Point),
-                    new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2), 2)
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new SetConstructionParameter(new ObjectConstructionParameter(Point), 2), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles, parameters, Point, isRandom: false);
             }
         }
 
@@ -296,11 +297,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 2)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, Point, isRandom: true);
             }
         }
 
@@ -315,11 +316,11 @@ namespace GeoGen.Core
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
-                    new SetConstructionParameter(new ObjectConstructionParameter(ConfigurationObjectType.Point), 3)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircleFromPoints, parameters, ConfigurationObjectType.Point);
+                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircleFromPoints, parameters, Point, isRandom: true);
             }
         }
 
@@ -330,7 +331,7 @@ namespace GeoGen.Core
         public static PredefinedConstruction RandomPoint
         {
             // Create the actual construction, which has no parameters
-            get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, Array.Empty<ConstructionParameter>(), ConfigurationObjectType.Point);
+            get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, Array.Empty<ConstructionParameter>(), Point, isRandom: true);
         }
     }
 }

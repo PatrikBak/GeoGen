@@ -1,9 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- E = IntersectionOfLinesFromPoints(A, C, B, D)
- M = Midpoint(A, B)
-
-Theorems:
-
- ConcurrentObjects: [E, M], [A, D], [B, C]

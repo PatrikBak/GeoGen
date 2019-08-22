@@ -23,7 +23,7 @@ namespace GeoGen.AnalyticGeometry
 
             // If it less than zero, then we have no solutions
             if (D.Rounded() < 0)
-                return new double[0];
+                return Array.Empty<double>();
 
             // If it's exactly zero, then we have exactly one solution
             if (D.Rounded() == 0)

@@ -1,0 +1,8 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+ D = ReflectionInLineFromPoints(B, A, C)
+
+Theorems:
+
+ LineTangentToCircle: [D, C], (A, B, C)

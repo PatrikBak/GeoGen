@@ -1,8 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- E = RandomPointOnLineFromPoints(A, D)
-
-Theorems:
-
- ConcurrentObjects: (A, B, E), (C, D, E), [B, C]

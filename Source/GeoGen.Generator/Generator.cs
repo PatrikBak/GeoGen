@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,85 +9,43 @@ namespace GeoGen.Generator
     /// The default implementation of <see cref="IGenerator"/>. It generates configurations by layers.
     /// Initially the first layer consists of the initial configuration from the input.
     /// Then in every iteration we extend all the configurations from the current layer with new 
-    /// <see cref="ConstructedConfigurationObject"/>, that are created using <see cref="IArgumentsGenerator"/>,
-    /// and the <see cref="Construction"/>s/ from the input. We use <see cref="IContainer{T}"/>, where 'T' 
-    /// is <see cref="ConfigurationObject"/>, to recognize equal objects.
+    /// <see cref="ConstructedConfigurationObject"/>, and the <see cref="Construction"/>s/ from the input. 
+    /// It guaranties generation of mutually non-symmetric configurations.
     /// </summary>
     public class Generator : IGenerator
     {
-        #region Dependencies
-
         /// <summary>
-        /// The factory for creating a container for configuration objects that recognizes equal ones.
-        /// </summary>
-        private readonly IConfigurationObjectsContainerFactory _objectsContainerFactory;
-
-        /// <summary>
-        /// The factory for creating a container for generated configurations that recognizes equal ones.
-        /// </summary>
-        private readonly IConfigurationsContainerFactory _configurationsContainerFactory;
-
-        /// <summary>
-        /// The generator of arguments that are passed to newly created constructed objects.
-        /// </summary>
-        private readonly IArgumentsGenerator _generator;
-
-        #endregion
-
-        #region Constructor
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Generator"/> class.
-        /// </summary>
-        /// <param name="objectsContainerFactory">The factory for creating a container for configuration objects that recognizes equal ones.</param>
-        /// <param name="configurationsContainerFactory">The factory for creating a container for generated configurations that recognizes equal ones.</param>
-        /// <param name="generator">The generator of arguments that are passed to newly created constructed objects.</param>
-        public Generator(IConfigurationObjectsContainerFactory objectsContainerFactory, IConfigurationsContainerFactory configurationsContainerFactory, IArgumentsGenerator generator)
-        {
-            _objectsContainerFactory = objectsContainerFactory ?? throw new ArgumentNullException(nameof(objectsContainerFactory));
-            _configurationsContainerFactory = configurationsContainerFactory ?? throw new ArgumentNullException(nameof(configurationsContainerFactory));
-            _generator = generator ?? throw new ArgumentNullException(nameof(generator));
-        }
-
-        #endregion
-
-        #region IGenerator implementation
-
-        /// <summary>
-        /// Performs the generation algorithm.
+        /// Performs the generation algorithm on a given input. It can be adjusted
+        /// by specifying <see cref="GenerationCallbacks"/>.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        /// <param name="objectFilter">The filter applied to generated constructed objects.</param>
-        /// <param name="configurationFilter">The filter applied to generated configuration.</param>
+        /// <param name="callbacks">The callbacks to adjust the generation process.</param>
         /// <returns>The generated configurations.</returns>
-        public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input, Predicate<ConstructedConfigurationObject> objectFilter, Predicate<GeneratedConfiguration> configurationFilter)
+        public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input, GenerationCallbacks callbacks = null)
         {
-            #region Prepare variables
+            #region Preparing variables
 
-            // The configurations that are to be extended
-            var currentLayer = new List<GeneratedConfiguration>();
+            // Prepare the configurations that are to be extended 
+            var currentLayer = new List<GeneratedConfiguration>
+            {
+                // with the initial configuration on it.
+                new GeneratedConfiguration(input.InitialConfiguration)
+            };
 
-            // The container for configuration objects
-            var objectsContainer = _objectsContainerFactory.CreateContainer();
+            // Prepare the dictionary that identities created constructed objects
+            // This is important for the algorithm that detects whether we haven't
+            // generated a configuration symmetric to a given one before
+            var objectIds = new Dictionary<ConstructedConfigurationObject, int>();
 
-            // The container for configurations
-            var configurationsContainer = _configurationsContainerFactory.CreateContainer();
-
-            #endregion
-
-            #region Prepare the initial configuration
-
-            // Add all the initial objects
-            input.InitialConfiguration.AllObjects.ForEach(configurtionObject => objectsContainer.TryAdd(configurtionObject, out var _));
-
-            // Create the initial generated configuration from the passed initial one
-            var firstConfiguration = new GeneratedConfiguration(input.InitialConfiguration);
-
-            // Add it to the container
-            configurationsContainer.Add(firstConfiguration);
-
-            // Add it to the first layer
-            currentLayer.Add(firstConfiguration);
+            // Prepare the set that is used to detect symmetric configurations
+            // in the following way: When we generate a configuration, we generate
+            // every configuration symmetric to it. Then we project constructed objects
+            // of these configurations to their ids (see the line before), sort them
+            // (that's why we use sorted set), and take the lexicographically minimal
+            // set. It's not hard to see that two configurations are symmetric if and
+            // only if the corresponding minimal sets are the same (symmetric configurations
+            // yield the same set of ids sets and we're unambiguously picking one of them).
+            var objectIdsSet = new HashSet<SortedSet<int>>(SortedSet<int>.CreateSetComparer());
 
             #endregion
 
@@ -103,73 +60,101 @@ namespace GeoGen.Generator
                 // and extends it with new objects. Each configuration will be projected into one or more generated ones
                 var generationEnumerable = currentLayer.SelectMany(currentConfiguration =>
                 {
-                    // For a given configuration we create all possible objects that are use our constructions
-                    //
-                    // TODO: Consider not using every construction. Over-using constructions is not pretty
-                    //       Maybe another filter coming as a parameter?
-                    // 
-                    return input.Constructions.SelectMany(construction =>
-                    {
-                        // For a given construction first generate all possible arguments
-                        return _generator.GenerateArguments(currentConfiguration.ObjectsMap, construction.Signature)
-                            // Create a constructed objects from each
-                            .Select(arguments => new ConstructedConfigurationObject(construction, arguments));
-                    })
-                    // Make sure each constructed object are added to the container so we can recognize equal ones
-                    .Select(newObject =>
-                    {
-                        // Add the new object to the container. It will found out if there 
-                        // already is an equal version of it inside
-                        objectsContainer.TryAdd(newObject, out var equalObject);
-
-                        // If there is an equal object already in the container
-                        if (equalObject != default)
+                    // For a given configuration we create all possible objects
+                    // using the constructions from the input
+                    return input.Constructions
+                        // Perform the construction filter if it is specified
+                        .Where(construction => callbacks?.ConstructionFilter?.Invoke(currentConfiguration, construction) ?? true)
+                        // Generate new objects from the objects of the current configuration
+                        .SelectMany(construction =>
                         {
-                            // Then we'll re-assign the value to be returned further
-                            // This also step makes sure that equal objects won't be 
-                            // used with more than one instance. The objects that we 
-                            // will re-assign shouldn't be used elsewhere and thus 
-                            // will be eventually eaten by the garbage collector. 
-                            newObject = (ConstructedConfigurationObject)equalObject;
-                        }
+                            // First we check if we have enough object to match the signature
+                            if (!construction.Signature.CanBeMatched(currentConfiguration.ObjectsMap))
+                                return Enumerable.Empty<ConstructedConfigurationObject>();
 
-                        // Return the new object
-                        return newObject;
-                    })
-                    // Perform the passed validation of the generated object
-                    .Where(objectFilter.Invoke)
-                    // For each valid object create a new generated configuration
-                    .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, iterationIndex + 1))
-                    // Make sure it has no duplicates and there is no configuration equal to it yet
-                    .Where(configuration =>
-                    {
-                        #region Duplicate objects validation
+                            // Now we're sure we can generate some objects
+                            // First we take all the available pairs [object type, objects]
+                            return currentConfiguration.ObjectsMap
+                                    // Those are wrapped in a dictionary mapping object types to particular objects
+                                    // We take only those types that are required in our signature
+                                    .Where(keyValue => construction.Signature.ObjectTypesToNeededCount.ContainsKey(keyValue.Key))
+                                    // We cast each type to the IEnumerable of all possible variations of those objects
+                                    // having the needed number of elements. Each of these variations represents a way to
+                                    // use some objects of their type in our arguments
+                                    .Select(keyValue => keyValue.Value.Variations(construction.Signature.ObjectTypesToNeededCount[keyValue.Key]))
+                                    // We need to combine all these options for particular object types in every possible way
+                                    // For example, if we need 2 points and 2 lines, and we have 4 pair of points and 5 pairs of lines
+                                    // then there are 20 ways of combining these pairs. The result of this call will be an enumerable
+                                    // where each element is an array of options (each array representing an option for some particular type)
+                                    .Combine()
+                                    // We need to create a single array representing an input for the signature.Match method
+                                    .Select(arrays =>
+                                    {
+                                        // Create a helper dictionary mapping types to an array of objects of these types
+                                        var typeToObjects = arrays.ToDictionary(objects => objects[0].ObjectType, objects => objects);
 
-                        // Make sure the last object is not equal to any previous ones
-                        // TODO: Replace with Indexers once they're out
-                        if (configuration.ConstructedObjects.Reverse().Skip(1).Any(configurationObject => configurationObject == configuration.LastConstructedObject))
-                            return false;
+                                        // Create a helper dictionary mapping types to the current index (pointer) on the next object
+                                        // of this type that should be returned
+                                        var typeToIndex = arrays.ToDictionary(objects => objects[0].ObjectType, objects => 0);
 
-                        #endregion
+                                        // We go through the requested types and for each we take the object of the given type
+                                        // and at the same moment increase the index so that it points out to the next object of this type
+                                        return construction.Signature.ObjectTypes.Select(type => typeToObjects[type][typeToIndex[type]++]).ToArray();
+                                    })
+                                    // After we have objects for the signature, we can match it to create arguments
+                                    .Select(construction.Signature.Match)
+                                    // And finally a constructed objects using them
+                                    .Select(arguments => new ConstructedConfigurationObject(construction, arguments));
+                        })
+                        // Don't take the objects that would make duplicates in the configuration
+                        .Where(newObject => !currentConfiguration.ConstructedObjectsSet.Contains(newObject))
+                        // Perform the object filter if it is specified
+                        .Where(newObject => callbacks?.ObjectsFilter?.Invoke(currentConfiguration, newObject) ?? true)
+                        // Add the object to the current configuration
+                        .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, iterationIndex + 1))
+                        // Look whether we haven't generated a symmetric configuration
+                        .Where(newConfiguration =>
+                        {
+                            // Helper function that makes sure the passed objects have ids 
+                            // in the ids dictionary, projects each to this id, and wraps
+                            // them in a sorted set 
+                            SortedSet<int> MakeIdsSet(IEnumerable<ConstructedConfigurationObject> objects)
+                                // We simply take each object, get its id from the 
+                                // dictionary, or add a new one, based on its count
+                                => objects.Select(currentObject => objectIds.GetOrAdd(currentObject, () => objectIds.Count))
+                                    // And enumerate to a sorted set
+                                    .ToSortedSet();
 
-                        #region Equal configurations validation
+                            // Find the ids set for the current configuration
+                            var currentSet = MakeIdsSet(newConfiguration.ConstructedObjects);
 
-                        // Add the configuration to the container
-                        configurationsContainer.TryAdd(configuration, out var equalConfiguration);
+                            // If we already have this configuration, we won't generate it twice
+                            if (objectIdsSet.Contains(currentSet))
+                                return false;
 
-                        // If there already is an equal version of it, this one is invalid
-                        if (equalConfiguration != default)
-                            return false;
+                            // We need to find out if the current configuration if the representant
+                            // of its symmetry class. Therefore we take all the symmetric mappings                            
+                            var minIdsSet = currentConfiguration.LooseObjectsHolder.GetSymmetryMappings()
+                                    // For every make ids set from the constructed objects 
+                                    .Select(mapping => MakeIdsSet(newConfiguration.ConstructedObjects
+                                        // that are remapped using this mapping
+                                        .Select(constructedObject => (ConstructedConfigurationObject)constructedObject.Remap(mapping))))
+                                    // Take the lexicographically minimal ids set
+                                    .Min((a1, a2) => a1.CompareToLexicographically(a2));
 
-                        // We're sure the configuration is new, i.e. we haven't seen an equal version of it yet
+                            // If this configuration is not the representant of its symmetry class,
+                            // then we say it is not correct
+                            if (!minIdsSet.SequenceEqual(currentSet))
+                                return false;
 
-                        #endregion
+                            // Otherwise we mark it as a generated one
+                            objectIdsSet.Add(currentSet);
 
-                        // In this case the configuration is correct
-                        return true;
-                    })
-                    // Perform the passed configuration validation 
-                    .Where(configurationFilter.Invoke);
+                            // And return that it's fine
+                            return true;
+                        })
+                        // Perform the configuration filter if it is specified
+                        .Where(newConfiguration => callbacks?.ConfigurationsFilter?.Invoke(newConfiguration) ?? true);
                 });
 
                 #endregion
@@ -197,7 +182,5 @@ namespace GeoGen.Generator
 
             #endregion
         }
-
-        #endregion
     }
 }

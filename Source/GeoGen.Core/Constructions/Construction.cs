@@ -28,6 +28,11 @@ namespace GeoGen.Core
         /// </summary>
         public string Name { get; }
 
+        /// <summary>
+        /// Indicates if the construction construct an object whose construction is not defined deterministically.
+        /// </summary>
+        public bool IsRandom { get; }
+
         #endregion
 
         #region Constructor
@@ -38,11 +43,40 @@ namespace GeoGen.Core
         /// <param name="name">The name of the construction.</param>
         /// <param name="parameters">The parameters representing the signature of the construction.</param>
         /// <param name="outputType">The output type of the construction.</param>
-        protected Construction(string name, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType)
+        /// <param name="isRandom">Indicates if the construction construct an object whose construction is not defined deterministically.</param>
+        protected Construction(string name, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType, bool isRandom)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Signature = new Signature(parameters);
             OutputType = outputType;
+            IsRandom = isRandom;
+        }
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => Name.GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is a construction
+                && otherObject is Construction construction
+                // And the names match
+                && construction.Name.Equals(Name);
         }
 
         #endregion
@@ -54,7 +88,7 @@ namespace GeoGen.Core
         /// NOTE: This method i used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the construction.</returns>
-        public override string ToString() => $"{Name} ({Signature})";
+        public override string ToString() => $"{Name}({Signature})";
 
         #endregion
     }

@@ -58,7 +58,7 @@ namespace GeoGen.TheoremsAnalyzer
             // Create the dictionary 
             _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>(
                 // That compares composed constructions by their names
-                SimpleEqualityComparer<ComposedConstruction>.Create(c => c.Name));
+                SimpleEqualityComparer<ComposedConstruction>.Create(construction => construction.Name));
         }
 
         #endregion
@@ -77,7 +77,7 @@ namespace GeoGen.TheoremsAnalyzer
 
             // If it has only loose objects, then do anything
             if (constructedObject == null)
-                return new Theorem[0];
+                return Array.Empty<Theorem>();
 
             // Get the passed objects to it for comfort
             var objects = constructedObject.PassedArguments.FlattenedList;
@@ -230,7 +230,7 @@ namespace GeoGen.TheoremsAnalyzer
 
                         // In all the other cases we can't say anything useful :/
                         default:
-                            return new Theorem[0];
+                            return Array.Empty<Theorem>();
                     }
 
                 // If we have a composed construction...
@@ -274,8 +274,10 @@ namespace GeoGen.TheoremsAnalyzer
             // Create a configuration holding the same loose objects, and the final constructed one
             var configuration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { constructedObject });
 
-            // Local function that throws an exception informing about the examination failure
-            void ThrowIncorrectConstructionException(string message, Exception e = null) => throw new TheoremsAnalyzerException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
+            // Local function that throws an exception
+            void ThrowIncorrectConstructionException(string message, Exception e = null)
+                // informing about the examination failure
+                => throw new TheoremsAnalyzerException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
 
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(

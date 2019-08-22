@@ -31,8 +31,8 @@ namespace GeoGen.Constructor.Tests
             // Create pictures
             var pictures = new Pictures(configuration, new PicturesSettings
             {
-                MaximalAttemptsToReconstructAllPictures = 1,
-                MaximalAttemptsToReconstructOnePicture = 1,
+                MaximalAttemptsToReconstructAllPictures = 0,
+                MaximalAttemptsToReconstructOnePicture = 0,
                 NumberOfPictures = allObjects.Length
             });
 

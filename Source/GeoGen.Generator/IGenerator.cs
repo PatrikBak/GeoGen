@@ -1,6 +1,4 @@
-﻿using GeoGen.Core;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Generator
 {
@@ -10,12 +8,12 @@ namespace GeoGen.Generator
     public interface IGenerator
     {
         /// <summary>
-        /// Performs the generation algorithm.
+        /// Performs the generation algorithm on a given input. It can be adjusted
+        /// by specifying <see cref="GenerationCallbacks"/>.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        /// <param name="objectFilter">The filter applied to generated constructed objects.</param>
-        /// <param name="configurationFilter">The filter applied to generated configuration.</param>
+        /// <param name="callbacks">The callbacks to adjust the generation process.</param>
         /// <returns>The generated configurations.</returns>
-        IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input, Predicate<ConstructedConfigurationObject> objectFilter, Predicate<GeneratedConfiguration> configurationFilter);
+        IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input, GenerationCallbacks callbacks = null);
     }
 }

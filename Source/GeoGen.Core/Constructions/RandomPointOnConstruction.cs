@@ -25,7 +25,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="construction">The construction outputting a line or circle where a random point should be constructed.</param>
         public RandomPointOnConstruction(Construction construction)
-            : base($"RandomPointOn{construction.Name}", construction.Signature.Parameters, Point)
+            : base($"RandomPointOn{construction.Name}", construction.Signature.Parameters, Point, isRandom: true)
         {
             Construction = construction;
 

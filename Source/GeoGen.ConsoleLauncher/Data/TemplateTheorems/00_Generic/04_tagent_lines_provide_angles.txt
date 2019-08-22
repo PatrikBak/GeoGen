@@ -1,7 +1,0 @@
-﻿Configuration:
-
- CircleFromPointAndItsTangentLineAtOnePoint: A, B, C, D
-
-Theorems:
-
- EqualAngles: [A, D], [A, B], [C, A], [C, B]

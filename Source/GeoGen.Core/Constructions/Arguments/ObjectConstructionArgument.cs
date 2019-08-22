@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -32,17 +33,41 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <summary>
-        /// Finds out if this argument is equivalent to another given one.
-        /// Constructed objects created from equivalent arguments are equivalent.
+        /// Recreates the argument using a given mapping of loose objects.
         /// </summary>
-        /// <param name="otherArgument">The other argument.</param>
-        /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public override bool IsEquivalentTo(ConstructionArgument otherArgument)
+        /// <param name="mapping">The mapping of the loose objects.</param>
+        /// <returns>The remapped argument.</returns>
+        public override ConstructionArgument Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
         {
-            // The other argument must be an object argument
-            return otherArgument is ObjectConstructionArgument objectArgument
-                // And their passed objects must be the same
-                && PassedObject == objectArgument.PassedObject;
+            // Simply remap the passed object
+            return new ObjectConstructionArgument(PassedObject.Remap(mapping));
+        }
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => PassedObject.GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is an object argument
+                && otherObject is ObjectConstructionArgument objectArgument
+                // And their objects are equal
+                && objectArgument.PassedObject.Equals(PassedObject);
         }
 
         #endregion

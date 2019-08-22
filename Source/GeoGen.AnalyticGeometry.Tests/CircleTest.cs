@@ -242,7 +242,7 @@ namespace GeoGen.AnalyticGeometry.Tests
 
             bool EqualPoints(int i, IEnumerable<Point> result)
             {
-                return result.ToSet().SetEquals(results[i].ToSet());
+                return EnumerableExtensions.ToSet(result).SetEquals(EnumerableExtensions.ToSet(results[i]));
             }
 
             for (var i = 0; i < points.Count; i++)
@@ -384,7 +384,7 @@ namespace GeoGen.AnalyticGeometry.Tests
 
             bool EqualPoints(int i, IEnumerable<Point> result)
             {
-                return result.ToSet().SetEquals(results[i].ToSet());
+                return EnumerableExtensions.ToSet(result).SetEquals(EnumerableExtensions.ToSet(results[i]));
             }
 
             for (var i = 0; i < circles.Count; i++)

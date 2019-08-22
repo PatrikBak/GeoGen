@@ -10,6 +10,8 @@ namespace GeoGen.Core
     /// </summary>
     public static class Constructions
     {
+        #region Public methods
+
         /// <summary>
         /// Gets the predefined construction from a <see cref="PredefinedConstructionType"/>.
         /// </summary>
@@ -58,6 +60,8 @@ namespace GeoGen.Core
         /// <returns>The constructions</returns>
         public static IEnumerable<Construction> GetAllConstructions() => GetPredefinedConstructions().Cast<Construction>().Concat(GetComposedConstructions());
 
+        #endregion
+
         #region Private methods
 
         /// <summary>
@@ -71,7 +75,7 @@ namespace GeoGen.Core
             // Get all properties
             return typeOfClass.GetProperties()
                 // Perform the get method of each
-                .Select(p => p.GetGetMethod().Invoke(null, null))
+                .Select(property => property.GetGetMethod().Invoke(null, null))
                 // Cast to the requested type
                 .Cast<T>();
         }

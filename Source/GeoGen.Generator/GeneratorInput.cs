@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents an input for the <see cref="Generator"/>.
+    /// Represents an input for an <see cref="IGenerator"/>.
     /// </summary>
     public class GeneratorInput
     {

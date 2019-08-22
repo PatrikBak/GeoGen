@@ -16,12 +16,15 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Gets the single instance of the equality comparer of two theorems that uses the 
-        /// <see cref="AreTheoremsEquivalent(Theorem, Theorem)"/> method and a constant hash code function
-        /// (i.e. using it together with a hash map / hash set would make all the operations O(n)).
+        /// <see cref="AreTheoremsEquivalent(Theorem, Theorem)"/> method and an almost constant
+        /// hash code function (i.e. using it together with a hash map / hash set would make
+        /// all the operations O(n)).
         /// </summary>
         public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) =>
             // Reuse the static helper method
-            AreTheoremsEquivalent(t1, t2));
+            AreTheoremsEquivalent(t1, t2),
+            // Equivalent theorems have the same type
+            t => t.Type.GetHashCode());
 
         #endregion
 
@@ -40,7 +43,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the list of theorem objects that this theorem is about.
         /// </summary>
-        public IReadOnlyList<TheoremObject> InvolvedObjects { get; }
+        public IReadOnlyHashSet<TheoremObject> InvolvedObjects { get; }
 
         #endregion
 
@@ -51,12 +54,12 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
-        /// <param name="involvedObjects">The list of theorem objects that this theorem is about.</param>
-        public Theorem(Configuration configuration, TheoremType type, IReadOnlyList<TheoremObject> involvedObjects)
+        /// <param name="involvedObjects">The theorem objects that this theorem is about.</param>
+        public Theorem(Configuration configuration, TheoremType type, IEnumerable<TheoremObject> involvedObjects)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
-            InvolvedObjects = involvedObjects ?? throw new ArgumentNullException(nameof(involvedObjects));
+            InvolvedObjects = involvedObjects?.ToReadOnlyHashSet(TheoremObject.EquivalencyComparer) ?? throw new ArgumentNullException(nameof(involvedObjects));
         }
 
         /// <summary>
@@ -86,7 +89,7 @@ namespace GeoGen.Core
                     _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
                 })
                 // Enumerate to an array
-                .ToArray();
+                .ToReadOnlyHashSet(TheoremObject.EquivalencyComparer);
         }
 
         #endregion
@@ -107,8 +110,7 @@ namespace GeoGen.Core
                 .Select(theoremObject => theoremObject.GetAllDefinitions())
                 // Combine them into a single one in every possible ways
                 .Combine()
-                // We have needless objects if and only if there is a definition
-                // containing fewer objects than we're expecting
+                // We have needless objects if and only if there is a definition containing fewer objects than we're expecting
                 .Any(definition => definition.Flatten().Distinct().Count() < Configuration.AllObjects.Count);
         }
 
@@ -215,51 +217,15 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Determines if two theorems are equivalent, i.e. if they have the same type and geometrically
-        /// represent the same statements in the same geometric situation. The way this is determined
-        /// depends on their type, because different types have different semantics of their involved 
-        /// theorem objects.
+        /// represent the same statements in the same geometric situation. 
         /// </summary>
         /// <param name="theorem1">The first theorem.</param>
         /// <param name="theorem2">The second theorem.</param>
         /// <returns>true, if they are equivalent; false otherwise.</returns>
         public static bool AreTheoremsEquivalent(Theorem theorem1, Theorem theorem2)
         {
-            // If they don't have the same type, then they are not equivalent
-            if (theorem1.Type != theorem2.Type)
-                return false;
-
-            // Get the instance of the equality comparer of theorem objects
-            var comparer = TheoremObject.EquivalencyComparer;
-
-            // We need to take care particular types since they might have specific signatures
-            switch (theorem1.Type)
-            {
-                // The cases where the objects can be in any order
-                case TheoremType.CollinearPoints:
-                case TheoremType.ConcyclicPoints:
-                case TheoremType.ConcurrentObjects:
-
-                    // Prepare the number of needed common objects for theorems to be equivalent
-                    var neededPoints = theorem1.Type == TheoremType.CollinearPoints || theorem1.Type == TheoremType.ConcurrentObjects ? 3 : 4;
-
-                    // Check if there is at least the needed number of common objects
-                    return theorem1.InvolvedObjects.ToSet(comparer).Intersect(theorem2.InvolvedObjects, comparer).Count() >= neededPoints;
-
-                // The cases where we have two objects
-                case TheoremType.ParallelLines:
-                case TheoremType.PerpendicularLines:
-                case TheoremType.TangentCircles:
-                case TheoremType.LineTangentToCircle:
-                case TheoremType.EqualAngles:
-                case TheoremType.EqualLineSegments:
-
-                    // Check if the sets of their internal objects are equal
-                    return theorem1.InvolvedObjects.ToSet(comparer).SetEquals(theorem2.InvolvedObjects);
-
-                // If something else
-                default:
-                    throw new GeoGenException($"Unhandled type of theorem: {theorem1.Type}");
-            }
+            // Their types and involved object sets must match
+            return theorem1.Type == theorem2.Type && theorem1.InvolvedObjects.Equals(theorem2.InvolvedObjects);
         }
 
         #endregion

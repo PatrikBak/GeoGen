@@ -210,6 +210,12 @@ namespace GeoGen.AnalyticGeometry
         #region HashCode and Equals
 
         /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => (A.Rounded(), B.Rounded(), C.Rounded()).GetHashCode();
+
+        /// <summary>
         /// Finds out if a passed object is equal to this one.
         /// </summary>
         /// <param name="otherObject">The passed object.</param>
@@ -218,16 +224,6 @@ namespace GeoGen.AnalyticGeometry
         {
             // Do the null and then the type check and then call the other Equals method
             return otherObject != null && otherObject is Line line && Equals(line);
-        }
-
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            // Let's use the built-in .NET hash code calculator for anonymous types
-            return new { a = A.Rounded(), b = B.Rounded(), c = C.Rounded() }.GetHashCode();
         }
 
         #endregion

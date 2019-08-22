@@ -10,7 +10,7 @@ namespace GeoGen.Core
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AngleTheoremObject"/> class.
+        /// Initializes a new instance of the <see cref="LineSegmentTheoremObject"/> class.
         /// </summary>
         /// <param name="object1">The first point of the line segment.</param>
         /// <param name="object2">The second line of the line segment.</param>
@@ -20,7 +20,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AngleTheoremObject"/> class.
+        /// Initializes a new instance of the <see cref="LineSegmentTheoremObject"/> class.
         /// </summary>
         /// <param name="object1">The first point of the line segment.</param>
         /// <param name="object2">The second line of the line segment.</param>
@@ -49,17 +49,6 @@ namespace GeoGen.Core
             // Reconstruct based on the fact whether remapping could be done
             return objects != default ? new LineSegmentTheoremObject((PointTheoremObject)objects.Item1, (PointTheoremObject)objects.Item2) : null;
         }
-
-        #endregion
-
-        #region To String
-
-        /// <summary>
-        /// Converts the line segment to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"Line Segment {Object1}, {Object2}";
 
         #endregion
     }

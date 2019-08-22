@@ -33,7 +33,9 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
-        public override TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping) => new PointTheoremObject(Map(ConfigurationObject, mapping));
+        public override TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping) =>
+            // Reuse the static helper from the base class    
+            new PointTheoremObject(Map(ConfigurationObject, mapping));
 
         #endregion
 
@@ -44,7 +46,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"Point {ConfigurationObject.Id}";
+        public override string ToString() => $"{ConfigurationObject.Id}";
 
         #endregion
     }

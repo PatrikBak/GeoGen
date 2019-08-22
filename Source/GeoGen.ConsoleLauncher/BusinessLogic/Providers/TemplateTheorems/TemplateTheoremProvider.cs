@@ -107,18 +107,24 @@ namespace GeoGen.ConsoleLauncher
                     // Try to parse it
                     var theorems = _parser.ParseTheorems(fileContent)
                         // Cast each theorem to a template theorem
-                        .Select((theorem, i) => new TemplateTheorem(theorem, 
+                        .Select((theorem, i) => new TemplateTheorem(theorem,
                             // To get file we look for relative path
-                            Path.GetRelativePath(_settings.TheoremsFolderPath, path), 
+                            Path.GetRelativePath(_settings.TheoremsFolderPath, path),
                             // Set the theorem number according to the file
                             i + 1));
 
                     // Create a map from them
                     var theoremsMap = new TheoremsMap(theorems);
 
-                    // If there is no theorem, skip
+                    // If there is no theorem
                     if (theoremsMap.AllObjects.IsEmpty())
+                    {
+                        // Log that we're skipping it
+                        LoggingManager.LogInfo("No theorems, skipping file");
+
+                        // Skip
                         continue;
+                    }
 
                     // They have the same configuration, take it from the first
                     var configuration = theoremsMap.AllObjects[0].Configuration;
@@ -137,6 +143,9 @@ namespace GeoGen.ConsoleLauncher
 
                 #endregion
             }
+
+            // Log finish
+            LoggingManager.LogInfo($"Found {result.Count} theorem file(s) with {result.Sum(t => t.Item2.Count)} theorem(s).");
 
             // Return the result
             return result;

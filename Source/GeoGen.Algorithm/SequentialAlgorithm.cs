@@ -124,10 +124,19 @@ namespace GeoGen.Algorithm
 
             #endregion
 
+            #region Construction verification function
+
+            // The function that says if we should perform the construction on the configuration
+            // TODO: Implement it meaningfully, for example, consider not using construction when
+            //       it's already used more than a few times.
+            static bool VerifyThatConstructionMightBeApplied(GeneratedConfiguration configuration, Construction construction) => true;
+
+            #endregion
+
             #region Object verification function
 
             // Prepare the function that checks if the generated object is correct
-            bool VerifyConstructedObjectCorrectness(ConstructedConfigurationObject constructedObject)
+            bool VerifyConstructedObjectCorrectness(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject constructedObject)
             {
                 // It's correct if it hasn't been previously marked as an inconstructible one
                 return !inconstructibleObjects.Contains(constructedObject);
@@ -217,51 +226,63 @@ namespace GeoGen.Algorithm
 
             #endregion
 
-            // Perform the generation with our defined verification functions
-            return (initialTheorems, _generator.Generate(input, VerifyConstructedObjectCorrectness, VerifyConfigurationCorrectness)
-                    // For each correct configuration perform the theorem analysis
-                    .Select(configuration =>
-                    {
-                        // Get the contextual picture
-                        var picture = contextualPicturesMap[configuration];
+            #region Returning result
 
-                        // Find new theorems
-                        var newTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindNewTheorems(picture)));
+            // Prepare the callbacks for the generation algorithm
+            var callbacks = new GenerationCallbacks
+            {
+                ObjectsFilter = VerifyConstructedObjectCorrectness,
+                ConfigurationsFilter = VerifyConfigurationCorrectness,
+                ConstructionFilter = VerifyThatConstructionMightBeApplied
+            };
 
-                        // Get the old theorems
-                        // If the previous configuration is the initial one
-                        var oldTheorems = configuration.PreviousConfiguration.IterationIndex == 0 ?
-                            // Then we have them in a variable
-                            initialTheorems.AllObjects
-                            // Otherwise we take them from the map
-                            : theoremsMap[configuration.PreviousConfiguration].AllObjects;
+            // Return the tuple of initial theorems and lazy algorithm enumerable
+            return (initialTheorems, _generator.Generate(input, callbacks)
+                   // For each correct configuration perform the theorem analysis
+                   .Select(configuration =>
+                   {
+                       // Get the contextual picture
+                       var picture = contextualPicturesMap[configuration];
 
-                        // We need to correct them so that theorem objects depict
-                        // the most recent situation
-                        oldTheorems = oldTheorems.Select(theorem => Recreate(picture, theorem)).ToList();
+                       // Find new theorems
+                       var newTheorems = new TheoremsMap(_finders.SelectMany(finder => finder.FindNewTheorems(picture)));
 
-                        // Now we can get all theorems
-                        var allTheorems = new TheoremsMap(newTheorems.AllObjects.Concat(oldTheorems));
+                       // Get the old theorems
+                       // If the previous configuration is the initial one
+                       var oldTheorems = configuration.PreviousConfiguration.IterationIndex == 0 ?
+                          // Then we have them in a variable
+                          initialTheorems.AllObjects
+                          // Otherwise we take them from the map
+                          : theoremsMap[configuration.PreviousConfiguration].AllObjects;
 
-                        // And cache them
-                        theoremsMap.Add(configuration, allTheorems);
+                       // We need to correct them so that theorem objects depict
+                       // the most recent situation
+                       oldTheorems = oldTheorems.Select(theorem => Recreate(picture, theorem)).ToList();
 
-                        // Analyze the theorems
-                        var analysisResults = _analyzer.Analyze(new TheoremAnalyzerInput
-                        {
-                            ContextualPicture = picture,
-                            NewTheorems = newTheorems,
-                            AllTheorems = allTheorems
-                        });
+                       // Now we can get all theorems
+                       var allTheorems = new TheoremsMap(newTheorems.AllObjects.Concat(oldTheorems));
 
-                        // Return the final output
-                        return new AlgorithmOutput
-                        {
-                            Configuration = configuration,
-                            Theorems = newTheorems,
-                            TheoremsFeedback = analysisResults
-                        };
-                    }));
+                       // And cache them
+                       theoremsMap.Add(configuration, allTheorems);
+
+                       // Analyze the theorems
+                       var analysisResults = _analyzer.Analyze(new TheoremAnalyzerInput
+                       {
+                           ContextualPicture = picture,
+                           NewTheorems = newTheorems,
+                           AllTheorems = allTheorems
+                       });
+
+                       // Return the final output
+                       return new AlgorithmOutput
+                       {
+                           Configuration = configuration,
+                           Theorems = newTheorems,
+                           TheoremsFeedback = analysisResults
+                       };
+                   }));
+
+            #endregion
         }
 
         /// <summary>

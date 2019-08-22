@@ -35,7 +35,7 @@ namespace GeoGen.AnalyticGeometry
 
                 // If there is no intersection, then we can immediately return an empty array
                 if (intersection == null)
-                    return new Point[0];
+                    return Array.Empty<Point>();
 
                 // Otherwise we set the intersections to this single one
                 intersections = new[] { intersection.Value };

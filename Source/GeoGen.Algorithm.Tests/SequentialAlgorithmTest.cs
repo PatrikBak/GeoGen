@@ -23,7 +23,7 @@ namespace GeoGen.Algorithm.Tests
         /// <summary>
         /// Gets the instance of the sequential algorithm.
         /// </summary>
-        private SequentialAlgorithm Algorithm
+        private static SequentialAlgorithm Algorithm
         {
             get
             {

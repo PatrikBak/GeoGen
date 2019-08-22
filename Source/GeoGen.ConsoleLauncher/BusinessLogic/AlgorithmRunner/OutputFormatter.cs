@@ -92,9 +92,12 @@ namespace GeoGen.ConsoleLauncher
                 case TheoremType.EqualAngles:
                 case TheoremType.EqualLineSegments:
 
+                    // Get the list of objects
+                    var objectsList = theorem.InvolvedObjects.ToList();
+
                     // Convert the first two 
-                    var first = TheoremObjectToString(theorem.InvolvedObjects[0]);
-                    var second = TheoremObjectToString(theorem.InvolvedObjects[1]);
+                    var first = TheoremObjectToString(objectsList[0]);
+                    var second = TheoremObjectToString(objectsList[1]);
 
                     // Get the smaller and the larger
                     var smaller = first.CompareTo(second) < 0 ? first : second;

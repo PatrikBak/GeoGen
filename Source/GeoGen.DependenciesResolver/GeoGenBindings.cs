@@ -1,10 +1,8 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Constructor;
-using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
 using GeoGen.TheoremsFinder;
-using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
 
@@ -22,27 +20,8 @@ namespace GeoGen.DependenciesResolver
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddGenerator(this IKernel kernel)
         {
-            // Stateless services
+            // Stateless service
             kernel.Bind<IGenerator>().To<Generator.Generator>().InSingletonScope();
-            kernel.Bind<IArgumentsGenerator>().To<ArgumentsGenerator>().InSingletonScope();
-            kernel.Bind<IGeneralArgumentsToStringConverter>().To<GeneralArgumentsToStringConverter>().InSingletonScope();
-            kernel.Bind<IGeneralConfigurationToStringConverter>().To<GeneralConfigurationToStringConverter>().InSingletonScope();
-            kernel.Bind<IFullObjectToStringConverter>().To<FullObjectToStringConverter>().InSingletonScope();
-
-            // Factories
-            kernel.Bind<IArgumentsContainerFactory>().ToFactory().InSingletonScope();
-            kernel.Bind<IConfigurationObjectsContainerFactory>().ToFactory().InSingletonScope();
-            kernel.Bind<IConfigurationsContainerFactory>().ToFactory().InSingletonScope();
-
-            // Factory outputs
-            kernel.Bind<IContainer<Arguments>>().To<ArgumentsContainer>();
-            kernel.Bind<IContainer<ConfigurationObject>>().To<ConfigurationObjectsContainer>();
-            kernel.Bind<IContainer<GeneratedConfiguration>>().To<ConfigurationsContainer>();
-
-            // Converters used by factory outputs
-            kernel.Bind<DefaultFullObjectToStringConverter>().ToSelf();
-            kernel.Bind<FullConfigurationToStringConverter>().ToSelf();
-            kernel.Bind<DefaultArgumentsToStringConverter>().ToSelf();
 
             // Return the kernel for chaining
             return kernel;

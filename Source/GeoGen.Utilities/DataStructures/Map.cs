@@ -11,7 +11,7 @@ namespace GeoGen.Utilities
     /// </summary>
     /// <typeparam name="T1">The type of first items.</typeparam>
     /// <typeparam name="T2">The type of second items.</typeparam>
-    public class Map<T1, T2> : IEnumerable<(T1 item1, T2 item2)>
+    public class Map<T1, T2> : IEnumerable<(T1, T2)>
     {
         #region Private fields
 
@@ -116,7 +116,7 @@ namespace GeoGen.Utilities
         /// Gets a generic enumerator.
         /// </summary>
         /// <returns>A generic enumerator.</returns>
-        public IEnumerator<(T1 item1, T2 item2)> GetEnumerator() => _leftToRight.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
+        public IEnumerator<(T1, T2)> GetEnumerator() => _leftToRight.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
 
         /// <summary>
         /// Gets a non-generic enumerator.

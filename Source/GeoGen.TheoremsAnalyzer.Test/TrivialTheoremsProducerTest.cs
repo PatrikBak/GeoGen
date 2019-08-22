@@ -25,7 +25,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// <summary>
         /// Gets the trivial theorems producer.
         /// </summary>
-        private ITrivialTheoremsProducer Producer
+        private static ITrivialTheoremsProducer Producer
         {
             get
             {

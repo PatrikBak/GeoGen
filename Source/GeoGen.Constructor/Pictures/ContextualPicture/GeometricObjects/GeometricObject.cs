@@ -4,8 +4,7 @@ namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a base class for a geometric object that can directly correspond to a
-    /// <see cref="Core.ConfigurationObject"/>, but doesn't necessary have to and also can be 
-    /// defined implicitly by <see cref="PointObject"/>s (see <see cref="DefinableByPoints"/>).
+    /// <see cref="Core.ConfigurationObject"/>.
     /// </summary>
     public abstract class GeometricObject
     {

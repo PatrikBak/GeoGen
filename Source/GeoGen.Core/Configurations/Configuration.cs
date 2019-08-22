@@ -32,6 +32,11 @@ namespace GeoGen.Core
         public IReadOnlyList<ConstructedConfigurationObject> ConstructedObjects { get; }
 
         /// <summary>
+        /// Gets the constructed objects of the configuration as a set.
+        /// </summary>
+        public IReadOnlyHashSet<ConstructedConfigurationObject> ConstructedObjectsSet { get; }
+
+        /// <summary>
         /// Gets the last constructed object of the configuration.
         /// </summary>
         public ConstructedConfigurationObject LastConstructedObject => ConstructedObjects.LastOrDefault() ?? throw new GeoGenException("No constructed objects");
@@ -60,6 +65,7 @@ namespace GeoGen.Core
             LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
             ObjectsMap = new ConfigurationObjectsMap(LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
+            ConstructedObjectsSet = ConstructedObjects.ToReadOnlyHashSet();
         }
 
         /// <summary>
@@ -84,7 +90,38 @@ namespace GeoGen.Core
         /// <param name="layout">The layout for the automatically detected loose objects.</param>
         /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
-        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConfigurationObject[] objects) => new Configuration(layout, objects.GetDefiningObjects().ToArray());
+        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConfigurationObject[] objects)
+            // We use our helper method to find all the objects that define the passed ones
+            => new Configuration(layout, objects.GetDefiningObjects().ToArray());
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => (LooseObjectsHolder, ConstructedObjectsSet).GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is a configuration
+                && otherObject is Configuration configuration
+                // And the sets of constructed objects are equal
+                && configuration.ConstructedObjectsSet.Equals(ConstructedObjectsSet)
+                // And the loose objects are equal
+                && LooseObjectsHolder.Equals(configuration.LooseObjectsHolder);
+        }
 
         #endregion
 
@@ -95,7 +132,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => AllObjects.Select(configurationObject => configurationObject.ToString()).ToJoinedString("; ");
+        public override string ToString() => $"{LooseObjectsHolder}, {ConstructedObjects.ToJoinedString()}";
 
         #endregion
     }

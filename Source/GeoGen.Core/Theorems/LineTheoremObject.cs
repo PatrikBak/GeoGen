@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Utilities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -62,11 +64,21 @@ namespace GeoGen.Core
         #region To String
 
         /// <summary>
-        /// Converts the circle to a string. 
+        /// Converts the line theorem object to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"Line {base.ToString()}";
+        public override string ToString()
+        {
+            // If there is a specific configuration object, we include it 
+            var objectPart = ConfigurationObject == null ? "" : $"{ConfigurationObject.Id}";
+
+            // If there are points, include them
+            var pointsPart = Points.Any() ? $"[{Points.Select(p => p.Id).Ordered().ToJoinedString(",")}]" : "";
+
+            // Construct the final string including the points
+            return $"{objectPart}{pointsPart}";
+        }
 
         #endregion
     }

@@ -2,12 +2,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a list of <see cref="ConstructionArgument"/> that is directly 
     /// part of the definition of <see cref="ConstructedConfigurationObject"/>s. 
+    /// 
+    /// TODO: Do inner objects have to be distinct? I think it should only hold true
+    ///       for sets, which should not be equivalent to each other.
+    /// 
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>
     {
@@ -56,21 +61,29 @@ namespace GeoGen.Core
             // Local function to extract objects from an argument
             void Extract(ConstructionArgument argument)
             {
-                // If we have an object argument
-                if (argument is ObjectConstructionArgument objectArgument)
+                // Switch based on type
+                switch (argument)
                 {
-                    // Then we simply add the internal object to the result
-                    result.Add(objectArgument.PassedObject);
+                    // If we have an object argument
+                    case ObjectConstructionArgument objectArgument:
 
-                    // And terminate
-                    return;
+                        // We simply add the internal object to the result
+                        result.Add(objectArgument.PassedObject);
+
+                        break;
+
+                    // If we have a set argument
+                    case SetConstructionArgument setArgument:
+
+                        // We recursively call this function for its internal arguments
+                        setArgument.PassedArguments.ForEach(Extract);
+
+                        break;
+
+                    // Default case
+                    default:
+                        throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}");
                 }
-
-                // Otherwise we have a set argument
-                var setArgument = (SetConstructionArgument)argument;
-
-                // We recursively call this function for its internal arguments
-                setArgument.PassedArguments.ForEach(Extract);
             }
 
             // Now we just call our local function for all the arguments
@@ -78,6 +91,21 @@ namespace GeoGen.Core
 
             // And return the result
             return result;
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Recreates the arguments using a given mapping of loose objects.
+        /// </summary>
+        /// <param name="mapping">The mapping of the loose objects.</param>
+        /// <returns>The remapped arguments.</returns>
+        public Arguments Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
+        {
+            // Remap individual arguments using their remap method 
+            return new Arguments(ArgumentsList.Select(argument => argument.Remap(mapping)).ToList());
         }
 
         #endregion
@@ -98,6 +126,33 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => ArgumentsList.GetHashCodeOfList();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is an Arguments object
+                && otherObject is Arguments arguments
+                // And the arguments lists
+                && arguments.ArgumentsList.SequenceEqual(ArgumentsList);
+        }
+
+        #endregion
+
         #region To String
 
         /// <summary>
@@ -105,7 +160,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => ArgumentsList.ToJoinedString(";");
+        public override string ToString() => ArgumentsList.ToJoinedString(",");
 
         #endregion
     }

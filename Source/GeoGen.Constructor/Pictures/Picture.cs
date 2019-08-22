@@ -94,7 +94,7 @@ namespace GeoGen.Constructor
             var clonedPicture = new Picture();
 
             // Copy the content
-            _content.ForEach(pair => clonedPicture._content.Add(pair.item1, pair.item2));
+            _content.ForEach(pair => clonedPicture._content.Add(pair.Item1, pair.Item2));
 
             // Copy the reconstructors
             _reconstructors.ForEach(clonedPicture._reconstructors.Add);

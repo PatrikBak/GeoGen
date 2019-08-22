@@ -159,7 +159,7 @@ namespace GeoGen.ConsoleLauncher
                     Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
 
                 // Skip configurations without theorems
-                if (algorithmOutput.Theorems.Count == 0)
+                if (algorithmOutput.Theorems.AllObjects.Count == 0)
                     continue;
 
                 // Count all theorems

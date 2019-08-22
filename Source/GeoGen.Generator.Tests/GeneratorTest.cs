@@ -41,7 +41,7 @@ namespace GeoGen.Generator.Tests
             };
 
             // Assert count
-            Generator.Generate(input, _ => true, _ => true).Should().HaveCount(18);
+            Generator.Generate(input).Should().HaveCount(18);
         }
     }
 }

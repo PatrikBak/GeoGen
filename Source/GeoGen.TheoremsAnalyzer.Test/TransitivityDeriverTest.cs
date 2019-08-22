@@ -22,7 +22,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// <summary>
         /// The instance of the deriver.
         /// </summary>
-        private TransitivityDeriver Deriver => new TransitivityDeriver();
+        private static TransitivityDeriver Deriver => new TransitivityDeriver();
 
         #endregion
 
@@ -266,7 +266,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var result = Deriver.Derive(configuration, theorems, assumedTheorems);
 
             // Prepare all tuples of equalities of new and old objects
-            var allEqualities = new[] { angles.Take(4), angles.Skip(4) }.Combine()
+            var allEqualities = (new[] { angles.Take(4), angles.Skip(4) }).Combine()
                 // Make each a theorem
                 .Select(twoAngles => new Theorem(configuration, EqualAngles, twoAngles))
                 // That have not been established
