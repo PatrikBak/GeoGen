@@ -32,7 +32,7 @@ namespace GeoGen.Core
         public Theorem FindEquivalentTheorem(Theorem theorem)
         {
             // Try to look for theorems of the given type and first the first equivalent
-            return this.GetOrDefault(theorem.Type)?.FirstOrDefault(_theorem => _theorem.IsEquivalentTo(theorem));
+            return this.GetOrDefault(theorem.Type)?.FirstOrDefault(_theorem => _theorem.Equals(theorem));
         }
 
         #endregion

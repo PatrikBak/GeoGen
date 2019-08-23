@@ -26,27 +26,5 @@
         }
 
         #endregion
-
-        #region Public abstract methods implementation
-
-        /// <summary>
-        /// Determines if a given theorem object is equivalent to this one,
-        /// i.e. if they represent the same object of a configuration.
-        /// </summary>
-        /// <param name="otherObject">The theorem object.</param>
-        /// <returns>true if they are equivalent; false otherwise.</returns>
-        public override bool IsEquivalentTo(TheoremObject otherObject)
-        {
-            // Either there instance are the same
-            return this == otherObject ||
-                // Or we have another base object
-                otherObject is BaseTheoremObject baseObject &&
-                // And both this and the other object have their configuration objects set
-                ConfigurationObject != null && baseObject.ConfigurationObject != null &&
-                // And these objects are the same
-                ConfigurationObject.Equals(baseObject.ConfigurationObject);
-        }
-
-        #endregion
     }
 }

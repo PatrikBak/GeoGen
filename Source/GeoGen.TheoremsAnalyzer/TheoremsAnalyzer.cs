@@ -116,7 +116,7 @@ namespace GeoGen.TheoremsAnalyzer
                     #region Trivial theorem testing
 
                     // If they're is a trivial theorem equivalent to it
-                    if (trivialTheorems.GetOrDefault(type)?.Any(trivialTheorem => trivialTheorem.IsEquivalentTo(theorem)) ?? false)
+                    if (trivialTheorems.GetOrDefault(type)?.Any(trivialTheorem => trivialTheorem.Equals(theorem)) ?? false)
                     {
                         // Mark it in the result
                         result.Add(theorem, new TrivialTheoremFeedback());

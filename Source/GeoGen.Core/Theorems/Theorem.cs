@@ -12,22 +12,6 @@ namespace GeoGen.Core
     /// </summary>
     public class Theorem
     {
-        #region Public static properties
-
-        /// <summary>
-        /// Gets the single instance of the equality comparer of two theorems that uses the 
-        /// <see cref="AreTheoremsEquivalent(Theorem, Theorem)"/> method and an almost constant
-        /// hash code function (i.e. using it together with a hash map / hash set would make
-        /// all the operations O(n)).
-        /// </summary>
-        public static readonly IEqualityComparer<Theorem> EquivalencyComparer = new SimpleEqualityComparer<Theorem>((t1, t2) =>
-            // Reuse the static helper method
-            AreTheoremsEquivalent(t1, t2),
-            // Equivalent theorems have the same type
-            t => t.Type.GetHashCode());
-
-        #endregion
-
         #region Public properties
 
         /// <summary>
@@ -59,7 +43,7 @@ namespace GeoGen.Core
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
-            InvolvedObjects = involvedObjects?.ToReadOnlyHashSet(TheoremObject.EquivalencyComparer) ?? throw new ArgumentNullException(nameof(involvedObjects));
+            InvolvedObjects = involvedObjects?.ToReadOnlyHashSet() ?? throw new ArgumentNullException(nameof(involvedObjects));
         }
 
         /// <summary>
@@ -89,7 +73,7 @@ namespace GeoGen.Core
                     _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
                 })
                 // Enumerate to an array
-                .ToReadOnlyHashSet(TheoremObject.EquivalencyComparer);
+                .ToReadOnlyHashSet();
         }
 
         #endregion
@@ -135,16 +119,6 @@ namespace GeoGen.Core
             return new Theorem(Configuration, Type, remappedObjects);
         }
 
-        /// <summary>
-        /// Determines if two theorems are equivalent, i.e. if they have the same type and geometrically
-        /// represent the same statements in the same geometric situation. The way this is determined
-        /// depends on their type, because different types have different semantics of their involved 
-        /// theorem objects.
-        /// </summary>
-        /// <param name="theorem">The theorem.</param>
-        /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public bool IsEquivalentTo(Theorem theorem) => AreTheoremsEquivalent(this, theorem);
-
         #endregion
 
         #region Public static methods
@@ -158,7 +132,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
-        /// <param name="involvedObjects">The list of flattened theorem objects that this theorem is about.</param>
+        /// <param name="flattenedObjects">The list of flattened theorem objects that this theorem is about.</param>
         /// <returns>The derived theorem.</returns>
         public static Theorem DeriveFromFlattenedObjects(Configuration configuration, TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
         {
@@ -215,17 +189,33 @@ namespace GeoGen.Core
             return new Theorem(configuration, type, finalTheoremObjects);
         }
 
+        #endregion
+
+        #region HashCode and Equals
+
         /// <summary>
-        /// Determines if two theorems are equivalent, i.e. if they have the same type and geometrically
-        /// represent the same statements in the same geometric situation. 
+        /// Gets the hash code of this object.
         /// </summary>
-        /// <param name="theorem1">The first theorem.</param>
-        /// <param name="theorem2">The second theorem.</param>
-        /// <returns>true, if they are equivalent; false otherwise.</returns>
-        public static bool AreTheoremsEquivalent(Theorem theorem1, Theorem theorem2)
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => (Type, InvolvedObjects).GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
         {
-            // Their types and involved object sets must match
-            return theorem1.Type == theorem2.Type && theorem1.InvolvedObjects.Equals(theorem2.InvolvedObjects);
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And it is a theorem
+                && otherObject is Theorem theorem
+                // And their types matches
+                && Type.Equals(theorem.Type)
+                // And their involved objects matches
+                && InvolvedObjects.Equals(theorem.InvolvedObjects);
         }
 
         #endregion

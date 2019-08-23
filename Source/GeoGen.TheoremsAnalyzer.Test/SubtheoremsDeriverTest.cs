@@ -29,19 +29,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// The equality comparer for <see cref="SubtheoremsDeriverOutput"/>.
         /// </summary>
         private static readonly IEqualityComparer<SubtheoremsDeriverOutput> OutputsComparer = new SimpleEqualityComparer<SubtheoremsDeriverOutput>(
-            // Method to say whether two objects are the same
-            (o1, o2) =>
-            {
-                // Prepare the comparer for theorem equality tuples
-                var theoremTuplesComparer = new SimpleEqualityComparer<(Theorem, Theorem)>(
-                     // Return that their objects are equivalent
-                     (t1, t2) => t1.Item1.IsEquivalentTo(t2.Item1) && t1.Item2.IsEquivalentTo(t2.Item2));
-
-                // Return true when used equalities are set-equals
-                return o1.UsedEqualities.ToSet().SetEquals(o2.UsedEqualities)
-                     // As well as derived theorems are set-equals
-                     && o1.DerivedTheorems.ToSet(theoremTuplesComparer).SetEquals(o2.DerivedTheorems);
-            });
+            // They're the same when the sets of used equalities are the same 
+            (o1, o2) => o1.UsedEqualities.ToSet().SetEquals(o2.UsedEqualities)
+                    // And the sets of derived theorems are the same as well
+                    && o1.DerivedTheorems.ToSet().SetEquals(o2.DerivedTheorems));
 
         #endregion
 

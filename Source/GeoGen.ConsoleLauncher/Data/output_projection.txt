@@ -1,0 +1,548 @@
+Initial configuration:
+
+ThreePoints: A, B, C
+
+Iterations: 3
+
+Constructions:
+
+ - PerpendicularProjectionOnLineFromPoints(P,{P,P})
+
+Results:
+
+------------------------------------------------
+Configuration 2
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, C, D), (B, C, E), [A, B]
+  2. ConcurrentObjects: (C, D, E), [A, D], [B, E]
+  3. EqualAngles: [A, B], [A, C, E], [D, E], [B, C, D]
+  4. EqualAngles: [A, B], [A, D], [B, E], [D, E]
+  5. EqualAngles: [A, B], [B, C, D], [D, E], [A, C, E]
+  6. EqualAngles: [A, C, E], [A, D], [B, E], [B, C, D]
+  7. EqualAngles: [A, C, E], [B, C, D], [B, E], [A, D]
+  8. EqualAngles: [B, E], [A, B], [D, E], [A, D]
+
+------------------------------------------------
+Configuration 3
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, E), (B, C, E), [A, C]
+  2. EqualAngles: [A, B, E], [A, D], [D, E], [B, C, D]
+  3. EqualAngles: [A, B, E], [B, C, D], [D, E], [A, D]
+
+------------------------------------------------
+Configuration 4
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(A, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F)
+  2. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
+  3. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
+  4. ConcurrentObjects: (A, C, F), (B, E, F), [B, C, D]
+  5. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
+  6. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  7. EqualAngles: [A, B], [A, C, E], [A, F], [A, D]
+  8. EqualAngles: [A, B], [A, D], [A, F], [A, C, E]
+  9. EqualAngles: [A, B], [B, C, D], [A, F], [B, E]
+ 10. EqualAngles: [A, B], [B, E], [A, F], [B, C, D]
+ 11. EqualAngles: [A, C, E], [D, E, F], [A, F], [B, E]
+ 12. EqualAngles: [A, D], [D, E, F], [A, F], [B, C, D]
+ 13. EqualAngles: [A, F], [A, C, E], [B, E], [D, E, F]
+ 14. EqualAngles: [A, F], [A, D], [B, C, D], [D, E, F]
+
+------------------------------------------------
+Configuration 5
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E)
+  2. ConcurrentObjects: (A, E, F), (B, D, F), [A, D]
+  3. ConcurrentObjects: (A, E, F), (B, D, F), [B, E]
+  4. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  5. ConcurrentObjects: (A, E, F), (C, D, E), [A, D]
+  6. ConcurrentObjects: (A, E, F), (C, D, E), [B, E]
+  7. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  8. ConcurrentObjects: (A, E, F), [A, D], [B, E]
+  9. ConcurrentObjects: (A, E, F), [A, D], [C, F]
+ 10. ConcurrentObjects: (B, D, F), (C, D, E), [A, D]
+ 11. ConcurrentObjects: (B, D, F), (C, D, E), [B, E]
+ 12. ConcurrentObjects: (B, D, F), (C, D, E), [C, F]
+ 13. ConcurrentObjects: (B, D, F), [A, D], [B, E]
+ 14. ConcurrentObjects: (B, D, F), [B, E], [C, F]
+ 15. ConcurrentObjects: (C, D, E), [A, D], [C, F]
+ 16. ConcurrentObjects: (C, D, E), [B, E], [C, F]
+ 17. ConcurrentObjects: [A, D], [B, E], [C, F]
+
+------------------------------------------------
+Configuration 6
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (B, D, F)
+  2. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
+  3. ConcurrentObjects: (A, B, C), (B, D, F), [C, F]
+  4. ConcurrentObjects: (A, C, F), (B, E, F), [A, B]
+  5. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  6. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  7. EqualAngles: [A, B], [A, C, E], [C, F], [A, D]
+  8. EqualAngles: [A, B], [A, D], [C, F], [A, C, E]
+  9. EqualAngles: [A, B], [B, C, D], [C, F], [B, E]
+ 10. EqualAngles: [A, B], [B, E], [C, F], [B, C, D]
+ 11. EqualAngles: [A, C, E], [D, E, F], [C, F], [B, E]
+ 12. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
+ 13. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
+ 14. EqualAngles: [B, E], [D, E, F], [C, F], [A, C, E]
+
+------------------------------------------------
+Configuration 7
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
+  3. ConcurrentObjects: (A, E, F), (B, D, F), (C, D, E)
+  4. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  5. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  6. ConcurrentObjects: (A, E, F), [B, E], [D, F]
+  7. ConcurrentObjects: (B, D, F), (C, D, E), [C, F]
+  8. ConcurrentObjects: (B, E, F), [A, C, E], [D, F]
+  9. EqualAngles: [A, B, F], [A, C, E], [D, F], [B, E]
+ 10. EqualAngles: [A, B, F], [B, E], [D, F], [A, C, E]
+ 11. EqualAngles: [A, D], [D, E], [D, F], [A, C, E]
+ 12. EqualAngles: [B, C, D], [D, E], [D, F], [B, E]
+
+------------------------------------------------
+Configuration 8
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {B, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (B, D, F), [A, F]
+  2. ConcurrentObjects: (A, C, D), (A, E, F), (B, D, F)
+  3. ConcurrentObjects: (A, C, D), (A, E, F), [C, F]
+  4. ConcurrentObjects: (A, C, D), (B, D, F), [C, F]
+  5. ConcurrentObjects: (A, C, D), (C, E, F), [A, F]
+  6. ConcurrentObjects: (A, D, F), (B, C, F), [A, C, E]
+  7. ConcurrentObjects: (A, E, F), (B, D, F), [C, F]
+  8. EqualAngles: [A, B], [A, C, E], [D, F], [A, B]
+  9. EqualAngles: [A, B], [B, C, D], [D, F], [D, E]
+ 10. EqualAngles: [A, C, E], [A, D], [D, F], [A, D]
+ 11. EqualAngles: [A, C, E], [B, C, D], [D, F], [B, C, D]
+ 12. EqualAngles: [A, C, E], [D, E], [D, F], [D, E]
+ 13. EqualAngles: [A, D], [B, E, F], [D, F], [B, C, D]
+ 14. EqualAngles: [A, F], [A, C, E], [A, F], [D, F]
+ 15. EqualAngles: [B, C, D], [B, E, F], [D, F], [A, D]
+ 16. EqualAngles: [B, C, D], [D, E], [D, F], [A, B]
+ 17. EqualAngles: [C, F], [A, C, E], [C, F], [D, F]
+
+------------------------------------------------
+Configuration 9
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+
+Theorems:
+
+  1. EqualAngles: [A, B], [A, D], [D, F], [D, E]
+  2. EqualAngles: [A, B], [B, E], [D, F], [A, B]
+  3. EqualAngles: [A, D], [D, E], [D, F], [A, B]
+  4. EqualAngles: [B, E], [D, E], [D, F], [D, E]
+  5. EqualAngles: [B, F], [B, E], [B, F], [D, F]
+
+------------------------------------------------
+Configuration 10
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  2. EqualAngles: [A, B], [A, D], [D, F], [D, E]
+  3. EqualAngles: [A, B], [B, E], [D, F], [A, B]
+  4. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D]
+  5. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D]
+  6. EqualAngles: [A, D], [B, E], [D, F], [A, D]
+  7. EqualAngles: [A, D], [D, E], [D, F], [A, B]
+  8. EqualAngles: [B, C, D], [B, E], [D, F], [B, C, D]
+  9. EqualAngles: [B, E], [D, E], [D, F], [D, E]
+ 10. EqualAngles: [B, F], [B, E], [B, F], [D, F]
+
+------------------------------------------------
+Configuration 11
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, D, F), (B, C, F), [A, B]
+  2. EqualAngles: [A, B], [A, D], [D, F], [D, E]
+  3. EqualAngles: [A, B], [B, E], [D, F], [A, B]
+  4. EqualAngles: [A, C, E, F], [A, D], [D, F], [B, C, D]
+  5. EqualAngles: [A, C, E, F], [B, C, D], [D, F], [A, D]
+  6. EqualAngles: [A, D], [B, E], [D, F], [A, D]
+  7. EqualAngles: [A, D], [D, E], [D, F], [A, B]
+  8. EqualAngles: [B, C, D], [B, E], [D, F], [B, C, D]
+  9. EqualAngles: [B, E], [D, E], [D, F], [D, E]
+ 10. EqualAngles: [B, F], [B, E], [B, F], [D, F]
+
+------------------------------------------------
+Configuration 12
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(A, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  3. ConcurrentObjects: (A, E, F), (B, C, F), (B, D, E)
+  4. EqualAngles: [A, B, E], [C, E, F], [A, F], [D, E]
+  5. EqualAngles: [A, C], [A, D], [D, F], [C, E, F]
+  6. EqualAngles: [A, C], [B, C, D], [A, F], [D, F]
+  7. EqualAngles: [A, C], [C, E, F], [D, F], [A, D]
+  8. EqualAngles: [A, D], [C, E, F], [A, F], [B, C, D]
+  9. EqualAngles: [A, F], [A, B, E], [C, E, F], [D, E]
+ 10. EqualAngles: [A, F], [A, C], [D, F], [B, C, D]
+ 11. EqualAngles: [A, F], [A, D], [B, C, D], [C, E, F]
+
+------------------------------------------------
+Configuration 13
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(B, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F)
+  2. ConcurrentObjects: (A, B, D), (B, C, F), [A, C]
+  3. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  4. ConcurrentObjects: (A, C, D), (B, C, F), [A, B, E]
+  5. ConcurrentObjects: (A, D, E), (B, E, F), (C, D, F)
+  6. ConcurrentObjects: (B, D, F), [A, D], [C, E, F]
+  7. ConcurrentObjects: (C, D, F), [A, D], [B, F]
+  8. EqualAngles: [A, B, E], [C, E, F], [B, F], [D, E]
+  9. EqualAngles: [A, D], [C, E, F], [B, F], [B, C, D]
+ 10. EqualAngles: [B, C, D], [C, E, F], [B, F], [A, D]
+ 11. EqualAngles: [B, F], [A, B, E], [C, E, F], [D, E]
+
+------------------------------------------------
+Configuration 14
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {B, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (B, C, F), [A, C]
+  2. ConcurrentObjects: (B, D, F), [A, D], [C, F]
+  3. EqualAngles: [A, B, E, F], [A, C], [D, F], [B, C, D]
+  4. EqualAngles: [A, B, E, F], [A, D], [C, F], [B, C, D]
+  5. EqualAngles: [A, B, E, F], [B, C, D], [C, F], [A, D]
+  6. EqualAngles: [A, C], [A, D], [C, F], [D, F]
+  7. EqualAngles: [A, C], [A, D], [D, F], [D, E]
+  8. EqualAngles: [A, C], [B, C, D], [D, F], [A, B, E, F]
+  9. EqualAngles: [A, C], [D, E], [C, F], [A, C]
+ 10. EqualAngles: [A, C], [D, E], [D, F], [A, D]
+ 11. EqualAngles: [A, D], [D, E], [C, F], [A, D]
+ 12. EqualAngles: [B, C, D], [D, E], [C, F], [B, C, D]
+ 13. EqualAngles: [C, E], [D, E], [C, F], [C, E]
+ 14. EqualAngles: [C, F], [A, C], [D, F], [A, D]
+ 15. EqualAngles: [C, F], [D, F], [D, F], [D, E]
+
+------------------------------------------------
+Configuration 15
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (B, C, F), [A, C]
+  2. ConcurrentObjects: (B, D, F), [A, D], [C, F]
+  3. EqualAngles: [A, B, E, F], [A, C], [D, F], [B, C, D]
+  4. EqualAngles: [A, B, E, F], [A, D], [C, F], [B, C, D]
+  5. EqualAngles: [A, B, E, F], [B, C, D], [C, F], [A, D]
+  6. EqualAngles: [A, C], [A, D], [C, F], [D, F]
+  7. EqualAngles: [A, C], [A, D], [D, F], [D, E]
+  8. EqualAngles: [A, C], [B, C, D], [D, F], [A, B, E, F]
+  9. EqualAngles: [A, C], [D, E], [C, F], [A, C]
+ 10. EqualAngles: [A, C], [D, E], [D, F], [A, D]
+ 11. EqualAngles: [A, D], [D, E], [C, F], [A, D]
+ 12. EqualAngles: [B, C, D], [D, E], [C, F], [B, C, D]
+ 13. EqualAngles: [C, E], [D, E], [C, F], [C, E]
+ 14. EqualAngles: [C, F], [A, C], [D, F], [A, D]
+ 15. EqualAngles: [C, F], [D, F], [D, F], [D, E]
+
+------------------------------------------------
+Configuration 16
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(C, {D, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, F)
+  2. ConcurrentObjects: (A, B, D), (A, E, F), [B, F]
+  3. ConcurrentObjects: (A, B, D), (B, E, F), (C, D, F)
+  4. ConcurrentObjects: (A, B, D), (B, E, F), [A, F]
+  5. ConcurrentObjects: (A, B, D), (C, D, F), [A, F]
+  6. ConcurrentObjects: (A, C, D), (A, E, F), [C, F]
+  7. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  8. ConcurrentObjects: (A, D, E), (B, C, E), (C, D, F)
+  9. ConcurrentObjects: (A, D, E), (C, D, F), [A, C]
+ 10. ConcurrentObjects: (A, D, F), (B, C, F), [A, B, E]
+ 11. ConcurrentObjects: (B, C, E), (C, D, F), [A, C]
+ 12. ConcurrentObjects: (B, E, F), (C, D, F), [A, F]
+ 13. EqualAngles: [A, B, E], [A, C], [C, F], [A, C]
+ 14. EqualAngles: [A, B, E], [A, D], [C, F], [A, D]
+ 15. EqualAngles: [A, B, E], [B, C, D], [C, F], [B, C, D]
+ 16. EqualAngles: [A, B, E], [C, E], [C, F], [C, E]
+ 17. EqualAngles: [A, D], [D, E, F], [C, F], [B, C, D]
+ 18. EqualAngles: [A, F], [A, B, E], [A, F], [C, F]
+ 19. EqualAngles: [B, C, D], [D, E, F], [C, F], [A, D]
+ 20. EqualAngles: [B, F], [A, B, E], [B, F], [C, F]
+
+------------------------------------------------
+Configuration 17
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+
+Theorems:
+
+  1. ConcyclicPoints: B, C, E, F
+  2. EqualAngles: [A, B, E], [A, C, F], [D, F], [D, E]
+  3. EqualAngles: [A, B, E], [A, D], [D, F], [E, F]
+  4. EqualAngles: [A, B, E], [B, C, D], [E, F], [A, C, F]
+  5. EqualAngles: [A, B, E], [C, E], [B, F], [A, C, F]
+  6. EqualAngles: [A, C, F], [A, D], [E, F], [D, E]
+  7. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, B, E]
+  8. EqualAngles: [A, C, F], [C, E], [B, F], [A, B, E]
+  9. EqualAngles: [A, C, F], [D, E], [D, F], [A, B, E]
+ 10. EqualAngles: [A, D], [D, E], [E, F], [A, C, F]
+ 11. EqualAngles: [B, C, D], [C, E], [B, F], [E, F]
+ 12. EqualAngles: [B, C, D], [D, E], [D, F], [E, F]
+ 13. EqualAngles: [B, F], [B, C, D], [E, F], [C, E]
+ 14. EqualAngles: [B, F], [D, E], [D, F], [C, E]
+ 15. EqualAngles: [B, F], [D, F], [C, E], [D, E]
+ 16. EqualAngles: [D, F], [A, D], [E, F], [A, B, E]
+ 17. EqualAngles: [D, F], [B, C, D], [E, F], [D, E]
+
+------------------------------------------------
+Configuration 18
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(D, {C, E})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, D), (A, E, F), (C, D, F)
+  2. ConcurrentObjects: (A, D, E), (B, C, E), (C, D, F)
+  3. ConcurrentObjects: (A, D, E), (C, D, F), [A, C]
+  4. ConcurrentObjects: (A, D, F), (B, C, F), [A, B, E]
+  5. ConcurrentObjects: (B, C, E), (C, D, F), [A, C]
+  6. ConcurrentObjects: (B, E, F), (C, D, F), [A, F]
+  7. EqualAngles: [A, B, E], [C, E, F], [D, F], [D, E]
+  8. EqualAngles: [A, D], [C, E, F], [D, F], [B, C, D]
+  9. EqualAngles: [B, C, D], [C, E, F], [D, F], [A, D]
+ 10. EqualAngles: [C, E, F], [D, E], [D, F], [A, B, E]
+
+------------------------------------------------
+Configuration 19
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {B, C})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  3. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  4. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E]
+  5. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E]
+  6. EqualAngles: [A, C], [A, D], [E, F], [A, C]
+  7. EqualAngles: [A, D], [C, E], [E, F], [C, E]
+  8. EqualAngles: [A, D], [D, E], [E, F], [D, E]
+  9. EqualAngles: [A, F], [A, D], [A, F], [E, F]
+ 10. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E]
+
+------------------------------------------------
+Configuration 20
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {B, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  3. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  4. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E]
+  5. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E]
+  6. EqualAngles: [A, C], [A, D], [E, F], [A, C]
+  7. EqualAngles: [A, D], [C, E], [E, F], [C, E]
+  8. EqualAngles: [A, D], [D, E], [E, F], [D, E]
+  9. EqualAngles: [A, F], [A, D], [A, F], [E, F]
+ 10. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E]
+
+------------------------------------------------
+Configuration 21
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {C, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, F), (D, E, F), [A, D]
+  2. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  3. ConcurrentObjects: (A, D, E), (B, E, F), [A, F]
+  4. EqualAngles: [A, B, E], [A, D], [E, F], [A, B, E]
+  5. EqualAngles: [A, B, E], [B, C, D, F], [E, F], [D, E]
+  6. EqualAngles: [A, C], [A, D], [E, F], [A, C]
+  7. EqualAngles: [A, D], [C, E], [E, F], [C, E]
+  8. EqualAngles: [A, D], [D, E], [E, F], [D, E]
+  9. EqualAngles: [A, F], [A, D], [A, F], [E, F]
+ 10. EqualAngles: [B, C, D, F], [D, E], [E, F], [A, B, E]
+
+------------------------------------------------
+Configuration 22
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {A, C})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, D), (B, E, F), (C, D, F)
+  3. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  4. ConcurrentObjects: (A, C, D), (A, E, F), [C, E]
+  5. ConcurrentObjects: (A, C, D), (C, E, F), [A, B, E]
+  6. ConcurrentObjects: (A, D, F), (B, C, F), (B, D, E)
+  7. ConcurrentObjects: (A, D, F), [B, C, D], [E, F]
+  8. ConcurrentObjects: (A, E, F), (B, D, E), (C, D, F)
+  9. ConcurrentObjects: (C, D, F), [A, D], [E, F]
+ 10. EqualAngles: [A, B, E], [A, C, F], [E, F], [D, E]
+ 11. EqualAngles: [A, C, F], [A, D], [E, F], [B, C, D]
+ 12. EqualAngles: [A, C, F], [B, C, D], [E, F], [A, D]
+ 13. EqualAngles: [A, C, F], [D, E], [E, F], [A, B, E]
+
+------------------------------------------------
+Configuration 23
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+F = PerpendicularProjectionOnLineFromPoints(E, {A, D})
+
+Theorems:
+
+  1. ConcurrentObjects: (A, B, C), (A, E, F), (C, D, E)
+  2. ConcurrentObjects: (A, B, C), (A, E, F), [C, F]
+  3. ConcurrentObjects: (A, B, C), (C, D, E), [C, F]
+  4. ConcurrentObjects: (A, B, F), (D, E, F), [B, C, D]
+  5. ConcurrentObjects: (A, C, D), (A, E, F), [C, E]
+  6. ConcurrentObjects: (A, E, F), (B, C, E), (C, D, F)
+  7. ConcurrentObjects: (A, E, F), (B, D, E), [B, F]
+  8. ConcurrentObjects: (A, E, F), (C, D, E), [C, F]
+  9. ConcurrentObjects: (B, C, E), (D, E, F), [C, F]
+ 10. EqualAngles: [A, B, E], [A, D, F], [E, F], [D, E]
+ 11. EqualAngles: [A, B, E], [B, C, D], [E, F], [A, B, E]
+ 12. EqualAngles: [A, C], [B, C, D], [E, F], [A, C]
+ 13. EqualAngles: [A, D, F], [D, E], [E, F], [A, B, E]
+ 14. EqualAngles: [B, C, D], [C, E], [E, F], [C, E]
+ 15. EqualAngles: [B, C, D], [D, E], [E, F], [D, E]
+ 16. EqualAngles: [B, F], [B, C, D], [B, F], [E, F]
+ 17. EqualAngles: [C, F], [B, C, D], [C, F], [E, F]
+
+------------------------------------------------
+Generated configurations: 23
+Theorems: 444
+Interesting theorems: 269
+Run-time: 2020 ms

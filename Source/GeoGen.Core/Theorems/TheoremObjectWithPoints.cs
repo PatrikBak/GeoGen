@@ -46,26 +46,6 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Public abstract methods implementation
-
-        /// <summary>
-        /// Determines if a given theorem object is equivalent to this one,
-        /// i.e. if they represent the same object of a configuration.
-        /// </summary>
-        /// <param name="otherObject">The theorem object.</param>
-        /// <returns>true if they are equivalent; false otherwise.</returns>
-        public override bool IsEquivalentTo(TheoremObject otherObject)
-        {
-            // They are either equivalent according to the base method 
-            return base.IsEquivalentTo(otherObject) ||
-                // Or the other object is an object with points of the same type
-                otherObject is TheoremObjectWithPoints objectWithPoints && objectWithPoints.GetType() == GetType() &&
-                // And the number of their common points is at least the number of the points that are needed to define them
-                Points.Intersect(objectWithPoints.Points).Count() >= NumberOfNeededPoints;
-        }
-
-        #endregion
-
         #region Protected helper methods
 
         /// <summary>

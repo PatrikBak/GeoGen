@@ -265,7 +265,7 @@ namespace GeoGen.ConsoleLauncher
                         string FactToString(Theorem fact)
                         {
                             // Try to find it in our theorems
-                            var equalTheoremIndex = sortedTheorems.IndexOf(pair => pair.theorem, fact, Theorem.EquivalencyComparer);
+                            var equalTheoremIndex = sortedTheorems.IndexOf(pair => pair.theorem, fact);
 
                             // If it's found, i.e. not -1, then return just the number
                             if (equalTheoremIndex != -1)

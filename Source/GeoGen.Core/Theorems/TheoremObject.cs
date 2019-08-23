@@ -8,28 +8,7 @@ namespace GeoGen.Core
     /// </summary>
     public abstract class TheoremObject
     {
-        #region Public static properties
-
-        /// <summary>
-        /// Gets the single instance of the equality comparer of two theorem objects that uses the 
-        /// <see cref="IsEquivalentTo(TheoremObject)"/> method and a constant hash code function 
-        /// (i.e. using it together with a dictionary / hash set would make all the operations O(n)).
-        /// </summary>
-        public static readonly IEqualityComparer<TheoremObject> EquivalencyComparer = new SimpleEqualityComparer<TheoremObject>(
-            // Reuse the abstract method on the object
-            (t1, t2) => t1.IsEquivalentTo(t2));
-
-        #endregion
-
         #region Public abstract methods
-
-        /// <summary>
-        /// Determines if a given theorem object is equivalent to this one,
-        /// i.e. if they represent the same object of a configuration.
-        /// </summary>
-        /// <param name="otherObject">The theorem object.</param>
-        /// <returns>true if they are equivalent; false otherwise.</returns>
-        public abstract bool IsEquivalentTo(TheoremObject otherObject);
 
         /// <summary>
         /// Recreates the theorem object by applying a given mapping of the inner configuration objects.

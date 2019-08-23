@@ -39,28 +39,6 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region Public abstract methods implementation
-
-        /// <summary>
-        /// Determines if a given theorem object is equivalent to this one,
-        /// i.e. if they represent the same object of a configuration.
-        /// </summary>
-        /// <param name="otherObject">The theorem object.</param>
-        /// <returns>true if they are equivalent; false otherwise.</returns>
-        public override bool IsEquivalentTo(TheoremObject otherObject)
-        {
-            // Either the instances are the same
-            return this == otherObject ||
-                // Or the passed object is of this type
-                otherObject is PairTheoremObject otherPairObject && otherPairObject.GetType() == GetType() &&
-                // And either the first and second objects are equivalent
-                ((Object1.IsEquivalentTo(otherPairObject.Object1) && Object2.IsEquivalentTo(otherPairObject.Object2)) ||
-                // Or the first one is equivalent to the second and vice versa
-                (Object1.IsEquivalentTo(otherPairObject.Object2) && Object2.IsEquivalentTo(otherPairObject.Object1)));
-        }
-
-        #endregion
-
         #region Protected helper methods
 
         /// <summary>

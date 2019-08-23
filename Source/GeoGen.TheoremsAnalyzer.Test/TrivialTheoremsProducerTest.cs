@@ -65,7 +65,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Find the trivial theorems
             Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be only equal angles
-                .ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+                .ToSet().SetEquals(new[]
                 {
                     new Theorem(configuration, EqualAngles, new[]
                     {
@@ -120,7 +120,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Find the trivial theorems
             Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be these theorems
-                .ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+                .ToSet().SetEquals(new[]
                 {
                     // Half alpha angles
                     new Theorem(configuration, EqualAngles, new[] {halfAlfa[0], halfAlfa[1] }),

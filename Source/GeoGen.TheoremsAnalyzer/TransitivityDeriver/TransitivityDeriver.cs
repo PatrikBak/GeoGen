@@ -107,7 +107,7 @@ namespace GeoGen.TheoremsAnalyzer
                         if (set1 == null && set2 == null)
                         {
                             // We can create a new one containing our objects
-                            equivalencySets.Add(new HashSet<TheoremObject>(TheoremObject.EquivalencyComparer) { object1, object2 });
+                            equivalencySets.Add(new HashSet<TheoremObject>() { object1, object2 });
 
                             // And move further
                             continue;
@@ -123,7 +123,7 @@ namespace GeoGen.TheoremsAnalyzer
                             foreach (var set2Object in set2)
                             {
                                 // We have to ignore the second object
-                                if (set2Object.IsEquivalentTo(object2))
+                                if (set2Object.Equals(object2))
                                     continue;
 
                                 // Otherwise we have some discovered transitivity
@@ -144,7 +144,7 @@ namespace GeoGen.TheoremsAnalyzer
                             foreach (var set1Object in set1)
                             {
                                 // Except for object1
-                                if (set1Object.IsEquivalentTo(object1))
+                                if (set1Object.Equals(object1))
                                     continue;
 
                                 // With every object from set2
@@ -187,7 +187,7 @@ namespace GeoGen.TheoremsAnalyzer
                         foreach (var setObject in existingSet)
                         {
                             // That are not equivalent to our one
-                            if (setObject.IsEquivalentTo(objectFromExistingSet))
+                            if (setObject.Equals(objectFromExistingSet))
                                 continue;
 
                             // We know that setObject = objectFromExistingSet, because they're in the same set
@@ -260,7 +260,7 @@ namespace GeoGen.TheoremsAnalyzer
                 if (currentSet == null)
                 {
                     // We need to add a new one
-                    equivalencySets.Add(new HashSet<TheoremObject>(theorem.InvolvedObjects, TheoremObject.EquivalencyComparer));
+                    equivalencySets.Add(new HashSet<TheoremObject>(theorem.InvolvedObjects));
 
                     // And we can't do more
                     return;
@@ -268,7 +268,7 @@ namespace GeoGen.TheoremsAnalyzer
 
                 // Otherwise we need to get the theorem object that doesn't 
                 // belong to the subset that identified the current set
-                var newObject = theorem.InvolvedObjects.ToSet(TheoremObject.EquivalencyComparer).Except(subset).Single();
+                var newObject = theorem.InvolvedObjects.ToSet().Except(subset).Single();
 
                 // If the current object is currently in the set, we can't do more
                 if (currentSet.Contains(newObject))

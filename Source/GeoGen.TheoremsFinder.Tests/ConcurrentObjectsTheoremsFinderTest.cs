@@ -35,7 +35,7 @@ namespace GeoGen.TheoremsFinder.Tests
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
             // Assert new theorems
-            newTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            newTheorems.ToSet().SetEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new[]
                 {
@@ -89,7 +89,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(newTheorems).Should().BeTrue();
+            allTheorems.ToSet().SetEquals(newTheorems).Should().BeTrue();
         }
 
         [Test]
@@ -110,7 +110,7 @@ namespace GeoGen.TheoremsFinder.Tests
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
             // Assert new theorems
-            newTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            newTheorems.ToSet().SetEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
@@ -230,7 +230,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(newTheorems.Concat(
+            allTheorems.ToSet().SetEquals(newTheorems.Concat(
                 // This is the only theorem that can be stated without H
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
@@ -260,19 +260,19 @@ namespace GeoGen.TheoremsFinder.Tests
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
             // Assert new theorems
-            newTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            newTheorems.ToSet().SetEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(l),
                     new CircleTheoremObject(c1),
-                    new LineTheoremObject(c2)
+                    new CircleTheoremObject(c2)
                 })
             })
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(newTheorems).Should().BeTrue();
+            allTheorems.ToSet().SetEquals(newTheorems).Should().BeTrue();
         }
     }
 }

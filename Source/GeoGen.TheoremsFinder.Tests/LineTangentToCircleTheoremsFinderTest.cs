@@ -32,7 +32,7 @@ namespace GeoGen.TheoremsFinder.Tests
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
             // Assert new theorems
-            newTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            newTheorems.ToSet().SetEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {
@@ -48,7 +48,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet(Theorem.EquivalencyComparer).SetEquals(new[]
+            allTheorems.ToSet().SetEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {

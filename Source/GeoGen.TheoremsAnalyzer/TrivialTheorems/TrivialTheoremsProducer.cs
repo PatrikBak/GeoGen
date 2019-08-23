@@ -54,11 +54,7 @@ namespace GeoGen.TheoremsAnalyzer
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finders = finders ?? throw new ArgumentNullException(nameof(finders));
-
-            // Create the dictionary 
-            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>(
-                // That compares composed constructions by their names
-                SimpleEqualityComparer<ComposedConstruction>.Create(construction => construction.Name));
+            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>();
         }
 
         #endregion

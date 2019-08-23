@@ -61,6 +61,41 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode()
+        {
+            // I don't think there is a better way to define it, because even if we have 
+            // 2 circles with completely different points, it might still be the same circle.
+            // We're working with large numbers of theorems at once, so it should fine like this.
+            return "Circle".GetHashCode();
+        }
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And it is a circle object
+                && otherObject is CircleTheoremObject circle
+                // And either their configuration objects are defined and equal
+                && ((ConfigurationObject != null && ConfigurationObject.Equals(circle.ConfigurationObject))
+                // Or they have enough common points
+                || Points.Intersect(circle.Points).Count() >= NumberOfNeededPoints);
+        }
+
+        #endregion
+
         #region To String
 
         /// <summary>

@@ -39,6 +39,33 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => ConfigurationObject.GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equals
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And is a point object
+                && otherObject is PointTheoremObject point
+                // And their objects are equal
+                && point.ConfigurationObject.Equals(ConfigurationObject);
+        }
+
+        #endregion
+
         #region To String
 
         /// <summary>
