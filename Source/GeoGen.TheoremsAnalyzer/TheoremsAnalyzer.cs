@@ -7,7 +7,19 @@ using System.Linq;
 namespace GeoGen.TheoremsAnalyzer
 {
     /// <summary>
-    /// The default implementation of <see cref="ITheoremsAnalyzer"/>.
+    /// The default implementation of <see cref="ITheoremsAnalyzer"/>. The main goal of this implementation
+    /// is to find problems as close to IMO problems as possible. Hence we consider only the following types:
+    /// <para>
+    /// 1. Collinear points. <br></br>
+    /// 2. Concyclic points. <br></br>
+    /// 3. Concurrent lines. <br></br>
+    /// 4. Perpendicular lines. <br></br>
+    /// 5. Parallel lines. <br></br>
+    /// 6. Line tangent to circle at an undefined point. <br></br>
+    /// 7. Tangent circles at an undefined point. <br></br><br></br>
+    /// </para>
+    /// Other theorems, such as EqualAngles or ConcurrentObjects (where we might intersect circles as well)
+    /// don't seem very olympiad, therefore all attempts to understand theorems will ignore them.
     /// </summary>
     public class TheoremsAnalyzer : ITheoremsAnalyzer
     {

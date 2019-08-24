@@ -2,6 +2,7 @@
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using Ninject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,14 +12,15 @@ namespace GeoGen.TheoremsFinder.Tests
     /// A base class for tests of <see cref="ITheoremsFinder"/>.
     /// </summary>
     /// <typeparam name="T">The type of theorems finder being tested.</typeparam>
-    public abstract class TheoremsFinderTestBase<T> where T : ITheoremsFinder, new()
+    public abstract class TheoremsFinderTestBase<T> where T : ITheoremsFinder
     {
         /// <summary>
         /// Runs the algorithm on the configuration to find new and all theorems. 
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
+        /// <param name="instanceFactory">The factory for creating an instance of the finder. If it's null, the default constructor is used.</param>
         /// <returns>The new and all theorems.</returns>
-        protected (List<Theorem> newTheorems, List<Theorem> allTheorems) FindTheorems(Configuration configuration)
+        protected (List<Theorem> newTheorems, List<Theorem> allTheorems) FindTheorems(Configuration configuration, Func<T> instanceFactory = null)
         {
             // Prepare the kernel
             var kernel = IoC.CreateKernel().AddConstructor(new PicturesSettings
@@ -34,8 +36,12 @@ namespace GeoGen.TheoremsFinder.Tests
             // Create the contextual picture
             var contextualPicture = kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
 
-            // Get the service instance
-            var finder = new T();
+            // If the instance factory is specified
+            var finder = instanceFactory != null ?
+                // Invoke it
+                instanceFactory() :
+                // Otherwise use reflection to call the parameterless constructor
+                Activator.CreateInstance<T>();
 
             // Run both algorithms
             return (finder.FindNewTheorems(contextualPicture).ToList(), finder.FindAllTheorems(contextualPicture).ToList());

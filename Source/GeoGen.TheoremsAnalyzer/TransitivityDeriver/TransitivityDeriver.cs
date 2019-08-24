@@ -84,6 +84,7 @@ namespace GeoGen.TheoremsAnalyzer
                     case TheoremType.ParallelLines:
                     case TheoremType.EqualLineSegments:
                     case TheoremType.EqualAngles:
+                    case TheoremType.ConcurrentLines:
                     {
                         // Get the equivalence set
                         var equivalencySets = oldEquivalencies[type];
@@ -233,6 +234,7 @@ namespace GeoGen.TheoremsAnalyzer
                 {
                     TheoremType.ConcyclicPoints => 3,
                     TheoremType.CollinearPoints => 2,
+                    TheoremType.ConcurrentLines => 2,
                     TheoremType.ParallelLines => 1,
                     TheoremType.EqualLineSegments => 1,
                     TheoremType.EqualAngles => 1,

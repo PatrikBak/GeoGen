@@ -1,4 +1,6 @@
 ﻿using GeoGen.Constructor;
+using GeoGen.Core;
+using GeoGen.TheoremsFinder;
 using System.Collections.Generic;
 using System.IO;
 
@@ -25,7 +27,7 @@ namespace GeoGen.ConsoleLauncher
                 {
                     IncludeLoggingOrigin = false,
                     IncludeTime = true,
-                    LogOutputLevel = LogOutputLevel.Debug
+                    LogOutputLevel = LogOutputLevel.Info
                 },
 
                 // File logger
@@ -71,6 +73,31 @@ namespace GeoGen.ConsoleLauncher
             {
                 TheoremsFolderPath = Path.Combine(workingFolder, "TemplateTheorems"),
                 FilesExtention = "txt"
+            };
+
+            // Create settings for tangent circles theorems finder
+            TangentCirclesTheoremsFinderSettings = new TangentCirclesTheoremsFinderSettings
+            {
+                ExcludeTangencyInsidePicture = true
+            };
+
+            // Create settings for line tangent to circle theorems finder
+            LineTangentToCircleTheoremsFinderSettings = new LineTangentToCircleTheoremsFinderSettings
+            {
+                ExcludeTangencyInsidePicture = true
+            };
+
+            // Set the list of theorem types that we're looking for
+            SeekedTheoremTypes = new[]
+            {
+                TheoremType.CollinearPoints,
+                TheoremType.ConcurrentLines,
+                TheoremType.ConcyclicPoints,
+                TheoremType.EqualLineSegments,
+                TheoremType.LineTangentToCircle,
+                TheoremType.ParallelLines,
+                TheoremType.PerpendicularLines,
+                TheoremType.TangentCircles
             };
         }
     }

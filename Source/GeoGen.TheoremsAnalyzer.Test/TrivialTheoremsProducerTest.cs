@@ -2,6 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
+using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
@@ -32,13 +33,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 // Initialize IoC
                 var kernel = IoC.CreateKernel();
 
-                // Add the theorems finder and constructor
-                kernel.AddTheoremsFinder().AddConstructor(new PicturesSettings
+                // Add the theorems finder with no restrictions
+                kernel.AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
                 {
-                    NumberOfPictures = 8,
-                    MaximalAttemptsToReconstructOnePicture = 100,
-                    MaximalAttemptsToReconstructAllPictures = 1000
-                });
+                    ExcludeTangencyInsidePicture = false
+                },
+                    new LineTangentToCircleTheoremsFinderSettings
+                    {
+                        ExcludeTangencyInsidePicture = false
+                    },
+                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
+                    // Add constructor ignoring inconsistencies
+                    .AddConstructor(new PicturesSettings
+                    {
+                        NumberOfPictures = 5,
+                        MaximalAttemptsToReconstructOnePicture = 0,
+                        MaximalAttemptsToReconstructAllPictures = 0
+                    });
 
                 // Bind producer
                 kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();

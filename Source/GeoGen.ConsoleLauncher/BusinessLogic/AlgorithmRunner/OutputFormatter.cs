@@ -106,12 +106,6 @@ namespace GeoGen.ConsoleLauncher
                     // Compose the final string
                     return $"{typeString}{smaller}, {larger}";
 
-                // Handle the case where the objects should not be sorted
-                case TheoremType.LineTangentToCircle:
-
-                    // Simply convert each object to a string
-                    return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).ToJoinedString()}";
-
                 // In every other case...
                 default:
 

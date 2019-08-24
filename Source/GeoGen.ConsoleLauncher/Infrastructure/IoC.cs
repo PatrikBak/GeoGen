@@ -1,5 +1,6 @@
 ﻿using GeoGen.DependenciesResolver;
 using GeoGen.TheoremsAnalyzer;
+using GeoGen.Utilities;
 using Ninject;
 using System;
 using System.Threading.Tasks;
@@ -83,8 +84,10 @@ namespace GeoGen.ConsoleLauncher
             Kernel.AddGenerator()
                 // With constructor that uses loaded settings
                 .AddConstructor(settings.PicturesManagerSettings)
-                // With theorems finder
-                .AddTheoremsFinder()
+                // With theorems finder and its settings
+                .AddTheoremsFinder(settings.TangentCirclesTheoremsFinderSettings,
+                                   settings.LineTangentToCircleTheoremsFinderSettings,
+                                   settings.SeekedTheoremTypes.ToReadOnlyHashSet())
                 // With analyzer and its data
                 .AddTheoremsAnalyzer(new TheoremsAnalyzerData
                 {

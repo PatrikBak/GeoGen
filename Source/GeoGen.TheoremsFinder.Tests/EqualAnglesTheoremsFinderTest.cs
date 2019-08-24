@@ -31,6 +31,10 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
+            // Assert counts
+            newTheorems.Count.Should().Be(3);
+            allTheorems.Count.Should().Be(6);
+
             // Assert new theorems
             newTheorems.ToSet().SetEquals(new[]
             {

@@ -24,12 +24,17 @@
         ConcyclicPoints,
 
         /// <summary>
-        /// Three or more objects are concurrent, each of them is either a line, or a circle
+        /// Three objects are concurrent, each of them is either a line or circle
         /// </summary>
         ConcurrentObjects,
 
         /// <summary>
-        /// Two or more lines are parallel to each other
+        /// Three lines are concurrent. NOTE: This is a subset of ConcurrentObjects.
+        /// </summary>
+        ConcurrentLines,
+
+        /// <summary>
+        /// Two lines are parallel to each other
         /// </summary>
         ParallelLines,
 

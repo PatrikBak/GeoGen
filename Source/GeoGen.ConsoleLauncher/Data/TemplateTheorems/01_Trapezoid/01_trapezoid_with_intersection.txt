@@ -1,8 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- E = IntersectionOfLinesFromPoints(A, C, B, D)
-
-Theorems:
-
- TangentCircles: (E, A, B), (E, C, D)

@@ -145,6 +145,7 @@ namespace GeoGen.Core
                 // The cases where objects are simply
                 case TheoremType.CollinearPoints:
                 case TheoremType.ConcyclicPoints:
+                case TheoremType.ConcurrentLines:
                 case TheoremType.ParallelLines:
                 case TheoremType.PerpendicularLines:
                 case TheoremType.LineTangentToCircle:

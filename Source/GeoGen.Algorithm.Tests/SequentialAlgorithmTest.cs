@@ -4,6 +4,8 @@ using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
 using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremsFinder;
+using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
 using System;
@@ -28,13 +30,24 @@ namespace GeoGen.Algorithm.Tests
             get
             {
                 // Prepare the kernel
-                var kernel = IoC.CreateKernel()
-                    .AddGenerator()
-                    .AddTheoremsFinder()
+                var kernel = IoC.CreateKernel().AddGenerator()
+                    // Add theorems finder with no restrictions
+                    .AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
+                    {
+                        ExcludeTangencyInsidePicture = false
+                    },
+                    new LineTangentToCircleTheoremsFinderSettings
+                    {
+                        ExcludeTangencyInsidePicture = false
+                    },
+                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
+                    // Analyzer with no theorems 
+                    // TODO: Get some theorems 
                     .AddTheoremsAnalyzer(new TheoremsAnalyzerData
                     {
                         TemplateTheorems = new List<(Configuration, TheoremsMap)>()
                     })
+                    // Constructor that ignores inconsistencies
                     .AddConstructor(new PicturesSettings
                     {
                         NumberOfPictures = 5,

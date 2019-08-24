@@ -47,12 +47,24 @@ namespace GeoGen.TheoremsAnalyzer.Test
         private List<SubtheoremsDeriverOutput> Run(Configuration examinedConfiguration, IEnumerable<Theorem> templateTheorems)
         {
             // Initialize IoC
-            var kernel = IoC.CreateKernel().AddTheoremsFinder().AddConstructor(new PicturesSettings
-            {
-                NumberOfPictures = 5,
-                MaximalAttemptsToReconstructOnePicture = 0,
-                MaximalAttemptsToReconstructAllPictures = 0
-            });
+            var kernel = IoC.CreateKernel()
+                // Add theorems finder with no restrictions
+                .AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
+                {
+                    ExcludeTangencyInsidePicture = false
+                },
+                new LineTangentToCircleTheoremsFinderSettings
+                {
+                    ExcludeTangencyInsidePicture = false
+                },
+                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
+                // Add constructor ignoring inconsistencies
+                .AddConstructor(new PicturesSettings
+                {
+                    NumberOfPictures = 5,
+                    MaximalAttemptsToReconstructOnePicture = 0,
+                    MaximalAttemptsToReconstructAllPictures = 0
+                });
 
             // Create the constructor
             var constructor = kernel.Get<IGeometryConstructor>();
