@@ -69,8 +69,8 @@ namespace GeoGen.ConsoleLauncher
 
             // If we request the origin...
             if (_settings.IncludeLoggingOrigin)
-                // Append it
-                finalMessage = $"{finalMessage} [{Path.GetFileName(filePath)} > {origin}() > Line {lineNumber}]";
+                // Prepend it
+                finalMessage = $"[{Path.GetFileName(filePath)} > {origin}() > Line {lineNumber}] {finalMessage}";
 
             // Return the composed message
             return finalMessage;

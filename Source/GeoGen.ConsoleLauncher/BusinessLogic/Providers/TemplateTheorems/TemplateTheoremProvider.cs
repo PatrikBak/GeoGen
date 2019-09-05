@@ -67,8 +67,8 @@ namespace GeoGen.ConsoleLauncher
             var theoremFiles = Directory.EnumerateDirectories(_settings.TheoremsFolderPath)
                 // Order them by names
                 .OrderBy(Path.GetDirectoryName)
-                // For each get the files ordered by name
-                .SelectMany(folder => Directory.EnumerateFiles(folder, $"*.{_settings.FilesExtention}").OrderBy(Path.GetFileName));
+                // For each get the files 
+                .SelectMany(folder => Directory.EnumerateFiles(folder, $"*.{_settings.FilesExtention}", SearchOption.AllDirectories));
 
             // Go through all the files
             foreach (var path in theoremFiles)

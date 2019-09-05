@@ -17,8 +17,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private static void Main()
         {
-
-
             // Initialize the IoC system
             RunTaskAndHandleExceptions(() => IoC.InitializeAsync(), exitOnException: true);
 

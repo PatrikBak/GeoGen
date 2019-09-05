@@ -18,6 +18,8 @@ namespace GeoGen.ConsoleLauncher
         public FileLogger(FileLoggerSettings settings)
             : base(settings)
         {
+            // Erase the file first
+            File.Delete(settings.FileLogPath);
         }
 
         #endregion

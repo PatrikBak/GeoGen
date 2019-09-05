@@ -65,13 +65,13 @@ namespace GeoGen.ConsoleLauncher
             var outputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}.{_settings.OutputFileExtention}");
 
             // Prepare the writer for the output
-            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.ReadWrite));
+            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
             // Prepare the path for the full output
             var fullOutputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}{_settings.FullReportSuffix}.{_settings.OutputFileExtention}");
 
             // Prepare the writer for the full output, if it's requested
-            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.ReadWrite)) : null;
+            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.Write, FileShare.Read)) : null;
 
             // Helper function that writes to both writes
             void WriteLineToBoth(string line = "")
@@ -156,7 +156,9 @@ namespace GeoGen.ConsoleLauncher
 
                 // Find out if we should log and if yes, do it
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
-                    Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, after {stopwatch.ElapsedMilliseconds} milliseconds.");
+                    Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
+                        $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
+                        $"with {interestingTheorems} interesting theorem(s).");
 
                 // Skip configurations without theorems
                 if (algorithmOutput.Theorems.AllObjects.Count == 0)
@@ -193,6 +195,10 @@ namespace GeoGen.ConsoleLauncher
 
                 // If we're requested, write the full too
                 WriteLineToFull(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.TheoremsFeedback, includeResolved: true));
+
+                // Flush after each output
+                outputWriter.Flush();
+                fullOutputWriter?.Flush();
             }
 
             // Write end

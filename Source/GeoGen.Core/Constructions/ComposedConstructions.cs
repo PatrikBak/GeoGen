@@ -269,9 +269,9 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Point A' such that ABA'C is a parallelogram (signature A, {B, C}).
+        /// Reflection of point A in the midpoint of BC (signature A, {B, C}).
         /// </summary>
-        public static ComposedConstruction Parallelogram
+        public static ComposedConstruction ReflectionInMidpointOfSegment
         {
             get
             {
@@ -293,7 +293,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction(nameof(Parallelogram), configuration, parameters);
+                return new ComposedConstruction(nameof(ReflectionInMidpointOfSegment), configuration, parameters);
             }
         }
 
@@ -531,7 +531,7 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// The circle with a given diameter  (signature {A, B}).
+        /// The circle with a given diameter (signature {A, B}).
         /// </summary>
         public static ComposedConstruction CircleWithDiameter
         {
@@ -554,6 +554,65 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(CircleWithDiameter), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The A-midline of triangle ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction Midline
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var D = new ConstructedConfigurationObject(Midpoint, A, B);
+                var E = new ConstructedConfigurationObject(Midpoint, A, C);
+                var l = new ConstructedConfigurationObject(LineFromPoints, D, E);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(Midline), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The A-median of triangle ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction Median
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var D = new ConstructedConfigurationObject(Midpoint, B, C);
+                var l = new ConstructedConfigurationObject(LineFromPoints, A, D);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(Median), configuration, parameters);
             }
         }
     }

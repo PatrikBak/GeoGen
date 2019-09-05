@@ -2,6 +2,9 @@
 {
     /// <summary>
     /// Represents a way in which the loose objects of a configuration are arranged.  
+    /// 
+    /// TODO: Parallelogram layout, for speed up
+    /// 
     /// </summary>
     public enum LooseObjectsLayout
     {

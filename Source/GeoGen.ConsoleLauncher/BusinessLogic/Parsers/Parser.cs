@@ -173,7 +173,7 @@ namespace GeoGen.ConsoleLauncher
 
                 // Try to parse it 
                 // If it worked out, wrap the result in the RandomPointOn construction
-                if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var _type))
+                if (Enum.TryParse<PredefinedConstructionType>(restOfName, out var _type))
                     return RandomPointOnConstruction.RandomPointOn(_type);
 
                 // Try to get the composed one

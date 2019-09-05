@@ -34,7 +34,7 @@ namespace GeoGen.ConsoleLauncher
                 new FileLoggerSettings
                 {
                     IncludeLoggingOrigin = true,
-                    IncludeTime = false,
+                    IncludeTime = true,
                     LogOutputLevel = LogOutputLevel.Debug,
                     FileLogPath = "log.txt"
                 }
