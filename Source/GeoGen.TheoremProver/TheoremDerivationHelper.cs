@@ -260,6 +260,8 @@ namespace GeoGen.TheoremProver
                 unprovenDiscoveredTheorems: unprovenDiscoveredTheorems
             );
 
+            //return theoremProverOutput;
+
             // Return the output with handled transitivity paths
             return GetRidOfNestedTransitivity(theoremProverOutput);
         }
@@ -440,7 +442,7 @@ namespace GeoGen.TheoremProver
             // If this is a transitivity attempt...
             if (proofAttempt.Rule == Transitivity)
                 // Use the helper method
-                return ConvertTransitivityArguments(new[] { proofAttempt }, cache);
+                return ConvertTransitiviteAttempts(new[] { proofAttempt }, cache);
 
             // Prepare the resulting attempt
             var convertedAttempt = proofAttempt switch
@@ -507,7 +509,7 @@ namespace GeoGen.TheoremProver
             // If there are any transitivity attempts...
             if (transitivityProofAttempts.Any())
                 // Use helper function to glue all of them to one
-                convertedProofAttempts.Add(ConvertTransitivityArguments(transitivityProofAttempts, cache));
+                convertedProofAttempts.Add(ConvertTransitiviteAttempts(transitivityProofAttempts, cache));
 
             // Return the result
             return convertedProofAttempts;
@@ -517,14 +519,14 @@ namespace GeoGen.TheoremProver
         /// Converts a given list of transitive attempts to a single attempt wrapping every inner
         /// transitive attempt.
         /// </summary>
-        /// <param name="transitiveAttempts"></param>
+        /// <param name="transitiveAttempts">The transitive attempts at the same theorem to be considered.</param>
         /// <param name="cache">The cache of currently converted attempts.</param>
         /// <returns>The single transitive theorem proof attempt.</returns>
-        private static TheoremProofAttempt ConvertTransitivityArguments(IReadOnlyList<TheoremProofAttempt> transitiveAttempts,
-                                                                        Dictionary<TheoremProofAttempt, TheoremProofAttempt> cache)
+        private static TheoremProofAttempt ConvertTransitiviteAttempts(IReadOnlyList<TheoremProofAttempt> transitiveAttempts,
+                                                                       Dictionary<TheoremProofAttempt, TheoremProofAttempt> cache)
         {
             // Find all assumptions of all the transitive attempts that will be merged
-            var allAssumptionAttemptsOfTransitiveAttempts = FindAllAssumptionAttemptsOfTransitivityAttempts(transitiveAttempts);
+            var allAssumptionAttemptsOfTransitiveAttempts = FindInnerTheoremsOfTransitiveAttempts(transitiveAttempts);
 
             // Prepare the list of proven assumptions of this transitive attempt
             var provenAssumptions = new List<TheoremProofAttempt>();
@@ -536,11 +538,17 @@ namespace GeoGen.TheoremProver
             var theoremBeingProven = transitiveAttempts.First().Theorem;
 
             // Go through all the transitivity assumptions
-            allAssumptionAttemptsOfTransitiveAttempts.ForEach(assumptionProofAttempt =>
+            allAssumptionAttemptsOfTransitiveAttempts.ForEach(pair =>
             {
-                // If it's been successful
-                if (assumptionProofAttempt.IsSuccessful)
+                // Deconstruct
+                var (assumptionTheorem, assumptionProofAttempts) = pair;
+
+                // If this theorem has been proven successfully, i.e. there is exactly one successful attempt
+                if (assumptionProofAttempts.Count == 1 && assumptionProofAttempts.First().IsSuccessful)
                 {
+                    // Get the attempt for comfort
+                    var assumptionProofAttempt = assumptionProofAttempts.First();
+
                     // If we don't have a transitivity proof
                     if (assumptionProofAttempt.Rule != Transitivity)
                         // We certainly want to include this proof, which recursively flattened transitivities
@@ -556,7 +564,7 @@ namespace GeoGen.TheoremProver
                             // Therefore we just add an empty transitive proof of the concerned theorem
                             provenAssumptions.Add(new TheoremProofAttempt
                             (
-                                theorem: assumptionProofAttempt.Theorem,
+                                theorem: assumptionTheorem,
                                 rule: Transitivity,
                                 provenAssumptions: new List<TheoremProofAttempt>(),
                                 unprovenAssumptions: new List<(Theorem, IReadOnlyList<TheoremProofAttempt>)>()
@@ -566,24 +574,17 @@ namespace GeoGen.TheoremProver
                 // If it hasn't been successful
                 else
                 {
-                    // Get the assumption theorem for comfort
-                    var assumptionTheorem = assumptionProofAttempt.Theorem;
-
-                    // We don't want to get into this obvious cycle where the theorem
-                    // is its assumption as well
+                    // We don't want to get into this obvious cycle where the theorem is its assumption as well
                     if (assumptionTheorem.Equals(theoremBeingProven))
                         return;
 
-                    // Make sure this theorem is marked in the map of unproved assumptions
-                    if (!unprovenAssumptionsMap.ContainsKey(assumptionTheorem))
-                        unprovenAssumptionsMap.Add(assumptionTheorem, new List<TheoremProofAttempt>());
+                    // Get the list
+                    var attemptsList = unprovenAssumptionsMap.GetOrAdd(assumptionTheorem, () => new List<TheoremProofAttempt>());
 
-                    // We don't want to include the transitive attempts (which is the point of this method)
-                    if (assumptionProofAttempt.Rule == Transitivity)
-                        return;
-
-                    // Add the current non-transitive attempt, which recursively flattened transitivities
-                    unprovenAssumptionsMap[assumptionTheorem].Add(GetRidOfNestedTransitivity(assumptionProofAttempt, cache));
+                    // We want to include all non-transitive attempts
+                    assumptionProofAttempts.Where(attempt => attempt.Rule != Transitivity)
+                        // with recursively flattened transitivities                    
+                        .ForEach(assumptionProofAttempt => attemptsList.Add(GetRidOfNestedTransitivity(assumptionProofAttempt, cache)));
                 }
             });
 
@@ -601,15 +602,14 @@ namespace GeoGen.TheoremProver
         }
 
         /// <summary>
-        /// Finds all sub-attempts of all transitive attempts found in the passed ones 
-        /// (including the inner attempts of this attempts).
+        /// Map theorems of transitive attempts (and sub-attempts) to the sets of these attempts. 
         /// </summary>
         /// <param name="transitiveAttempts">The initial transitive attempts.</param>
-        /// <returns>The set of all attempts at all transitive attempts.</returns>
-        private static HashSet<TheoremProofAttempt> FindAllAssumptionAttemptsOfTransitivityAttempts(IReadOnlyList<TheoremProofAttempt> transitiveAttempts)
+        /// <returns>The dictionary mapping assumption theorems to sets of the attempts at them.</returns>
+        private static Dictionary<Theorem, HashSet<TheoremProofAttempt>> FindInnerTheoremsOfTransitiveAttempts(IReadOnlyList<TheoremProofAttempt> transitiveAttempts)
         {
             // Prepare the result
-            var attempts = new HashSet<TheoremProofAttempt>();
+            var attempts = new Dictionary<Theorem, HashSet<TheoremProofAttempt>>();
 
             // Prepare the set of proof attempts that have been already examined
             var examined = new HashSet<TheoremProofAttempt>();
@@ -633,21 +633,32 @@ namespace GeoGen.TheoremProver
                 else
                     examined.Add(currentAttempt);
 
-                // If we have a non-transitive attempt, we don't want to examine its sub-attempts
+                // If we have a non-transitive attempt, we don't want to include its assumptions
                 if (currentAttempt.Rule != Transitivity)
                     continue;
 
-                // Otherwise all the unfinished attempts to prove the inner theorems
-                currentAttempt.UnprovenAssumptions.SelectMany(pair => pair.unfinishedProofs)
-                    // And the finished attempts to prove the inner theorems
-                    .Concat(currentAttempt.ProvenAssumptions).ForEach(theorem =>
-                    {
-                        // Are results
-                        attempts.Add(theorem);
+                // Add the proven assumptions
+                currentAttempt.ProvenAssumptions.ForEach(assumptionAttempt =>
+                {
+                    // Add the assumption
+                    attempts.GetOrAdd(assumptionAttempt.Theorem, () => new HashSet<TheoremProofAttempt>()).Add(assumptionAttempt);
 
-                        // And should be examined deeper
-                        toBeExamined.Enqueue(theorem);
-                    });
+                    // Enqueue it for further examination
+                    toBeExamined.Enqueue(assumptionAttempt);
+                });
+
+                // Add the unproven assumptions
+                currentAttempt.UnprovenAssumptions.ForEach(pair =>
+                {
+                    // Deconstruct
+                    var (assumption, assumptionAttempts) = pair;
+
+                    // Add all attempts
+                    attempts.GetOrAdd(assumption, () => new HashSet<TheoremProofAttempt>()).UnionWith(assumptionAttempts);
+
+                    // Enqueue them for further examination
+                    assumptionAttempts.ForEach(toBeExamined.Enqueue);
+                });
             }
 
             // Return the result
