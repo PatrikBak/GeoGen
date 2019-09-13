@@ -260,8 +260,6 @@ namespace GeoGen.TheoremProver
                 unprovenDiscoveredTheorems: unprovenDiscoveredTheorems
             );
 
-            //return theoremProverOutput;
-
             // Return the output with handled transitivity paths
             return GetRidOfNestedTransitivity(theoremProverOutput);
         }

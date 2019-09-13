@@ -146,8 +146,27 @@ namespace GeoGen.TheoremProver
         /// <returns>The derived theorems wrapped in output objects.</returns>
         public IEnumerable<SubtheoremsDeriverOutput> DeriveTheorems(SubtheoremsDeriverInput input)
         {
-            // TODO: Add check whether there the counts of objects of particular types
-            //       make this impossible -- if yes, we can return right away                     
+            #region Check if we have enough objects to do the mapping
+
+            // Find it out by going through all the (type, objects) pairs of the template configuration
+            var doWeHaveEnoughObjects = input.TemplateConfiguration.ObjectsMap.All(pair =>
+            {
+                // Deconstruct
+                var (type, templateObjects) = pair;
+
+                // Get the number examined objects of this type
+                var numberOfNumbers = input.ExaminedConfigurationPicture.Pictures.Configuration.ObjectsMap.GetOrDefault(type)?.Count ?? 0;
+
+                // This type is fine if there at least as many objects as the template ones
+                return numberOfNumbers >= templateObjects.Count;
+            });
+
+            // If we don't have enough objects
+            if (!doWeHaveEnoughObjects)
+                // Then there will definitely be no derived theorems
+                return Enumerable.Empty<SubtheoremsDeriverOutput>();
+
+            #endregion
 
             // Use the helper method to generate possible mappings between the loose objects of the
             // template configurations and objects of the examined configuration
