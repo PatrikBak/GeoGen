@@ -51,12 +51,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration, () => WithoutExcludingTangenciesInsidePicture);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(2);
-            allTheorems.Count.Should().Be(4);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {
@@ -72,7 +68,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {
@@ -117,7 +113,7 @@ namespace GeoGen.TheoremsFinder.Tests
             var (newTheorems, allTheorems) = FindTheorems(configuration, () => WithExcludingTangenciesInsidePicture);
 
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {
@@ -133,7 +129,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
                 {

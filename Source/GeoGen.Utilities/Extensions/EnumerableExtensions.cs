@@ -11,6 +11,108 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Converts the enumerable of equivalent pairs to the list of collections,
+        /// where each collections contains mutually equivalent objects, and no two 
+        /// collections have equivalent elements (in other words, equivalence classes).
+        /// </summary>
+        /// <typeparam name="T">The type of elements.</typeparam>
+        /// <param name="equivalentObjects">The enumerable of equivalent pairs.</param>
+        /// <returns>The list of equivalence classes.</returns>
+        public static IReadOnlyList<IReadOnlyCollection<T>> CreateEqualityClasses<T>(this IEnumerable<(T, T)> equivalentObjects)
+        {
+            // Prepare the result
+            var equivalencyClasses = new List<HashSet<T>>();
+
+            // Go through the equivalences
+            foreach (var (object1, object2) in equivalentObjects)
+            {
+                // Find the groups where the objects belong 
+                var group1 = equivalencyClasses.FirstOrDefault(set => set.Contains(object1));
+                var group2 = equivalencyClasses.FirstOrDefault(set => set.Contains(object2));
+
+                // If both are in the same group, then we don't have anything new
+                if (group1 == group2 && group2 != null)
+                    continue;
+
+                // If neither group exists, add a new group with our objects to the list
+                if (group1 == null && group2 == null)
+                    equivalencyClasses.Add(new HashSet<T> { object1, object2 });
+
+                // If both group exists
+                else if (group1 != null && group2 != null)
+                {
+                    // Add all objects from the first group to the second
+                    group2.UnionWith(group1);
+
+                    // Remove the first group
+                    equivalencyClasses.Remove(group1);
+                }
+
+                // If exactly one group exists
+                else
+                {
+                    // Get the group
+                    var group = group1 ?? group2;
+
+                    // Get the object that is not in it
+                    var newObject = group.Contains(object1) ? object2 : object1;
+
+                    // Add the object to the group
+                    group.Add(newObject);
+                }
+            }
+
+            // Return the result
+            return equivalencyClasses;
+        }
+
+        /// <summary>
+        /// Finds out if this enumerable has equivalent elements as the other one.
+        /// </summary>
+        /// <typeparam name="T">The type of elements of the enumerables.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="otherEnumerable">The other enumerable.</param>
+        /// <param name="comparer">The equality comparer to be used. If it's null, the default comparer will be used.</param>
+        /// <returns>true, if the enumerables are orderlessly equal; false otherwise.</returns>
+        public static bool OrderlessEquals<T>(this IEnumerable<T> enumerable, IEnumerable<T> otherEnumerable, IEqualityComparer<T> comparer = null)
+        {
+            // If the comparer is null, set it to the default one
+            comparer ??= EqualityComparer<T>.Default;
+
+            // Prepare the dictionary of element counts
+            var counts = new Dictionary<T, int>(comparer);
+
+            // Go through the first enumerable to 
+            foreach (var element in enumerable)
+            {
+                // If this element has occurred before, count it in
+                if (counts.ContainsKey(element))
+                    counts[element]++;
+                // Otherwise add it with a count 1
+                else
+                    counts.Add(element, 1);
+            }
+
+            // Go through the other enumerable
+            foreach (var element in otherEnumerable)
+            {
+                // If the element is not present in the dictionary, then they're not equal
+                if (!counts.ContainsKey(element))
+                    return false;
+
+                // Otherwise count down the expected occurrence
+                counts[element]--;
+
+                // If the element is not expected to occur anymore, remove it
+                if (counts[element] == 0)
+                    counts.Remove(element);
+            }
+
+            // They're equal if and only if we have an empty dictionary now
+            return counts.IsEmpty();
+        }
+
+        /// <summary>
         /// Compares two sequences lexicographically. For example:
         /// [1,2,3] < [1,2,4]
         /// [1,2,3] > [1,2,2]
@@ -139,7 +241,7 @@ namespace GeoGen.Utilities
         /// <param name="source">The source enumerable.</param>
         /// <param name="selector">The selector function.</param>
         /// <returns>The projected enumerable, if the selector doesn't return the default value; otherwise null.</returns>
-        public static List<TResult> SelectIfNotDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
+        public static IEnumerable<TResult> SelectIfNotDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector)
         {
             // Prepare a list of results
             var results = new List<TResult>();

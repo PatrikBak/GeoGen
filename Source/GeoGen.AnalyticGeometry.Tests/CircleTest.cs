@@ -240,7 +240,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 new List<Point> {new Point((-289 - 4 * Math.Sqrt(31)) / 41, (387 - 5 * Math.Sqrt(31)) / 41), new Point((4 * Math.Sqrt(31) - 289) / 41, (387 + 5 * Math.Sqrt(31)) / 41)}
             };
 
-            bool EqualPoints(int i, IEnumerable<Point> result) => result.ToSet().SetEquals(results[i].ToSet());
+            bool EqualPoints(int i, IEnumerable<Point> result) => result.OrderlessEquals(results[i]);
 
             for (var i = 0; i < points.Count; i++)
             {
@@ -379,10 +379,7 @@ namespace GeoGen.AnalyticGeometry.Tests
                 new List<Point> {new Point((13 - 9 * Math.Sqrt(15)) / 8, (-7 - 3 * Math.Sqrt(15)) / 8), new Point((13 + 9 * Math.Sqrt(15)) / 8, (-7 + 3 * Math.Sqrt(15)) / 8)}
             };
 
-            bool EqualPoints(int i, IEnumerable<Point> result)
-            {
-                return EnumerableExtensions.ToSet(result).SetEquals(EnumerableExtensions.ToSet(results[i]));
-            }
+            bool EqualPoints(int i, IEnumerable<Point> result) => result.OrderlessEquals(results[i]);
 
             for (var i = 0; i < circles.Count; i++)
             {

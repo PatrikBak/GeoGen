@@ -3,7 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
-using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremProver;
 using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using Ninject;
@@ -40,13 +40,10 @@ namespace GeoGen.Algorithm.Tests
                     {
                         ExcludeTangencyInsidePicture = false
                     },
-                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
-                    // Analyzer with no theorems 
+                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { TheoremType.EqualObjects, TheoremType.Incidence }).ToReadOnlyHashSet())
+                    // Prover with no theorems 
                     // TODO: Get some theorems 
-                    .AddTheoremsAnalyzer(new TheoremsAnalyzerData
-                    {
-                        TemplateTheorems = new List<(Configuration, TheoremsMap)>()
-                    })
+                    .AddTheoremProver(new TheoremProverData(new List<(Configuration, TheoremsMap)>()))
                     // Constructor that ignores inconsistencies
                     .AddConstructor(new PicturesSettings
                     {

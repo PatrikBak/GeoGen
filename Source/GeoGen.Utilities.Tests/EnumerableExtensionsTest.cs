@@ -32,7 +32,7 @@ namespace GeoGen.Utilities.Tests
             // Assert existence of some subsets
             new[]
             {
-                new[] { 1, 2, 3, 4},
+                new[] {1, 2, 3, 4},
                 new[] {1, 2, 3},
                 new[] {2, 3},
                 new[] {4},
@@ -41,10 +41,10 @@ namespace GeoGen.Utilities.Tests
             .ForEach(subset =>
             {
                 // Make sure it's listed in all subsets
-                superset.Subsets().Any(_subset => _subset.ToSet().SetEquals(subset)).Should().BeTrue();
+                superset.Subsets().Any(_subset => _subset.OrderlessEquals(subset)).Should().BeTrue();
 
                 // Make sure it's listed in the subsets with the given count
-                superset.Subsets(subset.Count()).Any(_subset => _subset.ToSet().SetEquals(subset)).Should().BeTrue();
+                superset.Subsets(subset.Count()).Any(_subset => _subset.OrderlessEquals(subset)).Should().BeTrue();
             });
         }
 

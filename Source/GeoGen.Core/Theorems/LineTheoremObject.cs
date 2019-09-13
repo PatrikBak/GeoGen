@@ -109,7 +109,7 @@ namespace GeoGen.Core
             var objectPart = ConfigurationObject == null ? "" : $"{ConfigurationObject.Id}";
 
             // If there are points, include them
-            var pointsPart = Points.Any() ? $"[{Points.Select(p => p.Id).Ordered().ToJoinedString(",")}]" : "";
+            var pointsPart = Points.Any() ? $"[{Points.Select(p => p.Id).Ordered().ToJoinedString()}]" : "";
 
             // Construct the final string including the points
             return $"{objectPart}{pointsPart}";

@@ -127,16 +127,11 @@ namespace GeoGen.Core.Tests
             // Create the configuration
             var configuration = Configuration.DeriveFromObjects(Trapezoid, A, B, C, D, P);
 
-            // Create line ACP that will be reused in the theorem
-            var lineACP = new LineTheoremObject(A, C, P);
-
             // This theorem can be stated without P
             new Theorem(configuration, EqualAngles, new TheoremObject[]
             {
-                lineACP,
-                new LineTheoremObject(A, B),
-                lineACP,
-                new LineTheoremObject(C, D),
+                new AngleTheoremObject(new LineTheoremObject(A, C, P), new LineTheoremObject(A, B)),
+                new AngleTheoremObject(new LineTheoremObject(A, C, P), new LineTheoremObject(C, D))
             })
             .CanBeStatedInSmallerConfiguration().Should().BeTrue();
         }

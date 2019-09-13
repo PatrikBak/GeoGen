@@ -34,12 +34,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(3);
-            allTheorems.Count.Should().Be(4);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, F, O, H),
                 new Theorem(configuration, CollinearPoints, F, O, G),
@@ -48,7 +44,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, F, O, H),
                 new Theorem(configuration, CollinearPoints, F, O, G),
@@ -77,12 +73,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(6);
-            allTheorems.Count.Should().Be(8);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, P, A, B),
                 new Theorem(configuration, CollinearPoints, P, A, mAB),
@@ -94,7 +86,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, CollinearPoints, P, A, B),
                 new Theorem(configuration, CollinearPoints, P, A, mAB),

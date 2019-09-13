@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Utilities
 {
@@ -40,19 +39,18 @@ namespace GeoGen.Utilities
         /// <summary>
         /// Finds the index of an item in the list using a function to retrieve items.
         /// </summary>        
+        /// <typeparam name="T">The type of items of the list.</typeparam>
         /// <param name="list">The list.</param>
-        /// <param name="itemFunction">The function that retries an item.</param>
         /// <param name="item">The item that we're looking for.</param>
         /// <returns>The index of the found item, if it exists; -1 otherwise.</returns>
-        public static int IndexOf<TSource, TItem>(this IReadOnlyList<TSource> list, Func<TSource, TItem> itemFunction, TItem item)
+        public static int IndexOf<T>(this IReadOnlyList<T> list, T item)
         {
             // Go through the list
             for (var index = 0; index < list.Count; index++)
-            {
-                // If the current item is equal to this one, return the index
-                if (item.Equals(itemFunction(list[index])))
+                // If the current item is equal to this one, 
+                if (item.Equals(list[index]))
+                    // Return the index
                     return index;
-            }
 
             // If we got here, we didn't find it
             return -1;

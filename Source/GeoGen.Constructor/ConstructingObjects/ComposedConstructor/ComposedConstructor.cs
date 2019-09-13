@@ -56,7 +56,7 @@ namespace GeoGen.Constructor
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
-            // TODO: How about the layout? There seems to be a problem with Paralellogram
+            // TODO: How about checking the layout?
 
             // Initialize an internal picture in which we're going to construct
             // the configuration that defines our composed construction

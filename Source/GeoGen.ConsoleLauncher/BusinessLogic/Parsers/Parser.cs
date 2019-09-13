@@ -200,7 +200,7 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="configurationLines">The lines with the configuration's definition.</param>
         /// <returns>The tuple consisting of the parsed configuration and the dictionary mapping declared object names to their real objects.</returns>
-        private (Configuration configuration, Dictionary<string, ConfigurationObject> namesToObjects) ParseConfiguration(List<string> configurationLines)
+        private static (Configuration configuration, Dictionary<string, ConfigurationObject> namesToObjects) ParseConfiguration(List<string> configurationLines)
         {
             // Make sure there is at least one line
             if (configurationLines.Count == 0)
@@ -286,44 +286,13 @@ namespace GeoGen.ConsoleLauncher
                 if (namesToObjects.ContainsKey(newObjectName))
                     throw new ParserException($"Error while parsing '{line}'. The object with the name '{newObjectName}' has been already declared at least twice.");
 
-                // Match the construction and input objects from the definition
-                var definitionMatch = Regex.Match(nameDefinitionMatch.Groups[2].Value.Trim(), "^(.+)\\((.*)\\)$");
-
-                // Make sure there's a match...
-                if (!definitionMatch.Success)
-                    throw new ParserException($"Error while parsing '{line}'. The definition should be in the form 'ConstructioName(objects)'.");
-
-                // Prepare the construction
-                var construction = default(Construction);
-
-                try
-                {
-                    // Try to get it 
-                    construction = ParseConstruction(definitionMatch.Groups[1].Value);
-                }
-                catch (ParserException e)
-                {
-                    // Re-throw the exception with the line info
-                    throw new ParserException($"Error while parsing '{line}'. {e.Message}");
-                }
-
-                // Get the passed objects
-                var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => !s.IsNullOrEmpty()).Select(name =>
-                {
-                    // Make sure the name has been declared before
-                    if (!namesToObjects.ContainsKey(name))
-                        throw new ParserException($"Error while parsing '{line}'. Undeclared object '{name}'");
-
-                    // Return the corresponding object
-                    return namesToObjects[name];
-                })
-                // Enumerate
-                .ToArray();
+                // Get the object string
+                var objectString = nameDefinitionMatch.Groups[2].Value.Trim();
 
                 try
                 {
                     // Try to create a constructed object
-                    var constructedObject = new ConstructedConfigurationObject(construction, passedObjects);
+                    var constructedObject = ParseConstructedObject(objectString, namesToObjects);
 
                     // Associate it
                     namesToObjects.Add(newObjectName, constructedObject);
@@ -331,10 +300,10 @@ namespace GeoGen.ConsoleLauncher
                     // Return it
                     return constructedObject;
                 }
-                catch (GeoGenException e)
+                catch (ParserException e)
                 {
                     // Make sure the user is aware of the problem
-                    throw new ParserException(e.Message);
+                    throw new ParserException($"Error while parsing '{line}'. Couldn't parse the object. {e.Message}");
                 }
             })
             // Enumerate
@@ -347,13 +316,67 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
+        /// Parses the constructed object represented by a given string. It's inner objects have to be named.
+        /// </summary>
+        /// <param name="objectString">The string to be parsed.</param>
+        /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
+        /// <returns>The parsed constructed object.</returns>
+        private static ConstructedConfigurationObject ParseConstructedObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
+        {
+            // Match the construction and input objects from the definition
+            var definitionMatch = Regex.Match(objectString, "^(.+)\\((.*)\\)$");
+
+            // Make sure there's a match...
+            if (!definitionMatch.Success)
+                throw new ParserException($"Error while parsing '{objectString}'. The definition should be in the form 'ConstructioName(objects)'.");
+
+            // Prepare the construction
+            var construction = default(Construction);
+
+            try
+            {
+                // Try to get it 
+                construction = ParseConstruction(definitionMatch.Groups[1].Value);
+            }
+            catch (ParserException e)
+            {
+                // Re-throw the exception with the line info
+                throw new ParserException($"Error while parsing '{objectString}'. {e.Message}");
+            }
+
+            // Get the passed objects
+            var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => !s.IsNullOrEmpty()).Select(name =>
+            {
+                // Make sure the name has been declared before
+                if (!namesToObjects.ContainsKey(name))
+                    throw new ParserException($"Error while parsing '{objectString}'. Undeclared object '{name}'");
+
+                // Return the corresponding object
+                return namesToObjects[name];
+            })
+            // Enumerate
+            .ToArray();
+
+            try
+            {
+                // Try to create a constructed object
+                return new ConstructedConfigurationObject(construction, passedObjects);
+            }
+            catch (GeoGenException e)
+            {
+                // Make sure the user is aware of the problem
+                throw new ParserException(e.Message);
+            }
+        }
+
+        /// <summary>
         /// Parses a theorem from a theorem line.
         /// </summary>
         /// <param name="theoremLine">The line with the theorem's description.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
         /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <returns>The parsed theorem.</returns>
-        private Theorem ParseTheorem(string theoremLine, Dictionary<string, ConfigurationObject> namesToObjects, Configuration configuration)
+        private static Theorem ParseTheorem(string theoremLine, Dictionary<string, ConfigurationObject> namesToObjects, Configuration configuration)
         {
             #region Parsing type
 
@@ -407,7 +430,7 @@ namespace GeoGen.ConsoleLauncher
             var theoremObjectsStrings = definitionCopy.ToString().Split(';').Select(s => s.Trim());
 
             // Parse the objects
-            var theoremObjects = theoremObjectsStrings.Select(theoremObject => ParseTheoremObject(theoremObject, namesToObjects)).ToList();
+            var theoremObjects = theoremObjectsStrings.Select(theoremObject => ParseTheoremObject(theoremType, theoremObject, namesToObjects)).ToList();
 
             #endregion
 
@@ -418,11 +441,56 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Parses theorem object from a given string.
         /// </summary>
+        /// <param name="theoremType">The type of theorem being parsed.</param>
         /// <param name="objectString">The string containing the object's definition.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
         /// <returns>The parsed theorem object.</returns>
-        private static TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
+        private static TheoremObject ParseTheoremObject(TheoremType theoremType, string objectString, Dictionary<string, ConfigurationObject> namesToObjects)
         {
+            // First handle the two special types of theorems
+            switch (theoremType)
+            {
+                // In these types we have two types of objects: 
+                // Named ones or explicitly defined ones (via a construction with arguments)
+                case TheoremType.Incidence:
+                case TheoremType.EqualObjects:
+
+                    var parsedObject = default(ConfigurationObject);
+
+                    // Try to parse it with a name
+                    if (namesToObjects.ContainsKey(objectString))
+                        parsedObject = namesToObjects[objectString];
+
+                    // Otherwise
+                    else
+                        try
+                        {
+                            // Or try to parse it as a configuration object
+                            parsedObject = ParseConstructedObject(objectString, namesToObjects);
+                        }
+                        catch (ParserException e)
+                        {
+                            // Re-thrown an exception with the right message
+                            throw new ParserException($"Error while parsing '{objectString}'. Object has to be defined correctly. {e.Message}");
+                        }
+
+                    // Switch based on the figured type which constructor we'll use
+                    return parsedObject.ObjectType switch
+                    {
+                        // Point case
+                        ConfigurationObjectType.Point => new PointTheoremObject(parsedObject) as TheoremObject,
+
+                        // Line case
+                        ConfigurationObjectType.Line => new LineTheoremObject(parsedObject),
+
+                        // Circle case
+                        ConfigurationObjectType.Circle => new CircleTheoremObject(parsedObject),
+
+                        // Default case
+                        _ => throw new GeoGenException($"Unhandled type of configuration object: {parsedObject.ObjectType}"),
+                    };
+            }
+
             // Try to match a line defined implicitly
             var implicitLineMatch = Regex.Match(objectString, "^\\[(.+)\\]$");
 

@@ -25,15 +25,11 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Finds an equivalent theorem in the map to a given one.
+        /// Finds out if the map contains a given theorem.
         /// </summary>
         /// <param name="theorem">The theorem.</param>
-        /// <returns>An equivalent theorem, if there is any; otherwise null.</returns>
-        public Theorem FindEquivalentTheorem(Theorem theorem)
-        {
-            // Try to look for theorems of the given type and first the first equivalent
-            return this.GetOrDefault(theorem.Type)?.FirstOrDefault(_theorem => _theorem.Equals(theorem));
-        }
+        /// <returns>true, if the given theorem is contained in the map; false otherwise.</returns>
+        public bool ContainsTheorem(Theorem theorem) => this.GetOrDefault(theorem.Type)?.Contains(theorem) ?? false;
 
         #endregion
 

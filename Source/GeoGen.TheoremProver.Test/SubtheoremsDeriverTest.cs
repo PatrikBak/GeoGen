@@ -15,7 +15,7 @@ using static GeoGen.Core.PredefinedConstructionType;
 using static GeoGen.Core.RandomPointOnConstruction;
 using static GeoGen.Core.TheoremType;
 
-namespace GeoGen.TheoremsAnalyzer.Test
+namespace GeoGen.TheoremProver.Test
 {
     /// <summary>
     /// The test class for <see cref="SubtheoremsDeriver"/>.
@@ -29,10 +29,14 @@ namespace GeoGen.TheoremsAnalyzer.Test
         /// The equality comparer for <see cref="SubtheoremsDeriverOutput"/>.
         /// </summary>
         private static readonly IEqualityComparer<SubtheoremsDeriverOutput> OutputsComparer = new SimpleEqualityComparer<SubtheoremsDeriverOutput>(
-            // They're the same when the sets of used equalities are the same 
-            (o1, o2) => o1.UsedEqualities.ToSet().SetEquals(o2.UsedEqualities)
-                    // And the sets of derived theorems are the same as well
-                    && o1.DerivedTheorems.ToSet().SetEquals(o2.DerivedTheorems));
+            // They're the same when the used equalities are the same 
+            (o1, o2) => o1.UsedEqualities.OrderlessEquals(o2.UsedEqualities)
+                    // And the derived theorems are the same
+                    && o1.DerivedTheorems.OrderlessEquals(o2.DerivedTheorems)
+                    // And the used facts are the same
+                    && o1.UsedFacts.OrderlessEquals(o2.UsedFacts)
+                    // And the used incidences are the same as well
+                    && o1.UsedIncidencies.OrderlessEquals(o2.UsedIncidencies));
 
         #endregion
 
@@ -57,7 +61,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                 {
                     ExcludeTangencyInsidePicture = false
                 },
-                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
+                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
                 // Add constructor ignoring inconsistencies
                 .AddConstructor(new PicturesSettings
                 {
@@ -83,12 +87,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
 
             // Run the algorithm
             return deriver.DeriveTheorems(new SubtheoremsDeriverInput
-            {
-                ExaminedConfigurationPicture = contextualPicture,
-                ExaminedConfigurationTheorems = theorems,
-                TemplateConfiguration = templateTheorems.First().Configuration,
-                TemplateTheorems = new TheoremsMap(templateTheorems)
-            })
+            (
+                examinedConfigurationPicture: contextualPicture,
+                examinedConfigurationTheorems: theorems,
+                templateConfiguration: templateTheorems.First().Configuration,
+                templateTheorems: new TheoremsMap(templateTheorems)
+            ))
             // Enumerate the result
             .ToList();
         }
@@ -169,15 +173,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(4);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -188,12 +189,14 @@ namespace GeoGen.TheoremsAnalyzer.Test
 
                         (new Theorem(examinedConfiguration, CollinearPoints, A, M, N), templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
 
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -204,8 +207,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
 
                         (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -245,15 +250,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(2);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -264,11 +266,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
 
                         (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (M, new ConstructedConfigurationObject(Midpoint, B, C))
-                    }
-                }
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -311,68 +315,80 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (B, new ConstructedConfigurationObject(PointReflection, C, M))
-                    }
-                },
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (C, new ConstructedConfigurationObject(PointReflection, B, M))
-                    }
-                },
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, A, O, D), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, A, O, D), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (A, new ConstructedConfigurationObject(PointReflection, D, O))
-                    }
-                },
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, D, M, H), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (H, new ConstructedConfigurationObject(PointReflection, D, M))
-                    }
-                },
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, CollinearPoints, D, M, H), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (D, new ConstructedConfigurationObject(PointReflection, H, M))
-                    }
-                }
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -414,8 +430,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -424,11 +440,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (M, new ConstructedConfigurationObject(PerpendicularBisector, B, C))
+                    },
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -437,11 +458,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (O, new ConstructedConfigurationObject(PerpendicularBisector, B, C))
+                    },
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -450,11 +476,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (O, new ConstructedConfigurationObject(PerpendicularBisector, A, C))
+                    },
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualLineSegments, new[]
                         {
@@ -463,8 +494,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (O, new ConstructedConfigurationObject(PerpendicularBisector, A, B))
+                    },
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -508,15 +544,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(6);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -525,12 +558,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
-
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -539,12 +573,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
-
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -553,8 +588,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -596,15 +633,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(6);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -613,15 +647,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (O, new ConstructedConfigurationObject(Circumcenter, A, D, E))
-                    }
-                },
-
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -630,15 +665,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (O, new ConstructedConfigurationObject(Circumcenter, A, D, E))
-                    }
-                },
-
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -647,11 +683,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (O, new ConstructedConfigurationObject(Circumcenter, A, D, E))
-                    }
-                }
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -695,15 +733,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(6);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
                         {
@@ -713,8 +748,10 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -758,15 +795,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(6);
-
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
                         {
@@ -776,13 +810,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (D, new ConstructedConfigurationObject(Midpoint, B, C)),
                         (E, new ConstructedConfigurationObject(Midpoint, C, A)),
                         (F, new ConstructedConfigurationObject(Midpoint, A, B))
-                    }
-                }
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -820,15 +856,12 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Run
             var results = Run(examinedConfiguration, templateTheorems);
 
-            // Check count
-            results.Count.Should().Be(24, "The orthocenter from every three points is the forth one");
-
             // Check that perpendicularity of AH and BC can be derived dually
             CheckThatResultsContain(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, PerpendicularLines, new[]
                         {
@@ -837,12 +870,14 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                ),
 
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, PerpendicularLines, new[]
                         {
@@ -851,11 +886,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (A, new ConstructedConfigurationObject(Orthocenter, B, H, C))
-                    }
-                }
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>()
+                )
             });
         }
 
@@ -906,8 +943,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckThatResultsContain(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
                         {
@@ -917,8 +954,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, CollinearPoints, D, A, B),
+                        new Theorem(examinedConfiguration, CollinearPoints, E, B, C),
+                        new Theorem(examinedConfiguration, CollinearPoints, F, C, A)
+                    }
+                )
             });
         }
 
@@ -968,8 +1012,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -978,14 +1022,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, C, E))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(B, C),
+                            new LineTheoremObject(D, E)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -994,14 +1047,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, D, F, G))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(D, G),
+                            new LineTheoremObject(B, F)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -1010,14 +1072,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (A, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, F, G, C, E))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(G, E),
+                            new LineTheoremObject(F, C)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -1026,14 +1097,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (C, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, E, B, F))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(A, B),
+                            new LineTheoremObject(E, F)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -1042,14 +1122,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (B, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, D, C, F))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(A, C),
+                            new LineTheoremObject(F, D)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -1058,14 +1147,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (G, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, F, D, E))
-                    }
-                },
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(A, D),
+                            new LineTheoremObject(F, E)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new[]
                         {
@@ -1074,11 +1172,20 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
                         (G, new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, F, D, E))
-                    }
-                }
+                    },
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(A, E),
+                            new LineTheoremObject(F, D)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1124,8 +1231,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckThatResultsContain(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1134,11 +1241,20 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(B, E),
+                            new LineTheoremObject(D, F)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1147,11 +1263,20 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(B, E),
+                            new LineTheoremObject(D, F)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1160,8 +1285,17 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        {
+                            new LineTheoremObject(B, E),
+                            new LineTheoremObject(D, F)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1207,13 +1341,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, ParallelLines, l1, l2), templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1260,8 +1396,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1270,11 +1406,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1283,11 +1424,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1296,11 +1442,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1309,11 +1460,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1322,11 +1478,16 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1335,8 +1496,13 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1387,8 +1553,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
                         {
@@ -1398,8 +1564,15 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, H, D),
+                        new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, B, C),
+                        new Theorem(examinedConfiguration, ConcyclicPoints, H, D, B, C)
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1452,8 +1625,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1466,13 +1639,23 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         {
                             new LineTheoremObject(A, D),
                             new CircleTheoremObject(B, D, E)
-                        }), templateTheorems[1])
+                        }),
+                        templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(A, D),
+                            new LineTheoremObject(B, D)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                ),
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1485,10 +1668,20 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         {
                             new LineTheoremObject(B, C, D),
                             new CircleTheoremObject(A, D, E)
-                        }), templateTheorems[1])
+                        }),
+                        templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(A, D),
+                            new LineTheoremObject(B, D)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
+                )
             });
         }
 
@@ -1530,11 +1723,11 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var results = Run(examinedConfiguration, templateTheorems);
 
             // Check results
-            CheckThatResultsContain(results, new[]
+            CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, TangentCircles, new TheoremObject[]
                         {
@@ -1543,8 +1736,49 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(A, F),
+                            new LineTheoremObject(F, E)
+                        }),
+
+                        new Theorem(examinedConfiguration, CollinearPoints, A, C, E),
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (D, new ConstructedConfigurationObject(CircleWithDiameter, A, C))
+                    }
+                ),
+                new SubtheoremsDeriverOutput
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(examinedConfiguration, TangentCircles, new TheoremObject[]
+                        {
+                            new CircleTheoremObject(A, C, D),
+                            new CircleTheoremObject(A, E, F)
+                        }),
+                        templateTheorems[0])
+                    },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(A, D),
+                            new LineTheoremObject(D, C)
+                        }),
+
+                        new Theorem(examinedConfiguration, CollinearPoints, A, C, E),
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (F, new ConstructedConfigurationObject(CircleWithDiameter, A, E))
+                    }
+                )
             });
         }
 
@@ -1593,8 +1827,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1603,12 +1837,21 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        {
+                            new LineTheoremObject(E, A),
+                            new CircleTheoremObject(A, B, C)
+                        })
+                    }
+                ),
 
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1617,8 +1860,17 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        {
+                            new LineTheoremObject(E, A),
+                            new CircleTheoremObject(A, B, C)
+                        })
+                    }
+                )
             });
         }
 
@@ -1662,8 +1914,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckThatResultsContain(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
@@ -1672,8 +1924,17 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[0])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        {
+                            new LineTheoremObject(C, D),
+                            new CircleTheoremObject(A, F, D)
+                        })
+                    }
+                )
             });
         }
 
@@ -1726,8 +1987,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckForEquivalncyOfResults(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, PerpendicularLines, new[]
                         {
@@ -1743,8 +2004,17 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(S, B),
+                            new LineSegmentTheoremObject(S, C)
+                        })
+                    }
+                )
             });
         }
 
@@ -1755,7 +2025,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             var A_ = new LooseConfigurationObject(Point);
             var B_ = new LooseConfigurationObject(Point);
             var C_ = new LooseConfigurationObject(Point);
-            var D_ = new ConstructedConfigurationObject(RandomPointOn(PerpendicularLineToLineFromPoints), A_, B_, C_);
+            var D_ = new ConstructedConfigurationObject(RandomPointOn(PerpendicularBisector), B_, C_);
 
             // Create the template configuration
             var templateConfiguration = Configuration.DeriveFromObjects(IsoscelesTriangle, A_, B_, C_, D_);
@@ -1792,8 +2062,8 @@ namespace GeoGen.TheoremsAnalyzer.Test
             CheckThatResultsContain(results, new[]
             {
                 new SubtheoremsDeriverOutput
-                {
-                    DerivedTheorems = new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
                         (new Theorem(examinedConfiguration, PerpendicularLines, new[]
                         {
@@ -1809,8 +2079,20 @@ namespace GeoGen.TheoremsAnalyzer.Test
                         }),
                         templateTheorems[1])
                     },
-                    UsedEqualities = new List<(ConfigurationObject originalObject, ConstructedConfigurationObject equalObject)>()
-                }
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
+                    usedFacts: new List<Theorem>
+                    {
+                        new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(O1, B),
+                            new LineSegmentTheoremObject(O1, C)
+                        })
+                    },
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (O2, new ConstructedConfigurationObject(PerpendicularBisector, B, C))
+                    }
+                )
             });
         }
 

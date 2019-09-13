@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.Core
 {
@@ -25,9 +26,14 @@ namespace GeoGen.Core
         public TheoremType Type { get; }
 
         /// <summary>
-        /// Gets the list of theorem objects that this theorem is about.
+        /// Gets the set of theorem objects that this theorem is about.
         /// </summary>
         public IReadOnlyHashSet<TheoremObject> InvolvedObjects { get; }
+
+        /// <summary>
+        /// Gets the <see cref="InvolvedObjects"/> as a list.
+        /// </summary>
+        public IReadOnlyList<TheoremObject> InvolvedObjectsList { get; }
 
         #endregion
 
@@ -44,6 +50,13 @@ namespace GeoGen.Core
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
             InvolvedObjects = involvedObjects?.ToReadOnlyHashSet() ?? throw new ArgumentNullException(nameof(involvedObjects));
+
+            // Get the list version of the objects
+            InvolvedObjectsList = InvolvedObjects.ToList();
+
+            // Ensure the number of objects is correct
+            if (InvolvedObjects.Count != type.GetNumberOfNeededObjects())
+                throw new GeoGenException($"Cannot create theorem of type '{type}', incorrect number of objects: {InvolvedObjects.Count}");
         }
 
         /// <summary>
@@ -74,6 +87,13 @@ namespace GeoGen.Core
                 })
                 // Enumerate to an array
                 .ToReadOnlyHashSet();
+
+            // Get the list version of the objects
+            InvolvedObjectsList = InvolvedObjects.ToList();
+
+            // Ensure the number of objects is correct
+            if (InvolvedObjects.Count != type.GetNumberOfNeededObjects())
+                throw new GeoGenException($"Cannot create theorem of type '{type}', incorrect number of objects: {InvolvedObjects.Count}");
         }
 
         #endregion
@@ -109,10 +129,14 @@ namespace GeoGen.Core
         public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Remap objects, but only if none of them is null
-            var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping));
+            var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping))?.Distinct().ToList();
 
             // If the remapped objects are null, then the theorem cannot be remapped
             if (remappedObjects == null)
+                return null;
+
+            // If the number of objects doesn't match, then the mapping is incorrect
+            if (remappedObjects.Count != Type.GetNumberOfNeededObjects())
                 return null;
 
             // Otherwise construct the remapped theorem
@@ -143,14 +167,16 @@ namespace GeoGen.Core
             switch (type)
             {
                 // The cases where objects are simply
-                case TheoremType.CollinearPoints:
-                case TheoremType.ConcyclicPoints:
-                case TheoremType.ConcurrentLines:
-                case TheoremType.ParallelLines:
-                case TheoremType.PerpendicularLines:
-                case TheoremType.LineTangentToCircle:
-                case TheoremType.TangentCircles:
-                case TheoremType.ConcurrentObjects:
+                case CollinearPoints:
+                case ConcyclicPoints:
+                case ConcurrentLines:
+                case ParallelLines:
+                case PerpendicularLines:
+                case LineTangentToCircle:
+                case TangentCircles:
+                case ConcurrentObjects:
+                case EqualObjects:
+                case Incidence:
 
                     // In those we simply take all created objects
                     finalTheoremObjects = flattenedObjects;
@@ -158,7 +184,7 @@ namespace GeoGen.Core
                     break;
 
                 // Case with angles
-                case TheoremType.EqualAngles:
+                case EqualAngles:
 
                     // Here the first two lines make one angle and the next one the other one
                     finalTheoremObjects = new TheoremObject[]
@@ -170,7 +196,7 @@ namespace GeoGen.Core
                     break;
 
                 // Case with line segments
-                case TheoremType.EqualLineSegments:
+                case EqualLineSegments:
 
                     // Here the first two points make one line segment and the next one the other one
                     finalTheoremObjects = new TheoremObject[]

@@ -27,15 +27,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor", "GeoGe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer", "GeoGen.TheoremsAnalyzer\GeoGen.TheoremsAnalyzer.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver", "GeoGen.TheoremProver\GeoGen.TheoremProver.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremsAnalyzer.Test", "GeoGen.TheoremsAnalyzer.Test\GeoGen.TheoremsAnalyzer.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.Test", "GeoGen.TheoremProver.Test\GeoGen.TheoremProver.Test.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.DependenciesResolver", "GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj", "{AEFD477E-2418-45D4-9637-23C95A7C5817}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConsoleLauncher", "GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Algorithm", "GeoGen.Algorithm\GeoGen.Algorithm.csproj", "{887FB427-45A2-4471-8635-7F7630F14A47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm", "GeoGen.Algorithm\GeoGen.Algorithm.csproj", "{887FB427-45A2-4471-8635-7F7630F14A47}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm.Tests", "GeoGen.Algorithm.Tests\GeoGen.Algorithm.Tests.csproj", "{0693E390-7513-4148-9255-648A69A09303}"
 EndProject

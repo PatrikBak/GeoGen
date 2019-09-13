@@ -1,7 +1,7 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
-using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremProver;
 using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using System;
@@ -39,9 +39,9 @@ namespace GeoGen.Algorithm
         private readonly ITheoremsFinder[] _finders;
 
         /// <summary>
-        /// The analyzer of theorem providing feedback whether they are olympiad or not.
+        /// The prover of theorems.
         /// </summary>
-        private readonly ITheoremsAnalyzer _analyzer;
+        private readonly ITheoremProver _prover;
 
         #endregion
 
@@ -54,18 +54,18 @@ namespace GeoGen.Algorithm
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="pictureFactory">The factory for creating contextual pictures.</param>
         /// <param name="finders">The finders of theorems in generated configurations.</param>
-        /// <param name="analyzer">The analyzer of theorem providing feedback whether they are olympiad or not.</param>
+        /// <param name="prover">The prover of theorems.</param>
         public SequentialAlgorithm(IGenerator generator,
                                    IGeometryConstructor geometryConstructor,
                                    IContextualPictureFactory pictureFactory,
                                    ITheoremsFinder[] finders,
-                                   ITheoremsAnalyzer analyzer)
+                                   ITheoremProver prover)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _finders = finders ?? throw new ArgumentNullException(nameof(finders));
-            _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
+            _prover = prover ?? throw new ArgumentNullException(nameof(prover));
         }
 
         #endregion
@@ -119,7 +119,7 @@ namespace GeoGen.Algorithm
             // Prepare the map for theorems
             var theoremsMap = new Dictionary<GeneratedConfiguration, TheoremsMap>();
 
-            // Prepare a set containing inconstructible objects. 
+            // Prepare the set containing inconstructible objects. 
             var inconstructibleObjects = new HashSet<ConfigurationObject>();
 
             #endregion
@@ -177,6 +177,13 @@ namespace GeoGen.Algorithm
                 // Find out if there are any duplicates
                 var anyDuplicates = constructionData.Duplicates != default;
 
+                // TODO: Duplicates = EqualObjects theorem. The configuration already been examined,
+                //       but, these theorems might be interesting. I should probably implement 
+                //       an algorithm that finds the minimal configuration for this (going backwards?
+                //       and this class can then do something interesting about the found theorem
+                //       it would technically have an access to the picture where the striped 
+                //       configuration is drawn, i.e. it can call theorems analyzer. For now it's not worth it 
+
                 // If there is an inconstructible object, remember it 
                 if (anyInconstructibleObject)
                     inconstructibleObjects.Add(constructionData.InconstructibleObject);
@@ -217,8 +224,7 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
-                // TODO: Further verification, for example whether
-                //       points aren't too close to each other?
+                // TODO: Further verification, for example whether points aren't too close to each other?
 
                 // If we got here, everything's fine
                 return true;
@@ -250,35 +256,34 @@ namespace GeoGen.Algorithm
                        // Get the old theorems
                        // If the previous configuration is the initial one
                        var oldTheorems = configuration.PreviousConfiguration.IterationIndex == 0 ?
-                          // Then we have them in a variable
-                          initialTheorems.AllObjects
+                          // Then the old theorems are the initial ones
+                          initialTheorems
                           // Otherwise we take them from the map
-                          : theoremsMap[configuration.PreviousConfiguration].AllObjects;
+                          : theoremsMap[configuration.PreviousConfiguration];
 
-                       // We need to correct them so that theorem objects depict
-                       // the most recent situation
-                       oldTheorems = oldTheorems.Select(theorem => Recreate(picture, theorem)).ToList();
+                       // We need to correct them so that theorem objects depict the most recent situation
+                       oldTheorems = new TheoremsMap(oldTheorems.AllObjects.Select(theorem => Recreate(picture, theorem)));
 
-                       // Now we can get all theorems
-                       var allTheorems = new TheoremsMap(newTheorems.AllObjects.Concat(oldTheorems));
+                       // Prepare the input for the theorem prover
+                       var input = new TheoremProverInput
+                       (
+                           contextualPicture: picture,
+                           oldTheorems: oldTheorems,
+                           newTheorems: newTheorems
+                       );
 
-                       // And cache them
-                       theoremsMap.Add(configuration, allTheorems);
+                       // Cache all the theorems (that the prover conveniently merged for us)
+                       theoremsMap.Add(configuration, input.AllTheorems);
 
-                       // Analyze the theorems
-                       var analysisResults = _analyzer.Analyze(new TheoremAnalyzerInput
-                       {
-                           ContextualPicture = picture,
-                           NewTheorems = newTheorems,
-                           AllTheorems = allTheorems
-                       });
+                       // Analyze them
+                       var proverOutput = _prover.Analyze(input);
 
                        // Return the final output
                        return new AlgorithmOutput
                        {
                            Configuration = configuration,
                            Theorems = newTheorems,
-                           TheoremsFeedback = analysisResults
+                           ProverOutput = proverOutput
                        };
                    }));
 

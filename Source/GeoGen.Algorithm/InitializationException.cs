@@ -4,9 +4,8 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
-    /// when <see cref="IAlgorithm"/> couldn't be performed because of an incorrect
-    /// input.
+    /// Represents a type of a <see cref="GeoGenException"/> that is thrown when 
+    /// <see cref="IAlgorithm"/> couldn't be performed because of an incorrect input.
     /// </summary>
     public class InitializationException : GeoGenException
     {

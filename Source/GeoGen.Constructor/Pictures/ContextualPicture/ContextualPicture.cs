@@ -242,14 +242,17 @@ namespace GeoGen.Constructor
             // Clone the objects
             _objects.ForEach(pair =>
             {
+                // Deconstruct
+                var (picture, objectsMap) = pair;
+
                 // Create a new map
                 var newMap = new Map<GeometricObject, IAnalyticObject>();
 
                 // Add the new map corresponding to the picture
-                newPicture._objects.Add(picturesMap[pair.Key], newMap);
+                newPicture._objects.Add(picturesMap[picture], newMap);
 
                 // Fill the map
-                pair.Value.ForEach(tuple => newMap.Add(geometricObjectsMap[tuple.Item1], tuple.Item2));
+                objectsMap.ForEach(tuple => newMap.Add(geometricObjectsMap[tuple.Item1], tuple.Item2));
             });
 
             // Clone all objects while making them all old

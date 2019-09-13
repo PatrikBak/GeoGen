@@ -36,7 +36,7 @@ namespace GeoGen.TheoremsFinder
         #region Finding type from the class name
 
         /// <summary>
-        /// Infers the type of the predefined constructor from the class name. 
+        /// Infers the type of the theorems finder from the class name. 
         /// The class name should be in the form {type}TheoremsFinder.
         /// </summary>
         /// <returns>The inferred type.</returns>

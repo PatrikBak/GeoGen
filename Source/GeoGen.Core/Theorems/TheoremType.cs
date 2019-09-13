@@ -61,6 +61,16 @@
         /// <summary>
         /// Two pairs of lines make the same angles
         /// </summary>
-        EqualAngles
+        EqualAngles,
+
+        /// <summary>
+        /// Two objects with formally different definitions represent the same geometric object
+        /// </summary>
+        EqualObjects,
+
+        /// <summary>
+        /// A point lies on a line or circle.
+        /// </summary>
+        Incidence
     }
 }

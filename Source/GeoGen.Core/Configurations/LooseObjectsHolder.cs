@@ -47,6 +47,10 @@ namespace GeoGen.Core
             // Make sure the objects match the layout
             if (!LooseObjects.Select(o => o.ObjectType).SequenceEqual(layout.ObjectTypes()))
                 throw new GeoGenException($"The loose objects don't match the specified layout {layout}.");
+
+            // Make sure they are distinct 
+            if (LooseObjects.Distinct().Count() != LooseObjects.Count)
+                throw new GeoGenException("The loose objects are not distinct.");
         }
 
         #endregion
@@ -116,7 +120,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"{Layout}({LooseObjects.Select(o => o.Id).ToJoinedString(",")})";
+        public override string ToString() => $"{Layout}({LooseObjects.Select(o => o.Id).ToJoinedString()})";
 
         #endregion
     }

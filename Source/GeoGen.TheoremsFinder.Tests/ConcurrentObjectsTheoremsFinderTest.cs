@@ -34,12 +34,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(8);
-            allTheorems.Count.Should().Be(8);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new[]
                 {
@@ -93,7 +89,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(newTheorems).Should().BeTrue();
+            allTheorems.OrderlessEquals(newTheorems).Should().BeTrue();
         }
 
         [Test]
@@ -113,12 +109,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(19);
-            allTheorems.Count.Should().Be(20);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
@@ -238,7 +230,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(newTheorems.Concat(
+            allTheorems.OrderlessEquals(newTheorems.Concat(
                 // This is the only theorem that can be stated without H
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
@@ -267,12 +259,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(1);
-            allTheorems.Count.Should().Be(1);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
                 {
@@ -284,7 +272,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(newTheorems).Should().BeTrue();
+            allTheorems.OrderlessEquals(newTheorems).Should().BeTrue();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using System;
 using System.IO;
 
@@ -43,7 +44,7 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Serialize it
-                    var settingsJson = JsonConvert.SerializeObject(settings, Formatting.Indented, new BaseLoggerSettingsConverter());
+                    var settingsJson = JsonConvert.SerializeObject(settings, Formatting.Indented, new BaseLoggerSettingsConverter(), new StringEnumConverter());
 
                     // Try to save it
                     File.WriteAllText(_settingsFilePath, settingsJson);

@@ -33,12 +33,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(4);
-            allTheorems.Count.Should().Be(6);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, F, B, E, H),
                 new Theorem(configuration, ConcyclicPoints, F, C, D, H),
@@ -48,7 +44,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, F, B, E, H),
                 new Theorem(configuration, ConcyclicPoints, F, C, D, H),
@@ -77,12 +73,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(4);
-            allTheorems.Count.Should().Be(5);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, G, A, B, C),
                 new Theorem(configuration, ConcyclicPoints, G, A, B, F),
@@ -92,7 +84,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcyclicPoints, G, A, B, C),
                 new Theorem(configuration, ConcyclicPoints, G, A, B, F),

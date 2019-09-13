@@ -1,5 +1,5 @@
 ﻿using GeoGen.DependenciesResolver;
-using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using Ninject;
 using System;
@@ -88,12 +88,12 @@ namespace GeoGen.ConsoleLauncher
                 .AddTheoremsFinder(settings.TangentCirclesTheoremsFinderSettings,
                                    settings.LineTangentToCircleTheoremsFinderSettings,
                                    settings.SeekedTheoremTypes.ToReadOnlyHashSet())
-                // With analyzer and its data
-                .AddTheoremsAnalyzer(new TheoremsAnalyzerData
-                {
+                // With prover and its data
+                .AddTheoremProver(new TheoremProverData
+                (
                     // Template theorems are loaded at the beginning
-                    TemplateTheorems = await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
-                })
+                    templateTheorems: await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
+                ))
                 // And finally the algorithm
                 .AddAlgorithm();
         }

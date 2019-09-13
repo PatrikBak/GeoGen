@@ -65,13 +65,10 @@ namespace GeoGen.Core
         {
             // Let's have a look at each pair of [ObjectType, NeededCount] to find out
             // if we have enough objects from this type
-            foreach (var keyValue in ObjectTypesToNeededCount)
+            foreach (var pair in ObjectTypesToNeededCount)
             {
-                // Pull the objects type
-                var type = keyValue.Key;
-
-                // Pull the needed count
-                var neededCount = keyValue.Value;
+                // Deconstruct
+                var (type, neededCount) = pair;
 
                 // If there is no object of the type, we certainly can't match the signature
                 if (!availableObjects.ContainsKey(type))
@@ -226,7 +223,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the signature.</returns>
-        public override string ToString() => Parameters.ToJoinedString(",");
+        public override string ToString() => Parameters.ToJoinedString(", ");
 
         #endregion
     }

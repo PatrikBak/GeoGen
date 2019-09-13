@@ -13,7 +13,7 @@ using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.TheoremType;
 
-namespace GeoGen.TheoremsAnalyzer.Test
+namespace GeoGen.TheoremProver.Test
 {
     /// <summary>
     /// The test class for <see cref="TrivialTheoremsProducer"/>.
@@ -42,7 +42,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
                     {
                         ExcludeTangencyInsidePicture = false
                     },
-                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().ToReadOnlyHashSet())
+                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
                     // Add constructor ignoring inconsistencies
                     .AddConstructor(new PicturesSettings
                     {
@@ -76,7 +76,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Find the trivial theorems
             Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be only equal angles
-                .ToSet().SetEquals(new[]
+                .OrderlessEquals(new[]
                 {
                     new Theorem(configuration, EqualAngles, new[]
                     {
@@ -131,7 +131,7 @@ namespace GeoGen.TheoremsAnalyzer.Test
             // Find the trivial theorems
             Producer.DeriveTrivialTheoremsFromLastObject(configuration)
                 // There should be these theorems
-                .ToSet().SetEquals(new[]
+                .OrderlessEquals(new[]
                 {
                     // Half alpha angles
                     new Theorem(configuration, EqualAngles, new[] {halfAlfa[0], halfAlfa[1] }),

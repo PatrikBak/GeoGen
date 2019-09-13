@@ -1,7 +1,6 @@
 ﻿using GeoGen.Core;
 using GeoGen.Generator;
-using GeoGen.TheoremsAnalyzer;
-using System.Collections.Generic;
+using GeoGen.TheoremProver;
 
 namespace GeoGen.Algorithm
 {
@@ -21,8 +20,8 @@ namespace GeoGen.Algorithm
         public TheoremsMap Theorems { get; set; }
 
         /// <summary>
-        /// The dictionary mapping non-olympiad theorems to their feedback. The ones that are not presents are hopefully olympiad.
+        /// The output of the theorem prover.
         /// </summary>
-        public Dictionary<Theorem, TheoremFeedback> TheoremsFeedback { get; set; }
+        public TheoremProverOutput ProverOutput { get; set; }
     }
 }

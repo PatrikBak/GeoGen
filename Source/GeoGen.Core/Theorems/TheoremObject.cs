@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -26,17 +27,40 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Tries to find the object corresponding to a given one with respect to a given mapping.
-        /// If the object is not present in the mapping, throws a <see cref="GeoGenException"/>.
+        /// If the object is not present in the mapping, it assumed the passed object is 
+        /// a constructed one and tries to construct it by remapping its arguments. If it fails,
+        /// a <see cref="GeoGenException"/> is thrown. (This is a helper method used by implementations
+        /// of <see cref="Remap(Dictionary{ConfigurationObject, ConfigurationObject})"/>).
         /// </summary>
         /// <param name="configurationObject">The configuration object to be mapped.</param>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped configuration object.</returns>
         protected static ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
-            // Try to get it from the mapping    
-            return mapping.GetOrDefault(configurationObject)
-                // If it can't be done, make the developer aware
-                ?? throw new GeoGenException("Cannot create a remapped theorem, because the passed mapping doesn't contain its object.");
+            // If the object is directly present in the map, return it
+            if (mapping.ContainsKey(configurationObject))
+                return mapping[configurationObject];
+
+            // Otherwise we assume the passed object is a constructed one
+            var constructedObject = configurationObject as ConstructedConfigurationObject
+                // If not, make aware
+                ?? throw new GeoGenException("Cannot do the mapping, because the passed object is not in the map, nor it's constructed.");
+
+            // Convert the individual passed objects
+            var mappedObjects = constructedObject.PassedArguments.FlattenedList
+                // Look for the inner objects in the mapping
+                .Select(innerObject => mapping.GetOrDefault(innerObject)
+                    // They must be there
+                    ?? throw new GeoGenException("Cannot do the mapping, because not all the arguments of the passed object are in the map."))
+                // Enumerate
+                .ToArray();
+
+            // If the objects are not same, the mapping cannot be done
+            if (mappedObjects.Distinct().Count() != mappedObjects.Length)
+                return null;
+
+            // Otherwise construct the remapped object
+            return new ConstructedConfigurationObject(constructedObject.Construction, mappedObjects);
         }
 
         #endregion

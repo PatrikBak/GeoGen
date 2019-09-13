@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.TheoremsAnalyzer
+namespace GeoGen.TheoremProver
 {
     /// <summary>
     /// Represents a service that is able to derive new theorems in 

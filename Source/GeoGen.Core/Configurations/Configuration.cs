@@ -66,6 +66,10 @@ namespace GeoGen.Core
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
             ObjectsMap = new ConfigurationObjectsMap(LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
             ConstructedObjectsSet = ConstructedObjects.ToReadOnlyHashSet();
+
+            // Make sure there are no duplicated
+            if (ConstructedObjectsSet.Count != constructedObjects.Count)
+                throw new GeoGenException("Configuration contains equal constructed objects.");
         }
 
         /// <summary>

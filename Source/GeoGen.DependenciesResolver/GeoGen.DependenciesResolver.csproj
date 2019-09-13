@@ -15,7 +15,7 @@
     <ProjectReference Include="..\GeoGen.Algorithm\GeoGen.Algorithm.csproj" />
     <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremsAnalyzer\GeoGen.TheoremsAnalyzer.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremsFinder\GeoGen.TheoremsFinder.csproj" />
   </ItemGroup>
 

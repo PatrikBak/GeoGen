@@ -61,8 +61,11 @@ namespace GeoGen.Core
             // Check if the number of objects of each type matched the needed count
             looseObjectsMap.ForEach(pair =>
             {
+                // Deconstruct
+                var (objectType, looseObjects) = pair;
+
                 // If not, throw an exception...
-                if (pair.Value.Count != Signature.ObjectTypesToNeededCount[pair.Key])
+                if (looseObjects.Count != Signature.ObjectTypesToNeededCount[objectType])
                     ThrowException();
             });
 

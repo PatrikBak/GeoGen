@@ -64,7 +64,7 @@ namespace GeoGen.ConsoleLauncher
             foreach (var constructedObject in _configuration.ConstructedObjects)
             {
                 // Prepare the object's definition
-                var objectsDefinition = $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString()})";
+                var objectsDefinition = ConfigurationObjectDefinition(constructedObject);
 
                 // Add it to the result
                 result.Append($"{_objectNames[constructedObject]} = {objectsDefinition}\n");
@@ -78,12 +78,11 @@ namespace GeoGen.ConsoleLauncher
         /// Creates a formatted string describing a given theorem.
         /// </summary>
         /// <param name="theorem">The theorem.</param>
-        /// <param name="includeType">Indicates whether the type of the theorem should be included.</param>
         /// <returns>The string representing the theorem.</returns>
-        public string FormatTheorem(Theorem theorem, bool includeType = true)
+        public string FormatTheorem(Theorem theorem)
         {
             // Prepare the type string
-            var typeString = includeType ? $"{theorem.Type}: " : "";
+            var typeString = $"{theorem.Type}: ";
 
             // Switch based on the type
             switch (theorem.Type)
@@ -91,20 +90,70 @@ namespace GeoGen.ConsoleLauncher
                 // Handle the case where the first two objects are exchangeable
                 case TheoremType.EqualAngles:
                 case TheoremType.EqualLineSegments:
-
-                    // Get the list of objects
-                    var objectsList = theorem.InvolvedObjects.ToList();
-
+                {
                     // Convert the first two 
-                    var first = TheoremObjectToString(objectsList[0]);
-                    var second = TheoremObjectToString(objectsList[1]);
+                    var object1 = TheoremObjectToString(theorem.InvolvedObjectsList[0]);
+                    var object2 = TheoremObjectToString(theorem.InvolvedObjectsList[1]);
 
                     // Get the smaller and the larger
-                    var smaller = first.CompareTo(second) < 0 ? first : second;
-                    var larger = smaller == first ? second : first;
+                    var smaller = object1.CompareTo(object2) < 0 ? object1 : object2;
+                    var larger = smaller == object1 ? object2 : object1;
 
                     // Compose the final string
                     return $"{typeString}{smaller}, {larger}";
+                }
+                // Special cases where objects don't have to be named
+                case TheoremType.EqualObjects:
+                case TheoremType.Incidence:
+                {
+                    // Convert the objects
+                    var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
+                    var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+
+                    // Get their strings
+                    var object1String = _objectNames.GetOrDefault(object1) ?? ConfigurationObjectDefinition(object1);
+                    var object2String = _objectNames.GetOrDefault(object2) ?? ConfigurationObjectDefinition(object2);
+
+                    // Distinguish even these two cases
+                    switch (theorem.Type)
+                    {
+                        // In the equal objects case
+                        case TheoremType.EqualObjects:
+
+                            // We presort them
+                            var smaller = object1String.CompareTo(object2String) < 0 ? object1String : object2String;
+                            var larger = smaller == object1String ? object2String : object1String;
+
+                            // Find which of them has a name
+                            var isObject1Named = _objectNames.ContainsKey(object1);
+                            var isObject2Named = _objectNames.ContainsKey(object2);
+
+                            // If both or neither has a name, return them sorted
+                            if ((isObject1Named && isObject2Named) || (!isObject1Named && !isObject2Named))
+                                return $"{typeString}{smaller}, {larger}";
+
+                            // Otherwise we want the named object first
+                            var namedObject = isObject1Named ? object1String : object2String;
+                            var otherObject = namedObject == object1String ? object2String : object1String;
+
+                            // Return them in the right order
+                            return $"{typeString}{namedObject}, {otherObject}";
+
+                        // In the incidence case                            
+                        case TheoremType.Incidence:
+
+                            // We want the point first
+                            var pointString = object1.ObjectType == ConfigurationObjectType.Point ? object1String : object2String;
+                            var otherString = pointString == object1String ? object2String : object1String;
+
+                            // Return them in the right order
+                            return $"{typeString}{pointString}, {otherString}";
+
+                        // Impossible case
+                        default:
+                            throw new Exception("Impossible");
+                    }
+                }
 
                 // In every other case...
                 default:
@@ -199,6 +248,28 @@ namespace GeoGen.ConsoleLauncher
 
                 // Default
                 _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
+            };
+        }
+
+        /// <summary>
+        /// Gets the string definition of a passed configuration object. Loose objects have only
+        /// names as their definition, whereas constructed objects have the construction and arguments.
+        /// </summary>
+        /// <param name="configurationObject">The object for which we're for the definition.</param>
+        /// <returns>The resulting string.</returns>
+        private string ConfigurationObjectDefinition(ConfigurationObject configurationObject)
+        {
+            // Switch based on the object
+            return configurationObject switch
+            {
+                // Loose objects have their names as the definition
+                LooseConfigurationObject _ => _objectNames[configurationObject],
+
+                // For constructed objects we include the construction and arguments
+                ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString()})",
+
+                // Default
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
             };
         }
 

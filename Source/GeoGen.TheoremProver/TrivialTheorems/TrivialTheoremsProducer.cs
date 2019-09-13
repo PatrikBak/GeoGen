@@ -8,12 +8,13 @@ using System.Linq;
 using static GeoGen.Core.PredefinedConstructionType;
 using static GeoGen.Core.TheoremType;
 
-namespace GeoGen.TheoremsAnalyzer
+namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// The default implementation of <see cref="ITrivialTheoremsProducer"/>.
-    /// This implementation caches trivial theorems that are true for general
-    /// <see cref="ComposedConstruction"/>s.
+    /// The default implementation of <see cref="ITrivialTheoremsProducer"/>. This implementation 
+    /// caches trivial theorems that are true for general <see cref="ComposedConstruction"/>s.
+    /// These are found by constructing the underlying <see cref="ComposedConstruction.Configuration"/>
+    /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremsFinder"/>s.
     /// </summary>
     public class TrivialTheoremsProducer : ITrivialTheoremsProducer
     {
@@ -34,12 +35,12 @@ namespace GeoGen.TheoremsAnalyzer
         #region Private fields
 
         /// <summary>
-        /// The cache dictionary mapping the names of <see cref="ComposedConstruction"/>
+        /// The cache dictionary mapping the <see cref="ComposedConstruction"/>s
         /// to the theorems holding true in <see cref="ComposedConstruction.Configuration"/>.
         /// Only theorems that can be then remapped to trivial theorem are stored, i.e. the ones
         /// that can be stated with just the loose objects of the <see cref="ComposedConstruction.Configuration"/>.
         /// </summary>
-        private readonly Dictionary<ComposedConstruction, List<Theorem>> _composedConstructionsTheorems;
+        private readonly Dictionary<ComposedConstruction, IReadOnlyList<Theorem>> _composedConstructionsTheorems;
 
         #endregion
 
@@ -54,7 +55,7 @@ namespace GeoGen.TheoremsAnalyzer
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finders = finders ?? throw new ArgumentNullException(nameof(finders));
-            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, List<Theorem>>();
+            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, IReadOnlyList<Theorem>>();
         }
 
         #endregion
@@ -64,8 +65,8 @@ namespace GeoGen.TheoremsAnalyzer
         /// <summary>
         /// Derive trivial theorems from the last object of a given configuration.
         /// </summary>
-        /// <param name="configuration">The configuration in which the theorem should hold.</param>
-        /// <returns>The trivial theorems.</returns>
+        /// <param name="configuration">The configuration in which the trivial theorems should hold.</param>
+        /// <returns>The produced trivial theorems.</returns>
         public IReadOnlyList<Theorem> DeriveTrivialTheoremsFromLastObject(Configuration configuration)
         {
             // Get the last object of the configuration
@@ -235,9 +236,11 @@ namespace GeoGen.TheoremsAnalyzer
                     // Get the theorems for it 
                     var theorems = _composedConstructionsTheorems.GetOrAdd(composedConstruction, () => FindTheoremsForComposedConstruction(composedConstruction));
 
-                    // Create mapping of loose objects of the template configuration + the constructed object
-                    var mapping = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>().Concat(composedConstruction.ConstructionOutput)
-                        // to the actual objects that created the constructed object + the constructed object
+                    // Create mapping of loose objects of the template configuration 
+                    var mapping = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>()
+                        // and the constructed object
+                        .Concat(composedConstruction.ConstructionOutput)
+                        // to the actual objects that created the constructed object and the constructed object
                         .ZipToDictionary(objects.Concat(constructedObject));
 
                     // Remap all the theorems
@@ -245,13 +248,13 @@ namespace GeoGen.TheoremsAnalyzer
 
                 // There shouldn't be any other case
                 default:
-                    throw new TheoremsAnalyzerException($"Unhandled type of construction: {constructedObject.Construction.GetType()}");
+                    throw new TheoremProverException($"Unhandled type of construction: {constructedObject.Construction.GetType()}");
             }
         }
 
         #endregion
 
-        #region Private fields
+        #region Private methods
 
         /// <summary>
         /// Find all theorems that hold true in the configuration of a given composed construction. 
@@ -262,7 +265,7 @@ namespace GeoGen.TheoremsAnalyzer
         private List<Theorem> FindTheoremsForComposedConstruction(ComposedConstruction composedConstruction)
         {
             // Create an array of loose objects of the defining configuration
-            var looseObjects = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>().ToArray();
+            var looseObjects = composedConstruction.Configuration.LooseObjects.ToArray();
 
             // Create a constructed object representing this construction, i.e. the one that gets passed the loose objects
             var constructedObject = new ConstructedConfigurationObject(composedConstruction, looseObjects);
@@ -270,16 +273,16 @@ namespace GeoGen.TheoremsAnalyzer
             // Create a configuration holding the same loose objects, and the final constructed one
             var configuration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { constructedObject });
 
-            // Local function that throws an exception
-            void ThrowIncorrectConstructionException(string message, Exception e = null)
+            // Local function that throws an exception about the examination failure
+            void ThrowIncorrectConstructionException(string message, Exception innerException = null)
                 // informing about the examination failure
-                => throw new TheoremsAnalyzerException($"Cannot examine construction {composedConstruction.Name}. {message}", e);
+                => throw new TheoremProverException($"Cannot examine construction {composedConstruction.Name}. {message}", innerException);
 
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(
-                // Constructing of the new object
+                // Constructing of the new configuration
                 () => _constructor.Construct(configuration),
-                // Make sure the exception is caught and re-thrown
+                // While making sure any exception is caught and re-thrown
                 (GeometryConstructionException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 
             // Make sure it has no inconstructible objects
@@ -292,9 +295,9 @@ namespace GeoGen.TheoremsAnalyzer
 
             // Safely execute
             var contextualPicture = GeneralUtilities.TryExecute(
-                // Construct of the contextual picture
+                // Construction of the contextual picture
                 () => new ContextualPicture(pictures),
-                // Make sure the exception is caught and re-thrown
+                // While making sure any exception is caught and re-thrown
                 (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
@@ -311,10 +314,10 @@ namespace GeoGen.TheoremsAnalyzer
                         .Select(looseObject => ((ConfigurationObject)looseObject, (ConfigurationObject)looseObject))
                         // Add the tuple of the constructed and last object
                         .Concat((constructedObject, composedConstruction.ConstructionOutput))
-                        // Make a mapping
+                        // Make the mapping
                         .ToDictionary(pair => pair.Item1, pair => pair.Item2);
 
-                    // Use theorems method to do the job
+                    // Delegate the work to the theorem
                     return theorem.Remap(mapping);
                 })
                 // Enumerate

@@ -2,7 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
-using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremProver;
 using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using Ninject;
@@ -140,18 +140,19 @@ namespace GeoGen.DependenciesResolver
         }
 
         /// <summary>
-        /// Bindings for the dependencies from the Analyzer module.
+        /// Bindings for the dependencies from the TheoremProver module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="analyzerData">The data for the theorems analyzer.</param>
+        /// <param name="proverData">The data for the theorem prover.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremsAnalyzer(this IKernel kernel, TheoremsAnalyzerData analyzerData)
+        public static IKernel AddTheoremProver(this IKernel kernel, TheoremProverData proverData)
         {
             // Stateless services
-            kernel.Bind<ITheoremsAnalyzer>().To<TheoremsAnalyzer.TheoremsAnalyzer>().InSingletonScope().WithConstructorArgument(analyzerData);
+            kernel.Bind<ITheoremProver>().To<TheoremProver.TheoremProver>().InSingletonScope().WithConstructorArgument(proverData);
             kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>().InSingletonScope();
-            kernel.Bind<ITransitivityDeriver>().To<TransitivityDeriver>().InSingletonScope();
             kernel.Bind<ISubtheoremsDeriver>().To<SubtheoremsDeriver>().InSingletonScope();
+
+            kernel.Bind<ITheoremDeriver>().To<TransitivityDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;

@@ -34,12 +34,8 @@ namespace GeoGen.TheoremsFinder.Tests
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert counts
-            newTheorems.Count.Should().Be(3);
-            allTheorems.Count.Should().Be(4);
-
             // Assert new theorems
-            newTheorems.ToSet().SetEquals(new[]
+            newTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcurrentLines, new[]
                 {
@@ -63,7 +59,7 @@ namespace GeoGen.TheoremsFinder.Tests
             .Should().BeTrue();
 
             // Assert all theorems
-            allTheorems.ToSet().SetEquals(new[]
+            allTheorems.OrderlessEquals(new[]
             {
                 new Theorem(configuration, ConcurrentLines, new[]
                 {

@@ -1,11 +1,11 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremsAnalyzer;
+using GeoGen.TheoremProver;
 using System;
 
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// Represents a template <see cref="Theorem"/> used by the <see cref="ITheoremsAnalyzer"/>
+    /// Represents a template <see cref="Theorem"/> used by the <see cref="ITheoremProver"/>
     /// loaded from a theorems file.
     /// </summary>
     public class TemplateTheorem : Theorem
@@ -15,12 +15,12 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Gets the file name from which the theorem was loaded.
         /// </summary>
-        public string FileName { get; set; }
+        public string FileName { get; }
 
         /// <summary>
         /// Gets the number of the theorem in the file.
         /// </summary>
-        public int Number { get; set; }
+        public int Number { get; }
 
         #endregion
 
