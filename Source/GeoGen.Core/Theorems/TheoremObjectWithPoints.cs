@@ -61,7 +61,11 @@ namespace GeoGen.Core
             var configurationObject = ConfigurationObject == null ? null : Map(ConfigurationObject, mapping);
 
             // Try to remap points
-            var points = Points.Select(point => Map(point, mapping)).Distinct().ToList();
+            var points = Points.SelectIfNotDefault(point => Map(point, mapping))?.Distinct().ToList();
+
+            // If the points couldn't be mapped, return default
+            if (points == null)
+                return default;
 
             // Make sure we can define the object, i.e. either there is an object or enough points
             return configurationObject != null || points.Count >= NumberOfNeededPoints

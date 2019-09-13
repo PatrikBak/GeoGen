@@ -34,7 +34,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configurationObject">The configuration object to be mapped.</param>
         /// <param name="mapping">The dictionary representing the mapping.</param>
-        /// <returns>The remapped configuration object.</returns>
+        /// <returns>The remapped configuration object, or null, if mapping would yield a new incorrect constructed object.</returns>
         protected static ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // If the object is directly present in the map, return it
