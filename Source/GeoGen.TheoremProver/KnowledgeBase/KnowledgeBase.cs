@@ -88,8 +88,8 @@ namespace GeoGen.TheoremProver
         #region Private fields
 
         /// <summary>
-        /// The dictionary of theorems and attempts to derive them. If a theorem is not in the dictionary,
-        /// then it hasn't been attempted at yet.
+        /// The dictionary of theorems and attempts to derive them. If a theorem is not in the 
+        /// dictionary, then it hasn't been attempted at yet.
         /// </summary>
         private readonly Dictionary<TTheorem, List<DerivationData>> _derivationAttempts = new Dictionary<TTheorem, List<DerivationData>>();
 
@@ -98,6 +98,12 @@ namespace GeoGen.TheoremProver
         /// then it hasn't been proven yet.
         /// </summary>
         private readonly Dictionary<TTheorem, DerivationData> _proofs = new Dictionary<TTheorem, DerivationData>();
+
+        /// <summary>
+        /// The dictionary of theorems and attempts that have these theorems as needed
+        /// assumptions.
+        /// </summary>
+        private readonly Dictionary<TTheorem, HashSet<DerivationData>> _parentDerivations = new Dictionary<TTheorem, HashSet<DerivationData>>();
 
         #endregion
 
@@ -117,9 +123,19 @@ namespace GeoGen.TheoremProver
             // Add all the assumptions to the proven / to be proven set of the derivation
             foreach (var assumedTheorem in neededAssumptions)
             {
-                // If the theorem has been proven, add it to the set of proven theorems
-                // Otherwise to the set of theorems to be proven
-                (IsProven(assumedTheorem) ? derivation.ProvenTheorems : derivation.TheoremsToBeProven).Add(assumedTheorem);
+                // If the theorem has been proven...
+                if (IsProven(assumedTheorem))
+                    // Add it to the set of proven theorems of the derivation
+                    derivation.ProvenTheorems.Add(assumedTheorem);
+                // If it's not proven...
+                else
+                {
+                    // Add it to the set of not proven theorems of the derivation
+                    derivation.TheoremsToBeProven.Add(assumedTheorem);
+
+                    // Make sure it's marked in the dictionary of parent derivations
+                    _parentDerivations.GetOrAdd(assumedTheorem, () => new HashSet<DerivationData>()).Add(derivation);
+                }
             }
 
             // Add the current derivation to the attempts list
@@ -175,43 +191,66 @@ namespace GeoGen.TheoremProver
         /// <param name="provenTheorem">The proven theorem.</param>
         private void MarkProven(TTheorem provenTheorem)
         {
-            // Fire an event that the theorem has been proven
-            TheoremProven(provenTheorem);
+            // Prepare the queue of theorems to be proven
+            var toBeProven = new Queue<TTheorem>();
 
-            // We need to find out whether this proof haven't made other theorems proven
-            // Go through the theorems that are not proven
-            _derivationAttempts.Where(pair => !IsProven(pair.Key)).ForEach(pair =>
+            // Add the current theorem to the queue
+            toBeProven.Enqueue(provenTheorem);
+
+            // Perform until there are some proven theorems
+            while (toBeProven.Any())
             {
-                // Deconstruct
-                var (theorem, derivations) = pair;
+                // Get the current one
+                provenTheorem = toBeProven.Dequeue();
 
-                // Go through the theorem's potential derivations
-                foreach (var derivation in derivations)
+                // Fire an event that the theorem has been proven
+                TheoremProven(provenTheorem);
+
+                // If we have a proven theorem that is not an assumption
+                // for any other theorem (knowledge ahead), we can't do more
+                if (!_parentDerivations.ContainsKey(provenTheorem))
+                    continue;
+
+                // Otherwise get the parent derivations
+                var parentDerivations = _parentDerivations[provenTheorem];
+
+                // Prepare the set of finished derivations that should be removed
+                var toBeRemoved = new HashSet<DerivationData>();
+
+                // Go through the derivations in which this theorem appear
+                foreach (var derivation in parentDerivations)
                 {
-                    // If the theorem we're resolving is here still marked as not proven...
-                    if (derivation.TheoremsToBeProven.Contains(provenTheorem))
-                    {
-                        // Remove it from the to be proven theorems set
-                        derivation.TheoremsToBeProven.Remove(provenTheorem);
+                    // Remove it from the to be proven theorems set
+                    derivation.TheoremsToBeProven.Remove(provenTheorem);
 
-                        // Add it to the proven theorems set
-                        derivation.ProvenTheorems.Add(provenTheorem);
+                    // Add it to the proven theorems set
+                    derivation.ProvenTheorems.Add(provenTheorem);
 
-                        // If this was the last theorem to prove...
-                        if (derivation.TheoremsToBeProven.IsEmpty())
-                        {
-                            // Then we can set this derivation to be the proof of this theorem
-                            _proofs.Add(theorem, derivation);
+                    // If the theorem is not proved, we can't do more
+                    if (derivation.TheoremsToBeProven.Any())
+                        continue;
 
-                            // Mark this theorem as proven
-                            MarkProven(theorem);
+                    // Otherwise we have proven a new theorem
+                    var newProvenTheorem = derivation.Theorem;
 
-                            // Break the loop, since other potential derivations are irrelevant (one proof is enough)
-                            break;
-                        }
-                    }
+                    // This derivation is therefore done and should be removed
+                    toBeRemoved.Remove(derivation);
+
+                    // It might have happened that this theorem has been proven
+                    // We have found a different proof, but we don't need it
+                    if (IsProven(newProvenTheorem))
+                        continue;
+
+                    // If this is the first prove we can set this derivation to be the proof
+                    _proofs.Add(newProvenTheorem, derivation);
+
+                    // Enqueue the newly proven theorem for being marked as proven as well
+                    toBeProven.Enqueue(newProvenTheorem);
                 }
-            });
+
+                // Remove all finished derivations
+                parentDerivations.ExceptWith(toBeRemoved);
+            }
         }
 
         #endregion
