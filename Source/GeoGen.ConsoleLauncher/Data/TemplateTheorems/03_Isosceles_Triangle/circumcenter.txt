@@ -1,0 +1,8 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+ O = Circumcenter(A, B, C)
+
+Theorems:
+
+ #PerpendicularLines: [A, O], [B, C]

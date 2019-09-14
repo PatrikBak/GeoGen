@@ -51,39 +51,5 @@ namespace GeoGen.Core
         }
 
         #endregion
-
-        #region HashCode and Equals
-
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            // I don't think there is a better way to define it, see the comment to the 
-            // GetHashCode method in the LineTheoremObject or CircleTheoremObject classes
-            return "LineSegment".GetHashCode();
-        }
-
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-        public override bool Equals(object otherObject)
-        {
-            // Either the references are equals
-            return this == otherObject
-                // Or the object is not null
-                || otherObject != null
-                // And it is a line segment object
-                && otherObject is LineSegmentTheoremObject lineSegment
-                // And either the first and second object are equal
-                && ((Object1.Equals(lineSegment.Object1) && Object2.Equals(lineSegment.Object2))
-                // Or the first one is equal to the second and vice versa
-                || (Object1.Equals(lineSegment.Object2) && Object2.Equals(lineSegment.Object1)));
-        }
-
-        #endregion
     }
 }

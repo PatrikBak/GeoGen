@@ -1,0 +1,2499 @@
+Initial configuration:
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+
+Theorems:
+
+  1. CollinearPoints: A, B, D
+  2. CollinearPoints: A, C, E
+  3. EqualLineSegments: A, D, B, D
+  4. EqualLineSegments: A, E, C, E
+  5. ParallelLines: [B, C], [D, E]
+
+Iterations: 2
+
+Constructions:
+
+ - Midpoint({P, P})
+
+Results:
+
+------------------------------------------------
+Configuration 1
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+
+Theorems:
+
+  1. CollinearPoints: A, B, F - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, F - can be defined in a smaller configuration
+  3. CollinearPoints: B, D, F - can be defined in a smaller configuration
+  4. EqualLineSegments: F, A, F, D - can be defined in a smaller configuration
+  5. ParallelLines: [C, D], [E, F] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: E, Midline(A, {C, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: F, Midline(A, {C, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 2
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, C})
+
+Theorems:
+
+  1. CollinearPoints: B, C, F - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, F], [B, E], [C, D] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+      2.1.1. CollinearPoints: A, B, D - true in a previous configuration
+      2.1.2. CollinearPoints: A, C, E - true in a previous configuration
+
+    2.2. Incidence: F, Median(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+    2.3. ParallelLines: [B, C], [D, E] - true in a previous configuration
+
+  3. EqualLineSegments: A, D, F, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    3.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+  4. EqualLineSegments: A, E, F, D - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    4.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+  5. EqualLineSegments: B, D, F, E - true because of the transitivity rule
+
+    5.1. EqualLineSegments: A, D, B, D - true in a previous configuration
+    5.2. EqualLineSegments: A, D, F, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 3.
+
+  6. EqualLineSegments: C, E, F, D - true because of the transitivity rule
+
+    6.1. EqualLineSegments: A, E, C, E - true in a previous configuration
+    6.2. EqualLineSegments: A, E, F, D - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 4.
+
+  7. EqualLineSegments: B, F, E, D - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    7.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+  8. EqualLineSegments: D, E, F, C - true because of the transitivity rule
+
+    8.1. EqualLineSegments: B, F, E, D - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 7.
+    8.2. EqualLineSegments: F, B, F, C - can be defined in a smaller configuration - theorem 9.
+
+  9. EqualLineSegments: F, B, F, C - can be defined in a smaller configuration
+ 10. ParallelLines: [A, B], [E, F] - can be defined in a smaller configuration
+ 11. ParallelLines: [A, C], [D, F] - can be defined in a smaller configuration
+ 12. ParallelLines: [A, D], [E, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    12.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+ 13. ParallelLines: [A, E], [D, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    13.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+ 14. ParallelLines: [B, D], [E, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    14.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 7.1.
+
+ 15. ParallelLines: [B, F], [D, E] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    15.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 7.1.
+
+ 16. ParallelLines: [C, E], [D, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    16.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+ 17. ParallelLines: [C, F], [D, E] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    17.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 16.1.
+
+------------------------------------------------
+Configuration 3
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+
+Theorems:
+
+  1. CollinearPoints: A, B, F - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, F - can be defined in a smaller configuration
+  3. CollinearPoints: B, D, F - can be defined in a smaller configuration
+  4. EqualLineSegments: F, B, F, D - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 4
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+
+Theorems:
+
+  1. CollinearPoints: B, E, F - can be defined in a smaller configuration
+  2. EqualLineSegments: F, B, F, E - can be defined in a smaller configuration
+  3. ParallelLines: [A, C], [D, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      3.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      3.2. Incidence: F, Midline(B, {A, C}) - no clue
+
+  4. ParallelLines: [A, E], [D, F] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    4.1. Incidence: D, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    4.2. Incidence: F, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  5. ParallelLines: [C, E], [D, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1. Incidence: F, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2. Incidence: D, Midline(B, {C, E}) - no clue
+
+------------------------------------------------
+Configuration 5
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({D, E})
+
+Theorems:
+
+  1. CollinearPoints: D, E, F - trivial theorem
+  2. ConcurrentLines: [A, F], [B, E], [C, D] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+      2.1.1. CollinearPoints: A, B, D - true in a previous configuration
+      2.1.2. CollinearPoints: A, C, E - true in a previous configuration
+
+    2.2. Incidence: F, Median(A, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+    2.3. ParallelLines: [B, C], [D, E] - true in a previous configuration
+
+  3. EqualLineSegments: D, F, E, F - trivial theorem
+  4. ParallelLines: [B, C], [D, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: F, Midline(A, {B, C}) - no clue
+
+  5. ParallelLines: [B, C], [E, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2. Incidence: F, Midline(A, {B, C}) - theorem 4.2. (unproven)
+
+------------------------------------------------
+Configuration 6
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({A, E})
+
+Theorems:
+
+  1. CollinearPoints: A, C, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, E, G - can be defined in a smaller configuration
+  3. CollinearPoints: C, E, G - can be defined in a smaller configuration
+  4. EqualLineSegments: G, A, G, E - can be defined in a smaller configuration
+  5. ParallelLines: [B, C], [F, G] - true because of the transitivity rule
+
+    5.1. ParallelLines: [B, C], [D, E] - true in a previous configuration
+    5.2. ParallelLines: [D, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt - theorem 7.
+
+  6. ParallelLines: [B, E], [D, G] - can be defined in a smaller configuration
+  7. ParallelLines: [D, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    7.1. Incidence: F, Midline(A, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    7.2. Incidence: G, Midline(A, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 7
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({A, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, A, G, F - can be defined in a smaller configuration
+  8. ParallelLines: [C, F], [E, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    8.1. Incidence: E, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    8.2. Incidence: G, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 8
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({B, C})
+
+Theorems:
+
+  1. CollinearPoints: B, C, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, G], [B, E], [C, D] - can be defined in a smaller configuration
+  3. EqualLineSegments: A, D, G, E - can be defined in a smaller configuration
+  4. EqualLineSegments: A, E, G, D - can be defined in a smaller configuration
+  5. EqualLineSegments: B, D, G, E - can be defined in a smaller configuration
+  6. EqualLineSegments: C, E, G, D - can be defined in a smaller configuration
+  7. EqualLineSegments: D, E, G, B - can be defined in a smaller configuration
+  8. EqualLineSegments: D, E, G, C - can be defined in a smaller configuration
+  9. EqualLineSegments: G, B, G, C - can be defined in a smaller configuration
+ 10. ParallelLines: [A, B], [E, G] - can be defined in a smaller configuration
+ 11. ParallelLines: [A, C], [D, G] - can be defined in a smaller configuration
+ 12. ParallelLines: [A, D], [E, G] - can be defined in a smaller configuration
+ 13. ParallelLines: [A, E], [D, G] - can be defined in a smaller configuration
+ 14. ParallelLines: [A, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      14.1. Incidence: E, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      14.2. Incidence: G, Midline(C, {A, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          14.2.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          14.2.2. EqualObjects: G, ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          14.2.3. EqualObjects: G, ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          14.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          14.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          14.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          14.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(C, {A, F}) - no clue
+          14.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(C, {A, F}) - no clue
+          14.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(C, {A, F}) - no clue
+
+ 15. ParallelLines: [B, D], [E, G] - can be defined in a smaller configuration
+ 16. ParallelLines: [B, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      16.1. Incidence: G, Midline(C, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      16.2. Incidence: E, Midline(C, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          16.2.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          16.2.2. EqualObjects: E, ReflectionInMidpointOfSegment(D, {A, G}) - no clue
+          16.2.3. EqualObjects: E, ReflectionInMidpointOfSegment(G, {C, D}) - no clue
+          16.2.4. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(D, {A, G}) - no clue
+          16.2.5. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(G, {C, D}) - no clue
+          16.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {A, G}), ReflectionInMidpointOfSegment(G, {C, D}) - no clue
+          16.2.7. Incidence: ReflectionInMidpointOfSegment(B, {D, G}), Midline(C, {B, F}) - no clue
+          16.2.8. Incidence: ReflectionInMidpointOfSegment(D, {A, G}), Midline(C, {B, F}) - no clue
+          16.2.9. Incidence: ReflectionInMidpointOfSegment(G, {C, D}), Midline(C, {B, F}) - no clue
+
+ 17. ParallelLines: [B, G], [D, E] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    17.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 16.2.1.
+
+ 18. ParallelLines: [C, E], [D, G] - can be defined in a smaller configuration
+ 19. ParallelLines: [C, G], [D, E] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    19.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+ 20. ParallelLines: [D, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      20.1. Incidence: E, Midline(C, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          20.1.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 16.2.1.
+          20.1.2. EqualObjects: E, ReflectionInMidpointOfSegment(D, {A, G}) - theorem 16.2.2. (unproven)
+          20.1.3. EqualObjects: E, ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.3. (unproven)
+          20.1.4. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(D, {A, G}) - theorem 16.2.4. (unproven)
+          20.1.5. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.5. (unproven)
+          20.1.6. EqualObjects: ReflectionInMidpointOfSegment(D, {A, G}), ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.6. (unproven)
+          20.1.7. Incidence: ReflectionInMidpointOfSegment(B, {D, G}), Midline(C, {D, F}) - no clue
+          20.1.8. Incidence: ReflectionInMidpointOfSegment(D, {A, G}), Midline(C, {D, F}) - no clue
+          20.1.9. Incidence: ReflectionInMidpointOfSegment(G, {C, D}), Midline(C, {D, F}) - no clue
+
+      20.2. Incidence: G, Midline(C, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          20.2.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 14.2.1.
+          20.2.2. EqualObjects: G, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 14.2.2. (unproven)
+          20.2.3. EqualObjects: G, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.3. (unproven)
+          20.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 14.2.4. (unproven)
+          20.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.5. (unproven)
+          20.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.6. (unproven)
+          20.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(C, {D, F}) - no clue
+          20.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(C, {D, F}) - no clue
+          20.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(C, {D, F}) - no clue
+
+Discovered unproved theorems:
+
+ 21. EqualObjects: E, ReflectionInMidpointOfSegment(D, {A, G}) - theorem 16.2.2.
+ 22. EqualObjects: E, ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.3.
+ 23. EqualObjects: G, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 14.2.2.
+ 24. EqualObjects: G, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.3.
+ 25. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 14.2.4.
+ 26. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.5.
+ 27. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(D, {A, G}) - theorem 16.2.4.
+ 28. EqualObjects: ReflectionInMidpointOfSegment(B, {D, G}), ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.5.
+ 29. EqualObjects: ReflectionInMidpointOfSegment(D, {A, G}), ReflectionInMidpointOfSegment(G, {C, D}) - theorem 16.2.6.
+ 30. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 14.2.6.
+ 31. Incidence: E, Midline(C, {B, F}) - theorem 16.2.
+ 32. Incidence: E, Midline(C, {D, F}) - theorem 20.1.
+ 33. Incidence: G, Midline(C, {A, F}) - theorem 14.2.
+ 34. Incidence: G, Midline(C, {D, F}) - theorem 20.2.
+ 35. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(C, {A, F}) - theorem 14.2.7.
+ 36. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(C, {D, F}) - theorem 20.2.7.
+ 37. Incidence: ReflectionInMidpointOfSegment(B, {D, G}), Midline(C, {B, F}) - theorem 16.2.7.
+ 38. Incidence: ReflectionInMidpointOfSegment(B, {D, G}), Midline(C, {D, F}) - theorem 20.1.7.
+ 39. Incidence: ReflectionInMidpointOfSegment(D, {A, G}), Midline(C, {B, F}) - theorem 16.2.8.
+ 40. Incidence: ReflectionInMidpointOfSegment(D, {A, G}), Midline(C, {D, F}) - theorem 20.1.8.
+ 41. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(C, {A, F}) - theorem 14.2.8.
+ 42. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(C, {D, F}) - theorem 20.2.8.
+ 43. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(C, {A, F}) - theorem 14.2.9.
+ 44. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(C, {D, F}) - theorem 20.2.9.
+ 45. Incidence: ReflectionInMidpointOfSegment(G, {C, D}), Midline(C, {B, F}) - theorem 16.2.9.
+ 46. Incidence: ReflectionInMidpointOfSegment(G, {C, D}), Midline(C, {D, F}) - theorem 20.1.9.
+
+------------------------------------------------
+Configuration 9
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({B, D})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: A, D, G, F - can be defined in a smaller configuration
+  8. EqualLineSegments: A, F, G, B - can be defined in a smaller configuration
+  9. EqualLineSegments: A, F, G, D - can be defined in a smaller configuration
+ 10. EqualLineSegments: B, D, G, F - can be defined in a smaller configuration
+ 11. EqualLineSegments: B, F, G, A - can be defined in a smaller configuration
+ 12. EqualLineSegments: D, F, G, B - can be defined in a smaller configuration
+ 13. EqualLineSegments: D, F, G, D - can be defined in a smaller configuration
+ 14. EqualLineSegments: G, B, G, D - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 10
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({B, E})
+
+Theorems:
+
+  1. CollinearPoints: B, E, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, B, G, E - can be defined in a smaller configuration
+  3. ParallelLines: [A, C], [D, G] - can be defined in a smaller configuration
+  4. ParallelLines: [A, E], [D, G] - can be defined in a smaller configuration
+  5. ParallelLines: [C, E], [D, G] - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 11
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({B, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, B, G, F - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 12
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({C, D})
+
+Theorems:
+
+  1. CollinearPoints: C, D, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, G], [C, F], [D, E] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{C, E}, {D, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+      2.1.1. CollinearPoints: A, C, E - true in a previous configuration
+      2.1.2. CollinearPoints: A, D, F - true in a previous configuration
+
+    2.2. Incidence: G, Median(A, {C, D}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+    2.3. ParallelLines: [C, D], [E, F] - true in a previous configuration
+
+  3. EqualLineSegments: A, E, G, F - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    3.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+  4. EqualLineSegments: A, F, G, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    4.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+  5. EqualLineSegments: C, E, G, F - true because of the transitivity rule
+
+    5.1. EqualLineSegments: A, E, C, E - true in a previous configuration
+    5.2. EqualLineSegments: A, E, G, F - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 3.
+
+  6. EqualLineSegments: F, D, G, E - true because of the transitivity rule
+
+    6.1. EqualLineSegments: A, F, G, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 4.
+    6.2. EqualLineSegments: F, A, F, D - true in a previous configuration
+
+  7. EqualLineSegments: C, G, F, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+    7.1. EqualObjects: F, ReflectionInMidpointOfSegment(C, {E, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+
+  8. EqualLineSegments: E, F, G, D - true because of the transitivity rule
+
+    8.1. EqualLineSegments: C, G, F, E - consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt - theorem 7.
+    8.2. EqualLineSegments: G, C, G, D - can be defined in a smaller configuration - theorem 9.
+
+  9. EqualLineSegments: G, C, G, D - can be defined in a smaller configuration
+ 10. ParallelLines: [A, B], [E, G] - can be defined in a smaller configuration
+ 11. ParallelLines: [A, C], [F, G] - can be defined in a smaller configuration
+ 12. ParallelLines: [A, D], [E, G] - can be defined in a smaller configuration
+ 13. ParallelLines: [A, E], [F, G] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    13.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+ 14. ParallelLines: [A, F], [E, G] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    14.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+
+ 15. ParallelLines: [B, D], [E, G] - can be defined in a smaller configuration
+ 16. ParallelLines: [B, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      16.1. Incidence: E, Midline(C, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          16.1.1. EqualObjects: E, ReflectionInMidpointOfSegment(D, {F, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          16.1.2. EqualObjects: E, ReflectionInMidpointOfSegment(F, {A, G}) - no clue
+          16.1.3. EqualObjects: E, ReflectionInMidpointOfSegment(G, {C, F}) - no clue
+          16.1.4. EqualObjects: ReflectionInMidpointOfSegment(D, {F, G}), ReflectionInMidpointOfSegment(F, {A, G}) - no clue
+          16.1.5. EqualObjects: ReflectionInMidpointOfSegment(D, {F, G}), ReflectionInMidpointOfSegment(G, {C, F}) - no clue
+          16.1.6. EqualObjects: ReflectionInMidpointOfSegment(F, {A, G}), ReflectionInMidpointOfSegment(G, {C, F}) - no clue
+          16.1.7. Incidence: ReflectionInMidpointOfSegment(D, {F, G}), Midline(C, {B, F}) - no clue
+          16.1.8. Incidence: ReflectionInMidpointOfSegment(F, {A, G}), Midline(C, {B, F}) - no clue
+          16.1.9. Incidence: ReflectionInMidpointOfSegment(G, {C, F}), Midline(C, {B, F}) - no clue
+
+      16.2. Incidence: G, Midline(C, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          16.2.1. EqualObjects: G, ReflectionInMidpointOfSegment(A, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 3.1.
+          16.2.2. EqualObjects: G, ReflectionInMidpointOfSegment(E, {C, F}) - no clue
+          16.2.3. EqualObjects: G, ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          16.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {E, F}), ReflectionInMidpointOfSegment(E, {C, F}) - no clue
+          16.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {E, F}), ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          16.2.6. EqualObjects: ReflectionInMidpointOfSegment(E, {C, F}), ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          16.2.7. Incidence: ReflectionInMidpointOfSegment(A, {E, F}), Midline(C, {B, F}) - no clue
+          16.2.8. Incidence: ReflectionInMidpointOfSegment(E, {C, F}), Midline(C, {B, F}) - no clue
+          16.2.9. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Midline(C, {B, F}) - no clue
+
+ 17. ParallelLines: [C, E], [F, G] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    17.1. EqualObjects: F, ReflectionInMidpointOfSegment(C, {E, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 7.1.
+
+ 18. ParallelLines: [C, G], [E, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    18.1. EqualObjects: F, ReflectionInMidpointOfSegment(C, {E, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 7.1.
+
+ 19. ParallelLines: [D, F], [E, G] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    19.1. EqualObjects: E, ReflectionInMidpointOfSegment(D, {F, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 16.1.1.
+
+ 20. ParallelLines: [D, G], [E, F] - consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+    20.1. EqualObjects: E, ReflectionInMidpointOfSegment(D, {F, G}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 16.1.1.
+
+Discovered unproved theorems:
+
+ 21. EqualObjects: E, ReflectionInMidpointOfSegment(F, {A, G}) - theorem 16.1.2.
+ 22. EqualObjects: E, ReflectionInMidpointOfSegment(G, {C, F}) - theorem 16.1.3.
+ 23. EqualObjects: G, ReflectionInMidpointOfSegment(E, {C, F}) - theorem 16.2.2.
+ 24. EqualObjects: G, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 16.2.3.
+ 25. EqualObjects: ReflectionInMidpointOfSegment(A, {E, F}), ReflectionInMidpointOfSegment(E, {C, F}) - theorem 16.2.4.
+ 26. EqualObjects: ReflectionInMidpointOfSegment(A, {E, F}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 16.2.5.
+ 27. EqualObjects: ReflectionInMidpointOfSegment(D, {F, G}), ReflectionInMidpointOfSegment(F, {A, G}) - theorem 16.1.4.
+ 28. EqualObjects: ReflectionInMidpointOfSegment(D, {F, G}), ReflectionInMidpointOfSegment(G, {C, F}) - theorem 16.1.5.
+ 29. EqualObjects: ReflectionInMidpointOfSegment(E, {C, F}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 16.2.6.
+ 30. EqualObjects: ReflectionInMidpointOfSegment(F, {A, G}), ReflectionInMidpointOfSegment(G, {C, F}) - theorem 16.1.6.
+ 31. Incidence: E, Midline(C, {B, F}) - theorem 16.1.
+ 32. Incidence: G, Midline(C, {B, F}) - theorem 16.2.
+ 33. Incidence: ReflectionInMidpointOfSegment(A, {E, F}), Midline(C, {B, F}) - theorem 16.2.7.
+ 34. Incidence: ReflectionInMidpointOfSegment(D, {F, G}), Midline(C, {B, F}) - theorem 16.1.7.
+ 35. Incidence: ReflectionInMidpointOfSegment(E, {C, F}), Midline(C, {B, F}) - theorem 16.2.8.
+ 36. Incidence: ReflectionInMidpointOfSegment(F, {A, G}), Midline(C, {B, F}) - theorem 16.1.8.
+ 37. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Midline(C, {B, F}) - theorem 16.2.9.
+ 38. Incidence: ReflectionInMidpointOfSegment(G, {C, F}), Midline(C, {B, F}) - theorem 16.1.9.
+
+------------------------------------------------
+Configuration 13
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({C, E})
+
+Theorems:
+
+  1. CollinearPoints: A, C, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, E, G - can be defined in a smaller configuration
+  3. CollinearPoints: C, E, G - can be defined in a smaller configuration
+  4. ConcurrentLines: [B, C], [D, G], [E, F] - no clue
+  5. EqualLineSegments: G, C, G, E - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 14
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({C, F})
+
+Theorems:
+
+  1. CollinearPoints: C, F, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, C, G, F - can be defined in a smaller configuration
+  3. ParallelLines: [A, B], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      3.1. Incidence: E, Midline(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      3.2. Incidence: G, Midline(C, {A, B}) - no clue
+
+  4. ParallelLines: [A, D], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: E, Midline(C, {A, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: G, Midline(C, {A, D}) - no clue
+
+  5. ParallelLines: [A, F], [E, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: E, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: G, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  6. ParallelLines: [B, D], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: E, Midline(C, {B, D}) - no clue
+      6.2. Incidence: G, Midline(C, {B, D}) - no clue
+
+  7. ParallelLines: [B, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: G, Midline(C, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      7.2. Incidence: E, Midline(C, {B, F}) - no clue
+
+  8. ParallelLines: [D, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: G, Midline(C, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: E, Midline(C, {D, F}) - no clue
+
+------------------------------------------------
+Configuration 15
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({D, E})
+
+Theorems:
+
+  1. CollinearPoints: D, E, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, G], [B, E], [C, D] - can be defined in a smaller configuration
+  3. EqualLineSegments: G, D, G, E - can be defined in a smaller configuration
+  4. ParallelLines: [A, C], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: F, Midline(D, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: G, Midline(D, {A, C}) - no clue
+
+  5. ParallelLines: [A, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: F, Midline(D, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: G, Midline(D, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  6. ParallelLines: [B, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2. Incidence: G, Midline(A, {B, C}) - no clue
+
+  7. ParallelLines: [B, C], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      7.2. Incidence: G, Midline(A, {B, C}) - theorem 6.2. (unproven)
+
+  8. ParallelLines: [C, E], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: G, Midline(D, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: F, Midline(D, {C, E}) - no clue
+
+------------------------------------------------
+Configuration 16
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({D, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, D, G, F - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 17
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({A, D})
+G = Midpoint({E, F})
+
+Theorems:
+
+  1. CollinearPoints: E, F, G - trivial theorem
+  2. ConcurrentLines: [A, G], [C, F], [D, E] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{C, E}, {D, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+      2.1.1. CollinearPoints: A, C, E - true in a previous configuration
+      2.1.2. CollinearPoints: A, D, F - true in a previous configuration
+
+    2.2. Incidence: G, Median(A, {E, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+    2.3. ParallelLines: [C, D], [E, F] - true in a previous configuration
+
+  3. EqualLineSegments: E, G, F, G - trivial theorem
+  4. ParallelLines: [C, D], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: E, Midline(A, {C, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: G, Midline(A, {C, D}) - no clue
+
+  5. ParallelLines: [C, D], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1. Incidence: F, Midline(A, {C, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2. Incidence: G, Midline(A, {C, D}) - theorem 4.2. (unproven)
+
+------------------------------------------------
+Configuration 18
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, C})
+G = Midpoint({B, E})
+
+Theorems:
+
+  1. CollinearPoints: B, E, G - can be defined in a smaller configuration
+  2. CollinearPoints: D, F, G - not proven, 12 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.1.1. Incidence: F, Median(D, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.1.2. Incidence: G, Median(D, {B, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.1.2.1. EqualObjects: G, Midpoint({D, F}) - no clue
+          2.1.2.2. Incidence: Midpoint({D, F}), Median(D, {B, C}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.2.1. Incidence: G, Median(D, {B, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.2.2. Incidence: F, Median(D, {B, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.2.2.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          2.2.2.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          2.2.2.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          2.2.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          2.2.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          2.2.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          2.2.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(D, {B, E}) - no clue
+          2.2.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(D, {B, E}) - no clue
+          2.2.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(D, {B, E}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.3.1. Incidence: F, Median(D, {F, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.3.1.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.2.2.1.
+          2.3.1.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.2. (unproven)
+          2.3.1.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.3. (unproven)
+          2.3.1.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.4. (unproven)
+          2.3.1.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.5. (unproven)
+          2.3.1.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.6. (unproven)
+          2.3.1.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(D, {F, G}) - no clue
+          2.3.1.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(D, {F, G}) - no clue
+          2.3.1.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(D, {F, G}) - no clue
+
+      2.3.2. Incidence: G, Median(D, {F, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.3.2.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          2.3.2.2. Incidence: Midpoint({D, F}), Median(D, {F, G}) - no clue
+
+    Attempt 4 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.4.1. Incidence: G, Median(F, {B, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.4.2. Incidence: D, Median(F, {B, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.4.2.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          2.4.2.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - no clue
+          2.4.2.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          2.4.2.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - no clue
+          2.4.2.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          2.4.2.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          2.4.2.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(F, {B, E}) - no clue
+          2.4.2.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(F, {B, E}) - no clue
+          2.4.2.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(F, {B, E}) - no clue
+
+    Attempt 5 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.5.1. Incidence: D, Median(F, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.5.2. Incidence: G, Median(F, {A, B}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.5.2.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          2.5.2.2. Incidence: Midpoint({D, F}), Median(F, {A, B}) - no clue
+
+    Attempt 6 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.6.1. Incidence: D, Median(F, {D, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.6.1.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.4.2.1.
+          2.6.1.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.2. (unproven)
+          2.6.1.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.3. (unproven)
+          2.6.1.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.4. (unproven)
+          2.6.1.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.5. (unproven)
+          2.6.1.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.6. (unproven)
+          2.6.1.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(F, {D, G}) - no clue
+          2.6.1.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(F, {D, G}) - no clue
+          2.6.1.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(F, {D, G}) - no clue
+
+      2.6.2. Incidence: G, Median(F, {D, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.6.2.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          2.6.2.2. Incidence: Midpoint({D, F}), Median(F, {D, G}) - no clue
+
+    Attempt 7 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.7.1. Incidence: F, Median(G, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.7.2. Incidence: D, Median(G, {B, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.7.2.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.4.2.1.
+          2.7.2.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.2. (unproven)
+          2.7.2.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.3. (unproven)
+          2.7.2.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.4. (unproven)
+          2.7.2.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.5. (unproven)
+          2.7.2.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.6. (unproven)
+          2.7.2.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(G, {B, C}) - no clue
+          2.7.2.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(G, {B, C}) - no clue
+          2.7.2.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(G, {B, C}) - no clue
+
+    Attempt 8 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      2.8.1. Incidence: D, Median(G, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.8.2. Incidence: F, Median(G, {A, B}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.8.2.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.2.2.1.
+          2.8.2.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.2. (unproven)
+          2.8.2.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.3. (unproven)
+          2.8.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.4. (unproven)
+          2.8.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.5. (unproven)
+          2.8.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.6. (unproven)
+          2.8.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(G, {A, B}) - no clue
+          2.8.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(G, {A, B}) - no clue
+          2.8.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(G, {A, B}) - no clue
+
+    Attempt 9 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      2.9.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.9.2. Incidence: F, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.9.3. Incidence: G, Midline(B, {A, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.9.3.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          2.9.3.2. Incidence: Midpoint({D, F}), Midline(B, {A, C}) - no clue
+
+    Attempt 10 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      2.10.1. Incidence: D, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.10.2. Incidence: G, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.10.3. Incidence: F, Midline(B, {A, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.10.3.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.2.2.1.
+          2.10.3.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.2. (unproven)
+          2.10.3.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.3. (unproven)
+          2.10.3.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.4. (unproven)
+          2.10.3.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.5. (unproven)
+          2.10.3.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.6. (unproven)
+          2.10.3.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(B, {A, E}) - no clue
+          2.10.3.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(B, {A, E}) - no clue
+          2.10.3.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(B, {A, E}) - no clue
+
+    Attempt 11 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      2.11.1. Incidence: F, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.11.2. Incidence: G, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.11.3. Incidence: D, Midline(B, {C, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.11.3.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.4.2.1.
+          2.11.3.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.2. (unproven)
+          2.11.3.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.3. (unproven)
+          2.11.3.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.4. (unproven)
+          2.11.3.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.5. (unproven)
+          2.11.3.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.6. (unproven)
+          2.11.3.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(B, {C, E}) - no clue
+          2.11.3.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(B, {C, E}) - no clue
+          2.11.3.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(B, {C, E}) - no clue
+
+    Attempt 12 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      2.12.1. Incidence: D, Midline(G, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.12.1.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.4.2.1.
+          2.12.1.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.2. (unproven)
+          2.12.1.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.3. (unproven)
+          2.12.1.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.4. (unproven)
+          2.12.1.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.5. (unproven)
+          2.12.1.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.6. (unproven)
+          2.12.1.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(G, {D, F}) - no clue
+          2.12.1.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(G, {D, F}) - no clue
+          2.12.1.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(G, {D, F}) - no clue
+
+      2.12.2. Incidence: F, Midline(G, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.12.2.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 2.2.2.1.
+          2.12.2.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.2. (unproven)
+          2.12.2.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.3. (unproven)
+          2.12.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.4. (unproven)
+          2.12.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.5. (unproven)
+          2.12.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.6. (unproven)
+          2.12.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(G, {D, F}) - no clue
+          2.12.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(G, {D, F}) - no clue
+          2.12.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(G, {D, F}) - no clue
+
+      2.12.3. Incidence: G, Midline(G, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.12.3.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          2.12.3.2. Incidence: Midpoint({D, F}), Midline(G, {D, F}) - no clue
+
+  3. ConcurrentLines: [A, F], [B, G], [C, D] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+      3.1.1. EqualObjects: B, IntersectionOfLinesFromPoints({{A, D}, {C, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+        3.1.1.1. CollinearPoints: A, B, D - true in a previous configuration
+        3.1.1.2. CollinearPoints: B, C, F - true in a previous configuration
+
+      3.1.2. ParallelLines: [A, C], [D, F] - true in a previous configuration
+      3.1.3. Incidence: G, Median(B, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          3.1.3.1. Incidence: Midpoint({D, F}), Median(B, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+          3.1.3.2. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+
+    Attempt 2 - attempted as a consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+      3.2.1. EqualObjects: B, IntersectionOfLinesFromPoints({{A, D}, {C, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 3.1.1.
+      3.2.2. ParallelLines: [A, C], [D, F] - true in a previous configuration - theorem 3.1.2.
+      3.2.3. Incidence: G, Median(B, {A, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          3.2.3.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+          3.2.3.2. Incidence: Midpoint({D, F}), Median(B, {A, C}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\Median\are_concurrent.txt
+
+      3.3.1. Incidence: D, Median(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      3.3.2. Incidence: F, Median(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      3.3.3. Incidence: G, Median(B, {A, C}) - theorem 3.2.3. (unproven)
+
+  4. ConcurrentLines: [A, F], [C, D], [E, G] - not proven, 2 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 01_Trapezoid\midpoints_make_concurrency.txt
+
+      4.1.1. ParallelLines: [A, C], [D, F] - true in a previous configuration - theorem 3.1.2.
+      4.1.2. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Median\are_concurrent.txt
+
+      4.2.1. Incidence: A, Median(F, {D, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          4.2.1.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+            4.2.1.1.1. CollinearPoints: A, B, D - true in a previous configuration - theorem 3.1.1.1.
+            4.2.1.1.2. CollinearPoints: A, C, E - true in a previous configuration
+
+          4.2.1.2. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          4.2.1.3. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          4.2.1.4. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {D, E}) - no clue
+          4.2.1.5. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {D, E}) - no clue
+
+      4.2.2. Incidence: C, Median(D, {E, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          4.2.2.1. EqualObjects: C, IntersectionOfLinesFromPoints({{A, E}, {B, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+            4.2.2.1.1. CollinearPoints: A, C, E - true in a previous configuration - theorem 4.2.1.1.2.
+            4.2.2.1.2. CollinearPoints: B, C, F - true in a previous configuration - theorem 3.1.1.2.
+
+          4.2.2.2. EqualObjects: C, ReflectionInMidpointOfSegment(D, {E, F}) - no clue
+          4.2.2.3. EqualObjects: IntersectionOfLinesFromPoints({{A, E}, {B, F}}), ReflectionInMidpointOfSegment(D, {E, F}) - no clue
+          4.2.2.4. Incidence: IntersectionOfLinesFromPoints({{A, E}, {B, F}}), Median(D, {E, F}) - no clue
+          4.2.2.5. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Median(D, {E, F}) - no clue
+
+      4.2.3. Incidence: G, Median(E, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          4.2.3.1. Incidence: Midpoint({D, F}), Median(E, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+          4.2.3.2. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+
+  5. EqualLineSegments: G, B, G, E - can be defined in a smaller configuration
+  6. EqualLineSegments: G, D, G, F - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 00_TrivialTheorems\midpoint.txt
+
+      6.1. EqualObjects: G, Midpoint({D, F}) - theorem 2.1.2.1. (unproven)
+
+  7. ParallelLines: [A, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.9.1.
+      7.2. Incidence: G, Midline(B, {A, C}) - theorem 2.9.3. (unproven)
+
+  8. ParallelLines: [A, C], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: F, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.9.2.
+      8.2. Incidence: G, Midline(B, {A, C}) - theorem 2.9.3. (unproven)
+
+  9. ParallelLines: [A, E], [D, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    9.1. Incidence: D, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.10.1.
+    9.2. Incidence: G, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.10.2.
+
+ 10. ParallelLines: [A, E], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      10.1. Incidence: G, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.10.2.
+      10.2. Incidence: F, Midline(B, {A, E}) - theorem 2.10.3. (unproven)
+
+ 11. ParallelLines: [C, E], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      11.1. Incidence: G, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.11.2.
+      11.2. Incidence: D, Midline(B, {C, E}) - theorem 2.11.3. (unproven)
+
+ 12. ParallelLines: [C, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    12.1. Incidence: F, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.11.1.
+    12.2. Incidence: G, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt - theorem 2.11.2.
+
+Discovered unproved theorems:
+
+ 13. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 4.2.1.2.
+ 14. EqualObjects: C, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 4.2.2.2.
+ 15. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.2.
+ 16. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.3.
+ 17. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.2.
+ 18. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.3.
+ 19. EqualObjects: IntersectionOfLinesFromPoints({{A, E}, {B, F}}), ReflectionInMidpointOfSegment(D, {E, F}) - theorem 4.2.2.3.
+ 20. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 4.2.1.3.
+ 21. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 2.2.2.4.
+ 22. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.5.
+ 23. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 2.4.2.4.
+ 24. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.5.
+ 25. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 2.2.2.6.
+ 26. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.4.2.6.
+ 27. Incidence: A, Median(F, {D, E}) - theorem 4.2.1.
+ 28. Incidence: C, Median(D, {E, F}) - theorem 4.2.2.
+ 29. Incidence: D, Median(F, {B, E}) - theorem 2.4.2.
+ 30. Incidence: D, Median(F, {D, G}) - theorem 2.6.1.
+ 31. Incidence: D, Median(G, {B, C}) - theorem 2.7.2.
+ 32. Incidence: D, Midline(B, {C, E}) - theorem 2.11.3.
+ 33. Incidence: D, Midline(G, {D, F}) - theorem 2.12.1.
+ 34. Incidence: F, Median(D, {B, E}) - theorem 2.2.2.
+ 35. Incidence: F, Median(D, {F, G}) - theorem 2.3.1.
+ 36. Incidence: F, Median(G, {A, B}) - theorem 2.8.2.
+ 37. Incidence: F, Midline(B, {A, E}) - theorem 2.10.3.
+ 38. Incidence: F, Midline(G, {D, F}) - theorem 2.12.2.
+ 39. Incidence: G, Median(B, {A, C}) - theorem 3.2.3.
+ 40. Incidence: G, Median(B, {D, F}) - theorem 3.1.3.
+ 41. Incidence: G, Median(D, {B, C}) - theorem 2.1.2.
+ 42. Incidence: G, Median(D, {F, G}) - theorem 2.3.2.
+ 43. Incidence: G, Median(E, {D, F}) - theorem 4.2.3.
+ 44. Incidence: G, Median(F, {A, B}) - theorem 2.5.2.
+ 45. Incidence: G, Median(F, {D, G}) - theorem 2.6.2.
+ 46. Incidence: G, Midline(B, {A, C}) - theorem 2.9.3.
+ 47. Incidence: G, Midline(G, {D, F}) - theorem 2.12.3.
+ 48. Incidence: IntersectionOfLinesFromPoints({{A, E}, {B, F}}), Median(D, {E, F}) - theorem 4.2.2.4.
+ 49. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {D, E}) - theorem 4.2.1.4.
+ 50. Incidence: Midpoint({D, F}), Median(B, {A, C}) - theorem 3.2.3.2.
+ 51. Incidence: Midpoint({D, F}), Median(D, {B, C}) - theorem 2.1.2.2.
+ 52. Incidence: Midpoint({D, F}), Median(D, {F, G}) - theorem 2.3.2.2.
+ 53. Incidence: Midpoint({D, F}), Median(F, {A, B}) - theorem 2.5.2.2.
+ 54. Incidence: Midpoint({D, F}), Median(F, {D, G}) - theorem 2.6.2.2.
+ 55. Incidence: Midpoint({D, F}), Midline(B, {A, C}) - theorem 2.9.3.2.
+ 56. Incidence: Midpoint({D, F}), Midline(G, {D, F}) - theorem 2.12.3.2.
+ 57. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(D, {B, E}) - theorem 2.2.2.7.
+ 58. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(D, {F, G}) - theorem 2.3.1.7.
+ 59. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(G, {A, B}) - theorem 2.8.2.7.
+ 60. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(B, {A, E}) - theorem 2.10.3.7.
+ 61. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(G, {D, F}) - theorem 2.12.2.7.
+ 62. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(F, {B, E}) - theorem 2.4.2.7.
+ 63. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(F, {D, G}) - theorem 2.6.1.7.
+ 64. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Median(G, {B, C}) - theorem 2.7.2.7.
+ 65. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(B, {C, E}) - theorem 2.11.3.7.
+ 66. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(G, {D, F}) - theorem 2.12.1.7.
+ 67. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(D, {B, E}) - theorem 2.2.2.8.
+ 68. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(D, {F, G}) - theorem 2.3.1.8.
+ 69. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(G, {A, B}) - theorem 2.8.2.8.
+ 70. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(B, {A, E}) - theorem 2.10.3.8.
+ 71. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(G, {D, F}) - theorem 2.12.2.8.
+ 72. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Median(D, {E, F}) - theorem 4.2.2.5.
+ 73. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(F, {B, E}) - theorem 2.4.2.8.
+ 74. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(F, {D, G}) - theorem 2.6.1.8.
+ 75. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Median(G, {B, C}) - theorem 2.7.2.8.
+ 76. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(B, {C, E}) - theorem 2.11.3.8.
+ 77. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(G, {D, F}) - theorem 2.12.1.8.
+ 78. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(D, {B, E}) - theorem 2.2.2.9.
+ 79. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(D, {F, G}) - theorem 2.3.1.9.
+ 80. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(G, {A, B}) - theorem 2.8.2.9.
+ 81. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(B, {A, E}) - theorem 2.10.3.9.
+ 82. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(G, {D, F}) - theorem 2.12.2.9.
+ 83. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(F, {B, E}) - theorem 2.4.2.9.
+ 84. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(F, {D, G}) - theorem 2.6.1.9.
+ 85. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Median(G, {B, C}) - theorem 2.7.2.9.
+ 86. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(B, {C, E}) - theorem 2.11.3.9.
+ 87. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(G, {D, F}) - theorem 2.12.1.9.
+ 88. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {D, E}) - theorem 4.2.1.5.
+
+------------------------------------------------
+Configuration 19
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, C})
+G = Midpoint({D, E})
+
+Theorems:
+
+  1. CollinearPoints: A, F, G - not proven, 7 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.1.1. Incidence: F, Median(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.1.2. Incidence: G, Median(A, {B, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.1.2.1. EqualObjects: G, Midpoint({A, F}) - no clue
+          1.1.2.2. Incidence: Midpoint({A, F}), Median(A, {B, C}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.2.1. Incidence: G, Median(A, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.2.2. Incidence: F, Median(A, {D, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.2.2.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          1.2.2.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          1.2.2.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          1.2.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - no clue
+          1.2.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          1.2.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - no clue
+          1.2.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(A, {D, E}) - no clue
+          1.2.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(A, {D, E}) - no clue
+          1.2.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(A, {D, E}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.3.1. Incidence: F, Median(A, {F, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.3.1.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 1.2.2.1.
+          1.3.1.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.2. (unproven)
+          1.3.1.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.3. (unproven)
+          1.3.1.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.4. (unproven)
+          1.3.1.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.5. (unproven)
+          1.3.1.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.6. (unproven)
+          1.3.1.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(A, {F, G}) - no clue
+          1.3.1.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(A, {F, G}) - no clue
+          1.3.1.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(A, {F, G}) - no clue
+
+      1.3.2. Incidence: G, Median(A, {F, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.3.2.1. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+          1.3.2.2. Incidence: Midpoint({A, F}), Median(A, {F, G}) - no clue
+
+    Attempt 4 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.4.1. Incidence: G, Median(F, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.4.2. Incidence: A, Median(F, {D, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.4.2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+            1.4.2.1.1. CollinearPoints: A, B, D - true in a previous configuration
+            1.4.2.1.2. CollinearPoints: A, C, E - true in a previous configuration
+
+          1.4.2.2. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          1.4.2.3. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - no clue
+          1.4.2.4. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {D, E}) - no clue
+          1.4.2.5. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {D, E}) - no clue
+
+    Attempt 5 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.5.1. Incidence: A, Median(F, {A, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.5.1.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 1.4.2.1.
+          1.5.1.2. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.2. (unproven)
+          1.5.1.3. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.3. (unproven)
+          1.5.1.4. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {A, G}) - no clue
+          1.5.1.5. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {A, G}) - no clue
+
+      1.5.2. Incidence: G, Median(F, {A, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.5.2.1. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+          1.5.2.2. Incidence: Midpoint({A, F}), Median(F, {A, G}) - no clue
+
+    Attempt 6 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.6.1. Incidence: F, Median(G, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.6.2. Incidence: A, Median(G, {B, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.6.2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 1.4.2.1.
+          1.6.2.2. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.2. (unproven)
+          1.6.2.3. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.3. (unproven)
+          1.6.2.4. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(G, {B, C}) - no clue
+          1.6.2.5. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(G, {B, C}) - no clue
+
+    Attempt 7 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      1.7.1. Incidence: A, Midline(G, {A, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.7.1.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 1.4.2.1.
+          1.7.1.2. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.2. (unproven)
+          1.7.1.3. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.3. (unproven)
+          1.7.1.4. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Midline(G, {A, F}) - no clue
+          1.7.1.5. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Midline(G, {A, F}) - no clue
+
+      1.7.2. Incidence: F, Midline(G, {A, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.7.2.1. EqualObjects: F, ReflectionInMidpointOfSegment(A, {D, E}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt - theorem 1.2.2.1.
+          1.7.2.2. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.2. (unproven)
+          1.7.2.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.3. (unproven)
+          1.7.2.4. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.4. (unproven)
+          1.7.2.5. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.5. (unproven)
+          1.7.2.6. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.6. (unproven)
+          1.7.2.7. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(G, {A, F}) - no clue
+          1.7.2.8. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(G, {A, F}) - no clue
+          1.7.2.9. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(G, {A, F}) - no clue
+
+      1.7.3. Incidence: G, Midline(G, {A, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          1.7.3.1. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+          1.7.3.2. Incidence: Midpoint({A, F}), Midline(G, {A, F}) - no clue
+
+  2. CollinearPoints: D, E, G - can be defined in a smaller configuration
+  3. ConcurrentLines: [A, G], [B, E], [C, D] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    3.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 1.4.2.1.
+    3.2. Incidence: G, Median(A, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt - theorem 1.2.1.
+    3.3. ParallelLines: [B, C], [D, E] - true in a previous configuration
+
+  4. ConcurrentLines: [B, E], [C, D], [F, G] - consequence of 1 from 01_Trapezoid\midpoints_make_concurrency.txt
+
+    4.1. ParallelLines: [B, C], [D, E] - true in a previous configuration - theorem 3.3.
+
+  5. EqualLineSegments: G, A, G, F - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 00_TrivialTheorems\midpoint.txt
+
+      5.1. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+
+  6. EqualLineSegments: G, D, G, E - can be defined in a smaller configuration
+  7. ParallelLines: [B, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      7.2. Incidence: G, Midline(A, {B, C}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          7.2.1. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+          7.2.2. Incidence: Midpoint({A, F}), Midline(A, {B, C}) - no clue
+
+  8. ParallelLines: [B, C], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: G, Midline(A, {B, C}) - theorem 7.2. (unproven)
+
+  9. ParallelLines: [B, F], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      9.1. Incidence: D, Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      9.2. Incidence: G, Midline(A, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          9.2.1. Incidence: Midpoint({A, F}), Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+          9.2.2. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+
+ 10. ParallelLines: [B, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      10.1. Incidence: E, Midline(A, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          10.1.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {D, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          10.1.2. EqualObjects: E, ReflectionInMidpointOfSegment(D, {A, F}) - no clue
+          10.1.3. EqualObjects: E, ReflectionInMidpointOfSegment(F, {C, D}) - no clue
+          10.1.4. EqualObjects: ReflectionInMidpointOfSegment(B, {D, F}), ReflectionInMidpointOfSegment(D, {A, F}) - no clue
+          10.1.5. EqualObjects: ReflectionInMidpointOfSegment(B, {D, F}), ReflectionInMidpointOfSegment(F, {C, D}) - no clue
+          10.1.6. EqualObjects: ReflectionInMidpointOfSegment(D, {A, F}), ReflectionInMidpointOfSegment(F, {C, D}) - no clue
+          10.1.7. Incidence: ReflectionInMidpointOfSegment(B, {D, F}), Midline(A, {B, F}) - no clue
+          10.1.8. Incidence: ReflectionInMidpointOfSegment(D, {A, F}), Midline(A, {B, F}) - no clue
+          10.1.9. Incidence: ReflectionInMidpointOfSegment(F, {C, D}), Midline(A, {B, F}) - no clue
+
+      10.2. Incidence: G, Midline(A, {B, F}) - theorem 9.2. (unproven)
+
+ 11. ParallelLines: [C, F], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      11.1. Incidence: D, Midline(A, {C, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          11.1.1. EqualObjects: D, ReflectionInMidpointOfSegment(C, {E, F}) - consequence of 1 from 00_EqualObjects\midpoints_make_parallelograms.txt
+          11.1.2. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - no clue
+          11.1.3. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          11.1.4. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - no clue
+          11.1.5. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          11.1.6. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+          11.1.7. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(A, {C, F}) - no clue
+          11.1.8. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(A, {C, F}) - no clue
+          11.1.9. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(A, {C, F}) - no clue
+
+      11.2. Incidence: G, Midline(A, {C, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          11.2.1. Incidence: Midpoint({A, F}), Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+          11.2.2. EqualObjects: G, Midpoint({A, F}) - theorem 1.1.2.1. (unproven)
+
+ 12. ParallelLines: [C, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      12.1. Incidence: E, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      12.2. Incidence: G, Midline(A, {C, F}) - theorem 11.2. (unproven)
+
+Discovered unproved theorems:
+
+ 13. EqualObjects: A, ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.2.
+ 14. EqualObjects: D, ReflectionInMidpointOfSegment(E, {A, F}) - theorem 11.1.2.
+ 15. EqualObjects: D, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 11.1.3.
+ 16. EqualObjects: E, ReflectionInMidpointOfSegment(D, {A, F}) - theorem 10.1.2.
+ 17. EqualObjects: E, ReflectionInMidpointOfSegment(F, {C, D}) - theorem 10.1.3.
+ 18. EqualObjects: F, ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.2.
+ 19. EqualObjects: F, ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.3.
+ 20. EqualObjects: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), ReflectionInMidpointOfSegment(F, {D, E}) - theorem 1.4.2.3.
+ 21. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(D, {B, E}) - theorem 1.2.2.4.
+ 22. EqualObjects: ReflectionInMidpointOfSegment(A, {D, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.5.
+ 23. EqualObjects: ReflectionInMidpointOfSegment(B, {D, F}), ReflectionInMidpointOfSegment(D, {A, F}) - theorem 10.1.4.
+ 24. EqualObjects: ReflectionInMidpointOfSegment(B, {D, F}), ReflectionInMidpointOfSegment(F, {C, D}) - theorem 10.1.5.
+ 25. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(E, {A, F}) - theorem 11.1.4.
+ 26. EqualObjects: ReflectionInMidpointOfSegment(C, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 11.1.5.
+ 27. EqualObjects: ReflectionInMidpointOfSegment(D, {A, F}), ReflectionInMidpointOfSegment(F, {C, D}) - theorem 10.1.6.
+ 28. EqualObjects: ReflectionInMidpointOfSegment(D, {B, E}), ReflectionInMidpointOfSegment(E, {C, D}) - theorem 1.2.2.6.
+ 29. EqualObjects: ReflectionInMidpointOfSegment(E, {A, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 11.1.6.
+ 30. Incidence: A, Median(F, {A, G}) - theorem 1.5.1.
+ 31. Incidence: A, Median(F, {D, E}) - theorem 1.4.2.
+ 32. Incidence: A, Median(G, {B, C}) - theorem 1.6.2.
+ 33. Incidence: A, Midline(G, {A, F}) - theorem 1.7.1.
+ 34. Incidence: D, Midline(A, {C, F}) - theorem 11.1.
+ 35. Incidence: E, Midline(A, {B, F}) - theorem 10.1.
+ 36. Incidence: F, Median(A, {D, E}) - theorem 1.2.2.
+ 37. Incidence: F, Median(A, {F, G}) - theorem 1.3.1.
+ 38. Incidence: F, Midline(G, {A, F}) - theorem 1.7.2.
+ 39. Incidence: G, Median(A, {B, C}) - theorem 1.1.2.
+ 40. Incidence: G, Median(A, {F, G}) - theorem 1.3.2.
+ 41. Incidence: G, Median(F, {A, G}) - theorem 1.5.2.
+ 42. Incidence: G, Midline(A, {B, C}) - theorem 7.2.
+ 43. Incidence: G, Midline(A, {B, F}) - theorem 9.2.
+ 44. Incidence: G, Midline(A, {C, F}) - theorem 11.2.
+ 45. Incidence: G, Midline(G, {A, F}) - theorem 1.7.3.
+ 46. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {A, G}) - theorem 1.5.1.4.
+ 47. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(F, {D, E}) - theorem 1.4.2.4.
+ 48. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Median(G, {B, C}) - theorem 1.6.2.4.
+ 49. Incidence: IntersectionOfLinesFromPoints({{B, D}, {C, E}}), Midline(G, {A, F}) - theorem 1.7.1.4.
+ 50. Incidence: Midpoint({A, F}), Median(A, {B, C}) - theorem 1.1.2.2.
+ 51. Incidence: Midpoint({A, F}), Median(A, {F, G}) - theorem 1.3.2.2.
+ 52. Incidence: Midpoint({A, F}), Median(F, {A, G}) - theorem 1.5.2.2.
+ 53. Incidence: Midpoint({A, F}), Midline(A, {B, C}) - theorem 7.2.2.
+ 54. Incidence: Midpoint({A, F}), Midline(G, {A, F}) - theorem 1.7.3.2.
+ 55. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(A, {D, E}) - theorem 1.2.2.7.
+ 56. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Median(A, {F, G}) - theorem 1.3.1.7.
+ 57. Incidence: ReflectionInMidpointOfSegment(A, {D, E}), Midline(G, {A, F}) - theorem 1.7.2.7.
+ 58. Incidence: ReflectionInMidpointOfSegment(B, {D, F}), Midline(A, {B, F}) - theorem 10.1.7.
+ 59. Incidence: ReflectionInMidpointOfSegment(C, {E, F}), Midline(A, {C, F}) - theorem 11.1.7.
+ 60. Incidence: ReflectionInMidpointOfSegment(D, {A, F}), Midline(A, {B, F}) - theorem 10.1.8.
+ 61. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(A, {D, E}) - theorem 1.2.2.8.
+ 62. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Median(A, {F, G}) - theorem 1.3.1.8.
+ 63. Incidence: ReflectionInMidpointOfSegment(D, {B, E}), Midline(G, {A, F}) - theorem 1.7.2.8.
+ 64. Incidence: ReflectionInMidpointOfSegment(E, {A, F}), Midline(A, {C, F}) - theorem 11.1.8.
+ 65. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(A, {D, E}) - theorem 1.2.2.9.
+ 66. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Median(A, {F, G}) - theorem 1.3.1.9.
+ 67. Incidence: ReflectionInMidpointOfSegment(E, {C, D}), Midline(G, {A, F}) - theorem 1.7.2.9.
+ 68. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(A, {C, F}) - theorem 11.1.9.
+ 69. Incidence: ReflectionInMidpointOfSegment(F, {C, D}), Midline(A, {B, F}) - theorem 10.1.9.
+ 70. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {A, G}) - theorem 1.5.1.5.
+ 71. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(F, {D, E}) - theorem 1.4.2.5.
+ 72. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Median(G, {B, C}) - theorem 1.6.2.5.
+ 73. Incidence: ReflectionInMidpointOfSegment(F, {D, E}), Midline(G, {A, F}) - theorem 1.7.1.5.
+
+------------------------------------------------
+Configuration 20
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({A, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, A, G, F - can be defined in a smaller configuration
+  8. ParallelLines: [C, F], [E, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    8.1. Incidence: E, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    8.2. Incidence: G, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 21
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({B, E})
+
+Theorems:
+
+  1. CollinearPoints: B, E, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, B, G, E - can be defined in a smaller configuration
+  3. ParallelLines: [A, C], [D, G] - can be defined in a smaller configuration
+  4. ParallelLines: [A, E], [D, G] - can be defined in a smaller configuration
+  5. ParallelLines: [B, C], [F, G] - true because of the transitivity rule
+
+    5.1. ParallelLines: [B, C], [D, E] - true in a previous configuration
+    5.2. ParallelLines: [D, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt - theorem 7.
+
+  6. ParallelLines: [C, E], [D, G] - can be defined in a smaller configuration
+  7. ParallelLines: [D, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    7.1. Incidence: F, Midline(B, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    7.2. Incidence: G, Midline(B, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 22
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({B, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, B, G, F - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 23
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({C, D})
+
+Theorems:
+
+  1. CollinearPoints: C, D, G - can be defined in a smaller configuration
+  2. EqualLineSegments: B, F, G, E - not proven, 5 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      2.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.1.1. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - no clue
+          2.1.2. EqualObjects: ReflectionInMidpointOfSegment(B, {F, G}), ReflectionInMidpointOfSegment(F, {D, G}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      2.2. EqualObjects: B, ReflectionInMidpointOfSegment(E, {F, G}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      2.3. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.3.1. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - no clue
+          2.3.2. EqualObjects: ReflectionInMidpointOfSegment(D, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - no clue
+
+    Attempt 4 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      2.4. EqualObjects: F, ReflectionInMidpointOfSegment(G, {B, E}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          2.4.1. EqualObjects: F, ReflectionInMidpointOfSegment(E, {D, G}) - no clue
+          2.4.2. EqualObjects: ReflectionInMidpointOfSegment(E, {D, G}), ReflectionInMidpointOfSegment(G, {B, E}) - no clue
+
+    Attempt 5 - attempted with the transitivity rule
+
+      2.5.1. EqualLineSegments: F, B, F, D - true in a previous configuration
+      2.5.2. EqualLineSegments: D, F, G, E - theorem 4. (unproven)
+
+  3. EqualLineSegments: D, E, G, F - not proven, 4 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      3.1. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1. (unproven)
+
+    Attempt 2 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      3.2. EqualObjects: F, ReflectionInMidpointOfSegment(E, {D, G}) - theorem 2.4.1. (unproven)
+
+    Attempt 3 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      3.3. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+
+    Attempt 4 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      3.4. EqualObjects: D, ReflectionInMidpointOfSegment(G, {E, F}) - no clue
+
+  4. EqualLineSegments: D, F, G, E - not proven, 5 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      4.1. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1. (unproven)
+
+    Attempt 2 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      4.2. EqualObjects: F, ReflectionInMidpointOfSegment(E, {D, G}) - theorem 2.4.1. (unproven)
+
+    Attempt 3 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      4.3. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+
+    Attempt 4 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      4.4. EqualObjects: D, ReflectionInMidpointOfSegment(G, {E, F}) - theorem 3.4. (unproven)
+
+    Attempt 5 - attempted with the transitivity rule
+
+      4.5.1. EqualLineSegments: F, B, F, D - true in a previous configuration - theorem 2.5.1.
+      4.5.2. EqualLineSegments: B, F, G, E - theorem 2. (unproven)
+
+  5. EqualLineSegments: E, F, G, B - not proven, 4 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      5.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+
+    Attempt 2 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      5.2. EqualObjects: B, ReflectionInMidpointOfSegment(E, {F, G}) - theorem 2.2. (unproven)
+
+    Attempt 3 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      5.3. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3. (unproven)
+
+    Attempt 4 - attempted as a consequence of 1 from 08_Parallelogram\constructing_with_reflection.txt
+
+      5.4. EqualObjects: F, ReflectionInMidpointOfSegment(G, {B, E}) - theorem 2.4. (unproven)
+
+  6. EqualLineSegments: G, C, G, D - can be defined in a smaller configuration
+  7. ParallelLines: [A, B], [E, G] - can be defined in a smaller configuration
+  8. ParallelLines: [A, D], [E, G] - can be defined in a smaller configuration
+  9. ParallelLines: [A, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      9.1. Incidence: E, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      9.2. Incidence: G, Midline(C, {A, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          9.2.1. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1. (unproven)
+          9.2.2. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3. (unproven)
+          9.2.3. EqualObjects: ReflectionInMidpointOfSegment(D, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3.2. (unproven)
+          9.2.4. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Midline(C, {A, F}) - no clue
+          9.2.5. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(C, {A, F}) - no clue
+
+ 10. ParallelLines: [B, C], [F, G] - can be defined in a smaller configuration
+ 11. ParallelLines: [B, D], [E, G] - can be defined in a smaller configuration
+ 12. ParallelLines: [B, F], [E, G] - not proven, 5 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      12.1.1. Incidence: E, Midline(C, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          12.1.1.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+          12.1.1.2. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+          12.1.1.3. EqualObjects: ReflectionInMidpointOfSegment(B, {F, G}), ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.2. (unproven)
+          12.1.1.4. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(C, {B, F}) - no clue
+          12.1.1.5. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(C, {B, F}) - no clue
+
+      12.1.2. Incidence: G, Midline(C, {B, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          12.1.2.1. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1. (unproven)
+          12.1.2.2. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3. (unproven)
+          12.1.2.3. EqualObjects: ReflectionInMidpointOfSegment(D, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3.2. (unproven)
+          12.1.2.4. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Midline(C, {B, F}) - no clue
+          12.1.2.5. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(C, {B, F}) - no clue
+
+    Attempt 2 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      12.2. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+
+    Attempt 3 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      12.3. EqualObjects: B, ReflectionInMidpointOfSegment(E, {F, G}) - theorem 2.2. (unproven)
+
+    Attempt 4 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      12.4. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3. (unproven)
+
+    Attempt 5 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      12.5. EqualObjects: F, ReflectionInMidpointOfSegment(G, {B, E}) - theorem 2.4. (unproven)
+
+ 13. ParallelLines: [B, G], [E, F] - not proven, 5 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      13.1.1. Incidence: F, Midline(D, {B, G}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      13.1.2. Incidence: E, Midline(D, {B, G}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          13.1.2.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+          13.1.2.2. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+          13.1.2.3. EqualObjects: ReflectionInMidpointOfSegment(B, {F, G}), ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.2. (unproven)
+          13.1.2.4. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(D, {B, G}) - no clue
+          13.1.2.5. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(D, {B, G}) - no clue
+
+    Attempt 2 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      13.2. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+
+    Attempt 3 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      13.3. EqualObjects: B, ReflectionInMidpointOfSegment(E, {F, G}) - theorem 2.2. (unproven)
+
+    Attempt 4 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      13.4. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3. (unproven)
+
+    Attempt 5 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      13.5. EqualObjects: F, ReflectionInMidpointOfSegment(G, {B, E}) - theorem 2.4. (unproven)
+
+ 14. ParallelLines: [D, E], [F, G] - true because of the transitivity rule
+
+    14.1. ParallelLines: [B, C], [D, E] - true in a previous configuration
+    14.2. ParallelLines: [B, C], [F, G] - can be defined in a smaller configuration - theorem 10.
+
+ 15. ParallelLines: [D, F], [E, G] - not proven, 5 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      15.1.1. Incidence: G, Midline(C, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      15.1.2. Incidence: E, Midline(C, {D, F}) - not proven, 1 attempt at proving it:
+
+        The attempt - attempted with the transitivity rule
+
+          15.1.2.1. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1. (unproven)
+          15.1.2.2. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+          15.1.2.3. EqualObjects: ReflectionInMidpointOfSegment(B, {F, G}), ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.2. (unproven)
+          15.1.2.4. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(C, {D, F}) - no clue
+          15.1.2.5. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(C, {D, F}) - no clue
+
+    Attempt 2 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      15.2. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1. (unproven)
+
+    Attempt 3 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      15.3. EqualObjects: F, ReflectionInMidpointOfSegment(E, {D, G}) - theorem 2.4.1. (unproven)
+
+    Attempt 4 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      15.4. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1. (unproven)
+
+    Attempt 5 - attempted as a consequence of 2 from 08_Parallelogram\constructing_with_reflection.txt
+
+      15.5. EqualObjects: D, ReflectionInMidpointOfSegment(G, {E, F}) - theorem 3.4. (unproven)
+
+Discovered unproved theorems:
+
+ 16. EqualObjects: E, ReflectionInMidpointOfSegment(B, {F, G}) - theorem 2.1.
+ 17. EqualObjects: E, ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.1.
+ 18. EqualObjects: F, ReflectionInMidpointOfSegment(E, {D, G}) - theorem 2.4.1.
+ 19. EqualObjects: F, ReflectionInMidpointOfSegment(G, {B, E}) - theorem 2.4.
+ 20. EqualObjects: G, ReflectionInMidpointOfSegment(D, {E, F}) - theorem 2.3.1.
+ 21. EqualObjects: G, ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3.
+ 22. EqualObjects: ReflectionInMidpointOfSegment(B, {F, G}), ReflectionInMidpointOfSegment(F, {D, G}) - theorem 2.1.2.
+ 23. EqualObjects: ReflectionInMidpointOfSegment(D, {E, F}), ReflectionInMidpointOfSegment(F, {B, E}) - theorem 2.3.2.
+ 24. EqualObjects: ReflectionInMidpointOfSegment(E, {D, G}), ReflectionInMidpointOfSegment(G, {B, E}) - theorem 2.4.2.
+ 25. Incidence: E, Midline(C, {B, F}) - theorem 12.1.1.
+ 26. Incidence: E, Midline(C, {D, F}) - theorem 15.1.2.
+ 27. Incidence: E, Midline(D, {B, G}) - theorem 13.1.2.
+ 28. Incidence: G, Midline(C, {A, F}) - theorem 9.2.
+ 29. Incidence: G, Midline(C, {B, F}) - theorem 12.1.2.
+ 30. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(C, {B, F}) - theorem 12.1.1.4.
+ 31. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(C, {D, F}) - theorem 15.1.2.4.
+ 32. Incidence: ReflectionInMidpointOfSegment(B, {F, G}), Midline(D, {B, G}) - theorem 13.1.2.4.
+ 33. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Midline(C, {A, F}) - theorem 9.2.4.
+ 34. Incidence: ReflectionInMidpointOfSegment(D, {E, F}), Midline(C, {B, F}) - theorem 12.1.2.4.
+ 35. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(C, {A, F}) - theorem 9.2.5.
+ 36. Incidence: ReflectionInMidpointOfSegment(F, {B, E}), Midline(C, {B, F}) - theorem 12.1.2.5.
+ 37. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(C, {B, F}) - theorem 12.1.1.5.
+ 38. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(C, {D, F}) - theorem 15.1.2.5.
+ 39. Incidence: ReflectionInMidpointOfSegment(F, {D, G}), Midline(D, {B, G}) - theorem 13.1.2.5.
+
+------------------------------------------------
+Configuration 24
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({C, E})
+
+Theorems:
+
+  1. CollinearPoints: A, C, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, E, G - can be defined in a smaller configuration
+  3. CollinearPoints: C, E, G - can be defined in a smaller configuration
+  4. EqualLineSegments: G, C, G, E - can be defined in a smaller configuration
+  5. ParallelLines: [B, C], [F, G] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1.1. Incidence: F, Midline(D, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.1.2. Incidence: G, Midline(D, {B, C}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.2.1. Incidence: G, Midline(E, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2.2. Incidence: F, Midline(E, {B, C}) - no clue
+
+    Attempt 3 - attempted with the transitivity rule
+
+      5.3.1. ParallelLines: [B, C], [D, E] - true in a previous configuration
+      5.3.2. ParallelLines: [D, E], [F, G] - theorem 6. (unproven)
+
+  6. ParallelLines: [D, E], [F, G] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1.1. Incidence: F, Midline(B, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.1.2. Incidence: G, Midline(B, {D, E}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.2.1. Incidence: G, Midline(C, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2.2. Incidence: F, Midline(C, {D, E}) - no clue
+
+    Attempt 3 - attempted with the transitivity rule
+
+      6.3.1. ParallelLines: [B, C], [D, E] - true in a previous configuration - theorem 5.3.1.
+      6.3.2. ParallelLines: [B, C], [F, G] - theorem 5. (unproven)
+
+------------------------------------------------
+Configuration 25
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({C, F})
+
+Theorems:
+
+  1. CollinearPoints: C, F, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, C, G, F - can be defined in a smaller configuration
+  3. ParallelLines: [A, B], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      3.1. Incidence: E, Midline(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      3.2. Incidence: G, Midline(C, {A, B}) - no clue
+
+  4. ParallelLines: [A, D], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: E, Midline(C, {A, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: G, Midline(C, {A, D}) - no clue
+
+  5. ParallelLines: [A, F], [E, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: E, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: G, Midline(C, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  6. ParallelLines: [B, D], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: E, Midline(C, {B, D}) - no clue
+      6.2. Incidence: G, Midline(C, {B, D}) - no clue
+
+  7. ParallelLines: [B, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: G, Midline(C, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      7.2. Incidence: E, Midline(C, {B, F}) - no clue
+
+  8. ParallelLines: [D, F], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: G, Midline(C, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: E, Midline(C, {D, F}) - no clue
+
+------------------------------------------------
+Configuration 26
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({D, E})
+
+Theorems:
+
+  1. CollinearPoints: D, E, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, G], [B, E], [C, D] - can be defined in a smaller configuration
+  3. EqualLineSegments: G, D, G, E - can be defined in a smaller configuration
+  4. ParallelLines: [B, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      4.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      4.2. Incidence: G, Midline(A, {B, C}) - no clue
+
+  5. ParallelLines: [B, C], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2. Incidence: G, Midline(A, {B, C}) - theorem 4.2. (unproven)
+
+  6. ParallelLines: [B, E], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    6.1. Incidence: F, Midline(D, {B, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    6.2. Incidence: G, Midline(D, {B, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 27
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({D, F})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G - can be defined in a smaller configuration
+  2. CollinearPoints: A, D, G - can be defined in a smaller configuration
+  3. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  4. CollinearPoints: B, D, G - can be defined in a smaller configuration
+  5. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  6. CollinearPoints: D, F, G - can be defined in a smaller configuration
+  7. EqualLineSegments: G, D, G, F - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 28
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, D})
+G = Midpoint({E, F})
+
+Theorems:
+
+  1. CollinearPoints: C, D, G - not proven, 10 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.1.1. Incidence: D, Median(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.1.2. Incidence: G, Median(C, {A, B}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.2.1. Incidence: D, Median(C, {D, G}) - no clue
+      1.2.2. Incidence: G, Median(C, {D, G}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.3.1. Incidence: G, Median(C, {E, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.3.2. Incidence: D, Median(C, {E, F}) - no clue
+
+    Attempt 4 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.4.1. Incidence: C, Median(D, {C, G}) - no clue
+      1.4.2. Incidence: G, Median(D, {C, G}) - no clue
+
+    Attempt 5 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.5.1. Incidence: G, Median(D, {E, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.5.2. Incidence: C, Median(D, {E, F}) - no clue
+
+    Attempt 6 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.6.1. Incidence: D, Median(G, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      1.6.2. Incidence: C, Median(G, {A, B}) - no clue
+
+    Attempt 7 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\median.txt
+
+      1.7.1. Incidence: C, Median(G, {C, D}) - no clue
+      1.7.2. Incidence: D, Median(G, {C, D}) - no clue
+
+    Attempt 8 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      1.8.1. Incidence: C, Midline(C, {D, G}) - no clue
+      1.8.2. Incidence: D, Midline(C, {D, G}) - no clue
+      1.8.3. Incidence: G, Midline(C, {D, G}) - no clue
+
+    Attempt 9 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      1.9.1. Incidence: C, Midline(D, {C, G}) - no clue
+      1.9.2. Incidence: D, Midline(D, {C, G}) - no clue
+      1.9.3. Incidence: G, Midline(D, {C, G}) - no clue
+
+    Attempt 10 - attempted as a consequence of 1 from 04_Triangle\CollinerityOnInterestingLines\midline.txt
+
+      1.10.1. Incidence: C, Midline(G, {C, D}) - no clue
+      1.10.2. Incidence: D, Midline(G, {C, D}) - no clue
+      1.10.3. Incidence: G, Midline(G, {C, D}) - no clue
+
+  2. CollinearPoints: E, F, G - trivial theorem
+  3. EqualLineSegments: E, G, F, G - trivial theorem
+
+------------------------------------------------
+Configuration 29
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({A, F})
+
+Theorems:
+
+  1. CollinearPoints: A, F, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, A, G, F - can be defined in a smaller configuration
+  3. ParallelLines: [B, E], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      3.1. Incidence: D, Midline(A, {B, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      3.2. Incidence: G, Midline(A, {B, E}) - no clue
+
+  4. ParallelLines: [B, F], [D, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    4.1. Incidence: D, Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    4.2. Incidence: G, Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  5. ParallelLines: [C, F], [E, G] - can be defined in a smaller configuration
+  6. ParallelLines: [D, G], [E, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: G, Midline(A, {E, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2. Incidence: D, Midline(A, {E, F}) - no clue
+
+------------------------------------------------
+Configuration 30
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({B, F})
+
+Theorems:
+
+  1. CollinearPoints: B, E, G - can be defined in a smaller configuration
+  2. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  3. CollinearPoints: E, F, G - can be defined in a smaller configuration
+  4. EqualLineSegments: G, B, G, F - can be defined in a smaller configuration
+  5. ParallelLines: [A, F], [D, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: D, Midline(B, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: G, Midline(B, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 31
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({C, D})
+
+Theorems:
+
+  1. CollinearPoints: C, D, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [B, C], [D, F], [E, G] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\two_midlines_and_side_are_concurrent_with_two_explicit_midlines.txt
+
+      2.1.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.1.2. Incidence: E, Midline(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.1.3. Incidence: F, Midline(B, {A, C}) - no clue
+      2.1.4. Incidence: G, Midline(C, {A, B}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Other\median_and_midline_and_side_are_concurrent.txt
+
+      2.2.1. Incidence: G, Midline(C, {B, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.2.2. Incidence: E, Midline(C, {B, D}) - no clue
+      2.2.3. Incidence: F, Median(D, {B, C}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\Other\median_and_midline_and_side_are_concurrent.txt
+
+      2.3.1. Incidence: F, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      2.3.2. Incidence: D, Midline(B, {C, E}) - no clue
+      2.3.3. Incidence: G, Median(E, {B, C}) - no clue
+
+  3. EqualLineSegments: G, C, G, D - can be defined in a smaller configuration
+  4. ParallelLines: [A, B], [E, G] - can be defined in a smaller configuration
+  5. ParallelLines: [A, D], [E, G] - can be defined in a smaller configuration
+  6. ParallelLines: [B, C], [F, G] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1.1. Incidence: G, Midline(D, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.1.2. Incidence: F, Midline(D, {B, C}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.2.1. Incidence: F, Midline(E, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2.2. Incidence: G, Midline(E, {B, C}) - no clue
+
+    Attempt 3 - attempted with the transitivity rule
+
+      6.3.1. ParallelLines: [B, C], [D, E] - true in a previous configuration
+      6.3.2. ParallelLines: [D, E], [F, G] - theorem 8. (unproven)
+
+  7. ParallelLines: [B, D], [E, G] - can be defined in a smaller configuration
+  8. ParallelLines: [D, E], [F, G] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1.1. Incidence: F, Midline(B, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.1.2. Incidence: G, Midline(B, {D, E}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.2.1. Incidence: G, Midline(C, {D, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2.2. Incidence: F, Midline(C, {D, E}) - no clue
+
+    Attempt 3 - attempted with the transitivity rule
+
+      8.3.1. ParallelLines: [B, C], [D, E] - true in a previous configuration - theorem 6.3.1.
+      8.3.2. ParallelLines: [B, C], [F, G] - theorem 6. (unproven)
+
+------------------------------------------------
+Configuration 32
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({C, F})
+
+Theorems:
+
+  1. CollinearPoints: C, F, G - can be defined in a smaller configuration
+  2. EqualLineSegments: G, C, G, F - can be defined in a smaller configuration
+  3. ParallelLines: [A, F], [E, G] - can be defined in a smaller configuration
+
+------------------------------------------------
+Configuration 33
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({D, E})
+
+Theorems:
+
+  1. CollinearPoints: D, E, G - can be defined in a smaller configuration
+  2. ConcurrentLines: [A, F], [B, G], [C, D] - no clue
+  3. ConcurrentLines: [A, G], [B, C], [D, F] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Other\median_and_midline_and_side_are_concurrent.txt
+
+      3.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      3.2. Incidence: F, Midline(B, {A, C}) - no clue
+      3.3. Incidence: G, Median(A, {B, C}) - no clue
+
+  4. ConcurrentLines: [A, G], [B, E], [C, D] - can be defined in a smaller configuration
+  5. ConcurrentLines: [A, G], [B, F], [C, D] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Median\are_concurrent.txt
+
+      5.1. Incidence: D, Median(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      5.2. Incidence: F, Median(B, {A, C}) - no clue
+      5.3. Incidence: G, Median(A, {B, C}) - theorem 3.3. (unproven)
+
+  6. ConcurrentLines: [A, G], [C, D], [E, F] - no clue
+  7. EqualLineSegments: G, D, G, E - can be defined in a smaller configuration
+  8. ParallelLines: [A, B], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: F, Midline(E, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: G, Midline(E, {A, B}) - no clue
+
+  9. ParallelLines: [A, D], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      9.1. Incidence: G, Midline(E, {A, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      9.2. Incidence: F, Midline(E, {A, D}) - no clue
+
+ 10. ParallelLines: [B, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      10.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      10.2. Incidence: G, Midline(A, {B, C}) - no clue
+
+ 11. ParallelLines: [B, C], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      11.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      11.2. Incidence: G, Midline(A, {B, C}) - theorem 10.2. (unproven)
+
+ 12. ParallelLines: [B, D], [F, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    12.1. Incidence: F, Midline(E, {B, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    12.2. Incidence: G, Midline(E, {B, D}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 34
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({D, F})
+
+Theorems:
+
+  1. CollinearPoints: D, F, G - trivial theorem
+  2. ConcurrentLines: [A, B], [C, F], [E, G] - no clue
+  3. ConcurrentLines: [A, D], [C, F], [E, G] - consequence of 1 from 01_Trapezoid\midpoints_make_concurrency.txt
+
+    3.1. ParallelLines: [A, C], [D, F] - true in a previous configuration
+
+  4. ConcurrentLines: [A, F], [B, G], [D, E] - consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+    4.1. EqualObjects: B, IntersectionOfLinesFromPoints({{A, D}, {E, F}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+      4.1.1. CollinearPoints: A, B, D - true in a previous configuration
+      4.1.2. CollinearPoints: B, E, F - true in a previous configuration
+
+    4.2. Incidence: G, Median(B, {D, F}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+    4.3. ParallelLines: [A, E], [D, F] - true in a previous configuration
+
+  5. ConcurrentLines: [A, F], [C, D], [E, G] - consequence of 1 from 01_Trapezoid\midpoints_make_concurrency.txt
+
+    5.1. ParallelLines: [A, C], [D, F] - true in a previous configuration - theorem 3.1.
+
+  6. ConcurrentLines: [B, D], [C, F], [E, G] - no clue
+  7. EqualLineSegments: D, G, F, G - trivial theorem
+  8. ParallelLines: [A, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      8.1. Incidence: D, Midline(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      8.2. Incidence: G, Midline(B, {A, C}) - no clue
+
+  9. ParallelLines: [A, C], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      9.1. Incidence: F, Midline(B, {A, C}) - no clue
+      9.2. Incidence: G, Midline(B, {A, C}) - theorem 8.2. (unproven)
+
+ 10. ParallelLines: [A, E], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      10.1. Incidence: D, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      10.2. Incidence: G, Midline(B, {A, E}) - no clue
+
+ 11. ParallelLines: [A, E], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      11.1. Incidence: F, Midline(B, {A, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      11.2. Incidence: G, Midline(B, {A, E}) - theorem 10.2. (unproven)
+
+ 12. ParallelLines: [C, E], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      12.1. Incidence: D, Midline(B, {C, E}) - no clue
+      12.2. Incidence: G, Midline(B, {C, E}) - no clue
+
+ 13. ParallelLines: [C, E], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      13.1. Incidence: F, Midline(B, {C, E}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      13.2. Incidence: G, Midline(B, {C, E}) - theorem 12.2. (unproven)
+
+------------------------------------------------
+Configuration 35
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({B, E})
+G = Midpoint({E, F})
+
+Theorems:
+
+  1. CollinearPoints: B, E, G - can be defined in a smaller configuration
+  2. CollinearPoints: B, F, G - can be defined in a smaller configuration
+  3. CollinearPoints: E, F, G - can be defined in a smaller configuration
+  4. ConcurrentLines: [A, F], [C, G], [D, E] - no clue
+  5. EqualLineSegments: G, E, G, F - can be defined in a smaller configuration
+  6. ParallelLines: [C, F], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: G, Midline(E, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2. Incidence: D, Midline(E, {C, F}) - no clue
+
+------------------------------------------------
+Configuration 36
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({D, E})
+G = Midpoint({A, F})
+
+Theorems:
+
+  1. CollinearPoints: A, F, G - trivial theorem
+  2. ConcurrentLines: [A, G], [B, E], [C, D] - not proven, 3 attempts at proving it:
+
+    Attempt 1 - attempted as a consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+      2.1.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt
+
+        2.1.1.1. CollinearPoints: A, B, D - true in a previous configuration
+        2.1.1.2. CollinearPoints: A, C, E - true in a previous configuration
+
+      2.1.2. ParallelLines: [B, C], [D, E] - true in a previous configuration
+      2.1.3. Incidence: G, Median(A, {D, E}) - no clue
+
+    Attempt 2 - attempted as a consequence of 1 from 01_Trapezoid\diagonals_are_concurrent_with_median.txt
+
+      2.2.1. EqualObjects: A, IntersectionOfLinesFromPoints({{B, D}, {C, E}}) - consequence of 1 from 00_EqualObjects\intersection_of_lines_from_points.txt - theorem 2.1.1.
+      2.2.2. ParallelLines: [B, C], [D, E] - true in a previous configuration - theorem 2.1.2.
+      2.2.3. Incidence: G, Median(A, {B, C}) - no clue
+
+    Attempt 3 - attempted as a consequence of 1 from 04_Triangle\Median\are_concurrent.txt
+
+      2.3.1. Incidence: D, Median(C, {A, B}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.3.2. Incidence: E, Median(B, {A, C}) - consequence of 1 from 00_Incidences\midpoint_on_median.txt
+      2.3.3. Incidence: G, Median(A, {B, C}) - theorem 2.2.3. (unproven)
+
+  3. ConcurrentLines: [B, E], [C, D], [F, G] - no clue
+  4. EqualLineSegments: A, G, F, G - trivial theorem
+  5. ParallelLines: [B, F], [D, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    5.1. Incidence: D, Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    5.2. Incidence: G, Midline(A, {B, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+  6. ParallelLines: [C, F], [E, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    6.1. Incidence: E, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    6.2. Incidence: G, Midline(A, {C, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 37
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({D, E})
+G = Midpoint({B, F})
+
+Theorems:
+
+  1. CollinearPoints: B, F, G - trivial theorem
+  2. EqualLineSegments: B, G, F, G - trivial theorem
+  3. ParallelLines: [A, F], [D, G] - consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+    3.1. Incidence: D, Midline(B, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+    3.2. Incidence: G, Midline(B, {A, F}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+
+------------------------------------------------
+Configuration 38
+------------------------------------------------
+
+ThreePoints: A, B, C
+D = Midpoint({A, B})
+E = Midpoint({A, C})
+F = Midpoint({D, E})
+G = Midpoint({D, F})
+
+Theorems:
+
+  1. CollinearPoints: D, E, G - true because of the transitivity rule
+
+    1.1. CollinearPoints: D, E, F - true in a previous configuration
+    1.2. CollinearPoints: D, F, G - trivial theorem - theorem 2.
+
+  2. CollinearPoints: D, F, G - trivial theorem
+  3. CollinearPoints: E, F, G - true because of the transitivity rule
+
+    3.1. CollinearPoints: D, E, F - true in a previous configuration - theorem 1.1.
+    3.2. CollinearPoints: D, F, G - trivial theorem - theorem 2.
+
+  4. EqualLineSegments: D, G, F, G - trivial theorem
+  5. ParallelLines: [B, C], [D, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      5.1. Incidence: D, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      5.2. Incidence: G, Midline(A, {B, C}) - no clue
+
+  6. ParallelLines: [B, C], [E, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      6.1. Incidence: E, Midline(A, {B, C}) - consequence of 1 from 00_Incidences\midpoint_on_midline.txt
+      6.2. Incidence: G, Midline(A, {B, C}) - theorem 5.2. (unproven)
+
+  7. ParallelLines: [B, C], [F, G] - not proven, 1 attempt at proving it:
+
+    The attempt - attempted as a consequence of 1 from 04_Triangle\Midline\is_parallel_to_side.txt
+
+      7.1. Incidence: F, Midline(A, {B, C}) - no clue
+      7.2. Incidence: G, Midline(A, {B, C}) - theorem 5.2. (unproven)
+
+------------------------------------------------
+Generated configurations: 38
+Theorems: 310
+Interesting theorems: 82
+Run-time: 23535 ms

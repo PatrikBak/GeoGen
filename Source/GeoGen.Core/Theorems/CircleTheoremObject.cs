@@ -12,29 +12,38 @@ namespace GeoGen.Core
         #region Public abstract properties implementation
 
         /// <summary>
-        /// Gets the minimal number of distinct points that are needed to define this type of object.
+        /// Gets the number of points that might define this type of object.
         /// </summary>
-        public override int NumberOfNeededPoints => 3;
+        public override int NumberOfDefiningPoints => 3;
+
+        /// <summary>
+        /// The type of configuration object this theorem objects represents.
+        /// </summary>
+        public override ConfigurationObjectType Type => ConfigurationObjectType.Circle;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CircleTheoremObject"/> class.
+        /// Initializes a new instance of the <see cref="CircleTheoremObject"/> class
+        /// defined by a circle configuration object.
         /// </summary>
-        /// <param name="configurationObject">The optional configuration object representing this theorem object.</param>
-        /// <param name="points">The optional points that define / lie on this object.</param>
-        public CircleTheoremObject(ConfigurationObject configurationObject, IEnumerable<ConfigurationObject> points = null)
-            : base(configurationObject, points)
+        /// <param name="circleObject">The configuration circle object representing this theorem object.</param>
+        public CircleTheoremObject(ConfigurationObject circleObject)
+            : base(circleObject)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="CircleTheoremObject"/> class defined by points.
-        /// </summary>
-        /// <param name="points">The points that define this object.</param>
-        public CircleTheoremObject(params ConfigurationObject[] points) : this(null, points)
+        /// Initializes a new instance of the <see cref="CircleTheoremObject"/> 
+        /// class defined by points.
+        /// </summary>        
+        /// <param name="point1">A point of the circle.</param>
+        /// <param name="point2">A point of the circle.</param>
+        /// <param name="point3">A point of the circle.</param>
+        public CircleTheoremObject(ConfigurationObject point1, ConfigurationObject point2, ConfigurationObject point3)
+            : base(point1, point2, point3)
         {
         }
 
@@ -55,43 +64,16 @@ namespace GeoGen.Core
             // Remap object and points
             var objectPoints = RemapObjectAndPoints(mapping);
 
-            // Remap if those could be remapped correctly
-            return objectPoints != default ? new CircleTheoremObject(objectPoints.Item1, objectPoints.Item2) : null;
-        }
+            // If it cannot be done, return null
+            if (objectPoints == default)
+                return null;
 
-        #endregion
+            // If this is defined by an object, use the object constructor
+            if (DefinedByExplicitObject)
+                return new CircleTheoremObject(objectPoints.explicitObject);
 
-        #region HashCode and Equals
-
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            // I don't think there is a better way to define it, because even if we have 
-            // 2 circles with completely different points, it might still be the same circle.
-            // We're working with large numbers of theorems at once, so it should fine like this.
-            return "Circle".GetHashCode();
-        }
-
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-        public override bool Equals(object otherObject)
-        {
-            // Either the references are equals
-            return this == otherObject
-                // Or the object is not null
-                || otherObject != null
-                // And it is a circle object
-                && otherObject is CircleTheoremObject circle
-                // And either their configuration objects are defined and equal
-                && ((ConfigurationObject != null && ConfigurationObject.Equals(circle.ConfigurationObject))
-                // Or they have enough common points
-                || Points.Intersect(circle.Points).Count() >= NumberOfNeededPoints);
+            // Otherwise use the points constructor
+            return new CircleTheoremObject(objectPoints.points[0], objectPoints.points[1], objectPoints.points[2]);
         }
 
         #endregion
@@ -105,14 +87,12 @@ namespace GeoGen.Core
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString()
         {
-            // If there is a specific configuration object, we include it 
-            var objectPart = ConfigurationObject == null ? "" : $"{ConfigurationObject.Id}";
+            // If the object is defined by a specific configuration object, we return its id
+            if (DefinedByExplicitObject)
+                return ConfigurationObject.Id.ToString();
 
-            // If there are points, include them
-            var pointsPart = Points.Any() ? $"({Points.Select(p => p.Id).Ordered().ToJoinedString()})" : "";
-
-            // Construct the final string including the points
-            return $"{objectPart}{pointsPart}";
+            // Otherwise it's defined by points
+            return $"({Points.Select(p => p.Id).Ordered().ToJoinedString()})";
         }
 
         #endregion    

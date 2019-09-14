@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ Trapezoid: A, B, C, D
+ E = IntersectionOfLinesFromPoints(A, D, B, C)
+ l = Median(E, B, C)
+
+Theorems:
+
+ ConcurrentLines: [A, C], [B, D], l

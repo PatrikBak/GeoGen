@@ -3,8 +3,8 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Generator;
+using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
-using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
@@ -31,12 +31,12 @@ namespace GeoGen.Algorithm.Tests
             {
                 // Prepare the kernel
                 var kernel = IoC.CreateKernel().AddGenerator()
-                    // Add theorems finder with no restrictions
-                    .AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
+                    // Add theorem finder with no restrictions
+                    .AddTheoremFinder(new TangentCirclesTheoremFinderSettings
                     {
                         ExcludeTangencyInsidePicture = false
                     },
-                    new LineTangentToCircleTheoremsFinderSettings
+                    new LineTangentToCircleTheoremFinderSettings
                     {
                         ExcludeTangencyInsidePicture = false
                     },

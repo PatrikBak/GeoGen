@@ -12,29 +12,37 @@ namespace GeoGen.Core
         #region Public abstract properties implementation
 
         /// <summary>
-        /// Gets the minimal number of distinct points that are needed to define this type of object.
+        /// Gets the number of points that might define this type of object.
         /// </summary>
-        public override int NumberOfNeededPoints => 2;
+        public override int NumberOfDefiningPoints => 2;
+
+        /// <summary>
+        /// The type of configuration object this theorem objects represents.
+        /// </summary>
+        public override ConfigurationObjectType Type => ConfigurationObjectType.Line;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LineTheoremObject"/> class.
+        /// Initializes a new instance of the <see cref="LineTheoremObject"/> class
+        /// defined by a line configuration object.
         /// </summary>
-        /// <param name="configurationObject">The optional configuration object representing this theorem object.</param>
-        /// <param name="points">The optional points that define / lie on this object.</param>
-        public LineTheoremObject(ConfigurationObject configurationObject, IEnumerable<ConfigurationObject> points = null)
-            : base(configurationObject, points)
+        /// <param name="lineObject">The configuration line object representing this theorem object.</param>
+        public LineTheoremObject(ConfigurationObject lineObject)
+            : base(lineObject)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LineTheoremObject"/> class defined by points.
-        /// </summary>
-        /// <param name="points">The points that define this object.</param>
-        public LineTheoremObject(params ConfigurationObject[] points) : this(null, points)
+        /// Initializes a new instance of the <see cref="LineTheoremObject"/> 
+        /// class defined by points.
+        /// </summary>        
+        /// <param name="point1">A point of the line.</param>
+        /// <param name="point2">A point of the line.</param>
+        public LineTheoremObject(ConfigurationObject point1, ConfigurationObject point2)
+            : base(point1, point2)
         {
         }
 
@@ -55,43 +63,16 @@ namespace GeoGen.Core
             // Remap object and points
             var objectPoints = RemapObjectAndPoints(mapping);
 
-            // Remap if those could be remapped correctly
-            return objectPoints != default ? new LineTheoremObject(objectPoints.Item1, objectPoints.Item2) : null;
-        }
+            // If it cannot be done, return null
+            if (objectPoints == default)
+                return null;
 
-        #endregion
+            // If this is defined by an object, use the object constructor
+            if (DefinedByExplicitObject)
+                return new LineTheoremObject(objectPoints.explicitObject);
 
-        #region HashCode and Equals
-
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            // I don't think there is a better way to define it, because even if we have 
-            // 2 lines with completely different points, it might still be the same line.
-            // We're working with large numbers of theorems at once, so it should fine like this.
-            return "Line".GetHashCode();
-        }
-
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-        public override bool Equals(object otherObject)
-        {
-            // Either the references are equals
-            return this == otherObject
-                // Or the object is not null
-                || otherObject != null
-                // And it is a line object
-                && otherObject is LineTheoremObject line
-                // And either their configuration objects are defined and equal
-                && ((ConfigurationObject != null && ConfigurationObject.Equals(line.ConfigurationObject))
-                // Or they have enough common points
-                || Points.Intersect(line.Points).Count() >= NumberOfNeededPoints);
+            // Otherwise use the points constructor
+            return new LineTheoremObject(objectPoints.points[0], objectPoints.points[1]);
         }
 
         #endregion
@@ -105,14 +86,12 @@ namespace GeoGen.Core
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString()
         {
-            // If there is a specific configuration object, we include it 
-            var objectPart = ConfigurationObject == null ? "" : $"{ConfigurationObject.Id}";
+            // If the object is defined by a specific configuration object, we return its id
+            if (DefinedByExplicitObject)
+                return ConfigurationObject.Id.ToString();
 
-            // If there are points, include them
-            var pointsPart = Points.Any() ? $"[{Points.Select(p => p.Id).Ordered().ToJoinedString()}]" : "";
-
-            // Construct the final string including the points
-            return $"{objectPart}{pointsPart}";
+            // Otherwise it's defined by points
+            return $"[{Points.Select(p => p.Id).Ordered().ToJoinedString()}]";
         }
 
         #endregion

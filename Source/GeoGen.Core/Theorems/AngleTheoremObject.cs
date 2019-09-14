@@ -12,20 +12,24 @@ namespace GeoGen.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="AngleTheoremObject"/> class.
         /// </summary>
-        /// <param name="object1">The first line of the angle.</param>
-        /// <param name="object2">The second line of the angle.</param>
-        public AngleTheoremObject(LineTheoremObject object1, LineTheoremObject object2)
-            : base(object1, object2)
+        /// <param name="line1">The first line of the angle.</param>
+        /// <param name="line2">The second line of the angle.</param>
+        public AngleTheoremObject(LineTheoremObject line1, LineTheoremObject line2)
+            : base(line1, line2)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AngleTheoremObject"/> class
         /// using two lines specified by points.
-        /// <param name="firstLinePoints">The points of the first line.</param>
-        /// <param name="secondLinePoints">The points of the second line.</param>
-        public AngleTheoremObject(IEnumerable<ConfigurationObject> firstLinePoints, IEnumerable<ConfigurationObject> secondLinePoints)
-            : this(new LineTheoremObject(configurationObject: null, firstLinePoints), new LineTheoremObject(configurationObject: null, secondLinePoints))
+        /// </summary>
+        /// <param name="line1Point1">A point of the first line.</param>
+        /// <param name="line1Point2">A point of the first line.</param>
+        /// <param name="line2Point1">A point of the second line.</param>
+        /// <param name="line2Point2">A point of the second line.</param>
+        public AngleTheoremObject(ConfigurationObject line1Point1, ConfigurationObject line1Point2,
+                                  ConfigurationObject line2Point1, ConfigurationObject line2Point2)
+            : this(new LineTheoremObject(line1Point1, line1Point2), new LineTheoremObject(line2Point1, line2Point2))
         {
         }
 
@@ -48,40 +52,6 @@ namespace GeoGen.Core
 
             // Reconstruct based on the fact whether remapping could be done
             return objects != default ? new AngleTheoremObject((LineTheoremObject)objects.Item1, (LineTheoremObject)objects.Item2) : null;
-        }
-
-        #endregion
-
-        #region HashCode and Equals
-
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
-        public override int GetHashCode()
-        {
-            // I don't think there is a better way to define it, see the comment to the 
-            // GetHashCode method in the LineTheoremObject or CircleTheoremObject classes
-            return "Angle".GetHashCode();
-        }
-
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-        public override bool Equals(object otherObject)
-        {
-            // Either the references are equals
-            return this == otherObject
-                // Or the object is not null
-                || otherObject != null
-                // And it is an angle object
-                && otherObject is AngleTheoremObject angle
-                // And either the first and second object are equal
-                && ((Object1.Equals(angle.Object1) && Object2.Equals(angle.Object2))
-                // Or the first one is equal to the second and vice versa
-                || (Object1.Equals(angle.Object2) && Object2.Equals(angle.Object1)));
         }
 
         #endregion

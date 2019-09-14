@@ -2,8 +2,8 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Generator;
+using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
-using GeoGen.TheoremsFinder;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -72,18 +72,21 @@ namespace GeoGen.DependenciesResolver
         }
 
         /// <summary>
-        /// Bindings for the dependencies from the Theorems Finder module.
+        /// Bindings for the dependencies from the Theorem Finder module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="tangentCirclesFinderSettings">The settings for the tangent circles theorems finder.</param>
-        /// <param name="lineTangentToCirclesFinderSettings">The settings for the line tangent to circles finder.</param>
+        /// <param name="tangentCirclesFinderSettings">The settings for the tangent circles theorem finder.</param>
+        /// <param name="lineTangentToCirclesFinderSettings">The settings for the line tangent to circles theorem finder.</param>
         /// <param name="types">The types of theorems that we should be looking for.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremsFinder(this IKernel kernel,
-                                                TangentCirclesTheoremsFinderSettings tangentCirclesFinderSettings,
-                                                LineTangentToCircleTheoremsFinderSettings lineTangentToCirclesFinderSettings,
+        public static IKernel AddTheoremFinder(this IKernel kernel,
+                                                TangentCirclesTheoremFinderSettings tangentCirclesFinderSettings,
+                                                LineTangentToCircleTheoremFinderSettings lineTangentToCirclesFinderSettings,
                                                 IReadOnlyHashSet<TheoremType> types)
         {
+            // Bind theorem finder
+            kernel.Bind<ITheoremFinder>().To<TheoremFinder.TheoremFinder>().InSingletonScope();
+
             // Go through all requested types
             types.ForEach(type =>
             {
@@ -91,43 +94,43 @@ namespace GeoGen.DependenciesResolver
                 switch (type)
                 {
                     case TheoremType.CollinearPoints:
-                        kernel.Bind<ITheoremsFinder>().To<CollinearPointsTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<CollinearPointsTheoremFinder>();
                         break;
 
                     case TheoremType.ConcyclicPoints:
-                        kernel.Bind<ITheoremsFinder>().To<ConcyclicPointsTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcyclicPointsTheoremFinder>();
                         break;
 
                     case TheoremType.ConcurrentObjects:
-                        kernel.Bind<ITheoremsFinder>().To<ConcurrentObjectsTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentObjectsTheoremFinder>();
                         break;
 
                     case TheoremType.ConcurrentLines:
-                        kernel.Bind<ITheoremsFinder>().To<ConcurrentLinesTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentLinesTheoremFinder>();
                         break;
 
                     case TheoremType.ParallelLines:
-                        kernel.Bind<ITheoremsFinder>().To<ParallelLinesTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ParallelLinesTheoremFinder>();
                         break;
 
                     case TheoremType.PerpendicularLines:
-                        kernel.Bind<ITheoremsFinder>().To<PerpendicularLinesTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<PerpendicularLinesTheoremFinder>();
                         break;
 
                     case TheoremType.TangentCircles:
-                        kernel.Bind<ITheoremsFinder>().To<TangentCirclesTheoremsFinder>().WithConstructorArgument(tangentCirclesFinderSettings);
+                        kernel.Bind<ITypedTheoremFinder>().To<TangentCirclesTheoremFinder>().WithConstructorArgument(tangentCirclesFinderSettings);
                         break;
 
                     case TheoremType.LineTangentToCircle:
-                        kernel.Bind<ITheoremsFinder>().To<LineTangentToCircleTheoremsFinder>().WithConstructorArgument(lineTangentToCirclesFinderSettings);
+                        kernel.Bind<ITypedTheoremFinder>().To<LineTangentToCircleTheoremFinder>().WithConstructorArgument(lineTangentToCirclesFinderSettings);
                         break;
 
                     case TheoremType.EqualLineSegments:
-                        kernel.Bind<ITheoremsFinder>().To<EqualLineSegmentsTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<EqualLineSegmentsTheoremFinder>();
                         break;
 
                     case TheoremType.EqualAngles:
-                        kernel.Bind<ITheoremsFinder>().To<EqualAnglesTheoremsFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<EqualAnglesTheoremFinder>();
                         break;
 
                     default:

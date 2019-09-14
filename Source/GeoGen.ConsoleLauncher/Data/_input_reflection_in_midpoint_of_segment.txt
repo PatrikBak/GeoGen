@@ -1,0 +1,9 @@
+﻿Iterations: 3
+
+Constructions:
+
+ ReflectionInMidpointOfSegment
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C

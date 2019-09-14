@@ -1,0 +1,9 @@
+﻿Iterations: 4
+
+Constructions:
+
+ PerpendicularProjectionOnLineFromPoints
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C

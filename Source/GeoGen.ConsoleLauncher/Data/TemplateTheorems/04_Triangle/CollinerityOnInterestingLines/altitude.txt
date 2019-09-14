@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = RandomPointOnPerpendicularLineToLineFromPoints(A, B, C)
+ E = RandomPointOnPerpendicularLineToLineFromPoints(A, B, C)
+
+Theorems:
+
+ CollinearPoints: A, D, E

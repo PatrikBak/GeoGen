@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = Centroid(A, B, C)
+ E = ReflectionInMidpointOfSegment(D, B, C)
+
+Theorems:
+
+ #EqualLineSegments: A, D, D, E

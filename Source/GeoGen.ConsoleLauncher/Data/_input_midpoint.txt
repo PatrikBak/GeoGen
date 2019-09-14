@@ -1,0 +1,23 @@
+﻿Iterations: 4
+
+Constructions:
+
+ Midpoint
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C
+
+
+ # 26.1 - Menelaus
+ # 41.1 - A problem from our math olympiad :-)
+ # 46.1 - Easy, but not worth excluding
+ # 46.2 - No idea at first sight 
+ # 47.1 - Not bad, but very easy (school round C?)
+ # 48.1 - No idea at first sight
+ # 48.2 - No idea at first sight
+ # 76.1 - No idea at first sight, but looks suspicious
+ # 77.1 - No idea at first sight
+ # 79.1 - Somehow the same as 47.1
+ # 83.1 - No idea at first sight
+ # 86.1 - No idea at first sight, it seems analogical to 83.1

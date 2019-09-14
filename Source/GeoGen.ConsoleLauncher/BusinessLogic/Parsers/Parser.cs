@@ -434,8 +434,16 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Finally construct the theorem
-            return Theorem.DeriveFromFlattenedObjects(configuration, theoremType, theoremObjects);
+            try
+            {
+                // Finally construct the theorem
+                return Theorem.DeriveFromFlattenedObjects(configuration, theoremType, theoremObjects);
+            }
+            catch (GeoGenException e)
+            {
+                // Re-throw possible exceptions
+                throw new ParserException($"Error while parsing '{theoremLine}'. {e.Message}");
+            }
         }
 
         /// <summary>
@@ -455,6 +463,7 @@ namespace GeoGen.ConsoleLauncher
                 case TheoremType.Incidence:
                 case TheoremType.EqualObjects:
 
+                    // Prepare the parser object
                     var parsedObject = default(ConfigurationObject);
 
                     // Try to parse it with a name
@@ -497,33 +506,16 @@ namespace GeoGen.ConsoleLauncher
             // Try to match a circle defined implicitly
             var implicitCircleMatch = Regex.Match(objectString, "^\\((.+)\\)$");
 
-            // Try to match a line with both explicit and implicit definitions
-            var explicitImplicitLineMatch = Regex.Match(objectString, "^(.+)\\[(.+)\\]$");
-
-            // Try to match a circle with both explicit and implicit definitions
-            var explicitImplicitCircleMatch = Regex.Match(objectString, "^(.+)\\((.+)\\)$");
-
             // Get the implicit points names. 
             var pointNames = implicitLineMatch.Success ? implicitLineMatch.Groups[1].Value :
                              implicitCircleMatch.Success ? implicitCircleMatch.Groups[1].Value :
-                             explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[2].Value :
-                             explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[2].Value
-                             // There might not be defined at all
-                             : null;
-
-            // Get the explicit object name. 
-            var objectName = explicitImplicitLineMatch.Success ? explicitImplicitLineMatch.Groups[1].Value :
-                             explicitImplicitCircleMatch.Success ? explicitImplicitCircleMatch.Groups[1].Value :
-                             implicitLineMatch.Success ? null :
-                             implicitCircleMatch.Success ? null :
-                             // If there is no match, we assume the whole string is the name
-                             objectString;
-
+                             // They might not be defined at all, if the object is defined explicitly
+                             null;
 
             // Parse the points, if there are any
             var theoremPoints = pointNames?.Split(",").Select(s => s.Trim()).Select(pointName =>
             {
-                // Make sure such a point exist 
+                // Make sure such a point exist s
                 if (!namesToObjects.ContainsKey(pointName))
                     throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{pointName}'.");
 
@@ -540,70 +532,61 @@ namespace GeoGen.ConsoleLauncher
             // Enumerate
             .ToArray();
 
-            // Make sure the points are mutually distinct
-            if (theoremPoints != null && theoremPoints.Distinct().Count() != theoremPoints.Length)
-                throw new ParserException($"Error while parsing '{objectString}'. Points are not mutually distinct.");
-
-            // Prepare a configuration object
-            var configurationObject = default(ConfigurationObject);
-
-            // Find the type of the object we're currently parsing
-            var type = default(ConfigurationObjectType);
-
-            // If the object is specified...
-            if (objectName != null)
+            // If points are defined, we can return a line or circle
+            if (theoremPoints != null)
             {
-                // Make sure the name has been defined
-                if (!namesToObjects.ContainsKey(objectName))
-                    throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{objectName}'.");
+                try
+                {
+                    // If line matches
+                    if (implicitLineMatch.Success)
+                    {
+                        // Make sure we have enough points
+                        if (theoremPoints.Length != 2)
+                            throw new ParserException("Line must have exactly 2 points.");
 
-                // Set the corresponding object
-                configurationObject = namesToObjects[objectName];
+                        // If yes, we're there
+                        return new LineTheoremObject(theoremPoints[0], theoremPoints[1]);
+                    }
+                    // Otherwise circle matches 
+                    else
+                    {
+                        // Make sure we have enough points
+                        if (theoremPoints.Length != 3)
+                            throw new ParserException("Circle must have exactly 3 points.");
 
-                // Set the type
-                type = configurationObject.ObjectType;
-
-                // Make sure the explicit circle is declared correctly
-                if (explicitImplicitCircleMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Line)
-                    throw new ParserException($"Error while parsing '{objectString}'. Line {objectName} should have had its points specified in [].");
-
-                // Make sure the explicit circle is declared correctly
-                if (explicitImplicitLineMatch.Success && configurationObject.ObjectType == ConfigurationObjectType.Circle)
-                    throw new ParserException($"Error while parsing '{objectString}'. Circle {objectName} should have had its points specified in ().");
-
-                // Make sure point does not have points specified
-                if ((explicitImplicitCircleMatch.Success || explicitImplicitLineMatch.Success) && configurationObject.ObjectType == ConfigurationObjectType.Point)
-                    throw new ParserException($"Error while parsing '{objectString}'. Point names cannot be followed by brackets.");
-            }
-            // If the object isn't specified...
-            else
-            {
-                // Then we must have a line or circle defined implicitly by points
-                // Figure out the type
-                type = implicitLineMatch.Success ? ConfigurationObjectType.Line : ConfigurationObjectType.Circle;
-
-                // Find the number of needed points
-                var numberOfNeededPoints = type == ConfigurationObjectType.Line ? 2 : 3;
-
-                // We need to make sure there are enough points
-                if (theoremPoints.Length < numberOfNeededPoints)
-                    throw new ParserException($"Error while parsing '{objectString}'. {type} needs at least {numberOfNeededPoints} points.");
+                        // If yes, we're there
+                        return new CircleTheoremObject(theoremPoints[0], theoremPoints[1], theoremPoints[2]);
+                    }
+                }
+                catch (GeoGenException e)
+                {
+                    // Re-throw a possible exception
+                    throw new ParserException($"Error while parsing '{objectString}'. {e.Message}");
+                }
             }
 
-            // Switch based on the figured type which constructor we'll use
-            return type switch
+            // If we don't have points, then the object is defined implicitly and the string is it's name
+            // Make sure the name has been defined
+            if (!namesToObjects.ContainsKey(objectString))
+                throw new ParserException($"Error while parsing '{objectString}'. Unknown object '{objectString}'.");
+
+            // Get the object
+            var configurationObject = namesToObjects[objectString];
+
+            // Switch based on the type which constructor we'll use
+            return configurationObject.ObjectType switch
             {
                 // Point case
                 ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
 
                 // Line case
-                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject, theoremPoints),
+                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
 
                 // Circle case
-                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject, theoremPoints),
+                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
                 // Default case
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {type}"),
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
             };
         }
     }

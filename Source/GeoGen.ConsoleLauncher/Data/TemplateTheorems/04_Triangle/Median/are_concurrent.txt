@@ -1,0 +1,10 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = RandomPointOnMedian(A, B, C)
+ E = RandomPointOnMedian(B, C, A)
+ F = RandomPointOnMedian(C, A, B)
+
+Theorems:
+
+ ConcurrentLines: [A, D], [B, E], [C, F]

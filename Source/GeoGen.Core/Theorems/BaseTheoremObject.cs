@@ -5,6 +5,15 @@
     /// </summary>
     public abstract class BaseTheoremObject : TheoremObject
     {
+        #region Public abstract properties
+
+        /// <summary>
+        /// The type of configuration object this theorem objects represents.
+        /// </summary>
+        public abstract ConfigurationObjectType Type { get; }
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -23,6 +32,10 @@
         protected BaseTheoremObject(ConfigurationObject configurationObject = null)
         {
             ConfigurationObject = configurationObject;
+
+            // Make sure the object has the right type, if it's set
+            if (ConfigurationObject != null && ConfigurationObject.ObjectType != Type)
+                throw new GeoGenException($"The {GetType()} should be defined by an object of type {Type}, but the type is {ConfigurationObject.ObjectType}.");
         }
 
         #endregion

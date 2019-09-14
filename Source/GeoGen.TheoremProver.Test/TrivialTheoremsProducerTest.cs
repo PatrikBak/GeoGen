@@ -2,7 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremFinder;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
@@ -33,23 +33,23 @@ namespace GeoGen.TheoremProver.Test
                 // Initialize IoC
                 var kernel = IoC.CreateKernel();
 
-                // Add the theorems finder with no restrictions
-                kernel.AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
+                // Add the theorem finder with no restrictions
+                kernel.AddTheoremFinder(new TangentCirclesTheoremFinderSettings
                 {
                     ExcludeTangencyInsidePicture = false
                 },
-                    new LineTangentToCircleTheoremsFinderSettings
-                    {
-                        ExcludeTangencyInsidePicture = false
-                    },
-                    typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
-                    // Add constructor ignoring inconsistencies
-                    .AddConstructor(new PicturesSettings
-                    {
-                        NumberOfPictures = 5,
-                        MaximalAttemptsToReconstructOnePicture = 0,
-                        MaximalAttemptsToReconstructAllPictures = 0
-                    });
+                new LineTangentToCircleTheoremFinderSettings
+                {
+                    ExcludeTangencyInsidePicture = false
+                },
+                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
+                // Add constructor ignoring inconsistencies
+                .AddConstructor(new PicturesSettings
+                {
+                    NumberOfPictures = 5,
+                    MaximalAttemptsToReconstructOnePicture = 0,
+                    MaximalAttemptsToReconstructAllPictures = 0
+                });
 
                 // Bind producer
                 kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
@@ -80,20 +80,20 @@ namespace GeoGen.TheoremProver.Test
                 {
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(B, A), new LineTheoremObject(A, I)),
-                        new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(A, I)),
+                        new AngleTheoremObject(B, A, A, I),
+                        new AngleTheoremObject(C, A, A, I),
                     }),
 
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(C, B), new LineTheoremObject(B, I)),
-                        new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(B, I)),
+                        new AngleTheoremObject(C, B, B, I),
+                        new AngleTheoremObject(A, B, B, I),
                     }),
 
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(C, I)),
-                        new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(C, I)),
+                        new AngleTheoremObject(A, C, C, I),
+                        new AngleTheoremObject(B, C, C, I),
                     })
                 })
                 .Should().BeTrue();
@@ -114,18 +114,18 @@ namespace GeoGen.TheoremProver.Test
             // Prepare angles that are indeed equal to <A/2
             var halfAlfa = new[]
             {
-                new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, M)),
-                new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(A, M)),
-                new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(B, M)),
-                new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(C, M))
+                new AngleTheoremObject(A, B, A, M),
+                new AngleTheoremObject(A, C, A, M),
+                new AngleTheoremObject(B, C, B, M),
+                new AngleTheoremObject(B, C, C, M)
             };
 
             // Prepare angles that are equal to the angle of the chord AM
             var chordAM = new[]
             {
-                new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(B, M)),
-                new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(C, M)),
-                new AngleTheoremObject(new LineTheoremObject(A, M), new LineTheoremObject(B, C))
+                new AngleTheoremObject(A, B, B, M),
+                new AngleTheoremObject(A, C, C, M),
+                new AngleTheoremObject(A, M, B, C)
             };
 
             // Find the trivial theorems
@@ -149,22 +149,22 @@ namespace GeoGen.TheoremProver.Test
                     // Alpha angles
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, C)),
-                        new AngleTheoremObject(new LineTheoremObject(M, B), new LineTheoremObject(M, C))
+                        new AngleTheoremObject(A, B, A, C),
+                        new AngleTheoremObject(M, B, M, C)
                     }),
 
                     // Beta angles
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(B, C)),
-                        new AngleTheoremObject(new LineTheoremObject(A, M), new LineTheoremObject(M, C))
+                        new AngleTheoremObject(A, B, B, C),
+                        new AngleTheoremObject(A, M, M, C)
                     }),
 
                     // Gamma angles
                     new Theorem(configuration, EqualAngles, new[]
                     {
-                        new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(B, C)),
-                        new AngleTheoremObject(new LineTheoremObject(A, M), new LineTheoremObject(M, B))
+                        new AngleTheoremObject(A, C, B, C),
+                        new AngleTheoremObject(A, M, M, B)
                     }),
 
                     // Equal line segments

@@ -1,0 +1,10 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = Excenter(A, B, C)
+ E = Excenter(B, A, C)
+ F = Excenter(C, A, B)
+
+Theorems:
+
+ #ConcurrentLines: [A, D], [B, E], [C, F]

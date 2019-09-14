@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+ D = ReflectionInLineFromPoints(A, B, C)
+
+Theorems:
+
+ #ParallelLines: [A, B], [C, D]
+ #EqualLineSegments: A, B, C, D

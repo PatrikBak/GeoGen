@@ -72,21 +72,21 @@ namespace GeoGen.Core
 
             // Create involved objects
             InvolvedObjects = objects.Select(configurationObject => configurationObject.ObjectType switch
-                {
-                    // Point case
-                    ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
+            {
+                // Point case
+                ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
 
-                    // Line case
-                    ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
+                // Line case
+                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
 
-                    // Circle case
-                    ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
+                // Circle case
+                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
-                    // Default case 
-                    _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
-                })
-                // Enumerate to an array
-                .ToReadOnlyHashSet();
+                // Default case 
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
+            })
+            // Enumerate to an array
+            .ToReadOnlyHashSet();
 
             // Get the list version of the objects
             InvolvedObjectsList = InvolvedObjects.ToList();
@@ -107,15 +107,11 @@ namespace GeoGen.Core
         /// <returns>true, if it cannot be stated in a smaller configuration; false otherwise.</returns>
         public bool CanBeStatedInSmallerConfiguration()
         {
-            // Now we're finally ready to combine all possible definitions of particular objects
-            // First take distinct involved objects
-            return InvolvedObjects
-                // For each object find all the definitions
-                .Select(theoremObject => theoremObject.GetAllDefinitions())
-                // Combine them into a single one in every possible ways
-                .Combine()
-                // We have needless objects if and only if there is a definition containing fewer objects than we're expecting
-                .Any(definition => definition.Flatten().Distinct().Count() < Configuration.AllObjects.Count);
+            // Take all the inner objects of the theorem objects
+            return InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects())
+                // The theorem can be stated in a smaller one if the number of the objects
+                // needed to define all of them is less than the total number of objects of the configuration
+                .GetDefiningObjects().Count() < Configuration.AllObjects.Count;
         }
 
         /// <summary>
@@ -149,7 +145,7 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Derives theorem from a list of flattened theorem objects. The idea is to accommodate the fact
-        /// that <see cref="TheoremType.EqualAngles"/> and <see cref="TheoremType.EqualLineSegments"/>
+        /// that <see cref="EqualAngles"/> and <see cref="EqualLineSegments"/>
         /// require <see cref="AngleTheoremObject"/> and <see cref="LineSegmentTheoremObject"/>, which
         /// internally consist of two lines and two points, i.e. their 'flattened' version have 4 lines
         /// and 4 points.
@@ -166,7 +162,7 @@ namespace GeoGen.Core
             // Switch based on the theorem type
             switch (type)
             {
-                // The cases where objects are simply
+                // The cases where objects are simply the ones passed
                 case CollinearPoints:
                 case ConcyclicPoints:
                 case ConcurrentLines:

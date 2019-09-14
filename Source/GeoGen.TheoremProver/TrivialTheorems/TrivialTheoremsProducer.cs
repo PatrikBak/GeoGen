@@ -1,6 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremFinder;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace GeoGen.TheoremProver
     /// The default implementation of <see cref="ITrivialTheoremsProducer"/>. This implementation 
     /// caches trivial theorems that are true for general <see cref="ComposedConstruction"/>s.
     /// These are found by constructing the underlying <see cref="ComposedConstruction.Configuration"/>
-    /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremsFinder"/>s.
+    /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremFinder"/>.
     /// </summary>
     public class TrivialTheoremsProducer : ITrivialTheoremsProducer
     {
@@ -26,9 +26,9 @@ namespace GeoGen.TheoremProver
         private readonly IGeometryConstructor _constructor;
 
         /// <summary>
-        /// The finders used to determine theorems of composed constructions.
+        /// The finder used to determine theorems of composed constructions.
         /// </summary>
-        private readonly ITheoremsFinder[] _finders;
+        private readonly ITheoremFinder _finder;
 
         #endregion
 
@@ -50,11 +50,11 @@ namespace GeoGen.TheoremProver
         /// Initializes a new instance of the <see cref="TrivialTheoremsProducer"/> class.
         /// </summary>
         /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
-        /// <param name="finders">The finders used to determine theorems of composed constructions.</param>
-        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremsFinder[] finders)
+        /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
+        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremFinder finder)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _finders = finders ?? throw new ArgumentNullException(nameof(finders));
+            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _composedConstructionsTheorems = new Dictionary<ComposedConstruction, IReadOnlyList<Theorem>>();
         }
 
@@ -94,7 +94,7 @@ namespace GeoGen.TheoremProver
                             // Create theorem objects
                             var line1 = new LineTheoremObject(objects[0], objects[1]);
                             var line2 = new LineTheoremObject(objects[0], objects[2]);
-                            var bisector = new LineTheoremObject(constructedObject, points: new[] { objects[0] });
+                            var bisector = new LineTheoremObject(constructedObject);
 
                             // Create the theorem
                             return new[]
@@ -150,7 +150,7 @@ namespace GeoGen.TheoremProver
                                 new Theorem(configuration, PerpendicularLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(objects[0], constructedObject),
-                                    new LineTheoremObject(objects[1], points: new[] {constructedObject })
+                                    new LineTheoremObject(objects[1])
                                 })
                             };
 
@@ -162,7 +162,7 @@ namespace GeoGen.TheoremProver
                             {
                                 new Theorem(configuration, PerpendicularLines, new TheoremObject[]
                                 {
-                                    new LineTheoremObject(constructedObject, points: new[] {objects[0] }),
+                                    new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 })
                             };
@@ -175,7 +175,7 @@ namespace GeoGen.TheoremProver
                             {
                                 new Theorem(configuration, ParallelLines, new TheoremObject[]
                                 {
-                                    new LineTheoremObject(constructedObject, points: new[] { objects[0] }),
+                                    new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 })
                             };
@@ -301,7 +301,7 @@ namespace GeoGen.TheoremProver
                 (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
-            return _finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture))
+            return _finder.FindAllTheorems(contextualPicture).AllObjects
                 // For each theorem we need to replace the artificially created
                 // object with the original one from the defining configuration
                 .Select(theorem =>

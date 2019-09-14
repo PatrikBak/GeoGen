@@ -22,6 +22,11 @@ namespace GeoGen.Core
         /// </summary>
         public TheoremObject Object2 { get; }
 
+        /// <summary>
+        /// Gets the inner objects of the pair object as a set.
+        /// </summary>
+        public IReadOnlyHashSet<TheoremObject> ObjectsSet { get; }
+
         #endregion
 
         #region Constructor
@@ -33,8 +38,26 @@ namespace GeoGen.Core
         /// <param name="object2">The second object of the pair.</param>
         protected PairTheoremObject(TheoremObject object1, TheoremObject object2)
         {
+            // Set the objects
             Object1 = object1 ?? throw new ArgumentNullException(nameof(object1));
             Object2 = object2 ?? throw new ArgumentNullException(nameof(object2));
+
+            // Create the objects set
+            ObjectsSet = new HashSet<TheoremObject> { Object1, Object2 }.AsReadOnly();
+        }
+
+        #endregion
+
+        #region Public abstract methods implementation
+
+        /// <summary>
+        /// Gets the configuration objects that internally define this theorem object.
+        /// </summary>
+        /// <returns>The enumerable of the internal configuration objects.</returns>
+        public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects()
+        {
+            // Return the merged inner objects
+            return Object1.GetInnerConfigurationObjects().Concat(Object2.GetInnerConfigurationObjects());
         }
 
         #endregion
@@ -55,6 +78,33 @@ namespace GeoGen.Core
 
             // Return tuple only if none of them is null
             return o1 != null && o2 != null ? (o1, o2) : default;
+        }
+
+        #endregion
+
+        #region HashCode and Equals
+
+        /// <summary>
+        /// Gets the hash code of this object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
+        public override int GetHashCode() => ObjectsSet.GetHashCode();
+
+        /// <summary>
+        /// Finds out if a passed object is equal to this one.
+        /// </summary>
+        /// <param name="otherObject">The passed object.</param>
+        /// <returns>true, if they are equal; false otherwise.</returns>
+        public override bool Equals(object otherObject)
+        {
+            // Either the references are equal
+            return this == otherObject
+                // Or the object is not null
+                || otherObject != null
+                // And it is a pair object
+                && otherObject is PairTheoremObject pairObject
+                // And their object sets are equal
+                && ObjectsSet.Equals(pairObject.ObjectsSet);
         }
 
         #endregion

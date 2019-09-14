@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ l1 = Median(A, B, C)
+ l2 = Midline(B, A, C)
+
+Theorems:
+
+ ConcurrentLines: [B, C], l1, l2

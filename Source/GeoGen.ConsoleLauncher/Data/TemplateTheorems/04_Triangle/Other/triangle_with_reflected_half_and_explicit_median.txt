@@ -1,0 +1,10 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ M = Midpoint(A, B)
+ P = ReflectionInMidpointOfSegment(C, B, M)
+ l = Median(B, M, C)
+
+Theorems:
+
+ ParallelLines: [A, P], l

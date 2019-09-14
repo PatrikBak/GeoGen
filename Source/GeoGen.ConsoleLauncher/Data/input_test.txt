@@ -1,0 +1,20 @@
+﻿Iterations: 2
+
+Constructions:
+
+ #IntersectionOfLines
+ #IntersectionOfLineAndLineFromPoints
+ #IntersectionOfLinesFromPoints
+ #PointReflection
+ #ReflectionInMidpointOfSegment
+ Midpoint
+ #ParallelLine
+ #ParallelLineToLineFromPoints
+ #PerpendicularLine
+ #PerpendicularLineAtPointOfLine
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C
+ D = Midpoint(A, B)
+ E = Midpoint(A, C)

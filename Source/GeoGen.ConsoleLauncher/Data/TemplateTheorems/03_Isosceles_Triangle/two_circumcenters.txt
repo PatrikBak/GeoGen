@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+ P = Circumcenter(A, B, C)
+ Q = Circumcenter(P, B, C)
+
+Theorems:
+
+ #CollinearPoints: A, P, Q

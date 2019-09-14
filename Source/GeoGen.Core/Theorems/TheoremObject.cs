@@ -21,6 +21,12 @@ namespace GeoGen.Core
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
         public abstract TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping);
 
+        /// <summary>
+        /// Gets the configuration objects that internally define this theorem object.
+        /// </summary>
+        /// <returns>The enumerable of the internal configuration objects.</returns>
+        public abstract IEnumerable<ConfigurationObject> GetInnerConfigurationObjects();
+
         #endregion
 
         #region Protected helper methods

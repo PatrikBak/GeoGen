@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = ReflectionInMidpointOfSegment(A, B, C)
+
+Theorems:
+
+ EqualLineSegments: D, B, A, C
+ ParallelLines: [D, B], [A, C]

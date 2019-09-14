@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ IsoscelesTriangle: A, B, C
+ D = ReflectionInLineFromPoints(B, A, C)
+ O = Circumcenter(A, B, C)
+
+Theorems:
+
+ #PerpendicularLines: [D, C], [O, C]

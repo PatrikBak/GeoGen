@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ Trapezoid: A, B, C, D
+ M = Midpoint(A, B)
+ N = Midpoint(C, D)
+
+Theorems:
+
+ ConcurrentLines: [A, D], [B, C], [M, N]

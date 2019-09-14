@@ -1,0 +1,10 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ M = RandomPointOnMedian(A, B, C)
+ l1 = ParallelLineToLineFromPoints(B, A, C)
+ l2 = ParallelLineToLineFromPoints(C, A, B)
+
+Theorems:
+
+ ConcurrentLines: [A, M], l1, l2

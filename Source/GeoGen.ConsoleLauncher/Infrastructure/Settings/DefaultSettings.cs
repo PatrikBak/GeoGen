@@ -1,6 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremFinder;
 using System.Collections.Generic;
 using System.IO;
 
@@ -75,14 +75,14 @@ namespace GeoGen.ConsoleLauncher
                 FilesExtention = "txt"
             };
 
-            // Create settings for tangent circles theorems finder
-            TangentCirclesTheoremsFinderSettings = new TangentCirclesTheoremsFinderSettings
+            // Create settings for tangent circles theorem finder
+            TangentCirclesTheoremFinderSettings = new TangentCirclesTheoremFinderSettings
             {
                 ExcludeTangencyInsidePicture = true
             };
 
-            // Create settings for line tangent to circle theorems finder
-            LineTangentToCircleTheoremsFinderSettings = new LineTangentToCircleTheoremsFinderSettings
+            // Create settings for line tangent to circle theorem finder
+            LineTangentToCircleTheoremFinderSettings = new LineTangentToCircleTheoremFinderSettings
             {
                 ExcludeTangencyInsidePicture = true
             };

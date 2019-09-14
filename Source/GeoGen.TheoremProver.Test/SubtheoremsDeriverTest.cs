@@ -2,7 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremFinder;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
@@ -52,12 +52,12 @@ namespace GeoGen.TheoremProver.Test
         {
             // Initialize IoC
             var kernel = IoC.CreateKernel()
-                // Add theorems finder with no restrictions
-                .AddTheoremsFinder(new TangentCirclesTheoremsFinderSettings
+                // Add theorem finder with no restrictions
+                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings
                 {
                     ExcludeTangencyInsidePicture = false
                 },
-                new LineTangentToCircleTheoremsFinderSettings
+                new LineTangentToCircleTheoremFinderSettings
                 {
                     ExcludeTangencyInsidePicture = false
                 },
@@ -83,7 +83,7 @@ namespace GeoGen.TheoremProver.Test
             var contextualPicture = kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
 
             // Find the theorems
-            var theorems = new TheoremsMap(kernel.GetAll<ITheoremsFinder>().SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
+            var theorems = kernel.Get<ITheoremFinder>().FindAllTheorems(contextualPicture);
 
             // Run the algorithm
             return deriver.DeriveTheorems(new SubtheoremsDeriverInput
@@ -525,8 +525,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(B_, C_), new LineTheoremObject(B_, O_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, O_), new LineTheoremObject(B_, C_))
+                    new AngleTheoremObject(B_, C_, B_, O_),
+                    new AngleTheoremObject(C_, O_, B_, C_)
                 })
             };
 
@@ -553,8 +553,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, D), new LineTheoremObject(A, O)),
-                            new AngleTheoremObject(new LineTheoremObject(D, O), new LineTheoremObject(A, D))
+                            new AngleTheoremObject(A, D, A, O),
+                            new AngleTheoremObject(D, O, A, D)
                         }),
                         templateTheorems[0])
                     },
@@ -568,8 +568,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(D, O)),
-                            new AngleTheoremObject(new LineTheoremObject(E, O), new LineTheoremObject(D, E))
+                            new AngleTheoremObject(D, E, D, O),
+                            new AngleTheoremObject(E, O, D, E)
                         }),
                         templateTheorems[0])
                     },
@@ -583,8 +583,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(E, O)),
-                            new AngleTheoremObject(new LineTheoremObject(A, O), new LineTheoremObject(E, A))
+                            new AngleTheoremObject(E, A, E, O),
+                            new AngleTheoremObject(A, O, E, A)
                         }),
                         templateTheorems[0])
                     },
@@ -612,8 +612,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(B_, C_), new LineTheoremObject(B_, O_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, O_), new LineTheoremObject(B_, C_))
+                    new AngleTheoremObject(B_, C_, B_, O_),
+                    new AngleTheoremObject(C_, O_, B_, C_)
                 })
             };
 
@@ -642,8 +642,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, D), new LineTheoremObject(A, O)),
-                            new AngleTheoremObject(new LineTheoremObject(D, O), new LineTheoremObject(A, D))
+                            new AngleTheoremObject(A, D, A, O),
+                            new AngleTheoremObject(D, O, A, D)
                         }),
                         templateTheorems[0])
                     },
@@ -660,8 +660,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(D, O)),
-                            new AngleTheoremObject(new LineTheoremObject(E, O), new LineTheoremObject(D, E))
+                            new AngleTheoremObject(D, E, D, O),
+                            new AngleTheoremObject(E, O, D, E)
                         }),
                         templateTheorems[0])
                     },
@@ -678,8 +678,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(E, O)),
-                            new AngleTheoremObject(new LineTheoremObject(A, O), new LineTheoremObject(E, A))
+                            new AngleTheoremObject(E, A, E, O),
+                            new AngleTheoremObject(A, O, E, A)
                         }),
                         templateTheorems[0])
                     },
@@ -1208,8 +1208,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(E_, F_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, D_), new LineTheoremObject(E_, F_))
+                    new AngleTheoremObject(A_, B_, E_, F_),
+                    new AngleTheoremObject(C_, D_, E_, F_)
                 })
             };
 
@@ -1236,8 +1236,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(B, E), new LineTheoremObject(C, F)),
-                            new AngleTheoremObject(new LineTheoremObject(D, F), new LineTheoremObject(C, F))
+                            new AngleTheoremObject(B, E, C, F),
+                            new AngleTheoremObject(D, F, C, F)
                         }),
                         templateTheorems[0])
                     },
@@ -1258,8 +1258,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(B, E)),
-                            new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(D, F))
+                            new AngleTheoremObject(A, C, B, E),
+                            new AngleTheoremObject(A, C, D, F)
                         }),
                         templateTheorems[0])
                     },
@@ -1280,8 +1280,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(B, E)),
-                            new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(D, F))
+                            new AngleTheoremObject(B, C, B, E),
+                            new AngleTheoremObject(B, C, D, F)
                         }),
                         templateTheorems[0])
                     },
@@ -1374,8 +1374,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(A_, D_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, B_), new LineTheoremObject(C_, D_))
+                    new AngleTheoremObject(A_, B_, A_, D_),
+                    new AngleTheoremObject(C_, B_, C_, D_)
                 })
             };
 
@@ -1401,8 +1401,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, C)),
-                            new AngleTheoremObject(new LineTheoremObject(D, B), new LineTheoremObject(D, C))
+                            new AngleTheoremObject(A, B, A, C),
+                            new AngleTheoremObject(D, B, D, C)
                         }),
                         templateTheorems[0])
                     },
@@ -1419,8 +1419,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(C, D)),
-                            new AngleTheoremObject(new LineTheoremObject(B, A), new LineTheoremObject(B, D))
+                            new AngleTheoremObject(C, A, C, D),
+                            new AngleTheoremObject(B, A, B, D)
                         }),
                         templateTheorems[0])
                     },
@@ -1437,8 +1437,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(D, A), new LineTheoremObject(D, C)),
-                            new AngleTheoremObject(new LineTheoremObject(B, A), new LineTheoremObject(B, C))
+                            new AngleTheoremObject(D, A, D, C),
+                            new AngleTheoremObject(B, A, B, C)
                         }),
                         templateTheorems[0])
                     },
@@ -1455,8 +1455,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(D, A), new LineTheoremObject(D, B)),
-                            new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(C, B))
+                            new AngleTheoremObject(D, A, D, B),
+                            new AngleTheoremObject(C, A, C, B)
                         }),
                         templateTheorems[0])
                     },
@@ -1473,8 +1473,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, C), new LineTheoremObject(A, D)),
-                            new AngleTheoremObject(new LineTheoremObject(B, C), new LineTheoremObject(B, D))
+                            new AngleTheoremObject(A, C, A, D),
+                            new AngleTheoremObject(B, C, B, D)
                         }),
                         templateTheorems[0])
                     },
@@ -1491,8 +1491,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(A, D)),
-                            new AngleTheoremObject(new LineTheoremObject(C, B), new LineTheoremObject(C, D))
+                            new AngleTheoremObject(A, B, A, D),
+                            new AngleTheoremObject(C, B, C, D)
                         }),
                         templateTheorems[0])
                     },
@@ -1597,8 +1597,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(A_, D_)),
-                    new AngleTheoremObject(new LineTheoremObject(A_, C_), new LineTheoremObject(C_, D_))
+                    new AngleTheoremObject(A_, B_, A_, D_),
+                    new AngleTheoremObject(A_, C_, C_, D_)
                 }),
 
                 new Theorem(templateConfiguration, LineTangentToCircle, new TheoremObject[]
@@ -1630,8 +1630,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, B, E), new LineTheoremObject(B, C, D)),
-                            new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(A, D))
+                            new AngleTheoremObject(D, A, D, E),
+                            new AngleTheoremObject(D, B, B, E)
                         }),
                         templateTheorems[0]),
 
@@ -1659,14 +1659,14 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, B, E), new LineTheoremObject(A, D)),
-                            new AngleTheoremObject(new LineTheoremObject(D, E), new LineTheoremObject(B, C, D))
+                            new AngleTheoremObject(D, B, D, E),
+                            new AngleTheoremObject(D, A, A, E)
                         }),
                         templateTheorems[0]),
 
                         (new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
                         {
-                            new LineTheoremObject(B, C, D),
+                            new LineTheoremObject(B, D),
                             new CircleTheoremObject(A, D, E)
                         }),
                         templateTheorems[1])
@@ -1803,8 +1803,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, D_), new LineTheoremObject(A_, B_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(C_, B_))
+                    new AngleTheoremObject(A_, D_, A_, B_),
+                    new AngleTheoremObject(C_, A_, C_, B_)
                 })
             };
 
@@ -1832,8 +1832,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(A, B)),
-                            new AngleTheoremObject(new LineTheoremObject(C, A), new LineTheoremObject(E, B, D, C))
+                            new AngleTheoremObject(E, A, A, B),
+                            new AngleTheoremObject(C, A, C, B)
                         }),
                         templateTheorems[0])
                     },
@@ -1855,8 +1855,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(E, A), new LineTheoremObject(A, C)),
-                            new AngleTheoremObject(new LineTheoremObject(A, B), new LineTheoremObject(E, B, D, C))
+                            new AngleTheoremObject(E, A, A, C),
+                            new AngleTheoremObject(B, A, B, C)
                         }),
                         templateTheorems[0])
                     },
@@ -1891,8 +1891,8 @@ namespace GeoGen.TheoremProver.Test
             {
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, D_), new LineTheoremObject(A_, B_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(C_, B_))
+                    new AngleTheoremObject(A_, D_, A_, B_),
+                    new AngleTheoremObject(C_, A_, C_, B_)
                 })
             };
 
@@ -1919,8 +1919,8 @@ namespace GeoGen.TheoremProver.Test
                     {
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(A, F), new LineTheoremObject(A, D)),
-                            new AngleTheoremObject(new LineTheoremObject(B, C, D), new LineTheoremObject(D, E, F))
+                            new AngleTheoremObject(A, F, A, D),
+                            new AngleTheoremObject(C, D, D, F)
                         }),
                         templateTheorems[0])
                     },
@@ -1964,8 +1964,8 @@ namespace GeoGen.TheoremProver.Test
                 }),
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(B_, A_), new LineTheoremObject(A_, M_)),
-                    new AngleTheoremObject(new LineTheoremObject(C_, A_), new LineTheoremObject(A_, M_))
+                    new AngleTheoremObject(B_, A_, A_, M_),
+                    new AngleTheoremObject(C_, A_, A_, M_)
                 })
             };
 
@@ -1999,8 +1999,8 @@ namespace GeoGen.TheoremProver.Test
 
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(S, M), new LineTheoremObject(S, B)),
-                            new AngleTheoremObject(new LineTheoremObject(S, M), new LineTheoremObject(S, C))
+                            new AngleTheoremObject(S, M, S, B),
+                            new AngleTheoremObject(S, M, S, C)
                         }),
                         templateTheorems[1])
                     },
@@ -2040,8 +2040,8 @@ namespace GeoGen.TheoremProver.Test
                 }),
                 new Theorem(templateConfiguration, EqualAngles, new[]
                 {
-                    new AngleTheoremObject(new LineTheoremObject(A_, B_), new LineTheoremObject(B_, D_)),
-                    new AngleTheoremObject(new LineTheoremObject(A_, C_), new LineTheoremObject(C_, D_))
+                    new AngleTheoremObject(A_, B_, B_, D_),
+                    new AngleTheoremObject(A_, C_, C_, D_)
                 })
             };
 
@@ -2074,8 +2074,8 @@ namespace GeoGen.TheoremProver.Test
 
                         (new Theorem(examinedConfiguration, EqualAngles, new[]
                         {
-                            new AngleTheoremObject(new LineTheoremObject(O1, B), new LineTheoremObject(B, O2)),
-                            new AngleTheoremObject(new LineTheoremObject(O1, C), new LineTheoremObject(C, O2))
+                            new AngleTheoremObject(O1, B, B, O2),
+                            new AngleTheoremObject(O1, C, C, O2)
                         }),
                         templateTheorems[1])
                     },
@@ -2099,4 +2099,3 @@ namespace GeoGen.TheoremProver.Test
         #endregion
     }
 }
-

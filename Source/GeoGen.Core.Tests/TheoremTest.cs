@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructionType;
@@ -28,7 +27,7 @@ namespace GeoGen.Core.Tests
             // Create the configuration
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
-            // This couldn't be stated in a smaller configuration
+            // This can't be stated in a smaller configuration
             new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
             {
                 new LineTheoremObject(A, mBC),
@@ -52,7 +51,7 @@ namespace GeoGen.Core.Tests
             // Create the configuration
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
-            // This couldn't be stated in a smaller configuration either
+            // This can't be stated in a smaller configuration either
             new Theorem(configuration, EqualLineSegments, new[]
             {
                 new LineSegmentTheoremObject(mAB, mAC),
@@ -60,7 +59,7 @@ namespace GeoGen.Core.Tests
             })
             .CanBeStatedInSmallerConfiguration().Should().BeFalse();
 
-            // Equivalently this couldn't be stated in a smaller configuration either
+            // Analogously this couldn't be stated in a smaller configuration either
             new Theorem(configuration, EqualLineSegments, new[]
             {
                 new LineSegmentTheoremObject(mAB, mAC),
@@ -86,52 +85,8 @@ namespace GeoGen.Core.Tests
             // This theorem can be stated without the midpoint of BC
             new Theorem(configuration, ParallelLines, new TheoremObject[]
             {
-                new LineTheoremObject(B, C, mBC),
-                new LineTheoremObject(mAC, mBC)
-            })
-            .CanBeStatedInSmallerConfiguration().Should().BeTrue();
-        }
-
-        [Test]
-        public void Test_CanBeStatedInSmallerConfiguration_Trapezoid_Parallel_Lines()
-        {
-            // Prepare points
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var D = new LooseConfigurationObject(Point);
-            var l = new ConstructedConfigurationObject(LineFromPoints, A, B);
-
-            // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(Trapezoid, A, B, C, D, l);
-
-            // This theorem can be stated without explicitly having line 'l'
-            new Theorem(configuration, ParallelLines, new TheoremObject[]
-            {
-                new LineTheoremObject(l, points: new[] { A, B }),
-                new LineTheoremObject(C, D)
-            })
-            .CanBeStatedInSmallerConfiguration().Should().BeTrue();
-        }
-
-        [Test]
-        public void Test_CanBeStatedInSmallerConfiguration_Trapezoid_Equal_Angles()
-        {
-            // Prepare points
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var D = new LooseConfigurationObject(Point);
-            var P = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, C, B, D);
-
-            // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(Trapezoid, A, B, C, D, P);
-
-            // This theorem can be stated without P
-            new Theorem(configuration, EqualAngles, new TheoremObject[]
-            {
-                new AngleTheoremObject(new LineTheoremObject(A, C, P), new LineTheoremObject(A, B)),
-                new AngleTheoremObject(new LineTheoremObject(A, C, P), new LineTheoremObject(C, D))
+                new LineTheoremObject(B, C),
+                new LineTheoremObject(mAB, mAC)
             })
             .CanBeStatedInSmallerConfiguration().Should().BeTrue();
         }

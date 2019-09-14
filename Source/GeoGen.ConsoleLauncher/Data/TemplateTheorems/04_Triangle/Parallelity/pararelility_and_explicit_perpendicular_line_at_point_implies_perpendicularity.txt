@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ l1 = ParallelLineToLineFromPoints(A, B, C)
+ l2 = PerpendicularLineAtPointOfLine(B, C)
+
+Theorems:
+
+ PerpendicularLines: l1, l2

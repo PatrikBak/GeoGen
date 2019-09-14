@@ -7,6 +7,15 @@ namespace GeoGen.Core
     /// </summary>
     public class PointTheoremObject : BaseTheoremObject
     {
+        #region Public abstract properties implementation
+
+        /// <summary>
+        /// The type of configuration object this theorem objects represents.
+        /// </summary>
+        public override ConfigurationObjectType Type => ConfigurationObjectType.Point;
+
+        #endregion
+
         #region Constructor
 
         /// <summary>
@@ -46,6 +55,12 @@ namespace GeoGen.Core
             return new PointTheoremObject(mappedPoint);
         }
 
+        /// <summary>
+        /// Gets the configuration objects that internally define this theorem object.
+        /// </summary>
+        /// <returns>The enumerable of the internal configuration objects.</returns>
+        public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects() => new[] { ConfigurationObject };
+
         #endregion
 
         #region HashCode and Equals
@@ -82,7 +97,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"{ConfigurationObject.Id}";
+        public override string ToString() => ConfigurationObject.Id.ToString();
 
         #endregion
     }

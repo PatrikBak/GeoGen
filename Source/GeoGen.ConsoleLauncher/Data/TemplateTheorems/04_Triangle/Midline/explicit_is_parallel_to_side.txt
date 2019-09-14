@@ -1,0 +1,8 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ l = Midline(A, B, C)
+
+Theorems:
+
+ ParallelLines: [B, C], l

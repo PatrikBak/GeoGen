@@ -1,6 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremsFinder;
+using GeoGen.TheoremFinder;
 using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
@@ -36,14 +36,14 @@ namespace GeoGen.ConsoleLauncher
         public TemplateTheoremsFolderSettings TemplateTheoremsFolderSettings { get; set; }
 
         /// <summary>
-        /// The settings for tangent circles theorems finder.
+        /// The settings for tangent circles theorem finder.
         /// </summary>
-        public TangentCirclesTheoremsFinderSettings TangentCirclesTheoremsFinderSettings { get; set; }
+        public TangentCirclesTheoremFinderSettings TangentCirclesTheoremFinderSettings { get; set; }
 
         /// <summary>
-        /// The settings for line tangent to circle theorems finder.
+        /// The settings for line tangent to circle theorem finder.
         /// </summary>
-        public LineTangentToCircleTheoremsFinderSettings LineTangentToCircleTheoremsFinderSettings { get; set; }
+        public LineTangentToCircleTheoremFinderSettings LineTangentToCircleTheoremFinderSettings { get; set; }
 
         /// <summary>
         /// The types of theorems that we're looking for.

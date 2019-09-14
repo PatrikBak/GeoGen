@@ -219,12 +219,12 @@ namespace GeoGen.TheoremProver
                 .Distinct(new SimpleEqualityComparer<SubtheoremsDeriverOutput>(
                     // They're the same when the used equalities are the same 
                     (o1, o2) => o1.UsedEqualities.OrderlessEquals(o2.UsedEqualities)
-                            // And the derived theorems are the same
-                            && o1.DerivedTheorems.OrderlessEquals(o2.DerivedTheorems)
-                            // And the used facts are the same
-                            && o1.UsedFacts.OrderlessEquals(o2.UsedFacts)
-                            // And the used incidences are the same as well
-                            && o1.UsedIncidencies.OrderlessEquals(o2.UsedIncidencies)));
+                        // And the derived theorems are the same
+                        && o1.DerivedTheorems.OrderlessEquals(o2.DerivedTheorems)
+                        // And the used facts are the same
+                        && o1.UsedFacts.OrderlessEquals(o2.UsedFacts)
+                        // And the used incidences are the same as well
+                        && o1.UsedIncidencies.OrderlessEquals(o2.UsedIncidencies)));
         }
 
         /// <summary>

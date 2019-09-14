@@ -84,10 +84,10 @@ namespace GeoGen.ConsoleLauncher
             Kernel.AddGenerator()
                 // With constructor that uses loaded settings
                 .AddConstructor(settings.PicturesManagerSettings)
-                // With theorems finder and its settings
-                .AddTheoremsFinder(settings.TangentCirclesTheoremsFinderSettings,
-                                   settings.LineTangentToCircleTheoremsFinderSettings,
-                                   settings.SeekedTheoremTypes.ToReadOnlyHashSet())
+                // With theorem finder and its settings
+                .AddTheoremFinder(settings.TangentCirclesTheoremFinderSettings,
+                                  settings.LineTangentToCircleTheoremFinderSettings,
+                                  settings.SeekedTheoremTypes.ToReadOnlyHashSet())
                 // With prover and its data
                 .AddTheoremProver(new TheoremProverData
                 (

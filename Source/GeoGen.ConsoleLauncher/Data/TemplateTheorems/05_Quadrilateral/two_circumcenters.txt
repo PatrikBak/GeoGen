@@ -1,0 +1,9 @@
+﻿Configuration:
+
+ FourPoints: A, B, C, D
+ E = Circumcenter(A, B, D)
+ F = Circumcenter(A, C, D)
+
+Theorems:
+
+ PerpendicularLines: [A, D], [E, F]

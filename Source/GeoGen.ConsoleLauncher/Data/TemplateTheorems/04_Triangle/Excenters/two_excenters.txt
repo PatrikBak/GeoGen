@@ -1,0 +1,11 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = Excenter(A, B, C)
+ E = Excenter(B, A, C)
+
+Theorems:
+
+ #CollinearPoints: C, D, E
+ #PerpendicularLines: [A, D], [A, E]
+ #PerpendicularLines: [B, D], [B, E]

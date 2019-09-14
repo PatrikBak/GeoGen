@@ -1,0 +1,9 @@
+﻿Iterations: 2
+
+Constructions:
+
+ SecondIntersectionOfCircleWithCenterAndLineFromPoints
+
+Initial configuration:
+ 
+ ThreePoints: A, B, C

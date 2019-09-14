@@ -1,0 +1,10 @@
+﻿Configuration:
+
+ ThreePoints: A, B, C
+ D = RandomPointOnMidline(A, B, C)
+ E = RandomPointOnMidline(A, B, C)
+ F = RandomPointOnMidline(A, B, C)
+
+Theorems:
+
+ CollinearPoints: D, E, F

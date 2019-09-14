@@ -9,7 +9,7 @@
     <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremsFinder\GeoGen.TheoremsFinder.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>
 

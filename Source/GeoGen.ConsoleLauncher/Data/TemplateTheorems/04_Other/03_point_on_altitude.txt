@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- D = RandomPointOnPerpendicularLineToLineFromPoints(A, B, C)
- E = ReflectionInLineFromPoints(A, B, C)
-
-Theorems:
-
- CollinearPoints: A, D, E
