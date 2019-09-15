@@ -5,9 +5,9 @@ using System;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents an input of the <see cref="ISubtheoremsDeriver"/>.
+    /// Represents an input of the <see cref="ISubtheoremDeriver"/>.
     /// </summary>
-    public class SubtheoremsDeriverInput
+    public class SubtheoremDeriverInput
     {
         #region Public properties
 
@@ -36,13 +36,13 @@ namespace GeoGen.TheoremProver
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubtheoremsDeriverInput"/> class.
+        /// Initializes a new instance of the <see cref="SubtheoremDeriverInput"/> class.
         /// </summary>
         /// <param name="examinedConfigurationPicture">The picture where we are trying to derive new theorems.</param>
         /// <param name="examinedConfigurationTheorems">The list of theorems that are true in the picture.</param>
         /// <param name="templateConfiguration">The configuration where our template theorems hold.</param>
         /// <param name="templateTheorems">The template theorems that are used to derive theorems in our picture.</param>
-        public SubtheoremsDeriverInput(ContextualPicture examinedConfigurationPicture,
+        public SubtheoremDeriverInput(ContextualPicture examinedConfigurationPicture,
                                        TheoremsMap examinedConfigurationTheorems,
                                        Configuration templateConfiguration,
                                        TheoremsMap templateTheorems)

@@ -18,10 +18,10 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver.Test
 {
     /// <summary>
-    /// The test class for <see cref="SubtheoremsDeriver"/>.
+    /// The test class for <see cref="SubtheoremDeriver"/>.
     /// </summary>
     [TestFixture]
-    public class SubtheoremsDeriverTest
+    public class SubtheoremDeriverTest
     {
         #region Run and check methods
 
@@ -31,7 +31,7 @@ namespace GeoGen.TheoremProver.Test
         /// <param name="examinedConfiguration">The examined configuration.</param>
         /// <param name="templateTheorems">The template theorems.</param>
         /// <returns>The list of results.</returns>
-        private List<SubtheoremsDeriverOutput> Run(Configuration examinedConfiguration, IEnumerable<Theorem> templateTheorems)
+        private List<SubtheoremDeriverOutput> Run(Configuration examinedConfiguration, IEnumerable<Theorem> templateTheorems)
         {
             // Initialize IoC
             var kernel = IoC.CreateKernel()
@@ -57,7 +57,7 @@ namespace GeoGen.TheoremProver.Test
             var constructor = kernel.Get<IGeometryConstructor>();
 
             // Create the deriver
-            var deriver = new SubtheoremsDeriver(constructor);
+            var deriver = new SubtheoremDeriver(constructor);
 
             // Draw the examined configuration
             var pictures = constructor.Construct(examinedConfiguration).pictures;
@@ -69,7 +69,7 @@ namespace GeoGen.TheoremProver.Test
             var theorems = kernel.Get<ITheoremFinder>().FindAllTheorems(contextualPicture);
 
             // Run the algorithm
-            return deriver.DeriveTheorems(new SubtheoremsDeriverInput
+            return deriver.DeriveTheorems(new SubtheoremDeriverInput
             (
                 examinedConfigurationPicture: contextualPicture,
                 examinedConfigurationTheorems: theorems,
@@ -86,7 +86,7 @@ namespace GeoGen.TheoremProver.Test
         /// </summary>
         /// <param name="result">The result produced by the algorithm.</param>
         /// <param name="expected">The expected result.</param>
-        private void CheckForEquivalncyOfResults(List<SubtheoremsDeriverOutput> result, IEnumerable<SubtheoremsDeriverOutput> expected)
+        private void CheckForEquivalncyOfResults(List<SubtheoremDeriverOutput> result, IEnumerable<SubtheoremDeriverOutput> expected)
         {
             // Find the items that are expected and not in the result
             var nonexistingExpectedOutputs = expected.Except(result).ToList();
@@ -107,7 +107,7 @@ namespace GeoGen.TheoremProver.Test
         /// </summary>
         /// <param name="result">The result produced by the algorithm.</param>
         /// <param name="expectedSubset">The expected result to be contained in the result..</param>
-        private void CheckThatResultsContain(List<SubtheoremsDeriverOutput> result, IEnumerable<SubtheoremsDeriverOutput> expectedSubset)
+        private void CheckThatResultsContain(List<SubtheoremDeriverOutput> result, IEnumerable<SubtheoremDeriverOutput> expectedSubset)
         {
             // Find the items that are expected and not in the result
             var nonexistingExpectedOutputs = expectedSubset.Except(result).ToList();
@@ -159,7 +159,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -177,7 +177,7 @@ namespace GeoGen.TheoremProver.Test
                     usedFacts: new List<Theorem>()
                 ),
 
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -236,7 +236,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -297,7 +297,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -310,7 +310,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -323,7 +323,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -333,7 +333,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -346,7 +346,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -359,7 +359,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -412,7 +412,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -430,7 +430,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -448,7 +448,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -466,7 +466,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -530,7 +530,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -545,7 +545,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -560,7 +560,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -619,7 +619,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -637,7 +637,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -655,7 +655,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -719,7 +719,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -781,7 +781,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -842,7 +842,7 @@ namespace GeoGen.TheoremProver.Test
             // Check that perpendicularity of AH and BC can be derived dually
             CheckThatResultsContain(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -858,7 +858,7 @@ namespace GeoGen.TheoremProver.Test
                     usedFacts: new List<Theorem>()
                 ),
 
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -925,7 +925,7 @@ namespace GeoGen.TheoremProver.Test
             // we're using this algorithm only for ruling out theorems)
             CheckThatResultsContain(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -994,7 +994,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1019,7 +1019,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1044,7 +1044,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1069,7 +1069,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1094,7 +1094,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1119,7 +1119,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1144,7 +1144,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1213,7 +1213,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckThatResultsContain(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1235,7 +1235,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1257,7 +1257,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1323,7 +1323,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1378,7 +1378,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1396,7 +1396,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1414,7 +1414,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1432,7 +1432,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1450,7 +1450,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1468,7 +1468,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1537,7 +1537,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1566,7 +1566,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1638,7 +1638,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1665,7 +1665,7 @@ namespace GeoGen.TheoremProver.Test
                         (D, new ConstructedConfigurationObject(CircleWithDiameter, A, C))
                     }
                 ),
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1739,7 +1739,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1762,7 +1762,7 @@ namespace GeoGen.TheoremProver.Test
                     }
                 ),
 
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1826,7 +1826,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckThatResultsContain(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1899,7 +1899,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckForEquivalncyOfResults(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
@@ -1974,7 +1974,7 @@ namespace GeoGen.TheoremProver.Test
             // Check results
             CheckThatResultsContain(results, new[]
             {
-                new SubtheoremsDeriverOutput
+                new SubtheoremDeriverOutput
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {

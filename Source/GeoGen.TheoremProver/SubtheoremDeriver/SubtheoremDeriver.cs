@@ -12,9 +12,9 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// A default implementation of <see cref="ISubtheoremsDeriver"/>. 
+    /// A default implementation of <see cref="ISubtheoremDeriver"/>. 
     /// 
-    /// Supported <see cref="LooseObjectsLayout"/> of <see cref="SubtheoremsDeriverInput.TemplateTheorems"/>:
+    /// Supported <see cref="LooseObjectsLayout"/> of <see cref="SubtheoremDeriverInput.TemplateTheorems"/>:
     /// 
     ///  - TwoPoints
     ///  - ThreePoints
@@ -28,7 +28,7 @@ namespace GeoGen.TheoremProver
     /// If the theorems needed for a specific layout aren't provided (for example, because there are not being found),
     /// then the deriver will not match the layout.
     /// </summary>
-    public class SubtheoremsDeriver : ISubtheoremsDeriver
+    public class SubtheoremDeriver : ISubtheoremDeriver
     {
         #region MappingData class
 
@@ -139,24 +139,24 @@ namespace GeoGen.TheoremProver
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubtheoremsDeriver"/> class.
+        /// Initializes a new instance of the <see cref="SubtheoremDeriver"/> class.
         /// </summary>
         /// <param name="constructor">The constructor of geometric objects that allows us to find geometrical properties of the mappings.</param>
-        public SubtheoremsDeriver(IGeometryConstructor constructor)
+        public SubtheoremDeriver(IGeometryConstructor constructor)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
         }
 
         #endregion
 
-        #region ISubtheoremsDeriver implementation
+        #region ISubtheoremDeriver implementation
 
         /// <summary>
         /// Performs the sub-theorem derivation on a given input.
         /// </summary>
         /// <param name="input">The input for the deriver.</param>
         /// <returns>The derived theorems wrapped in output objects.</returns>
-        public IEnumerable<SubtheoremsDeriverOutput> DeriveTheorems(SubtheoremsDeriverInput input)
+        public IEnumerable<SubtheoremDeriverOutput> DeriveTheorems(SubtheoremDeriverInput input)
         {
             #region Check if we have enough objects to do the mapping
 
@@ -176,7 +176,7 @@ namespace GeoGen.TheoremProver
             // If we don't have enough objects
             if (!doWeHaveEnoughObjects)
                 // Then there will definitely be no derived theorems
-                return Enumerable.Empty<SubtheoremsDeriverOutput>();
+                return Enumerable.Empty<SubtheoremDeriverOutput>();
 
             #endregion
 
@@ -220,7 +220,7 @@ namespace GeoGen.TheoremProver
                 // Take only those remapping that have any theorem
                 .Where(pair => pair.derivedTheorems.Any())
                 // Those represent a correct result
-                .Select(pair => new SubtheoremsDeriverOutput
+                .Select(pair => new SubtheoremDeriverOutput
                 (
                     derivedTheorems: pair.derivedTheorems,
                     usedEqualities: pair.data.EqualObjects,
@@ -237,7 +237,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappings(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappings(SubtheoremDeriverInput input)
         {
             // Return the answer based on the layout of the template theorem
             return input.TemplateConfiguration.LooseObjectsHolder.Layout switch
@@ -278,7 +278,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsWithPoints(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsWithPoints(SubtheoremDeriverInput input)
         {
             // Take the points 
             return input.ExaminedConfigurationPicture.AllPoints
@@ -297,7 +297,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForFourConcyclicPoints(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForFourConcyclicPoints(SubtheoremDeriverInput input)
         {
             // Take all circles
             return input.ExaminedConfigurationPicture.AllCircles
@@ -320,7 +320,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremDeriverInput input)
         {
             // Take the parallel lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(ParallelLines)
@@ -359,24 +359,24 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForRightTriangleLayout(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForRightTriangleLayout(SubtheoremDeriverInput input)
         {
             // Take the perpendicular lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(PerpendicularLines)
                 // Where both the lines objects are defined by points
                 ?.Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
                 // From each theorem object unwrap points
-                .Select(theorem => (theorem, 
+                .Select(theorem => (theorem,
                     // We now know we have two lines defined by points
-                    points1:  ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
-                    points2:  ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
+                    points1: ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
+                    points2: ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
                 ))
                 // Find their common point (should be at most one)
                 .Select(pair => (pair.theorem, pair.points1, pair.points2, commonPoint: pair.points1.Intersect(pair.points2).FirstOrDefault()))
                 // Take only those where there is a common point
                 .Where(tuple => tuple.commonPoint != null)
                 // Get those points on particular lines that are distinct from the common one
-                .Select(triple => (triple.theorem, triple.commonPoint, 
+                .Select(triple => (triple.theorem, triple.commonPoint,
                     // Each line should have one other point
                     otherPoint1: triple.points1.Where(point => point != triple.commonPoint).First(),
                     otherPoint2: triple.points2.Where(point => point != triple.commonPoint).First()
@@ -400,7 +400,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForCircleAndTangentLineLayout(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForCircleAndTangentLineLayout(SubtheoremDeriverInput input)
         {
             // Take the line tangent to circle theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(LineTangentToCircle)
@@ -442,7 +442,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForIsoscelesTriangleLayout(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForIsoscelesTriangleLayout(SubtheoremDeriverInput input)
         {
             // Take the equal line segments theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(EqualLineSegments)
@@ -453,7 +453,7 @@ namespace GeoGen.TheoremProver
                     (LineSegmentTheoremObject)theorem.InvolvedObjectsList[1],
                 }))
                 // And configuration objects from them
-                .Select(pair => (pair.theorem, 
+                .Select(pair => (pair.theorem,
                     // Use the helper method
                     points1: pair.lineSegments[0].GetInnerConfigurationObjects().ToArray(),
                     points2: pair.lineSegments[1].GetInnerConfigurationObjects().ToArray()))
@@ -462,7 +462,7 @@ namespace GeoGen.TheoremProver
                 // Take only those where there is a common point
                 .Where(tuple => tuple.commonPoint != null)
                 // Find the other point for 
-                .Select(tuple => (tuple.theorem, tuple.commonPoint, 
+                .Select(tuple => (tuple.theorem, tuple.commonPoint,
                     // There should be exactly one other point
                     otherPoint1: tuple.points1.Where(point => point != tuple.commonPoint).First(),
                     otherPoint2: tuple.points2.Where(point => point != tuple.commonPoint).First()
@@ -486,7 +486,7 @@ namespace GeoGen.TheoremProver
         /// <param name="constructedObject">The object that should be currently mapped.</param>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private IEnumerable<MappingData> GenerateMappingsIncludingObject(MappingData data, ConstructedConfigurationObject constructedObject, SubtheoremsDeriverInput input)
+        private IEnumerable<MappingData> GenerateMappingsIncludingObject(MappingData data, ConstructedConfigurationObject constructedObject, SubtheoremDeriverInput input)
         {
             #region Creating the mapped object
 
@@ -494,7 +494,7 @@ namespace GeoGen.TheoremProver
             var mappedObjects = constructedObject.PassedArguments.FlattenedList.Select(o => data.Mapping[o]).ToArray();
 
             // Make sure there are no two equal objects. If yes, the mapping is incorrect
-            if (mappedObjects.Distinct().Count() != mappedObjects.Length)
+            if (mappedObjects.AnyDuplicates())
                 return Enumerable.Empty<MappingData>();
 
             // Create new arguments for the remapped object.

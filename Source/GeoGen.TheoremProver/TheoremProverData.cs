@@ -13,7 +13,7 @@ namespace GeoGen.TheoremProver
 
         /// <summary>
         /// The list of configurations together with their theorems that are supposed to be 
-        /// known and used to derive new theorems via <see cref="ISubtheoremsDeriver"/>.
+        /// known and used to derive new theorems via <see cref="ISubtheoremDeriver"/>.
         /// </summary>
         public IReadOnlyList<(Configuration, TheoremsMap)> TemplateTheorems { get; }
 

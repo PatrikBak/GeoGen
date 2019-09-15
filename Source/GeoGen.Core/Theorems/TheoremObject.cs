@@ -62,7 +62,7 @@ namespace GeoGen.Core
                 .ToArray();
 
             // If the objects are not same, the mapping cannot be done
-            if (mappedObjects.Distinct().Count() != mappedObjects.Length)
+            if (mappedObjects.AnyDuplicates())
                 return null;
 
             // Otherwise construct the remapped object

@@ -2,7 +2,6 @@
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using static GeoGen.Core.TheoremType;
 using static GeoGen.TheoremProver.DerivationRule;
@@ -11,7 +10,7 @@ namespace GeoGen.TheoremProver
 {
     /// <summary>
     /// The default implementation of <see cref="ITheoremProver"/>. This implementation combines
-    /// <see cref="ITrivialTheoremsProducer"/>, <see cref="ISubtheoremsDeriver"/>, 
+    /// <see cref="ITrivialTheoremsProducer"/>, <see cref="ISubtheoremDeriver"/>, 
     /// and various <see cref="ITheoremDeriver"/>s. Most of the complicated algorithmic work
     /// is delegated to a helper class <see cref="TheoremDerivationHelper"/>.
     /// </summary>
@@ -32,7 +31,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.
         /// </summary>
-        private readonly ISubtheoremsDeriver _subtheoremsDeriver;
+        private readonly ISubtheoremDeriver _subtheoremDeriver;
 
         #endregion
 
@@ -53,16 +52,16 @@ namespace GeoGen.TheoremProver
         /// <param name="data">The data for the prover.</param>
         /// <param name="derivers">The theorem derivers based on logical rules applied on the existing theorems.</param>
         /// <param name="trivialTheoremsProducer">The producer of trivial theorems.</param>
-        /// <param name="subtheoremsDeriver">The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.</param>
+        /// <param name="subtheoremDeriver">The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.</param>
         public TheoremProver(TheoremProverData data,
                              ITheoremDeriver[] derivers,
                              ITrivialTheoremsProducer trivialTheoremsProducer,
-                             ISubtheoremsDeriver subtheoremsDeriver)
+                             ISubtheoremDeriver subtheoremDeriver)
         {
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _derivers = derivers ?? throw new ArgumentNullException(nameof(derivers));
             _trivialTheoremsProducer = trivialTheoremsProducer ?? throw new ArgumentNullException(nameof(trivialTheoremsProducer));
-            _subtheoremsDeriver = subtheoremsDeriver ?? throw new ArgumentNullException(nameof(subtheoremsDeriver));
+            _subtheoremDeriver = subtheoremDeriver ?? throw new ArgumentNullException(nameof(subtheoremDeriver));
         }
 
         #endregion
@@ -105,13 +104,7 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
-            #region Subtheorems derivation
-
-            var subtheoremsSw = new Stopwatch();
-            var derivationsSw = new Stopwatch();
-
-            var derivations = 0;
-            var subtheorems = 0;
+            #region Subtheorem derivation
 
             // Prepare a set of object equalities
             var equalObjects = new HashSet<(ConfigurationObject, ConfigurationObject)>();
@@ -151,18 +144,14 @@ namespace GeoGen.TheoremProver
                     // Mark that we've used the template
                     usedTemplates.Add(template);
 
-                    subtheoremsSw.Start();
-
                     // Call the subtheorem algorithm
-                    var outputs = _subtheoremsDeriver.DeriveTheorems(new SubtheoremsDeriverInput
+                    var outputs = _subtheoremDeriver.DeriveTheorems(new SubtheoremDeriverInput
                     (
                         examinedConfigurationPicture: input.ContextualPicture,
                         examinedConfigurationTheorems: input.AllTheorems,
                         templateConfiguration: templateConfiguration,
                         templateTheorems: templateTheorems
-                    )).ToList();
-
-                    subtheoremsSw.Stop();
+                    ));
 
                     // Go through its outputs
                     foreach (var output in outputs)
@@ -189,21 +178,14 @@ namespace GeoGen.TheoremProver
                             // Prepare the needed assumptions by merging the used acts, equalities and incidences
                             var neededAsumptions = output.UsedFacts.Concat(usedEqualities).Concat(usedIncidences).ToArray();
 
-                            subtheorems++;
-                            derivations++;
-
-                            derivationsSw.Start();
                             // Add the subtheorem derivation
                             derivationHelper.AddSubtheoremDerivation(derivedTheorem, templateTheorem, neededAsumptions);
-
-                            derivationsSw.Stop();
                         }
                     }
                 }
             });
 
             #endregion
-
 
             #region Transitivities based on discovered object equalities
 
@@ -218,15 +200,10 @@ namespace GeoGen.TheoremProver
                 var theorem2 = new Theorem(configuration, EqualObjects, triple[1], triple[2]);
                 var theorem3 = new Theorem(configuration, EqualObjects, triple[2], triple[0]);
 
-                derivations += 3;
-                derivationsSw.Start();
-
                 // From every two we can derive the other
                 derivationHelper.AddDerivation(theorem1, Transitivity, new[] { theorem2, theorem3 });
                 derivationHelper.AddDerivation(theorem2, Transitivity, new[] { theorem3, theorem1 });
                 derivationHelper.AddDerivation(theorem3, Transitivity, new[] { theorem1, theorem2 });
-
-                derivationsSw.Stop();
             }));
 
             // Go through every incidence
@@ -257,13 +234,8 @@ namespace GeoGen.TheoremProver
                         // Create the derived theorem
                         var derivedTheorem = new Theorem(configuration, Incidence, otherGroup1Object, group2Object);
 
-                        derivations++;
-
-                        derivationsSw.Start();
-
                         // Add the derivation
                         derivationHelper.AddDerivation(derivedTheorem, Transitivity, new[] { usedEquality, newIncidence });
-
                     });
 
                     // Use every equality in the second group, except for the identity
@@ -275,22 +247,13 @@ namespace GeoGen.TheoremProver
                         // Create the derived theorem
                         var derivedTheorem = new Theorem(configuration, Incidence, otherGroup2Object, group1Object);
 
-                        derivations++;
-                        derivationsSw.Start();
-
                         // Add the derivation
                         derivationHelper.AddDerivation(derivedTheorem, Transitivity, new[] { usedEquality, newIncidence });
-                        derivationsSw.Stop();
                     });
                 });
             });
 
             #endregion
-
-
-            //Console.WriteLine($"SUB: {subtheoremsSw.ElapsedMilliseconds}, total: {subtheorems}, speed: {(subtheoremsSw.ElapsedMilliseconds == 0 ? "-" : ((double)subtheorems/subtheoremsSw.ElapsedMilliseconds).ToString())}");
-            //Console.WriteLine($"DER: {derivationsSw.ElapsedMilliseconds}, total: {derivations}, speed: {(derivationsSw.ElapsedMilliseconds == 0 ? "-" : ((double)derivations / derivationsSw.ElapsedMilliseconds).ToString())}"); 
-            //Console.WriteLine();
 
             // Let the helper construct the result
             return derivationHelper.ConstructResult();

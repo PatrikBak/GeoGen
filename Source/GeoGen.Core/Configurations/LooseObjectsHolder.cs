@@ -49,7 +49,7 @@ namespace GeoGen.Core
                 throw new GeoGenException($"The loose objects don't match the specified layout {layout}.");
 
             // Make sure they are distinct 
-            if (LooseObjects.Distinct().Count() != LooseObjects.Count)
+            if (LooseObjects.AnyDuplicates())
                 throw new GeoGenException("The loose objects are not distinct.");
         }
 

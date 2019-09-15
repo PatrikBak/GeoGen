@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents an output of the <see cref="ISubtheoremsDeriver"/>.
+    /// Represents an output of the <see cref="ISubtheoremDeriver"/>.
     /// </summary>
-    public class SubtheoremsDeriverOutput
+    public class SubtheoremDeriverOutput
     {
         #region Public properties
 
@@ -37,13 +37,13 @@ namespace GeoGen.TheoremProver
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubtheoremsDeriverOutput"/> class.
+        /// Initializes a new instance of the <see cref="SubtheoremDeriverOutput"/> class.
         /// </summary>
         /// <param name="derivedTheorems">The set of pairs of derived and template theorems.</param>
         /// <param name="usedEqualities">The set of all objects equalities that were needed to derive this theorem.</param>
         /// <param name="usedFacts">The set of theorems that are already known and needed to derive theorems.</param>
         /// <param name="usedIncidencies">The set of incidences, i.e. points lying on lines/circles, that are needed to derive theorems.</param>
-        public SubtheoremsDeriverOutput(IReadOnlyHashSet<(Theorem derivedTheorem, Theorem templateTheorem)> derivedTheorems,
+        public SubtheoremDeriverOutput(IReadOnlyHashSet<(Theorem derivedTheorem, Theorem templateTheorem)> derivedTheorems,
                                         IReadOnlyHashSet<(ConfigurationObject originalObject, ConfigurationObject equalObject)> usedEqualities,
                                         IReadOnlyHashSet<Theorem> usedFacts,
                                         IReadOnlyHashSet<(ConfigurationObject point, ConfigurationObject lineOrCircle)> usedIncidencies)
@@ -55,14 +55,14 @@ namespace GeoGen.TheoremProver
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SubtheoremsDeriverOutput"/> class that uses lists
+        /// Initializes a new instance of the <see cref="SubtheoremDeriverOutput"/> class that uses lists
         /// instead of sets.
         /// </summary>
         /// <param name="derivedTheorems">The list of pairs of derived and template theorems.</param>
         /// <param name="usedEqualities">The list of all objects equalities that were needed to derive this theorem.</param>
         /// <param name="usedFacts">The list of theorems that are already known and needed to derive theorems.</param>
         /// <param name="usedIncidencies">The list of incidences, i.e. points lying on lines/circles, that are needed to derive theorems.</param>
-        public SubtheoremsDeriverOutput(IReadOnlyList<(Theorem derivedTheorem, Theorem templateTheorem)> derivedTheorems,
+        public SubtheoremDeriverOutput(IReadOnlyList<(Theorem derivedTheorem, Theorem templateTheorem)> derivedTheorems,
                                         IReadOnlyList<(ConfigurationObject originalObject, ConfigurationObject equalObject)> usedEqualities,
                                         IReadOnlyList<Theorem> usedFacts,
                                         IReadOnlyList<(ConfigurationObject point, ConfigurationObject lineOrCircle)> usedIncidencies)
@@ -99,7 +99,7 @@ namespace GeoGen.TheoremProver
                 // Or the object is not null
                 || otherObject != null
                 // And it is a subtheorem deriver output
-                && otherObject is SubtheoremsDeriverOutput output
+                && otherObject is SubtheoremDeriverOutput output
                 // And the used equalities are the same
                 && UsedEqualities.Equals(output.UsedEqualities)
                 // And the derived theorems are the same

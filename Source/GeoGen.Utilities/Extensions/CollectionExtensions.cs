@@ -52,6 +52,6 @@ namespace GeoGen.Utilities
         /// <typeparam name="T">The type of items.</typeparam>
         /// <param name="collection">The collection.</param>
         /// <returns>true, if the collection contains duplicate items; false otherwise.</returns>
-        public static bool AnyDuplicates<T>(this IReadOnlyCollection<T> collection) => collection.Count == collection.Distinct().Count();
+        public static bool AnyDuplicates<T>(this IReadOnlyCollection<T> collection) => collection.Count != collection.Distinct().Count();
     }
 }
