@@ -163,6 +163,15 @@ namespace GeoGen.ConsoleLauncher
             }
         }
 
+        /// <summary>
+        /// Gets the name of the passed object.
+        /// </summary>
+        /// <param name="configurationObject">The object.</param>
+        /// <returns>The objects name.</returns>
+        public string GetNameOfObject(ConfigurationObject configurationObject) => _objectNames.GetOrDefault(configurationObject)
+            // If it's not there, make it known
+            ?? throw new GeoGenException("Unknown object.");
+
         #endregion
 
         #region Private methods

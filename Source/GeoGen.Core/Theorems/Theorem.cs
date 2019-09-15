@@ -101,17 +101,23 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Finds out if this theorem can be stated without explicitly mentioning
-        /// some of its internal configuration objects.
+        /// Finds the objects of the underlying configuration that are not needed to state this theorem.
         /// </summary>
-        /// <returns>true, if it cannot be stated in a smaller configuration; false otherwise.</returns>
-        public bool CanBeStatedInSmallerConfiguration()
+        /// <returns>The unnecessary objects with regards to this theorem.</returns>
+        public IReadOnlyList<ConfigurationObject> GetUnnecessaryObjects()
         {
-            // Take all the inner objects of the theorem objects
-            return InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects())
-                // The theorem can be stated in a smaller one if the number of the objects
-                // needed to define all of them is less than the total number of objects of the configuration
-                .GetDefiningObjects().Count() < Configuration.AllObjects.Count;
+            // Prepare the list of inner objects needed to define the theorem objects
+            // For each theorem object we can the method to find the inner configuration objects
+            var innerObjects = InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects())
+                // And use another helper method to find their inner defining objects
+                .GetDefiningObjects();
+
+            // From the objects of the configuration
+            return Configuration.AllObjects
+                // Exclude all the inner objects of the theorem objects
+                .Except(innerObjects)
+                // Enumerate
+                .ToList();
         }
 
         /// <summary>

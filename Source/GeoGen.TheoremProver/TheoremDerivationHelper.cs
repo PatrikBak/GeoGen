@@ -13,74 +13,8 @@ namespace GeoGen.TheoremProver
     /// constructs the final <see cref="TheoremProverOutput"/> that even has flattened
     /// transitivities (<see cref="GetRidOfNestedTransitivity(TheoremProverOutput)"/>).
     /// </summary>
-    public class TheoremDerivationHelper
+    public partial class TheoremDerivationHelper
     {
-        #region TheoremDerivationData class
-
-        /// <summary>
-        /// Represents metadata of a subtheorem derivation used as TData type for
-        /// <see cref="KnowledgeBase{TTheorem, TData}"/>.
-        /// </summary>
-        private class TheoremDerivationData
-        {
-            #region Public properties
-
-            /// <summary>
-            /// The used derivation rule.
-            /// </summary>
-            public DerivationRule Rule { get; }
-
-            #endregion
-
-            #region Constructor
-
-            /// <summary>
-            /// Initialize a new instance of the <see cref="TheoremDerivationData"/> class.
-            /// </summary>
-            /// <param name="rule">The used derivation rule.</param>
-            public TheoremDerivationData(DerivationRule rule)
-            {
-                Rule = rule;
-            }
-
-            #endregion
-        }
-
-        #endregion
-
-        #region SubtheoremDerivationData class
-
-        /// <summary>
-        /// Represents metadata of a subtheorem derivation.
-        /// </summary>
-        private class SubtheoremDerivationData : TheoremDerivationData
-        {
-            #region Public properties
-
-            /// <summary>
-            /// The theorem that is assumed to be true and was found implying some theorem.
-            /// </summary>
-            public Theorem TemplateTheorem { get; }
-
-            #endregion
-
-            #region Constructor
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="SubtheoremDerivationData"/> class.
-            /// </summary>
-            /// <param name="templateTheorem">The theorem that is assumed to be true and was found implying some theorem.</param>
-            public SubtheoremDerivationData(Theorem templateTheorem)
-                : base(DerivationRule.Subtheorem)
-            {
-                TemplateTheorem = templateTheorem ?? throw new ArgumentNullException(nameof(templateTheorem));
-            }
-
-            #endregion
-        }
-
-        #endregion
-
         #region Public properties
 
         /// <summary>
@@ -189,15 +123,28 @@ namespace GeoGen.TheoremProver
             => AddDerivation(derivedTheorem, new TheoremDerivationData(rule), neededTheorems);
 
         /// <summary>
-        /// Adds the derivation with the rule <see cref="Subtheorem"/>
-        /// of a given theorem using possibly some dependent theorems.
+        /// Adds the derivation of a given theorem using a given theorem derivation data and 
+        /// possibly some dependent theorems.
         /// </summary>
         /// <param name="derivedTheorem">The derived theorem.</param>
-        /// <param name="templateTheorem">The used template theorem.</param>
+        /// <param name="data">The metadata of the derivation.</param>
         /// <param name="neededTheorems">The theorems needed to be assumed for this derivation.</param>
-        public void AddSubtheoremDerivation(Theorem derivedTheorem, Theorem templateTheorem, IEnumerable<Theorem> neededTheorems)
-            // Delegate the call to the private method
-            => AddDerivation(derivedTheorem, new SubtheoremDerivationData(templateTheorem), neededTheorems);
+        public void AddDerivation(Theorem derivedTheorem, TheoremDerivationData data, IEnumerable<Theorem> neededTheorems)
+        {
+            // If this theorem is proven, don't do anything
+            if (_knowledgeBase.IsProven(derivedTheorem))
+                return;
+
+            // Make sure the needed theorems are marked as to be proven, if they are not already
+            foreach (var theorem in neededTheorems)
+                // If the current one is not proven
+                if (!_knowledgeBase.IsProven(theorem))
+                    // Add it to the dictionary mapping types to theorems to prove
+                    _allTheoremsToProve.GetOrAdd(theorem.Type, () => new HashSet<Theorem>()).Add(theorem);
+
+            // Add the derivation to the knowledge base
+            _knowledgeBase.AddDerivation(derivedTheorem, data, neededTheorems);
+        }
 
         /// <summary>
         /// Constructs a <see cref="TheoremProverOutput"/> representing the current state of the 
@@ -269,30 +216,6 @@ namespace GeoGen.TheoremProver
         #region Private methods
 
         /// <summary>
-        /// Adds the derivation of a given theorem using a given theorem derivation data and 
-        /// possibly some dependent theorems.
-        /// </summary>
-        /// <param name="derivedTheorem">The derived theorem.</param>
-        /// <param name="data">The metadata of the derivation.</param>
-        /// <param name="neededTheorems">The theorems needed to be assumed for this derivation.</param>
-        private void AddDerivation(Theorem derivedTheorem, TheoremDerivationData data, IEnumerable<Theorem> neededTheorems)
-        {
-            // If this theorem is proven, don't do anything
-            if (_knowledgeBase.IsProven(derivedTheorem))
-                return;
-
-            // Make sure the needed theorems are marked as to be proven, if they are not already
-            foreach (var theorem in neededTheorems)
-                // If the current one is not proven
-                if (!_knowledgeBase.IsProven(theorem))
-                    // Add it to the dictionary mapping types to theorems to prove
-                    _allTheoremsToProve.GetOrAdd(theorem.Type, () => new HashSet<Theorem>()).Add(theorem);
-
-            // Add the derivation to the knowledge base
-            _knowledgeBase.AddDerivation(derivedTheorem, data, neededTheorems);
-        }
-
-        /// <summary>
         /// Converts the type <see cref="TheoremDerivation{TTheorem, TData}"/> used by the <see cref="KnowledgeBase{TTheorem, TData}"/>
         /// to the type <see cref="TheoremProofAttempt"/> required to be returned by the prover service.
         /// </summary>
@@ -308,22 +231,11 @@ namespace GeoGen.TheoremProver
                 return cache[derivation];
 
             // Prepare the resulting attempt
-            var proofAttempt = derivation.Data switch
-            {
-                // Handle the subtheorem proof case
-                SubtheoremDerivationData subtheoremDerivationData => new SubtheoremProofAttempt
-                (
-                    theorem: derivation.Theorem,
-                    templateTheorem: subtheoremDerivationData.TemplateTheorem
-                ),
-
-                // By default construct a standard proof attempt
-                _ => new TheoremProofAttempt
-                (
-                    theorem: derivation.Theorem,
-                    rule: derivation.Data.Rule
-                )
-            };
+            var proofAttempt = new TheoremProofAttempt
+            (
+                theorem: derivation.Theorem,
+                data: derivation.Data
+            );
 
             // Cache the result
             // NOTE: It is important to do it now, because there might be (and usually is) a cycle
@@ -443,22 +355,11 @@ namespace GeoGen.TheoremProver
                 return ConvertTransitiviteAttempts(new[] { proofAttempt }, cache);
 
             // Prepare the resulting attempt
-            var convertedAttempt = proofAttempt switch
-            {
-                // Handle the subtheorem proof case
-                SubtheoremProofAttempt subtheoremProofAttempt => new SubtheoremProofAttempt
-                (
-                    theorem: proofAttempt.Theorem,
-                    templateTheorem: subtheoremProofAttempt.TemplateTheorem
-                ),
-
-                // By default construct a standard proof attempt
-                _ => new TheoremProofAttempt
-                (
-                    theorem: proofAttempt.Theorem,
-                    rule: proofAttempt.Rule
-                )
-            };
+            var convertedAttempt = new TheoremProofAttempt
+            (
+                theorem: proofAttempt.Theorem,
+                data: proofAttempt.Data
+            );
 
             // Cache it
             cache.Add(proofAttempt, convertedAttempt);
@@ -563,7 +464,7 @@ namespace GeoGen.TheoremProver
                             provenAssumptions.Add(new TheoremProofAttempt
                             (
                                 theorem: assumptionTheorem,
-                                rule: Transitivity,
+                                data: new TheoremDerivationData(Transitivity),
                                 provenAssumptions: new List<TheoremProofAttempt>(),
                                 unprovenAssumptions: new List<(Theorem, IReadOnlyList<TheoremProofAttempt>)>()
                             ));
@@ -593,7 +494,7 @@ namespace GeoGen.TheoremProver
             return new TheoremProofAttempt
             (
                 theorem: theoremBeingProven,
-                rule: Transitivity,
+                data: new TheoremDerivationData(Transitivity),
                 provenAssumptions: provenAssumptions,
                 unprovenAssumptions: unprovenAssumptions
             );

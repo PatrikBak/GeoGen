@@ -14,7 +14,7 @@ namespace GeoGen.Core.Tests
     public class TheoremTest
     {
         [Test]
-        public void Test_CanBeStatedInSmallerConfiguration_ConcurrentMedians()
+        public void Test_GetUnnecessaryObjects_ConcurrentMedians()
         {
             // Draw configuration with medians
             var A = new LooseConfigurationObject(Point);
@@ -34,11 +34,11 @@ namespace GeoGen.Core.Tests
                 new LineTheoremObject(B, mAC),
                 new LineTheoremObject(C, mAB)
             })
-            .CanBeStatedInSmallerConfiguration().Should().BeFalse();
+            .GetUnnecessaryObjects().Should().BeEmpty();
         }
 
         [Test]
-        public void Test_CanBeStatedInSmallerConfiguration_Midline_Is_Half_Of_Side()
+        public void Test_GetUnnecessaryObjects_Midline_Is_Half_Of_Side()
         {
             // Draw configuration with medians
             var A = new LooseConfigurationObject(Point);
@@ -57,7 +57,7 @@ namespace GeoGen.Core.Tests
                 new LineSegmentTheoremObject(mAB, mAC),
                 new LineSegmentTheoremObject(B, mBC)
             })
-            .CanBeStatedInSmallerConfiguration().Should().BeFalse();
+            .GetUnnecessaryObjects().Should().BeEmpty();
 
             // Analogously this couldn't be stated in a smaller configuration either
             new Theorem(configuration, EqualLineSegments, new[]
@@ -65,11 +65,11 @@ namespace GeoGen.Core.Tests
                 new LineSegmentTheoremObject(mAB, mAC),
                 new LineSegmentTheoremObject(C, mBC)
             })
-            .CanBeStatedInSmallerConfiguration().Should().BeFalse();
+            .GetUnnecessaryObjects().Should().BeEmpty();
         }
 
         [Test]
-        public void Test_CanBeStatedInSmallerConfiguration_Midline_Is_Parallel_To_Side()
+        public void Test_GetUnnecessaryObjects_Midline_Is_Parallel_To_Side()
         {
             // Draw configuration with medians
             var A = new LooseConfigurationObject(Point);
@@ -88,7 +88,7 @@ namespace GeoGen.Core.Tests
                 new LineTheoremObject(B, C),
                 new LineTheoremObject(mAB, mAC)
             })
-            .CanBeStatedInSmallerConfiguration().Should().BeTrue();
+            .GetUnnecessaryObjects().Should().BeEquivalentTo(new[] { mBC });
         }
     }
 }

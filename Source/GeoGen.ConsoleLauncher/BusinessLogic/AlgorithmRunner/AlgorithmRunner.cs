@@ -327,7 +327,7 @@ namespace GeoGen.ConsoleLauncher
                 return $"{result} - no clue";
 
             // Otherwise there was at least one attempt, append the information about their count
-            result += $" - not proven, {unfinishedProofs.Count} attempt{(unfinishedProofs.Count == 1 ? "" : "s")} at proving it:\n\n";
+            result += $" - not proven, {unfinishedProofs.Count} attempt{(unfinishedProofs.Count == 1 ? "" : "s")} to prove it:\n\n";
 
             // We're going to gradually append reports from every (unsuccessful) attempt
             unfinishedProofs.ForEach((proofAttempt, index) =>
@@ -389,7 +389,7 @@ namespace GeoGen.ConsoleLauncher
             var result = includeStatement ? formatter.FormatTheorem(proofAttempt.Theorem) : "";
 
             // Append the explanation
-            result += $" - {GetExplanation(proofAttempt)}";
+            result += $" - {GetExplanation(proofAttempt, formatter)}";
 
             // If there are any coming theorems to be described, make an empty line
             if (proofAttempt.ProvenAssumptions.Count != 0 || proofAttempt.UnprovenAssumptions.Count != 0)
@@ -421,7 +421,7 @@ namespace GeoGen.ConsoleLauncher
                     // If it's untagged, recursively find the report for it
                     ProofReport(innerAttempt, formatter, theoremTags, untrimmedTag) :
                     // Otherwise just state it again and add the explanation and the reference to it
-                    $"{formatter.FormatTheorem(theorem)} - {GetExplanation(innerAttempt)} - theorem {theoremTags[theorem]}";
+                    $"{formatter.FormatTheorem(theorem)} - {GetExplanation(innerAttempt, formatter)} - theorem {theoremTags[theorem]}";
 
                 // Add the description to the result
                 result += $"{untrimmedTag} {reason}\n";
@@ -467,8 +467,9 @@ namespace GeoGen.ConsoleLauncher
         /// Returns a string representation of how the theorem was proved or was attempted to be proven.
         /// </summary>
         /// <param name="proofAttempt">The attempt.</param>
+        /// <param name="formatter">The formatter of the configuration in which the theorem holds.</param>
         /// <returns>The explanation.</returns>
-        private static string GetExplanation(TheoremProofAttempt proofAttempt)
+        private static string GetExplanation(TheoremProofAttempt proofAttempt, OutputFormatter formatter)
         {
             // Prepare the helper variable indicating whether the theorem has been proven
             var isProved = proofAttempt.UnprovenAssumptions.IsEmpty();
@@ -484,7 +485,18 @@ namespace GeoGen.ConsoleLauncher
                 // Case when it's not in a previous configuration, but can be declared in one
                 // There are no needed theorems to make this conclusion, i.e. the theorem is right
                 case DerivationRule.DefinableSimpler:
-                    return "can be defined in a smaller configuration";
+
+                    // Get the redundant objects
+                    var redundantObjects = ((DefinableSimplerDerivationData)proofAttempt.Data).RedundantObjects
+                        // Get their names
+                        .Select(formatter.GetNameOfObject)
+                        // Sort them
+                        .Ordered()
+                        // Join together
+                        .ToJoinedString();
+
+                    // Return the final conclusion with these objects included
+                    return $"can be stated without {redundantObjects}";
 
                 // Case when it's a trivial consequence of the construction of the object
                 // There are no needed theorems to make this conclusion, i.e. the theorem is right
@@ -501,7 +513,7 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.Subtheorem:
 
                     // Pull the template theorem
-                    var templateTheorem = (TemplateTheorem)((SubtheoremProofAttempt)proofAttempt).TemplateTheorem;
+                    var templateTheorem = (TemplateTheorem)((SubtheoremDerivationData)proofAttempt.Data).TemplateTheorem;
 
                     // Return the right message based on whether is proven
                     return isProved ? $"consequence of {templateTheorem.Number} from {templateTheorem.FileName}"
@@ -509,7 +521,7 @@ namespace GeoGen.ConsoleLauncher
 
                 // Default case
                 default:
-                    throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Rule}");
+                    throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data}");
             }
         }
 

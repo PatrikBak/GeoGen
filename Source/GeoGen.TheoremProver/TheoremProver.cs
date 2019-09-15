@@ -90,8 +90,15 @@ namespace GeoGen.TheoremProver
 
             // Add theorems definable simpler as not interesting ones
             foreach (var theorem in input.NewTheorems.AllObjects)
-                if (theorem.CanBeStatedInSmallerConfiguration())
-                    derivationHelper.AddDerivation(theorem, DefinableSimpler, Array.Empty<Theorem>());
+            {
+                // For a theorem find unnecessary objects
+                var unnecessaryObjects = theorem.GetUnnecessaryObjects();
+
+                // If there are any...
+                if (unnecessaryObjects.Any())
+                    // Add the derivation
+                    derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(unnecessaryObjects), Array.Empty<Theorem>());
+            }
 
             // Add all trivial theorems as not interesting ones
             foreach (var theorem in _trivialTheoremsProducer.DeriveTrivialTheoremsFromLastObject(configuration))
@@ -179,7 +186,7 @@ namespace GeoGen.TheoremProver
                             var neededAsumptions = output.UsedFacts.Concat(usedEqualities).Concat(usedIncidences).ToArray();
 
                             // Add the subtheorem derivation
-                            derivationHelper.AddSubtheoremDerivation(derivedTheorem, templateTheorem, neededAsumptions);
+                            derivationHelper.AddDerivation(derivedTheorem, new SubtheoremDerivationData(templateTheorem), neededAsumptions);
                         }
                     }
                 }

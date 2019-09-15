@@ -21,9 +21,14 @@ namespace GeoGen.TheoremProver
         public Theorem Theorem { get; }
 
         /// <summary>
-        /// The derivation rule that was used in this attempt.
+        /// The data of this attempt.
         /// </summary>
-        public DerivationRule Rule { get; }
+        public TheoremDerivationData Data { get; }
+
+        /// <summary>
+        /// The used derivation rule.
+        /// </summary>
+        public DerivationRule Rule => Data.Rule;
 
         /// <summary>
         /// The proven assumptions of the used <see cref="Rule"/>.
@@ -48,16 +53,16 @@ namespace GeoGen.TheoremProver
         /// Initializes a new instance of the <see cref="TheoremProofAttempt"/> class.
         /// </summary>
         /// <param name="theorem">The theorem that was attempted to be proven.</param>
-        /// <param name="rule">The derivation rule that was used in this attempt.</param>
+        /// <param name="data">The data of this attempt.</param>
         /// <param name="provenAssumptions">The proven assumptions of the used <see cref="Rule"/>.</param>
         /// <param name="unprovenAssumptions">The unproven assumptions of the used <see cref="Rule"/>, with all the attempts to prove each of them.</param> 
         public TheoremProofAttempt(Theorem theorem,
-                                   DerivationRule rule,
+                                   TheoremDerivationData data,
                                    IReadOnlyList<TheoremProofAttempt> provenAssumptions,
                                    IReadOnlyList<(Theorem theorem, IReadOnlyList<TheoremProofAttempt> unfinishedProofs)> unprovenAssumptions)
         {
             Theorem = theorem ?? throw new ArgumentNullException(nameof(theorem));
-            Rule = rule;
+            Data = data ?? throw new ArgumentNullException(nameof(data));
             ProvenAssumptions = provenAssumptions ?? throw new ArgumentNullException(nameof(provenAssumptions));
             UnprovenAssumptions = unprovenAssumptions ?? throw new ArgumentNullException(nameof(unprovenAssumptions));
         }
@@ -67,11 +72,11 @@ namespace GeoGen.TheoremProver
         /// with deferred setting of <see cref="ProvenAssumptions"/> and <see cref="UnprovenAssumptions"/>.
         /// </summary>
         /// <param name="theorem">The theorem that was attempted to be proven.</param>
-        /// <param name="rule">The derivation rule that was used in this attempt.</param>
-        internal TheoremProofAttempt(Theorem theorem, DerivationRule rule)
+        /// <param name="data">The data of this attempt.</param>
+        internal TheoremProofAttempt(Theorem theorem, TheoremDerivationData data)
         {
             Theorem = theorem ?? throw new ArgumentNullException(nameof(theorem));
-            Rule = rule;
+            Data = data ?? throw new ArgumentNullException(nameof(data));
         }
 
         #endregion
