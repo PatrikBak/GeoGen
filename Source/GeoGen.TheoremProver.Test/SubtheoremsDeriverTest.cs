@@ -23,23 +23,6 @@ namespace GeoGen.TheoremProver.Test
     [TestFixture]
     public class SubtheoremsDeriverTest
     {
-        #region Outputs comparer
-
-        /// <summary>
-        /// The equality comparer for <see cref="SubtheoremsDeriverOutput"/>.
-        /// </summary>
-        private static readonly IEqualityComparer<SubtheoremsDeriverOutput> OutputsComparer = new SimpleEqualityComparer<SubtheoremsDeriverOutput>(
-            // They're the same when the used equalities are the same 
-            (o1, o2) => o1.UsedEqualities.OrderlessEquals(o2.UsedEqualities)
-                    // And the derived theorems are the same
-                    && o1.DerivedTheorems.OrderlessEquals(o2.DerivedTheorems)
-                    // And the used facts are the same
-                    && o1.UsedFacts.OrderlessEquals(o2.UsedFacts)
-                    // And the used incidences are the same as well
-                    && o1.UsedIncidencies.OrderlessEquals(o2.UsedIncidencies));
-
-        #endregion
-
         #region Run and check methods
 
         /// <summary>
@@ -106,13 +89,13 @@ namespace GeoGen.TheoremProver.Test
         private void CheckForEquivalncyOfResults(List<SubtheoremsDeriverOutput> result, IEnumerable<SubtheoremsDeriverOutput> expected)
         {
             // Find the items that are expected and not in the result
-            var nonexistingExpectedOutputs = expected.Except(result, OutputsComparer).ToList();
+            var nonexistingExpectedOutputs = expected.Except(result).ToList();
 
             // Assert its empty
             nonexistingExpectedOutputs.Should().BeEmpty();
 
             // Find the items that results and not in the expected list
-            var unexpectedResults = result.Except(expected, OutputsComparer).ToList();
+            var unexpectedResults = result.Except(expected).ToList();
 
             // Assert its empty
             unexpectedResults.Should().BeEmpty();
@@ -127,7 +110,7 @@ namespace GeoGen.TheoremProver.Test
         private void CheckThatResultsContain(List<SubtheoremsDeriverOutput> result, IEnumerable<SubtheoremsDeriverOutput> expectedSubset)
         {
             // Find the items that are expected and not in the result
-            var nonexistingExpectedOutputs = expectedSubset.Except(result, OutputsComparer).ToList();
+            var nonexistingExpectedOutputs = expectedSubset.Except(result).ToList();
 
             // Assert its empty
             nonexistingExpectedOutputs.Should().BeEmpty();
@@ -1508,76 +1491,6 @@ namespace GeoGen.TheoremProver.Test
 
         #endregion  
 
-        #region Three cyclic quadrilaterals on six points layout
-
-        [Test]
-        public void Test_Radical_Axis_Theorem()
-        {
-            // Create the template configuration's objects
-            var A_ = new LooseConfigurationObject(Point);
-            var B_ = new LooseConfigurationObject(Point);
-            var C_ = new LooseConfigurationObject(Point);
-            var D_ = new LooseConfigurationObject(Point);
-            var E_ = new LooseConfigurationObject(Point);
-            var F_ = new LooseConfigurationObject(Point);
-
-            // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreeCyclicQuadrilatersOnSixPoints, A_, B_, C_, D_, E_, F_);
-
-            // Create the template theorems
-            var templateTheorems = new[]
-            {
-                new Theorem(templateConfiguration, ConcurrentObjects, new[]
-                {
-                    new LineTheoremObject(A_, B_),
-                    new LineTheoremObject(C_, D_),
-                    new LineTheoremObject(E_, F_)
-                })
-            };
-
-            // Create the examined configuration's objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var H = new ConstructedConfigurationObject(Orthocenter, A, B, C);
-            var H1 = new ConstructedConfigurationObject(ReflectionInLineFromPoints, H, A, B);
-            var D = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, H, H1, A, B, C);
-
-            // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D);
-
-            // Run
-            var results = Run(examinedConfiguration, templateTheorems);
-
-            // Check results
-            CheckForEquivalncyOfResults(results, new[]
-            {
-                new SubtheoremsDeriverOutput
-                (
-                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
-                    {
-                        (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
-                        {
-                            new LineTheoremObject(A, H1),
-                            new LineTheoremObject(H, D),
-                            new LineTheoremObject(B, C)
-                        }),
-                        templateTheorems[0])
-                    },
-                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
-                    usedFacts: new List<Theorem>
-                    {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, H, D),
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, H1, B, C),
-                        new Theorem(examinedConfiguration, ConcyclicPoints, H, D, B, C)
-                    },
-                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
-                )
-            });
-        }
-
-        #endregion
-
         #region Right triangle layout
 
         [Test]
@@ -1796,7 +1709,7 @@ namespace GeoGen.TheoremProver.Test
             var D_ = new LooseConfigurationObject(Point);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(CircleFromPointAndItsTangentLineAtOnePoint, A_, B_, C_, D_);
+            var templateConfiguration = Configuration.DeriveFromObjects(CircleAndTangentLine, A_, B_, C_, D_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -1884,7 +1797,7 @@ namespace GeoGen.TheoremProver.Test
             var D_ = new LooseConfigurationObject(Point);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(CircleFromPointAndItsTangentLineAtOnePoint, A_, B_, C_, D_);
+            var templateConfiguration = Configuration.DeriveFromObjects(CircleAndTangentLine, A_, B_, C_, D_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]

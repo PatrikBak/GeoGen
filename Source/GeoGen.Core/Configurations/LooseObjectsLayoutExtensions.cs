@@ -22,14 +22,11 @@ namespace GeoGen.Core
                 // 3 points
                 ThreePoints => new[] { Point, Point, Point },
 
-                // 6 points
-                ThreeCyclicQuadrilatersOnSixPoints => new[] { Point, Point, Point, Point, Point, Point },
-
                 // 4 points
                 Trapezoid => new[] { Point, Point, Point, Point },
 
                 // 4 points
-                CircleFromPointAndItsTangentLineAtOnePoint => new[] { Point, Point, Point, Point },
+                CircleAndTangentLine => new[] { Point, Point, Point, Point },
 
                 // 4 points
                 FourPoints => new[] { Point, Point, Point, Point },
@@ -51,9 +48,6 @@ namespace GeoGen.Core
 
                 // 3 points
                 RightTriangle => new[] { Point, Point, Point },
-
-                // 4 points
-                LineSegmentBisectedByLineFromPoints => new[] { Point, Point, Point, Point },
 
                 // Default case
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),

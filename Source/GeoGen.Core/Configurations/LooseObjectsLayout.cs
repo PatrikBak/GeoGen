@@ -1,10 +1,7 @@
 ﻿namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a way in which the loose objects of a configuration are arranged.  
-    /// 
-    /// TODO: Parallelogram layout, for speed up
-    /// 
+    /// Represents a way in which the loose objects of a configuration are arranged.
     /// </summary>
     public enum LooseObjectsLayout
     {
@@ -20,7 +17,7 @@
         ThreePoints,
 
         /// <summary>
-        /// Represents three points A, B, C, where AB is supposed to be equal to AC.
+        /// Represents three points A, B, C, where AB = AC.
         /// </summary>
         IsoscelesTriangle,
 
@@ -30,18 +27,13 @@
         RightTriangle,
 
         /// <summary>
-        /// Represents four points A, B, C, D such that CD is the perpendicular bisector of AB.
-        /// </summary>
-        LineSegmentBisectedByLineFromPoints,
-
-        /// <summary>
         /// Represents 4 points, where no 3 of them are collinear. When drawn they make 
         /// a convex quadrilateral. 
         /// </summary>
         FourPoints,
 
         /// <summary>
-        /// Represents 4 points, where no 3 of them are collinear, that lie on a single circle.
+        /// Represents 4 points that lie on a single circle.
         /// </summary>
         FourConcyclicPoints,
 
@@ -61,15 +53,8 @@
         Trapezoid,
 
         /// <summary>
-        /// Represents points A, B, C, D, E, F such that there are three circles
-        /// (ABCD), (CDEF), (EFAB) (from the radical axis theorem this means that
-        /// lines AB, CD, EF are concurrent).
-        /// </summary>
-        ThreeCyclicQuadrilatersOnSixPoints,
-
-        /// <summary>
         /// Represents points A, B, C, D such that DA is tangent to circle (ABC).
         /// </summary>
-        CircleFromPointAndItsTangentLineAtOnePoint
+        CircleAndTangentLine
     }
 }

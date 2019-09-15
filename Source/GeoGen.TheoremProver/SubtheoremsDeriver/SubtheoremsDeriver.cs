@@ -12,9 +12,21 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// A default implementation of <see cref="ISubtheoremsDeriver"/>.
+    /// A default implementation of <see cref="ISubtheoremsDeriver"/>. 
     /// 
-    /// TODO: How does this class know what derivers were used?
+    /// Supported <see cref="LooseObjectsLayout"/> of <see cref="SubtheoremsDeriverInput.TemplateTheorems"/>:
+    /// 
+    ///  - TwoPoints
+    ///  - ThreePoints
+    ///  - FourPoints
+    ///  - FourConcyclicPoints (uses <see cref="ContextualPicture"/> to get the concyclic points)
+    ///  - Trapezoid (uses <see cref="ParallelLines"/>)
+    ///  - RightTriangle (uses <see cref="PerpendicularLine"/>)
+    ///  - CircleAndTangentLine (uses <see cref="LineTangentToCircle"/>)
+    ///  - IsoscelesTriangle (uses <see cref="EqualLineSegments"/>)
+    ///  
+    /// If the theorems needed for a specific layout aren't provided (for example, because there are not being found),
+    /// then the deriver will not match the layout.
     /// </summary>
     public class SubtheoremsDeriver : ISubtheoremsDeriver
     {
@@ -216,15 +228,7 @@ namespace GeoGen.TheoremProver
                     usedIncidencies: pair.data.UsedIncidencies
                 ))
                 // Don't take outputs with the same theorems and reasoning
-                .Distinct(new SimpleEqualityComparer<SubtheoremsDeriverOutput>(
-                    // They're the same when the used equalities are the same 
-                    (o1, o2) => o1.UsedEqualities.OrderlessEquals(o2.UsedEqualities)
-                        // And the derived theorems are the same
-                        && o1.DerivedTheorems.OrderlessEquals(o2.DerivedTheorems)
-                        // And the used facts are the same
-                        && o1.UsedFacts.OrderlessEquals(o2.UsedFacts)
-                        // And the used incidences are the same as well
-                        && o1.UsedIncidencies.OrderlessEquals(o2.UsedIncidencies)));
+                .Distinct();
         }
 
         /// <summary>
@@ -238,9 +242,6 @@ namespace GeoGen.TheoremProver
             // Return the answer based on the layout of the template theorem
             return input.TemplateConfiguration.LooseObjectsHolder.Layout switch
             {
-                // Three cyclic quadruples on six points
-                ThreeCyclicQuadrilatersOnSixPoints => GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(input),
-
                 // Trapezoid
                 Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
@@ -260,7 +261,7 @@ namespace GeoGen.TheoremProver
                 RightTriangle => GenerateInitialMappingsForRightTriangleLayout(input),
 
                 // Tangent line 
-                CircleFromPointAndItsTangentLineAtOnePoint => GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(input),
+                CircleAndTangentLine => GenerateInitialMappingsForCircleAndTangentLineLayout(input),
 
                 // Isosceles triangle
                 IsoscelesTriangle => GenerateInitialMappingsForIsoscelesTriangleLayout(input),
@@ -315,71 +316,6 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="ThreeCyclicQuadrilatersOnSixPoints"/>.
-        /// </summary>
-        /// <param name="input">The algorithm input.</param>
-        /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForThreeCyclicQuadrilatersOnSixPointsLayout(SubtheoremsDeriverInput input)
-        {
-            // We start with getting all circles
-            return input.ExaminedConfigurationPicture.AllCircles
-                // That contain at least three points
-                .Where(circle => circle.Points.Count >= 4)
-                // We take their unordered triples
-                .Subsets(3)
-                // For each triple of circles create three possible pairs of them
-                .Select(triple => new[] { (triple[0], triple[1]), (triple[1], triple[2]), (triple[2], triple[0]) })
-                // For each triple of these pairs find common points
-                .Select(tripleOfPairs => tripleOfPairs.Select(pair => pair.Item1.CommonPointsWith(pair.Item2).ToArray()).ToArray())
-                // Take only those triples of common points where each of them has exactly 2 points
-                .Where(commonPointsInPairs => commonPointsInPairs.All(points => points.Length == 2))
-                // Flatten them
-                .Select(commonPointsInPairs => (flattenedPoints: new[]
-                {
-                    commonPointsInPairs[0][0].ConfigurationObject,
-                    commonPointsInPairs[0][1].ConfigurationObject,
-                    commonPointsInPairs[1][0].ConfigurationObject,
-                    commonPointsInPairs[1][1].ConfigurationObject,
-                    commonPointsInPairs[2][0].ConfigurationObject,
-                    commonPointsInPairs[2][1].ConfigurationObject
-                },
-                concyclicPoints: new[]
-                {
-                    new[]
-                    {
-                        commonPointsInPairs[0][0].ConfigurationObject,
-                        commonPointsInPairs[0][1].ConfigurationObject,
-                        commonPointsInPairs[1][0].ConfigurationObject,
-                        commonPointsInPairs[1][1].ConfigurationObject
-                    },
-                    new[]
-                    {
-                        commonPointsInPairs[1][0].ConfigurationObject,
-                        commonPointsInPairs[1][1].ConfigurationObject,
-                        commonPointsInPairs[2][0].ConfigurationObject,
-                        commonPointsInPairs[2][1].ConfigurationObject
-                    },
-                    new[]
-                    {
-                        commonPointsInPairs[2][0].ConfigurationObject,
-                        commonPointsInPairs[2][1].ConfigurationObject,
-                        commonPointsInPairs[0][0].ConfigurationObject,
-                        commonPointsInPairs[0][1].ConfigurationObject
-                    },
-                }))
-                // Now we finally have our 6 points that compose a correct layout
-                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.flattenedPoints,
-                    // And we create concyclicity theorems
-                    pair.concyclicPoints
-                    // from each of the three used circles
-                    .Select(points => new Theorem(input.ExaminedConfigurationPicture.Pictures.Configuration, ConcyclicPoints, points))
-                    // As an array
-                    .ToArray()));
-        }
-
-        /// <summary>
-        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
-        /// and the loose objects of the template theorem in case where the layout of the template
         /// configuration is <see cref="Trapezoid"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
@@ -388,29 +324,27 @@ namespace GeoGen.TheoremProver
         {
             // Take the parallel lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(ParallelLines)
+                // Where both the lines objects are defined by points
+                ?.Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
                 // From each theorem object unwrap points
-                ?.Select(theorem => (theorem, linePoints: new[]
-                {
-                    ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
-                    ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
-                }))
-                // For each such a pair of lines we take all pairs of points from one line
-                .Select(pair => new[]
-                    {
-                        pair.linePoints[0].Variations(2),
-                        pair.linePoints[1].Variations(2)
-                    }
-                    // Combine them
-                    .Combine()
-                    // And add the used theorem
-                    .Select(option => (pair.theorem, option)))
-                // This way we get enumerable of pairs of pairs of points, so we flatten it
-                .Flatten()
-                // In each we might even exchange points from the line, like (A,B,C,D) --> (C,D,A,B)
+                .Select(theorem => (theorem,
+                    // We now know we have two lines defined by points
+                    points1: ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
+                    points2: ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
+                ))
+                // Flatten them
+                .Select(pair => (pair.theorem, points: pair.points1.Concat(pair.points2).ToArray()))
+                // Reorder to get every possible valid mapping
                 .SelectMany(pair => new[]
                 {
-                    (pair.theorem, points: new[] { pair.option[0][0], pair.option[0][1], pair.option[1][0], pair.option[1][1] }),
-                    (pair.theorem, points: new[] { pair.option[1][0], pair.option[1][1], pair.option[0][0], pair.option[0][1] })
+                    (pair.theorem, points: new[] { pair.points[0], pair.points[1], pair.points[2], pair.points[3] }),
+                    (pair.theorem, points: new[] { pair.points[1], pair.points[0], pair.points[2], pair.points[3] }),
+                    (pair.theorem, points: new[] { pair.points[0], pair.points[1], pair.points[3], pair.points[2] }),
+                    (pair.theorem, points: new[] { pair.points[1], pair.points[0], pair.points[3], pair.points[2] }),
+                    (pair.theorem, points: new[] { pair.points[2], pair.points[3], pair.points[0], pair.points[1] }),
+                    (pair.theorem, points: new[] { pair.points[2], pair.points[3], pair.points[1], pair.points[0] }),
+                    (pair.theorem, points: new[] { pair.points[3], pair.points[2], pair.points[0], pair.points[1] }),
+                    (pair.theorem, points: new[] { pair.points[3], pair.points[2], pair.points[1], pair.points[0] })
                 })
                 // These points finally represent one of our sought trapezoids
                 .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
@@ -429,29 +363,29 @@ namespace GeoGen.TheoremProver
         {
             // Take the perpendicular lines theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(PerpendicularLines)
+                // Where both the lines objects are defined by points
+                ?.Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
                 // From each theorem object unwrap points
-                ?.Select(theorem => (theorem, pointArrays: new[]
-                {
-                    ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
-                    ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
-                }))
-                // Find their common points (should be at most one)
-                .Select(pair => (pair.theorem, pair.pointArrays, commonPoint: pair.pointArrays[0].Intersect(pair.pointArrays[1]).FirstOrDefault()))
+                .Select(theorem => (theorem, 
+                    // We now know we have two lines defined by points
+                    points1:  ((LineTheoremObject)theorem.InvolvedObjectsList[0]).Points,
+                    points2:  ((LineTheoremObject)theorem.InvolvedObjectsList[1]).Points
+                ))
+                // Find their common point (should be at most one)
+                .Select(pair => (pair.theorem, pair.points1, pair.points2, commonPoint: pair.points1.Intersect(pair.points2).FirstOrDefault()))
                 // Take only those where there is a common point
-                .Where(triple => triple.commonPoint != null)
+                .Where(tuple => tuple.commonPoint != null)
                 // Get those points on particular lines that are distinct from the common one
-                .Select(triple => (triple.theorem, triple.commonPoint, otherPoints: new[]
-                {
-                    triple.pointArrays[0].Where(point => point != triple.commonPoint),
-                    triple.pointArrays[1].Where(point => point != triple.commonPoint)
-                }))
-                // Combine the points from the lines
-                .SelectMany(triple => triple.otherPoints.Combine().Select(twoPoints => (triple.theorem, triple.commonPoint, twoPoints)))
-                // Flatten the tuple to a single array + exchange the points
+                .Select(triple => (triple.theorem, triple.commonPoint, 
+                    // Each line should have one other point
+                    otherPoint1: triple.points1.Where(point => point != triple.commonPoint).First(),
+                    otherPoint2: triple.points2.Where(point => point != triple.commonPoint).First()
+                ))
+                // Reorder to get every possible valid mapping
                 .SelectMany(triple => new[]
                 {
-                    (triple.theorem, points: new[] { triple.commonPoint, triple.twoPoints[0], triple.twoPoints[1] }),
-                    (triple.theorem, points: new[] { triple.commonPoint, triple.twoPoints[1], triple.twoPoints[0] })
+                    (triple.theorem, points: new[] { triple.commonPoint, triple.otherPoint1, triple.otherPoint2 }),
+                    (triple.theorem, points: new[] { triple.commonPoint, triple.otherPoint2, triple.otherPoint1 })
                 })
                 // These points finally represent one of our sought right triangle
                 .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
@@ -462,16 +396,18 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects of the template theorem in case where the layout of the template
-        /// configuration is <see cref="CircleFromPointAndItsTangentLineAtOnePoint"/>.
+        /// configuration is <see cref="CircleAndTangentLine"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>
-        private static IEnumerable<MappingData> GenerateInitialMappingsForCircleFromPointAndItsTangentLineAtOnePointLayout(SubtheoremsDeriverInput input)
+        private static IEnumerable<MappingData> GenerateInitialMappingsForCircleAndTangentLineLayout(SubtheoremsDeriverInput input)
         {
             // Take the line tangent to circle theorems from the configuration
             return input.ExaminedConfigurationTheorems.GetOrDefault(LineTangentToCircle)
-                // From each theorem object unwrap points
-                ?.Select(theorem => (theorem, lineCirclePoints: new[]
+                // Where both line and circle are defined by points
+                ?.Where(theorem => theorem.InvolvedObjects.All(lineOrCircle => ((TheoremObjectWithPoints)lineOrCircle).DefinedByPoints))
+                // From particular theorem objects unwrap points
+                .Select(theorem => (theorem, lineCirclePoints: new[]
                 {
                     theorem.InvolvedObjects.OfType<LineTheoremObject>().First().Points,
                     theorem.InvolvedObjects.OfType<CircleTheoremObject>().First().Points
@@ -480,16 +416,19 @@ namespace GeoGen.TheoremProver
                 .Select(pair => (pair.theorem, pointArrays: pair.lineCirclePoints, commonPoint: pair.lineCirclePoints[0].Intersect(pair.lineCirclePoints[1]).FirstOrDefault()))
                 // Take only those where there is a common point
                 .Where(triple => triple.commonPoint != null)
-                // We need to combine points from the line with ordered pairs of points from the circle
-                .Select(triple => (triple.theorem, triple.commonPoint, otherPoints: new[]
+                // Get those points on particular objects that are distinct from the common one
+                .Select(triple => (triple.theorem, triple.commonPoint,
+                    // The line has only one other point
+                    linePoint: triple.pointArrays[0].Where(point => point != triple.commonPoint).First(),
+                    // The circle has 2 other points
+                    circlePoints: triple.pointArrays[1].Where(point => point != triple.commonPoint).ToArray()
+                ))
+                // Reorder to get every possible valid mapping
+                .SelectMany(tuple => new[]
                 {
-                    triple.pointArrays[1].Where(point => point != triple.commonPoint).Variations(2),
-                    triple.pointArrays[0].Where(point => point != triple.commonPoint).Select(point => point.ToEnumerable())
-                }))
-                // With this array we can use the Combine method to do the combination
-                .SelectMany(triple => triple.otherPoints.Combine().Select(twoArrays => (triple.theorem, triple.commonPoint, twoArrays)))
-                // Finally each tuple represents points that we need to flatten
-                .Select(triple => (triple.theorem, points: triple.commonPoint.ToEnumerable().Concat(triple.twoArrays.Flatten())))
+                    (tuple.theorem, points: new[] { tuple.commonPoint, tuple.circlePoints[0], tuple.circlePoints[1], tuple.linePoint }),
+                    (tuple.theorem, points: new[] { tuple.commonPoint, tuple.circlePoints[1], tuple.circlePoints[0], tuple.linePoint })
+                })
                 // These points finally represent one of our sought situation
                 .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
                 // If there are no line tangent to circle theorems, we have no mapping
@@ -514,34 +453,25 @@ namespace GeoGen.TheoremProver
                     (LineSegmentTheoremObject)theorem.InvolvedObjectsList[1],
                 }))
                 // And configuration objects from them
-                .Select(pair => (pair.theorem, pairOfPointArrays: new[]
-                {
-                    new[]
-                    {
-                        ((PointTheoremObject)pair.lineSegments[0].Object1).ConfigurationObject,
-                        ((PointTheoremObject)pair.lineSegments[0].Object2).ConfigurationObject
-                    },
-                    new[]
-                    {
-                        ((PointTheoremObject)pair.lineSegments[1].Object1).ConfigurationObject,
-                        ((PointTheoremObject)pair.lineSegments[1].Object2).ConfigurationObject
-                    }
-                }))
+                .Select(pair => (pair.theorem, 
+                    // Use the helper method
+                    points1: pair.lineSegments[0].GetInnerConfigurationObjects().ToArray(),
+                    points2: pair.lineSegments[1].GetInnerConfigurationObjects().ToArray()))
                 // Find their common points (should be at most one)
-                .Select(pair => (pair.theorem, pointArrays: pair.pairOfPointArrays, commonPoint: pair.pairOfPointArrays[0].Intersect(pair.pairOfPointArrays[1]).FirstOrDefault()))
+                .Select(pair => (pair.theorem, pair.points1, pair.points2, commonPoint: pair.points1.Intersect(pair.points2).FirstOrDefault()))
                 // Take only those where there is a common point
-                .Where(triple => triple.commonPoint != null)
+                .Where(tuple => tuple.commonPoint != null)
                 // Find the other point for 
-                .Select(triple => (triple.theorem, triple.commonPoint, otherPoints: new[]
-                {
-                    triple.pointArrays[0].Where(point => point != triple.commonPoint).First(),
-                    triple.pointArrays[1].Where(point => point != triple.commonPoint).First()
-                }))
-                // Make a single array with possibly exchanged points
+                .Select(tuple => (tuple.theorem, tuple.commonPoint, 
+                    // There should be exactly one other point
+                    otherPoint1: tuple.points1.Where(point => point != tuple.commonPoint).First(),
+                    otherPoint2: tuple.points2.Where(point => point != tuple.commonPoint).First()
+                ))
+                // Reorder to get every possible valid mapping
                 .SelectMany(triple => new[]
                 {
-                    (triple.theorem, points: new[] {triple.commonPoint, triple.otherPoints[0], triple.otherPoints[1]}),
-                    (triple.theorem, points: new[] {triple.commonPoint, triple.otherPoints[1], triple.otherPoints[0]})
+                    (triple.theorem, points: new[] {triple.commonPoint, triple.otherPoint1, triple.otherPoint2}),
+                    (triple.theorem, points: new[] {triple.commonPoint, triple.otherPoint2, triple.otherPoint1})
                 })
                 // These points finally represent one of our sought situation
                 .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
