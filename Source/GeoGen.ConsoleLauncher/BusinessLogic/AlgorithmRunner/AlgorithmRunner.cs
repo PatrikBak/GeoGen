@@ -519,6 +519,10 @@ namespace GeoGen.ConsoleLauncher
                     return isProved ? $"consequence of {templateTheorem.Number} from {templateTheorem.FileName}"
                                     : $"attempted as a consequence of {templateTheorem.Number} from {templateTheorem.FileName}";
 
+                // Case when we're using collinearity to redefine a line
+                case DerivationRule.RedefinableByCollinearity:
+                    return isProved ? "can be stated differently due to collinearity" : "attempted to be stated differently due to collinearity";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data}");

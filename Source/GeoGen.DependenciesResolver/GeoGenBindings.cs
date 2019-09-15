@@ -156,6 +156,7 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<ISubtheoremDeriver>().To<SubtheoremDeriver>().InSingletonScope();
 
             kernel.Bind<ITheoremDeriver>().To<TransitivityDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<RedefinableByCollinearityDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;

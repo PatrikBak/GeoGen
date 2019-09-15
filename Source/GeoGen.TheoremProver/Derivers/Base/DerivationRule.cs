@@ -31,6 +31,12 @@
         Transitivity,
 
         /// <summary>
+        /// The theorem can follows from restating the definition of a line involved in an already
+        /// proven theorem.
+        /// </summary>
+        RedefinableByCollinearity,
+
+        /// <summary>
         /// The theorem is a consequence of a simpler (template) theorem that is presumed to be true.
         /// Such theorems might, but don't have to have assumptions that are needed for them to be true.
         /// </summary>

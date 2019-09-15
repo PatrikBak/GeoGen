@@ -25,6 +25,15 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
+        /// Enumerates all theorems of requested types.
+        /// </summary>
+        /// <param name="types">The types of requested theorems.</param>
+        /// <returns>The enumerable of all the theorems of the requested types.</returns>
+        public IEnumerable<Theorem> GetTheoremsOfTypes(params TheoremType[] types) =>
+            // Merge the theorems from each type, if they're present
+            types.Distinct().Where(ContainsKey).SelectMany(type => this[type]);
+
+        /// <summary>
         /// Finds out if the map contains a given theorem.
         /// </summary>
         /// <param name="theorem">The theorem.</param>

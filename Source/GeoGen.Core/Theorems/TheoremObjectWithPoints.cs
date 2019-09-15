@@ -18,6 +18,11 @@ namespace GeoGen.Core
         public IReadOnlyHashSet<ConfigurationObject> Points { get; }
 
         /// <summary>
+        /// The <see cref="Points"/> as a list.
+        /// </summary>
+        public IReadOnlyList<ConfigurationObject> PointsList { get; }
+
+        /// <summary>
         /// Indicates whether this object is defined explicitly via a <see cref="ConfigurationObject"/>
         /// of the particular type.
         /// </summary>
@@ -63,6 +68,9 @@ namespace GeoGen.Core
         {
             // Set the points
             Points = points?.ToReadOnlyHashSet() ?? throw new ArgumentNullException(nameof(points));
+
+            // Set the points list
+            PointsList = points;
 
             // Make sure there count fits
             if (Points.Count != NumberOfDefiningPoints)
