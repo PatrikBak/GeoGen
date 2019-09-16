@@ -87,7 +87,7 @@ namespace GeoGen.ConsoleLauncher
                 // With theorem finder and its settings
                 .AddTheoremFinder(settings.TangentCirclesTheoremFinderSettings,
                                   settings.LineTangentToCircleTheoremFinderSettings,
-                                  settings.SeekedTheoremTypes.ToReadOnlyHashSet())
+                                  settings.SoughtTheoremTypes.ToReadOnlyHashSet())
                 // With prover and its data
                 .AddTheoremProver(new TheoremProverData
                 (

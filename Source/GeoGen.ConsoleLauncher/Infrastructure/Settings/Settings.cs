@@ -48,6 +48,6 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The types of theorems that we're looking for.
         /// </summary>
-        public IEnumerable<TheoremType> SeekedTheoremTypes { get; set; }
+        public IEnumerable<TheoremType> SoughtTheoremTypes { get; set; }
     }
 }

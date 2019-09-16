@@ -88,7 +88,7 @@ namespace GeoGen.ConsoleLauncher
             };
 
             // Set the list of theorem types that we're looking for
-            SeekedTheoremTypes = new[]
+            SoughtTheoremTypes = new[]
             {
                 TheoremType.CollinearPoints,
                 TheoremType.ConcurrentLines,
