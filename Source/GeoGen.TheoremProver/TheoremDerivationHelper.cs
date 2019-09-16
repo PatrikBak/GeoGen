@@ -190,14 +190,14 @@ namespace GeoGen.TheoremProver
             }
 
             // Find all unproven discovered theorems
-            // Use a helper method to take all unfinished proof attempts of all theorems
-            var unprovenDiscoveredTheorems = GetUnfishinedProofAttempts(unprovenTheorems.SelectMany(pair => pair.Value))
+            // Use the helper method to examine the inner attempts at our theorems
+            // This way we might miss our main theorems that had no attempt, but 
+            // that's okay, because we don't want to include them anyway
+            var unprovenDiscoveredTheorems = GetAllUnprovenTheorems(unprovenTheorems.SelectMany(pair => pair.Value))
                 // Exclude the attempts at our main theorems
-                .Where(attempt => !MainTheorems.ContainsTheorem(attempt.Theorem))
-                // Group the attempts by the theorem
-                .GroupBy(attempt => attempt.Theorem)
+                .Where(attempt => !MainTheorems.ContainsTheorem(attempt.Key))
                 // Convert to a dictionary
-                .ToDictionary(group => group.Key, group => (IReadOnlyList<TheoremProofAttempt>)group.ToArray());
+                .ToDictionary(pair => pair.Key, pair => (IReadOnlyList<TheoremProofAttempt>)pair.Value.ToArray());
 
             // Construct the result
             var theoremProverOutput = new TheoremProverOutput
@@ -268,13 +268,17 @@ namespace GeoGen.TheoremProver
         }
 
         /// <summary>
-        /// Traverses given initial attempts in order to find all unfinished proof attempts,
-        /// including the attempts at inner theorems.
+        /// Traverses given initial attempts in order to find all unproven theorems with their
+        /// unfinished attempts (there might be no attempt). This recursively includes attempts 
+        /// at attempted theorems.
         /// </summary>
         /// <param name="initialAttempts">The initial attempts that are to be examined.</param>
-        /// <returns>The enumerable of unfinished proof attempts.</returns>
-        private static IEnumerable<TheoremProofAttempt> GetUnfishinedProofAttempts(IEnumerable<TheoremProofAttempt> initialAttempts)
+        /// <returns>The dictionary mapping theorems to their unfinished proof attempts.</returns>
+        private static Dictionary<Theorem, HashSet<TheoremProofAttempt>> GetAllUnprovenTheorems(IEnumerable<TheoremProofAttempt> initialAttempts)
         {
+            // Prepare the result
+            var unprovenTheorems = new Dictionary<Theorem, HashSet<TheoremProofAttempt>>();
+
             // Prepare the set of proof attempts that have been already examined
             var examined = new HashSet<TheoremProofAttempt>();
 
@@ -290,9 +294,6 @@ namespace GeoGen.TheoremProver
                 // Get the current proof attempt from the queue
                 var proofAttempt = toBeExamined.Dequeue();
 
-                // Return it
-                yield return proofAttempt;
-
                 // If it's been examined, we won't do it again
                 if (examined.Contains(proofAttempt))
                     continue;
@@ -300,9 +301,30 @@ namespace GeoGen.TheoremProver
                 else
                     examined.Add(proofAttempt);
 
-                // From the unproved assumptions take all unfinished proofs and mark them to be examined
-                proofAttempt.UnprovenAssumptions.SelectMany(pair => pair.unfinishedProofs).ForEach(toBeExamined.Enqueue);
+                // If it's proven, we're not interested
+                if (proofAttempt.IsSuccessful)
+                    continue;
+
+                // Otherwise mark sure it's in the result
+                unprovenTheorems.GetOrAdd(proofAttempt.Theorem, () => new HashSet<TheoremProofAttempt>()).Add(proofAttempt);
+
+                // Go through the unproven assumptions
+                proofAttempt.UnprovenAssumptions.ForEach(pair =>
+                {
+                    // Deconstruct
+                    var (theorem, unfinishedProofs) = pair;
+
+                    // Mark sure the theorem is marked as an unproven one
+                    if (!unprovenTheorems.ContainsKey(theorem))
+                        unprovenTheorems.Add(theorem, new HashSet<TheoremProofAttempt>());
+
+                    // Make sure the inner attempts will be examined as well
+                    unfinishedProofs.ForEach(toBeExamined.Enqueue);
+                });
             }
+
+            // Return the result
+            return unprovenTheorems;
         }
 
         /// <summary>
