@@ -56,6 +56,73 @@ namespace GeoGen.Constructor
         /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
+            #region Verify layout
+
+            // First we need to verify that the objects match the layout
+            switch (_construction.Configuration.LooseObjectsHolder.Layout)
+            {
+                // Two points or three arbitrary points should be always fine
+                case LooseObjectsLayout.TwoPoints:
+                case LooseObjectsLayout.ThreeArbitraryPoints:
+                    break;
+
+                // Make sure the points are not collinear
+                case LooseObjectsLayout.ThreePoints:
+
+                    // If yes, the construction shouldn't be possible
+                    if (AnalyticHelpers.AreCollinear((Point)input[0], (Point)input[1], (Point)input[2]))
+                        return null;
+
+                    break;
+
+                // Make sure no three points are collinear
+                case LooseObjectsLayout.FourPoints:
+
+                    // Get the points
+                    var point1 = (Point)input[0];
+                    var point2 = (Point)input[1];
+                    var point3 = (Point)input[2];
+                    var point4 = (Point)input[3];
+
+                    // Verify any three of them
+                    if (AnalyticHelpers.AreCollinear(point1, point2, point3) ||
+                        AnalyticHelpers.AreCollinear(point1, point2, point4) ||
+                        AnalyticHelpers.AreCollinear(point1, point3, point4) ||
+                        AnalyticHelpers.AreCollinear(point2, point3, point4))
+                        // If some three are collinear, the construction shouldn't be possible
+                        return null;
+
+                    break;
+
+                // Make sure the point doesn't line on the line are not collinear
+                case LooseObjectsLayout.LineAndPoint:
+
+                    // If yes, the construction shouldn't be possible
+                    if (((Line)input[0]).Contains((Point)input[1]))
+                        return null;
+
+                    break;
+
+                // Make sure neither of the points lies on the line
+                case LooseObjectsLayout.LineAndTwoPoints:
+
+                    // Get the line 
+                    var line = (Line)input[0];
+
+                    // If at least one point lies on the line, the construction 
+                    // shouldn't be possible
+                    if (line.Contains((Point)input[1]) || line.Contains((Point)input[2]))
+                        return null;
+
+                    break;
+
+                // Default case
+                default:
+                    throw new ConstructorException($"Unsupported layout: {_construction.Configuration.LooseObjectsHolder.Layout}");
+            }
+
+            #endregion
+
             // Initialize an internal picture in which we're going to construct
             // the configuration that defines our composed construction
             var internalPicture = new Picture();

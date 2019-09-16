@@ -283,7 +283,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, midpointBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(ThreeArbitraryPoints, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
