@@ -329,8 +329,8 @@ namespace GeoGen.ConsoleLauncher
             // Otherwise there was at least one attempt, append the information about their count
             result += $" - not proven, {unfinishedProofs.Count} attempt{(unfinishedProofs.Count == 1 ? "" : "s")} to prove it:\n\n";
 
-            // We're going to gradually append reports from every (unsuccessful) attempt
-            unfinishedProofs.ForEach((proofAttempt, index) =>
+            // We're going to create an enumerable of reports from every (unsuccessful) attempt
+            var unfinishedProofsReports = unfinishedProofs.Select((proofAttempt, index) =>
             {
                 // Get the string identifying the current attempt, based on the fact
                 // whether there is just one or more of them
@@ -362,12 +362,13 @@ namespace GeoGen.ConsoleLauncher
                     // We don't we want repeat the statement in the description
                     includeStatement: false);
 
-                // Append the final string with the report to the result 
-                result += $"{spaces}{attemptsString}{reportString.TrimEnd()}\n\n";
+                // Append the final string with the report to the result, 
+                // making sure it has no white-spaces at the end
+                return $"{spaces}{attemptsString}{reportString.TrimEnd()}";
             });
 
-            // Make sure the final string ends with exactly one new-line char
-            return $"{result.Trim()}\n";
+            // Enumerate the reports while making them each on separate line with empty ones
+            return $"{result}{unfinishedProofsReports.ToJoinedString("\n\n")}\n";
         }
 
         /// <summary>
@@ -391,76 +392,84 @@ namespace GeoGen.ConsoleLauncher
             // Append the explanation
             result += $" - {GetExplanation(proofAttempt, formatter)}";
 
-            // If there are any coming theorems to be described, make an empty line
-            if (proofAttempt.ProvenAssumptions.Count != 0 || proofAttempt.UnprovenAssumptions.Count != 0)
-                result += "\n\n";
+            // If there is nothing left to write, i.e. no attempts, then we can't do more
+            if (proofAttempt.ProvenAssumptions.Count == 0 && proofAttempt.UnprovenAssumptions.Count == 0)
+                return result;
+
+            // Otherwise we want an empty line
+            result += "\n\n";
 
             // Prepare the index of the next theorem to be described
             var index = 1;
 
-            // Write the theorems that were successfully justified
-            proofAttempt.ProvenAssumptions.OrderBy(d => formatter.FormatTheorem(d.Theorem)).ForEach(innerAttempt =>
-            {
-                // Get the theorem for comfort
-                var theorem = innerAttempt.Theorem;
+            // Create an enumerable of reports of proven assumptions, ordered by theorem
+            var provenAssumptionsStrings = proofAttempt.ProvenAssumptions.OrderBy(attempt => formatter.FormatTheorem(attempt.Theorem))
+                // Process a given one
+                .Select(innerAttempt =>
+                {
+                    // Get the theorem for comfort
+                    var theorem = innerAttempt.Theorem;
 
-                // Compose the tag with spaces. 
-                // If there is no previous tag, get the default one from the tags map (with spaces)
-                // Otherwise, take the previous one with more spaces and append the current index (and increase it)
-                var untrimmedTag = $"{(previousTag.IsEmpty() ? $"    {theoremTags[proofAttempt.Theorem]}" : $"  {previousTag}")}{index++}.";
+                    // Compose the tag with spaces. 
+                    // If there is no previous tag, get the default one from the tags map (with spaces)
+                    // Otherwise, take the previous one with more spaces and append the current index (and increase it)
+                    var untrimmedTag = $"{(previousTag.IsEmpty() ? $"    {theoremTags[proofAttempt.Theorem]}" : $"  {previousTag}")}{index++}.";
 
-                // Find out if the theorem already has a tag
-                var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
+                    // Find out if the theorem already has a tag
+                    var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
 
-                // If the theorem is not tagged yet, tag it
-                if (theoremIsUntagged)
-                    theoremTags.Add(theorem, untrimmedTag.Trim());
+                    // If the theorem is not tagged yet, tag it
+                    if (theoremIsUntagged)
+                        theoremTags.Add(theorem, untrimmedTag.Trim());
 
-                // Find out the reasoning for the theorem
-                var reason = theoremIsUntagged ?
-                    // If it's untagged, recursively find the report for it
-                    ProofReport(innerAttempt, formatter, theoremTags, untrimmedTag) :
-                    // Otherwise just state it again and add the explanation and the reference to it
-                    $"{formatter.FormatTheorem(theorem)} - {GetExplanation(innerAttempt, formatter)} - theorem {theoremTags[theorem]}";
+                    // Find out the reasoning for the theorem
+                    var reason = theoremIsUntagged ?
+                        // If it's untagged, recursively find the report for it
+                        ProofReport(innerAttempt, formatter, theoremTags, untrimmedTag) :
+                        // Otherwise just state it again and add the explanation and the reference to it
+                        $"{formatter.FormatTheorem(theorem)} - {GetExplanation(innerAttempt, formatter)} - theorem {theoremTags[theorem]}";
 
-                // Add the description to the result
-                result += $"{untrimmedTag} {reason}\n";
-            });
+                    // Add the description to the result
+                    return $"{untrimmedTag} {reason}";
+                });
 
-            // Write the theorems that were not proved
-            proofAttempt.UnprovenAssumptions.OrderBy(d => formatter.FormatTheorem(d.theorem)).ForEach(pair =>
-            {
-                // Deconstruct
-                var (theorem, attempts) = pair;
+            // Create an enumerable of reports of proven assumptions, ordered by theorem
+            var unprovenAssumptionsStrings = proofAttempt.UnprovenAssumptions.OrderBy(attempt => formatter.FormatTheorem(attempt.theorem))
+                // Process a given one
+                .Select(pair =>
+                {
+                    // Deconstruct
+                    var (theorem, attempts) = pair;
 
-                // Start the construction of an untrimmed tag by adding spaces before the previous one
-                var untrimmedTag = $"  {previousTag}";
+                    // Start the construction of an untrimmed tag by adding spaces before the previous one
+                    var untrimmedTag = $"  {previousTag}";
 
-                // We want to start indexing these theorems only if there won't be exactly one theorem
-                // (including the ones that are already there)
-                if (proofAttempt.UnprovenAssumptions.Count + proofAttempt.ProvenAssumptions.Count != 1)
-                    untrimmedTag += $"{index++}.";
+                    // We want to start indexing these theorems only if there won't be exactly one theorem
+                    // (including the ones that are already there)
+                    if (proofAttempt.UnprovenAssumptions.Count + proofAttempt.ProvenAssumptions.Count != 1)
+                        untrimmedTag += $"{index++}.";
 
-                // Find out if the theorem already has a tag
-                var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
+                    // Find out if the theorem already has a tag
+                    var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
 
-                // If the theorem is not tagged yet, tag it
-                if (theoremIsUntagged)
-                    theoremTags.Add(theorem, untrimmedTag.Trim());
+                    // If the theorem is not tagged yet, tag it
+                    if (theoremIsUntagged)
+                        theoremTags.Add(theorem, untrimmedTag.Trim());
 
-                // Find out the reasoning for the theorem
-                var reason = theoremIsUntagged ?
-                   // If it's untagged, recursively find the report for it
-                   UnfinishedProofsReport(theorem, attempts, formatter, theoremTags, untrimmedTag) :
-                   // Otherwise just state it again and add the reference to it
-                   $"{formatter.FormatTheorem(theorem)} - theorem {theoremTags[theorem]} (unproven)";
+                    // Find out the reasoning for the theorem
+                    var reason = theoremIsUntagged ?
+                       // If it's untagged, recursively find the report for it
+                       UnfinishedProofsReport(theorem, attempts, formatter, theoremTags, untrimmedTag) :
+                       // Otherwise just state it again and add the reference to it
+                       $"{formatter.FormatTheorem(theorem)} - theorem {theoremTags[theorem]} (unproven)";
 
-                // Add the description to the result
-                result += $"{untrimmedTag} {reason}\n";
-            });
+                    // Add the description to the result
+                    return $"{untrimmedTag} {reason}";
+                });
 
-            // Return the final result
-            return result;
+            // Append the particular reports, each on a separate line, while making sure 
+            // there is exactly one line break at the end
+            return $"{result}{provenAssumptionsStrings.Concat(unprovenAssumptionsStrings).ToJoinedString("\n").TrimEnd()}\n";
         }
 
         /// <summary>
