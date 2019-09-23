@@ -11,12 +11,12 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// The default implementation of <see cref="ITrivialTheoremsProducer"/>. This implementation 
+    /// The default implementation of <see cref="ITrivialTheoremProducer"/>. This implementation 
     /// caches trivial theorems that are true for general <see cref="ComposedConstruction"/>s.
     /// These are found by constructing the underlying <see cref="ComposedConstruction.Configuration"/>
     /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremFinder"/>.
     /// </summary>
-    public class TrivialTheoremsProducer : ITrivialTheoremsProducer
+    public class TrivialTheoremProducer : ITrivialTheoremProducer
     {
         #region Dependencies
 
@@ -42,25 +42,32 @@ namespace GeoGen.TheoremProver
         /// </summary>
         private readonly Dictionary<ComposedConstruction, IReadOnlyList<Theorem>> _composedConstructionsTheorems;
 
+        /// <summary>
+        /// The cache dictionary mapping the names of composed constructions to the instances
+        /// that were used to determine the <see cref="_composedConstructionsTheorems"/>.
+        /// </summary>
+        private readonly Dictionary<string, ComposedConstruction> _originalInstances;
+
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TrivialTheoremsProducer"/> class.
+        /// Initializes a new instance of the <see cref="TrivialTheoremProducer"/> class.
         /// </summary>
         /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
         /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
-        public TrivialTheoremsProducer(IGeometryConstructor constructor, ITheoremFinder finder)
+        public TrivialTheoremProducer(IGeometryConstructor constructor, ITheoremFinder finder)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _composedConstructionsTheorems = new Dictionary<ComposedConstruction, IReadOnlyList<Theorem>>();
+            _originalInstances = new Dictionary<string, ComposedConstruction>();
         }
 
         #endregion
 
-        #region ITrivialTheoremsProducer
+        #region ITrivialTheoremProducer
 
         /// <summary>
         /// Derive trivial theorems from the last object of a given configuration.
@@ -233,8 +240,24 @@ namespace GeoGen.TheoremProver
                 // If we have a composed construction...
                 case ComposedConstruction composedConstruction:
 
-                    // Get the theorems for it 
-                    var theorems = _composedConstructionsTheorems.GetOrAdd(composedConstruction, () => FindTheoremsForComposedConstruction(composedConstruction));
+                    // If we haven't found the theorems yet...
+                    if (!_originalInstances.ContainsKey(composedConstruction.Name))
+                    {
+                        // Let the helper method do the job
+                        var newTheorems = FindTheoremsForComposedConstruction(composedConstruction);
+
+                        // Add them
+                        _composedConstructionsTheorems.Add(composedConstruction, newTheorems);
+
+                        // Mark the used instance
+                        _originalInstances.Add(composedConstruction.Name, composedConstruction);
+                    }
+
+                    // Get the original instance used for the theorems
+                    composedConstruction = _originalInstances[composedConstruction.Name];
+
+                    // Get the theorems
+                    var theorems = _composedConstructionsTheorems[composedConstruction];
 
                     // Create mapping of loose objects of the template configuration 
                     var mapping = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>()

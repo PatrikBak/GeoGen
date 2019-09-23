@@ -1,8 +1,0 @@
-﻿Configuration:
-
- TwoPoints: A, B
- M = Midpoint(A, B)
-
-Theorems:
-
- EqualLineSegments: A, M, B, M

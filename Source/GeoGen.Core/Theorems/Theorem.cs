@@ -104,20 +104,24 @@ namespace GeoGen.Core
         /// Finds the objects of the underlying configuration that are not needed to state this theorem.
         /// </summary>
         /// <returns>The unnecessary objects with regards to this theorem.</returns>
-        public IReadOnlyList<ConfigurationObject> GetUnnecessaryObjects()
+        public IReadOnlyHashSet<ConfigurationObject> GetUnnecessaryObjects()
         {
-            // Prepare the list of inner objects needed to define the theorem objects
-            // For each theorem object we can the method to find the inner configuration objects
-            var innerObjects = InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects())
-                // And use another helper method to find their inner defining objects
-                .GetDefiningObjects();
-
             // From the objects of the configuration
             return Configuration.AllObjects
                 // Exclude all the inner objects of the theorem objects
-                .Except(innerObjects)
+                .Except(GetInnerConfigurationObjects().GetDefiningObjects())
                 // Enumerate
-                .ToList();
+                .ToReadOnlyHashSet();
+        }
+
+        /// <summary>
+        /// Finds the inner configuration objects of the theorem objects.
+        /// </summary>
+        /// <returns>The inner configuration objects of all theorems objects</returns>
+        public IReadOnlyList<ConfigurationObject> GetInnerConfigurationObjects()
+        {
+            // Simply merge all the inner objects of all the theorem objects
+            return InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects()).Distinct().ToArray();
         }
 
         /// <summary>

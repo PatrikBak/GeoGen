@@ -1,9 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- M = RandomPointOnMedian(B, A, D)
- l = ParallelLineToLineFromPoints(A, B, D)
-
-Theorems:
-
- ConcurrentLines: [B, M], l, [C, D]

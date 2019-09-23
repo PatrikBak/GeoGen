@@ -9,7 +9,7 @@ namespace GeoGen.TheoremProver
     /// <summary>
     /// Represents <see cref="ITheoremDeriver"/> that derives theorems using the <see cref="DerivationRule.RedefinableByCollinearity"/>.
     /// </summary>
-    public class RedefinableByCollinearityDeriver : TheoremDeriverBase
+    public class CollinearityWithLinesFromPointsDeriver : TheoremDeriverBase
     {
         /// <summary>
         /// Takes new theorems and based on logical reason comes up with relationships between them,
@@ -63,6 +63,19 @@ namespace GeoGen.TheoremProver
                     // Return the derivations
                     yield return (new[] { theorem, collinearity }, theorem1);
                     yield return (new[] { theorem, collinearity }, theorem2);
+
+                    // In some case two of these theorems can imply the last one
+                    switch (theorem.Type)
+                    {
+                        // It's easy to see these are the types
+                        case ConcurrentLines:
+                        case ParallelLines:
+                        case PerpendicularLines:
+
+                            // For example, two parallel lines mean collinearity right away
+                            yield return (new[] { theorem1, theorem2 }, collinearity);
+                            break;
+                    }
                 }
             }
         }

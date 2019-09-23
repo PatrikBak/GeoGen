@@ -26,15 +26,9 @@
         /// This rule is clearly used for binary relations, for example the relation '=', or parallelity.
         /// It is also used for collinearity and line concurrency (which are trinary relations), 
         /// concyclity (quaternary relation) and also in a combination with incidence and equality
-        /// (if a=b and a lies on c, then b lies on c; if a=b and c lies of a, then c lies on b).
+        /// (if a=b and a lies on c, then b lies on c; if a = b and c lies of a, then c lies on b).
         /// </summary>
         Transitivity,
-
-        /// <summary>
-        /// The theorem can follows from restating the definition of a line involved in an already
-        /// proven theorem.
-        /// </summary>
-        RedefinableByCollinearity,
 
         /// <summary>
         /// The theorem is a consequence of a simpler (template) theorem that is presumed to be true.
@@ -53,6 +47,11 @@
         TrivialTheorem,
 
         /// <summary>
+        /// The theorem can be reformulated using equalities to a trivial theorem.
+        /// </summary>
+        ReformulatedTrivialTheorem,
+
+        /// <summary>
         /// If we have 4 concyclic points and the center of the circle they make, then 3 right 
         /// equal segment theorems imply the concyclity, and the concyclity implies the equal segment theorems.
         /// </summary>
@@ -62,6 +61,13 @@
         /// If we have three lines a, b, c such that (a, b) and (a, c) are perpendicular and (b, c)
         /// are parallel, then any two of these statements imply the last one.
         /// </summary>
-        PerpendicularLineToParallelLines
+        PerpendicularLineToParallelLines,
+
+        /// <summary>
+        /// The theorem connects collinearity of three points and some two theorems involving two
+        /// lines. For example, if we have theorems Collinear Points A, B, C, Parallel Lines [A, B], l,
+        /// Parallel Lines [A, C], l, then any two of these theorems imply the third. 
+        /// </summary>
+        CollinearityWithLinesFromPoints
     }
 }

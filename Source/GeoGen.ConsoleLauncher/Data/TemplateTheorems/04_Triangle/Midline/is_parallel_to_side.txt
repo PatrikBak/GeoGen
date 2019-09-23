@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- D = RandomPointOnMidline(A, B, C)
- E = RandomPointOnMidline(A, B, C)
-
-Theorems:
-
- ParallelLines: [B, C], [D, E]

@@ -1,9 +1,0 @@
-﻿Configuration:
-
- Trapezoid: A, B, C, D
- E = IntersectionOfLinesFromPoints(A, D, B, C)
- M = RandomPointOnMedian(E, A, B)
-
-Theorems:
-
- ConcurrentLines: [A, C], [B, D], [E, M]

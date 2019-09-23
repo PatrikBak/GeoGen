@@ -1,9 +1,0 @@
-﻿Configuration:
-
- FourPoints: A, B, C, D
- E = RandomPointOnPerpendicularLineToLineFromPoints(A, B, C)
- F = RandomPointOnPerpendicularLineToLineFromPoints(D, A, E)
-
-Theorems:
-
- ParallelLines: [B, C], [D, F]

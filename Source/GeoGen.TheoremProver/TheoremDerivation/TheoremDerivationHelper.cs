@@ -13,7 +13,7 @@ namespace GeoGen.TheoremProver
     /// constructs the final <see cref="TheoremProverOutput"/> that even has flattened
     /// transitivities (<see cref="GetRidOfNestedTransitivity(TheoremProverOutput)"/>).
     /// </summary>
-    public partial class TheoremDerivationHelper
+    public class TheoremDerivationHelper
     {
         #region Public properties
 
@@ -97,6 +97,12 @@ namespace GeoGen.TheoremProver
         #region Public methods
 
         /// <summary>
+        /// Gets the main theorems that are not proven yet.
+        /// </summary>
+        /// <returns>The theorems to be proven.</returns>
+        public IEnumerable<Theorem> UnproveneMainTheorems() => _mainTheoremsLeftToProve;
+
+        /// <summary>
         /// Find out whether there is any of <see cref="MainTheorems"/> still left to be proven.
         /// </summary>
         /// <returns>true, if there is a main theorem to be proven; false otherwise.</returns>
@@ -119,7 +125,7 @@ namespace GeoGen.TheoremProver
         /// <param name="rule">The used derivation rule.</param>
         /// <param name="neededTheorems">The theorems needed to be assumed for this derivation.</param>
         public void AddDerivation(Theorem derivedTheorem, DerivationRule rule, IEnumerable<Theorem> neededTheorems)
-            // Delegate the call to the private method
+            // Delegate the call to the other method
             => AddDerivation(derivedTheorem, new TheoremDerivationData(rule), neededTheorems);
 
         /// <summary>

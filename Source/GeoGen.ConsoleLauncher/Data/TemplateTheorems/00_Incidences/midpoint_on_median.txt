@@ -1,7 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
-
-Theorems:
-
- Incidence: Midpoint(B, C), Median(A, B, C)

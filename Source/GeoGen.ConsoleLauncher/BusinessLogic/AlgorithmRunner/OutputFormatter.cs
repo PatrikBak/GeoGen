@@ -87,78 +87,58 @@ namespace GeoGen.ConsoleLauncher
             // Switch based on the type
             switch (theorem.Type)
             {
-                // Handle the case where the first two objects are exchangeable
-                case TheoremType.EqualAngles:
-                case TheoremType.EqualLineSegments:
-                {
-                    // Convert the first two 
-                    var object1 = TheoremObjectToString(theorem.InvolvedObjectsList[0]);
-                    var object2 = TheoremObjectToString(theorem.InvolvedObjectsList[1]);
-
-                    // Get the smaller and the larger
-                    var smaller = object1.CompareTo(object2) < 0 ? object1 : object2;
-                    var larger = smaller == object1 ? object2 : object1;
-
-                    // Compose the final string
-                    return $"{typeString}{smaller}, {larger}";
-                }
-                // Special cases where objects don't have to be named
+                // Special case where we want the named objects first
                 case TheoremType.EqualObjects:
+                {
+                    // Get their strings
+                    var object1String = TheoremObjectToString(theorem.InvolvedObjectsList[0]);
+                    var object2String = TheoremObjectToString(theorem.InvolvedObjectsList[1]);
+
+                    // We presort them
+                    var smaller = object1String.CompareTo(object2String) < 0 ? object1String : object2String;
+                    var larger = smaller == object1String ? object2String : object1String;
+
+                    // Get the objects (might be null)
+                    var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
+                    var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+
+                    // Find which of them has a name
+                    var isObject1Named = object1 != null && _objectNames.ContainsKey(object1);
+                    var isObject2Named = object2 != null && _objectNames.ContainsKey(object2);
+
+                    // If both or neither has a name, return them sorted
+                    if ((isObject1Named && isObject2Named) || (!isObject1Named && !isObject2Named))
+                        return $"{typeString}{smaller}, {larger}";
+
+                    // Otherwise we want the named object first
+                    var namedObject = isObject1Named ? object1String : object2String;
+                    var otherObject = namedObject == object1String ? object2String : object1String;
+
+                    // Return them in the right order
+                    return $"{typeString}{namedObject}, {otherObject}";
+                }
+
+                // Special case where there is a point and we want it first
                 case TheoremType.Incidence:
                 {
-                    // Convert the objects
+                    // Get the objects
                     var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
                     var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
 
                     // Get their strings
-                    var object1String = _objectNames.GetOrDefault(object1) ?? ConfigurationObjectDefinition(object1);
-                    var object2String = _objectNames.GetOrDefault(object2) ?? ConfigurationObjectDefinition(object2);
+                    var object1String = TheoremObjectToString(theorem.InvolvedObjectsList[0]);
+                    var object2String = TheoremObjectToString(theorem.InvolvedObjectsList[1]);
 
-                    // Distinguish even these two cases
-                    switch (theorem.Type)
-                    {
-                        // In the equal objects case
-                        case TheoremType.EqualObjects:
+                    // We want the point first
+                    var pointString = (object1 != null && object1.ObjectType == ConfigurationObjectType.Point) ? object1String : object2String;
+                    var otherString = pointString == object1String ? object2String : object1String;
 
-                            // We presort them
-                            var smaller = object1String.CompareTo(object2String) < 0 ? object1String : object2String;
-                            var larger = smaller == object1String ? object2String : object1String;
-
-                            // Find which of them has a name
-                            var isObject1Named = _objectNames.ContainsKey(object1);
-                            var isObject2Named = _objectNames.ContainsKey(object2);
-
-                            // If both or neither has a name, return them sorted
-                            if ((isObject1Named && isObject2Named) || (!isObject1Named && !isObject2Named))
-                                return $"{typeString}{smaller}, {larger}";
-
-                            // Otherwise we want the named object first
-                            var namedObject = isObject1Named ? object1String : object2String;
-                            var otherObject = namedObject == object1String ? object2String : object1String;
-
-                            // Return them in the right order
-                            return $"{typeString}{namedObject}, {otherObject}";
-
-                        // In the incidence case                            
-                        case TheoremType.Incidence:
-
-                            // We want the point first
-                            var pointString = object1.ObjectType == ConfigurationObjectType.Point ? object1String : object2String;
-                            var otherString = pointString == object1String ? object2String : object1String;
-
-                            // Return them in the right order
-                            return $"{typeString}{pointString}, {otherString}";
-
-                        // Impossible case
-                        default:
-                            throw new Exception("Impossible");
-                    }
+                    // Return them in the right order
+                    return $"{typeString}{pointString}, {otherString}";
                 }
 
-                // In every other case...
+                // In every other case, convert each object and sort them
                 default:
-
-                    // Convert each object and sort them
                     return $"{typeString}{theorem.InvolvedObjects.Select(TheoremObjectToString).Ordered().ToJoinedString()}";
             }
         }
@@ -295,33 +275,55 @@ namespace GeoGen.ConsoleLauncher
                 // Base objects might have an object part
                 case BaseTheoremObject baseObject:
 
-                    // Try to find the string version of the object, if it is specified
-                    var objectPart = baseObject.ConfigurationObject != null ? _objectNames[baseObject.ConfigurationObject] : "";
+                    // If it has the object part...
+                    if (baseObject.ConfigurationObject != null)
+                    {
+                        // Get the object for comfort
+                        var definingObject = baseObject.ConfigurationObject;
 
-                    // We need to dig deeper to find the points part too
+                        // Try to return it's name, if there is any
+                        if (_objectNames.ContainsKey(definingObject))
+                            return _objectNames[definingObject];
+
+                        // Otherwise return the definition
+                        return ConfigurationObjectDefinition(definingObject);
+                    }
+
+                    // If this object doesn't have an object part, it must be defined differently
                     switch (baseObject)
                     {
-                        // If we have a point object, we don't have more information
-                        case PointTheoremObject _:
-                            return objectPart;
-
                         // If we have an object with points...
                         case TheoremObjectWithPoints objectWithPoints:
 
-                            // Prepare the list describing individual points
-                            var pointsList = objectWithPoints.Points.Select(point => _objectNames[point]).Ordered().ToJoinedString();
+                            // Get the points
+                            var namedPoints = objectWithPoints.Points
+                                // That have a name
+                                .Where(_objectNames.ContainsKey)
+                                // Get those names
+                                .Select(point => _objectNames[point])
+                                // Order them
+                                .Ordered();
 
-                            // Prepare the points part of the string
-                            var pointsPart = objectWithPoints.Points.Count == 0 ? "" : pointsList;
+                            // Get the points
+                            var otherPoints = objectWithPoints.Points
+                                // That don't have a name
+                                .Where(point => !_objectNames.ContainsKey(point))
+                                // Get their definition
+                                .Select(ConfigurationObjectDefinition)
+                                // Order them
+                                .Ordered();
+
+                            // Get the final string by concating the named points first and then the order points
+                            var pointsPart = namedPoints.Concat(otherPoints).ToJoinedString();
 
                             // Dig further to provide information whether it is a line or circle
                             return objectWithPoints switch
                             {
                                 // If we have a line, add [] around points 
-                                LineTheoremObject _ => $"{objectPart}[{pointsPart}]",
+                                LineTheoremObject _ => $"[{pointsPart}]",
 
-                                // If we have a circle, add [] around points
-                                CircleTheoremObject _ => $"{objectPart}({pointsPart})",
+                                // If we have a circle, add () around points
+                                CircleTheoremObject _ => $"({pointsPart})",
 
                                 // Unhandled case
                                 _ => throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}"),
@@ -332,9 +334,19 @@ namespace GeoGen.ConsoleLauncher
                             throw new GeoGenException($"Unhandled type of base theorem object: {baseObject.GetType()}");
                     }
 
-                // For a line segment / angle we convert individual objects
+                // For a pair object...
                 case PairTheoremObject pairObject:
-                    return $"{TheoremObjectToString(pairObject.Object1)}, {TheoremObjectToString(pairObject.Object2)}";
+
+                    // We convert individual objects
+                    var object1 = TheoremObjectToString(pairObject.Object1);
+                    var object2 = TheoremObjectToString(pairObject.Object2);
+
+                    // Get the smaller and the larger
+                    var smaller = object1.CompareTo(object2) < 0 ? object1 : object2;
+                    var larger = smaller == object1 ? object2 : object1;
+
+                    // Compose the final string
+                    return $"{smaller}, {larger}";
 
                 // If something else
                 default:

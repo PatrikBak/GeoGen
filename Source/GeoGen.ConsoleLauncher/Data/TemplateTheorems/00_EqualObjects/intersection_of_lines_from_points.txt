@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- X = RandomPointOnLineFromPoints(A, B)
- Y = RandomPointOnLineFromPoints(A, C)
-
-Theorems:
-
- EqualObjects: A, IntersectionOfLinesFromPoints(B, X, C, Y)

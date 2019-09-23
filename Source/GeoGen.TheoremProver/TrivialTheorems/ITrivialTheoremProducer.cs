@@ -7,7 +7,7 @@ namespace GeoGen.TheoremProver
     /// Represents a service that can find theorems that be directly derived from construction
     /// of the last object of a configuration.
     /// </summary>
-    public interface ITrivialTheoremsProducer
+    public interface ITrivialTheoremProducer
     {
         /// <summary>
         /// Derive trivial theorems from the last object of a given configuration.

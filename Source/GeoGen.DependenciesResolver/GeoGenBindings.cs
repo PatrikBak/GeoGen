@@ -152,11 +152,12 @@ namespace GeoGen.DependenciesResolver
         {
             // Stateless services
             kernel.Bind<ITheoremProver>().To<TheoremProver.TheoremProver>().InSingletonScope().WithConstructorArgument(proverData);
-            kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>().InSingletonScope();
             kernel.Bind<ISubtheoremDeriver>().To<SubtheoremDeriver>().InSingletonScope();
+            kernel.Bind<ITrivialTheoremProducer>().To<TrivialTheoremProducer>().InSingletonScope();
 
+            // Derivers
             kernel.Bind<ITheoremDeriver>().To<TransitivityDeriver>().InSingletonScope();
-            kernel.Bind<ITheoremDeriver>().To<RedefinableByCollinearityDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<CollinearityWithLinesFromPointsDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;

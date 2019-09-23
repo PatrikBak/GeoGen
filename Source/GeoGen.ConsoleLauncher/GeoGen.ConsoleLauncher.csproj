@@ -15,4 +15,11 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\TemplateTheorems\" />
+    <Folder Include="Data\_TemplateTheorems\04_Isosceles_Triangle\" />
+    <Folder Include="Data\_TemplateTheorems\03_Right_Triangle\" />
+    <Folder Include="Data\_TemplateTheorems\06_Quadrilateral\" />
+  </ItemGroup>
+
 </Project>

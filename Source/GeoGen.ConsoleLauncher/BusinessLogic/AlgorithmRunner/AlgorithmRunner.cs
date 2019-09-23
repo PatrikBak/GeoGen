@@ -512,6 +512,10 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.TrivialTheorem:
                     return "trivial theorem";
 
+                // Case when the theorem was attempted as a reformulation of a trivial theorem
+                case DerivationRule.ReformulatedTrivialTheorem:
+                    return "reformulation of a trivial theorem";
+
                 // Case when it's been derived using the transitivity rule
                 case DerivationRule.Transitivity:
 
@@ -528,9 +532,15 @@ namespace GeoGen.ConsoleLauncher
                     return isProved ? $"consequence of {templateTheorem.Number} from {templateTheorem.FileName}"
                                     : $"attempted as a consequence of {templateTheorem.Number} from {templateTheorem.FileName}";
 
-                // Case when we're using collinearity to redefine a line
-                case DerivationRule.RedefinableByCollinearity:
-                    return isProved ? "can be stated differently due to collinearity" : "attempted to be stated differently due to collinearity";
+                // Case when we're connecting collinearity with other line theorems
+                case DerivationRule.CollinearityWithLinesFromPoints:
+
+                    // If we have a collinearity
+                    return proofAttempt.Theorem.Type == TheoremType.CollinearPoints
+                        // Get the corresponding message
+                        ? "using uniquely constructed line to prove collinearity"
+                        // Otherwise the message is a bit different
+                        : "reformulation using collinearity";
 
                 // Default case
                 default:

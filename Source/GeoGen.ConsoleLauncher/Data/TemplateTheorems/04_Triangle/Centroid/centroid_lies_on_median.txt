@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- D = Centroid(A, B, C)
- E = RandomPointOnMedian(A, B, C)
-
-Theorems:
-
- #CollinearPoints: A, D, E

@@ -1,9 +1,0 @@
-﻿Iterations: 3
-
-Constructions:
-
- Excenter
-
-Initial configuration:
- 
- ThreePoints: A, B, C

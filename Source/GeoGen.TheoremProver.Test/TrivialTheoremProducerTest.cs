@@ -16,17 +16,17 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver.Test
 {
     /// <summary>
-    /// The test class for <see cref="TrivialTheoremsProducer"/>.
+    /// The test class for <see cref="TrivialTheoremProducer"/>.
     /// </summary>
     [TestFixture]
-    public class TrivialTheoremsProducerTest
+    public class TrivialTheoremProducerTest
     {
-        #region TrivialTheoremsProducer instance
+        #region TrivialTheoremProducer instance
 
         /// <summary>
         /// Gets the trivial theorems producer.
         /// </summary>
-        private static ITrivialTheoremsProducer Producer
+        private static ITrivialTheoremProducer Producer
         {
             get
             {
@@ -52,10 +52,10 @@ namespace GeoGen.TheoremProver.Test
                 });
 
                 // Bind producer
-                kernel.Bind<ITrivialTheoremsProducer>().To<TrivialTheoremsProducer>();
+                kernel.Bind<ITrivialTheoremProducer>().To<TrivialTheoremProducer>();
 
                 // Get it
-                return kernel.Get<ITrivialTheoremsProducer>();
+                return kernel.Get<ITrivialTheoremProducer>();
             }
         }
 

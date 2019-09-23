@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- D = RandomPointOnMedian(A, B, C)
- l = Midline(B, A, C)
-
-Theorems:
-
- ConcurrentLines: [B, C], [A, D], l

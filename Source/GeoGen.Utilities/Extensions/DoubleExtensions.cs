@@ -68,7 +68,7 @@
             // Now we apply the bit mask to cut all the bits we're not interested.
             // We're interested in the first 'importantBits'so we need to fill the
             // mask with zeros (by shifting to left) so its length is 64
-            bits &= (mask << (64 - importantBits));
+            bits &= mask << (64 - importantBits);
 
             // Now we check the last bit that we didn't make zero. If it's 1, we need to
             // round up, by adding 1 at that specific place. Getting the bit at the

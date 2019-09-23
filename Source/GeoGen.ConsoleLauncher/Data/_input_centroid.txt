@@ -1,9 +1,0 @@
-﻿Iterations: 3
-
-Constructions:
-
- Centroid
-
-Initial configuration:
- 
- ThreePoints: A, B, C

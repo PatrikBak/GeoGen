@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
-using System.Collections.Generic;
 
 namespace GeoGen.TheoremProver
 {
@@ -14,7 +14,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The objects that are not needed to state the theorem.
         /// </summary>
-        public IReadOnlyList<ConfigurationObject> RedundantObjects { get; }
+        public IReadOnlyHashSet<ConfigurationObject> RedundantObjects { get; }
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace GeoGen.TheoremProver
         /// Initializes a new instance of the <see cref="DefinableSimplerDerivationData"/> class.
         /// </summary>
         /// <param name="redundantObjects">The objects that are not needed to state the theorem.</param>
-        public DefinableSimplerDerivationData(IReadOnlyList<ConfigurationObject> redundantObjects)
+        public DefinableSimplerDerivationData(IReadOnlyHashSet<ConfigurationObject> redundantObjects)
             : base(DerivationRule.DefinableSimpler)
         {
             RedundantObjects = redundantObjects ?? throw new ArgumentNullException(nameof(redundantObjects));

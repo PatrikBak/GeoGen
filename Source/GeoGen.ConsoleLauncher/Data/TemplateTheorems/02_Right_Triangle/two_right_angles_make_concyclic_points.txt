@@ -1,8 +1,0 @@
-﻿Configuration:
-
- RightTriangle: A, B, C
- D = RandomPointOnCircleWithDiameter(B, C)
-
-Theorems:
-
- #ConcyclicPoints: A, B, C, D

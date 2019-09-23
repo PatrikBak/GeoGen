@@ -1,9 +1,0 @@
-﻿Configuration:
-
- ThreePoints: A, B, C
- D = Centroid(A, B, C)
- E = IntersectionOfLinesFromPoints(A, D, B, C)
-
-Theorems:
-
- #EqualLineSegments: B, E, C, E

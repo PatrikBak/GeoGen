@@ -615,5 +615,35 @@ namespace GeoGen.Core
                 return new ComposedConstruction(nameof(Median), configuration, parameters);
             }
         }
+
+        /// <summary>
+        ///  Point X of the segment AX parallel to given segment BC in this direction (signature A, B, C)
+        /// </summary>
+        public static ComposedConstruction HalfSegment
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var M = new ConstructedConfigurationObject(Midpoint, B, C);
+                var X = new ConstructedConfigurationObject(ReflectionInMidpointOfSegment, B, A, M);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M, X);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point),
+                    new ObjectConstructionParameter(Point)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(HalfSegment), configuration, parameters);
+            }
+        }
     }
 }

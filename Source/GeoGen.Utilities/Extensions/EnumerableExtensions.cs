@@ -580,6 +580,10 @@ namespace GeoGen.Utilities
         /// <returns>A lazy enumerable of all possible subsets with a given size.</returns>
         public static IEnumerable<T[]> Subsets<T>(this IEnumerable<T> enumerable, int numberOfElements)
         {
+            // If there are 0 element, then the only answer is the empty set
+            if (numberOfElements == 0)
+                return Array.Empty<T>().ToEnumerable();
+
             // Enumerate the items to an array, if it's needed
             var items = enumerable as IReadOnlyList<T> ?? enumerable.ToArray();
 

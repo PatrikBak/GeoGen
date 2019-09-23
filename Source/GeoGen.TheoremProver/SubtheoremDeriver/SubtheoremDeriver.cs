@@ -246,9 +246,11 @@ namespace GeoGen.TheoremProver
                 Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
                 // Triangle
+                // TODO: collinearity
                 ThreePoints => GenerateInitialMappingsWithPoints(input),
 
                 // Quadrilateral
+                // TODO: collinearity
                 FourPoints => GenerateInitialMappingsWithPoints(input),
 
                 // Concyclic points
