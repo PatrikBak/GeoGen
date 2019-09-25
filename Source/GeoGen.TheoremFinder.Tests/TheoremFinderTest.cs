@@ -50,6 +50,7 @@ namespace GeoGen.TheoremFinder.Tests
                 ParallelLines,
                 EqualLineSegments,
                 TangentCircles,
+                Incidence
             }
             // As a set
             .ToReadOnlyHashSet());
@@ -125,7 +126,9 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(E, F)
-                })
+                }),
+                new Theorem(configuration, Incidence, B, l),
+                new Theorem(configuration, Incidence, C, l)
             })
             .Should().BeTrue();
 
@@ -181,7 +184,9 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new LineSegmentTheoremObject(D, F),
                     new LineSegmentTheoremObject(E, F)
-                })
+                }),
+                new Theorem(configuration, Incidence, B, l),
+                new Theorem(configuration, Incidence, C, l)
             })
             .Should().BeTrue();
         }
@@ -342,7 +347,12 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new LineSegmentTheoremObject(D, F),
                     new LineSegmentTheoremObject(E, F)
-                })
+                }),
+                new Theorem(configuration, Incidence, B, l),
+                new Theorem(configuration, Incidence, C, l),
+                new Theorem(configuration, Incidence, P, l),
+                new Theorem(configuration, Incidence, A, b),
+                new Theorem(configuration, Incidence, P, b)
             })
             .Should().BeTrue();
         }
@@ -380,7 +390,11 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
-                })
+                }),
+                new Theorem(configuration, Incidence, A, c),
+                new Theorem(configuration, Incidence, B, c),
+                new Theorem(configuration, Incidence, C, c),
+                new Theorem(configuration, Incidence, P, c)
             })
             .Should().BeTrue();
 
@@ -476,7 +490,11 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
-                })
+                }),
+                new Theorem(configuration, Incidence, A, c),
+                new Theorem(configuration, Incidence, B, c),
+                new Theorem(configuration, Incidence, C, c),
+                new Theorem(configuration, Incidence, P, c)
             })
             .Should().BeTrue();
         }
@@ -554,7 +572,8 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(B, C, P)
-                })
+                }),
+                new Theorem(configuration, Incidence, P, c)
             })
             .Should().BeTrue();
 
@@ -650,7 +669,11 @@ namespace GeoGen.TheoremFinder.Tests
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
-                })
+                }),
+                new Theorem(configuration, Incidence, A, c),
+                new Theorem(configuration, Incidence, B, c),
+                new Theorem(configuration, Incidence, C, c),
+                new Theorem(configuration, Incidence, P, c)
             })
             .Should().BeTrue();
         }

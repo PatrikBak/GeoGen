@@ -62,7 +62,7 @@ namespace GeoGen.ConsoleLauncher
                 OutputFolder = workingFolder,
                 OutputFileExtention = "txt",
                 OutputFilePrefix = "output",
-                GenerationProgresLoggingFrequency = 100,
+                GenerationProgresLoggingFrequency = 10,
                 LogProgress = true,
                 GenerateFullReport = true,
                 FullReportSuffix = " (full)"
@@ -97,7 +97,8 @@ namespace GeoGen.ConsoleLauncher
                 TheoremType.LineTangentToCircle,
                 TheoremType.ParallelLines,
                 TheoremType.PerpendicularLines,
-                TheoremType.TangentCircles
+                TheoremType.TangentCircles,
+                TheoremType.Incidence
             };
         }
     }

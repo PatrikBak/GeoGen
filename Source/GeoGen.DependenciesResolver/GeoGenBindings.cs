@@ -133,6 +133,10 @@ namespace GeoGen.DependenciesResolver
                         kernel.Bind<ITypedTheoremFinder>().To<EqualAnglesTheoremFinder>();
                         break;
 
+                    case TheoremType.Incidence:
+                        kernel.Bind<ITypedTheoremFinder>().To<IncidenceTheoremFinder>();
+                        break;
+
                     default:
                         throw new GeoGenException($"Unhandled type of theorem: {type}");
                 }

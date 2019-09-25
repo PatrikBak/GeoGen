@@ -63,7 +63,10 @@ namespace GeoGen.TheoremFinder
             // such as collinearity or concyclity, but can now be stated using the new object
             // For that we are going to take every old theorem and return possibly new versions of it
             var redefinedNewTheorems = oldTheorems.AllObjects.SelectMany(theorem =>
-                // For each theorem we take its objects
+                // If we have an incidence, we don't want to do anything 
+                // (it's not needed to state that A lines on line AB)
+                theorem.Type == TheoremType.Incidence ? Enumerable.Empty<Theorem>() :
+                // Otherwise  For each theorem we take its objects
                 theorem.InvolvedObjects
                     // Find the possible definition changes for each
                     // (this includes the option of not changing the definition at all)
