@@ -542,6 +542,12 @@ namespace GeoGen.ConsoleLauncher
                         // Otherwise the message is a bit different
                         : "reformulation using collinearity";
 
+                // Case when we have two perpendicular lines and one parallelity
+                case DerivationRule.PerpendicularLineToParallelLines:
+
+                    // If we have a collinearity
+                    return "two perpendicular lines with a common line are equivalent with parallelity";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data}");

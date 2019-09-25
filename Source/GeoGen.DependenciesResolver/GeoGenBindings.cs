@@ -158,6 +158,7 @@ namespace GeoGen.DependenciesResolver
             // Derivers
             kernel.Bind<ITheoremDeriver>().To<TransitivityDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<CollinearityWithLinesFromPointsDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<PerpendicularLineToParallelLinesDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;
