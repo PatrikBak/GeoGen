@@ -5,7 +5,7 @@ namespace GeoGen.Utilities
     /// <summary>
     /// Represents a dictionary mapping <see cref="TKey"/>s to lists of <see cref="TValue"/>s.
     /// </summary>
-    public abstract class ObjectsMap<TKey, TValue> : Dictionary<TKey, IReadOnlyList<TValue>>
+    public abstract class ObjectMap<TKey, TValue> : Dictionary<TKey, IReadOnlyList<TValue>>
     {
         #region Public properties
 
@@ -19,10 +19,10 @@ namespace GeoGen.Utilities
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectsMap"/> class wrapping given objects.
+        /// Initializes a new instance of the <see cref="ObjectMap"/> class wrapping given objects.
         /// </summary>
         /// <param name="objects">The objects to be contained in the map.</param>
-        protected ObjectsMap(IEnumerable<TValue> objects)
+        protected ObjectMap(IEnumerable<TValue> objects)
         {
             // Prepare the list of all objects
             var allObjects = new List<TValue>();

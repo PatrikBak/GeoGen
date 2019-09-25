@@ -7,15 +7,15 @@ namespace GeoGen.Core
     /// Represents a dictionary mapping <see cref="ConfigurationObjectType"/> to lists of <see cref="ConfigurationObject"/>
     /// of that type.
     /// </summary>
-    public class ConfigurationObjectsMap : ObjectsMap<ConfigurationObjectType, ConfigurationObject>
+    public class ConfigurationObjectMap : ObjectMap<ConfigurationObjectType, ConfigurationObject>
     {
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigurationObjectsMap"/> class.
+        /// Initializes a new instance of the <see cref="ConfigurationObjectMap"/> class.
         /// </summary>
         /// <param name="objects">The objects to be contained in the map.</param>
-        public ConfigurationObjectsMap(IEnumerable<ConfigurationObject> objects) : base(objects)
+        public ConfigurationObjectMap(IEnumerable<ConfigurationObject> objects) : base(objects)
         {
         }
 

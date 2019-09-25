@@ -53,7 +53,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="theorems">The theorems between which we're finding relationships.</param>
         /// <returns>The enumerable of all found relationships, i.e. assumptions and the theorem that follows from them.</returns>
-        public abstract IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremsMap theorems);
+        public abstract IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems);
 
         #endregion
     }

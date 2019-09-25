@@ -54,13 +54,13 @@ namespace GeoGen.ConsoleLauncher
         /// Gets template theorems.
         /// </summary>
         /// <returns>The list of loaded configuration with its theorems.</returns>
-        public async Task<List<(Configuration, TheoremsMap)>> GetTemplateTheoremsAsync()
+        public async Task<List<(Configuration, TheoremMap)>> GetTemplateTheoremsAsync()
         {
             // Log that we're starting
             LoggingManager.LogInfo($"Starting to search for template theorems in {_settings.TheoremsFolderPath}");
 
             // Prepare the result
-            var result = new List<(Configuration, TheoremsMap)>();
+            var result = new List<(Configuration, TheoremMap)>();
 
             // Prepare the theorem files
             // Load the theorem folders 
@@ -114,10 +114,10 @@ namespace GeoGen.ConsoleLauncher
                             i + 1));
 
                     // Create a map from them
-                    var theoremsMap = new TheoremsMap(theorems);
+                    var theoremMap = new TheoremMap(theorems);
 
                     // If there is no theorem
-                    if (theoremsMap.AllObjects.IsEmpty())
+                    if (theoremMap.AllObjects.IsEmpty())
                     {
                         // Log that we're skipping it
                         LoggingManager.LogInfo("No theorems, skipping file");
@@ -127,10 +127,10 @@ namespace GeoGen.ConsoleLauncher
                     }
 
                     // They have the same configuration, take it from the first
-                    var configuration = theoremsMap.AllObjects[0].Configuration;
+                    var configuration = theoremMap.AllObjects[0].Configuration;
 
                     // Add it to our result
-                    result.Add((configuration, theoremsMap));
+                    result.Add((configuration, theoremMap));
                 }
                 catch (ParserException)
                 {

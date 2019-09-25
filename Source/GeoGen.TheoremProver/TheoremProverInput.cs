@@ -21,18 +21,18 @@ namespace GeoGen.TheoremProver
         /// The theorems that hold true in the configuration and cannot be stated without its last object. 
         /// These are the theorems that will be analyzed whether they are interesting or not.
         /// </summary>
-        public TheoremsMap NewTheorems { get; }
+        public TheoremMap NewTheorems { get; }
 
         /// <summary>
         /// The theorems that hold true in the configuration and can be stated without its last object.
         /// These are the theorems are assumed to already have been analyzed, i.e. not interesting.
         /// </summary>
-        public TheoremsMap OldTheorems { get; }
+        public TheoremMap OldTheorems { get; }
 
         /// <summary>
         /// The theorems that hold true in the configuration.
         /// </summary>
-        public TheoremsMap AllTheorems { get; }
+        public TheoremMap AllTheorems { get; }
 
         #endregion
 
@@ -44,14 +44,14 @@ namespace GeoGen.TheoremProver
         /// <param name="contextualPicture">The contextual picture where the configuration is drawn.</param>
         /// <param name="newTheorems">The theorems that hold true in the configuration and cannot be stated without its last object.</param>
         /// <param name="oldTheorems">The theorems that hold true in the configuration and can be stated without its last object.</param>
-        public TheoremProverInput(ContextualPicture contextualPicture, TheoremsMap newTheorems, TheoremsMap oldTheorems)
+        public TheoremProverInput(ContextualPicture contextualPicture, TheoremMap newTheorems, TheoremMap oldTheorems)
         {
             ContextualPicture = contextualPicture ?? throw new ArgumentNullException(nameof(contextualPicture));
             NewTheorems = newTheorems ?? throw new ArgumentNullException(nameof(newTheorems));
             OldTheorems = oldTheorems ?? throw new ArgumentNullException(nameof(oldTheorems));
 
             // Create the map of all theorems by merging the old and new ones
-            AllTheorems = new TheoremsMap(OldTheorems.AllObjects.Concat(NewTheorems.AllObjects));
+            AllTheorems = new TheoremMap(OldTheorems.AllObjects.Concat(NewTheorems.AllObjects));
         }
 
         #endregion

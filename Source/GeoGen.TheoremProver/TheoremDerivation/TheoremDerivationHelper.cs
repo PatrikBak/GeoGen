@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The map of theorems of which we're looking for a proof. 
         /// </summary>
-        public TheoremsMap MainTheorems { get; }
+        public TheoremMap MainTheorems { get; }
 
         #endregion
 
@@ -52,7 +52,7 @@ namespace GeoGen.TheoremProver
         /// Initializes a new instance of the <see cref="TheoremDerivationHelper"/> class.
         /// </summary>
         /// <param name="mainTheorems">The map of theorems of which we're looking for a proof. </param>
-        public TheoremDerivationHelper(TheoremsMap mainTheorems)
+        public TheoremDerivationHelper(TheoremMap mainTheorems)
         {
             // Set the theorems to prove
             MainTheorems = mainTheorems ?? throw new ArgumentNullException(nameof(mainTheorems));

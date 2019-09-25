@@ -161,13 +161,13 @@ namespace GeoGen.TheoremProver
             #region Check if we have enough objects to do the mapping
 
             // Find it out by going through all the (type, objects) pairs of the template configuration
-            var doWeHaveEnoughObjects = input.TemplateConfiguration.ObjectsMap.All(pair =>
+            var doWeHaveEnoughObjects = input.TemplateConfiguration.ObjectMap.All(pair =>
             {
                 // Deconstruct
                 var (type, templateObjects) = pair;
 
                 // Get the number examined objects of this type
-                var numberOfNumbers = input.ExaminedConfigurationPicture.Pictures.Configuration.ObjectsMap.GetOrDefault(type)?.Count ?? 0;
+                var numberOfNumbers = input.ExaminedConfigurationPicture.Pictures.Configuration.ObjectMap.GetOrDefault(type)?.Count ?? 0;
 
                 // This type is fine if there at least as many objects as the template ones
                 return numberOfNumbers >= templateObjects.Count;
@@ -519,7 +519,7 @@ namespace GeoGen.TheoremProver
                 case PredefinedConstruction p when p.Type == RandomPoint:
 
                     // Then we do so by pulling the map and looking at points
-                    return configuration.ObjectsMap.GetOrDefault(ConfigurationObjectType.Point)?
+                    return configuration.ObjectMap.GetOrDefault(ConfigurationObjectType.Point)?
                         // And using our helper function
                         .Select(point => new MappingData(data, (constructedObject, point)))
                         // In case there in no point (which I doubt that will ever happen), return nothing

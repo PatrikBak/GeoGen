@@ -74,7 +74,7 @@ namespace GeoGen.TheoremProver.Test
                 examinedConfigurationPicture: contextualPicture,
                 examinedConfigurationTheorems: theorems,
                 templateConfiguration: templateTheorems.First().Configuration,
-                templateTheorems: new TheoremsMap(templateTheorems)
+                templateTheorems: new TheoremMap(templateTheorems)
             ))
             // Enumerate the result
             .ToList();

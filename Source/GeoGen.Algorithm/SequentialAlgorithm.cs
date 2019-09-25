@@ -77,7 +77,7 @@ namespace GeoGen.Algorithm
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
         /// <returns>The theorems in the initial configuration and a lazy enumerable of all the generated output.</returns>
-        public (TheoremsMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(GeneratorInput input)
+        public (TheoremMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(GeneratorInput input)
         {
             #region Initial configuration
 
@@ -117,7 +117,7 @@ namespace GeoGen.Algorithm
             var picturesMap = new Dictionary<GeneratedConfiguration, Pictures>();
 
             // Prepare the map for theorems
-            var theoremsMap = new Dictionary<GeneratedConfiguration, TheoremsMap>();
+            var theoremMap = new Dictionary<GeneratedConfiguration, TheoremMap>();
 
             // Prepare the set containing inconstructible objects. 
             var inconstructibleObjects = new HashSet<ConfigurationObject>();
@@ -256,7 +256,7 @@ namespace GeoGen.Algorithm
                           // Then the old theorems are the initial ones
                           initialTheorems
                           // Otherwise we take them from the map
-                          : theoremsMap[configuration.PreviousConfiguration];
+                          : theoremMap[configuration.PreviousConfiguration];
 
                        // Find new theorems
                        var newTheorems = _finder.FindNewTheorems(picture, oldTheorems);
@@ -270,7 +270,7 @@ namespace GeoGen.Algorithm
                        );
 
                        // Cache all the theorems (that the prover conveniently merged for us)
-                       theoremsMap.Add(configuration, input.AllTheorems);
+                       theoremMap.Add(configuration, input.AllTheorems);
 
                        // Analyze them
                        var proverOutput = _prover.Analyze(input);

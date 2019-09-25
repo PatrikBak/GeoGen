@@ -19,7 +19,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The list of theorems that are true in the picture.
         /// </summary>
-        public TheoremsMap ExaminedConfigurationTheorems { get; }
+        public TheoremMap ExaminedConfigurationTheorems { get; }
 
         /// <summary>
         /// The configuration where our template theorems hold.
@@ -29,7 +29,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The template theorems that are used to derive theorems in our picture.
         /// </summary>
-        public TheoremsMap TemplateTheorems { get; }
+        public TheoremMap TemplateTheorems { get; }
 
         #endregion
 
@@ -43,9 +43,9 @@ namespace GeoGen.TheoremProver
         /// <param name="templateConfiguration">The configuration where our template theorems hold.</param>
         /// <param name="templateTheorems">The template theorems that are used to derive theorems in our picture.</param>
         public SubtheoremDeriverInput(ContextualPicture examinedConfigurationPicture,
-                                       TheoremsMap examinedConfigurationTheorems,
+                                       TheoremMap examinedConfigurationTheorems,
                                        Configuration templateConfiguration,
-                                       TheoremsMap templateTheorems)
+                                       TheoremMap templateTheorems)
         {
             ExaminedConfigurationPicture = examinedConfigurationPicture ?? throw new ArgumentNullException(nameof(examinedConfigurationPicture));
             ExaminedConfigurationTheorems = examinedConfigurationTheorems ?? throw new ArgumentNullException(nameof(examinedConfigurationTheorems));

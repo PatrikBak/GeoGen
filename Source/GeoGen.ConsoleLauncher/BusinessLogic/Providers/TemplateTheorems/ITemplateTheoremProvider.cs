@@ -13,6 +13,6 @@ namespace GeoGen.ConsoleLauncher
         /// Gets template theorems.
         /// </summary>
         /// <returns>The list of loaded configuration with its theorems.</returns>
-        Task<List<(Configuration, TheoremsMap)>> GetTemplateTheoremsAsync();
+        Task<List<(Configuration, TheoremMap)>> GetTemplateTheoremsAsync();
     }
 }

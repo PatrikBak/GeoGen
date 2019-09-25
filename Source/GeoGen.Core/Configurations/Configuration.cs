@@ -44,12 +44,12 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the configuration objects map containing all the objects of the configuration.
         /// </summary>
-        public ConfigurationObjectsMap ObjectsMap { get; }
+        public ConfigurationObjectMap ObjectMap { get; }
 
         /// <summary>
         /// Gets all configuration objects of the configuration.
         /// </summary>
-        public IReadOnlyList<ConfigurationObject> AllObjects => ObjectsMap.AllObjects;
+        public IReadOnlyList<ConfigurationObject> AllObjects => ObjectMap.AllObjects;
 
         #endregion
 
@@ -64,7 +64,7 @@ namespace GeoGen.Core
         {
             LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
-            ObjectsMap = new ConfigurationObjectsMap(LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
+            ObjectMap = new ConfigurationObjectMap(LooseObjects.Cast<ConfigurationObject>().Concat(constructedObjects));
             ConstructedObjectsSet = ConstructedObjects.ToReadOnlyHashSet();
 
             // Make sure there are no duplicated

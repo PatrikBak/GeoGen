@@ -27,7 +27,7 @@ namespace GeoGen.TheoremFinder.Tests
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
         /// <returns>The old, new and all theorems.</returns>
-        private static (TheoremsMap oldTheorems, TheoremsMap newTheorems, TheoremsMap allTheorems) FindTheorems(Configuration configuration)
+        private static (TheoremMap oldTheorems, TheoremMap newTheorems, TheoremMap allTheorems) FindTheorems(Configuration configuration)
         {
             // Prepare the kernel
             var kernel = IoC.CreateKernel().AddConstructor(new PicturesSettings

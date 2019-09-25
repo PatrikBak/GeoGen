@@ -41,10 +41,10 @@ namespace GeoGen.TheoremFinder
         /// </summary>
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <returns>The enumerable of true theorems in the configuration.</returns>
-        public TheoremsMap FindAllTheorems(ContextualPicture contextualPicture)
+        public TheoremMap FindAllTheorems(ContextualPicture contextualPicture)
         {
             // Simply reuse all the finders and wrap the theorems in a map (which will enumerate it)
-            return new TheoremsMap(_finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
+            return new TheoremMap(_finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GeoGen.TheoremFinder
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <param name="oldTheorems">The theorems that hold true in the configuration without the last object.</param>
         /// <returns>The enumerable of true theorems in the configuration that use the last object.</returns>
-        public TheoremsMap FindNewTheorems(ContextualPicture contextualPicture, TheoremsMap oldTheorems)
+        public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems)
         {
             // Reuse all the finders to find the theorems that are geometrically new in the configuration
             var uniqueNewTheorems = _finders.SelectMany(finder => finder.FindNewTheorems(contextualPicture));
@@ -80,7 +80,7 @@ namespace GeoGen.TheoremFinder
                 .Except(oldTheorems.AllObjects);
 
             // Concatenate these two types of theorems and wrap the result in a map (which will enumerate it)
-            return new TheoremsMap(uniqueNewTheorems.Concat(redefinedNewTheorems));
+            return new TheoremMap(uniqueNewTheorems.Concat(redefinedNewTheorems));
         }
 
         /// <summary>

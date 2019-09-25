@@ -61,7 +61,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="availableObjects">The available objects that we can use.</param>
         /// <returns>true, if the signature can be matched, false otherwise.</returns>
-        public bool CanBeMatched(ConfigurationObjectsMap availableObjects)
+        public bool CanBeMatched(ConfigurationObjectMap availableObjects)
         {
             // Let's have a look at each pair of [ObjectType, NeededCount] to find out
             // if we have enough objects from this type

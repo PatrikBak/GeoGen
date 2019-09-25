@@ -8,15 +8,15 @@ namespace GeoGen.Core
     /// Represents a dictionary mapping <see cref="TheoremType"/> to lists of <see cref="Theorem"/>
     /// of that type.
     /// </summary>
-    public class TheoremsMap : ObjectsMap<TheoremType, Theorem>
+    public class TheoremMap : ObjectMap<TheoremType, Theorem>
     {
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TheoremsMap"/> class.
+        /// Initializes a new instance of the <see cref="TheoremMap"/> class.
         /// </summary>
         /// <param name="theorems">The theorems to be contained in the map.</param>
-        public TheoremsMap(IEnumerable<Theorem> theorems) : base(theorems)
+        public TheoremMap(IEnumerable<Theorem> theorems) : base(theorems)
         {
         }
 

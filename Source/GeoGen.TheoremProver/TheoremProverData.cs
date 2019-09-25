@@ -15,7 +15,7 @@ namespace GeoGen.TheoremProver
         /// The list of configurations together with their theorems that are supposed to be 
         /// known and used to derive new theorems via <see cref="ISubtheoremDeriver"/>.
         /// </summary>
-        public IReadOnlyList<(Configuration, TheoremsMap)> TemplateTheorems { get; }
+        public IReadOnlyList<(Configuration, TheoremMap)> TemplateTheorems { get; }
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace GeoGen.TheoremProver
         /// Initializes a new instance of the <see cref="TheoremProverData"/> class.
         /// </summary>
         /// <param name="templateTheorems">The list of template configurations together with their theorems.</param>
-        public TheoremProverData(IReadOnlyList<(Configuration, TheoremsMap)> templateTheorems)
+        public TheoremProverData(IReadOnlyList<(Configuration, TheoremMap)> templateTheorems)
         {
             TemplateTheorems = templateTheorems ?? throw new ArgumentNullException(nameof(templateTheorems));
         }

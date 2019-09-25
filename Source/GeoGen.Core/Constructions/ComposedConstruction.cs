@@ -51,15 +51,15 @@ namespace GeoGen.Core
             static void ThrowException() => throw new GeoGenException("Incorrect composed construction: The loose objects don't correspond to the parameters");
 
             // Wrap the loose objects in a map and for each pair of [type, objects]....
-            var looseObjectsMap = new ConfigurationObjectsMap(configuration.LooseObjects);
+            var looseObjectMap = new ConfigurationObjectMap(configuration.LooseObjects);
 
             // Make sure the number of the actual object types is the same as the number of the needed object types
             // If not, throw an exception...
-            if (looseObjectsMap.Count != Signature.ObjectTypesToNeededCount.Count)
+            if (looseObjectMap.Count != Signature.ObjectTypesToNeededCount.Count)
                 ThrowException();
 
             // Check if the number of objects of each type matched the needed count
-            looseObjectsMap.ForEach(pair =>
+            looseObjectMap.ForEach(pair =>
             {
                 // Deconstruct
                 var (objectType, looseObjects) = pair;

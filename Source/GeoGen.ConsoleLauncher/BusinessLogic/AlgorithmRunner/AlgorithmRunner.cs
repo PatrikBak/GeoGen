@@ -223,7 +223,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="initialFormatter">The formatter of the initial configuration.</param>
         /// <param name="initialTheorems">The theorems found in the initial configuration</param>
         /// <returns>The string representing the theorems.</returns>
-        private string InitialTheoremsToString(OutputFormatter initialFormatter, TheoremsMap initialTheorems)
+        private string InitialTheoremsToString(OutputFormatter initialFormatter, TheoremMap initialTheorems)
         {
             // Process every theorem
             return initialTheorems.AllObjects
@@ -245,7 +245,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="includeProven">Indicates if we should include the proved theorems as well.</param>
         /// <param name="proverOutput">The output of the theorem analyzer.</param>
         /// <returns>The string representing the theorems.</returns>
-        private string TheoremsToString(OutputFormatter formatter, TheoremsMap theorems, bool includeProven, TheoremProverOutput proverOutput)
+        private string TheoremsToString(OutputFormatter formatter, TheoremMap theorems, bool includeProven, TheoremProverOutput proverOutput)
         {
             // First we find which theorems we're going to convert
             var allTheorems = theorems.AllObjects

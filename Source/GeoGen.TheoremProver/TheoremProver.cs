@@ -120,7 +120,7 @@ namespace GeoGen.TheoremProver
             var incidences = new HashSet<(ConfigurationObject, ConfigurationObject)>();
 
             // Prepare a set of used template configurations
-            var usedTemplates = new HashSet<(Configuration, TheoremsMap)>();
+            var usedTemplates = new HashSet<(Configuration, TheoremMap)>();
 
             // We're going to execute the subtheorems algorithm in two phases
             // In the first one we try to derive our theorems that we're interested

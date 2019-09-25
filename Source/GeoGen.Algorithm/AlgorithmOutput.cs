@@ -17,7 +17,7 @@ namespace GeoGen.Algorithm
         /// <summary>
         /// The found theorems for the configurations.
         /// </summary>
-        public TheoremsMap Theorems { get; set; }
+        public TheoremMap Theorems { get; set; }
 
         /// <summary>
         /// The output of the theorem prover.

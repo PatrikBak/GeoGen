@@ -7,10 +7,10 @@ using static GeoGen.Core.PredefinedConstructionType;
 namespace GeoGen.Core.Tests
 {
     /// <summary>
-    /// The test class for <see cref="ConfigurationObjectsExtensions"/>.
+    /// The test class for <see cref="ConfigurationObjectEnumerableExtensions"/>.
     /// </summary>
     [TestFixture]
-    public class ConfigurationObjectsExtensionsTest
+    public class ConfigurationObjectEnumerableExtensionsTest
     {
         [Test]
         public void Test_Getting_Defining_Objects()

@@ -60,7 +60,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// The map of configuration objects represented in this picture to their corresponding geometric objects.
         /// </summary>
-        private readonly Dictionary<ConfigurationObject, GeometricObject> _configurationObjectsMap = new Dictionary<ConfigurationObject, GeometricObject>();
+        private readonly Dictionary<ConfigurationObject, GeometricObject> _configurationObjectMap = new Dictionary<ConfigurationObject, GeometricObject>();
 
         /// <summary>
         /// The tracer of unsuccessful attempts to reconstruct the contextual picture.
@@ -193,7 +193,7 @@ namespace GeoGen.Constructor
             // We need to have geometric objects cloned
             // Thus we prepare a dictionary mapping old to newly created ones
             // To get all the geometric objects we take some map from the _objects
-            var geometricObjectsMap = _objects.First().Value.Select(pair => pair.Item1).Select(geometricObject => geometricObject switch
+            var geometricObjectMap = _objects.First().Value.Select(pair => pair.Item1).Select(geometricObject => geometricObject switch
             {
                 // Point
                 PointObject point => (oldObject: geometricObject, newObject: new PointObject(point.ConfigurationObject) as GeometricObject),
@@ -212,15 +212,15 @@ namespace GeoGen.Constructor
 
             // Make sure the lines and circles know about its points
             // Take the pairs where we have a line/circle
-            geometricObjectsMap.Where(pair => pair.Key is DefinableByPoints)
+            geometricObjectMap.Where(pair => pair.Key is DefinableByPoints)
                 // For every such pair take the points 
                 .ForEach(pair => ((DefinableByPoints)pair.Key).Points
                     // And add the corresponding point to the corresponding object
-                    .ForEach(point => ((DefinableByPoints)pair.Value).AddPoint((PointObject)geometricObjectsMap[point])));
+                    .ForEach(point => ((DefinableByPoints)pair.Value).AddPoint((PointObject)geometricObjectMap[point])));
 
             // Make sure the points know about its lines and circles
             // Take the pairs where we have a point
-            geometricObjectsMap.Where(pair => pair.Key is PointObject)
+            geometricObjectMap.Where(pair => pair.Key is PointObject)
                 // For every such pair
                 .ForEach(pair =>
                 {
@@ -229,12 +229,12 @@ namespace GeoGen.Constructor
                     var newPoint = (PointObject)pair.Value;
 
                     // Add the lines / circles corresponding to the old ones to the new point
-                    oldPoint.Lines.ForEach(line => newPoint.AddLine((LineObject)geometricObjectsMap[line]));
-                    oldPoint.Circles.ForEach(circle => newPoint.AddCircle((CircleObject)geometricObjectsMap[circle]));
+                    oldPoint.Lines.ForEach(line => newPoint.AddLine((LineObject)geometricObjectMap[line]));
+                    oldPoint.Circles.ForEach(circle => newPoint.AddCircle((CircleObject)geometricObjectMap[circle]));
                 });
 
             // Clone the configuration objects map
-            _configurationObjectsMap.ForEach(pair => newPicture._configurationObjectsMap.Add(pair.Key, geometricObjectsMap[pair.Value]));
+            _configurationObjectMap.ForEach(pair => newPicture._configurationObjectMap.Add(pair.Key, geometricObjectMap[pair.Value]));
 
             // Prepare a map that maps old picture instances to corresponding new ones
             var picturesMap = Pictures.ZipToDictionary(newPictures);
@@ -243,7 +243,7 @@ namespace GeoGen.Constructor
             _objects.ForEach(pair =>
             {
                 // Deconstruct
-                var (picture, objectsMap) = pair;
+                var (picture, objectMap) = pair;
 
                 // Create a new map
                 var newMap = new Map<GeometricObject, IAnalyticObject>();
@@ -252,13 +252,13 @@ namespace GeoGen.Constructor
                 newPicture._objects.Add(picturesMap[picture], newMap);
 
                 // Fill the map
-                objectsMap.ForEach(tuple => newMap.Add(geometricObjectsMap[tuple.Item1], tuple.Item2));
+                objectMap.ForEach(tuple => newMap.Add(geometricObjectMap[tuple.Item1], tuple.Item2));
             });
 
             // Clone all objects while making them all old
-            _oldPoints.Concat(_newPoints).ForEach(point => newPicture._oldPoints.Add((PointObject)geometricObjectsMap[point]));
-            _oldLines.Concat(_newLines).ForEach(line => newPicture._oldLines.Add((LineObject)geometricObjectsMap[line]));
-            _oldCircles.Concat(_newCircles).ForEach(circle => newPicture._oldCircles.Add((CircleObject)geometricObjectsMap[circle]));
+            _oldPoints.Concat(_newPoints).ForEach(point => newPicture._oldPoints.Add((PointObject)geometricObjectMap[point]));
+            _oldLines.Concat(_newLines).ForEach(line => newPicture._oldLines.Add((LineObject)geometricObjectMap[line]));
+            _oldCircles.Concat(_newCircles).ForEach(circle => newPicture._oldCircles.Add((CircleObject)geometricObjectMap[circle]));
 
             // Add the last object of the configuration to the new picture
             newPicture.AddObjects(new[] { newPictures.Configuration.LastConstructedObject });
@@ -306,7 +306,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The corresponding geometric object.</returns>
-        public GeometricObject GetGeometricObject(ConfigurationObject configurationObject) => _configurationObjectsMap[configurationObject];
+        public GeometricObject GetGeometricObject(ConfigurationObject configurationObject) => _configurationObjectMap[configurationObject];
 
         /// <summary>
         /// Gets the analytic representation of a given geometric object in a given picture.
@@ -358,7 +358,7 @@ namespace GeoGen.Constructor
                         _newPoints.Clear();
                         _newLines.Clear();
                         _newCircles.Clear();
-                        _configurationObjectsMap.Clear();
+                        _configurationObjectMap.Clear();
                     });
             }
             catch (UnresolvedInconsistencyException e)
@@ -395,7 +395,7 @@ namespace GeoGen.Constructor
                 geometricObject.ConfigurationObject = configurationObject;
 
                 // Map them
-                _configurationObjectsMap.Add(configurationObject, geometricObject);
+                _configurationObjectMap.Add(configurationObject, geometricObject);
 
                 // And terminate, since the implicit objects this might create have already been added
                 return;
@@ -422,7 +422,7 @@ namespace GeoGen.Constructor
             _objects.Keys.ForEach(picture => _objects[picture].Add(geometricObject, picture.Get(configurationObject)));
 
             // Map them
-            _configurationObjectsMap.Add(configurationObject, geometricObject);
+            _configurationObjectMap.Add(configurationObject, geometricObject);
 
             // Switch based on the object type
             switch (configurationObject.ObjectType)

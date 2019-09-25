@@ -17,7 +17,7 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="theorems">The theorems between which we're finding relationships.</param>
         /// <returns>The enumerable of all found relationships, i.e. assumptions and the theorem that follows from them.</returns>
-        public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremsMap theorems)
+        public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the collinearities
             foreach (var collinearity in theorems.GetTheoremsOfTypes(CollinearPoints))

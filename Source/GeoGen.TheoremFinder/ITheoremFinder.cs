@@ -14,7 +14,7 @@ namespace GeoGen.TheoremFinder
         /// </summary>
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <returns>The enumerable of true theorems in the configuration.</returns>
-        TheoremsMap FindAllTheorems(ContextualPicture contextualPicture);
+        TheoremMap FindAllTheorems(ContextualPicture contextualPicture);
 
         /// <summary>
         /// Finds all theorems that hold true in the configuration represented by a given contextual picture
@@ -23,6 +23,6 @@ namespace GeoGen.TheoremFinder
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <param name="oldTheorems">The theorems that hold true in the configuration without the last object.</param>
         /// <returns>The enumerable of true theorems in the configuration that use the last object.</returns>
-        TheoremsMap FindNewTheorems(ContextualPicture contextualPicture, TheoremsMap oldTheorems);
+        TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems);
     }
 }

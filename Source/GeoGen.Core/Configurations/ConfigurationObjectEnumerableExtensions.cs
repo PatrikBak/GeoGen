@@ -7,7 +7,7 @@ namespace GeoGen.Core
     /// <summary>
     /// Extension methods for <see cref="ConfigurationObject"/>s.
     /// </summary>
-    public static class ConfigurationObjectsExtensions
+    public static class ConfigurationObjectEnumerableExtensions
     {
         /// <summary>
         /// Finds the objects that define these objects, in an order in which they can be constructed, including these ones.

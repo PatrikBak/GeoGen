@@ -69,12 +69,12 @@ namespace GeoGen.Generator
                         .SelectMany(construction =>
                         {
                             // First we check if we have enough object to match the signature
-                            if (!construction.Signature.CanBeMatched(currentConfiguration.ObjectsMap))
+                            if (!construction.Signature.CanBeMatched(currentConfiguration.ObjectMap))
                                 return Enumerable.Empty<ConstructedConfigurationObject>();
 
                             // Now we're sure we can generate some objects
                             // First we take all the available pairs [object type, objects]
-                            return currentConfiguration.ObjectsMap
+                            return currentConfiguration.ObjectMap
                                     // Those are wrapped in a dictionary mapping object types to particular objects
                                     // We take only those types that are required in our signature
                                     .Where(keyValue => construction.Signature.ObjectTypesToNeededCount.ContainsKey(keyValue.Key))
