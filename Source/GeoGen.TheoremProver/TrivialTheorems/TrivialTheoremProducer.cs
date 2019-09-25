@@ -95,7 +95,7 @@ namespace GeoGen.TheoremProver
                     // Switch based on its type
                     switch (predefinedConstruction.Type)
                     {
-                        // An angle bisector makes equal angles
+                        // An angle bisector makes equal angles and incidence
                         case InternalAngleBisector:
                         {
                             // Create theorem objects
@@ -110,7 +110,8 @@ namespace GeoGen.TheoremProver
                                 {
                                     new AngleTheoremObject(line1, bisector),
                                     new AngleTheoremObject(line2, bisector)
-                                })
+                                }),
+                                new Theorem(configuration, Incidence, objects[0], constructedObject)
                             };
                         }
 
@@ -148,7 +149,7 @@ namespace GeoGen.TheoremProver
                                 })
                              };
 
-                        // Perpendicular projection makes perpendicular lines
+                        // Perpendicular projection makes perpendicular lines and incidence
                         case PerpendicularProjection:
 
                             // Create the theorem
@@ -158,10 +159,11 @@ namespace GeoGen.TheoremProver
                                 {
                                     new LineTheoremObject(objects[0], constructedObject),
                                     new LineTheoremObject(objects[1])
-                                })
+                                }),
+                                new Theorem(configuration, Incidence, objects[1], constructedObject)
                             };
 
-                        // Perpendicular line makes (surprisingly) perpendicular lines
+                        // Perpendicular line makes (surprisingly) perpendicular lines and incidence
                         case PerpendicularLine:
 
                             // Create the theorem
@@ -171,10 +173,11 @@ namespace GeoGen.TheoremProver
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
-                                })
+                                }),
+                                new Theorem(configuration, Incidence, objects[0], constructedObject)
                             };
 
-                        // Parallel line makes (surprisingly) parallel lines
+                        // Parallel line makes (surprisingly) parallel lines and incidence
                         case ParallelLine:
 
                             // Create the theorem
@@ -184,7 +187,8 @@ namespace GeoGen.TheoremProver
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
-                                })
+                                }),
+                                new Theorem(configuration, Incidence, objects[0], constructedObject)
                             };
 
                         // Second intersection of two circumcircles makes concyclic points
@@ -232,9 +236,63 @@ namespace GeoGen.TheoremProver
                                 new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1])
                             };
 
-                        // In all the other cases we can't say anything useful :/
-                        default:
+                        // Random point on a circles makes concyclic points
+                        case RandomPointOnCircleFromPoints:
+
+                            // Create the theorem
+                            return new[]
+                            {
+                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2])
+                            };
+
+                        // Line makes incidences
+                        case LineFromPoints:
+
+                            // Create the theorems
+                            return new[]
+                            {
+                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
+                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                            };
+
+                        // Circumcircle makes incidences
+                        case Circumcircle:
+
+                            // Create the theorems
+                            return new[]
+                            {
+                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
+                                new Theorem(configuration, Incidence, constructedObject, objects[1]),
+                                new Theorem(configuration, Incidence, constructedObject, objects[2])
+                            };
+
+                        // Circle with center through point makes incidences
+                        case CircleWithCenterThroughPoint:
+
+                            // Create the theorem
+                            return new[]
+                            {
+                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                            };
+
+                        // Intersection of lines makes incidences
+                        case IntersectionOfLines:
+
+                            // Create the theorems
+                            return new[]
+                            {
+                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
+                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                            };
+
+                        // Here we can't say anything useful
+                        case CenterOfCircle:
+                        case RandomPoint:
                             return Array.Empty<Theorem>();
+
+                        // Default case
+                        default:
+                            throw new TheoremProverException($"Unhandled type of predefined construction: {predefinedConstruction.Type}");
                     }
 
                 // If we have a composed construction...

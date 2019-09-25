@@ -81,7 +81,7 @@
         RandomPointOnLineFromPoints,
 
         /// <summary>
-        /// A random point lying on circle c (signature c).
+        /// A random point lying on circle ABC (signature {A, B, C}).
         /// </summary>
         RandomPointOnCircleFromPoints,
 
