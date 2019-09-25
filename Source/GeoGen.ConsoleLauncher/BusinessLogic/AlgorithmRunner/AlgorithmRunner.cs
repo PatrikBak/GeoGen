@@ -544,9 +544,11 @@ namespace GeoGen.ConsoleLauncher
 
                 // Case when we have two perpendicular lines and one parallelity
                 case DerivationRule.PerpendicularLineToParallelLines:
-
-                    // If we have a collinearity
                     return "two perpendicular lines with a common line are equivalent with parallelity";
+
+                // Case when we combine incidences to restate a theorem
+                case DerivationRule.ExplicitLineWithIncidences:
+                    return "restating using incidences";
 
                 // Default case
                 default:

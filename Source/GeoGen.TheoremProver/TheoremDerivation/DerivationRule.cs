@@ -64,10 +64,22 @@
         PerpendicularLineToParallelLines,
 
         /// <summary>
-        /// The theorem connects collinearity of three points and some two theorems involving two
-        /// lines. For example, if we have theorems Collinear Points A, B, C, Parallel Lines [A, B], l,
-        /// Parallel Lines [A, C], l, then any two of these theorems imply the third. 
+        /// The theorem connects collinearity of three points and some two theorems involving two lines. 
+        /// For example, if we have theorems t1 = Parallel Lines [A, B], l, t2 = Parallel Lines [A, C], l
+        /// and c = Collinear Points A, B, C, then (t1, c) => t2 and (t2, c) => t1. In the cases of
+        /// Parallel Lines we can also say that (t1, t2) => c. This further implication holds true for 
+        /// Parallel Lines, Perpendicular Lines and ConcurrentLines.
         /// </summary>
-        CollinearityWithLinesFromPoints
+        CollinearityWithLinesFromPoints,
+
+        /// <summary>
+        /// The theorem connects some two theorems with a common line l, and two incidences that
+        /// explicitly define this line. For example: If we have theorems t1 = Parallel Lines [A, B], l', 
+        /// t2 = Parallel Lines l, [A, B], and two incidences i1 = Incidence A, l, i2 = Incidence B, l, 
+        /// then (t1, i1, i2) => t2 and (t2, i1, i2) => t1. In the case of Parallel Lines we can also
+        /// say (t1, t2, i1) => i2 and (t1, t2, i2) => i1. This further implication holds true for 
+        /// Parallel Lines, Perpendicular Lines and ConcurrentLines.
+        /// </summary>
+        ExplicitLineWithIncidences,
     }
 }
