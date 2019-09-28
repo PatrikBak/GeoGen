@@ -36,8 +36,9 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <param name="addToPictures">Indicates if we should add the object to the pictures.</param>
         /// <returns>The construction data.</returns>
-        ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject);
+        ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures);
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.

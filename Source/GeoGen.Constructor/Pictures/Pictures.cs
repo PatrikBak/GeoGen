@@ -62,6 +62,16 @@ namespace GeoGen.Constructor
 
         #endregion
 
+        #region Public methods
+
+        /// <summary>
+        /// Clones the pictures.
+        /// </summary>
+        /// <returns>The cloned pictures.</returns>
+        public Pictures Clone() => Clone(Configuration);
+
+        #endregion
+
         #region Internal methods
 
         /// <summary>

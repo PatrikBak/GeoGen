@@ -85,7 +85,7 @@ namespace GeoGen.Algorithm
             var (initialPictures, initialData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
                 () => _geometryConstructor.Construct(input.InitialConfiguration),
-                // Make sure the exception is caught and re-thrown
+                // Make sure a potential exception is caught and re-thrown
                 (GeometryConstructionException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
 
             // Make sure it is constructible
@@ -100,7 +100,7 @@ namespace GeoGen.Algorithm
             var initialContextualPicture = GeneralUtilities.TryExecute(
                  // Creating of the picture
                  () => _pictureFactory.CreateContextualPicture(initialPictures),
-                 // While ignoring potential issues (such a configuration will be discarded anyway)
+                 // Make sure a potential exception is caught and re-thrown
                  (InconstructibleContextualPicture e) => throw new InitializationException("Drawing of the contextual container for the initial configuration failed.", e));
 
             // Find the initial theorems for the configuration
@@ -111,7 +111,7 @@ namespace GeoGen.Algorithm
             #region Preparing variables
 
             // Prepare the map for contextual pictures
-            var contextualPicturesMap = new Dictionary<GeneratedConfiguration, ContextualPicture>();
+            var contextualPictureMap = new Dictionary<GeneratedConfiguration, ContextualPicture>();
 
             // Prepare the map for pictures
             var picturesMap = new Dictionary<GeneratedConfiguration, Pictures>();
@@ -122,13 +122,27 @@ namespace GeoGen.Algorithm
             // Prepare the set containing inconstructible objects. 
             var inconstructibleObjects = new HashSet<ConfigurationObject>();
 
+            // Prepare the picture where we will draw all the objects to find geometrically equal ones
+            var objectTestingPictures = initialPictures.Clone();
+
+            // Prepare the dictionary mapping configuration objects to their integer codes
+            var allObjectCodes = new Dictionary<ConfigurationObject, int>(
+                // Initialize it with the objects of the initial configuration
+                input.InitialConfiguration.AllObjects.ToDictionary((obj, index) => obj, (obj, index) => index));
+
+            // Prepare the set of correctly examined configurations, where the configurations
+            // are coded by the codes of their objects wrapped in a read-only set 
+            // (which correctly implements hash code and equals)
+            var configurationCodes = new HashSet<IReadOnlyHashSet<int>>();
+
             #endregion
 
             #region Construction verification function
 
             // The function that says if we should perform the construction on the configuration
-            // TODO: Implement it meaningfully, for example, consider not using construction when
-            //       it's already used more than a few times.
+            // TODO: Consider implementing it meaningfully, for example, consider not using 
+            //       a construction when it's already used more than a few times, or some other 
+            //       heuristic approach
             static bool VerifyThatConstructionMightBeApplied(GeneratedConfiguration configuration, Construction construction) => true;
 
             #endregion
@@ -138,8 +152,44 @@ namespace GeoGen.Algorithm
             // Prepare the function that checks if the generated object is correct
             bool VerifyConstructedObjectCorrectness(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject constructedObject)
             {
-                // It's correct if it hasn't been previously marked as an inconstructible one
-                return !inconstructibleObjects.Contains(constructedObject);
+                // If it's marked as an inconstructible one, then it's not fine
+                if (inconstructibleObjects.Contains(constructedObject))
+                    return false;
+
+                // If the object already has a key, then it's fine
+                if (allObjectCodes.ContainsKey(constructedObject))
+                    return true;
+
+                // If it doesn't have a code, construct it 
+                // TODO: Do it safely
+                // TODO: Add tracing
+                var data = _geometryConstructor.ExamineObject(objectTestingPictures, constructedObject, addToPictures: true);
+
+                // If it's not constructible...
+                if (data.InconstructibleObject != default)
+                {
+                    // Mark it
+                    inconstructibleObjects.Add(data.InconstructibleObject);
+
+                    // The configuration is incorrect
+                    return false;
+                }
+
+                // Get the code for the object
+                // If there are no duplicates
+                var newCode = data.Duplicates == default ?
+                    // Then the object gets a very new one
+                    allObjectCodes.Count :
+                    // Otherwise it inherits the code of its original version
+                    allObjectCodes[data.Duplicates.olderObject];
+
+                // Assign the new code
+                allObjectCodes.Add(constructedObject, newCode);
+
+                // TODO: Duplicates might create new super-cool theorems! Consider doing something about it
+
+                // At this stage the object is fine
+                return true;
             }
 
             #endregion
@@ -150,6 +200,24 @@ namespace GeoGen.Algorithm
             // While doing so it construct pictures that we can reuse further for finding theorems
             bool VerifyConfigurationCorrectness(GeneratedConfiguration configuration)
             {
+                #region Check if there is a geometrically equal configuration
+
+                // Get the code of the configuration
+                var currentObjectCodes = configuration.AllObjects.Select(o => allObjectCodes[o]).ToReadOnlyHashSet();
+
+                // If the number doesn't match, then there are duplicates
+                if (currentObjectCodes.Count != configuration.AllObjects.Count)
+                    return false;
+
+                // If these codes already exist, then this configuration has been examined
+                if (configurationCodes.Contains(currentObjectCodes))
+                    return false;
+
+                // Otherwise the configuration is new and we can remember their object codes
+                configurationCodes.Add(currentObjectCodes);
+
+                #endregion
+
                 #region Pictures construction
 
                 // Get the previous pictures
@@ -167,33 +235,14 @@ namespace GeoGen.Algorithm
                     // Ignoring a possible failure (such configurations will be discarded in the next step)
                     (GeometryConstructionException e) => { });
 
-                // If the construction didn't work out, the configuration is incorrect
-                if (pictures == default)
+                // Since the configuration has been confirmed to be correct, there should not
+                // be any problem. If there is, then this is very weird, thought theoretically not impossible
+                // We're going to evaluate it as an incorrect configuration after all
+                // TODO: Add tracing
+                if (pictures == default || constructionData.InconstructibleObject != default || constructionData.Duplicates != default)
                     return false;
 
-                // Find out if the constructed object is inconstructible 
-                var anyInconstructibleObject = constructionData.InconstructibleObject != default;
-
-                // Find out if there are any duplicates
-                var anyDuplicates = constructionData.Duplicates != default;
-
-                // TODO: Duplicates = EqualObjects theorem. The configuration already been examined,
-                //       but, these theorems might be interesting. I should probably implement 
-                //       an algorithm that finds the minimal configuration for this (going backwards?
-                //       and this class can then do something interesting about the found theorem
-                //       it would technically have an access to the picture where the striped 
-                //       configuration is drawn, i.e. it can call theorems analyzer. For now it's not worth it 
-
-                // If there is an inconstructible object, remember it 
-                if (anyInconstructibleObject)
-                    inconstructibleObjects.Add(constructionData.InconstructibleObject);
-
-                // If there are any invalid objects or duplicates, then it's incorrect
-                if (anyInconstructibleObject || anyDuplicates)
-                    return false;
-
-                // If we got here, the configuration is fine. 
-                // We have to remember its pictures for further use
+                // We have to remember the pictures for further use
                 picturesMap.Add(configuration, pictures);
 
                 #endregion
@@ -206,7 +255,7 @@ namespace GeoGen.Algorithm
                         // Then the result is the initial picture
                         ? initialContextualPicture
                         // Otherwise we get it from the map
-                        : contextualPicturesMap[configuration.PreviousConfiguration];
+                        : contextualPictureMap[configuration.PreviousConfiguration];
 
                 // Safely execute
                 var newContextualPicture = GeneralUtilities.TryExecute(
@@ -216,11 +265,12 @@ namespace GeoGen.Algorithm
                     (InconstructibleContextualPicture _) => { });
 
                 // If the construction cannot be done, we can't use this configuration
+                // TODO: Add tracing
                 if (newContextualPicture == default)
                     return false;
 
                 // Otherwise add it to the map
-                contextualPicturesMap.Add(configuration, newContextualPicture);
+                contextualPictureMap.Add(configuration, newContextualPicture);
 
                 #endregion
 
@@ -248,7 +298,7 @@ namespace GeoGen.Algorithm
                    .Select(configuration =>
                    {
                        // Get the contextual picture
-                       var picture = contextualPicturesMap[configuration];
+                       var picture = contextualPictureMap[configuration];
 
                        // Get the old theorems
                        // If the previous configuration is the initial one

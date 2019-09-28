@@ -152,18 +152,19 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <param name="addToPictures">Indicates if we should add the object to the pictures.</param>
         /// <returns>The construction data.</returns>
-        public ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject)
+        public ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
         {
             try
             {
                 // Prepare the result
                 var data = default(ConstructionData);
 
-                // Execute the construction without adding the object to the picture
+                // Execute the construction
                 pictures.ExecuteAndReconstructAtIncosistencies(
                     // Call the internal construction function
-                    () => data = ConstructObject(constructedObject, pictures, addToPictures: false),
+                    () => data = ConstructObject(constructedObject, pictures, addToPictures),
                     // Trace any inconsistency exception
                     e => _tracer?.TraceInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message));
 

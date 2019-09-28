@@ -622,7 +622,7 @@ namespace GeoGen.TheoremProver
             {
                 // We need to examine this object with respect to the examined configuration
                 // TODO: Figure out how we want to handle a possible exception
-                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationPicture.Pictures, mappedObject);
+                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false);
 
                 // If the object is not constructible, then the mapping is incorrect
                 if (newObjectData.InconstructibleObject != default)
