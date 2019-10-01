@@ -564,19 +564,22 @@ namespace GeoGen.TheoremProver
                         RandomPointOnLineFromPoints => geometricPoints[0].Lines.First(line => line.ContainsAll(geometricPoints)) as DefinableByPoints,
 
                         // Looking for the circle that contains our points
-                        RandomPointOnCircleFromPoints => geometricPoints[0].Circles.First(circle => circle.ContainsAll(geometricPoints)),
+                        // It might happen there is no such circle, if the points are collinear
+                        RandomPointOnCircleFromPoints => geometricPoints[0].Circles.FirstOrDefault(circle => circle.ContainsAll(geometricPoints)),
 
                         // Impossible, we're down to these 2 cases
                         _ => throw new TheoremProverException("Impossible.")
                     })
                    // Now we take every possible point on this line / circle 
-                   .Points.Select(point => point.ConfigurationObject)
+                   ?.Points.Select(point => point.ConfigurationObject)
                    // Distinct from the passed ones
                    .Where(point => !mappedObject.PassedArguments.FlattenedList.Contains(point))
                    // Create the final mapping
                    .Select(point => new MappingData(data, (constructedObject, point),
                         // with the right theorem used as a fact
-                        new Theorem(configuration, type, inputPoints.Concat(point).ToArray())));
+                        new Theorem(configuration, type, inputPoints.Concat(point).ToArray())))
+                    // If there is no valid object, then there is no mapping
+                    ?? Enumerable.Empty<MappingData>();
 
                 // If we have a random point on construction
                 case RandomPointOnConstruction randomPointConstruction:
