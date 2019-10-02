@@ -490,8 +490,16 @@ namespace GeoGen.TheoremProver
                             // Making each a theorem
                             .Select(pair => new Theorem(configuration, EqualObjects, new[] { pair.Key, pair.Value }));
 
+                        // Prepare the list of objects that are redundant in the original configuration
+                        // This code doesn't look efficient, but we're dealing with very little quantities
+                        var originalRedundantObjects = redundantObjects.Select(redundantObject =>
+                            // Get the pair where this object is on the right and take the corresponding key
+                            allObjectsMapping.First(pair => pair.Value.Equals(redundantObject)).Key)
+                        // Wrap it all in a read-only set
+                        .ToReadOnlyHashSet();
+
                         // Otherwise add the derivation
-                        derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(redundantObjects), usedEqualities);
+                        derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(originalRedundantObjects), usedEqualities);
                     });
                 });
 
