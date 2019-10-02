@@ -296,7 +296,7 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
-            #region Trivial theorems implied by the new objects
+            #region Reformulating theorems to trivial ones
 
             // Get the objects from the incidences
             var newTrivialTheorems = incidences.SelectMany(pair => new[] { pair.Item1, pair.Item2 })
@@ -319,10 +319,6 @@ namespace GeoGen.TheoremProver
 
             // Mark the theorems as trivial ones
             newTrivialTheorems.ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
-
-            #endregion
-
-            #region Reformulating theorems to trivial ones
 
             // Get the new theorems that are not proven
             derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
@@ -365,6 +361,139 @@ namespace GeoGen.TheoremProver
                         derivationHelper.AddDerivation(theorem, ReformulatedTrivialTheorem, usedEqualities);
                     });
             });
+
+            #endregion
+
+            #region Reformulating theorem and configuration to get rid of objects
+
+            // Find all possible configuration and theorem reformulations by taking all the objects
+            configuration.ConstructedObjects
+                // Find the equality groups for them
+                .Select(innerObject => (innerObject, group: objectEqualityGroups.FirstOrDefault(group => group.Contains(innerObject))))
+                // Take only objects that have some group
+                .Where(pair => pair.group != null)
+                // Make all possible pairs of the object and its equal distinct partner
+                .Select(pair => pair.group.Where(equalObject => !equalObject.Equals(pair.innerObject)).Select(equalObject => (pair.innerObject, equalObject)))
+                // Combine these option to a single one
+                .Combine()
+                // Exclude the trivial one with no mapping
+                .Where(option => option.Length != 0)
+                // Each option represents a reformulation
+                .ForEach(option =>
+                {
+                    // Get the mapping dictionary
+                    var mapping = option.ToDictionary(pair => pair.innerObject, pair => (ConstructedConfigurationObject)pair.equalObject);
+
+                    #region Function for mapping object
+
+                    // Prepare the set of objects being map
+                    // It serves as a prevention from cyclic mapping
+                    var objectsBeingMapped = new HashSet<ConstructedConfigurationObject>();
+
+                    // Local function to map an object. If it cannot be done
+                    // (because of the cycle), returns null
+                    ConfigurationObject Map(ConfigurationObject configurationObject)
+                    {
+                        // Switch based on the object
+                        switch (configurationObject)
+                        {
+                            // Loose objects are mapped to themselves
+                            case LooseConfigurationObject _:
+                                return configurationObject;
+
+                            // For constructed objects
+                            case ConstructedConfigurationObject constructedObject:
+
+                                // We first check if it's in the mapping, because
+                                // if it's not, it should be mapped to itself
+                                if (!mapping.ContainsKey(constructedObject))
+                                    return constructedObject;
+
+                                // Otherwise the object is in the mapping
+                                // If it's being mapped, then we have run into a cycle
+                                // and the mapping should not be successful
+                                if (objectsBeingMapped.Contains(constructedObject))
+                                    return null;
+
+                                // Otherwise we're going to map the object right now
+                                objectsBeingMapped.Add(constructedObject);
+
+                                // Get the object to which we're going to map this
+                                var newObject = mapping[constructedObject];
+
+                                // Take the inner objects and recursively map them
+                                var newArguments = newObject.PassedArguments.FlattenedList.SelectIfNotDefault(Map);
+
+                                // If some of them cannot be mapped, the mapping cannot be done,
+                                // and we don't even have to remove the object from the set of 
+                                // ones being mapped (it is not mappable anyway)
+                                if (newArguments == null)
+                                    return null;
+
+                                // If all of them are fine, we can say the mapping is done
+                                objectsBeingMapped.Remove(constructedObject);
+
+                                // And we can return the object with remapped arguments
+                                return new ConstructedConfigurationObject(newObject.Construction, newArguments.ToArray());
+
+                            // Default case
+                            default:
+                                throw new TheoremProverException($"Unhandled type of configuration object: {configurationObject.GetType()}");
+                        }
+                    }
+
+                    #endregion
+
+                    // Create the mapping of all objects
+                    var allObjectsMapping = configuration.AllObjects.SelectIfNotDefault(configurationObject =>
+                    {
+                        // Map the object
+                        var mappedObject = Map(configurationObject);
+
+                        // Return either the pair of the original one and this one if it can be done,
+                        // otherwise the default value
+                        return mappedObject != null ? (originalObject: configurationObject, mappedObject) : default;
+                    })
+                    // Enumerate to a dictionary
+                    ?.ToDictionary(pair => pair.originalObject, pair => pair.mappedObject);
+
+                    // If the mapping cannot be done, we're sad
+                    if (allObjectsMapping == null)
+                        return;
+
+                    // Otherwise we can create a new redefined configuration
+                    var redefinedConfiguration = new Configuration(configuration.LooseObjectsHolder,
+                            // Pull the constructed objects from the map
+                            // It might probably happen they are in a wrong order, 
+                            // but it should not mapped for this particular usage
+                            allObjectsMapping.Values.OfType<ConstructedConfigurationObject>().ToArray());
+
+                    // Get the not-proven theorems
+                    derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
+                    {
+                        // Try to reformulate the current one
+                        var remappedTheorem = theorem.Remap(allObjectsMapping, redefinedConfiguration);
+
+                        // I think it should be doable...
+                        if (remappedTheorem == null)
+                            throw new Exception("I thought it's not possible");
+
+                        // Finally we can test if the theorem can be stated without some objects
+                        var redundantObjects = remappedTheorem.GetUnnecessaryObjects();
+
+                        // If there is none, we can't do more
+                        if (redundantObjects.IsEmpty())
+                            return;
+
+                        // Otherwise prepare the used equalities by taking all non-identity pairs of the mapping
+                        var usedEqualities = allObjectsMapping.Where(pair => !pair.Key.Equals(pair.Value))
+                            // Making each a theorem
+                            .Select(pair => new Theorem(configuration, EqualObjects, new[] { pair.Key, pair.Value }));
+
+                        // Otherwise add the derivation
+                        derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(redundantObjects), usedEqualities);
+                    });
+                });
 
             #endregion
 

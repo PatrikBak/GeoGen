@@ -132,7 +132,19 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
-        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping) => Remap(mapping, Configuration);
+        
+        /// <summary>
+        /// Recreates the theorem by applying a given mapping of the inner configuration objects.
+        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem must be
+        /// present in the mapping. If the mapping cannot be done (for example because 2 points
+        /// making a line are mapped to the same point), then null is returned. The new theorem
+        /// will have the given configuration set.
+        /// </summary>
+        /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <param name="newConfiguration">The new configuration to be set to the new theorem.</param>
+        /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
+        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping, Configuration newConfiguration)
         {
             // Remap objects, but only if none of them is null
             var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping))?.Distinct().ToList();
@@ -146,7 +158,7 @@ namespace GeoGen.Core
                 return null;
 
             // Otherwise construct the remapped theorem
-            return new Theorem(Configuration, Type, remappedObjects);
+            return new Theorem(newConfiguration, Type, remappedObjects);
         }
 
         #endregion

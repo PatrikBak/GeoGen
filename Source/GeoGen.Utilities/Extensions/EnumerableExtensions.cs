@@ -253,7 +253,7 @@ namespace GeoGen.Utilities
                 var result = selector(element);
 
                 // If the selector return the default value, cut it
-                if (result == default)
+                if (result == null || result.Equals(default(TResult)))
                     return null;
 
                 // Otherwise add the element
