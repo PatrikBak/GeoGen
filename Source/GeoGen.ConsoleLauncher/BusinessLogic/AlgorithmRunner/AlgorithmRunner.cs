@@ -516,9 +516,9 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.TrivialTheorem:
                     return "trivial theorem";
 
-                // Case when the theorem was attempted as a reformulation of a trivial theorem
-                case DerivationRule.ReformulatedTrivialTheorem:
-                    return "reformulation of a trivial theorem";
+                // Case when the theorem was attempted as a reformulation of a theorem
+                case DerivationRule.ReformulatedTheorem:
+                    return "reformulation of a theorem";
 
                 // Case when it's been derived using the transitivity rule
                 case DerivationRule.Transitivity:
@@ -553,6 +553,14 @@ namespace GeoGen.ConsoleLauncher
                 // Case when we combine incidences to restate a theorem
                 case DerivationRule.ExplicitLineWithIncidences:
                     return "restating using incidences";
+
+                // Case when we put together 3 incidences and collinearity:
+                case DerivationRule.IncidencesAndCollinearity:
+                    return "incidences are related to collinearity";
+
+                // Case when we put together 4 incidences and concyclicity:
+                case DerivationRule.IncidencesAndConcyclity:
+                    return "incidences are related to concyclicity";
 
                 // Default case
                 default:

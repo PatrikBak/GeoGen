@@ -47,9 +47,9 @@
         TrivialTheorem,
 
         /// <summary>
-        /// The theorem can be reformulated using equalities to a trivial theorem.
+        /// The theorem can be reformulated using equalities to another theorem.
         /// </summary>
-        ReformulatedTrivialTheorem,
+        ReformulatedTheorem,
 
         /// <summary>
         /// If we have 4 concyclic points and the center of the circle they make, then 3 right 
@@ -64,7 +64,7 @@
         PerpendicularLineToParallelLines,
 
         /// <summary>
-        /// The theorem connects collinearity of three points and some two theorems involving two lines. 
+        /// The theorem which connects collinearity of three points and some two theorems involving two lines. 
         /// For example, if we have theorems t1 = Parallel Lines [A, B], l, t2 = Parallel Lines [A, C], l
         /// and c = Collinear Points A, B, C, then (t1, c) => t2 and (t2, c) => t1. In the cases of
         /// Parallel Lines we can also say that (t1, t2) => c. This further implication holds true for 
@@ -73,7 +73,7 @@
         CollinearityWithLinesFromPoints,
 
         /// <summary>
-        /// The theorem connects some two theorems with a common line l, and two incidences that
+        /// The theorem which connects some two theorems with a common line l, and two incidences that
         /// explicitly define this line. For example: If we have theorems t1 = Parallel Lines [A, B], l', 
         /// t2 = Parallel Lines l, [A, B], and two incidences i1 = Incidence A, l, i2 = Incidence B, l, 
         /// then (t1, i1, i2) => t2 and (t2, i1, i2) => t1. In the case of Parallel Lines we can also
@@ -81,5 +81,17 @@
         /// Parallel Lines, Perpendicular Lines and ConcurrentLines.
         /// </summary>
         ExplicitLineWithIncidences,
+
+        /// <summary>
+        /// The theorem which connects 3 incidences and collinearity. Any three of these four theorems
+        /// imply the fourth.
+        /// </summary>
+        IncidencesAndCollinearity,
+
+        /// <summary>
+        /// The theorem which connects 4 incidences and concyclity. Any four of these five theorems
+        /// imply the fifth.
+        /// </summary>
+        IncidencesAndConcyclity
     }
 }

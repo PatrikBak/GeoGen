@@ -3,6 +3,7 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.TheoremType;
 using static GeoGen.TheoremProver.DerivationRule;
 
@@ -228,6 +229,52 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
+            #region Trivial theorems of newly discovered objects
+
+            // Prepare a set of newly found incidences that will be merged later
+            var newIncidences = new HashSet<(ConfigurationObject, ConfigurationObject)>();
+
+            // Start finding all the newly discovered objects by taking the incidence objects
+            incidences.SelectMany(pair => new[] { pair.Item1, pair.Item2 })
+                // Add the objects from the equalities
+                .Concat(equalObjects.SelectMany(pair => new[] { pair.Item1, pair.Item2 }))
+                // Only constructed ones
+                .OfType<ConstructedConfigurationObject>()
+                // Take distinct ones
+                .Distinct()
+                // And only new ones
+                .Where(o => !configuration.ConstructedObjectsSet.Contains(o))
+                // Create a temporary configuration containing each object as the last one
+                .Select(o => new Configuration(configuration.LooseObjectsHolder, configuration.ConstructedObjects.Concat(o).ToList()))
+                // Get trivial theorems for it
+                .Select(_trivialTheoremProducer.DeriveTrivialTheoremsFromLastObject)
+                // Get rid of the temporary configuration from the theorems definition
+                .SelectMany(theorems => theorems.Select(theorem => new Theorem(configuration, theorem.Type, theorem.InvolvedObjects)))
+                // Take distinct ones
+                .Distinct()
+                // Handle each theorem
+                .ForEach(theorem =>
+                {
+                    // Add the derivation
+                    derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
+
+                    // If this theorem is an incidence theorem...
+                    if (theorem.Type == Incidence)
+                    {
+                        // Get the objects
+                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
+                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+
+                        // Mark the incidence
+                        newIncidences.Add((object1, object2));
+                    }
+                });
+
+            // Merge the new incidences with the old ones
+            incidences.Add(newIncidences);
+
+            #endregion
+
             #region Transitivities based on discovered object equalities
 
             // From the found object equalities create groups of mutually equal objects
@@ -296,29 +343,95 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
+            #region Incidences give collinearity and concyclity
+
+            // Take all incidences and figure out which one is point
+            incidences.Select(pair => pair.Item1.ObjectType == Point ? (point: pair.Item1, lineOrCircle: pair.Item2) : (point: pair.Item2, lineOrCircle: pair.Item1))
+                // For each such incidence pair
+                .Select(pair => (pair.point, pair.lineOrCircle,
+                    // Find the equality group for the line / circle, or if there is none, create an empty one
+                    group: objectEqualityGroups.FirstOrDefault(group => group.Contains(pair.lineOrCircle))?.ToSet() ?? new HashSet<ConfigurationObject> { pair.lineOrCircle }))
+                // Group these incidences by their group (pun intended?)
+                .GroupBy(triple => triple.group, HashSet<ConfigurationObject>.CreateSetComparer())
+                // Each group represents more potential collinearities
+                // We take every possible triple / quadruple of incidences from this group,
+                // based on the fact whether we're dealing with a line or circle
+                .SelectMany(grouping => grouping.Subsets(grouping.First().lineOrCircle.ObjectType switch
+                {
+                    // Line is interesting with 3 points
+                    Line => 3,
+
+                    // Circle is interesting with 4 points
+                    Circle => 4,
+
+                    // Default case
+                    _ => throw new TheoremProverException($"Unhandled type of configuration object: {grouping.First().lineOrCircle.ObjectType}")
+                }))
+                // Each triple represents a true collinearity (potentially degenerated)
+                .ForEach(incidences =>
+                {
+                    // Local function to check if two objects are equal
+                    bool AreEqual(ConfigurationObject object1, ConfigurationObject object2)
+                         // Which is true if they are equal by definition
+                         => object1.Equals(object2)
+                        // Or the group of the first object
+                        || (!objectEqualityGroups.FirstOrDefault(group => group.Contains(object1))
+                            // Is not equal to the group of the second object
+                            ?.Equals(objectEqualityGroups.FirstOrDefault(group => group.Contains(object2)))
+                            // Or it doesn't exist at all
+                            ?? false);
+
+                    // Get the points of the incidences
+                    var points = incidences.Select(pair => pair.point).ToArray();
+
+                    // Make sure none two points are equal
+                    if (points.UnorderedPairs().Any(pair => AreEqual(pair.Item1, pair.Item2)))
+                        return;
+
+                    // Prepare the incidence theorems
+                    var incidencesTheorems = incidences.Select(pair => new Theorem(configuration, Incidence, pair.lineOrCircle, pair.point)).ToArray();
+
+                    // Switch on the type of the other object
+                    switch (incidences[0].lineOrCircle.ObjectType)
+                    {
+                        // Line case
+                        case Line:
+
+                            // Prepare the collinearity theorem
+                            var collinearity = new Theorem(configuration, CollinearPoints, points);
+
+                            // Add the derivation of any of the theorems from the others
+                            derivationHelper.AddDerivation(collinearity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2] });
+                            derivationHelper.AddDerivation(incidencesTheorems[0], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[1], incidencesTheorems[2] });
+                            derivationHelper.AddDerivation(incidencesTheorems[1], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[0], incidencesTheorems[2] });
+                            derivationHelper.AddDerivation(incidencesTheorems[2], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[0], incidencesTheorems[1] });
+
+                            break;
+
+                        // Circle case
+                        case Circle:
+
+                            // Prepare the concyclity theorem
+                            var concyclity = new Theorem(configuration, CollinearPoints, points);
+
+                            // Add the derivation of any of the theorems from the others
+                            derivationHelper.AddDerivation(concyclity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
+                            derivationHelper.AddDerivation(incidencesTheorems[0], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
+                            derivationHelper.AddDerivation(incidencesTheorems[1], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[2], incidencesTheorems[3] });
+                            derivationHelper.AddDerivation(incidencesTheorems[2], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[3] });
+                            derivationHelper.AddDerivation(incidencesTheorems[3], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2] });
+
+                            break;
+
+                        // Default case
+                        default:
+                            throw new TheoremProverException($"Unhandled type of configuration object: {incidences[0].lineOrCircle.ObjectType}");
+                    }
+                });
+
+            #endregion
+
             #region Reformulating theorems to trivial ones
-
-            // Get the objects from the incidences
-            var newTrivialTheorems = incidences.SelectMany(pair => new[] { pair.Item1, pair.Item2 })
-                // Add the objects from the equalities
-                .Concat(equalObjects.SelectMany(pair => new[] { pair.Item1, pair.Item2 }))
-                // Only constructed ones
-                .OfType<ConstructedConfigurationObject>()
-                // Take distinct ones
-                .Distinct()
-                // And only new ones
-                .Where(o => !configuration.ConstructedObjectsSet.Contains(o))
-                // Create a temporary configuration containing each object as the last one
-                .Select(o => new Configuration(configuration.LooseObjectsHolder, configuration.ConstructedObjects.Concat(o).ToList()))
-                // Get trivial theorems for it
-                .Select(_trivialTheoremProducer.DeriveTrivialTheoremsFromLastObject)
-                // Get rid of the temporary configuration from the theorems definition
-                .SelectMany(theorems => theorems.Select(theorem => new Theorem(configuration, theorem.Type, theorem.InvolvedObjects)))
-                // Make a set
-                .ToSet();
-
-            // Mark the theorems as trivial ones
-            newTrivialTheorems.ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
 
             // Get the new theorems that are not proven
             derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
@@ -346,19 +459,19 @@ namespace GeoGen.TheoremProver
                         // Create the remapped theorem
                         var remappedTheorem = theorem.Remap(mapping);
 
-                        // If the mapped theorem is not a trivial one, we can't do much
-                        if (!newTrivialTheorems.Contains(remappedTheorem))
+                        // If this theorem is the same as the original one, we don't need to do anything
+                        if (theorem.Equals(remappedTheorem))
                             return;
 
-                        // Otherwise prepare the used equalities by taking all non-identity pairs of the mapping
-                        var usedEqualities = mapping.Where(pair => !pair.Key.Equals(pair.Value))
+                        // Otherwise prepare the used theorem by taking all non-identity equality pairs
+                        var assumptions = mapping.Where(pair => !pair.Key.Equals(pair.Value))
                             // Making each a theorem
                             .Select(pair => new Theorem(configuration, EqualObjects, new[] { pair.Key, pair.Value }))
-                            // And appending our reformulated trivial theorem
+                            // And appending our reformulated theorem
                             .Concat(remappedTheorem);
 
                         // Finally add the derivation
-                        derivationHelper.AddDerivation(theorem, ReformulatedTrivialTheorem, usedEqualities);
+                        derivationHelper.AddDerivation(theorem, ReformulatedTheorem, assumptions);
                     });
             });
 
@@ -476,7 +589,7 @@ namespace GeoGen.TheoremProver
 
                         // I think it should be doable...
                         if (remappedTheorem == null)
-                            throw new Exception("I thought it's not possible");
+                            throw new TheoremProverException("A theorem to be proved got remapped to an incorrect one. How is this possible???");
 
                         // Finally we can test if the theorem can be stated without some objects
                         var redundantObjects = remappedTheorem.GetUnnecessaryObjects();
