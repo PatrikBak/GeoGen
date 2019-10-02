@@ -494,7 +494,7 @@ namespace GeoGen.ConsoleLauncher
                 // Case when it's not in a previous configuration, but can be declared in one
                 // There are no needed theorems to make this conclusion, i.e. the theorem is right
                 case DerivationRule.DefinableSimpler:
-                
+
                     // Get the redundant objects
                     var redundantObjects = ((DefinableSimplerDerivationData)proofAttempt.Data).RedundantObjects
                         // Get their names
@@ -510,7 +510,7 @@ namespace GeoGen.ConsoleLauncher
 
                     // Return the final conclusion with these objects included
                     return isProved ? $"can be stated{reformulation}without {redundantObjects}" : $"could be stated{reformulation}without {redundantObjects}";
-                
+
                 // Case when it's a trivial consequence of the construction of the object
                 // There are no needed theorems to make this conclusion, i.e. the theorem is right
                 case DerivationRule.TrivialTheorem:

@@ -133,7 +133,7 @@ namespace GeoGen.Core
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
         public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping) => Remap(mapping, Configuration);
-        
+
         /// <summary>
         /// Recreates the theorem by applying a given mapping of the inner configuration objects.
         /// Every <see cref="ConfigurationObject"/> internally contained in this theorem must be

@@ -230,7 +230,9 @@ namespace GeoGen.ConsoleLauncher
             return argument switch
             {
                 // If we have an object argument, ask directly for the name of its object
-                ObjectConstructionArgument objectArgument => _objectNames[objectArgument.PassedObject],
+                ObjectConstructionArgument objectArgument => _objectNames.GetOrDefault(objectArgument.PassedObject)
+                        // If there is none, we don't have a different option bu converting it (and get an ugly string)
+                        ?? ConfigurationObjectDefinition(objectArgument.PassedObject),
 
                 // For set argument we wrap the result in curly braces and convert the inner arguments
                 SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}",
