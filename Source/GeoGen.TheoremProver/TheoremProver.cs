@@ -361,7 +361,7 @@ namespace GeoGen.TheoremProver
                         case Circle:
 
                             // Prepare the concyclity theorem
-                            var concyclity = new Theorem(configuration, CollinearPoints, points);
+                            var concyclity = new Theorem(configuration, ConcyclicPoints, points);
 
                             // Add the derivation of any of the theorems from the others
                             derivationHelper.AddDerivation(concyclity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
