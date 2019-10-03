@@ -674,5 +674,34 @@ namespace GeoGen.Core
                 return new ComposedConstruction(nameof(TangentLine), configuration, parameters);
             }
         }
+
+        /// <summary>
+        /// The point lying opposite to point A of the circumcircle of triangle ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction OppositePointOnCircumcircle
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+                var D = new ConstructedConfigurationObject(PointReflection, A, O);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, D);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(OppositePointOnCircumcircle), configuration, parameters);
+            }
+        }
     }
 }
