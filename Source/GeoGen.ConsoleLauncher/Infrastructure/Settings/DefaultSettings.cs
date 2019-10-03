@@ -65,7 +65,8 @@ namespace GeoGen.ConsoleLauncher
                 GenerationProgresLoggingFrequency = 10,
                 LogProgress = true,
                 GenerateFullReport = true,
-                FullReportSuffix = " (full)"
+                FullReportSuffix = " (full)",
+                DisplayProofAttempts = true
             };
 
             // Create default template theorems folder settings

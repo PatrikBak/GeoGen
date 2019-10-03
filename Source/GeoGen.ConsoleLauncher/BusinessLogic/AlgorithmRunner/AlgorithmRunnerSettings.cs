@@ -37,8 +37,13 @@
         public bool GenerateFullReport { get; set; }
 
         /// <summary>
-        /// Gets or sets the suffix for the file containg the full report.
+        /// Gets or sets the suffix for the file containing the full report.
         /// </summary>
         public string FullReportSuffix { get; set; }
+
+        /// <summary>
+        /// Indicates if we should display attempts at proofs of theorems.
+        /// </summary>
+        public bool DisplayProofAttempts { get; set; }
     }
 }

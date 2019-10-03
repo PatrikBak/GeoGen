@@ -282,8 +282,8 @@ namespace GeoGen.ConsoleLauncher
             // Ensure no white spaces at the end
             .TrimEnd();
 
-            // If there are any unproved discovered theorems...
-            if (proverOutput.UnprovenDiscoveredTheorems.Any())
+            // If there are any unproved discovered theorems and we are displaying them within attempts
+            if (proverOutput.UnprovenDiscoveredTheorems.Any() && _settings.DisplayProofAttempts)
             {
                 // Convert them to a string
                 var unprovenDiscoveredTheoremsString = proverOutput.UnprovenDiscoveredTheorems
@@ -321,6 +321,10 @@ namespace GeoGen.ConsoleLauncher
         {
             // First format the unfinished theorem
             var result = formatter.FormatTheorem(theorem);
+
+            // If we are not supposed to display attempts, then we're done
+            if (!_settings.DisplayProofAttempts)
+                return result;
 
             // Handle if there were no attempt to prove the theorem
             if (unfinishedProofs.Count == 0)
