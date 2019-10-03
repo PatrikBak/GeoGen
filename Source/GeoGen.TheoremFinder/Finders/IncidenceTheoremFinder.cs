@@ -21,7 +21,7 @@ namespace GeoGen.TheoremFinder
         public override IEnumerable<Theorem> FindAllTheorems(ContextualPicture contextualPicture)
         {
             // Take all objects
-            return contextualPicture.Pictures.Configuration.ConstructedObjects
+            return contextualPicture.Pictures.Configuration.AllObjects
                 // That are explicit lines / circles
                 .Where(configurationObject => configurationObject.ObjectType == Line || configurationObject.ObjectType == Circle)
                 // For each found the corresponding geometric object
