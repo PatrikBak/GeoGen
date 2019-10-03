@@ -114,11 +114,8 @@ namespace GeoGen.TheoremProver
 
             #region Subtheorem derivation
 
-            // Prepare a set of object equalities
-            var equalObjects = new HashSet<(ConfigurationObject, ConfigurationObject)>();
-
-            // Prepare a set of found incidences
-            var incidences = new HashSet<(ConfigurationObject, ConfigurationObject)>();
+            // Prepare a tracker of equalities and incidences
+            var equalityAndIncidenceTracker = new EqualityAndIncidenceTracker();
 
             // Prepare a set of used template configurations
             var usedTemplates = new HashSet<(Configuration, TheoremMap)>();
@@ -173,47 +170,33 @@ namespace GeoGen.TheoremProver
                         {
                             #region Handling equalities
 
-                            // If this theorem is an equal objects theorem...
+                            // If this theorem is an equal objects theorem, mark it
                             if (derivedTheorem.Type == EqualObjects)
-                            {
-                                // Get the objects
-                                var object1 = ((BaseTheoremObject)derivedTheorem.InvolvedObjectsList[0]).ConfigurationObject;
-                                var object2 = ((BaseTheoremObject)derivedTheorem.InvolvedObjectsList[1]).ConfigurationObject;
-
-                                // Mark the equality
-                                equalObjects.Add((object1, object2));
-                            }
-
-                            // Add the found equalities to our set of all equalities
-                            equalObjects.UnionWith(output.UsedEqualities);
+                                equalityAndIncidenceTracker.MarkEquality(derivedTheorem);
 
                             // Prepare the used equality theorems
                             var usedEqualities = output.UsedEqualities
                                 // Convert each equality to a theorem
                                 .Select(equality => new Theorem(configuration, EqualObjects, equality.originalObject, equality.equalObject));
 
+                            // Mark all of them
+                            usedEqualities.ForEach(equalityAndIncidenceTracker.MarkEquality);
+
                             #endregion
 
                             #region Handling incidences
 
-                            // If this theorem is an incidence theorem...
+                            // If this theorem is an incidence theorem, mark it
                             if (derivedTheorem.Type == Incidence)
-                            {
-                                // Get the objects
-                                var object1 = ((BaseTheoremObject)derivedTheorem.InvolvedObjectsList[0]).ConfigurationObject;
-                                var object2 = ((BaseTheoremObject)derivedTheorem.InvolvedObjectsList[1]).ConfigurationObject;
-
-                                // Mark the incidence
-                                incidences.Add((object1, object2));
-                            }
-
-                            // Add the found incidences to our set of all incidences
-                            incidences.UnionWith(output.UsedIncidencies);
+                                equalityAndIncidenceTracker.MarkIncidence(derivedTheorem);
 
                             // Prepare the used incidences theorems
                             var usedIncidences = output.UsedIncidencies
                                 // Convert each incidence to a theorem
                                 .Select(incidence => new Theorem(configuration, Incidence, incidence.point, incidence.lineOrCircle));
+
+                            // Mark all of them
+                            usedIncidences.ForEach(equalityAndIncidenceTracker.MarkIncidence);
 
                             #endregion
 
@@ -232,16 +215,12 @@ namespace GeoGen.TheoremProver
             #region Trivial theorems of newly discovered objects
 
             // Prepare a set of newly found incidences that will be merged later
-            var newIncidences = new HashSet<(ConfigurationObject, ConfigurationObject)>();
+            var newIncidences = new HashSet<Theorem>();
 
-            // Start finding all the newly discovered objects by taking the incidence objects
-            incidences.SelectMany(pair => new[] { pair.Item1, pair.Item2 })
-                // Add the objects from the equalities
-                .Concat(equalObjects.SelectMany(pair => new[] { pair.Item1, pair.Item2 }))
-                // Only constructed ones
+            // Get all the objects tracker by the tracker
+            equalityAndIncidenceTracker.AllObjects
+                // Only constructed
                 .OfType<ConstructedConfigurationObject>()
-                // Take distinct ones
-                .Distinct()
                 // And only new ones
                 .Where(o => !configuration.ConstructedObjectsSet.Contains(o))
                 // Create a temporary configuration containing each object as the last one
@@ -258,30 +237,20 @@ namespace GeoGen.TheoremProver
                     // Add the derivation
                     derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
 
-                    // If this theorem is an incidence theorem...
+                    // If this theorem is an incidence theorem, remember it
                     if (theorem.Type == Incidence)
-                    {
-                        // Get the objects
-                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
-                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
-
-                        // Mark the incidence
-                        newIncidences.Add((object1, object2));
-                    }
+                        newIncidences.Add(theorem);
                 });
 
             // Merge the new incidences with the old ones
-            incidences.Add(newIncidences);
+            newIncidences.ForEach(equalityAndIncidenceTracker.MarkIncidence);
 
             #endregion
 
-            #region Transitivities based on discovered object equalities
+            #region Transitivities of equalities
 
-            // From the found object equalities create groups of mutually equal objects
-            var objectEqualityGroups = equalObjects.CreateEqualityClasses();
-
-            // Go through each triples of each equality group
-            objectEqualityGroups.ForEach(group => group.Subsets(3).ForEach(triple =>
+            // Get all triples of equal objects and for each do the derivation
+            equalityAndIncidenceTracker.EqualityGroups.SelectMany(group => group.Subsets(3)).ForEach(triple =>
             {
                 // Prepare the equal objects theorems
                 var theorem1 = new Theorem(configuration, EqualObjects, triple[0], triple[1]);
@@ -292,52 +261,47 @@ namespace GeoGen.TheoremProver
                 derivationHelper.AddDerivation(theorem1, Transitivity, new[] { theorem2, theorem3 });
                 derivationHelper.AddDerivation(theorem2, Transitivity, new[] { theorem3, theorem1 });
                 derivationHelper.AddDerivation(theorem3, Transitivity, new[] { theorem1, theorem2 });
-            }));
+            });
+
+            #endregion
+
+            #region Redefining incidences using equalities
 
             // Go through every incidence
-            incidences.ForEach(incidence =>
+            equalityAndIncidenceTracker.Incidences.ForEach(objects =>
             {
                 // Deconstruct
-                var (object1, object2) = incidence;
+                var (point, lineOrCircle) = objects;
 
-                // Get the equality groups for these objects, or a one-element sets, if there is none
-                var group1 = objectEqualityGroups.FirstOrDefault(group => group.Contains(object1)) ?? new HashSet<ConfigurationObject> { object1 };
-                var group2 = objectEqualityGroups.FirstOrDefault(group => group.Contains(object2)) ?? new HashSet<ConfigurationObject> { object2 };
+                // Get the incidence theorem
+                var incidence = new Theorem(configuration, Incidence, point, lineOrCircle);
 
-                // Combine elements from these groups 
-                group1.CombinedWith(group2).ForEach(pair =>
+                // Get the equality groups for the points objects and take its other points
+                equalityAndIncidenceTracker.FindEqualityGroup(point).Where(_point => !_point.Equals(point)).ForEach(equalPoint =>
                 {
-                    // Deconstruct
-                    var (group1Object, group2Object) = pair;
+                    // Create the used equality theorem
+                    var usedEquality = new Theorem(configuration, EqualObjects, point, equalPoint);
 
-                    // To create an incidence theorem
-                    var newIncidence = new Theorem(configuration, Incidence, group1Object, group2Object);
+                    // Create the derived theorem
+                    var otherIncidence = new Theorem(configuration, Incidence, equalPoint, lineOrCircle);
 
-                    // Use every equality in the first group, except for the identity
-                    group1.Where(o => !o.Equals(group1Object)).ForEach(otherGroup1Object =>
-                    {
-                        // Create the used equality theorem
-                        var usedEquality = new Theorem(configuration, EqualObjects, group1Object, otherGroup1Object);
+                    // Add the derivations
+                    derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
+                    derivationHelper.AddDerivation(incidence, ReformulatedTheorem, new[] { usedEquality, otherIncidence });
+                });
 
-                        // Create the derived theorem
-                        var derivedTheorem = new Theorem(configuration, Incidence, otherGroup1Object, group2Object);
+                // Get the equality groups for the line or circles objects and take its other objects
+                equalityAndIncidenceTracker.FindEqualityGroup(lineOrCircle).Where(_lineOrCircle => !_lineOrCircle.Equals(lineOrCircle)).ForEach(equalLineOrCircle =>
+                {
+                    // Create the used equality theorem
+                    var usedEquality = new Theorem(configuration, EqualObjects, lineOrCircle, equalLineOrCircle);
 
-                        // Add the derivation
-                        derivationHelper.AddDerivation(derivedTheorem, Transitivity, new[] { usedEquality, newIncidence });
-                    });
+                    // Create the derived theorem
+                    var otherIncidence = new Theorem(configuration, Incidence, point, equalLineOrCircle);
 
-                    // Use every equality in the second group, except for the identity
-                    group2.Where(o => !o.Equals(group2Object)).ForEach(otherGroup2Object =>
-                    {
-                        // Create the used equality theorem
-                        var usedEquality = new Theorem(configuration, EqualObjects, group2Object, otherGroup2Object);
-
-                        // Create the derived theorem
-                        var derivedTheorem = new Theorem(configuration, Incidence, otherGroup2Object, group1Object);
-
-                        // Add the derivation
-                        derivationHelper.AddDerivation(derivedTheorem, Transitivity, new[] { usedEquality, newIncidence });
-                    });
+                    // Add the derivation
+                    derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
+                    derivationHelper.AddDerivation(incidence, ReformulatedTheorem, new[] { usedEquality, otherIncidence });
                 });
             });
 
@@ -345,15 +309,11 @@ namespace GeoGen.TheoremProver
 
             #region Incidences give collinearity and concyclity
 
-            // Take all incidences and figure out which one is point
-            incidences.Select(pair => pair.Item1.ObjectType == Point ? (point: pair.Item1, lineOrCircle: pair.Item2) : (point: pair.Item2, lineOrCircle: pair.Item1))
-                // For each such incidence pair
-                .Select(pair => (pair.point, pair.lineOrCircle,
-                    // Find the equality group for the line / circle, or if there is none, create an empty one
-                    group: objectEqualityGroups.FirstOrDefault(group => group.Contains(pair.lineOrCircle))?.ToSet() ?? new HashSet<ConfigurationObject> { pair.lineOrCircle }))
-                // Group these incidences by their group (pun intended?)
-                .GroupBy(triple => triple.group, HashSet<ConfigurationObject>.CreateSetComparer())
-                // Each group represents more potential collinearities
+            // Take all incidences
+            equalityAndIncidenceTracker.Incidences
+                // Group these incidences by the line / circle
+                .GroupBy(tuple => tuple.lineOrCircle)
+                // Each group represents more potential collinearities / concyclities
                 // We take every possible triple / quadruple of incidences from this group,
                 // based on the fact whether we're dealing with a line or circle
                 .SelectMany(grouping => grouping.Subsets(grouping.First().lineOrCircle.ObjectType switch
@@ -370,22 +330,11 @@ namespace GeoGen.TheoremProver
                 // Each triple represents a true collinearity (potentially degenerated)
                 .ForEach(incidences =>
                 {
-                    // Local function to check if two objects are equal
-                    bool AreEqual(ConfigurationObject object1, ConfigurationObject object2)
-                         // Which is true if they are equal by definition
-                         => object1.Equals(object2)
-                        // Or the group of the first object
-                        || (!objectEqualityGroups.FirstOrDefault(group => group.Contains(object1))
-                            // Is not equal to the group of the second object
-                            ?.Equals(objectEqualityGroups.FirstOrDefault(group => group.Contains(object2)))
-                            // Or it doesn't exist at all
-                            ?? false);
-
                     // Get the points of the incidences
                     var points = incidences.Select(pair => pair.point).ToArray();
 
                     // Make sure none two points are equal
-                    if (points.UnorderedPairs().Any(pair => AreEqual(pair.Item1, pair.Item2)))
+                    if (points.UnorderedPairs().Any(pair => equalityAndIncidenceTracker.AreEqual(pair.Item1, pair.Item2)))
                         return;
 
                     // Prepare the incidence theorems
@@ -440,9 +389,9 @@ namespace GeoGen.TheoremProver
                 var innerObjects = theorem.GetInnerConfigurationObjects();
 
                 // For each find the equivalence group
-                innerObjects.Select(innerObject => (innerObject, group: objectEqualityGroups.FirstOrDefault(group => group.Contains(innerObject))))
-                    // Take only objects that have some group
-                    .Where(pair => pair.group != null)
+                innerObjects.Select(innerObject => (innerObject, group: equalityAndIncidenceTracker.FindEqualityGroup(innerObject)))
+                    // Take only objects that have some equal objects
+                    .Where(pair => pair.group.Count != 1)
                     // Make all possible pairs of the object and its equal partner
                     .Select(pair => pair.group.Select(equalObject => (pair.innerObject, equalObject)))
                     // Combine these option to a single one
@@ -482,9 +431,9 @@ namespace GeoGen.TheoremProver
             // Find all possible configuration and theorem reformulations by taking all the objects
             configuration.ConstructedObjects
                 // Find the equality groups for them
-                .Select(innerObject => (innerObject, group: objectEqualityGroups.FirstOrDefault(group => group.Contains(innerObject))))
-                // Take only objects that have some group
-                .Where(pair => pair.group != null)
+                .Select(innerObject => (innerObject, group: equalityAndIncidenceTracker.FindEqualityGroup(innerObject)))
+                // Take only objects that have some equal objects
+                .Where(pair => pair.group.Count != 1)
                 // Make all possible pairs of the object and its equal distinct partner
                 .Select(pair => pair.group.Where(equalObject => !equalObject.Equals(pair.innerObject)).Select(equalObject => (pair.innerObject, equalObject)))
                 // Combine these option to a single one
@@ -606,10 +555,10 @@ namespace GeoGen.TheoremProver
                         // Prepare the list of objects that are redundant in the original configuration
                         // This code doesn't look efficient, but we're dealing with very little quantities
                         var originalRedundantObjects = redundantObjects.Select(redundantObject =>
-                            // Get the pair where this object is on the right and take the corresponding key
-                            allObjectsMapping.First(pair => pair.Value.Equals(redundantObject)).Key)
-                        // Wrap it all in a read-only set
-                        .ToReadOnlyHashSet();
+                                // Get the pair where this object is on the right and take the corresponding key
+                                allObjectsMapping.First(pair => pair.Value.Equals(redundantObject)).Key)
+                            // Wrap it all in a read-only set
+                            .ToReadOnlyHashSet();
 
                         // Otherwise add the derivation
                         derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(originalRedundantObjects), usedEqualities);
