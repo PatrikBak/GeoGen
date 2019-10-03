@@ -56,6 +56,16 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>The list of loaded configuration with its theorems.</returns>
         public async Task<List<(Configuration, TheoremMap)>> GetTemplateTheoremsAsync()
         {
+            // If the dictionary doesn't exist...
+            if (!Directory.Exists(_settings.TheoremsFolderPath))
+            {
+                // Warn
+                LoggingManager.LogWarning($"The directory for template theorems {_settings.TheoremsFolderPath} doesn't exist.");
+
+                // Break
+                return new List<(Configuration, TheoremMap)>();
+            }
+
             // Log that we're starting
             LoggingManager.LogInfo($"Starting to search for template theorems in {_settings.TheoremsFolderPath}");
 
