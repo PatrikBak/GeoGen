@@ -156,7 +156,7 @@ namespace GeoGen.ConsoleLauncher
             // Local helper that returns a string informing about available constructions
             static string AvailableConstructions() => $"Available: \n\n" +
                 // Get all constructions, prepend -, sort, and make every on a single line
-                $"{Constructions.GetAllConstructions().Select(c => $" - {c}").Ordered().ToJoinedString("\n")}.\n";
+                $"{Constructions.GetAllConstructions().Select(c => $"  {c.Name}").Ordered().ToJoinedString("\n")}.\n";
 
             // Try to find if it is a predefined one
             if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var type))

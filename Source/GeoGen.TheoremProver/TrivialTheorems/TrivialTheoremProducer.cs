@@ -212,21 +212,6 @@ namespace GeoGen.TheoremProver
                             };
 
 
-                        // Second intersection of a circle with center and line from points makes collinear and equally distanced points
-                        case SecondIntersectionOfCircleWithCenterAndLineFromPoints:
-
-                            // Create the theorems
-                            return new[]
-                            {
-                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1]),
-                                new Theorem(configuration, EqualLineSegments, new[]
-                                {
-                                    new LineSegmentTheoremObject(objects[2], objects[0]),
-                                    new LineSegmentTheoremObject(objects[2], constructedObject)
-                                })
-                            };
-
-
                         // Random point on a line makes collinear points
                         case RandomPointOnLineFromPoints:
 

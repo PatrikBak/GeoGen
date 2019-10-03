@@ -71,11 +71,6 @@
         SecondIntersectionOfCircleAndLineFromPoints,
 
         /// <summary>
-        /// The second intersection of line AB with the circle with center C passing through A (signature A, B, C).
-        /// </summary>
-        SecondIntersectionOfCircleWithCenterAndLineFromPoints,
-
-        /// <summary>
         /// A random point lying on line AB (signature {A, B}).
         /// </summary>
         RandomPointOnLineFromPoints,

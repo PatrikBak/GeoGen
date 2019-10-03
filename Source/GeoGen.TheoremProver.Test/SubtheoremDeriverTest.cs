@@ -1310,9 +1310,9 @@ namespace GeoGen.TheoremProver.Test
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
             var l1 = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, A, B, C);
-            var l2 = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, G, B, C);
+            var l2 = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, I, B, C);
 
             // Create the examined configuration
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, l1, l2);

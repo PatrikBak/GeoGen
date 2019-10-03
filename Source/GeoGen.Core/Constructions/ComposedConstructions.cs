@@ -213,6 +213,35 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// The external angle bisector of angle BAC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction ExternalAngleBisector
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+                var l = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, A, I);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(ExternalAngleBisector), configuration, parameters);
+            }
+        }
+
+        /// <summary>
         /// Perpendicular bisector of line segment AB (signature {A, B}).
         /// </summary>
         public static ComposedConstruction PerpendicularBisector
@@ -269,9 +298,9 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Reflection of point A in the midpoint of BC (signature A, {B, C}).
+        /// Reflection of point A in the midpoint of BC (signature A, {B, C}). 
         /// </summary>
-        public static ComposedConstruction ReflectionInMidpointOfSegment
+        public static ComposedConstruction ParallelogramPoint
         {
             get
             {
@@ -283,7 +312,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, midpointBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreeArbitraryPoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -293,7 +322,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction(nameof(ReflectionInMidpointOfSegment), configuration, parameters);
+                return new ComposedConstruction(nameof(ParallelogramPoint), configuration, parameters);
             }
         }
 
@@ -323,35 +352,6 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(Orthocenter), configuration, parameters);
-            }
-        }
-
-        /// <summary>
-        /// Centroid of triangle ABC (signature {A, B, C}).
-        /// </summary>
-        public static ComposedConstruction Centroid
-        {
-            get
-            {
-                // Create objects
-                var A = new LooseConfigurationObject(Point);
-                var B = new LooseConfigurationObject(Point);
-                var C = new LooseConfigurationObject(Point);
-                var midpointAB = new ConstructedConfigurationObject(Midpoint, A, B);
-                var midpointAC = new ConstructedConfigurationObject(Midpoint, A, C);
-                var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, C, midpointAB, B, midpointAC);
-
-                // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, G);
-
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
-                };
-
-                // Create the actual construction
-                return new ComposedConstruction(nameof(Centroid), configuration, parameters);
             }
         }
 
@@ -467,6 +467,36 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(MidpointOfOppositeArc), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// The midpoint of arc BAC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction MidpointOfArc
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var Ib = new ConstructedConfigurationObject(Excenter, B, A, C);
+                var Ic = new ConstructedConfigurationObject(Excenter, C, A, B);
+                var M = new ConstructedConfigurationObject(Midpoint, Ib, Ic);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(MidpointOfArc), configuration, parameters);
             }
         }
 
@@ -617,9 +647,9 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        ///  Point X of the segment AX parallel to given segment BC in this direction (signature A, B, C)
+        /// The tangent line at point A of the circumcircle ABC (signature A, {B, C}).
         /// </summary>
-        public static ComposedConstruction HalfSegment
+        public static ComposedConstruction TangentLine
         {
             get
             {
@@ -627,22 +657,21 @@ namespace GeoGen.Core
                 var A = new LooseConfigurationObject(Point);
                 var B = new LooseConfigurationObject(Point);
                 var C = new LooseConfigurationObject(Point);
-                var M = new ConstructedConfigurationObject(Midpoint, B, C);
-                var X = new ConstructedConfigurationObject(ReflectionInMidpointOfSegment, B, A, M);
+                var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+                var l = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, A, O);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M, X);
+                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
                 {
                     new ObjectConstructionParameter(Point),
-                    new ObjectConstructionParameter(Point),
-                    new ObjectConstructionParameter(Point)
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction(nameof(HalfSegment), configuration, parameters);
+                return new ComposedConstruction(nameof(TangentLine), configuration, parameters);
             }
         }
     }

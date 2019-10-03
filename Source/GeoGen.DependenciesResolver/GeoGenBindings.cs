@@ -54,7 +54,6 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<IPredefinedConstructor>().To<PerpendicularProjectionConstructor>().InSingletonScope();
             kernel.Bind<IPredefinedConstructor>().To<PointReflectionConstructor>().InSingletonScope();
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>().InSingletonScope();
-            kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleWithCenterAndLineFromPointsConstructor>().InSingletonScope();
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>().InSingletonScope();
 
             // Factories

@@ -23,7 +23,9 @@ namespace GeoGen.TheoremFinder.Tests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, A, C);
+            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, E, C, D);
             var H = new ConstructedConfigurationObject(Orthocenter, A, B, C);
             var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
             var F = new ConstructedConfigurationObject(Midpoint, O, H);
@@ -46,6 +48,10 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
+                new Theorem(configuration, CollinearPoints, A, B, D),
+                new Theorem(configuration, CollinearPoints, A, C, E),
+                new Theorem(configuration, CollinearPoints, B, E, G),
+                new Theorem(configuration, CollinearPoints, C, D, G),
                 new Theorem(configuration, CollinearPoints, F, O, H),
                 new Theorem(configuration, CollinearPoints, F, O, G),
                 new Theorem(configuration, CollinearPoints, F, H, G),

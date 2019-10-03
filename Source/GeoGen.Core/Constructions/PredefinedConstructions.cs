@@ -246,27 +246,6 @@ namespace GeoGen.Core
         }
 
         /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.SecondIntersectionOfCircleWithCenterAndLineFromPoints"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction SecondIntersectionOfCircleWithCenterAndLineFromPoints
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(Point),
-                    new ObjectConstructionParameter(Point),
-                    new ObjectConstructionParameter(Point),
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleWithCenterAndLineFromPoints, parameters, Point, isRandom: false);
-            }
-        }
-
-        /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>

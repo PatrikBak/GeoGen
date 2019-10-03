@@ -151,7 +151,7 @@ namespace GeoGen.Constructor.Tests
             var D = new ConstructedConfigurationObject(Midpoint, A, B);
             var E = new ConstructedConfigurationObject(Midpoint, B, C);
             var F = new ConstructedConfigurationObject(Midpoint, C, A);
-            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, E, C, D);
 
             // Create the configuration
             var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, D, E, F, G);
