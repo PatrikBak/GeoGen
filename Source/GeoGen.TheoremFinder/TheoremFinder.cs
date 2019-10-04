@@ -64,7 +64,7 @@ namespace GeoGen.TheoremFinder
             // For that we are going to take every old theorem and return possibly new versions of it
             var redefinedNewTheorems = oldTheorems.AllObjects.SelectMany(theorem =>
                 // If we have an incidence, we don't want to do anything 
-                // (it's not needed to state that A lines on line AB)
+                // (it's not needed to state that A lies on line AB)
                 theorem.Type == TheoremType.Incidence ? Enumerable.Empty<Theorem>() :
                 // Otherwise  For each theorem we take its objects
                 theorem.InvolvedObjects
@@ -74,7 +74,7 @@ namespace GeoGen.TheoremFinder
                     // Combine these definitions in every possible way
                     .Combine()
                     // For every option create a new theorem
-                    .Select(objects => new Theorem(theorem.Configuration, theorem.Type, objects)))
+                    .Select(objects => new Theorem(contextualPicture.Pictures.Configuration, theorem.Type, objects)))
                 // We might have gotten even old theorems (when all the definition option changes were 
                 // 'no change'. Also we might have gotten duplicates. This call will solve both problems
                 .Except(oldTheorems.AllObjects);
@@ -206,7 +206,9 @@ namespace GeoGen.TheoremFinder
                                         // Default case
                                         _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
                                     };
-                                });
+                                })
+                                // Append the no-change definition
+                                .Concat(oldTheoremObject);
 
                         // If we have a line or circle...
                         case ConfigurationObjectType.Line:

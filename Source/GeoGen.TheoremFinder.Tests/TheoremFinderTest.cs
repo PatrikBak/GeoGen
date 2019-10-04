@@ -48,6 +48,7 @@ namespace GeoGen.TheoremFinder.Tests
             types: new[]
             {
                 ParallelLines,
+                PerpendicularLines,
                 EqualLineSegments,
                 TangentCircles,
                 Incidence
@@ -87,6 +88,133 @@ namespace GeoGen.TheoremFinder.Tests
         }
 
         #endregion
+
+        [Test]
+        public void Test_Orthocenter_And_Intersection()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var H = new ConstructedConfigurationObject(Orthocenter, A, B, C);
+            var D = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, C, A, H);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(ThreePoints, H, D);
+
+            // Run
+            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+
+            // Assert that new + old = all
+            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+
+            // Assert new theorems
+            newTheorems.AllObjects.OrderlessEquals(new[]
+            {
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(D, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(B, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(D, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(B, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A, H),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A, H),
+                    new LineTheoremObject(D, C)
+                })
+            })
+            .Should().BeTrue();
+
+            // Assert all theorems
+            allTheorems.AllObjects.OrderlessEquals(new[]
+            {
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(D, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, H),
+                    new LineTheoremObject(B, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(D, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(D, A),
+                    new LineTheoremObject(B, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A, H),
+                    new LineTheoremObject(D, B)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(A, H),
+                    new LineTheoremObject(D, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(H, A),
+                    new LineTheoremObject(B, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(H, B),
+                    new LineTheoremObject(A, C)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(H, C),
+                    new LineTheoremObject(B, A)
+                })
+            })
+            .Should().BeTrue();
+        }
 
         [Test]
         public void Test_Triangle_With_Midpoints_And_Explicit_Line_At_The_End()
@@ -494,7 +622,42 @@ namespace GeoGen.TheoremFinder.Tests
                 new Theorem(configuration, Incidence, A, c),
                 new Theorem(configuration, Incidence, B, c),
                 new Theorem(configuration, Incidence, C, c),
-                new Theorem(configuration, Incidence, P, c)
+                new Theorem(configuration, Incidence, P, c),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(B, A)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(B, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, A)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, C),
+                    new LineTheoremObject(A, C)
+                })
             })
             .Should().BeTrue();
         }
@@ -573,7 +736,27 @@ namespace GeoGen.TheoremFinder.Tests
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, Incidence, P, c)
+                new Theorem(configuration, Incidence, P, c),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, A)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, C),
+                    new LineTheoremObject(A, C)
+                })
             })
             .Should().BeTrue();
 
@@ -673,7 +856,42 @@ namespace GeoGen.TheoremFinder.Tests
                 new Theorem(configuration, Incidence, A, c),
                 new Theorem(configuration, Incidence, B, c),
                 new Theorem(configuration, Incidence, C, c),
-                new Theorem(configuration, Incidence, P, c)
+                new Theorem(configuration, Incidence, P, c),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(B, A)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(B, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(O, D),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, A)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(B, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, B),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(configuration, PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(P, C),
+                    new LineTheoremObject(A, C)
+                })
             })
             .Should().BeTrue();
         }
