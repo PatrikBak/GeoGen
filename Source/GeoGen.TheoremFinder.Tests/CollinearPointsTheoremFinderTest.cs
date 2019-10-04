@@ -39,23 +39,23 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, CollinearPoints, F, O, H),
-                new Theorem(configuration, CollinearPoints, F, O, G),
-                new Theorem(configuration, CollinearPoints, F, H, G)
+                new Theorem(CollinearPoints, F, O, H),
+                new Theorem(CollinearPoints, F, O, G),
+                new Theorem(CollinearPoints, F, H, G)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, CollinearPoints, A, B, D),
-                new Theorem(configuration, CollinearPoints, A, C, E),
-                new Theorem(configuration, CollinearPoints, B, E, G),
-                new Theorem(configuration, CollinearPoints, C, D, G),
-                new Theorem(configuration, CollinearPoints, F, O, H),
-                new Theorem(configuration, CollinearPoints, F, O, G),
-                new Theorem(configuration, CollinearPoints, F, H, G),
-                new Theorem(configuration, CollinearPoints, O, H, G)
+                new Theorem(CollinearPoints, A, B, D),
+                new Theorem(CollinearPoints, A, C, E),
+                new Theorem(CollinearPoints, B, E, G),
+                new Theorem(CollinearPoints, C, D, G),
+                new Theorem(CollinearPoints, F, O, H),
+                new Theorem(CollinearPoints, F, O, G),
+                new Theorem(CollinearPoints, F, H, G),
+                new Theorem(CollinearPoints, O, H, G)
             })
             .Should().BeTrue();
         }
@@ -82,26 +82,26 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, CollinearPoints, P, A, B),
-                new Theorem(configuration, CollinearPoints, P, A, mAB),
-                new Theorem(configuration, CollinearPoints, P, B, mAB),
-                new Theorem(configuration, CollinearPoints, P, C, D),
-                new Theorem(configuration, CollinearPoints, P, C, mCD),
-                new Theorem(configuration, CollinearPoints, P, D, mCD)
+                new Theorem(CollinearPoints, P, A, B),
+                new Theorem(CollinearPoints, P, A, mAB),
+                new Theorem(CollinearPoints, P, B, mAB),
+                new Theorem(CollinearPoints, P, C, D),
+                new Theorem(CollinearPoints, P, C, mCD),
+                new Theorem(CollinearPoints, P, D, mCD)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, CollinearPoints, P, A, B),
-                new Theorem(configuration, CollinearPoints, P, A, mAB),
-                new Theorem(configuration, CollinearPoints, P, B, mAB),
-                new Theorem(configuration, CollinearPoints, P, C, D),
-                new Theorem(configuration, CollinearPoints, P, C, mCD),
-                new Theorem(configuration, CollinearPoints, P, D, mCD),
-                new Theorem(configuration, CollinearPoints, A, B, mAB),
-                new Theorem(configuration, CollinearPoints, C, D, mCD)
+                new Theorem(CollinearPoints, P, A, B),
+                new Theorem(CollinearPoints, P, A, mAB),
+                new Theorem(CollinearPoints, P, B, mAB),
+                new Theorem(CollinearPoints, P, C, D),
+                new Theorem(CollinearPoints, P, C, mCD),
+                new Theorem(CollinearPoints, P, D, mCD),
+                new Theorem(CollinearPoints, A, B, mAB),
+                new Theorem(CollinearPoints, C, D, mCD)
             })
             .Should().BeTrue();
         }

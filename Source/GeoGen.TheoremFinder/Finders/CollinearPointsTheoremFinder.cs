@@ -28,7 +28,7 @@ namespace GeoGen.TheoremFinder
                 // Get the configuration objects
                 .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
                 // Each of these triples makes a theorem
-                .Select(points => new Theorem(contextualPicture.Pictures.Configuration, Type, points));
+                .Select(points => new Theorem(Type, points));
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace GeoGen.TheoremFinder
                 // Get the configuration objects
                 .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
                 // Each of these triples makes a theorem
-                .Select(points => new Theorem(contextualPicture.Pictures.Configuration, Type, points));
+                .Select(points => new Theorem(Type, points));
         }
     }
 }

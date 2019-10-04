@@ -28,13 +28,13 @@ namespace GeoGen.Core.Tests
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
             // This can't be stated in a smaller configuration
-            new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+            new Theorem(ConcurrentObjects, new TheoremObject[]
             {
                 new LineTheoremObject(A, mBC),
                 new LineTheoremObject(B, mAC),
                 new LineTheoremObject(C, mAB)
             })
-            .GetUnnecessaryObjects().Should().BeEmpty();
+            .GetUnnecessaryObjects(configuration).Should().BeEmpty();
         }
 
         [Test]
@@ -52,20 +52,20 @@ namespace GeoGen.Core.Tests
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
             // This can't be stated in a smaller configuration either
-            new Theorem(configuration, EqualLineSegments, new[]
+            new Theorem(EqualLineSegments, new[]
             {
                 new LineSegmentTheoremObject(mAB, mAC),
                 new LineSegmentTheoremObject(B, mBC)
             })
-            .GetUnnecessaryObjects().Should().BeEmpty();
+            .GetUnnecessaryObjects(configuration).Should().BeEmpty();
 
             // Analogously this couldn't be stated in a smaller configuration either
-            new Theorem(configuration, EqualLineSegments, new[]
+            new Theorem(EqualLineSegments, new[]
             {
                 new LineSegmentTheoremObject(mAB, mAC),
                 new LineSegmentTheoremObject(C, mBC)
             })
-            .GetUnnecessaryObjects().Should().BeEmpty();
+            .GetUnnecessaryObjects(configuration).Should().BeEmpty();
         }
 
         [Test]
@@ -83,12 +83,12 @@ namespace GeoGen.Core.Tests
             var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
 
             // This theorem can be stated without the midpoint of BC
-            new Theorem(configuration, ParallelLines, new TheoremObject[]
+            new Theorem(ParallelLines, new TheoremObject[]
             {
                 new LineTheoremObject(B, C),
                 new LineTheoremObject(mAB, mAC)
             })
-            .GetUnnecessaryObjects().Should().BeEquivalentTo(new[] { mBC });
+            .GetUnnecessaryObjects(configuration).Should().BeEquivalentTo(new[] { mBC });
         }
     }
 }

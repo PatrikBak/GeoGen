@@ -312,7 +312,7 @@ namespace GeoGen.TheoremProver
                 // Each represent a possible mapping
                 .Select(points => new MappingData(input.TemplateConfiguration.LooseObjects, points,
                         // With the used concyclity theorem
-                        new Theorem(input.ExaminedConfigurationPicture.Pictures.Configuration, ConcyclicPoints, points)));
+                        new Theorem(ConcyclicPoints, points)));
         }
 
         /// <summary>
@@ -577,7 +577,7 @@ namespace GeoGen.TheoremProver
                    // Create the final mapping
                    .Select(point => new MappingData(data, (constructedObject, point),
                         // with the right theorem used as a fact
-                        new Theorem(configuration, type, inputPoints.Concat(point).ToArray())))
+                        new Theorem(type, inputPoints.Concat(point).ToArray())))
                     // If there is no valid object, then there is no mapping
                     ?? Enumerable.Empty<MappingData>();
 

@@ -70,15 +70,12 @@ namespace GeoGen.TheoremProver
         #region ITrivialTheoremProducer
 
         /// <summary>
-        /// Derive trivial theorems from the last object of a given configuration.
+        /// Derive trivial theorems from a given constructed configuration object.
         /// </summary>
-        /// <param name="configuration">The configuration in which the trivial theorems should hold.</param>
-        /// <returns>The produced trivial theorems.</returns>
-        public IReadOnlyList<Theorem> DeriveTrivialTheoremsFromLastObject(Configuration configuration)
+        /// <param name="constructedObject">The object from which we should derive theorems.</param>
+        /// <returns>The produced theorems.</returns>
+        public IReadOnlyList<Theorem> DeriveTrivialTheoremsFromObject(ConstructedConfigurationObject constructedObject)
         {
-            // Get the last object of the configuration
-            var constructedObject = configuration.ConstructedObjects.LastOrDefault();
-
             // If it has only loose objects, then do anything
             if (constructedObject == null)
                 return Array.Empty<Theorem>();
@@ -106,12 +103,12 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, EqualAngles, new []
+                                new Theorem(EqualAngles, new []
                                 {
                                     new AngleTheoremObject(line1, bisector),
                                     new AngleTheoremObject(line2, bisector)
                                 }),
-                                new Theorem(configuration, Incidence, objects[0], constructedObject)
+                                new Theorem(Incidence, objects[0], constructedObject)
                             };
                         }
 
@@ -122,10 +119,10 @@ namespace GeoGen.TheoremProver
                             return new[]
                             {
                                 // Collinearity
-                                new Theorem(configuration, CollinearPoints, objects[0], objects[1], constructedObject),
+                                new Theorem(CollinearPoints, objects[0], objects[1], constructedObject),
 
                                 // Equal distances
-                                new Theorem(configuration, EqualLineSegments, new TheoremObject[]
+                                new Theorem(EqualLineSegments, new TheoremObject[]
                                 {
                                     new LineSegmentTheoremObject(objects[1], objects[0]),
                                     new LineSegmentTheoremObject(objects[1], constructedObject)
@@ -139,10 +136,10 @@ namespace GeoGen.TheoremProver
                             return new[]
                             {
                                 // Collinearity
-                                new Theorem(configuration, CollinearPoints, objects[0], objects[1], constructedObject),
+                                new Theorem(CollinearPoints, objects[0], objects[1], constructedObject),
 
                                 // Equal distances
-                                new Theorem(configuration, EqualLineSegments, new TheoremObject[]
+                                new Theorem(EqualLineSegments, new TheoremObject[]
                                 {
                                     new LineSegmentTheoremObject(objects[0], constructedObject),
                                     new LineSegmentTheoremObject(objects[1], constructedObject)
@@ -155,12 +152,12 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, PerpendicularLines, new TheoremObject[]
+                                new Theorem(PerpendicularLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(objects[0], constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
-                                new Theorem(configuration, Incidence, objects[1], constructedObject)
+                                new Theorem(Incidence, objects[1], constructedObject)
                             };
 
                         // Perpendicular line makes (surprisingly) perpendicular lines and incidence
@@ -169,12 +166,12 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, PerpendicularLines, new TheoremObject[]
+                                new Theorem(PerpendicularLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
-                                new Theorem(configuration, Incidence, objects[0], constructedObject)
+                                new Theorem(Incidence, objects[0], constructedObject)
                             };
 
                         // Parallel line makes (surprisingly) parallel lines and incidence
@@ -183,12 +180,12 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, ParallelLines, new TheoremObject[]
+                                new Theorem(ParallelLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
-                                new Theorem(configuration, Incidence, objects[0], constructedObject)
+                                new Theorem(Incidence, objects[0], constructedObject)
                             };
 
                         // Second intersection of two circumcircles makes concyclic points
@@ -197,8 +194,8 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2]),
-                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[3], objects[4])
+                                new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2]),
+                                new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[3], objects[4])
                             };
 
                         // Second intersection of a circle and line from point make collinear and concyclic points
@@ -207,8 +204,8 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1]),
-                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[2], objects[3])
+                                new Theorem(CollinearPoints, constructedObject, objects[0], objects[1]),
+                                new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[2], objects[3])
                             };
 
 
@@ -218,7 +215,7 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, CollinearPoints, constructedObject, objects[0], objects[1])
+                                new Theorem(CollinearPoints, constructedObject, objects[0], objects[1])
                             };
 
                         // Random point on a circles makes concyclic points
@@ -227,7 +224,7 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2])
+                                new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2])
                             };
 
                         // Line makes incidences
@@ -236,8 +233,8 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
-                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                                new Theorem(Incidence, constructedObject, objects[0]),
+                                new Theorem(Incidence, constructedObject, objects[1])
                             };
 
                         // Circumcircle makes incidences
@@ -246,9 +243,9 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
-                                new Theorem(configuration, Incidence, constructedObject, objects[1]),
-                                new Theorem(configuration, Incidence, constructedObject, objects[2])
+                                new Theorem(Incidence, constructedObject, objects[0]),
+                                new Theorem(Incidence, constructedObject, objects[1]),
+                                new Theorem(Incidence, constructedObject, objects[2])
                             };
 
                         // Circle with center through point makes incidences
@@ -257,7 +254,7 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
-                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                                new Theorem(Incidence, constructedObject, objects[1])
                             };
 
                         // Intersection of lines makes incidences
@@ -266,8 +263,8 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
-                                new Theorem(configuration, Incidence, constructedObject, objects[0]),
-                                new Theorem(configuration, Incidence, constructedObject, objects[1])
+                                new Theorem(Incidence, constructedObject, objects[0]),
+                                new Theorem(Incidence, constructedObject, objects[1])
                             };
 
                         // Here we can't say anything useful

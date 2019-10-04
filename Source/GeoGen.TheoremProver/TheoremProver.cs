@@ -93,7 +93,7 @@ namespace GeoGen.TheoremProver
             foreach (var theorem in input.NewTheorems.AllObjects)
             {
                 // For a theorem find unnecessary objects
-                var unnecessaryObjects = theorem.GetUnnecessaryObjects();
+                var unnecessaryObjects = theorem.GetUnnecessaryObjects(configuration);
 
                 // If there are any...
                 if (unnecessaryObjects.Any())
@@ -102,7 +102,7 @@ namespace GeoGen.TheoremProver
             }
 
             // Add all trivial theorems as not interesting ones
-            foreach (var theorem in _trivialTheoremProducer.DeriveTrivialTheoremsFromLastObject(configuration))
+            foreach (var theorem in _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(configuration.LastConstructedObject))
                 derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
 
             // Use all derivers to make relations between all theorems
@@ -177,7 +177,7 @@ namespace GeoGen.TheoremProver
                             // Prepare the used equality theorems
                             var usedEqualities = output.UsedEqualities
                                 // Convert each equality to a theorem
-                                .Select(equality => new Theorem(configuration, EqualObjects, equality.originalObject, equality.equalObject));
+                                .Select(equality => new Theorem(EqualObjects, equality.originalObject, equality.equalObject));
 
                             // Mark all of them
                             usedEqualities.ForEach(equalityAndIncidenceTracker.MarkEquality);
@@ -193,7 +193,7 @@ namespace GeoGen.TheoremProver
                             // Prepare the used incidences theorems
                             var usedIncidences = output.UsedIncidencies
                                 // Convert each incidence to a theorem
-                                .Select(incidence => new Theorem(configuration, Incidence, incidence.point, incidence.lineOrCircle));
+                                .Select(incidence => new Theorem(Incidence, incidence.point, incidence.lineOrCircle));
 
                             // Mark all of them
                             usedIncidences.ForEach(equalityAndIncidenceTracker.MarkIncidence);
@@ -223,12 +223,10 @@ namespace GeoGen.TheoremProver
                 .OfType<ConstructedConfigurationObject>()
                 // And only new ones
                 .Where(o => !configuration.ConstructedObjectsSet.Contains(o))
-                // Create a temporary configuration containing each object as the last one
-                .Select(o => new Configuration(configuration.LooseObjectsHolder, configuration.ConstructedObjects.Concat(o).ToList()))
                 // Get trivial theorems for it
-                .Select(_trivialTheoremProducer.DeriveTrivialTheoremsFromLastObject)
-                // Get rid of the temporary configuration from the theorems definition
-                .SelectMany(theorems => theorems.Select(theorem => new Theorem(configuration, theorem.Type, theorem.InvolvedObjects)))
+                .Select(_trivialTheoremProducer.DeriveTrivialTheoremsFromObject)
+                // Flatten them
+                .Flatten()
                 // Take distinct ones
                 .Distinct()
                 // Handle each theorem
@@ -253,9 +251,9 @@ namespace GeoGen.TheoremProver
             equalityAndIncidenceTracker.EqualityGroups.SelectMany(group => group.Subsets(3)).ForEach(triple =>
             {
                 // Prepare the equal objects theorems
-                var theorem1 = new Theorem(configuration, EqualObjects, triple[0], triple[1]);
-                var theorem2 = new Theorem(configuration, EqualObjects, triple[1], triple[2]);
-                var theorem3 = new Theorem(configuration, EqualObjects, triple[2], triple[0]);
+                var theorem1 = new Theorem(EqualObjects, triple[0], triple[1]);
+                var theorem2 = new Theorem(EqualObjects, triple[1], triple[2]);
+                var theorem3 = new Theorem(EqualObjects, triple[2], triple[0]);
 
                 // From every two we can derive the other
                 derivationHelper.AddDerivation(theorem1, Transitivity, new[] { theorem2, theorem3 });
@@ -274,16 +272,16 @@ namespace GeoGen.TheoremProver
                 var (point, lineOrCircle) = objects;
 
                 // Get the incidence theorem
-                var incidence = new Theorem(configuration, Incidence, point, lineOrCircle);
+                var incidence = new Theorem(Incidence, point, lineOrCircle);
 
                 // Get the equality groups for the points objects and take its other points
                 equalityAndIncidenceTracker.FindEqualityGroup(point).Where(_point => !_point.Equals(point)).ForEach(equalPoint =>
                 {
                     // Create the used equality theorem
-                    var usedEquality = new Theorem(configuration, EqualObjects, point, equalPoint);
+                    var usedEquality = new Theorem(EqualObjects, point, equalPoint);
 
                     // Create the derived theorem
-                    var otherIncidence = new Theorem(configuration, Incidence, equalPoint, lineOrCircle);
+                    var otherIncidence = new Theorem(Incidence, equalPoint, lineOrCircle);
 
                     // Add the derivations
                     derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
@@ -294,10 +292,10 @@ namespace GeoGen.TheoremProver
                 equalityAndIncidenceTracker.FindEqualityGroup(lineOrCircle).Where(_lineOrCircle => !_lineOrCircle.Equals(lineOrCircle)).ForEach(equalLineOrCircle =>
                 {
                     // Create the used equality theorem
-                    var usedEquality = new Theorem(configuration, EqualObjects, lineOrCircle, equalLineOrCircle);
+                    var usedEquality = new Theorem(EqualObjects, lineOrCircle, equalLineOrCircle);
 
                     // Create the derived theorem
-                    var otherIncidence = new Theorem(configuration, Incidence, point, equalLineOrCircle);
+                    var otherIncidence = new Theorem(Incidence, point, equalLineOrCircle);
 
                     // Add the derivation
                     derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
@@ -338,7 +336,7 @@ namespace GeoGen.TheoremProver
                         return;
 
                     // Prepare the incidence theorems
-                    var incidencesTheorems = incidences.Select(pair => new Theorem(configuration, Incidence, pair.lineOrCircle, pair.point)).ToArray();
+                    var incidencesTheorems = incidences.Select(pair => new Theorem(Incidence, pair.lineOrCircle, pair.point)).ToArray();
 
                     // Switch on the type of the other object
                     switch (incidences[0].lineOrCircle.ObjectType)
@@ -347,7 +345,7 @@ namespace GeoGen.TheoremProver
                         case Line:
 
                             // Prepare the collinearity theorem
-                            var collinearity = new Theorem(configuration, CollinearPoints, points);
+                            var collinearity = new Theorem(CollinearPoints, points);
 
                             // Add the derivation of any of the theorems from the others
                             derivationHelper.AddDerivation(collinearity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2] });
@@ -361,7 +359,7 @@ namespace GeoGen.TheoremProver
                         case Circle:
 
                             // Prepare the concyclity theorem
-                            var concyclity = new Theorem(configuration, ConcyclicPoints, points);
+                            var concyclity = new Theorem(ConcyclicPoints, points);
 
                             // Add the derivation of any of the theorems from the others
                             derivationHelper.AddDerivation(concyclity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
@@ -415,7 +413,7 @@ namespace GeoGen.TheoremProver
                         // Otherwise prepare the used theorem by taking all non-identity equality pairs
                         var assumptions = mapping.Where(pair => !pair.Key.Equals(pair.Value))
                             // Making each a theorem
-                            .Select(pair => new Theorem(configuration, EqualObjects, new[] { pair.Key, pair.Value }))
+                            .Select(pair => new Theorem(EqualObjects, new[] { pair.Key, pair.Value }))
                             // And appending our reformulated theorem
                             .Concat(remappedTheorem);
 
@@ -534,14 +532,14 @@ namespace GeoGen.TheoremProver
                     derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
                     {
                         // Try to reformulate the current one
-                        var remappedTheorem = theorem.Remap(allObjectsMapping, redefinedConfiguration);
+                        var remappedTheorem = theorem.Remap(allObjectsMapping);
 
                         // I think it should be doable...
                         if (remappedTheorem == null)
                             throw new TheoremProverException("A theorem to be proved got remapped to an incorrect one. How is this possible???");
 
                         // Finally we can test if the theorem can be stated without some objects
-                        var redundantObjects = remappedTheorem.GetUnnecessaryObjects();
+                        var redundantObjects = remappedTheorem.GetUnnecessaryObjects(redefinedConfiguration);
 
                         // If there is none, we can't do more
                         if (redundantObjects.IsEmpty())
@@ -550,7 +548,7 @@ namespace GeoGen.TheoremProver
                         // Otherwise prepare the used equalities by taking all non-identity pairs of the mapping
                         var usedEqualities = allObjectsMapping.Where(pair => !pair.Key.Equals(pair.Value))
                             // Making each a theorem
-                            .Select(pair => new Theorem(configuration, EqualObjects, new[] { pair.Key, pair.Value }));
+                            .Select(pair => new Theorem(EqualObjects, new[] { pair.Key, pair.Value }));
 
                         // Prepare the list of objects that are redundant in the original configuration
                         // This code doesn't look efficient, but we're dealing with very little quantities

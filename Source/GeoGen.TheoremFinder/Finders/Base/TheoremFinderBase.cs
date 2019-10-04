@@ -132,7 +132,7 @@ namespace GeoGen.TheoremFinder
             // Combine every possible definition of each object
             .Combine()
             // Now we can finally use the helper method to get the theorem from these objects
-            .Select(objects => Theorem.DeriveFromFlattenedObjects(configuration, Type, objects));
+            .Select(objects => Theorem.DeriveFromFlattenedObjects(Type, objects));
         }
 
         #endregion

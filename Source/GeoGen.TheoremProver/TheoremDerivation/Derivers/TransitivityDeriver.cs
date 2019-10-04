@@ -54,7 +54,7 @@ namespace GeoGen.TheoremProver
                     // Otherwise any (n+1)-tuple, where 'n' is the needed number of objects, represents a true theorem. 
                     var impliedTheorems = theorem1.InvolvedObjects.Union(theorem2.InvolvedObjects).Subsets(neededObjects + 1)
                         // We make theorems for each
-                        .Select(objects => new Theorem(theorem1.Configuration, theoremType, objects))
+                        .Select(objects => new Theorem(theoremType, objects))
                         // Take those that are equivalent to our theorems
                         .Where(theorem => !theorem.Equals(theorem1) && !theorem.Equals(theorem2));
 

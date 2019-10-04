@@ -37,21 +37,21 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, l, A),
-                new Theorem(configuration, Incidence, l, H),
-                new Theorem(configuration, Incidence, l, D)
+                new Theorem(Incidence, l, A),
+                new Theorem(Incidence, l, H),
+                new Theorem(Incidence, l, D)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, l, A),
-                new Theorem(configuration, Incidence, l, H),
-                new Theorem(configuration, Incidence, l, D),
-                new Theorem(configuration, Incidence, bc, B),
-                new Theorem(configuration, Incidence, bc, C),
-                new Theorem(configuration, Incidence, bc, D)
+                new Theorem(Incidence, l, A),
+                new Theorem(Incidence, l, H),
+                new Theorem(Incidence, l, D),
+                new Theorem(Incidence, bc, B),
+                new Theorem(Incidence, bc, C),
+                new Theorem(Incidence, bc, D)
             })
             .Should().BeTrue();
         }
@@ -77,20 +77,20 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, bc, D),
-                new Theorem(configuration, Incidence, l, D)
+                new Theorem(Incidence, bc, D),
+                new Theorem(Incidence, l, D)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, l, A),
-                new Theorem(configuration, Incidence, l, H),
-                new Theorem(configuration, Incidence, l, D),
-                new Theorem(configuration, Incidence, bc, B),
-                new Theorem(configuration, Incidence, bc, C),
-                new Theorem(configuration, Incidence, bc, D)
+                new Theorem(Incidence, l, A),
+                new Theorem(Incidence, l, H),
+                new Theorem(Incidence, l, D),
+                new Theorem(Incidence, bc, B),
+                new Theorem(Incidence, bc, C),
+                new Theorem(Incidence, bc, D)
             })
             .Should().BeTrue();
         }
@@ -114,16 +114,16 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, l, A)
+                new Theorem(Incidence, l, A)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, l, A),
-                new Theorem(configuration, Incidence, bc, B),
-                new Theorem(configuration, Incidence, bc, C)
+                new Theorem(Incidence, l, A),
+                new Theorem(Incidence, bc, B),
+                new Theorem(Incidence, bc, C)
             })
             .Should().BeTrue();
         }
@@ -149,24 +149,24 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, A),
-                new Theorem(configuration, Incidence, thalesBC, B),
-                new Theorem(configuration, Incidence, thalesBC, C),
-                new Theorem(configuration, Incidence, thalesBC, D)
+                new Theorem(Incidence, thalesBC, A),
+                new Theorem(Incidence, thalesBC, B),
+                new Theorem(Incidence, thalesBC, C),
+                new Theorem(Incidence, thalesBC, D)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, A),
-                new Theorem(configuration, Incidence, thalesBC, B),
-                new Theorem(configuration, Incidence, thalesBC, C),
-                new Theorem(configuration, Incidence, thalesBC, D),
-                new Theorem(configuration, Incidence, c1, A),
-                new Theorem(configuration, Incidence, c1, D),
-                new Theorem(configuration, Incidence, c2, A),
-                new Theorem(configuration, Incidence, c2, D)
+                new Theorem(Incidence, thalesBC, A),
+                new Theorem(Incidence, thalesBC, B),
+                new Theorem(Incidence, thalesBC, C),
+                new Theorem(Incidence, thalesBC, D),
+                new Theorem(Incidence, c1, A),
+                new Theorem(Incidence, c1, D),
+                new Theorem(Incidence, c2, A),
+                new Theorem(Incidence, c2, D)
             })
             .Should().BeTrue();
         }
@@ -190,17 +190,17 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, D)
+                new Theorem(Incidence, thalesBC, D)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, A),
-                new Theorem(configuration, Incidence, thalesBC, B),
-                new Theorem(configuration, Incidence, thalesBC, C),
-                new Theorem(configuration, Incidence, thalesBC, D)
+                new Theorem(Incidence, thalesBC, A),
+                new Theorem(Incidence, thalesBC, B),
+                new Theorem(Incidence, thalesBC, C),
+                new Theorem(Incidence, thalesBC, D)
             })
             .Should().BeTrue();
         }
@@ -224,19 +224,19 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, B),
-                new Theorem(configuration, Incidence, thalesBC, C)
+                new Theorem(Incidence, thalesBC, B),
+                new Theorem(Incidence, thalesBC, C)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, Incidence, thalesBC, B),
-                new Theorem(configuration, Incidence, thalesBC, C),
-                new Theorem(configuration, Incidence, abc, A),
-                new Theorem(configuration, Incidence, abc, B),
-                new Theorem(configuration, Incidence, abc, C)
+                new Theorem(Incidence, thalesBC, B),
+                new Theorem(Incidence, thalesBC, C),
+                new Theorem(Incidence, abc, A),
+                new Theorem(Incidence, abc, B),
+                new Theorem(Incidence, abc, C)
             })
             .Should().BeTrue();
         }

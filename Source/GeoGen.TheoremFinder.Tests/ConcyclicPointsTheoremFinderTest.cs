@@ -36,22 +36,22 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcyclicPoints, F, B, E, H),
-                new Theorem(configuration, ConcyclicPoints, F, C, D, H),
-                new Theorem(configuration, ConcyclicPoints, F, B, D, A),
-                new Theorem(configuration, ConcyclicPoints, F, C, E, A)
+                new Theorem(ConcyclicPoints, F, B, E, H),
+                new Theorem(ConcyclicPoints, F, C, D, H),
+                new Theorem(ConcyclicPoints, F, B, D, A),
+                new Theorem(ConcyclicPoints, F, C, E, A)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcyclicPoints, F, B, E, H),
-                new Theorem(configuration, ConcyclicPoints, F, C, D, H),
-                new Theorem(configuration, ConcyclicPoints, F, B, D, A),
-                new Theorem(configuration, ConcyclicPoints, F, C, E, A),
-                new Theorem(configuration, ConcyclicPoints, B, C, D, E),
-                new Theorem(configuration, ConcyclicPoints, A, D, E, H)
+                new Theorem(ConcyclicPoints, F, B, E, H),
+                new Theorem(ConcyclicPoints, F, C, D, H),
+                new Theorem(ConcyclicPoints, F, B, D, A),
+                new Theorem(ConcyclicPoints, F, C, E, A),
+                new Theorem(ConcyclicPoints, B, C, D, E),
+                new Theorem(ConcyclicPoints, A, D, E, H)
             })
             .Should().BeTrue();
         }
@@ -76,21 +76,21 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcyclicPoints, G, A, B, C),
-                new Theorem(configuration, ConcyclicPoints, G, A, B, F),
-                new Theorem(configuration, ConcyclicPoints, G, A, C, F),
-                new Theorem(configuration, ConcyclicPoints, G, B, C, F)
+                new Theorem(ConcyclicPoints, G, A, B, C),
+                new Theorem(ConcyclicPoints, G, A, B, F),
+                new Theorem(ConcyclicPoints, G, A, C, F),
+                new Theorem(ConcyclicPoints, G, B, C, F)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcyclicPoints, G, A, B, C),
-                new Theorem(configuration, ConcyclicPoints, G, A, B, F),
-                new Theorem(configuration, ConcyclicPoints, G, A, C, F),
-                new Theorem(configuration, ConcyclicPoints, G, B, C, F),
-                new Theorem(configuration, ConcyclicPoints, A, B, C, F),
+                new Theorem(ConcyclicPoints, G, A, B, C),
+                new Theorem(ConcyclicPoints, G, A, B, F),
+                new Theorem(ConcyclicPoints, G, A, C, F),
+                new Theorem(ConcyclicPoints, G, B, C, F),
+                new Theorem(ConcyclicPoints, A, B, C, F),
             })
             .Should().BeTrue();
         }

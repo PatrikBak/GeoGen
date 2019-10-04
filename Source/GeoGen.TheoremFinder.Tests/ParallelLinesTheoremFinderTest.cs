@@ -37,27 +37,27 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(C, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, D),
                     new LineTheoremObject(F, B)
@@ -68,107 +68,107 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(C, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, G),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(H, D),
                     new LineTheoremObject(F, B)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(E, F),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(E, F),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(E, F),
                     new LineTheoremObject(C, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(G, D),
                     new LineTheoremObject(C, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, E),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, B),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, G),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, G),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(E, G),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(E, B),
                     new LineTheoremObject(F, D)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, F),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(A, C),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, H),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, C),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(C, H),
                     new LineTheoremObject(D, E)
@@ -202,42 +202,42 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l2),
                     new LineTheoremObject(l1)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l2),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l2),
                     new LineTheoremObject(D, M)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l2),
                     new LineTheoremObject(M, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(l1)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(D, M)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(M, E)

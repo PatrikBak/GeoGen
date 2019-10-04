@@ -37,49 +37,49 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcurrentObjects, new[]
+                new Theorem(ConcurrentObjects, new[]
                 {
                     new LineTheoremObject(A, F),
                     new LineTheoremObject(B, E),
                     new LineTheoremObject(C, D)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new[]
+                new Theorem(ConcurrentObjects, new[]
                 {
                     new CircleTheoremObject(A, D, E),
                     new CircleTheoremObject(B, D, F),
                     new CircleTheoremObject(C, E, F)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(B, C, E),
                     new CircleTheoremObject(B, D, F),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(C, E, F),
                     new CircleTheoremObject(B, C, D),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, B, E),
                     new CircleTheoremObject(B, D, F),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, B, F),
                     new CircleTheoremObject(A, D, E),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, C, D),
                     new CircleTheoremObject(C, E, F),
                     new LineTheoremObject(D, F)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, C, F),
                     new CircleTheoremObject(A, D, E),
@@ -112,115 +112,115 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, B, D)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, C, E)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(B, E, H),
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(A, C, E)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(B, E, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(B, E, H),
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(A, H),
                     new CircleTheoremObject(B, E, H),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(B, E, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(B, E, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(B, E, H),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(B, E, H),
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, B, D),
                     new CircleTheoremObject(B, E, H),
                     new CircleTheoremObject(C, D, H)
                 }),
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new CircleTheoremObject(A, C, E),
                     new CircleTheoremObject(B, E, H),
@@ -232,7 +232,7 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(newTheorems.Concat(
                 // This is the only theorem that can be stated without H
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, B, D),
@@ -262,7 +262,7 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcurrentObjects, new TheoremObject[]
+                new Theorem(ConcurrentObjects, new TheoremObject[]
                 {
                     new LineTheoremObject(l),
                     new CircleTheoremObject(c1),

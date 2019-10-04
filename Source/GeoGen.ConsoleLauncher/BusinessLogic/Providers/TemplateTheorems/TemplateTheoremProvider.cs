@@ -115,16 +115,17 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Try to parse it
-                    var theorems = _parser.ParseTheorems(fileContent)
-                        // Cast each theorem to a template theorem
-                        .Select((theorem, i) => new TemplateTheorem(theorem,
-                            // To get file we look for relative path
-                            Path.GetRelativePath(_settings.TheoremsFolderPath, path),
-                            // Set the theorem number according to the file
-                            i + 1));
+                    var (theorems, configuration) = _parser.ParseTheoremsAndConfiguration(fileContent);
+
+                    // Create the template theorems
+                    var templateTheorems = theorems.Select((theorem, i) => new TemplateTheorem(theorem,
+                                // To get file we look for relative path
+                                Path.GetRelativePath(_settings.TheoremsFolderPath, path),
+                                // Set the theorem number according to the file
+                                i + 1));
 
                     // Create a map from them
-                    var theoremMap = new TheoremMap(theorems);
+                    var theoremMap = new TheoremMap(templateTheorems);
 
                     // If there is no theorem
                     if (theoremMap.AllObjects.IsEmpty())
@@ -136,10 +137,7 @@ namespace GeoGen.ConsoleLauncher
                         continue;
                     }
 
-                    // They have the same configuration, take it from the first
-                    var configuration = theoremMap.AllObjects[0].Configuration;
-
-                    // Add it to our result
+                    // Otherwise add it to our result
                     result.Add((configuration, theoremMap));
                 }
                 catch (ParserException)

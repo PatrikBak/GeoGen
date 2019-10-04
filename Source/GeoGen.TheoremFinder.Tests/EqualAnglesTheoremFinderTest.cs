@@ -34,17 +34,17 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(I, J), new LineTheoremObject(B, I)),
                     new AngleTheoremObject(new LineTheoremObject(I, J), new LineTheoremObject(C, I))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(B, J), new LineTheoremObject(B, C)),
                     new AngleTheoremObject(new LineTheoremObject(B, J), new LineTheoremObject(B, I))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(C, J), new LineTheoremObject(B, C)),
                     new AngleTheoremObject(new LineTheoremObject(C, J), new LineTheoremObject(C, I))
@@ -55,32 +55,32 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(I, J), new LineTheoremObject(B, I)),
                     new AngleTheoremObject(new LineTheoremObject(I, J), new LineTheoremObject(C, I))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(B, J), new LineTheoremObject(B, C)),
                     new AngleTheoremObject(new LineTheoremObject(B, J), new LineTheoremObject(B, I))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(C, J), new LineTheoremObject(B, C)),
                     new AngleTheoremObject(new LineTheoremObject(C, J), new LineTheoremObject(C, I))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(A, I), new LineTheoremObject(A, B)),
                     new AngleTheoremObject(new LineTheoremObject(A, I), new LineTheoremObject(A, C))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(B, I), new LineTheoremObject(B, C)),
                     new AngleTheoremObject(new LineTheoremObject(B, I), new LineTheoremObject(B, A))
                 }),
-                new Theorem(configuration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(new LineTheoremObject(C, I), new LineTheoremObject(C, A)),
                     new AngleTheoremObject(new LineTheoremObject(C, I), new LineTheoremObject(C, B))

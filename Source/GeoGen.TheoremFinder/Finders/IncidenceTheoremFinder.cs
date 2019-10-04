@@ -31,7 +31,7 @@ namespace GeoGen.TheoremFinder
                 // We can now access its points
                 .SelectMany(geometricObject => geometricObject.Points
                     // Every one of them makes an incidence
-                    .Select(point => new Theorem(contextualPicture.Pictures.Configuration, Type, geometricObject.ConfigurationObject, point.ConfigurationObject)));
+                    .Select(point => new Theorem(Type, geometricObject.ConfigurationObject, point.ConfigurationObject)));
         }
 
         /// <summary>
@@ -61,7 +61,7 @@ namespace GeoGen.TheoremFinder
                         // That are defined explicitly
                         .Where(lineCircle => lineCircle.ConfigurationObject != null)
                         // Each makes a valid incidence
-                        .Select(lineCircle => new Theorem(contextualPicture.Pictures.Configuration, Type, lineCircle.ConfigurationObject, lastConfigurationObject));
+                        .Select(lineCircle => new Theorem(Type, lineCircle.ConfigurationObject, lastConfigurationObject));
 
                 // If we have a line or circle
                 case Line:
@@ -73,7 +73,7 @@ namespace GeoGen.TheoremFinder
                     // Take its points
                     return geometricLineCircle.Points
                         // Each makes a valid incidence theorem
-                        .Select(point => new Theorem(contextualPicture.Pictures.Configuration, Type, point.ConfigurationObject, lastConfigurationObject));
+                        .Select(point => new Theorem(Type, point.ConfigurationObject, lastConfigurationObject));
 
                 // Default case
                 default:

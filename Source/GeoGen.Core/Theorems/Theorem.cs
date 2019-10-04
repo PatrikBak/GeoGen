@@ -16,11 +16,6 @@ namespace GeoGen.Core
         #region Public properties
 
         /// <summary>
-        /// Gets the configuration in which the theorem holds. 
-        /// </summary>
-        public Configuration Configuration { get; }
-
-        /// <summary>
         /// Gets the type of the theorem.
         /// </summary>
         public TheoremType Type { get; }
@@ -42,12 +37,10 @@ namespace GeoGen.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Theorem"/> object.
         /// </summary>
-        /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
         /// <param name="involvedObjects">The theorem objects that this theorem is about.</param>
-        public Theorem(Configuration configuration, TheoremType type, IEnumerable<TheoremObject> involvedObjects)
+        public Theorem(TheoremType type, IEnumerable<TheoremObject> involvedObjects)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
             InvolvedObjects = involvedObjects?.ToReadOnlyHashSet() ?? throw new ArgumentNullException(nameof(involvedObjects));
 
@@ -62,12 +55,10 @@ namespace GeoGen.Core
         /// <summary>
         /// Initializes a new instance of the <see cref="Theorem"/> object.
         /// </summary>
-        /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
         /// <param name="involvedObjects">The list of theorem objects that will be wrapped directly in particular theorem objects.</param>
-        public Theorem(Configuration configuration, TheoremType type, params ConfigurationObject[] objects)
+        public Theorem(TheoremType type, params ConfigurationObject[] objects)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             Type = type;
 
             // Create involved objects
@@ -101,13 +92,14 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Finds the objects of the underlying configuration that are not needed to state this theorem.
+        /// Finds the objects of a given configuration that are not needed to state this theorem.
         /// </summary>
+        /// <param name="configuration">The configuration with respect to which we're finding unnecessary objects.</param>
         /// <returns>The unnecessary objects with regards to this theorem.</returns>
-        public IReadOnlyHashSet<ConfigurationObject> GetUnnecessaryObjects()
+        public IReadOnlyHashSet<ConfigurationObject> GetUnnecessaryObjects(Configuration configuration)
         {
             // From the objects of the configuration
-            return Configuration.AllObjects
+            return configuration.AllObjects
                 // Exclude all the inner objects of the theorem objects
                 .Except(GetInnerConfigurationObjects().GetDefiningObjects())
                 // Enumerate
@@ -132,19 +124,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
-        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping) => Remap(mapping, Configuration);
-
-        /// <summary>
-        /// Recreates the theorem by applying a given mapping of the inner configuration objects.
-        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem must be
-        /// present in the mapping. If the mapping cannot be done (for example because 2 points
-        /// making a line are mapped to the same point), then null is returned. The new theorem
-        /// will have the given configuration set.
-        /// </summary>
-        /// <param name="mapping">The dictionary representing the mapping.</param>
-        /// <param name="newConfiguration">The new configuration to be set to the new theorem.</param>
-        /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
-        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping, Configuration newConfiguration)
+        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Remap objects, but only if none of them is null
             var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping))?.Distinct().ToList();
@@ -158,7 +138,7 @@ namespace GeoGen.Core
                 return null;
 
             // Otherwise construct the remapped theorem
-            return new Theorem(newConfiguration, Type, remappedObjects);
+            return new Theorem(Type, remappedObjects);
         }
 
         #endregion
@@ -172,11 +152,10 @@ namespace GeoGen.Core
         /// internally consist of two lines and two points, i.e. their 'flattened' version have 4 lines
         /// and 4 points.
         /// </summary>
-        /// <param name="configuration">The configuration in which the theorem holds.</param>
         /// <param name="type">The type of the theorem.</param>
         /// <param name="flattenedObjects">The list of flattened theorem objects that this theorem is about.</param>
         /// <returns>The derived theorem.</returns>
-        public static Theorem DeriveFromFlattenedObjects(Configuration configuration, TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
+        public static Theorem DeriveFromFlattenedObjects(TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
         {
             // Prepare the final theorem objects
             IReadOnlyList<TheoremObject> finalTheoremObjects;
@@ -231,7 +210,7 @@ namespace GeoGen.Core
             }
 
             // Create a new theorem using the found objects
-            return new Theorem(configuration, type, finalTheoremObjects);
+            return new Theorem(type, finalTheoremObjects);
         }
 
         #endregion
@@ -271,7 +250,7 @@ namespace GeoGen.Core
         /// Converts the theorem to a string. 
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <returns>A human-readable string representation of the theorem.</returns>
         public override string ToString() => $"{Type}: {InvolvedObjects.Select(o => o.ToString()).Ordered().ToJoinedString()}";
 
         #endregion

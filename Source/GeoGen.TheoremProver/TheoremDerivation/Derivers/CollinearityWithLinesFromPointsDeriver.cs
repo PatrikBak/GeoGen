@@ -57,8 +57,8 @@ namespace GeoGen.TheoremProver
                     var redefinedLine2 = new LineTheoremObject(thirdPoint, redefinableLine.PointsList[1]);
 
                     // Create the restated theorems
-                    var theorem1 = new Theorem(theorem.Configuration, theorem.Type, otherObjects.Concat(redefinedLine1));
-                    var theorem2 = new Theorem(theorem.Configuration, theorem.Type, otherObjects.Concat(redefinedLine2));
+                    var theorem1 = new Theorem(theorem.Type, otherObjects.Concat(redefinedLine1));
+                    var theorem2 = new Theorem(theorem.Type, otherObjects.Concat(redefinedLine2));
 
                     // Return the derivations
                     yield return (new[] { theorem, collinearity }, theorem1);

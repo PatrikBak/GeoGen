@@ -35,37 +35,37 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, B),
                     new LineSegmentTheoremObject(F, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, B),
                     new LineSegmentTheoremObject(D, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, C),
                     new LineSegmentTheoremObject(D, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, D),
                     new LineSegmentTheoremObject(C, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, D),
                     new LineSegmentTheoremObject(A, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, E),
                     new LineSegmentTheoremObject(A, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, E),
                     new LineSegmentTheoremObject(B, D)
@@ -76,47 +76,47 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, B),
                     new LineSegmentTheoremObject(F, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, B),
                     new LineSegmentTheoremObject(D, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, C),
                     new LineSegmentTheoremObject(D, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, D),
                     new LineSegmentTheoremObject(C, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, D),
                     new LineSegmentTheoremObject(A, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, E),
                     new LineSegmentTheoremObject(A, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(F, E),
                     new LineSegmentTheoremObject(B, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, D),
                     new LineSegmentTheoremObject(B, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, E),
                     new LineSegmentTheoremObject(C, E)

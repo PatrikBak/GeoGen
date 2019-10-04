@@ -103,11 +103,11 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Parses a given content to a list of theorems.
+        /// Parses a given content to the list of theorems and the configuration where the theorems hold.
         /// </summary>
         /// <param name="content">The content of a file containing template theorems.</param>
-        /// <returns>The parsed theorems.</returns>
-        public List<Theorem> ParseTheorems(string content)
+        /// <returns>The parsed theorems with configuration.</returns>
+        public (List<Theorem> theorems, Configuration configuration) ParseTheoremsAndConfiguration(string content)
         {
             // Get the lines 
             var lines = content.Split('\n')
@@ -142,8 +142,11 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Otherwise parse each theorem line
-            return lines.Skip(theoremsLineIndex + 1).Select(line => ParseTheorem(line, namesToObjects, configuration)).ToList();
+            // Parse the theorems
+            var theorems = lines.Skip(theoremsLineIndex + 1).Select(line => ParseTheorem(line, namesToObjects)).ToList();
+
+            // Return the final result
+            return (theorems, configuration);
         }
 
         /// <summary>
@@ -374,9 +377,8 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="theoremLine">The line with the theorem's description.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <returns>The parsed theorem.</returns>
-        private static Theorem ParseTheorem(string theoremLine, Dictionary<string, ConfigurationObject> namesToObjects, Configuration configuration)
+        private static Theorem ParseTheorem(string theoremLine, Dictionary<string, ConfigurationObject> namesToObjects)
         {
             #region Parsing type
 
@@ -437,7 +439,7 @@ namespace GeoGen.ConsoleLauncher
             try
             {
                 // Finally construct the theorem
-                return Theorem.DeriveFromFlattenedObjects(configuration, theoremType, theoremObjects);
+                return Theorem.DeriveFromFlattenedObjects(theoremType, theoremObjects);
             }
             catch (GeoGenException e)
             {

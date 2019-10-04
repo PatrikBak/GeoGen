@@ -37,19 +37,19 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l1),
                     new LineTheoremObject(l2)
                 }),
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l1),
                     new LineTheoremObject(l3)
                 }),
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l2),
@@ -61,25 +61,25 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l1),
                     new LineTheoremObject(l2)
                 }),
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l1),
                     new LineTheoremObject(l3)
                 }),
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l4),
                     new LineTheoremObject(l2),
                     new LineTheoremObject(l3)
                 }),
-                new Theorem(configuration, ConcurrentLines, new[]
+                new Theorem(ConcurrentLines, new[]
                 {
                     new LineTheoremObject(l1),
                     new LineTheoremObject(l2),

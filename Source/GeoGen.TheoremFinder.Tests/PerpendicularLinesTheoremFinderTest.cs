@@ -37,27 +37,27 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(A, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, N)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(N, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(M, N)
@@ -68,67 +68,67 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(A, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, N)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(N, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(M, N)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(M, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(B, M)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(B, H),
                     new LineTheoremObject(A, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(B, H),
                     new LineTheoremObject(N, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(B, H),
                     new LineTheoremObject(A, N)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(C, H),
                     new LineTheoremObject(M, N)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(C, H),
                     new LineTheoremObject(A, B)

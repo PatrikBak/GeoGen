@@ -65,7 +65,7 @@ namespace GeoGen.TheoremProver
                         : new LineTheoremObject(points[0], points[1]);
 
                     // Create the restated theorem
-                    var restatedTheorem = new Theorem(theorem.Configuration, theorem.Type, otherObjects.Concat(redefinedLine));
+                    var restatedTheorem = new Theorem(theorem.Type, otherObjects.Concat(redefinedLine));
 
                     // Return the derivations
                     yield return (new[] { theorem, incidences[0], incidences[1] }, restatedTheorem);

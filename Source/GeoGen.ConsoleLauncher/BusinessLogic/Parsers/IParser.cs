@@ -17,10 +17,10 @@ namespace GeoGen.ConsoleLauncher
         GeneratorInput ParseInput(string content);
 
         /// <summary>
-        /// Parses a given content to a list of theorems.
+        /// Parses a given content to the list of theorems and the configuration where the theorems hold.
         /// </summary>
         /// <param name="content">The content of a file containing template theorems.</param>
-        /// <returns>The parsed theorems.</returns>
-        List<Theorem> ParseTheorems(string content);
+        /// <returns>The parsed theorems with configuration.</returns>
+        (List<Theorem> theorems, Configuration configuration) ParseTheoremsAndConfiguration(string content);
     }
 }

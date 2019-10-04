@@ -37,7 +37,7 @@ namespace GeoGen.TheoremProver
                 var otherLines = theorem1.InvolvedObjects.Concat(theorem2.InvolvedObjects).Except(commonLine.ToEnumerable());
 
                 // They should be parallel
-                var parallelLines = new Theorem(theorem1.Configuration, ParallelLines, otherLines);
+                var parallelLines = new Theorem(ParallelLines, otherLines);
 
                 // Any two of these theorems can imply the third
                 yield return (new[] { theorem1, theorem2 }, parallelLines);

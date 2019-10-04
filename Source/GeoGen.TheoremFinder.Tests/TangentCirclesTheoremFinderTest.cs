@@ -59,27 +59,27 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(i),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(k),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(l)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, B, C),
                     new CircleTheoremObject(A, Q, R)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, B, C),
                     new CircleTheoremObject(B, R, P)
@@ -90,32 +90,32 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(i),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(k),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(l)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, B, C),
                     new CircleTheoremObject(A, Q, R)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, B, C),
                     new CircleTheoremObject(B, R, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, B, C),
                     new CircleTheoremObject(C, P, Q)
@@ -147,17 +147,17 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(i),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(k),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(l)
@@ -168,17 +168,17 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(i),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(k),
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(P, Q, R),
                     new CircleTheoremObject(l)

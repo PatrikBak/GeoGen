@@ -74,7 +74,7 @@ namespace GeoGen.TheoremFinder
                     // Combine these definitions in every possible way
                     .Combine()
                     // For every option create a new theorem
-                    .Select(objects => new Theorem(contextualPicture.Pictures.Configuration, theorem.Type, objects)))
+                    .Select(objects => new Theorem(theorem.Type, objects)))
                 // We might have gotten even old theorems (when all the definition option changes were 
                 // 'no change'. Also we might have gotten duplicates. This call will solve both problems
                 .Except(oldTheorems.AllObjects);

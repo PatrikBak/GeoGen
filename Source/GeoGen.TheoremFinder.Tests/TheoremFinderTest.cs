@@ -111,42 +111,42 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(D, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(D, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(D, C)
@@ -157,57 +157,57 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(D, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, H),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(D, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(D, A),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(D, B)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A, H),
                     new LineTheoremObject(D, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(H, A),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(H, B),
                     new LineTheoremObject(A, C)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(H, C),
                     new LineTheoremObject(B, A)
@@ -240,81 +240,81 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(D, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, Incidence, B, l),
-                new Theorem(configuration, Incidence, C, l)
+                new Theorem(Incidence, B, l),
+                new Theorem(Incidence, C, l)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(D, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(D, E)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(D, F)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, C),
                     new LineTheoremObject(E, F)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, E),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, D),
                     new LineSegmentTheoremObject(B, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, E),
                     new LineSegmentTheoremObject(C, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(D, F),
                     new LineSegmentTheoremObject(E, F)
                 }),
-                new Theorem(configuration, Incidence, B, l),
-                new Theorem(configuration, Incidence, C, l)
+                new Theorem(Incidence, B, l),
+                new Theorem(Incidence, C, l)
             })
             .Should().BeTrue();
         }
@@ -345,47 +345,47 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(B, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(B, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(C, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(C, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(l)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(l)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(D, F),
                     new LineSegmentTheoremObject(E, F)
@@ -396,91 +396,91 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(D, E),
                     new LineTheoremObject(B, C)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(B, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(B, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(D, E),
                     new LineTheoremObject(B, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(C, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(C, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(D, E),
                     new LineTheoremObject(C, P)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
                     new LineTheoremObject(l)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, E),
                     new LineTheoremObject(l)
                 }),
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(D, E),
                     new LineTheoremObject(l)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, E),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, D),
                     new LineSegmentTheoremObject(B, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, E),
                     new LineSegmentTheoremObject(C, E)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(D, F),
                     new LineSegmentTheoremObject(E, F)
                 }),
-                new Theorem(configuration, Incidence, B, l),
-                new Theorem(configuration, Incidence, C, l),
-                new Theorem(configuration, Incidence, P, l),
-                new Theorem(configuration, Incidence, A, b),
-                new Theorem(configuration, Incidence, P, b)
+                new Theorem(Incidence, B, l),
+                new Theorem(Incidence, C, l),
+                new Theorem(Incidence, P, l),
+                new Theorem(Incidence, A, b),
+                new Theorem(Incidence, P, b)
             })
             .Should().BeTrue();
         }
@@ -509,151 +509,151 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, Incidence, A, c),
-                new Theorem(configuration, Incidence, B, c),
-                new Theorem(configuration, Incidence, C, c),
-                new Theorem(configuration, Incidence, P, c)
+                new Theorem(Incidence, A, c),
+                new Theorem(Incidence, B, c),
+                new Theorem(Incidence, C, c),
+                new Theorem(Incidence, P, c)
             })
             .Should().BeTrue();
 
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, P),
                     new LineTheoremObject(O, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, D),
                     new LineSegmentTheoremObject(D, B)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, B)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, B),
                     new LineSegmentTheoremObject(O, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, B),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, C),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, Incidence, A, c),
-                new Theorem(configuration, Incidence, B, c),
-                new Theorem(configuration, Incidence, C, c),
-                new Theorem(configuration, Incidence, P, c),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(Incidence, A, c),
+                new Theorem(Incidence, B, c),
+                new Theorem(Incidence, C, c),
+                new Theorem(Incidence, P, c),
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(B, A)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(A, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, A)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(A, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, C)
@@ -686,73 +686,73 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, P),
                     new LineTheoremObject(O, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, B),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, C),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, Incidence, P, c),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(Incidence, P, c),
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, A)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(A, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, C)
@@ -763,131 +763,131 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
-                new Theorem(configuration, ParallelLines, new[]
+                new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(B, P),
                     new LineTheoremObject(O, D)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A, D),
                     new LineSegmentTheoremObject(D, B)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, B)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, A),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, B),
                     new LineSegmentTheoremObject(O, C)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, B),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(O, C),
                     new LineSegmentTheoremObject(O, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(A, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, B, C)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, B, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(A, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(B, C, P)
                 }),
-                new Theorem(configuration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(B, D, O),
                     new CircleTheoremObject(c)
                 }),
-                new Theorem(configuration, Incidence, A, c),
-                new Theorem(configuration, Incidence, B, c),
-                new Theorem(configuration, Incidence, C, c),
-                new Theorem(configuration, Incidence, P, c),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(Incidence, A, c),
+                new Theorem(Incidence, B, c),
+                new Theorem(Incidence, C, c),
+                new Theorem(Incidence, P, c),
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(B, A)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(O, D),
                     new LineTheoremObject(A, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, A)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(B, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, B),
                     new LineTheoremObject(A, D)
                 }),
-                new Theorem(configuration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(P, C),
                     new LineTheoremObject(A, C)

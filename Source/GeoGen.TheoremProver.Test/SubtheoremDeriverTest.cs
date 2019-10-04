@@ -30,8 +30,9 @@ namespace GeoGen.TheoremProver.Test
         /// </summary>
         /// <param name="examinedConfiguration">The examined configuration.</param>
         /// <param name="templateTheorems">The template theorems.</param>
+        /// <param name="templateConfiguration">The template configuration.</param>
         /// <returns>The list of results.</returns>
-        private List<SubtheoremDeriverOutput> Run(Configuration examinedConfiguration, IEnumerable<Theorem> templateTheorems)
+        private List<SubtheoremDeriverOutput> Run(Configuration examinedConfiguration, IEnumerable<Theorem> templateTheorems, Configuration templateConfiguration)
         {
             // Initialize IoC
             var kernel = IoC.CreateKernel()
@@ -73,7 +74,7 @@ namespace GeoGen.TheoremProver.Test
             (
                 examinedConfigurationPicture: contextualPicture,
                 examinedConfigurationTheorems: theorems,
-                templateConfiguration: templateTheorems.First().Configuration,
+                templateConfiguration: templateConfiguration,
                 templateTheorems: new TheoremMap(templateTheorems)
             ))
             // Enumerate the result
@@ -134,13 +135,13 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A_, M_),
                     new LineSegmentTheoremObject(B_, M_)
                 }),
 
-                new Theorem(templateConfiguration, CollinearPoints, A_, B_, M_)
+                new Theorem(CollinearPoints, A_, B_, M_)
             };
 
             // Create the examined configuration's objects
@@ -154,7 +155,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, N);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -163,14 +164,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(N, A),
                             new LineSegmentTheoremObject(N, M)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, CollinearPoints, A, M, N), templateTheorems[1])
+                        (new Theorem(CollinearPoints, A, M, N), templateTheorems[1])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
@@ -181,14 +182,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(M, B),
                             new LineSegmentTheoremObject(M, C)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[1])
+                        (new Theorem(CollinearPoints, B, C, M), templateTheorems[1])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
@@ -211,13 +212,13 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A_, M_),
                     new LineSegmentTheoremObject(B_, M_)
                 }),
 
-                new Theorem(templateConfiguration, CollinearPoints, A_, B_, M_)
+                new Theorem(CollinearPoints, A_, B_, M_)
             };
 
             // Create the examined configuration's objects
@@ -231,7 +232,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, M);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -240,14 +241,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(M, B),
                             new LineSegmentTheoremObject(M, C)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[1])
+                        (new Theorem(CollinearPoints, B, C, M), templateTheorems[1])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -273,7 +274,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, CollinearPoints, A_, B_, M_)
+                new Theorem(CollinearPoints, A_, B_, M_)
             };
 
             // Create the examined configuration's objects
@@ -289,7 +290,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, M, D, H);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check count
             results.Count.Should().Be(6);
@@ -301,7 +302,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[0])
+                        (new Theorem(CollinearPoints, B, C, M), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -314,7 +315,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, B, C, M), templateTheorems[0])
+                        (new Theorem(CollinearPoints, B, C, M), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -327,7 +328,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, A, O, D), templateTheorems[0])
+                        (new Theorem(CollinearPoints, A, O, D), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
@@ -337,7 +338,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, A, O, D), templateTheorems[0])
+                        (new Theorem(CollinearPoints, A, O, D), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -350,7 +351,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, D, M, H), templateTheorems[0])
+                        (new Theorem(CollinearPoints, D, M, H), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -363,7 +364,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, CollinearPoints, D, M, H), templateTheorems[0])
+                        (new Theorem(CollinearPoints, D, M, H), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
                     {
@@ -389,7 +390,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualLineSegments, new[]
+                new Theorem(EqualLineSegments, new[]
                 {
                     new LineSegmentTheoremObject(A_, M_),
                     new LineSegmentTheoremObject(B_, M_)
@@ -407,7 +408,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O, M);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -416,7 +417,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(M, B),
                             new LineSegmentTheoremObject(M, C)
@@ -434,7 +435,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(O, B),
                             new LineSegmentTheoremObject(O, C)
@@ -452,7 +453,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(O, C),
                             new LineSegmentTheoremObject(O, A)
@@ -470,7 +471,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        (new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(O, A),
                             new LineSegmentTheoremObject(O, B)
@@ -506,7 +507,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(B_, C_, B_, O_),
                     new AngleTheoremObject(C_, O_, B_, C_)
@@ -525,7 +526,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -534,7 +535,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, D, A, O),
                             new AngleTheoremObject(D, O, A, D)
@@ -549,7 +550,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, E, D, O),
                             new AngleTheoremObject(E, O, D, E)
@@ -564,7 +565,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(E, A, E, O),
                             new AngleTheoremObject(A, O, E, A)
@@ -593,7 +594,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(B_, C_, B_, O_),
                     new AngleTheoremObject(C_, O_, B_, C_)
@@ -614,7 +615,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -623,7 +624,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, D, A, O),
                             new AngleTheoremObject(D, O, A, D)
@@ -641,7 +642,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, E, D, O),
                             new AngleTheoremObject(E, O, D, E)
@@ -659,7 +660,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(E, A, E, O),
                             new AngleTheoremObject(A, O, E, A)
@@ -693,7 +694,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, ConcurrentObjects, new[]
+                new Theorem(ConcurrentObjects, new[]
                 {
                     new LineTheoremObject(A_, D_),
                     new LineTheoremObject(B_, E_),
@@ -714,7 +715,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E, F, G);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -723,7 +724,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
+                        (new Theorem(ConcurrentObjects, new[]
                         {
                             new LineTheoremObject(A, G),
                             new LineTheoremObject(D, E),
@@ -755,7 +756,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, ConcurrentObjects, new[]
+                new Theorem(ConcurrentObjects, new[]
                 {
                     new LineTheoremObject(A_, D_),
                     new LineTheoremObject(B_, E_),
@@ -776,7 +777,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -785,7 +786,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
+                        (new Theorem(ConcurrentObjects, new[]
                         {
                             new LineTheoremObject(A, D),
                             new LineTheoremObject(B, E),
@@ -820,7 +821,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A_, H_),
                     new LineTheoremObject(B_, C_)
@@ -837,7 +838,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, H);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check that perpendicularity of AH and BC can be derived dually
             CheckThatResultsContain(results, new[]
@@ -846,7 +847,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        (new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, H),
                             new LineTheoremObject(B, C)
@@ -862,7 +863,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        (new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, H),
                             new LineTheoremObject(B, C)
@@ -896,7 +897,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, ConcurrentObjects, new[]
+                new Theorem(ConcurrentObjects, new[]
                 {
                     new CircleTheoremObject(A_, E_, F_),
                     new CircleTheoremObject(B_, F_, D_),
@@ -916,7 +917,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             // We're not looking for equivalence, because Miquel's theorem
@@ -929,7 +930,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, ConcurrentObjects, new[]
+                        (new Theorem(ConcurrentObjects, new[]
                         {
                             new CircleTheoremObject(A, E, F),
                             new CircleTheoremObject(B, F, D),
@@ -941,9 +942,9 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, CollinearPoints, D, A, B),
-                        new Theorem(examinedConfiguration, CollinearPoints, E, B, C),
-                        new Theorem(examinedConfiguration, CollinearPoints, F, C, A)
+                        new Theorem(CollinearPoints, D, A, B),
+                        new Theorem(CollinearPoints, E, B, C),
+                        new Theorem(CollinearPoints, F, C, A)
                     }
                 )
             });
@@ -969,7 +970,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, TangentCircles, new[]
+                new Theorem(TangentCircles, new[]
                 {
                     new CircleTheoremObject(E_, A_, B_),
                     new CircleTheoremObject(E_, C_, D_)
@@ -989,7 +990,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F, G);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -998,7 +999,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, D, E),
                             new CircleTheoremObject(A, B, C)
@@ -1011,7 +1012,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(B, C),
                             new LineTheoremObject(D, E)
@@ -1023,7 +1024,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, D, G),
                             new CircleTheoremObject(A, B, F)
@@ -1036,7 +1037,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(D, G),
                             new LineTheoremObject(B, F)
@@ -1048,7 +1049,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, G, E),
                             new CircleTheoremObject(A, F, C)
@@ -1061,7 +1062,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(G, E),
                             new LineTheoremObject(F, C)
@@ -1073,7 +1074,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, B, C),
                             new CircleTheoremObject(E, F, C)
@@ -1086,7 +1087,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(A, B),
                             new LineTheoremObject(E, F)
@@ -1098,7 +1099,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, B, C),
                             new CircleTheoremObject(B, F, D)
@@ -1111,7 +1112,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(A, C),
                             new LineTheoremObject(F, D)
@@ -1123,7 +1124,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, D, G),
                             new CircleTheoremObject(F, E, G)
@@ -1136,7 +1137,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(A, D),
                             new LineTheoremObject(F, E)
@@ -1148,7 +1149,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new[]
+                        (new Theorem(TangentCircles, new[]
                         {
                             new CircleTheoremObject(A, E, G),
                             new CircleTheoremObject(F, D, G)
@@ -1161,7 +1162,7 @@ namespace GeoGen.TheoremProver.Test
                     },
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(A, E),
                             new LineTheoremObject(F, D)
@@ -1189,7 +1190,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, B_, E_, F_),
                     new AngleTheoremObject(C_, D_, E_, F_)
@@ -1208,7 +1209,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, F);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckThatResultsContain(results, new[]
@@ -1217,7 +1218,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(B, E, C, F),
                             new AngleTheoremObject(D, F, C, F)
@@ -1227,7 +1228,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(B, E),
                             new LineTheoremObject(D, F)
@@ -1239,7 +1240,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, C, B, E),
                             new AngleTheoremObject(A, C, D, F)
@@ -1249,7 +1250,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(B, E),
                             new LineTheoremObject(D, F)
@@ -1261,7 +1262,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(B, C, B, E),
                             new AngleTheoremObject(B, C, D, F)
@@ -1271,7 +1272,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ParallelLines, new[]
+                        new Theorem(ParallelLines, new[]
                         {
                             new LineTheoremObject(B, E),
                             new LineTheoremObject(D, F)
@@ -1303,7 +1304,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, ParallelLines, l1_, l2_)
+                new Theorem(ParallelLines, l1_, l2_)
             };
 
             // Create the examined configuration's objects
@@ -1318,7 +1319,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, l1, l2);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1327,7 +1328,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, ParallelLines, l1, l2), templateTheorems[0])
+                        (new Theorem(ParallelLines, l1, l2), templateTheorems[0])
                     },
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>(),
@@ -1355,7 +1356,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, B_, A_, D_),
                     new AngleTheoremObject(C_, B_, C_, D_)
@@ -1373,7 +1374,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1382,7 +1383,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, B, A, C),
                             new AngleTheoremObject(D, B, D, C)
@@ -1392,7 +1393,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
@@ -1400,7 +1401,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(C, A, C, D),
                             new AngleTheoremObject(B, A, B, D)
@@ -1410,7 +1411,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
@@ -1418,7 +1419,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, A, D, C),
                             new AngleTheoremObject(B, A, B, C)
@@ -1428,7 +1429,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
@@ -1436,7 +1437,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, A, D, B),
                             new AngleTheoremObject(C, A, C, B)
@@ -1446,7 +1447,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
@@ -1454,7 +1455,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, C, A, D),
                             new AngleTheoremObject(B, C, B, D)
@@ -1464,7 +1465,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 ),
@@ -1472,7 +1473,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, B, A, D),
                             new AngleTheoremObject(C, B, C, D)
@@ -1482,7 +1483,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, ConcyclicPoints, A, B, C, D)
+                        new Theorem(ConcyclicPoints, A, B, C, D)
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>()
                 )
@@ -1508,13 +1509,13 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, B_, A_, D_),
                     new AngleTheoremObject(A_, C_, C_, D_)
                 }),
 
-                new Theorem(templateConfiguration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A_, B_),
                     new CircleTheoremObject(A_, C_, D_),
@@ -1532,7 +1533,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1541,14 +1542,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, A, D, E),
                             new AngleTheoremObject(D, B, B, E)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        (new Theorem(LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(A, D),
                             new CircleTheoremObject(B, D, E)
@@ -1558,7 +1559,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, D),
                             new LineTheoremObject(B, D)
@@ -1570,14 +1571,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(D, B, D, E),
                             new AngleTheoremObject(D, A, A, E)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        (new Theorem(LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(B, D),
                             new CircleTheoremObject(A, D, E)
@@ -1587,7 +1588,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, D),
                             new LineTheoremObject(B, D)
@@ -1614,7 +1615,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, TangentCircles, new TheoremObject[]
+                new Theorem(TangentCircles, new TheoremObject[]
                 {
                     new CircleTheoremObject(D_, B_, E_),
                     new CircleTheoremObject(A_, B_, C_),
@@ -1633,7 +1634,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1642,7 +1643,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new TheoremObject[]
+                        (new Theorem(TangentCircles, new TheoremObject[]
                         {
                             new CircleTheoremObject(A, C, D),
                             new CircleTheoremObject(A, E, F)
@@ -1652,13 +1653,13 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, F),
                             new LineTheoremObject(F, E)
                         }),
 
-                        new Theorem(examinedConfiguration, CollinearPoints, A, C, E),
+                        new Theorem(CollinearPoints, A, C, E),
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
                     {
@@ -1669,7 +1670,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, TangentCircles, new TheoremObject[]
+                        (new Theorem(TangentCircles, new TheoremObject[]
                         {
                             new CircleTheoremObject(A, C, D),
                             new CircleTheoremObject(A, E, F)
@@ -1679,13 +1680,13 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(A, D),
                             new LineTheoremObject(D, C)
                         }),
 
-                        new Theorem(examinedConfiguration, CollinearPoints, A, C, E),
+                        new Theorem(CollinearPoints, A, C, E),
                     },
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
                     {
@@ -1714,7 +1715,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, D_, A_, B_),
                     new AngleTheoremObject(C_, A_, C_, B_)
@@ -1734,7 +1735,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1743,7 +1744,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(E, A, A, B),
                             new AngleTheoremObject(C, A, C, B)
@@ -1754,7 +1755,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        new Theorem(LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(E, A),
                             new CircleTheoremObject(A, B, C)
@@ -1766,7 +1767,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(E, A, A, C),
                             new AngleTheoremObject(B, A, B, C)
@@ -1777,7 +1778,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        new Theorem(LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(E, A),
                             new CircleTheoremObject(A, B, C)
@@ -1802,7 +1803,7 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new Theorem[]
             {
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, D_, A_, B_),
                     new AngleTheoremObject(C_, A_, C_, B_)
@@ -1821,7 +1822,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckThatResultsContain(results, new[]
@@ -1830,7 +1831,7 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(A, F, A, D),
                             new AngleTheoremObject(C, D, D, F)
@@ -1841,7 +1842,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, LineTangentToCircle, new TheoremObject[]
+                        new Theorem(LineTangentToCircle, new TheoremObject[]
                         {
                             new LineTheoremObject(C, D),
                             new CircleTheoremObject(A, F, D)
@@ -1870,12 +1871,12 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A_, M_),
                     new LineTheoremObject(B_, C_)
                 }),
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(B_, A_, A_, M_),
                     new AngleTheoremObject(C_, A_, A_, M_)
@@ -1894,7 +1895,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, I, S, M);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckForEquivalncyOfResults(results, new[]
@@ -1903,14 +1904,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        (new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(S, M),
                             new LineTheoremObject(B, C)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(S, M, S, B),
                             new AngleTheoremObject(S, M, S, C)
@@ -1921,7 +1922,7 @@ namespace GeoGen.TheoremProver.Test
                     usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(S, B),
                             new LineSegmentTheoremObject(S, C)
@@ -1946,12 +1947,12 @@ namespace GeoGen.TheoremProver.Test
             // Create the template theorems
             var templateTheorems = new[]
             {
-                new Theorem(templateConfiguration, PerpendicularLines, new[]
+                new Theorem(PerpendicularLines, new[]
                 {
                     new LineTheoremObject(A_, D_),
                     new LineTheoremObject(B_, C_)
                 }),
-                new Theorem(templateConfiguration, EqualAngles, new[]
+                new Theorem(EqualAngles, new[]
                 {
                     new AngleTheoremObject(A_, B_, B_, D_),
                     new AngleTheoremObject(A_, C_, C_, D_)
@@ -1969,7 +1970,7 @@ namespace GeoGen.TheoremProver.Test
             var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O2);
 
             // Run
-            var results = Run(examinedConfiguration, templateTheorems);
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
 
             // Check results
             CheckThatResultsContain(results, new[]
@@ -1978,14 +1979,14 @@ namespace GeoGen.TheoremProver.Test
                 (
                     derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
                     {
-                        (new Theorem(examinedConfiguration, PerpendicularLines, new[]
+                        (new Theorem(PerpendicularLines, new[]
                         {
                             new LineTheoremObject(O1, O2),
                             new LineTheoremObject(B, C)
                         }),
                         templateTheorems[0]),
 
-                        (new Theorem(examinedConfiguration, EqualAngles, new[]
+                        (new Theorem(EqualAngles, new[]
                         {
                             new AngleTheoremObject(O1, B, B, O2),
                             new AngleTheoremObject(O1, C, C, O2)
@@ -1995,7 +1996,7 @@ namespace GeoGen.TheoremProver.Test
                     usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>(),
                     usedFacts: new List<Theorem>
                     {
-                        new Theorem(examinedConfiguration, EqualLineSegments, new[]
+                        new Theorem(EqualLineSegments, new[]
                         {
                             new LineSegmentTheoremObject(O1, B),
                             new LineSegmentTheoremObject(O1, C)

@@ -33,7 +33,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="fileName">The file name from which the theorem was loaded.</param>
         /// <param name="number">The number of the theorem in the file.</param>
         public TemplateTheorem(Theorem theorem, string fileName, int number)
-            : base(theorem.Configuration, theorem.Type, theorem.InvolvedObjects)
+            : base(theorem.Type, theorem.InvolvedObjects)
         {
             FileName = fileName ?? throw new ArgumentNullException(nameof(fileName));
             Number = number;

@@ -54,22 +54,22 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(D, C),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, D),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, D),
                     new CircleTheoremObject(B, E, D)
@@ -80,42 +80,42 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(D, C),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, D),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(A, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, D),
                     new CircleTheoremObject(B, E, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, C),
                     new CircleTheoremObject(A, B, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, B),
                     new CircleTheoremObject(A, C, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, E),
                     new CircleTheoremObject(A, C, D)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, E),
                     new CircleTheoremObject(A, C, D)
@@ -145,12 +145,12 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert new theorems
             newTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, B),
                     new CircleTheoremObject(eB)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(eB)
@@ -161,37 +161,37 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.OrderlessEquals(new[]
             {
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, B),
                     new CircleTheoremObject(eB)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(eB)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, B),
                     new CircleTheoremObject(eC)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(B, C),
                     new CircleTheoremObject(eC)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, C),
                     new CircleTheoremObject(eC)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(P, C),
                     new CircleTheoremObject(eC)
                 }),
-                new Theorem(configuration, LineTangentToCircle, new TheoremObject[]
+                new Theorem(LineTangentToCircle, new TheoremObject[]
                 {
                     new LineTheoremObject(A, P),
                     new CircleTheoremObject(eC)
