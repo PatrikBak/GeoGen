@@ -17,11 +17,6 @@
         ThreePoints,
 
         /// <summary>
-        /// Represents three points that might or might not be collinear.
-        /// </summary>
-        ThreeArbitraryPoints,
-
-        /// <summary>
         /// Represents three points A, B, C, where AB = AC.
         /// </summary>
         IsoscelesTriangle,

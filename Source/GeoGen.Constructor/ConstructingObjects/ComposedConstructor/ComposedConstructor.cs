@@ -61,9 +61,8 @@ namespace GeoGen.Constructor
             // First we need to verify that the objects match the layout
             switch (_construction.Configuration.LooseObjectsHolder.Layout)
             {
-                // Two points or three arbitrary points should be always fine
+                // Two points should be always fine
                 case LooseObjectsLayout.TwoPoints:
-                case LooseObjectsLayout.ThreeArbitraryPoints:
                     break;
 
                 // Make sure the points are not collinear

@@ -22,9 +22,6 @@ namespace GeoGen.Core
                 // 3 points
                 ThreePoints => new[] { Point, Point, Point },
 
-                // 3 points
-                ThreeArbitraryPoints => new[] { Point, Point, Point },
-
                 // 4 points
                 Trapezoid => new[] { Point, Point, Point, Point },
 

@@ -353,7 +353,6 @@ namespace GeoGen.Constructor
 
                 // With three points we'll create an acute scalene triangle
                 case LooseObjectsLayout.ThreePoints:
-                case LooseObjectsLayout.ThreeArbitraryPoints:
                 {
                     // Create the points
                     var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
