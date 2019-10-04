@@ -19,8 +19,23 @@ namespace GeoGen.Core
             // Switch based on the layout
             layout switch
             {
+                // 2 points
+                LineSegment => new[] { Point, Point },
+
                 // 3 points
-                ThreePoints => new[] { Point, Point, Point },
+                Triangle => new[] { Point, Point, Point },
+
+                // 3 points
+                IsoscelesTriangle => new[] { Point, Point, Point },
+
+                // 3 points
+                RightTriangle => new[] { Point, Point, Point },
+
+                // 4 points
+                Quadrilateral => new[] { Point, Point, Point, Point },
+
+                // 4 points
+                CyclicQuadrilater => new[] { Point, Point, Point, Point },
 
                 // 4 points
                 Trapezoid => new[] { Point, Point, Point, Point },
@@ -28,26 +43,23 @@ namespace GeoGen.Core
                 // 4 points
                 CircleAndTangentLine => new[] { Point, Point, Point, Point },
 
-                // 4 points
-                FourPoints => new[] { Point, Point, Point, Point },
-
-                // 4 points
-                FourConcyclicPoints => new[] { Point, Point, Point, Point },
+                // 1 line
+                ExplicitLine => new[] { Line },
 
                 // 1 line, 1 point
-                LineAndPoint => new[] { Line, Point },
+                ExplicitLineAndPoint => new[] { Line, Point },
 
                 // 1 line, 2 points
-                LineAndTwoPoints => new[] { Line, Point, Point },
+                ExplicitLineAndTwoPoints => new[] { Line, Point, Point },
 
-                // 2 points
-                TwoPoints => new[] { Point, Point },
+                // 1 Circle
+                ExplicitCircle => new[] { Circle },
 
-                // 3 points
-                IsoscelesTriangle => new[] { Point, Point, Point },
+                // 1 circle, 1 point
+                ExplicitCircleAndPoint => new[] { Circle, Point },
 
-                // 3 points
-                RightTriangle => new[] { Point, Point, Point },
+                // 1 circle, 2 points
+                ExplicitCircleAndTwoPoints => new[] { Circle, Point, Point },
 
                 // Default case
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),

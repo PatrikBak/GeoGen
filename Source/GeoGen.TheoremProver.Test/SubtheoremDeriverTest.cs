@@ -130,7 +130,7 @@ namespace GeoGen.TheoremProver.Test
             var M_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, M_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -152,7 +152,7 @@ namespace GeoGen.TheoremProver.Test
             var N = new ConstructedConfigurationObject(Midpoint, A, M);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, N);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, N);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -207,7 +207,7 @@ namespace GeoGen.TheoremProver.Test
             var M_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, M_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -229,7 +229,7 @@ namespace GeoGen.TheoremProver.Test
             var M = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, O, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, M);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, M);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -269,7 +269,7 @@ namespace GeoGen.TheoremProver.Test
             var B_ = new ConstructedConfigurationObject(PointReflection, A_, M_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, B_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, B_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -287,7 +287,7 @@ namespace GeoGen.TheoremProver.Test
             var M = new ConstructedConfigurationObject(Midpoint, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, M, D, H);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, M, D, H);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -385,7 +385,7 @@ namespace GeoGen.TheoremProver.Test
             var M_ = new ConstructedConfigurationObject(RandomPointOn(PerpendicularBisector), A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, M_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, M_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -405,7 +405,7 @@ namespace GeoGen.TheoremProver.Test
             var M = new ConstructedConfigurationObject(Midpoint, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O, M);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, O, M);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -498,7 +498,7 @@ namespace GeoGen.TheoremProver.Test
             var C_ = new ConstructedConfigurationObject(RandomPointOnCircle, c_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, A_, B_, c_, C_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, A_, B_, c_, C_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -518,7 +518,7 @@ namespace GeoGen.TheoremProver.Test
             var c = new ConstructedConfigurationObject(Circumcircle, A, B, D);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, c);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, c);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -560,7 +560,7 @@ namespace GeoGen.TheoremProver.Test
             var D_ = new ConstructedConfigurationObject(RandomPointOnLine, l_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, A_, B_, l_, D_);
+            var templateConfiguration = Configuration.DeriveFromObjects(LineSegment, A_, B_, l_, D_);
 
             // Create the template theorems
             var templateTheorems = new Theorem[]
@@ -581,7 +581,7 @@ namespace GeoGen.TheoremProver.Test
             var l = new ConstructedConfigurationObject(LineFromPoints, M, O);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, l);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, l);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -649,7 +649,7 @@ namespace GeoGen.TheoremProver.Test
             var O_ = new ConstructedConfigurationObject(Circumcenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, O_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, O_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -670,7 +670,7 @@ namespace GeoGen.TheoremProver.Test
             var O = new ConstructedConfigurationObject(Circumcenter, A, D, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, O);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -736,7 +736,7 @@ namespace GeoGen.TheoremProver.Test
             var O_ = new ConstructedConfigurationObject(Circumcenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, O_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, O_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -759,7 +759,7 @@ namespace GeoGen.TheoremProver.Test
             var O = new ConstructedConfigurationObject(IntersectionOfLines, o1, o2);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, O);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -836,7 +836,7 @@ namespace GeoGen.TheoremProver.Test
             var F_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create original configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, D_, E_, F_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -859,7 +859,7 @@ namespace GeoGen.TheoremProver.Test
             var G = new ConstructedConfigurationObject(Midpoint, D, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E, F, G);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, E, F, G);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -898,7 +898,7 @@ namespace GeoGen.TheoremProver.Test
             var F_ = new ConstructedConfigurationObject(Midpoint, A_, B_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, D_, E_, F_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -921,7 +921,7 @@ namespace GeoGen.TheoremProver.Test
             var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, O, A, B);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -963,7 +963,7 @@ namespace GeoGen.TheoremProver.Test
             var H_ = new ConstructedConfigurationObject(Orthocenter, A_, B_, C_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, H_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, H_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -982,7 +982,7 @@ namespace GeoGen.TheoremProver.Test
             var H = new ConstructedConfigurationObject(Orthocenter, A, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, H);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, H);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1039,7 +1039,7 @@ namespace GeoGen.TheoremProver.Test
             var F_ = new ConstructedConfigurationObject(RandomPointOnLineFromPoints, C_, A_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(ThreePoints, D_, E_, F_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Triangle, D_, E_, F_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -1061,7 +1061,7 @@ namespace GeoGen.TheoremProver.Test
             var F = new ConstructedConfigurationObject(Midpoint, C, A);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1134,7 +1134,7 @@ namespace GeoGen.TheoremProver.Test
             var G = new ConstructedConfigurationObject(Midpoint, D, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F, G);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D, E, F, G);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1353,7 +1353,7 @@ namespace GeoGen.TheoremProver.Test
             var F = new ConstructedConfigurationObject(Midpoint, A, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, F);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1446,7 +1446,7 @@ namespace GeoGen.TheoremProver.Test
             var l2_ = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, B_, C_, D_);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(FourPoints, l1_, l2_);
+            var templateConfiguration = Configuration.DeriveFromObjects(Quadrilateral, l1_, l2_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -1463,7 +1463,7 @@ namespace GeoGen.TheoremProver.Test
             var l2 = new ConstructedConfigurationObject(PerpendicularLineToLineFromPoints, I, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, l1, l2);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, l1, l2);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1498,7 +1498,7 @@ namespace GeoGen.TheoremProver.Test
             var D_ = new LooseConfigurationObject(Point);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(FourConcyclicPoints, A_, B_, C_, D_);
+            var templateConfiguration = Configuration.DeriveFromObjects(CyclicQuadrilater, A_, B_, C_, D_);
 
             // Create the template theorems
             var templateTheorems = new[]
@@ -1518,7 +1518,7 @@ namespace GeoGen.TheoremProver.Test
             var D = new ConstructedConfigurationObject(ReflectionInLineFromPoints, H, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1677,7 +1677,7 @@ namespace GeoGen.TheoremProver.Test
             var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, D, A, B);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, E);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1778,7 +1778,7 @@ namespace GeoGen.TheoremProver.Test
             var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, D, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1879,7 +1879,7 @@ namespace GeoGen.TheoremProver.Test
             var E = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, m, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, E);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, E);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -1966,7 +1966,7 @@ namespace GeoGen.TheoremProver.Test
             var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, D, E);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -2039,7 +2039,7 @@ namespace GeoGen.TheoremProver.Test
             var M = new ConstructedConfigurationObject(Midpoint, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, I, S, M);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, I, S, M);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
@@ -2114,7 +2114,7 @@ namespace GeoGen.TheoremProver.Test
             var O2 = new ConstructedConfigurationObject(Circumcenter, O1, B, C);
 
             // Create the examined configuration
-            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, O2);
+            var examinedConfiguration = Configuration.DeriveFromObjects(Triangle, O2);
 
             // Run
             var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);

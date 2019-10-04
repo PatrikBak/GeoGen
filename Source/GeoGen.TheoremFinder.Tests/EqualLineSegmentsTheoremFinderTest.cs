@@ -27,7 +27,7 @@ namespace GeoGen.TheoremFinder.Tests
             var F = new ConstructedConfigurationObject(Midpoint, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, E, F);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);

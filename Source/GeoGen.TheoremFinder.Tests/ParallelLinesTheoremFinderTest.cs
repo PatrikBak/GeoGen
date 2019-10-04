@@ -29,7 +29,7 @@ namespace GeoGen.TheoremFinder.Tests
             var H = new ConstructedConfigurationObject(Midpoint, C, F);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, E, F, G, H);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F, G, H);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
@@ -191,7 +191,7 @@ namespace GeoGen.TheoremFinder.Tests
             var l2 = new ConstructedConfigurationObject(LineFromPoints, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, E, M, l1, l2);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, M, l1, l2);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);

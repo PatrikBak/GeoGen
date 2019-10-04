@@ -30,7 +30,7 @@ namespace GeoGen.Generator.Tests
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
             // Prepare the configuration
-            var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.ThreePoints, A, B, C);
+            var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.Triangle, A, B, C);
 
             // Prepare the input
             var input = new GeneratorInput

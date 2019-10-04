@@ -62,11 +62,11 @@ namespace GeoGen.Constructor
             switch (_construction.Configuration.LooseObjectsHolder.Layout)
             {
                 // Two points should be always fine
-                case LooseObjectsLayout.TwoPoints:
+                case LooseObjectsLayout.LineSegment:
                     break;
 
                 // Make sure the points are not collinear
-                case LooseObjectsLayout.ThreePoints:
+                case LooseObjectsLayout.Triangle:
 
                     // If yes, the construction shouldn't be possible
                     if (AnalyticHelpers.AreCollinear((Point)input[0], (Point)input[1], (Point)input[2]))
@@ -75,7 +75,7 @@ namespace GeoGen.Constructor
                     break;
 
                 // Make sure no three points are collinear
-                case LooseObjectsLayout.FourPoints:
+                case LooseObjectsLayout.Quadrilateral:
 
                     // Get the points
                     var point1 = (Point)input[0];
@@ -94,7 +94,7 @@ namespace GeoGen.Constructor
                     break;
 
                 // Make sure the point doesn't line on the line are not collinear
-                case LooseObjectsLayout.LineAndPoint:
+                case LooseObjectsLayout.ExplicitLineAndPoint:
 
                     // If yes, the construction shouldn't be possible
                     if (((Line)input[0]).Contains((Point)input[1]))
@@ -103,7 +103,7 @@ namespace GeoGen.Constructor
                     break;
 
                 // Make sure neither of the points lies on the line
-                case LooseObjectsLayout.LineAndTwoPoints:
+                case LooseObjectsLayout.ExplicitLineAndTwoPoints:
 
                     // Get the line 
                     var line = (Line)input[0];

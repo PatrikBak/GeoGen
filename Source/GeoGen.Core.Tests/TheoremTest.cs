@@ -25,7 +25,7 @@ namespace GeoGen.Core.Tests
             var mAB = new ConstructedConfigurationObject(Midpoint, A, B);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
+            var configuration = Configuration.DeriveFromObjects(Triangle, mBC, mAC, mAB);
 
             // This can't be stated in a smaller configuration
             new Theorem(ConcurrentObjects, new TheoremObject[]
@@ -49,7 +49,7 @@ namespace GeoGen.Core.Tests
             var mAB = new ConstructedConfigurationObject(Midpoint, A, B);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
+            var configuration = Configuration.DeriveFromObjects(Triangle, mBC, mAC, mAB);
 
             // This can't be stated in a smaller configuration either
             new Theorem(EqualLineSegments, new[]
@@ -80,7 +80,7 @@ namespace GeoGen.Core.Tests
             var mAB = new ConstructedConfigurationObject(Midpoint, A, B);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, mBC, mAC, mAB);
+            var configuration = Configuration.DeriveFromObjects(Triangle, mBC, mAC, mAB);
 
             // This theorem can be stated without the midpoint of BC
             new Theorem(ParallelLines, new TheoremObject[]

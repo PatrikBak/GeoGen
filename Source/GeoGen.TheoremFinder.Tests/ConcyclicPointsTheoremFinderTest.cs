@@ -28,7 +28,7 @@ namespace GeoGen.TheoremFinder.Tests
             var F = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, H, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, F);
+            var configuration = Configuration.DeriveFromObjects(Triangle, F);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
@@ -68,7 +68,7 @@ namespace GeoGen.TheoremFinder.Tests
             var G = new ConstructedConfigurationObject(ReflectionInLineFromPoints, H, A, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, F, G);
+            var configuration = Configuration.DeriveFromObjects(Triangle, F, G);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);

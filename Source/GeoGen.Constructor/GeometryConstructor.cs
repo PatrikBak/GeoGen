@@ -348,11 +348,11 @@ namespace GeoGen.Constructor
             switch (layout)
             {
                 // With two points all options are equivalent
-                case LooseObjectsLayout.TwoPoints:
+                case LooseObjectsLayout.LineSegment:
                     return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };
 
                 // With three points we'll create an acute scalene triangle
-                case LooseObjectsLayout.ThreePoints:
+                case LooseObjectsLayout.Triangle:
                 {
                     // Create the points
                     var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
@@ -362,7 +362,7 @@ namespace GeoGen.Constructor
                 }
 
                 // With four points we'll create a convex quadrilateral
-                case LooseObjectsLayout.FourPoints:
+                case LooseObjectsLayout.Quadrilateral:
                 {
                     // Create the points
                     var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
@@ -372,7 +372,7 @@ namespace GeoGen.Constructor
                 }
 
                 // In this case the line is fixed and the point is arbitrary
-                case LooseObjectsLayout.LineAndPoint:
+                case LooseObjectsLayout.ExplicitLineAndPoint:
                 {
                     // Create the points
                     var (point, line) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
@@ -382,7 +382,7 @@ namespace GeoGen.Constructor
                 }
 
                 // In this case the line is fixed and points are arbitrary
-                case LooseObjectsLayout.LineAndTwoPoints:
+                case LooseObjectsLayout.ExplicitLineAndTwoPoints:
                 {
                     // Create the points
                     var (line, point1, point2) = AnalyticHelpers.ConstructLineAndTwoRandomPointsNotLyingOnIt();

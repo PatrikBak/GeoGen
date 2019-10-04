@@ -247,17 +247,17 @@ namespace GeoGen.TheoremProver
 
                 // Triangle
                 // TODO: collinearity
-                ThreePoints => GenerateInitialMappingsWithPoints(input),
+                Triangle => GenerateInitialMappingsWithPoints(input),
 
                 // Quadrilateral
                 // TODO: collinearity
-                FourPoints => GenerateInitialMappingsWithPoints(input),
+                Quadrilateral => GenerateInitialMappingsWithPoints(input),
 
                 // Concyclic points
-                FourConcyclicPoints => GenerateInitialMappingsForFourConcyclicPoints(input),
+                CyclicQuadrilater => GenerateInitialMappingsForFourConcyclicPoints(input),
 
                 // Line segment
-                TwoPoints => GenerateInitialMappingsWithPoints(input),
+                LineSegment => GenerateInitialMappingsWithPoints(input),
 
                 // Right triangle
                 RightTriangle => GenerateInitialMappingsForRightTriangleLayout(input),
@@ -296,7 +296,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects the template theorem in case where the layout of the template
-        /// configuration is <see cref="FourConcyclicPoints"/>.
+        /// configuration is <see cref="CyclicQuadrilater"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>

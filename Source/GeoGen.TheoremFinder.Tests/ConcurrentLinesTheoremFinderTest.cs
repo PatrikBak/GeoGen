@@ -29,7 +29,7 @@ namespace GeoGen.TheoremFinder.Tests
             var l4 = new ConstructedConfigurationObject(PerpendicularBisector, A, D);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, l1, l2, l3, l4);
+            var configuration = Configuration.DeriveFromObjects(Triangle, l1, l2, l3, l4);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);

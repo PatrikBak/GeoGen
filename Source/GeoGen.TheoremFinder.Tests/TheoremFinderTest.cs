@@ -100,7 +100,7 @@ namespace GeoGen.TheoremFinder.Tests
             var D = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, B, C, A, H);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, H, D);
+            var configuration = Configuration.DeriveFromObjects(Triangle, H, D);
 
             // Run
             var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
@@ -229,7 +229,7 @@ namespace GeoGen.TheoremFinder.Tests
             var l = new ConstructedConfigurationObject(LineFromPoints, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, E, F, l);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F, l);
 
             // Run
             var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
@@ -334,7 +334,7 @@ namespace GeoGen.TheoremFinder.Tests
             var F = new ConstructedConfigurationObject(Midpoint, D, E);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, E, P, l, F);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, P, l, F);
 
             // Run
             var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
@@ -498,7 +498,7 @@ namespace GeoGen.TheoremFinder.Tests
             var c = new ConstructedConfigurationObject(Circumcircle, P, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, O, P, c);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, O, P, c);
 
             // Run
             var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
@@ -675,7 +675,7 @@ namespace GeoGen.TheoremFinder.Tests
             var P = new ConstructedConfigurationObject(PointReflection, A, O);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, D, O, c, P);
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, O, c, P);
 
             // Run
             var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);

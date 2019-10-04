@@ -29,7 +29,7 @@ namespace GeoGen.TheoremFinder.Tests
             var l = new ConstructedConfigurationObject(PerpendicularLine, H, bc);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, bc, D, H, l);
+            var configuration = Configuration.DeriveFromObjects(Triangle, bc, D, H, l);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
@@ -69,7 +69,7 @@ namespace GeoGen.TheoremFinder.Tests
             var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, bc, l, H, D);
+            var configuration = Configuration.DeriveFromObjects(Triangle, bc, l, H, D);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
@@ -106,7 +106,7 @@ namespace GeoGen.TheoremFinder.Tests
             var l = new ConstructedConfigurationObject(PerpendicularLine, A, bc);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, bc, l);
+            var configuration = Configuration.DeriveFromObjects(Triangle, bc, l);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);
@@ -216,7 +216,7 @@ namespace GeoGen.TheoremFinder.Tests
             var thalesBC = new ConstructedConfigurationObject(CircleWithDiameter, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, abc, thalesBC);
+            var configuration = Configuration.DeriveFromObjects(Triangle, abc, thalesBC);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration);

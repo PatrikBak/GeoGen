@@ -70,7 +70,7 @@ namespace GeoGen.Constructor.Tests
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C);
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
 
             // Create the picture
             var picture = CreatePicture(configuration, new[]
@@ -154,7 +154,7 @@ namespace GeoGen.Constructor.Tests
             var G = new ConstructedConfigurationObject(IntersectionOfLinesFromPoints, A, E, C, D);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, D, E, F, G);
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
 
             // Create the picture 
             var picture = CreatePicture(configuration, new[]
@@ -257,7 +257,7 @@ namespace GeoGen.Constructor.Tests
             var I = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, C, A, B);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, D, E, F, G, H, I);
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G, H, I);
 
             // Create the picture
             var picture = CreatePicture(configuration, new[]
@@ -304,7 +304,7 @@ namespace GeoGen.Constructor.Tests
             var C = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C);
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
 
             // Create the action that should cause an exception
             Action action = () => CreatePicture(configuration, new[]
@@ -337,7 +337,7 @@ namespace GeoGen.Constructor.Tests
             var D = new LooseConfigurationObject(ConfigurationObjectType.Point);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(FourPoints, A, B, C, D);
+            var configuration = Configuration.DeriveFromObjects(Quadrilateral, A, B, C, D);
 
             // Create the action that should cause an exception
             Action action = () => CreatePicture(configuration, new[]

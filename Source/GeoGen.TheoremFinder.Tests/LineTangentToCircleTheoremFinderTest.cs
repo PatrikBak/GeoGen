@@ -137,7 +137,7 @@ namespace GeoGen.TheoremFinder.Tests
             var eB = new ConstructedConfigurationObject(Excircle, B, A, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(ThreePoints, Ib, P, eC, eB);
+            var configuration = Configuration.DeriveFromObjects(Triangle, Ib, P, eC, eB);
 
             // Run
             var (newTheorems, allTheorems) = FindTheorems(configuration, () => WithExcludingTangenciesInsidePicture);

@@ -70,8 +70,8 @@ namespace GeoGen.Core
             switch (Layout)
             {
                 // Cases where any permutation works
-                case TwoPoints:
-                case ThreePoints:
+                case LineSegment:
+                case Triangle:
 
                     // Take all permutations and zip them with the objects
                     return LooseObjects.Permutations().Select(LooseObjects.ZipToDictionary);

@@ -25,7 +25,7 @@ namespace GeoGen.Core
                 var intersection = new ConstructedConfigurationObject(IntersectionOfLines, l, lineAB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LineAndTwoPoints, intersection);
+                var configuration = Configuration.DeriveFromObjects(ExplicitLineAndTwoPoints, intersection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -56,7 +56,7 @@ namespace GeoGen.Core
                 var intersection = new ConstructedConfigurationObject(IntersectionOfLines, lineAB, lineCD);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(FourPoints, A, B, C, D, intersection);
+                var configuration = Configuration.DeriveFromObjects(Quadrilateral, A, B, C, D, intersection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -84,7 +84,7 @@ namespace GeoGen.Core
                 var projection = new ConstructedConfigurationObject(PerpendicularProjection, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, projection);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, projection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -112,7 +112,7 @@ namespace GeoGen.Core
                 var perpendicularLine = new ConstructedConfigurationObject(PerpendicularLine, A, lineAB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(TwoPoints, A, B, perpendicularLine);
+                var configuration = Configuration.DeriveFromObjects(LineSegment, A, B, perpendicularLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -141,7 +141,7 @@ namespace GeoGen.Core
                 var perpendicularLine = new ConstructedConfigurationObject(PerpendicularLine, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, perpendicularLine);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, perpendicularLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -169,7 +169,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, projectionA);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(LineAndPoint, l, A, reflection);
+                var configuration = Configuration.DeriveFromObjects(ExplicitLineAndPoint, l, A, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -198,7 +198,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(ReflectionInLine, lineBC, A);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -227,7 +227,7 @@ namespace GeoGen.Core
                 var l = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, A, I);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -255,7 +255,7 @@ namespace GeoGen.Core
                 var bisector = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, midpointAB, A);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(TwoPoints, bisector);
+                var configuration = Configuration.DeriveFromObjects(LineSegment, bisector);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -283,7 +283,7 @@ namespace GeoGen.Core
                 var parallelLine = new ConstructedConfigurationObject(ParallelLine, A, lineBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, parallelLine);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, parallelLine);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -312,7 +312,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, midpointBC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, reflection);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -342,7 +342,7 @@ namespace GeoGen.Core
                 var H = new ConstructedConfigurationObject(IntersectionOfLines, altitudeB, altitudeC);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, H);
+                var configuration = Configuration.DeriveFromObjects(Triangle, H);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -371,7 +371,7 @@ namespace GeoGen.Core
                 var I = new ConstructedConfigurationObject(IntersectionOfLines, bisectorA, bisectorB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, I);
+                var configuration = Configuration.DeriveFromObjects(Triangle, I);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -400,7 +400,7 @@ namespace GeoGen.Core
                 var incircle = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, I, projection);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, incircle);
+                var configuration = Configuration.DeriveFromObjects(Triangle, incircle);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -428,7 +428,7 @@ namespace GeoGen.Core
                 var O = new ConstructedConfigurationObject(CenterOfCircle, c);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, O);
+                var configuration = Configuration.DeriveFromObjects(Triangle, O);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -456,7 +456,7 @@ namespace GeoGen.Core
                 var M = new ConstructedConfigurationObject(Circumcenter, B, C, I);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, M);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -486,7 +486,7 @@ namespace GeoGen.Core
                 var M = new ConstructedConfigurationObject(Midpoint, Ib, Ic);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, M);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, M);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -516,7 +516,7 @@ namespace GeoGen.Core
                 var J = new ConstructedConfigurationObject(PointReflection, I, M);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, J);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, J);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -546,7 +546,7 @@ namespace GeoGen.Core
                 var c = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, J, D);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, c);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, c);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -574,7 +574,7 @@ namespace GeoGen.Core
                 var c = new ConstructedConfigurationObject(CircleWithCenterThroughPoint, M, A);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(TwoPoints, A, B, c);
+                var configuration = Configuration.DeriveFromObjects(LineSegment, A, B, c);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -603,7 +603,7 @@ namespace GeoGen.Core
                 var l = new ConstructedConfigurationObject(LineFromPoints, D, E);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -632,7 +632,7 @@ namespace GeoGen.Core
                 var l = new ConstructedConfigurationObject(LineFromPoints, A, D);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -661,7 +661,7 @@ namespace GeoGen.Core
                 var l = new ConstructedConfigurationObject(PerpendicularLineAtPointOfLine, A, O);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, l);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -690,7 +690,7 @@ namespace GeoGen.Core
                 var D = new ConstructedConfigurationObject(PointReflection, A, O);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ThreePoints, A, B, C, D);
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, D);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
