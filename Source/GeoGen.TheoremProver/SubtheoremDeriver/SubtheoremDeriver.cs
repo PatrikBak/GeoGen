@@ -1,10 +1,10 @@
-﻿using GeoGen.AnalyticGeometry;
-using GeoGen.Constructor;
+﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructionType;
 using static GeoGen.Core.TheoremType;
@@ -16,10 +16,16 @@ namespace GeoGen.TheoremProver
     /// 
     /// Supported <see cref="LooseObjectsLayout"/> of <see cref="SubtheoremDeriverInput.TemplateTheorems"/>:
     /// 
-    ///  - TwoPoints
-    ///  - ThreePoints
-    ///  - FourPoints
-    ///  - FourConcyclicPoints (uses <see cref="ContextualPicture"/> to get the concyclic points)
+    ///  - ExplicitLine,
+    ///  - ExplicitLineAndPoint,
+    ///  - ExplicitLineAndTwoPoints,
+    ///  - ExplicitCircle,
+    ///  - ExplicitCircleAndPoint
+    ///  - ExplicitCircleAndTwoPoints
+    ///  - LineSegment
+    ///  - Triangle
+    ///  - Quadrilateral
+    ///  - CyclicQuadrilateral (uses <see cref="ContextualPicture"/> to get the concyclic points)
     ///  - Trapezoid (uses <see cref="ParallelLines"/>)
     ///  - RightTriangle (uses <see cref="PerpendicularLine"/>)
     ///  - CircleAndTangentLine (uses <see cref="LineTangentToCircle"/>)
@@ -66,8 +72,8 @@ namespace GeoGen.TheoremProver
             #region Constructors
 
             /// <summary>
-            /// Initializes a instance of the <see cref="MappingData"/> class with no equalities,
-            /// no incidences, and passed facts.
+            /// Initializes a instance of the <see cref="MappingData"/> class with no equalities, no facts,
+            /// and passed incidences.
             /// </summary>
             /// <param name="templateObjects">The loose objects that are mapped.</param>
             /// <param name="mappedObjects">The objects to which the loose objects are mapped.</param>
@@ -242,6 +248,24 @@ namespace GeoGen.TheoremProver
             // Return the answer based on the layout of the template theorem
             return input.TemplateConfiguration.LooseObjectsHolder.Layout switch
             {
+                // Line
+                ExplicitLine => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
+                // Line and point
+                ExplicitLineAndPoint => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
+                // Line and 2 points
+                ExplicitLineAndTwoPoints => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
+                // Circle
+                ExplicitCircle => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
+                // Circle and point
+                ExplicitCircleAndPoint => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
+                // Circle and two points
+                ExplicitCircleAndTwoPoints => GenerateInitialMappingsForExplicitObjectWithPoints(input),
+
                 // Trapezoid
                 Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
@@ -272,6 +296,80 @@ namespace GeoGen.TheoremProver
                 // Default case
                 _ => throw new TheoremProverException($"Unhandled type of loose objects layout: {input.TemplateConfiguration.LooseObjectsHolder.Layout}")
             };
+        }
+
+        /// <summary>
+        /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
+        /// and the loose objects of the template theorem in case where the layout of the template
+        /// configuration consists of an explicit line or circle and possibly points.
+        /// </summary>
+        /// <param name="input">The algorithm input.</param>
+        /// <returns>The mappings.</returns>
+        private static IEnumerable<MappingData> GenerateInitialMappingsForExplicitObjectWithPoints(SubtheoremDeriverInput input)
+        {
+            // Prepare the needed number of points and objects to search
+            var numberOfPoints = input.TemplateConfiguration.LooseObjectsHolder.Layout switch
+            {
+                // Line
+                ExplicitLine => 0,
+
+                // Line and point
+                ExplicitLineAndPoint => 1,
+
+                // Line and 2 points
+                ExplicitLineAndTwoPoints => 2,
+
+                // Circle
+                ExplicitCircle => 0,
+
+                // Circle and point
+                ExplicitCircleAndPoint => 1,
+
+                // Circle and two points
+                ExplicitCircleAndTwoPoints => 2,
+
+                // Default case
+                _ => throw new TheoremProverException($"Impossible.")
+            };
+
+            // Get the objects to search
+            return (input.TemplateConfiguration.LooseObjectsHolder.Layout switch
+            {
+                // Line
+                ExplicitLine => input.ExaminedConfigurationPicture.AllLines as IEnumerable<DefinableByPoints>,
+
+                // Line and point
+                ExplicitLineAndPoint => input.ExaminedConfigurationPicture.AllLines,
+
+                // Line and 2 points
+                ExplicitLineAndTwoPoints => input.ExaminedConfigurationPicture.AllLines,
+
+                // Circle
+                ExplicitCircle => input.ExaminedConfigurationPicture.AllCircles,
+
+                // Circle and point
+                ExplicitCircleAndPoint => input.ExaminedConfigurationPicture.AllCircles,
+
+                // Circle and two points
+                ExplicitCircleAndTwoPoints => input.ExaminedConfigurationPicture.AllCircles,
+
+                // Default case
+                _ => throw new TheoremProverException($"Impossible.")
+            })
+            // Take only those that have explicit object
+            .Where(lineOrCircle => lineOrCircle.ConfigurationObject != null)
+            // For each object
+            .SelectMany(lineOrCircle => input.ExaminedConfigurationPicture.AllPoints
+                // Take points not lying on it
+                .Where(point => !lineOrCircle.Contains(point))
+                // Its variations of the needed type
+                .Variations(numberOfPoints)
+                // Make valid tuples so we can use it later
+                .Select(option => (lineOrCircle, option)))
+            // For each line-points tuple we have a possible solution
+            .Select(tuple => new MappingData(input.TemplateConfiguration.LooseObjects,
+                    // Unwrap the mapped objects
+                    tuple.lineOrCircle.ConfigurationObject.ToEnumerable().Concat(tuple.option.Select(point => point.ConfigurationObject))));
         }
 
         /// <summary>
@@ -491,6 +589,8 @@ namespace GeoGen.TheoremProver
         /// <returns>The mappings.</returns>
         private IEnumerable<MappingData> GenerateMappingsIncludingObject(MappingData data, ConstructedConfigurationObject constructedObject, SubtheoremDeriverInput input)
         {
+            // TODO: Should I make somehow sure no object is mapped twice?
+
             #region Creating the mapped object
 
             // We need to remap the arguments of the constructed objects with respect to the provided mapping
@@ -524,7 +624,7 @@ namespace GeoGen.TheoremProver
                     // no matter what?
 
                     // Then we do so by pulling the map and looking at points
-                    return configuration.ObjectMap.GetOrDefault(ConfigurationObjectType.Point)?
+                    return configuration.ObjectMap.GetOrDefault(Point)?
                         // And using our helper function
                         .Select(point => new MappingData(data, (constructedObject, point)))
                         // In case there in no point (which I doubt that will ever happen), return nothing
@@ -612,7 +712,7 @@ namespace GeoGen.TheoremProver
                     var innerObject = new ConstructedConfigurationObject(randomPointConstruction.Construction, newArguments);
 
                     // Now we prepare the constructor function of it for the contextual picture
-                    IReadOnlyDictionary<Picture, IAnalyticObject> ConstructorFunction() =>
+                    IReadOnlyDictionary<Picture, AnalyticGeometry.IAnalyticObject> ConstructorFunction() =>
                         // That calls the constructor 
                         _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject);
 
