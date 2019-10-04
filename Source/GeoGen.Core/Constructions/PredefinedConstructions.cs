@@ -266,6 +266,44 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLine"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        public static PredefinedConstruction RandomPointOnLine
+        {
+            get
+            {
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Line)
+                };
+
+                // Create the actual construction
+                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLine, parameters, Point, isRandom: true);
+            }
+        }
+
+        /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircle"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        public static PredefinedConstruction RandomPointOnCircle
+        {
+            get
+            {
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Circle)
+                };
+
+                // Create the actual construction
+                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircle, parameters, Point, isRandom: true);
+            }
+        }
+
+        /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLineFromPoints"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>

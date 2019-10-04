@@ -488,6 +488,153 @@ namespace GeoGen.TheoremProver.Test
             });
         }
 
+        [Test]
+        public void Test_Random_Point_On_Explicit_Circle()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var c_ = new ConstructedConfigurationObject(CircleWithDiameter, A_, B_);
+            var C_ = new ConstructedConfigurationObject(RandomPointOnCircle, c_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, A_, B_, c_, C_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(C_, A_),
+                    new LineTheoremObject(C_, B_)
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var c = new ConstructedConfigurationObject(Circumcircle, A, B, D);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, c);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
+
+            // Check results
+            CheckForEquivalncyOfResults(results, new[]
+            {
+                new SubtheoremDeriverOutput
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(PerpendicularLines, new[]
+                        {
+                            new LineTheoremObject(A, D),
+                            new LineTheoremObject(D, B)
+                        }),
+                        templateTheorems[0])
+                    },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
+                    {
+                        (c, new ConstructedConfigurationObject(CircleWithDiameter, A, B))
+                    },
+                    usedFacts: new List<Theorem>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (D, c)
+                    }
+                )
+            });
+        }
+
+        [Test]
+        public void Test_Random_Point_On_Explicit_line()
+        {
+            // Create the template configuration's objects
+            var A_ = new LooseConfigurationObject(Point);
+            var B_ = new LooseConfigurationObject(Point);
+            var l_ = new ConstructedConfigurationObject(PerpendicularBisector, A_, B_);
+            var D_ = new ConstructedConfigurationObject(RandomPointOnLine, l_);
+
+            // Create the template configuration
+            var templateConfiguration = Configuration.DeriveFromObjects(TwoPoints, A_, B_, l_, D_);
+
+            // Create the template theorems
+            var templateTheorems = new Theorem[]
+            {
+                new Theorem(EqualLineSegments, new[]
+                {
+                    new LineSegmentTheoremObject(D_, A_),
+                    new LineSegmentTheoremObject(D_, B_)
+                })
+            };
+
+            // Create the examined configuration's objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var M = new ConstructedConfigurationObject(Midpoint, B, C);
+            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var l = new ConstructedConfigurationObject(LineFromPoints, M, O);
+
+            // Create the examined configuration
+            var examinedConfiguration = Configuration.DeriveFromObjects(ThreePoints, l);
+
+            // Run
+            var results = Run(examinedConfiguration, templateTheorems, templateConfiguration);
+
+            // Check results
+            CheckForEquivalncyOfResults(results, new[]
+            {
+                new SubtheoremDeriverOutput
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(O, B),
+                            new LineSegmentTheoremObject(O, C)
+                        }),
+                        templateTheorems[0])
+                    },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
+                    {
+                        (l, new ConstructedConfigurationObject(PerpendicularBisector, B, C))
+                    },
+                    usedFacts: new List<Theorem>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (O, l)
+                    }
+                ),
+
+                new SubtheoremDeriverOutput
+                (
+                    derivedTheorems: new List<(Theorem derivedTheorem, Theorem templateTheorem)>
+                    {
+                        (new Theorem(EqualLineSegments, new[]
+                        {
+                            new LineSegmentTheoremObject(M, B),
+                            new LineSegmentTheoremObject(M, C)
+                        }),
+                        templateTheorems[0])
+                    },
+                    usedEqualities: new List<(ConfigurationObject originalObject, ConfigurationObject equalObject)>
+                    {
+                        (l, new ConstructedConfigurationObject(PerpendicularBisector, B, C))
+                    },
+                    usedFacts: new List<Theorem>(),
+                    usedIncidencies: new List<(ConfigurationObject point, ConfigurationObject lineOrCircle)>
+                    {
+                        (M, l)
+                    }
+                )
+            });
+        }
+
         #endregion
 
         #region Three points layout

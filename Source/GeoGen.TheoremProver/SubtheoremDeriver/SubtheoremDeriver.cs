@@ -266,6 +266,7 @@ namespace GeoGen.TheoremProver
                 CircleAndTangentLine => GenerateInitialMappingsForCircleAndTangentLineLayout(input),
 
                 // Isosceles triangle
+                // TODO: collinearity
                 IsoscelesTriangle => GenerateInitialMappingsForIsoscelesTriangleLayout(input),
 
                 // Default case
@@ -518,6 +519,10 @@ namespace GeoGen.TheoremProver
                 // If we can choose our point completely at random...
                 case PredefinedConstruction p when p.Type == RandomPoint:
 
+                    // TODO: Wouldn't it be better not to allow duplicates? 
+                    // In general. Shouldn't the remapped theorems be always correct
+                    // no matter what?
+
                     // Then we do so by pulling the map and looking at points
                     return configuration.ObjectMap.GetOrDefault(ConfigurationObjectType.Point)?
                         // And using our helper function
@@ -527,7 +532,26 @@ namespace GeoGen.TheoremProver
 
                 // If the construction is predefined...
                 case PredefinedConstruction predefinedConstruction when
-                    // And it's a random point on a line
+                    // And it's a random point on an explicit line
+                    predefinedConstruction.Type == RandomPointOnLine
+                    // Or on a circle
+                    || predefinedConstruction.Type == RandomPointOnCircle:
+
+                    // Get the input line or line
+                    var inputLineOrCircle = mappedObject.PassedArguments.FlattenedList[0];
+
+                    // Get the geometric line or circle
+                    return ((DefinableByPoints)input.ExaminedConfigurationPicture.GetGeometricObject(inputLineOrCircle))
+                        // Unwrap configuration points
+                        .Points.Select(point => point.ConfigurationObject)
+                        // Any of its points does the job
+                        .Select(point => new MappingData(data, (constructedObject, point),
+                            // But we need an incidence theorem to state so
+                            incidence: (point, inputLineOrCircle)));
+
+                // If the construction is predefined...
+                case PredefinedConstruction predefinedConstruction when
+                    // And it's a random point on a line from points
                     predefinedConstruction.Type == RandomPointOnLineFromPoints
                     // Or on a circle
                     || predefinedConstruction.Type == RandomPointOnCircleFromPoints:

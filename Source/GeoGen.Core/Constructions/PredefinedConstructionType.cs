@@ -71,6 +71,16 @@
         SecondIntersectionOfCircleAndLineFromPoints,
 
         /// <summary>
+        /// A random point lying on line l (signature l).
+        /// </summary>
+        RandomPointOnLine,
+
+        /// <summary>
+        /// A random point lying on circle c (signature c).
+        /// </summary>
+        RandomPointOnCircle,
+
+        /// <summary>
         /// A random point lying on line AB (signature {A, B}).
         /// </summary>
         RandomPointOnLineFromPoints,
