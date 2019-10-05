@@ -35,7 +35,7 @@ namespace GeoGen.Core
                 Quadrilateral => new[] { Point, Point, Point, Point },
 
                 // 4 points
-                CyclicQuadrilater => new[] { Point, Point, Point, Point },
+                CyclicQuadrilateral => new[] { Point, Point, Point, Point },
 
                 // 4 points
                 Trapezoid => new[] { Point, Point, Point, Point },

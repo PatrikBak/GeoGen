@@ -1498,7 +1498,7 @@ namespace GeoGen.TheoremProver.Test
             var D_ = new LooseConfigurationObject(Point);
 
             // Create the template configuration
-            var templateConfiguration = Configuration.DeriveFromObjects(CyclicQuadrilater, A_, B_, C_, D_);
+            var templateConfiguration = Configuration.DeriveFromObjects(CyclicQuadrilateral, A_, B_, C_, D_);
 
             // Create the template theorems
             var templateTheorems = new[]

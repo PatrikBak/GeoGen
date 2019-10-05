@@ -278,7 +278,7 @@ namespace GeoGen.TheoremProver
                 Quadrilateral => GenerateInitialMappingsWithPoints(input),
 
                 // Concyclic points
-                CyclicQuadrilater => GenerateInitialMappingsForFourConcyclicPoints(input),
+                CyclicQuadrilateral => GenerateInitialMappingsForFourConcyclicPoints(input),
 
                 // Line segment
                 LineSegment => GenerateInitialMappingsWithPoints(input),
@@ -394,7 +394,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Generates the initial <see cref="MappingData"/> of the objects of the examined theorem
         /// and the loose objects the template theorem in case where the layout of the template
-        /// configuration is <see cref="CyclicQuadrilater"/>.
+        /// configuration is <see cref="CyclicQuadrilateral"/>.
         /// </summary>
         /// <param name="input">The algorithm input.</param>
         /// <returns>The mappings.</returns>

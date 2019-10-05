@@ -35,7 +35,7 @@
         /// <summary>
         /// Represents 4 points that lie on a single circle.
         /// </summary>
-        CyclicQuadrilater,
+        CyclicQuadrilateral,
 
         /// <summary>
         /// Represents points A, B, C, D such that AB is parallel to CD.
