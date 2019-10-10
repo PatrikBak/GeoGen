@@ -136,7 +136,7 @@ namespace GeoGen.Core
         /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => $"{LooseObjectsHolder}, {ConstructedObjects.ToJoinedString()}";
+        public override string ToString() => $"{LooseObjectsHolder}{(ConstructedObjects.Any() ? $", {ConstructedObjects.ToJoinedString()}" : "")}";
 
         #endregion
     }
