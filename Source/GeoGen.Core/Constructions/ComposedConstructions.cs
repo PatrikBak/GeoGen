@@ -676,6 +676,35 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// The line through point A and the circumcenter of ABC (signature A, {B, C}).
+        /// </summary>
+        public static ComposedConstruction LineThroughCircumcenter
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+                var l = new ConstructedConfigurationObject(LineFromPoints, A, O);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(LineThroughCircumcenter), configuration, parameters);
+            }
+        }
+
+        /// <summary>
         /// The point lying opposite to point A of the circumcircle of triangle ABC (signature A, {B, C}).
         /// </summary>
         public static ComposedConstruction OppositePointOnCircumcircle
