@@ -10,8 +10,7 @@ namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a picture that handles mapping of <see cref="ConfigurationObject"/> to their analytic 
-    /// representations, i.e. <see cref="IAnalyticObject"/>s. This picture assumes each object is present
-    /// exactly ones and doesn't allow duplicity. It is also able to reconstruct all its objects.
+    /// representations, i.e. <see cref="IAnalyticObject"/>s. The picture is able to reconstruct all its objects.
     /// </summary>
     public class Picture : IEnumerable<(ConfigurationObject configurationObject, IAnalyticObject analyticObject)>
     {
@@ -34,6 +33,12 @@ namespace GeoGen.Constructor
         /// </summary>
         private readonly List<Func<bool>> _reconstructors = new List<Func<bool>>();
 
+        /// <summary>
+        /// The dictionary mapping objects that are not present in the container to their
+        /// equal objects that are present.
+        /// </summary>
+        private readonly Dictionary<ConfigurationObject, ConfigurationObject> _equalObjects;
+
         #endregion
 
         #region Constructor
@@ -50,6 +55,9 @@ namespace GeoGen.Constructor
                 {typeof(Circle), ConfigurationObjectType.Circle},
                 {typeof(Line), ConfigurationObjectType.Line}
             };
+
+            // Create the equal objects dictionary
+            _equalObjects = new Dictionary<ConfigurationObject, ConfigurationObject>();
         }
 
         #endregion
@@ -57,11 +65,16 @@ namespace GeoGen.Constructor
         #region Public methods
 
         /// <summary>
-        /// Gets the analytic representation of a given configuration object. 
+        /// Gets the analytic representation of a given configuration object. If this object 
+        /// is not explicitly present, but it's equal version is, then the representation of
+        /// this equal object will be returned.
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
-        /// <returns>The analytic object of a given configuration object.</returns>
-        public IAnalyticObject Get(ConfigurationObject configurationObject) => _content.GetRightValue(configurationObject);
+        /// <returns>The analytic object.</returns>
+        public IAnalyticObject Get(ConfigurationObject configurationObject)
+            // Return the object if it's present, otherwise fall-back to duplicates
+            => _content.GetRightValueOrDefault(configurationObject) ?? _content.GetRightValue(_equalObjects[configurationObject]);
+
 
         /// <summary>
         /// Gets the configuration object corresponding to a given analytic object.
@@ -230,6 +243,17 @@ namespace GeoGen.Constructor
             // If we got here, the reconstruction went fine
             reconstructionSuccessful = true;
         }
+
+        /// <summary>
+        /// Marks that a given object that is already present in the container has 
+        /// a given equal object. This will affect queering for analytic version 
+        /// of an object via <see cref="Get(IAnalyticObject)"/> calls.
+        /// </summary>
+        /// <param name="existingObject">The object already present in the container.</param>
+        /// <param name="equalObject">The equal object.</param>
+        internal void MarkDuplicate(ConfigurationObject existingObject, ConfigurationObject equalObject)
+            // Mark the equality in the equal objects dictionary
+            => _equalObjects.Add(equalObject, existingObject);
 
         #endregion
 

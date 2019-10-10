@@ -322,6 +322,10 @@ namespace GeoGen.Constructor
                 if (picture != pictures.First() && duplicate != equalObject)
                     throw new InconsistentPicturesException("The fact whether the object has an equal version was not determined consistently.");
 
+                // If there is an equal object and we could manipulate the picture, mark the equality
+                if (equalObject != null && addToPictures)
+                    picture.MarkDuplicate(equalObject, constructedObject);
+
                 // Set the found values
                 canBeConstructed = objectConstructed;
                 duplicate = equalObject;
