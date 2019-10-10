@@ -566,9 +566,13 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.IncidencesAndConcyclity:
                     return "incidences are related to concyclicity";
 
+                // Case when we have 4 concyclic points and their circumcenter in the same picture
+                case DerivationRule.ConcyclicPointsWithExplicitCenter:
+                    return "concyclic points with explicit center";
+
                 // Default case
                 default:
-                    throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data}");
+                    throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");
             }
         }
 
