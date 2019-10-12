@@ -578,6 +578,14 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.ThalesTheorem:
                     return "Thales theorem";
 
+                // Case when we have a parallelogram
+                case DerivationRule.Parallelogram:
+                    return "Parallelogram";
+
+                // Case when we have a rectangle
+                case DerivationRule.Rectangle:
+                    return "Rectangle";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");

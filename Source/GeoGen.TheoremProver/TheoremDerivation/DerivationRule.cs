@@ -81,6 +81,12 @@
         ExplicitLineWithIncidences,
 
         /// <summary>
+        /// When we have theorems t1: AB || CD, t2: BC || AD, t3: AB = CD, t4: BC = AD, then it is true that 
+        /// (t1, t2) => t3 and (t1, t2) => t4.
+        /// </summary>
+        Parallelogram,
+
+        /// <summary>
         /// If we have three lines a, b, c such that (a, b) and (a, c) are perpendicular and (b, c)
         /// are parallel, then any two of these statements imply the last one.
         /// </summary>
@@ -91,6 +97,11 @@
         /// [A, B], [C, D], [E, F], then any three of these theorems imply the fourth.
         /// </summary>
         RadicalAxis,
+
+        /// <summary>
+        /// If we have theorems t1: AB || CD, t2: BC || AD, t3: AB ⟂ CD => 
+        /// </summary>
+        Rectangle,
 
         /// <summary>
         /// The theorem where we have fours points A, B, C, D, three theorems Perpendicular Lines BA, CA;
