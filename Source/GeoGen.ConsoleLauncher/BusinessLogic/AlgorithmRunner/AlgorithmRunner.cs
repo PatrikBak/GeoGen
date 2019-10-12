@@ -562,6 +562,10 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.ExplicitLineWithIncidences:
                     return "restating using incidences";
 
+                // Case when we combine incidences to restate a theorem
+                case DerivationRule.ExplicitCircleWithIncidences:
+                    return "restating using incidences";
+
                 // Case when we put together 3 incidences and collinearity:
                 case DerivationRule.IncidencesAndCollinearity:
                     return "incidences are related to collinearity";

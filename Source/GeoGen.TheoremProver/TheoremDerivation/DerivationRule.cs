@@ -66,6 +66,14 @@
         ConcyclityWithCirclesFromPoints,
 
         /// <summary>
+        /// The theorem which connects some two theorems with a common line c, and three incidences that
+        /// explicitly define this circle. For example: If we have theorems t1 = l is tangent to c,
+        /// t2 = l is tangent to (A, B, C), and two incidences i1 = Incidence A, c, i2 = Incidence B, c, 
+        /// i3 = Incidence C, c, then (t1, i1, i2, i3) => t2 and (t2, i1, i2, i3) => t1.
+        /// </summary>
+        ExplicitCircleWithIncidences,
+
+        /// <summary>
         /// The theorem which connects some two theorems with a common line l, and two incidences that
         /// explicitly define this line. For example: If we have theorems t1 = Parallel Lines [A, B], l', 
         /// t2 = Parallel Lines l, [A, B], and two incidences i1 = Incidence A, l, i2 = Incidence B, l, 

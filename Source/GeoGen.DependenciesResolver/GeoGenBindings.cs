@@ -171,6 +171,7 @@ namespace GeoGen.DependenciesResolver
             kernel.Bind<ITheoremDeriver>().To<ExplicitLineWithIncidencesDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<ConcyclicPointsWithExplicitCenterDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<ConcyclityWithCirclesFromPointsDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<ExplicitCircleWithIncidencesDeriver>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;
