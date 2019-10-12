@@ -87,6 +87,12 @@
         PerpendicularLineToParallelLines,
 
         /// <summary>
+        /// If we have concyclic points (A, B, C, D), (C, D, E, F), (E, F, A, B), and concurrent lines 
+        /// [A, B], [C, D], [E, F], then any three of these theorems imply the fourth.
+        /// </summary>
+        RadicalAxis,
+
+        /// <summary>
         /// The theorem follows from the general mathematical transitivity rule of some relations.
         /// This rule is clearly used for binary relations, for example the relation '=', or parallelity.
         /// It is also used for collinearity and line concurrency (which are trinary relations), 

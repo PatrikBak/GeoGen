@@ -570,6 +570,10 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.ConcyclicPointsWithExplicitCenter:
                     return "concyclic points with explicit center";
 
+                // Case when we have 3 radical axis implying concurrency, or another concyclity
+                case DerivationRule.RadicalAxis:
+                    return "radical axis theorem";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");
