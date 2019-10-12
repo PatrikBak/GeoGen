@@ -550,6 +550,10 @@ namespace GeoGen.ConsoleLauncher
                         // Otherwise the message is a bit different
                         : "reformulation using collinearity";
 
+                // Case when we're connecting concyclity with other circle theorems
+                case DerivationRule.ConcyclityWithCirclesFromPoints:
+                    return "reformulation using concyclity";
+
                 // Case when we have two perpendicular lines and one parallelity
                 case DerivationRule.PerpendicularLineToParallelLines:
                     return "two perpendicular lines with a common line are equivalent with parallelity";

@@ -59,6 +59,13 @@
         ConcyclicPointsWithExplicitCenter,
 
         /// <summary>
+        /// The theorem which connects concyclity of four points and some two theorems involving circles.
+        /// For example, if we have t1: l is tangent to (A, B, C); t2: A, B, C, D, are concyclic,
+        /// and t3: l is tangent to (A, C, D), then (t1, t2) => t3.
+        /// </summary>
+        ConcyclityWithCirclesFromPoints,
+
+        /// <summary>
         /// The theorem which connects some two theorems with a common line l, and two incidences that
         /// explicitly define this line. For example: If we have theorems t1 = Parallel Lines [A, B], l', 
         /// t2 = Parallel Lines l, [A, B], and two incidences i1 = Incidence A, l, i2 = Incidence B, l, 
