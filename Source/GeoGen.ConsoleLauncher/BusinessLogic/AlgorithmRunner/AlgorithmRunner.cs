@@ -574,6 +574,10 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.RadicalAxis:
                     return "radical axis theorem";
 
+                // Case when we have 3 radical axis implying concurrency, or another concyclity
+                case DerivationRule.ThalesTheorem:
+                    return "Thales theorem";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");

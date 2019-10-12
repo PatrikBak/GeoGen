@@ -93,11 +93,17 @@
         RadicalAxis,
 
         /// <summary>
+        /// The theorem where we have fours points A, B, C, D, three theorems Perpendicular Lines BA, CA;
+        /// Perpendicular Lines BD, CD; Concyclic Points A, B, C, D, then any two of these theorems 
+        /// imply the third.
+        /// </summary>
+        ThalesTheorem,
+
+        /// <summary>
         /// The theorem follows from the general mathematical transitivity rule of some relations.
         /// This rule is clearly used for binary relations, for example the relation '=', or parallelity.
         /// It is also used for collinearity and line concurrency (which are trinary relations), 
-        /// concyclity (quaternary relation) and also in a combination with incidence and equality
-        /// (if a=b and a lies on c, then b lies on c; if a = b and c lies of a, then c lies on b).
+        /// concyclity (quaternary relation).
         /// </summary>
         Transitivity
     }
