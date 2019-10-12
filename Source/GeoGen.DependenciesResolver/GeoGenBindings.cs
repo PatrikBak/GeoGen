@@ -160,6 +160,8 @@ namespace GeoGen.DependenciesResolver
 
             // Derivers
             kernel.Bind<ITheoremDeriver>().To<RectangleDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<IncidencesAndCollinearityDeriver>().InSingletonScope();
+            kernel.Bind<ITheoremDeriver>().To<IncidencesAndConcyclityDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<ThalesTheoremDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<TransitivityDeriver>().InSingletonScope();
             kernel.Bind<ITheoremDeriver>().To<ParallelogramDeriver>().InSingletonScope();
