@@ -28,7 +28,7 @@ namespace GeoGen.TheoremProver
                 // Get their circles
                 var circles = incidences.Select(i => i.InvolvedObjects.OfType<TheoremObjectWithPoints>().First()).ToArray();
 
-                // Make sure the lines are lines and there is exactly one
+                // Make sure the circles are circles and there is exactly one
                 if (!circles.All(c => c is CircleTheoremObject) || circles.Distinct().Count() != 1)
                     continue;
 

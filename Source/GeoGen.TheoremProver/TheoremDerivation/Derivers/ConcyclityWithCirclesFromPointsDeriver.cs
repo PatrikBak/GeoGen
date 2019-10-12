@@ -36,7 +36,7 @@ namespace GeoGen.TheoremProver
                     var redefinableCircle = theorem.InvolvedObjects.OfType<CircleTheoremObject>()
                         // Defined by points
                         .Where(circle => circle.DefinedByPoints)
-                        // And it's points must be among the collinearity points
+                        // And it's points must be among the concyclity points
                         .Where(circle => circle.Points.All(concyclicPoints.Contains))
                         // There must be at most one such object
                         .FirstOrDefault();

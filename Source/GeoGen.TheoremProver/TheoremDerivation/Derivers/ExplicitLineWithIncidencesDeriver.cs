@@ -25,7 +25,7 @@ namespace GeoGen.TheoremProver
                 // Extract the common line
                 var commonLine = incidences[0].InvolvedObjects.Intersect(incidences[1].InvolvedObjects).FirstOrDefault();
 
-                // If there is no common line, or the common object is a point
+                // If there is no common line, or the common object is not a line
                 // then we can't do much
                 if (commonLine == default || !(commonLine is LineTheoremObject))
                     continue;
