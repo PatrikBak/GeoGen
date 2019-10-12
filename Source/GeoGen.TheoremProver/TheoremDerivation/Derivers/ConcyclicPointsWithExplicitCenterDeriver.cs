@@ -7,7 +7,7 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents <see cref="ITheoremDeriver"/> that derives theorems using the <see cref="DerivationRule.CollinearityWithLinesFromPoints"/>.
+    /// Represents <see cref="ITheoremDeriver"/> that derives theorems using the <see cref="DerivationRule.ConcyclicPointsWithExplicitCenter"/>.
     /// </summary>
     public class ConcyclicPointsWithExplicitCenterDeriver : TheoremDeriverBase
     {
