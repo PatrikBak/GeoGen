@@ -96,6 +96,12 @@
         IncidencesAndConcyclity,
 
         /// <summary>
+        /// The situation where we have theorems t1: CA = CB, t2: DA = DB, t3: AB ⟂ CD. In this case
+        /// we can say that any two of these theorems imply the third.
+        /// </summary>
+        IsoscelesTrianglesPerpendicularity,
+
+        /// <summary>
         /// When we have theorems t1: AB || CD, t2: BC || AD, t3: AB = CD, t4: BC = AD, then it is true that 
         /// (t1, t2) => t3 and (t1, t2) => t4.
         /// </summary>

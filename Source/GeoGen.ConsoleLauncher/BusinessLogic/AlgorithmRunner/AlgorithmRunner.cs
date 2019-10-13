@@ -594,6 +594,10 @@ namespace GeoGen.ConsoleLauncher
                 case DerivationRule.Rectangle:
                     return "Rectangle";
 
+                // Case when we have two equal line segments theorems and a perpendicularity
+                case DerivationRule.IsoscelesTrianglesPerpendicularity:
+                    return "Two isosceles triangles with are related to the perpendicularity";
+
                 // Default case
                 default:
                     throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");
