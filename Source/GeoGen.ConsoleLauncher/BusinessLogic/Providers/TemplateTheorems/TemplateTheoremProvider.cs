@@ -67,10 +67,10 @@ namespace GeoGen.ConsoleLauncher
             }
 
             // Log that we're starting
-            LoggingManager.LogInfo($"Starting to search for template theorems in {_settings.TheoremsFolderPath}");
+            LoggingManager.LogInfo($"Starting to search for template theorems in {_settings.TheoremsFolderPath}.");
 
             // Prepare the result
-            var result = new List<(Configuration, TheoremMap)>();
+            var result = new List<(Configuration templateConfiguration, TheoremMap templateTheorems)>();
 
             // Prepare the theorem files
             // Load the theorem folders 
@@ -84,7 +84,7 @@ namespace GeoGen.ConsoleLauncher
             foreach (var path in theoremFiles)
             {
                 // Log the current file
-                LoggingManager.LogInfo($"Processing theorems file {path}.");
+                LoggingManager.LogDebug($"Processing theorems file {path}.");
 
                 #region Reading theorems file
 
@@ -131,7 +131,7 @@ namespace GeoGen.ConsoleLauncher
                     if (theoremMap.AllObjects.IsEmpty())
                     {
                         // Log that we're skipping it
-                        LoggingManager.LogInfo("No theorems, skipping file");
+                        LoggingManager.LogWarning($"No theorems in file {path}.");
 
                         // Skip
                         continue;
@@ -143,7 +143,7 @@ namespace GeoGen.ConsoleLauncher
                 catch (ParserException)
                 {
                     // Log the exception
-                    LoggingManager.LogError($"Couldn't parse the input file {path}");
+                    LoggingManager.LogError($"Couldn't parse the input file {path}.");
 
                     // Throw further
                     throw;
@@ -152,8 +152,30 @@ namespace GeoGen.ConsoleLauncher
                 #endregion
             }
 
-            // Log finish
-            LoggingManager.LogInfo($"Found {result.Count} theorem file(s) with {result.Sum(t => t.Item2.Count)} theorem(s).");
+            #region Logging database stats
+
+            // Find the total number of theorems
+            var numberOfTheorems = result.Sum(theorem => theorem.templateTheorems.Count);
+
+            // Log count
+            LoggingManager.LogInfo($"Found {result.Count} theorem file(s) with {numberOfTheorems} theorem(s).");
+
+            // Prepare the map of types and counts
+            // Take all the theorems
+            var typeToCountsString = result.SelectMany(pair => pair.templateTheorems.AllObjects)
+                // Group them by their type
+                .GroupBy(type => type.Type)
+                // Order by the count of theorems of each type
+                .OrderBy(group => group.Count())
+                // Compose strings
+                .Select(group => $"  - {group.Key} --> {group.Count()}")
+                // Join
+                .ToJoinedString("\n");
+
+            // Log it
+            LoggingManager.LogInfo($"Types of the found theorems: \n\n{typeToCountsString}\n");
+
+            #endregion
 
             // Return the result
             return result;
