@@ -1,17 +1,19 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.Core.TheoremType;
 
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// A helper class that keeps track of <see cref="TheoremType.Incidence"/> and  <see cref="TheoremType.EqualObjects"/> 
+    /// A helper class that keeps track of <see cref="Incidence"/> and  <see cref="EqualObjects"/> 
     /// theorems to that at each point we know about every incidence and equality that can be inferred.
     /// </summary>
     public class EqualityAndIncidenceTracker
     {
-        #region Private 
+        #region Private fields
 
         /// <summary>
         /// The dictionary mapping objects to the sets of objects equal to them.
@@ -26,7 +28,7 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The dictionary mapping points to lines or circle that contain it.
         /// </summary>
-        private readonly Dictionary<ConfigurationObject, HashSet<ConfigurationObject>> _pointToLinesAndCirles;
+        private readonly Dictionary<ConfigurationObject, HashSet<ConfigurationObject>> _pointToLinesAndCircles;
 
         /// <summary>
         /// The set of all the objects in appear either in an incidence of equality.
@@ -35,24 +37,17 @@ namespace GeoGen.TheoremProver
 
         #endregion
 
-        #region Public properties
+        #region Public events
 
         /// <summary>
-        /// The enumeration of all the objects in appear either in an incidence of equality.
+        /// Raised when there are new equalities derived via the transitivity from 2 or 3 already announced equalities.
         /// </summary>
-        public IEnumerable<ConfigurationObject> AllObjects => _allObjects;
+        public event Action<IReadOnlyList<(IReadOnlyList<Theorem> usedEqualities, Theorem derivedEquality)>> NewEqualities = _ => { };
 
         /// <summary>
-        /// The enumeration of all incidences that can be concluded.
+        /// Raised when there are new incidences derived by exchanging objects of an old one using 1 or 2 equalities.
         /// </summary>
-        public IEnumerable<(ConfigurationObject point, ConfigurationObject lineOrCircle)> Incidences
-            // For each point take every line / circle containing it
-            => _pointToLinesAndCirles.SelectMany(pair => pair.Value.Select(value => (pair.Key, value)));
-
-        /// <summary>
-        /// The enumeration of all groups of equal objects with at least two objects.
-        /// </summary>
-        public IEnumerable<HashSet<ConfigurationObject>> EqualityGroups => _equalObjects.Values.Distinct();
+        public event Action<IReadOnlyList<(Theorem oldIncidence, IReadOnlyList<Theorem> usedEqualities, Theorem newIncidence)>> NewIncidences = _ => { };
 
         #endregion
 
@@ -67,7 +62,7 @@ namespace GeoGen.TheoremProver
             _equalObjects = new Dictionary<ConfigurationObject, HashSet<ConfigurationObject>>();
             _allObjects = new HashSet<ConfigurationObject>();
             _lineOrCircleToItsPoints = new Dictionary<ConfigurationObject, HashSet<ConfigurationObject>>();
-            _pointToLinesAndCirles = new Dictionary<ConfigurationObject, HashSet<ConfigurationObject>>();
+            _pointToLinesAndCircles = new Dictionary<ConfigurationObject, HashSet<ConfigurationObject>>();
         }
 
         #endregion
@@ -78,12 +73,12 @@ namespace GeoGen.TheoremProver
         /// Marks the given equality to be tracked. This call might cause changes of the
         /// incidences that use these objects.
         /// </summary>
-        /// <param name="theorem">The equality theorem.</param>
-        public void MarkEquality(Theorem theorem)
+        /// <param name="equalObjectsTheorem">The equality theorem.</param>
+        public void MarkEquality(Theorem equalObjectsTheorem)
         {
             // Get the objects
-            var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
-            var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+            var object1 = ((BaseTheoremObject)equalObjectsTheorem.InvolvedObjectsList[0]).ConfigurationObject;
+            var object2 = ((BaseTheoremObject)equalObjectsTheorem.InvolvedObjectsList[1]).ConfigurationObject;
 
             // Make sure they're marked
             _allObjects.Add(object1, object2);
@@ -97,7 +92,7 @@ namespace GeoGen.TheoremProver
                 return;
 
             // Prepare the list of new equalities that will be used to alter the current incidences
-            var newEqulities = group1.CombinedWith(group2).ToList();
+            var newEqualities = group1.CombinedWith(group2).ToList();
 
             // We're to add everything to the first group
             // If it's new, make sure it's in the dictionary
@@ -110,53 +105,138 @@ namespace GeoGen.TheoremProver
             // Make sure the objects from the second group are merged to the first one
             group1.UnionWith(group2);
 
+            // Prepare the equality inferences to be announced via the event
+            var newDerivedEqualities = new List<(IReadOnlyList<Theorem> usedEqualities, Theorem derivedEquality)>();
+
+            // Prepare the incidence inferences to be announced via the event
+            var newDerivedIncidences = new List<(Theorem oldIncidence, IReadOnlyList<Theorem> usedEqualities, Theorem newIncidence)>();
+
             // Handle the new equalities to derive incidences
-            foreach (var pair in newEqulities)
+            foreach (var newEquality in newEqualities)
             {
-                // Deconstruct manually
-                object1 = pair.Item1;
-                object2 = pair.Item2;
+                // Deconstruct
+                var (newEqualityObject1, newEqualityObject2) = newEquality;
+
+                // If this is not our equality...
+                if (!object1.Equals(newEqualityObject1) || !object2.Equals(newEqualityObject2))
+                {
+                    // Then it was derived from some actual equality
+                    // Create the derived equality theorem
+                    var derivedEquality = new Theorem(EqualObjects, newEqualityObject1, newEqualityObject2);
+
+                    // New need to create the used equalities
+                    var usedEqualities = new List<Theorem> { equalObjectsTheorem };
+
+                    // If there was used an equality within the first group, add it
+                    if (!object1.Equals(newEqualityObject1))
+                        usedEqualities.Add(new Theorem(EqualObjects, object1, newEqualityObject1));
+
+                    // If there was used an equality within the second group, add it
+                    if (!object2.Equals(newEqualityObject2))
+                        usedEqualities.Add(new Theorem(EqualObjects, object2, newEqualityObject2));
+
+                    // Add the inferred quality to be announced later
+                    newDerivedEqualities.Add((usedEqualities, derivedEquality));
+                }
 
                 // Switch based on the type
-                switch (object1.ObjectType)
+                switch (newEqualityObject1.ObjectType)
                 {
                     // Point
                     case ConfigurationObjectType.Point:
-
+                    {
                         // Get the particular sets
-                        var linesOrCircles1 = FindLinesOrCircles(object1);
-                        var linesOrCircles2 = FindLinesOrCircles(object2);
+                        var linesOrCircles1 = FindLinesOrCircles(newEqualityObject1);
+                        var linesOrCircles2 = FindLinesOrCircles(newEqualityObject2);
+
+                        // Prepare the discovered incidences of the first point
+                        var discoveredIncidences = linesOrCircles1.Select(lineOrCircle =>
+                                // The current incidence
+                                (oldIncidence: new Theorem(Incidence, newEqualityObject1, lineOrCircle),
+                                // The equality
+                                equalities: (IReadOnlyList<Theorem>)new[] { equalObjectsTheorem },
+                                // The derived incidence
+                                newIncidence: new Theorem(Incidence, newEqualityObject2, lineOrCircle)))
+                            // Merge them with the incidences of the second point
+                            .Concat(linesOrCircles2.Select(lineOrCircle =>
+                                // The current incidence
+                                (oldIncidence: new Theorem(Incidence, newEqualityObject2, lineOrCircle),
+                                // The equality
+                                equalities: (IReadOnlyList<Theorem>)new[] { equalObjectsTheorem },
+                                // The derived incidence
+                                newIncidence: new Theorem(Incidence, newEqualityObject1, lineOrCircle))))
+                            // Enumerate
+                            .ToArray();
 
                         // Merge them
                         linesOrCircles1.UnionWith(linesOrCircles2);
                         linesOrCircles2.UnionWith(linesOrCircles1);
 
-                        // Make sure they know about the points too
-                        linesOrCircles1.Concat(linesOrCircles2).ForEach(lineOrCircle => FindPoints(lineOrCircle).Add(object1, object2));
+                        // Make sure both of them 
+                        linesOrCircles1.Concat(linesOrCircles2)
+                            // Know about the points too
+                            .ForEach(lineOrCircle => FindPoints(lineOrCircle).Add(newEqualityObject1, newEqualityObject2));
+
+                        // Add the discovered incidences to be announced later
+                        newDerivedIncidences.AddRange(discoveredIncidences);
 
                         break;
+                    }
 
                     // Line or circle
                     case ConfigurationObjectType.Line:
                     case ConfigurationObjectType.Circle:
-
+                    {
                         // Get the particular sets
-                        var points1 = FindPoints(object1);
-                        var points2 = FindPoints(object2);
+                        var points1 = FindPoints(newEqualityObject1);
+                        var points2 = FindPoints(newEqualityObject2);
+
+                        // Prepare the discovered incidences of the first line/circle
+                        var discoveredIncidences = points1.Select(point =>
+                                // The current incidence
+                                (oldIncidence: new Theorem(Incidence, newEqualityObject1, point),
+                                // The equality
+                                equalities: (IReadOnlyList<Theorem>)new[] { equalObjectsTheorem },
+                                // The derived incidence
+                                newIncidence: new Theorem(Incidence, newEqualityObject2, point)))
+                            // Merge them with the incidences of the second line/circle
+                            .Concat(points2.Select(point =>
+                                // The current incidence
+                                (oldIncidence: new Theorem(Incidence, newEqualityObject2, point),
+                                // The equality
+                                equalities: (IReadOnlyList<Theorem>)new[] { equalObjectsTheorem },
+                                // The derived incidence
+                                newIncidence: new Theorem(Incidence, newEqualityObject1, point))))
+                            // Enumerate
+                            .ToArray();
 
                         // Merge them
                         points1.UnionWith(points2);
                         points2.UnionWith(points1);
 
-                        // Make sure they know about the lines too
-                        points1.Concat(points2).ForEach(point => FindLinesOrCircles(point).Add(object1, object2));
+                        // Make sure both of them 
+                        points1.Concat(points2)
+                            // Know about the points too
+                            .ForEach(point => FindLinesOrCircles(point).Add(newEqualityObject1, newEqualityObject2));
+
+                        // Add the discovered incidences to be announced later
+                        newDerivedIncidences.AddRange(discoveredIncidences);
 
                         break;
+                    }
 
                     // Default case
                     default:
-                        throw new TheoremProverException($"Unhandled type of configuration object: {object1.ObjectType}");
+                        throw new TheoremProverException($"Unhandled type of configuration object: {newEqualityObject1.ObjectType}");
                 }
+
+                // Announce the derived equalities
+                if (newDerivedEqualities.Any())
+                    NewEqualities(newDerivedEqualities);
+
+                // Announce the derived incidences
+                if (newDerivedIncidences.Any())
+                    NewIncidences(newDerivedIncidences);
             }
         }
 
@@ -164,12 +244,12 @@ namespace GeoGen.TheoremProver
         /// Marks the given incidence to be tracked. This call might find more
         /// incidences by combining this one with equalities.
         /// </summary>
-        /// <param name="theorem">The incidence theorem.</param>
-        public void MarkIncidence(Theorem theorem)
+        /// <param name="incidenceTheorem">The incidence theorem.</param>
+        public void MarkIncidence(Theorem incidenceTheorem)
         {
             // Get the objects
-            var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
-            var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+            var object1 = ((BaseTheoremObject)incidenceTheorem.InvolvedObjectsList[0]).ConfigurationObject;
+            var object2 = ((BaseTheoremObject)incidenceTheorem.InvolvedObjectsList[1]).ConfigurationObject;
 
             // Make sure they're marked
             _allObjects.Add(object1, object2);
@@ -179,27 +259,54 @@ namespace GeoGen.TheoremProver
             var lineOrCircle = object1 == point ? object2 : object1;
 
             // If this incidence is already there, don't do more
-            if (_pointToLinesAndCirles.GetOrDefault(point)?.Contains(lineOrCircle) ?? false)
+            if (_pointToLinesAndCircles.GetOrDefault(point)?.Contains(lineOrCircle) ?? false)
                 return;
 
             // Otherwise we need to figure out the other new incidences that this one brought
             // Get the group for the point and the line/circle
             var pointGroup = FindEqualityGroup(point);
-            var lineGroup = FindEqualityGroup(lineOrCircle);
+            var lineOrCircleGroup = FindEqualityGroup(lineOrCircle);
+
+            // Prepare the incidence inferences to be announced via the event
+            var newDerivedIncidences = new List<(Theorem oldIncidence, IReadOnlyList<Theorem> usedEqualities, Theorem newIncidence)>();
 
             // Each combination is a new incidence
-            pointGroup.CombinedWith(lineGroup).ToList().ForEach(pair =>
+            pointGroup.CombinedWith(lineOrCircleGroup).ToList().ForEach(pair =>
             {
-                // Get the point and line/circle
-                point = pair.Item1;
-                lineOrCircle = pair.Item2;
+                // Deconstruct
+                var (newIncidencePoint, newIncidenceLineOrCircle) = pair;
+
+                // Create the new incidence
+                var newIncidence = new Theorem(Incidence, newIncidencePoint, newIncidenceLineOrCircle);
 
                 // Mark the incidence in the dictionary mapping lines/circles to their points
                 _lineOrCircleToItsPoints.GetOrAdd(lineOrCircle, () => new HashSet<ConfigurationObject>()).Add(point);
 
                 // Mark the incidence in the dictionary mapping points to their lines/circles
-                _pointToLinesAndCirles.GetOrAdd(point, () => new HashSet<ConfigurationObject>()).Add(lineOrCircle);
+                _pointToLinesAndCircles.GetOrAdd(point, () => new HashSet<ConfigurationObject>()).Add(lineOrCircle);
+
+                // If this is not the incidence being added...
+                if (!point.Equals(newIncidencePoint) || !lineOrCircle.Equals(newIncidenceLineOrCircle))
+                {
+                    // Create the list of used equalities
+                    var usedEqualities = new List<Theorem>();
+
+                    // If the point was replaced via an equality, mark it
+                    if (!point.Equals(newIncidencePoint))
+                        usedEqualities.Add(new Theorem(EqualObjects, point, newIncidencePoint));
+
+                    // If the line or circle was replaced via an equality, mark it
+                    if (!lineOrCircle.Equals(newIncidenceLineOrCircle))
+                        usedEqualities.Add(new Theorem(EqualObjects, lineOrCircle, newIncidenceLineOrCircle));
+
+                    // Mark the derived incidence
+                    newDerivedIncidences.Add((incidenceTheorem, usedEqualities, newIncidence));
+                }
             });
+
+            // Announce the derived incidences
+            if (newDerivedIncidences.Any())
+                NewIncidences(newDerivedIncidences);
         }
 
         /// <summary>
@@ -212,27 +319,13 @@ namespace GeoGen.TheoremProver
             => _equalObjects.GetOrDefault(configurationObject) ?? new HashSet<ConfigurationObject> { configurationObject };
 
         /// <summary>
-        /// Finds out if two objects are equal.
-        /// </summary>
-        /// <param name="object1">The first object.</param>
-        /// <param name="object2">The second object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-        public bool AreEqual(ConfigurationObject object1, ConfigurationObject object2)
-            // Either they are equal by definition
-            => object1.Equals(object2)
-                // Or they both have a group
-                || _equalObjects.ContainsKey(object1) && _equalObjects.ContainsKey(object2)
-                // And these groups are identical
-                && _equalObjects[object1] == _equalObjects[object2];
-
-        /// <summary>
         /// Finds all the lines and circles passing through a given point.
         /// </summary>
         /// <param name="point">The point.</param>
         /// <returns>The lines and circles passing through the point.</returns>
         public HashSet<ConfigurationObject> FindLinesOrCircles(ConfigurationObject point)
             // Either the object is in the dictionary or we create a new set
-            => _pointToLinesAndCirles.GetOrDefault(point) ?? new HashSet<ConfigurationObject>();
+            => _pointToLinesAndCircles.GetOrDefault(point) ?? new HashSet<ConfigurationObject>();
 
         /// <summary>
         /// Finds all points that lie on a given line or circle.

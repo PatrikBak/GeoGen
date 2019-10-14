@@ -3,7 +3,6 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.TheoremType;
 using static GeoGen.TheoremProver.DerivationRule;
 
@@ -78,16 +77,166 @@ namespace GeoGen.TheoremProver
         {
             // Initialize a theorem derivation helper that will do the proving. 
             // We want it to prove the new theorems
-            var derivationHelper = new TheoremDerivationHelper(mainTheorems: input.NewTheorems);
+            var derivationHelper = new TheoremDerivationHelper(theorems: input.NewTheorems);
+
+            // Prepare a tracker of equalities and incidences
+            var equalityAndIncidenceTracker = new EqualityAndIncidenceTracker();
 
             // Get the analyzed configuration for comfort
             var configuration = input.ContextualPicture.Pictures.Configuration;
+
+            // Add the listener for proved theorems
+            derivationHelper.TheoremProven += theorem =>
+            {
+                // Switch based on the theorem type
+                switch (theorem.Type)
+                {
+                    // If we have new equal objects...
+                    case EqualObjects:
+                    {
+                        #region Trivial theorems
+
+                        // Get the objects
+                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
+                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+
+                        // Enumerate them for comfort
+                        object1.ToEnumerable().Concat(object2)
+                            // Only constructed
+                            .OfType<ConstructedConfigurationObject>()
+                            // For each of them
+                            .ForEach(constructedObject =>
+                            {
+                                // Get the trivial theorems
+                                var trivialTheorems = _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(constructedObject);
+
+                                // Mark them
+                                trivialTheorems.ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
+
+                                // Get the other object
+                                var otherObject = object1 == constructedObject ? object2 : object1;
+
+                                // Go through the trivial theorems
+                                trivialTheorems.ForEach(trivialTheorem =>
+                                {
+                                    // We're going use this other object to remap the theorem 
+                                    // We need to get all the inner objects first mapped to itself
+                                    var mapping = trivialTheorem.GetInnerConfigurationObjects().ToDictionary(o => o, o => o);
+
+                                    // Replace our object with the other equal object
+                                    mapping[constructedObject] = otherObject;
+
+                                    // Do the remapping
+                                    var remappedTheorem = trivialTheorem.Remap(mapping);
+
+                                    // In case we have something degenerated, do nothing
+                                    // TODO: Log it. I wanna see...
+                                    if (remappedTheorem == null)
+                                        return;
+
+                                    // Add the derivation
+                                    derivationHelper.AddDerivation(remappedTheorem, ReformulatedTheorem, new[] { trivialTheorem, theorem });
+                                });
+                            });
+
+                        #endregion
+
+                        // Mark the proven equality to the tracker
+                        equalityAndIncidenceTracker.MarkEquality(theorem);
+
+                        break;
+                    }
+
+                    case Incidence:
+                    {
+                        #region Mark sure trivial theorems of both objects are registered
+
+                        // Get the objects
+                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
+                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+
+                        // Enumerate them for comfort
+                        object1.ToEnumerable().Concat(object2)
+                            // Only constructed
+                            .OfType<ConstructedConfigurationObject>()
+                            // Take them
+                            .SelectMany(_trivialTheoremProducer.DeriveTrivialTheoremsFromObject)
+                            // Mark them
+                            .ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
+
+                        #endregion
+
+                        #region Using incidences to prove collinearity / concyclity
+
+                        // Go through the unproven ones
+                        derivationHelper.UnprovenTheoremsOfTypes(CollinearPoints, ConcyclicPoints)
+                            // Enumerate because they might change by proving
+                            .ToList()
+                            // Try to prove each of them
+                            .ForEach(theoremToProve =>
+                            {
+                                // Get the points
+                                var points = theoremToProve.GetInnerConfigurationObjects();
+
+                                // For each point
+                                var lineOrCircle = points
+                                    // Try to find the line or circle where each point lies
+                                    .Select(equalityAndIncidenceTracker.FindLinesOrCircles)
+                                    // Find the intersection of all these sets
+                                    .Aggregate((intersection, current) => intersection.Intersect(current).ToSet())
+                                    // Take the first common element or null
+                                    .FirstOrDefault();
+
+                                // If there is no common line or circle, we can't do much
+                                if (lineOrCircle == null)
+                                    return;
+
+                                // Otherwise we have it! Prepare the incidences
+                                var incidences = points.Select(point => new Theorem(Incidence, point, lineOrCircle)).ToArray();
+
+                                // If we're proving collinearity...
+                                if (theoremToProve.Type == CollinearPoints)
+                                    derivationHelper.AddDerivation(theoremToProve, IncidencesAndCollinearity, incidences);
+                                // Otherwise we're proving concyclities
+                                else
+                                    derivationHelper.AddDerivation(theoremToProve, IncidencesAndConcyclity, incidences);
+                            });
+
+                        #endregion
+
+                        // Mark the proven incidence to the tracker
+                        equalityAndIncidenceTracker.MarkIncidence(theorem);
+
+                        break;
+                    }
+                }
+            };
+
+            // Add the listener for newly derived equalities
+            equalityAndIncidenceTracker.NewEqualities += derivations =>
+            {
+                // Add the derivation for all of them
+                derivations.ForEach(pair => derivationHelper.AddDerivation(pair.derivedEquality, Transitivity, pair.usedEqualities));
+            };
+
+            // Add the listener for newly derived incidences
+            equalityAndIncidenceTracker.NewIncidences += derivations =>
+            {
+                // Add the derivation for all of them
+                derivations.ForEach(triple => derivationHelper.AddDerivation(triple.newIncidence, ReformulatedTheorem,
+                    // The assumptions are the equalities and the old incidence
+                    triple.usedEqualities.Concat(triple.oldIncidence)));
+            };
 
             #region Basic derivations
 
             // Add old theorems as not interesting ones
             foreach (var theorem in input.OldTheorems.AllObjects)
                 derivationHelper.AddDerivation(theorem, TrueInPreviousConfiguration, Array.Empty<Theorem>());
+
+            // Add all trivial theorems as not interesting ones
+            foreach (var theorem in _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(configuration.LastConstructedObject))
+                derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
 
             // Add theorems definable simpler as not interesting ones
             foreach (var theorem in input.NewTheorems.AllObjects)
@@ -101,10 +250,6 @@ namespace GeoGen.TheoremProver
                     derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(unnecessaryObjects), Array.Empty<Theorem>());
             }
 
-            // Add all trivial theorems as not interesting ones
-            foreach (var theorem in _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(configuration.LastConstructedObject))
-                derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
-
             // Use all derivers to make relations between all theorems
             foreach (var deriver in _derivers)
                 foreach (var (assumptions, derivedTheorem) in deriver.DeriveTheorems(input.AllTheorems))
@@ -113,9 +258,6 @@ namespace GeoGen.TheoremProver
             #endregion
 
             #region Subtheorem derivation
-
-            // Prepare a tracker of equalities and incidences
-            var equalityAndIncidenceTracker = new EqualityAndIncidenceTracker();
 
             // Prepare a set of used template configurations
             var usedTemplates = new HashSet<(Configuration, TheoremMap)>();
@@ -131,16 +273,16 @@ namespace GeoGen.TheoremProver
                 // Go through the template theorems
                 foreach (var template in _data.TemplateTheorems)
                 {
+                    // If we have used this template, we can skip it
+                    if (usedTemplates.Contains(template))
+                        continue;
+
                     // Deconstruct
                     var (templateConfiguration, templateTheorems) = template;
 
                     // If there are no main theorems to prove, we don't need to continue
-                    if (!derivationHelper.AnyMainTheoremLeftToProve())
+                    if (!derivationHelper.AnyTheoremLeftToProve())
                         break;
-
-                    // If we have used this template, we can skip it
-                    if (usedTemplates.Contains(template))
-                        continue;
 
                     // If these doesn't yield special Incidence and EqualObjects theorems
                     if (!templateTheorems.ContainsKey(Incidence) && !templateTheorems.ContainsKey(EqualObjects)
@@ -150,7 +292,6 @@ namespace GeoGen.TheoremProver
                         continue;
 
                     // Otherwise we're going to do the derivation
-                    // Mark that we've used the template
                     usedTemplates.Add(template);
 
                     // Call the subtheorem algorithm
@@ -168,37 +309,15 @@ namespace GeoGen.TheoremProver
                         // Go through the theorems it derived
                         foreach (var (derivedTheorem, templateTheorem) in output.DerivedTheorems)
                         {
-                            #region Handling equalities
-
-                            // If this theorem is an equal objects theorem, mark it
-                            if (derivedTheorem.Type == EqualObjects)
-                                equalityAndIncidenceTracker.MarkEquality(derivedTheorem);
-
                             // Prepare the used equality theorems
                             var usedEqualities = output.UsedEqualities
                                 // Convert each equality to a theorem
                                 .Select(equality => new Theorem(EqualObjects, equality.originalObject, equality.equalObject));
 
-                            // Mark all of them
-                            usedEqualities.ForEach(equalityAndIncidenceTracker.MarkEquality);
-
-                            #endregion
-
-                            #region Handling incidences
-
-                            // If this theorem is an incidence theorem, mark it
-                            if (derivedTheorem.Type == Incidence)
-                                equalityAndIncidenceTracker.MarkIncidence(derivedTheorem);
-
                             // Prepare the used incidences theorems
                             var usedIncidences = output.UsedIncidencies
                                 // Convert each incidence to a theorem
                                 .Select(incidence => new Theorem(Incidence, incidence.point, incidence.lineOrCircle));
-
-                            // Mark all of them
-                            usedIncidences.ForEach(equalityAndIncidenceTracker.MarkIncidence);
-
-                            #endregion
 
                             // Prepare the needed assumptions by merging the used acts, equalities and incidences
                             var neededAsumptions = output.UsedFacts.Concat(usedEqualities).Concat(usedIncidences).ToArray();
@@ -209,359 +328,6 @@ namespace GeoGen.TheoremProver
                     }
                 }
             });
-
-            #endregion
-
-            #region Trivial theorems of newly discovered objects
-
-            // Prepare a set of newly found incidences that will be merged later
-            var newIncidences = new HashSet<Theorem>();
-
-            // Get all the objects tracker by the tracker
-            equalityAndIncidenceTracker.AllObjects
-                // Only constructed
-                .OfType<ConstructedConfigurationObject>()
-                // And only new ones
-                .Where(o => !configuration.ConstructedObjectsSet.Contains(o))
-                // Get trivial theorems for it
-                .Select(_trivialTheoremProducer.DeriveTrivialTheoremsFromObject)
-                // Flatten them
-                .Flatten()
-                // Take distinct ones
-                .Distinct()
-                // Handle each theorem
-                .ForEach(theorem =>
-                {
-                    // Add the derivation
-                    derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
-
-                    // If this theorem is an incidence theorem, remember it
-                    if (theorem.Type == Incidence)
-                        newIncidences.Add(theorem);
-                });
-
-            // Merge the new incidences with the old ones
-            newIncidences.ForEach(equalityAndIncidenceTracker.MarkIncidence);
-
-            #endregion
-
-            #region Transitivities of equalities
-
-            // Get all triples of equal objects and for each do the derivation
-            equalityAndIncidenceTracker.EqualityGroups.SelectMany(group => group.Subsets(3)).ForEach(triple =>
-            {
-                // Prepare the equal objects theorems
-                var theorem1 = new Theorem(EqualObjects, triple[0], triple[1]);
-                var theorem2 = new Theorem(EqualObjects, triple[1], triple[2]);
-                var theorem3 = new Theorem(EqualObjects, triple[2], triple[0]);
-
-                // From every two we can derive the other
-                derivationHelper.AddDerivation(theorem1, Transitivity, new[] { theorem2, theorem3 });
-                derivationHelper.AddDerivation(theorem2, Transitivity, new[] { theorem3, theorem1 });
-                derivationHelper.AddDerivation(theorem3, Transitivity, new[] { theorem1, theorem2 });
-            });
-
-            #endregion
-
-            #region Redefining incidences using equalities
-
-            // Go through every incidence
-            equalityAndIncidenceTracker.Incidences.ForEach(objects =>
-            {
-                // Deconstruct
-                var (point, lineOrCircle) = objects;
-
-                // Get the incidence theorem
-                var incidence = new Theorem(Incidence, point, lineOrCircle);
-
-                // Get the equality groups for the points objects and take its other points
-                equalityAndIncidenceTracker.FindEqualityGroup(point).Where(_point => !_point.Equals(point)).ForEach(equalPoint =>
-                {
-                    // Create the used equality theorem
-                    var usedEquality = new Theorem(EqualObjects, point, equalPoint);
-
-                    // Create the derived theorem
-                    var otherIncidence = new Theorem(Incidence, equalPoint, lineOrCircle);
-
-                    // Add the derivations
-                    derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
-                    derivationHelper.AddDerivation(incidence, ReformulatedTheorem, new[] { usedEquality, otherIncidence });
-                });
-
-                // Get the equality groups for the line or circles objects and take its other objects
-                equalityAndIncidenceTracker.FindEqualityGroup(lineOrCircle).Where(_lineOrCircle => !_lineOrCircle.Equals(lineOrCircle)).ForEach(equalLineOrCircle =>
-                {
-                    // Create the used equality theorem
-                    var usedEquality = new Theorem(EqualObjects, lineOrCircle, equalLineOrCircle);
-
-                    // Create the derived theorem
-                    var otherIncidence = new Theorem(Incidence, point, equalLineOrCircle);
-
-                    // Add the derivation
-                    derivationHelper.AddDerivation(otherIncidence, ReformulatedTheorem, new[] { usedEquality, incidence });
-                    derivationHelper.AddDerivation(incidence, ReformulatedTheorem, new[] { usedEquality, otherIncidence });
-                });
-            });
-
-            #endregion
-
-            #region Incidences give collinearity and concyclity
-
-            // Take all incidences
-            equalityAndIncidenceTracker.Incidences
-                // Group these incidences by the line / circle
-                .GroupBy(tuple => tuple.lineOrCircle)
-                // Each group represents more potential collinearities / concyclities
-                // We take every possible triple / quadruple of incidences from this group,
-                // based on the fact whether we're dealing with a line or circle
-                .SelectMany(grouping => grouping.Subsets(grouping.First().lineOrCircle.ObjectType switch
-                {
-                    // Line is interesting with 3 points
-                    Line => 3,
-
-                    // Circle is interesting with 4 points
-                    Circle => 4,
-
-                    // Default case
-                    _ => throw new TheoremProverException($"Unhandled type of configuration object: {grouping.First().lineOrCircle.ObjectType}")
-                }))
-                // Each triple represents a true collinearity (potentially degenerated)
-                .ForEach(incidences =>
-                {
-                    // Get the points of the incidences
-                    var points = incidences.Select(pair => pair.point).ToArray();
-
-                    // Make sure none two points are equal
-                    if (points.UnorderedPairs().Any(pair => equalityAndIncidenceTracker.AreEqual(pair.Item1, pair.Item2)))
-                        return;
-
-                    // Prepare the incidence theorems
-                    var incidencesTheorems = incidences.Select(pair => new Theorem(Incidence, pair.lineOrCircle, pair.point)).ToArray();
-
-                    // Switch on the type of the other object
-                    switch (incidences[0].lineOrCircle.ObjectType)
-                    {
-                        // Line case
-                        case Line:
-
-                            // Prepare the collinearity theorem
-                            var collinearity = new Theorem(CollinearPoints, points);
-
-                            // Add the derivation of any of the theorems from the others
-                            derivationHelper.AddDerivation(collinearity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2] });
-                            derivationHelper.AddDerivation(incidencesTheorems[0], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[1], incidencesTheorems[2] });
-                            derivationHelper.AddDerivation(incidencesTheorems[1], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[0], incidencesTheorems[2] });
-                            derivationHelper.AddDerivation(incidencesTheorems[2], IncidencesAndCollinearity, new[] { collinearity, incidencesTheorems[0], incidencesTheorems[1] });
-
-                            break;
-
-                        // Circle case
-                        case Circle:
-
-                            // Prepare the concyclity theorem
-                            var concyclity = new Theorem(ConcyclicPoints, points);
-
-                            // Add the derivation of any of the theorems from the others
-                            derivationHelper.AddDerivation(concyclity, IncidencesAndCollinearity, new[] { incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
-                            derivationHelper.AddDerivation(incidencesTheorems[0], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[1], incidencesTheorems[2], incidencesTheorems[3] });
-                            derivationHelper.AddDerivation(incidencesTheorems[1], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[2], incidencesTheorems[3] });
-                            derivationHelper.AddDerivation(incidencesTheorems[2], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[3] });
-                            derivationHelper.AddDerivation(incidencesTheorems[3], IncidencesAndCollinearity, new[] { concyclity, incidencesTheorems[0], incidencesTheorems[1], incidencesTheorems[2] });
-
-                            break;
-
-                        // Default case
-                        default:
-                            throw new TheoremProverException($"Unhandled type of configuration object: {incidences[0].lineOrCircle.ObjectType}");
-                    }
-                });
-
-            #endregion
-
-            #region Reformulating theorems to trivial ones
-
-            // Get the new theorems that are not proven
-            derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
-            {
-                // For a given one get the inner objects of the theorem
-                var innerObjects = theorem.GetInnerConfigurationObjects();
-
-                // For each find the equivalence group
-                innerObjects.Select(innerObject => (innerObject, group: equalityAndIncidenceTracker.FindEqualityGroup(innerObject)))
-                    // Take only objects that have some equal objects
-                    .Where(pair => pair.group.Count != 1)
-                    // Make all possible pairs of the object and its equal partner
-                    .Select(pair => pair.group.Select(equalObject => (pair.innerObject, equalObject)))
-                    // Combine these option to a single one
-                    .Combine()
-                    // Each option represents a reformulation
-                    .ForEach(option =>
-                    {
-                        // Create the dictionary mapping objects to their equal versions
-                        var mapping = option.ToDictionary(pair => pair.innerObject, pair => pair.equalObject);
-
-                        // Make sure all the objects are in the mapping
-                        innerObjects.Where(o => !mapping.ContainsKey(o)).ForEach(o => mapping.Add(o, o));
-
-                        // Create the remapped theorem
-                        var remappedTheorem = theorem.Remap(mapping);
-
-                        // If this theorem is the same as the original one, we don't need to do anything
-                        if (theorem.Equals(remappedTheorem))
-                            return;
-
-                        // Otherwise prepare the used theorem by taking all non-identity equality pairs
-                        var assumptions = mapping.Where(pair => !pair.Key.Equals(pair.Value))
-                            // Making each a theorem
-                            .Select(pair => new Theorem(EqualObjects, new[] { pair.Key, pair.Value }))
-                            // And appending our reformulated theorem
-                            .Concat(remappedTheorem);
-
-                        // Finally add the derivation
-                        derivationHelper.AddDerivation(theorem, ReformulatedTheorem, assumptions);
-                    });
-            });
-
-            #endregion
-
-            #region Reformulating theorem and configuration to get rid of objects
-
-            // Find all possible configuration and theorem reformulations by taking all the objects
-            configuration.ConstructedObjects
-                // Find the equality groups for them
-                .Select(innerObject => (innerObject, group: equalityAndIncidenceTracker.FindEqualityGroup(innerObject)))
-                // Take only objects that have some equal objects
-                .Where(pair => pair.group.Count != 1)
-                // Make all possible pairs of the object and its equal distinct partner
-                .Select(pair => pair.group.Where(equalObject => !equalObject.Equals(pair.innerObject)).Select(equalObject => (pair.innerObject, equalObject)))
-                // Combine these option to a single one
-                .Combine()
-                // Exclude the trivial one with no mapping
-                .Where(option => option.Length != 0)
-                // Each option represents a reformulation
-                .ForEach(option =>
-                {
-                    // Get the mapping dictionary
-                    var mapping = option.ToDictionary(pair => pair.innerObject, pair => (ConstructedConfigurationObject)pair.equalObject);
-
-                    #region Function for mapping object
-
-                    // Prepare the set of objects being map
-                    // It serves as a prevention from cyclic mapping
-                    var objectsBeingMapped = new HashSet<ConstructedConfigurationObject>();
-
-                    // Local function to map an object. If it cannot be done
-                    // (because of the cycle), returns null
-                    ConfigurationObject Map(ConfigurationObject configurationObject)
-                    {
-                        // Switch based on the object
-                        switch (configurationObject)
-                        {
-                            // Loose objects are mapped to themselves
-                            case LooseConfigurationObject _:
-                                return configurationObject;
-
-                            // For constructed objects
-                            case ConstructedConfigurationObject constructedObject:
-
-                                // We first check if it's in the mapping, because
-                                // if it's not, it should be mapped to itself
-                                if (!mapping.ContainsKey(constructedObject))
-                                    return constructedObject;
-
-                                // Otherwise the object is in the mapping
-                                // If it's being mapped, then we have run into a cycle
-                                // and the mapping should not be successful
-                                if (objectsBeingMapped.Contains(constructedObject))
-                                    return null;
-
-                                // Otherwise we're going to map the object right now
-                                objectsBeingMapped.Add(constructedObject);
-
-                                // Get the object to which we're going to map this
-                                var newObject = mapping[constructedObject];
-
-                                // Take the inner objects and recursively map them
-                                var newArguments = newObject.PassedArguments.FlattenedList.SelectIfNotDefault(Map);
-
-                                // If some of them cannot be mapped, the mapping cannot be done,
-                                // and we don't even have to remove the object from the set of 
-                                // ones being mapped (it is not mappable anyway)
-                                if (newArguments == null)
-                                    return null;
-
-                                // If all of them are fine, we can say the mapping is done
-                                objectsBeingMapped.Remove(constructedObject);
-
-                                // And we can return the object with remapped arguments
-                                return new ConstructedConfigurationObject(newObject.Construction, newArguments.ToArray());
-
-                            // Default case
-                            default:
-                                throw new TheoremProverException($"Unhandled type of configuration object: {configurationObject.GetType()}");
-                        }
-                    }
-
-                    #endregion
-
-                    // Create the mapping of all objects
-                    var allObjectsMapping = configuration.AllObjects.SelectIfNotDefault(configurationObject =>
-                    {
-                        // Map the object
-                        var mappedObject = Map(configurationObject);
-
-                        // Return either the pair of the original one and this one if it can be done,
-                        // otherwise the default value
-                        return mappedObject != null ? (originalObject: configurationObject, mappedObject) : default;
-                    })
-                    // Enumerate to a dictionary
-                    ?.ToDictionary(pair => pair.originalObject, pair => pair.mappedObject);
-
-                    // If the mapping cannot be done, we're sad
-                    if (allObjectsMapping == null)
-                        return;
-
-                    // Otherwise we can create a new redefined configuration
-                    var redefinedConfiguration = new Configuration(configuration.LooseObjectsHolder,
-                            // Pull the constructed objects from the map
-                            // It might probably happen they are in a wrong order, 
-                            // but it should not mapped for this particular usage
-                            allObjectsMapping.Values.OfType<ConstructedConfigurationObject>().ToArray());
-
-                    // Get the not-proven theorems
-                    derivationHelper.UnproveneMainTheorems().ToList().ForEach(theorem =>
-                    {
-                        // Try to reformulate the current one
-                        var remappedTheorem = theorem.Remap(allObjectsMapping);
-
-                        // I think it should be doable...
-                        if (remappedTheorem == null)
-                            throw new TheoremProverException("A theorem to be proved got remapped to an incorrect one. How is this possible???");
-
-                        // Finally we can test if the theorem can be stated without some objects
-                        var redundantObjects = remappedTheorem.GetUnnecessaryObjects(redefinedConfiguration);
-
-                        // If there is none, we can't do more
-                        if (redundantObjects.IsEmpty())
-                            return;
-
-                        // Otherwise prepare the used equalities by taking all non-identity pairs of the mapping
-                        var usedEqualities = allObjectsMapping.Where(pair => !pair.Key.Equals(pair.Value))
-                            // Making each a theorem
-                            .Select(pair => new Theorem(EqualObjects, new[] { pair.Key, pair.Value }));
-
-                        // Prepare the list of objects that are redundant in the original configuration
-                        // This code doesn't look efficient, but we're dealing with very little quantities
-                        var originalRedundantObjects = redundantObjects.Select(redundantObject =>
-                                // Get the pair where this object is on the right and take the corresponding key
-                                allObjectsMapping.First(pair => pair.Value.Equals(redundantObject)).Key)
-                            // Wrap it all in a read-only set
-                            .ToReadOnlyHashSet();
-
-                        // Otherwise add the derivation
-                        derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(originalRedundantObjects), usedEqualities);
-                    });
-                });
 
             #endregion
 

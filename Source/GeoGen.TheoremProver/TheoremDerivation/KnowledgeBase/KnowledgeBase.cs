@@ -117,6 +117,10 @@ namespace GeoGen.TheoremProver
         /// <param name="neededAssumptions">The assumptions needed for this derivation.</param>
         public void AddDerivation(TTheorem theorem, TData data, IEnumerable<TTheorem> neededAssumptions)
         {
+            // If the theorem is proven, don't do anything
+            if (IsProven(theorem))
+                return;
+
             // Create a new empty derivation data with the passed data
             var derivation = new DerivationData(theorem, data);
 

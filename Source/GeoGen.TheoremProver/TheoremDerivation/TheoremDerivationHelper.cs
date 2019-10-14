@@ -20,7 +20,16 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// The map of theorems of which we're looking for a proof. 
         /// </summary>
-        public TheoremMap MainTheorems { get; }
+        public TheoremMap Theorems { get; }
+
+        #endregion
+
+        #region Public events
+
+        /// <summary>
+        /// Raises when there is a new proven theorem by the underlying back-end.
+        /// </summary>
+        public event Action<Theorem> TheoremProven = _ => { };
 
         #endregion
 
@@ -34,15 +43,9 @@ namespace GeoGen.TheoremProver
 
         /// <summary>
         /// The dictionary mapping theorem types to theorems that are left to prove. 
-        /// This might include even theorems that are not <see cref="MainTheorems"/>, 
-        /// but have been added as needed theorems of some derivation.
+        /// The theorems are a subset of <see cref="Theorems"/>.
         /// </summary>
-        private readonly Dictionary<TheoremType, HashSet<Theorem>> _allTheoremsToProve;
-
-        /// <summary>
-        /// The set of the <see cref="MainTheorems"/> that are still unproven.
-        /// </summary>
-        private readonly HashSet<Theorem> _mainTheoremsLeftToProve;
+        private readonly Dictionary<TheoremType, HashSet<Theorem>> _unprovenTheorems;
 
         #endregion
 
@@ -51,17 +54,14 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremDerivationHelper"/> class.
         /// </summary>
-        /// <param name="mainTheorems">The map of theorems of which we're looking for a proof. </param>
-        public TheoremDerivationHelper(TheoremMap mainTheorems)
+        /// <param name="theorems">The map of theorems of which we're looking for a proof. </param>
+        public TheoremDerivationHelper(TheoremMap theorems)
         {
             // Set the theorems to prove
-            MainTheorems = mainTheorems ?? throw new ArgumentNullException(nameof(mainTheorems));
+            Theorems = theorems ?? throw new ArgumentNullException(nameof(theorems));
 
-            // Initially all of them are left to prove
-            _mainTheoremsLeftToProve = new HashSet<Theorem>(mainTheorems.AllObjects);
-
-            // We want to mark them in the dictionary of all theorems to prove as well
-            _allTheoremsToProve = _mainTheoremsLeftToProve.GroupBy(t => t.Type).ToDictionary(group => group.Key, group => group.ToSet());
+            // Initially they are unproven
+            _unprovenTheorems = Theorems.ToDictionary(pair => pair.Key, pair => pair.Value.ToSet());
 
             // Initialize the underlying knowledge base
             _knowledgeBase = new KnowledgeBase<Theorem, TheoremDerivationData>();
@@ -73,10 +73,10 @@ namespace GeoGen.TheoremProver
                 var type = provenTheorem.Type;
 
                 // If this theorem has been marked as one to be proved
-                if (_allTheoremsToProve.ContainsKey(type))
+                if (_unprovenTheorems.ContainsKey(type))
                 {
                     // Get the set of theorems to prove of this type
-                    var theoremsToProve = _allTheoremsToProve[type];
+                    var theoremsToProve = _unprovenTheorems[type];
 
                     // Remove the theorem from it
                     theoremsToProve.Remove(provenTheorem);
@@ -84,11 +84,11 @@ namespace GeoGen.TheoremProver
                     // If the set is empty
                     if (theoremsToProve.IsEmpty())
                         // Make sure the type is not longer needed
-                        _allTheoremsToProve.Remove(type);
+                        _unprovenTheorems.Remove(type);
                 }
 
-                // Make sure it's not in the main theorems set now (no matter whether it's main or not, it's proven)
-                _mainTheoremsLeftToProve.Remove(provenTheorem);
+                // Raise an event of this class that we've proven theorem
+                TheoremProven(provenTheorem);
             };
         }
 
@@ -97,25 +97,25 @@ namespace GeoGen.TheoremProver
         #region Public methods
 
         /// <summary>
-        /// Gets the main theorems that are not proven yet.
+        /// Find out whether there is any of <see cref="Theorems"/> still left to be proven.
         /// </summary>
-        /// <returns>The theorems to be proven.</returns>
-        public IEnumerable<Theorem> UnproveneMainTheorems() => _mainTheoremsLeftToProve;
+        /// <returns>true, if there is a theorem to be proven; false otherwise.</returns>
+        public bool AnyTheoremLeftToProve() => _unprovenTheorems.Any();
 
         /// <summary>
-        /// Find out whether there is any of <see cref="MainTheorems"/> still left to be proven.
+        /// Gets the theorems that are not proven yet.
         /// </summary>
-        /// <returns>true, if there is a main theorem to be proven; false otherwise.</returns>
-        public bool AnyMainTheoremLeftToProve() => _mainTheoremsLeftToProve.Any();
+        /// <returns>The theorems to be proven.</returns>
+        public IEnumerable<Theorem> UnprovenTheoremsOfTypes(params TheoremType[] types)
+            // Merge the theorems of the requested types
+            => types.SelectMany(type => _unprovenTheorems.GetOrDefault(type) ?? Enumerable.Empty<Theorem>());
 
         /// <summary>
         /// Finds out if there still is a theorem of a given type that is left to be proven.
-        /// This theorem doesn't have to be one of <see cref="MainTheorems"/>, but it might 
-        /// be useful to prove one of these theorems.
         /// </summary>
         /// <param name="type">The theorem type.</param>
         /// <returns>true, if there is a theorem of the given type to be proven; false otherwise.</returns>
-        public bool AnyTheoremLeftToProveOfType(TheoremType type) => _allTheoremsToProve.ContainsKey(type);
+        public bool AnyTheoremLeftToProveOfType(TheoremType type) => _unprovenTheorems.ContainsKey(type);
 
         /// <summary>
         /// Adds the derivation of a given theorem using a given derivation rule and 
@@ -125,8 +125,8 @@ namespace GeoGen.TheoremProver
         /// <param name="rule">The used derivation rule.</param>
         /// <param name="neededTheorems">The theorems needed to be assumed for this derivation.</param>
         public void AddDerivation(Theorem derivedTheorem, DerivationRule rule, IEnumerable<Theorem> neededTheorems)
-            // Delegate the call to the other method
-            => AddDerivation(derivedTheorem, new TheoremDerivationData(rule), neededTheorems);
+            // Delegate the call to the back-end
+            => _knowledgeBase.AddDerivation(derivedTheorem, new TheoremDerivationData(rule), neededTheorems);
 
         /// <summary>
         /// Adds the derivation of a given theorem using a given theorem derivation data and 
@@ -136,21 +136,8 @@ namespace GeoGen.TheoremProver
         /// <param name="data">The metadata of the derivation.</param>
         /// <param name="neededTheorems">The theorems needed to be assumed for this derivation.</param>
         public void AddDerivation(Theorem derivedTheorem, TheoremDerivationData data, IEnumerable<Theorem> neededTheorems)
-        {
-            // If this theorem is proven, don't do anything
-            if (_knowledgeBase.IsProven(derivedTheorem))
-                return;
-
-            // Make sure the needed theorems are marked as to be proven, if they are not already
-            foreach (var theorem in neededTheorems)
-                // If the current one is not proven
-                if (!_knowledgeBase.IsProven(theorem))
-                    // Add it to the dictionary mapping types to theorems to prove
-                    _allTheoremsToProve.GetOrAdd(theorem.Type, () => new HashSet<Theorem>()).Add(theorem);
-
-            // Add the derivation to the knowledge base
-            _knowledgeBase.AddDerivation(derivedTheorem, data, neededTheorems);
-        }
+            // Delegate the call to the back-end
+            => _knowledgeBase.AddDerivation(derivedTheorem, data, neededTheorems);
 
         /// <summary>
         /// Constructs a <see cref="TheoremProverOutput"/> representing the current state of the 
@@ -169,7 +156,7 @@ namespace GeoGen.TheoremProver
             var cache = new Dictionary<TheoremDerivation<Theorem, TheoremDerivationData>, TheoremProofAttempt>();
 
             // Go through the considered theorems
-            foreach (var theorem in MainTheorems.AllObjects)
+            foreach (var theorem in Theorems.AllObjects)
             {
                 // Handle the case where there is a proof
                 if (_knowledgeBase.IsProven(theorem))
@@ -201,7 +188,7 @@ namespace GeoGen.TheoremProver
             // that's okay, because we don't want to include them anyway
             var unprovenDiscoveredTheorems = GetAllUnprovenTheorems(unprovenTheorems.SelectMany(pair => pair.Value))
                 // Exclude the attempts at our main theorems
-                .Where(attempt => !MainTheorems.ContainsTheorem(attempt.Key))
+                .Where(attempt => !Theorems.ContainsTheorem(attempt.Key))
                 // Convert to a dictionary
                 .ToDictionary(pair => pair.Key, pair => (IReadOnlyList<TheoremProofAttempt>)pair.Value.ToArray());
 
