@@ -140,9 +140,7 @@ namespace GeoGen.Algorithm
             #region Construction verification function
 
             // The function that says if we should perform the construction on the configuration
-            // TODO: Consider implementing it meaningfully, for example, consider not using 
-            //       a construction when it's already used more than a few times, or some other 
-            //       heuristic approach
+            // FEATURE: Don't automatically allow any construction for any configuration
             static bool VerifyThatConstructionMightBeApplied(GeneratedConfiguration configuration, Construction construction) => true;
 
             #endregion
@@ -161,7 +159,7 @@ namespace GeoGen.Algorithm
                     return true;
 
                 // If it doesn't have a code, construct it 
-                // TODO: Do it safely
+                // TODO: Execute safely
                 // TODO: Add tracing
                 var data = _geometryConstructor.ExamineObject(objectTestingPictures, constructedObject, addToPictures: true);
 
@@ -186,7 +184,7 @@ namespace GeoGen.Algorithm
                 // Assign the new code
                 allObjectCodes.Add(constructedObject, newCode);
 
-                // TODO: Duplicates might create new super-cool theorems! Consider doing something about it
+                // TODO: Trace discovered equality
 
                 // At this stage the object is fine
                 return true;
@@ -274,7 +272,7 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
-                // TODO: Further verification, for example whether points aren't too close to each other?
+                // FEATURE: Should we verify here whether the configuration has a normal picture?
 
                 // If we got here, everything's fine
                 return true;

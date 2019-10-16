@@ -42,7 +42,7 @@ namespace GeoGen.Algorithm.Tests
                     },
                     typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { TheoremType.EqualObjects, TheoremType.Incidence }).ToReadOnlyHashSet())
                     // Prover with no theorems 
-                    // TODO: Get some theorems 
+                    // TODO: Add some manually written template theorems
                     .AddTheoremProver(new TheoremProverData(new List<(Configuration, TheoremMap)>()))
                     // Constructor that ignores inconsistencies
                     .AddConstructor(new PicturesSettings

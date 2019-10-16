@@ -10,8 +10,7 @@ namespace GeoGen.Core
     /// Represents a list of <see cref="ConstructionArgument"/> that is directly 
     /// part of the definition of <see cref="ConstructedConfigurationObject"/>s. 
     /// 
-    /// TODO: Do inner objects have to be distinct? I think it should only hold true
-    ///       for sets, which should not be equivalent to each other.
+    /// FEATURE: I think the inner objects don't have to distinct, only within sets.
     /// 
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>

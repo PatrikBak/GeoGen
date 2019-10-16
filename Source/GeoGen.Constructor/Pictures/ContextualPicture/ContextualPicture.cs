@@ -12,9 +12,7 @@ namespace GeoGen.Constructor
     /// is responsible for creating them and mapping them between <see cref="IAnalyticObject"/>s
     /// with respect to <see cref="Picture"/>s.
     /// 
-    /// TODO: Whenever pictures are reconstructed, this becomes invalid. One solution might be
-    ///       to have an event of reconstruction in <see cref="Pictures"/>, and whenever it 
-    ///       happens, reconstruct this, without ruining the old objects.
+    /// TODO: Make sure the container is reconstructed after the inner pictures are.
     ///       
     /// </summary>
     public class ContextualPicture
@@ -285,7 +283,7 @@ namespace GeoGen.Constructor
                     // Finding of the equivalent object
                     () => result = FindEquivalentObject(objectConstructor),
                     // While handling inconsistencies
-                    // TODO: Trace
+                    // TODO: Add tracing
                     (InconsistentPicturesException e) => { });
 
                 // Return the result

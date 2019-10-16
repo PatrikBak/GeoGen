@@ -245,6 +245,8 @@ namespace GeoGen.TheoremProver
         /// <returns>The mappings.</returns>
         private static IEnumerable<MappingData> GenerateInitialMappings(SubtheoremDeriverInput input)
         {
+            // TODO: Try to make sure collinear points are not considered at all. 
+
             // Return the answer based on the layout of the template theorem
             return input.TemplateConfiguration.LooseObjectsHolder.Layout switch
             {
@@ -270,11 +272,9 @@ namespace GeoGen.TheoremProver
                 Trapezoid => GenerateInitialMappingsForTrapezoidLayout(input),
 
                 // Triangle
-                // TODO: collinearity
                 Triangle => GenerateInitialMappingsWithPoints(input),
 
                 // Quadrilateral
-                // TODO: collinearity
                 Quadrilateral => GenerateInitialMappingsWithPoints(input),
 
                 // Concyclic points
@@ -290,7 +290,7 @@ namespace GeoGen.TheoremProver
                 CircleAndTangentLine => GenerateInitialMappingsForCircleAndTangentLineLayout(input),
 
                 // Isosceles triangle
-                // TODO: collinearity
+                // TODO: Exclude collinearity while generating
                 IsoscelesTriangle => GenerateInitialMappingsForIsoscelesTriangleLayout(input),
 
                 // Default case
@@ -589,7 +589,7 @@ namespace GeoGen.TheoremProver
         /// <returns>The mappings.</returns>
         private IEnumerable<MappingData> GenerateMappingsIncludingObject(MappingData data, ConstructedConfigurationObject constructedObject, SubtheoremDeriverInput input)
         {
-            // TODO: Should I make somehow sure no object is mapped twice?
+            // TODO: Try to make sure no object is mapped twice
 
             #region Creating the mapped object
 
@@ -619,9 +619,7 @@ namespace GeoGen.TheoremProver
                 // If we can choose our point completely at random...
                 case PredefinedConstruction p when p.Type == RandomPoint:
 
-                    // TODO: Wouldn't it be better not to allow duplicates? 
-                    // In general. Shouldn't the remapped theorems be always correct
-                    // no matter what?
+                    // TODO: Don't allow duplicate mapping
 
                     // Then we do so by pulling the map and looking at points
                     return configuration.ObjectMap.GetOrDefault(Point)?
@@ -717,7 +715,8 @@ namespace GeoGen.TheoremProver
                         _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject);
 
                     // We pass this function to the contextual picture to get the resulting object
-                    // TODO: Handle possible failure
+                    // TODO: Execute safely
+                    // TODO: Add tracing
                     var foundObject = input.ExaminedConfigurationPicture.GetGeometricObject(ConstructorFunction);
 
                     // If the found object is null, i.e. the construction is not possible, 
@@ -748,7 +747,8 @@ namespace GeoGen.TheoremProver
             if (equalObject == null)
             {
                 // We need to examine this object with respect to the examined configuration
-                // TODO: Figure out how we want to handle a possible exception
+                // TODO: Execute safely
+                // TODO: Add tracing
                 var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false);
 
                 // If the object is not constructible, then the mapping is incorrect

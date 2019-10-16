@@ -5,6 +5,7 @@ namespace GeoGen.Generator
 {
     /// <summary>
     /// Represents an input for an <see cref="IGenerator"/>.
+    /// TODO: Merge with <see cref="GenerationCallbacks"/>.
     /// </summary>
     public class GeneratorInput
     {

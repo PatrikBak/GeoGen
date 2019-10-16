@@ -130,7 +130,7 @@ namespace GeoGen.TheoremProver
                                     var remappedTheorem = trivialTheorem.Remap(mapping);
 
                                     // In case we have something degenerated, do nothing
-                                    // TODO: Log it. I wanna see...
+                                    // TODO: Trace it. Ideally this shouldn't ever happen
                                     if (remappedTheorem == null)
                                         return;
 
@@ -330,6 +330,8 @@ namespace GeoGen.TheoremProver
             });
 
             #endregion
+
+            // TODO: Trace discovered unproven equalities / incidences
 
             // Let the helper construct the result
             return derivationHelper.ConstructResult();
