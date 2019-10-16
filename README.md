@@ -8,14 +8,13 @@
 Institute of Computer Science  
 Faculty of Science*
 
-## Overall goal
+## Goal
 
-Design and implement software that is able to generate planar geometry olympiad problems by extending an initial configuration with new geometrical objects and subsequently finding non-trivial theorems in the generated configurations.
+Make a program that will generate [IMO](http://imo-official.org/)-level geometry problems.
 
-## Links
+## Current state
 
-[Presentation](https://github.com/PatrikBak/GeoGen/blob/master/Resources/School/presentation.pdf)  
-[Extended assignment](https://github.com/PatrikBak/GeoGen/blob/master/Resources/School/extended_assignment.pdf)
+[Slides from October 16, 2019](https://drive.google.com/open?id=17fU4KqOAZjzKeXzh1mzz47IthZPG1NoL)  
 
 ## References
 
