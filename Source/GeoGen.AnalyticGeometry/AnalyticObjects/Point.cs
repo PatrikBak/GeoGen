@@ -1,6 +1,7 @@
 ﻿using GeoGen.Utilities;
 using System;
 using System.Globalization;
+using static System.Math;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -48,8 +49,8 @@ namespace GeoGen.AnalyticGeometry
             var angleInRadians = MathematicalHelpers.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
-            var cosT = Math.Cos(angleInRadians);
-            var sinT = Math.Sin(angleInRadians);
+            var cosT = Cos(angleInRadians);
+            var sinT = Sin(angleInRadians);
 
             // The general rotation matrix in 2D is 
             // 
@@ -75,7 +76,7 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="otherPoint">The other point.</param>
         /// <returns>The distance to the other point.</returns>
-        public double DistanceTo(Point otherPoint) => Math.Sqrt((X - otherPoint.X).Squared() + (Y - otherPoint.Y).Squared());
+        public double DistanceTo(Point otherPoint) => Sqrt((X - otherPoint.X).Squared() + (Y - otherPoint.Y).Squared());
 
         /// <summary>
         /// Creates the perpendicular projection of this point onto a given line.
@@ -86,7 +87,7 @@ namespace GeoGen.AnalyticGeometry
         public Point Project(Line line)
         {
             // Get the perpendicular line passing through this point
-            var perpendicularLine = line.PerpendicularLine(this);
+            var perpendicularLine = line.PerpendicularLineThroughPoint(this);
 
             // Intersect it with the given line
             var intersection = perpendicularLine.IntersectionWith(line);

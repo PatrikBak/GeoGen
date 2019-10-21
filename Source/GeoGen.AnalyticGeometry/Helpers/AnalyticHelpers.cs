@@ -146,8 +146,8 @@ namespace GeoGen.AnalyticGeometry
             var distanceAB = vertex.DistanceTo(rayPoint1);
             var distanceAC = vertex.DistanceTo(rayPoint2);
 
-            // Make sure their sum is not null...
-            if ((distanceAB + distanceAC).Rounded() == 0)
+            // Make sure neither of these distances is 0
+            if (distanceAB.Rounded() == 0 || distanceAC.Rounded() == 0)
                 throw new AnalyticException("Cannot construct the angle bisector from equal points.");
 
             // Construct point X according to the formula

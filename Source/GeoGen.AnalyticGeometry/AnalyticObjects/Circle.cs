@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using static System.Math;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -120,7 +121,7 @@ namespace GeoGen.AnalyticGeometry
                 return true;
 
             // If this distance is the same as the difference between their radii, then they're tangent internally
-            if (distanceBetweenCenters == Math.Abs(Radius - otherCircle.Radius).Rounded())
+            if (distanceBetweenCenters == Abs(Radius - otherCircle.Radius).Rounded())
                 return true;
 
             // Otherwise they're not tangent
@@ -137,7 +138,7 @@ namespace GeoGen.AnalyticGeometry
             // The distance between a point P[x,y] and the line ax+by+c = 0 is equal to 
             // |ax + by + c| / sqrt(a^2 + b^2). We know that (a,b) is normalized, so it's 
             // |ax + by + c|. We can test tangency by checking if this is equal to the radius.
-            return Math.Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
+            return Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
         }
 
         /// <summary>

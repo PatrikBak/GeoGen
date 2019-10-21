@@ -36,7 +36,7 @@ namespace GeoGen.Constructor
             var l = (Line)input[1];
 
             // Construct the result
-            return l.PerpendicularLine(A).PerpendicularLine(A);
+            return l.PerpendicularLineThroughPoint(A).PerpendicularLineThroughPoint(A);
         }
 
         #endregion

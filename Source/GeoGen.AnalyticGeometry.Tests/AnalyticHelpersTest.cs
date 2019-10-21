@@ -1,16 +1,15 @@
-﻿using GeoGen.Utilities;
+﻿using FluentAssertions;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
+using static GeoGen.AnalyticGeometry.AnalyticHelpers;
+using static System.Math;
 
 namespace GeoGen.AnalyticGeometry.Tests
 {
     /// <summary>
     /// The test class for <see cref="AnalyticHelpers"/>.
-    /// 
-    /// TODO: Review
-    /// 
     /// </summary>
     [TestFixture]
     public class AnalyticHelpersTest
@@ -18,317 +17,319 @@ namespace GeoGen.AnalyticGeometry.Tests
         [Test]
         public void Test_Lies_On_With_Line()
         {
+            // Prepare some line
             var line = new Line(new Point(1, 1), new Point(4, 5));
 
-            Assert.IsTrue(AnalyticHelpers.LiesOn(line, new Point(1, 1)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(line, new Point(7, 9)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(line, new Point(4, 5)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(line, new Point(-2, -3)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(line, new Point(2.5, 3)));
+            // Test some points that are on it
+            LiesOn(line, new Point(1, 1)).Should().BeTrue();
+            LiesOn(line, new Point(7, 9)).Should().BeTrue();
+            LiesOn(line, new Point(4, 5)).Should().BeTrue();
+            LiesOn(line, new Point(-2, -3)).Should().BeTrue();
+            LiesOn(line, new Point(2.5, 3)).Should().BeTrue();
 
-            Assert.IsFalse(AnalyticHelpers.LiesOn(line, new Point(7, 2)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(line, new Point(7, 3)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(line, new Point(-5, 3)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(line, new Point(-7, -7)));
+            // Test some points that are not on it
+            LiesOn(line, new Point(7, 2)).Should().BeFalse();
+            LiesOn(line, new Point(7, 3)).Should().BeFalse();
+            LiesOn(line, new Point(-5, 3)).Should().BeFalse();
+            LiesOn(line, new Point(-7, -7)).Should().BeFalse();
         }
 
         [Test]
         public void Test_Lies_On_With_Circle()
         {
+            // Prepare a circle
             var circle = new Circle(new Point(1, 1), 2);
 
-            Assert.IsTrue(AnalyticHelpers.LiesOn(circle, new Point(-1, 1)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(circle, new Point(-0.2, 2.6)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(circle, new Point(-0.6, 2.2)));
-            Assert.IsTrue(AnalyticHelpers.LiesOn(circle, new Point(3, 1)));
+            // Test some points that are on it
+            LiesOn(circle, new Point(-1, 1)).Should().BeTrue();
+            LiesOn(circle, new Point(-0.2, 2.6)).Should().BeTrue();
+            LiesOn(circle, new Point(-0.6, 2.2)).Should().BeTrue();
+            LiesOn(circle, new Point(3, 1)).Should().BeTrue();
 
-            Assert.IsFalse(AnalyticHelpers.LiesOn(circle, new Point(1, 1)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(circle, new Point(7, -5)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(circle, new Point(5, -1)));
-            Assert.IsFalse(AnalyticHelpers.LiesOn(circle, new Point(3, -4)));
+            // Test some points that are not on it
+            LiesOn(circle, new Point(1, 1)).Should().BeFalse();
+            LiesOn(circle, new Point(7, -5)).Should().BeFalse();
+            LiesOn(circle, new Point(5, -1)).Should().BeFalse();
+            LiesOn(circle, new Point(3, -4)).Should().BeFalse();
         }
 
         [Test]
         public void Test_Intersect_Two_Lines()
         {
-            var objects = new IAnalyticObject[]
+            // Intersect some two lines
+            Intersect(new IAnalyticObject[]
             {
                 new Line(new Point(1, 5), new Point(1, 3)),
                 new Line(new Point(1, 5), new Point(2, 4))
-            };
-
-            var points = AnalyticHelpers.Intersect(objects);
-
-            Assert.AreEqual(1, points.Length);
-            Assert.IsTrue(points.Contains(new Point(1, 5)));
+            })
+            // Test the intersection
+            .Should().BeEquivalentTo(new[] { new Point(1, 5) });
         }
 
         [Test]
         public void Test_Intersect_Two_Circles()
         {
-            var objects = new IAnalyticObject[]
+            // Intersect some two circles
+            Intersect(new IAnalyticObject[]
             {
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(7, 8)),
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(8, 7))
-            };
-
-            var points = AnalyticHelpers.Intersect(objects);
-
-            Assert.AreEqual(2, points.Length);
-            Assert.IsTrue(points.Contains(new Point(0, 0)));
-            Assert.IsTrue(points.Contains(new Point(1, 1)));
+            })
+            // Test the intersections
+            .Should().BeEquivalentTo(new[] { new Point(0, 0), new Point(1, 1) });
         }
 
         [Test]
         public void Test_Intersect_Line_And_Circle()
         {
-            var objects = new IAnalyticObject[]
+            // Intersect some circle and some line
+            Intersect(new IAnalyticObject[]
             {
                 new Circle(new Point(0, 0), new Point(1, 1), new Point(7, 8)),
                 new Line(new Point(0, 0), new Point(1, 1))
-            };
-
-            var points = AnalyticHelpers.Intersect(objects);
-
-            Assert.AreEqual(2, points.Length);
-            Assert.IsTrue(points.Contains(new Point(0, 0)));
-            Assert.IsTrue(points.Contains(new Point(1, 1)));
+            })
+            // Test the intersections
+            .Should().BeEquivalentTo(new[] { new Point(0, 0), new Point(1, 1) });
         }
 
         [Test]
-        public void Test_Intersect_Complex_Test_Medians()
+        public void Test_Intersect_Three_Lines()
         {
-            var a = new Point(1, 5);
-            var b = new Point(7, 4);
-            var c = new Point(1, 77);
+            // Prepare some non-collinear points
+            var A = new Point(1, 5);
+            var B = new Point(7, 4);
+            var C = new Point(1, 77);
 
-            var objects = new IAnalyticObject[]
+            // Intersect the medians
+            Intersect(new IAnalyticObject[]
             {
-                new Line(a, (b+c)/2),
-                new Line(b, (c+a)/2),
-                new Line(c, (a+b)/2)
-            };
-
-            var points = AnalyticHelpers.Intersect(objects);
-
-            Assert.AreEqual(1, points.Length);
-            Assert.IsTrue(points.Contains((a + b + c) / 3));
+                new Line(A, (B+C)/2),
+                new Line(B, (C+A)/2),
+                new Line(C, (A+B)/2)
+            })
+            // Test the intersection, which should be the centroid
+            .Should().BeEquivalentTo(new[] { (A + B + C) / 3 });
         }
 
         [Test]
-        public void Test_Intersect_Complex_Test_Feet_Of_Altitude()
+        public void Test_Intersect_Two_Lines_Two_Circles()
         {
-            var a = new Point(1, 5);
-            var b = new Point(7, 4);
-            var c = new Point(1, 77);
+            // Prepare some non-collinear points
+            var A = new Point(1, 5);
+            var B = new Point(7, 4);
+            var C = new Point(1, 77);
 
-            var objects = new IAnalyticObject[]
+            // Intersect some lines and circles
+            Intersect(new IAnalyticObject[]
             {
-                new Line(b, c),
-                new Circle((a+b)/2, a.DistanceTo(b) / 2),
-                new Circle((a+c)/2, a.DistanceTo(c) / 2),
-                new Line(a, a.Project(new Line(b, c)))
-            };
-
-            var points = AnalyticHelpers.Intersect(objects);
-
-            Assert.AreEqual(1, points.Length);
-            Assert.IsTrue(points.Contains(a.Project(new Line(b, c))));
+                new Line(B, C),
+                new Circle((A+B)/2, A.DistanceTo(B) / 2),
+                new Circle((A+C)/2, A.DistanceTo(C) / 2),
+                new Line(A, A.Project(new Line(B, C)))
+            })
+            // Test the intersection, which should be the projection of A on BC
+            .Should().BeEquivalentTo(new[] { A.Project(new Line(B, C)) });
         }
 
         [Test]
         public void Test_Angle_Between_Lines_With_Equal_Lines()
         {
-            // Diagonal lines
+            // Prepare some diagonal lines
             var line1 = new Line(new Point(0, 0), new Point(1, 1));
             var line2 = new Line(new Point(2, 2), new Point(3, 3));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
 
-            // Vertical lines
+            // Prepare some vertical lines
             line1 = new Line(new Point(0, 1), new Point(0, 2));
             line2 = new Line(new Point(0, 3), new Point(0, 4));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
 
-            // Horizontal lines
+            // Prepare some horizontal lines
             line1 = new Line(new Point(1, 0), new Point(3, 0));
             line2 = new Line(new Point(2, 0), new Point(4, 0));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
         }
 
         [Test]
         public void Test_Angle_Between_Lines_With_Parallel_Lines()
         {
-            // Diagonal lines
+            // Prepare some diagonal lines
             var line1 = new Line(new Point(0, 0), new Point(1, 1));
             var line2 = new Line(new Point(-1, 0), new Point(0, 1));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
 
-            // Vertical lines
+            // Prepare some vertical lines
             line1 = new Line(new Point(0, 1), new Point(0, 2));
             line2 = new Line(new Point(1, 3), new Point(1, 4));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
 
-            // Horizontal lines
+            // Prepare some horizontal lines
             line1 = new Line(new Point(1, 1), new Point(3, 1));
             line2 = new Line(new Point(2, 0), new Point(4, 0));
 
-            Assert.AreEqual(0, AnalyticHelpers.AngleBetweenLines(line1, line2).Rounded());
+            // Assert their angle is 0
+            AngleBetweenLines(line1, line2).Rounded().Should().Be(0);
+            AngleBetweenLines(line2, line1).Rounded().Should().Be(0);
         }
 
         [Test]
         public void Test_Angle_Between_Lines_With_Acute_Angled_Triangle()
         {
-            // Prepare points
-            var a = new Point(2, -2);
-            var b = new Point(8, -2);
-            var c = new Point(3, 6);
+            // Prepare some non-collinear points
+            var A = new Point(2, -2);
+            var B = new Point(8, -2);
+            var C = new Point(3, 6);
 
-            // Prepare lines
-            var lines = new List<Line>
-            {
-                new Line(a, b),
-                new Line(a, c),
-                new Line(b, c)
-            };
+            // Prepare their sides
+            var AB = new Line(A, B);
+            var AC = new Line(A, C);
+            var BC = new Line(B, C);
 
-            // Prepare precalculated results
-            var results = new List<double>
-            {
-                Math.Atan(8),
-                Math.Atan(8.0/5),
-                Math.PI - Math.Atan(8) - Math.Atan(8.0/5)
-            };
-
-            // Assert
-            Assert.AreEqual(results[0].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[2]).Rounded());
-            Assert.AreEqual(results[2].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[1], lines[2]).Rounded());
+            // Assert with some precalculated results
+            AngleBetweenLines(AB, AC).Rounded().Should().Be(Atan(8).Rounded());
+            AngleBetweenLines(AB, BC).Rounded().Should().Be(Atan(8.0 / 5).Rounded());
+            AngleBetweenLines(AC, BC).Rounded().Should().Be((PI - Atan(8) - Atan(8.0 / 5)).Rounded());
         }
 
         [Test]
         public void Test_Angle_Between_Lines_With_Right_Angled_Triangle()
         {
-            // Prepare points
-            var a = new Point(0, 3);
-            var b = new Point(8, 5);
-            var c = new Point(3, 8);
+            // Prepare some non-collinear points
+            var A = new Point(0, 3);
+            var B = new Point(8, 5);
+            var C = new Point(3, 8);
 
-            // Prepare lines
-            var lines = new List<Line>
-            {
-                new Line(a, b),
-                new Line(a, c),
-                new Line(b, c)
-            };
+            // Prepare their sides
+            var AB = new Line(A, B);
+            var AC = new Line(A, C);
+            var BC = new Line(B, C);
 
-            // Prepare precalculated results
-            var results = new List<double>
-            {
-                Math.PI/4,
-                Math.PI/4,
-                Math.PI/2
-            };
-
-            // Assert
-            Assert.AreEqual(results[0].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[1]).Rounded());
-            Assert.AreEqual(results[1].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[0], lines[2]).Rounded());
-            Assert.AreEqual(results[2].Rounded(), AnalyticHelpers.AngleBetweenLines(lines[1], lines[2]).Rounded());
+            // Assert with some precalculated results
+            AngleBetweenLines(AB, AC).Rounded().Should().Be((PI / 4).Rounded());
+            AngleBetweenLines(AB, BC).Rounded().Should().Be((PI / 4).Rounded());
+            AngleBetweenLines(AC, BC).Rounded().Should().Be((PI / 2).Rounded());
         }
-
 
         [Test]
         public void Test_Internal_Angle_Bisector_With_Intencter()
         {
-            var a = new Point(1, 3);
-            var b = new Point(2, 5);
-            var c = new Point(7, 7);
+            // Prepare some non-collinear points
+            var A = new Point(1, 3);
+            var B = new Point(2, 5);
+            var C = new Point(7, 7);
 
-            var alfa = AnalyticHelpers.InternalAngleBisector(a, b, c);
-            var betta = AnalyticHelpers.InternalAngleBisector(b, a, c);
-            var gamma = AnalyticHelpers.InternalAngleBisector(c, a, b);
+            // Get the internal angle bisectors
+            var Abisector = InternalAngleBisector(A, B, C);
+            var Bbisector = InternalAngleBisector(B, A, C);
+            var Cbisector = InternalAngleBisector(C, A, B);
 
-            Assert.IsTrue(alfa.Contains(a));
-            Assert.IsTrue(betta.Contains(b));
-            Assert.IsTrue(gamma.Contains(c));
+            // Make sure they contain the particular vertices
+            Abisector.Contains(A).Should().BeTrue();
+            Bbisector.Contains(B).Should().BeTrue();
+            Cbisector.Contains(C).Should().BeTrue();
 
-            var i1 = alfa.IntersectionWith(betta);
-            var i2 = betta.IntersectionWith(gamma);
-            var i3 = gamma.IntersectionWith(alfa);
+            // Intersect each two
+            var I1 = Abisector.IntersectionWith(Bbisector);
+            var I2 = Bbisector.IntersectionWith(Cbisector);
+            var I3 = Cbisector.IntersectionWith(Abisector);
 
-            Assert.AreEqual(i1, i2);
-            Assert.AreEqual(i2, i3);
-            Assert.AreEqual(i3, i1);
+            // Make sure these intersections are equal
+            I1.Should().Be(I2);
+            I2.Should().Be(I3);
+            I3.Should().Be(I1);
         }
 
         [Test]
-        public void Test_Internal_Angle_Bisector_With__Svrcek_Point()
+        public void Test_Internal_Angle_Bisector_With_Midpoint_Of_Opposite_arc()
         {
-            var a = new Point(1, 3);
-            var b = new Point(2, 5);
-            var c = new Point(7, 7);
+            // Prepare some non-collinear points
+            var A = new Point(1, 3);
+            var B = new Point(2, 5);
+            var C = new Point(7, 7);
 
-            var alfa = AnalyticHelpers.InternalAngleBisector(a, b, c);
-            var bcBisector = AnalyticHelpers.PerpendicularBisector(b, c);
-            var circumCircle = new Circle(a, b, c);
-            var intersection = alfa.IntersectionWith(bcBisector).Value;
+            // Prepare the three objects that should intersect
+            var Abisector = InternalAngleBisector(A, B, C);
+            var BCbisector = PerpendicularBisector(B, C);
+            var ABCcircumcircle = new Circle(A, B, C);
 
-            Assert.IsTrue(circumCircle.Contains(intersection));
+            // Intersect all of them
+            Intersect(new IAnalyticObject[] { Abisector, BCbisector, ABCcircumcircle })
+                // Assert there is only one intersection
+                .Length.Should().Be(1);
+        }
+
+        [Test]
+        public void Test_Internal_Angle_Bisector_With_Equal_Points()
+        {
+            // Prepare some points
+            var A = new Point(0, 1);
+            var B = new Point(42, 666);
+
+            // Assert there is an exception whenever one point is equal to the main vertex
+            Assert.Throws<AnalyticException>(() => InternalAngleBisector(A, A, B));
+            Assert.Throws<AnalyticException>(() => InternalAngleBisector(A, B, A));
+            Assert.Throws<AnalyticException>(() => InternalAngleBisector(A, A, A));
         }
 
         [Test]
         public void Test_Perpendicular_Bisector_Equal_Points()
         {
-            Assert.Throws<AnalyticException>
-            (
-                () =>
-                {
-                    var p1 = new Point(1.0 / 3, 2.0 / 3);
-                    var p2 = new Point(0.1 / 0.3, 0.2 / 0.3);
-
-                    AnalyticHelpers.PerpendicularBisector(p1, p2);
-                }
-            );
+            // Assert there is an exception if it's called for two equal points 
+            Assert.Throws<AnalyticException>(() => PerpendicularBisector(new Point(0, 0), new Point(0, 0)));
+            Assert.Throws<AnalyticException>(() => PerpendicularBisector(new Point(42, 666), new Point(42, 666)));
         }
 
         [Test]
         public void Test_Perpedicular_Bisector_Distint_Points()
         {
-            var tests = new List<Tuple<Point, Point>>
+            // Prepare some precalculated inputs
+            new[]
             {
-                new Tuple<Point, Point>(new Point(0, 0), new Point(1, 0)),
-                new Tuple<Point, Point>(new Point(0, 0), new Point(0, 1)),
-                new Tuple<Point, Point>(new Point(7, 9.5), new Point(7, 9.6)),
-                new Tuple<Point, Point>(new Point(0, 0), new Point(4, 4)),
-                new Tuple<Point, Point>(new Point(17, 4), new Point(11, 2))
-            };
-
-            var unnormalizedCoefficients = new List<List<double>>
-            {
-                new List<double> {1, 0, -0.5},
-                new List<double> {0, 1, -0.5},
-                new List<double> {0, 1, -9.55},
-                new List<double> {1, 1, -4},
-                new List<double> {3, 1, -45}
-            };
-
-            foreach (var i in Enumerable.Range(0, tests.Count))
-            {
-                var test = tests[i];
-                var line = AnalyticHelpers.PerpendicularBisector(test.Item1, test.Item2);
-
-                var coefficients = unnormalizedCoefficients[i];
-                var sumOfSquares = Math.Sqrt(coefficients[0].Squared() + coefficients[1].Squared());
-                var normalized = coefficients.Select(c => c / sumOfSquares).ToList();
-
-                Assert.IsTrue(line.A.Rounded() == normalized[0].Rounded(), $"{i}");
-                Assert.IsTrue(line.B.Rounded() == normalized[1].Rounded(), $"{i}");
-                Assert.IsTrue(line.C.Rounded() == normalized[2].Rounded(), $"{i}");
+                (points: (new Point(0, 0), new Point(1, 0)), coefficients: new[] {1, 0, -0.5}),
+                (points: (new Point(0, 0), new Point(0, 1)), coefficients: new[] {0, 1, -0.5}),
+                (points: (new Point(7, 9.5), new Point(7, 9.6)), coefficients: new[] {0, 1, -9.55}),
+                (points: (new Point(0, 0), new Point(4, 4)), coefficients: new[] {1 / Sqrt(2), 1 / Sqrt(2), -4 / Sqrt(2)}),
+                (points: (new Point(17, 4), new Point(11, 2)), coefficients: new[] {3 / Sqrt(10), 1 / Sqrt(10), -45 / Sqrt(10)})
             }
+            // Test each
+            .ForEach(pair =>
+            {
+                // Create the bisector
+                var bisector = PerpendicularBisector(pair.points.Item1, pair.points.Item2);
+
+                // Get its rounded coefficients
+                new[] { bisector.A, bisector.B, bisector.C }.Select(d => d.Rounded())
+                    // Assert they are equal to the precalculated ones
+                    .SequenceEqual(pair.coefficients.Select(d => d.Rounded())).Should().BeTrue();
+            });
+        }
+
+        [Test]
+        public void Test_Are_Collinear()
+        {
+            // Get some collinear points
+            var A = new Point(0, 0);
+            var B = new Point(2, 2);
+            var C = new Point(42, 42);
+            var D = new Point(666, 666);
+
+            // Assert they're collinear
+            AreCollinear(A, B, C, D).Should().BeTrue();
         }
     }
 }

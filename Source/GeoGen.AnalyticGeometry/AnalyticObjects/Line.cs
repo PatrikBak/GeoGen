@@ -1,6 +1,7 @@
 ﻿using GeoGen.Utilities;
 using System;
 using System.Globalization;
+using static System.Math;
 
 namespace GeoGen.AnalyticGeometry
 {
@@ -29,11 +30,6 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         public double C { get; }
 
-        /// <summary>
-        /// Gets the angle in radians between this line and the x-axis. 
-        /// </summary>
-        public double Angle => B.Rounded() == 0 ? Math.PI / 2 : Math.Atan(A / B);
-
         #endregion
 
         #region Constructor
@@ -61,7 +57,7 @@ namespace GeoGen.AnalyticGeometry
             var c = -a * point1.X - b * point1.Y;
 
             // Now we calculate the scale so that (a,b) is a normalized vector (i.e. a^2+b^2 = 1)
-            var scale = Math.Sqrt(a.Squared() + b.Squared());
+            var scale = Sqrt(a.Squared() + b.Squared());
 
             // If we used this scale, we would almost have the unique representation. The problem is that ax+by=0 
             // and -ax-by=0 represent the same line even when a^2+b^2 = (-a)^2+(-b)^2 = 1. We're going to solve it by
@@ -136,7 +132,7 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="point">The point that should lie on the resulting line.</param>
         /// <returns>The line perpendicular to this one passing through the given point.</returns>
-        public Line PerpendicularLine(Point point)
+        public Line PerpendicularLineThroughPoint(Point point)
         {
             // Math suggests that the directional vector of the result
             // will be (A,B). We have one point on the line, [x,y]
@@ -286,7 +282,7 @@ namespace GeoGen.AnalyticGeometry
                     if (B == 1 || B == -1)
                         result += "y";
                     else
-                        result += $"{Math.Abs(B).ToString(CultureInfo.InvariantCulture)}y";
+                        result += $"{Abs(B).ToString(CultureInfo.InvariantCulture)}y";
                 }
                 // If there was not an x-part
                 else
