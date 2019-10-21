@@ -119,8 +119,8 @@ namespace GeoGen.Algorithm
             // Prepare the map for theorems
             var theoremMap = new Dictionary<GeneratedConfiguration, TheoremMap>();
 
-            // Prepare the set containing inconstructible objects. 
-            var inconstructibleObjects = new HashSet<ConfigurationObject>();
+            // Prepare the set containing excluded objects. 
+            var excludedObjects = new HashSet<ConfigurationObject>();
 
             // Prepare the picture where we will draw all the objects to find geometrically equal ones
             var objectTestingPictures = initialPictures.Clone();
@@ -150,26 +150,39 @@ namespace GeoGen.Algorithm
             // Prepare the function that checks if the generated object is correct
             bool VerifyConstructedObjectCorrectness(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject constructedObject)
             {
-                // If it's marked as an inconstructible one, then it's not fine
-                if (inconstructibleObjects.Contains(constructedObject))
+                // If it's been excluded, then it's not fine
+                if (excludedObjects.Contains(constructedObject))
                     return false;
 
-                // If the object already has a key, then it's fine
+                // If the object already has a code, then it's fine
                 if (allObjectCodes.ContainsKey(constructedObject))
                     return true;
 
-                // If it doesn't have a code, construct it 
-                // TODO: Execute safely
+                // If it doesn't have a code, then safely execute
                 // TODO: Add tracing
-                var data = _geometryConstructor.ExamineObject(objectTestingPictures, constructedObject, addToPictures: true);
+                var data = GeneralUtilities.TryExecute(
+                    // Constructing of the object with adding it to the pictures
+                    () => _geometryConstructor.ExamineObject(objectTestingPictures, constructedObject, addToPictures: true),
+                    // Ignoring a possible failure, which will be handled in the next step
+                    (GeometryConstructionException e) => { });
 
-                // If it's not constructible...
+                // If it couldn't be drawn
+                if (data == null)
+                {
+                    // Mark it
+                    excludedObjects.Add(constructedObject);
+
+                    // The object is incorrect
+                    return false;
+                }
+
+                // If it's inconstructible...
                 if (data.InconstructibleObject != default)
                 {
                     // Mark it
-                    inconstructibleObjects.Add(data.InconstructibleObject);
+                    excludedObjects.Add(data.InconstructibleObject);
 
-                    // The configuration is incorrect
+                    // The object is incorrect
                     return false;
                 }
 
