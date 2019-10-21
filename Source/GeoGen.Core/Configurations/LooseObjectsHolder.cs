@@ -72,6 +72,7 @@ namespace GeoGen.Core
                 // Cases where any permutation works
                 case LineSegment:
                 case Triangle:
+                case Quadrilateral:
 
                     // Take all permutations and zip them with the objects
                     return LooseObjects.Permutations().Select(LooseObjects.ZipToDictionary);
