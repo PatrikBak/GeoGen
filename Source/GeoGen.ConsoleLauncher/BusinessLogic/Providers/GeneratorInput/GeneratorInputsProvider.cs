@@ -74,14 +74,14 @@ namespace GeoGen.ConsoleLauncher
             if (inputFiles.Count == 0)
             {
                 // Log it
-                LoggingManager.LogInfo("No file found on which we could run the algorithm.");
+                LoggingManager.LogWarning("No file found on which we could run the algorithm.");
 
                 // Finish the method
                 return new List<LoadedGeneratorInput>();
             }
 
             // Inform about the found ones
-            LoggingManager.LogInfo($"Found input files:\n\n{inputFiles.Select(file => $"{new string(' ', 15)}{file.path}").ToJoinedString("\n")}\n");
+            LoggingManager.LogInfo($"Found input files:\n\n{inputFiles.Select(file => $"  - {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
             var result = new List<LoadedGeneratorInput>();
@@ -90,7 +90,7 @@ namespace GeoGen.ConsoleLauncher
             foreach (var (path, id) in inputFiles)
             {
                 // Log the file being processed
-                LoggingManager.LogInfo($"Processing input file {path}.");
+                LoggingManager.LogDebug($"Processing input file {path}.");
 
                 #region Loading the file
 
