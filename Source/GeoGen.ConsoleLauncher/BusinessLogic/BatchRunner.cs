@@ -62,14 +62,11 @@ namespace GeoGen.ConsoleLauncher
                 }
                 catch (Exception e)
                 {
-                    // Log the exception
+                    // Log which file failed
                     LoggingManager.LogError($"Couldn't perform the algorithm on the input file {input.FilePath}: {e.Message}");
 
-                    // Log the internal exception
-                    LoggingManager.LogDebug($"{e}\n");
-
-                    // Continue to the next file
-                    continue;
+                    // Throw it further
+                    throw;
                 }
             }
         }
