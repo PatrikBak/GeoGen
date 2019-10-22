@@ -31,7 +31,7 @@ namespace GeoGen.Utilities
 
             // If we failed, we want to make the developer aware
             if (!match.Success)
-                throw new Exception($"The class {className} doesn't match the name pattern '{{type}}{classNamePrefix}'");
+                throw new ArgumentException($"The class {className} doesn't match the name pattern '{{type}}{classNamePrefix}'");
 
             // Otherwise we pull the supposed type name
             var typeName = match.Groups[1].Value;
@@ -41,7 +41,7 @@ namespace GeoGen.Utilities
 
             // If the parsing failed, we want to make the developer aware
             if (!parsingSuccessful)
-                throw new Exception($"Unable to parse the name '{typeName}' (inferred from the {className}) into a value of {typeof(T)}.");
+                throw new ArgumentException($"Unable to parse the name '{typeName}' (inferred from the {className}) into a value of {typeof(T)}.");
 
             // Otherwise we're fine
             return result;
