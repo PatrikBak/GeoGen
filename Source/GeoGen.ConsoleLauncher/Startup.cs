@@ -10,54 +10,37 @@ namespace GeoGen.ConsoleLauncher
     /// </summary>
     public static class Startup
     {
-        #region Main method
-
         /// <summary>
         /// The main function.
         /// </summary>
-        private static void Main()
-        {
-            // Initialize the IoC system
-            RunTaskAndHandleExceptions(() => IoC.InitializeAsync(), exitOnException: true);
-
-            // Run the algorithm
-            RunTaskAndHandleExceptions(() => IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunAlgorithmsAsync());
-
-            // Log that we're done
-            LoggingManager.LogInfo("The application has finished.\n");
-        }
-
-        #endregion
-
-        #region RunAndHandleExceptions methods
-
-        /// <summary>
-        /// Runs the given task and handles all possible exception it may produce.
-        /// </summary>
-        /// <param name="task">The task.</param>
-        /// <param name="exitOnException">Indicates whether we should exist when an exception occurs.</param>
-        private static void RunTaskAndHandleExceptions(Func<Task> task, bool exitOnException = false)
+        /// <param name="arguments">The arguments of the application.</param>
+        public static async Task Main(string[] arguments)
         {
             try
             {
-                // Run the task and wait for the result
-                // 
-                // NOTE: Because of calling GetAwaiter().GetResult() instead of Wait(),
-                //       the final exception won't be of the type AggregateException
-                //
-                task().GetAwaiter().GetResult();
+                // Load the settings
+                // The first argument could be the settings file
+                // If it's not, fall-back to the default value
+                var settings = await SettingsLoader.LoadAsync(arguments.Length > 1 ? arguments[0] : "settings.json");
+
+                // Initialize the IoC system
+                await IoC.InitializeAsync(settings);
+
+                // Run the algorithm
+                await IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunAlgorithmsAsync();
+
+                // Log that we're done
+                LoggingManager.LogInfo("The application has finished.\n");
             }
+            // Catch for any unhandled exception
             catch (Exception e)
             {
-                // Log it
+                // Log if there is any
                 LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
 
-                // If we should terminate, do so
-                if (exitOnException)
-                    Environment.Exit(-1);
+                // This is a sad end
+                Environment.Exit(-1);
             }
         }
-
-        #endregion
     }
 }

@@ -20,7 +20,7 @@ namespace GeoGen.ConsoleLauncher
 
         #endregion
 
-        #region BaseLogger Log method implementation
+        #region BaseLogger implementation
 
         /// <summary>
         /// Handles the logged message being passed in.
@@ -57,14 +57,14 @@ namespace GeoGen.ConsoleLauncher
                     consoleColor = ConsoleColor.Yellow;
                     break;
 
-                // Error is red
+                // Error is  dark red
                 case LogLevel.Error:
-                    consoleColor = ConsoleColor.Red;
+                    consoleColor = ConsoleColor.DarkRed;
                     break;
 
-                // Fatal is dark red
+                // Fatal is red
                 case LogLevel.Fatal:
-                    consoleColor = ConsoleColor.Magenta;
+                    consoleColor = ConsoleColor.Red;
                     break;
             }
 

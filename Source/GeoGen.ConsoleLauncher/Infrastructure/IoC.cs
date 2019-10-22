@@ -2,7 +2,6 @@
 using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using Ninject;
-using System;
 using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
@@ -26,18 +25,16 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes the <see cref="Kernel"/> and all the dependencies.
         /// </summary>
-        public static async Task InitializeAsync()
+        /// <param name="settings">The settings of the application.</param>
+        public static async Task InitializeAsync(Settings settings)
         {
-            // Load the settings
-            var settings = SettingsLoader.Load();
-
             // Initialize the container
             Kernel = DependenciesResolver.IoC.CreateKernel();
 
             #region Bind logging system
 
             // Bind logging manager
-            Kernel.Bind<ILoggingManager>().To<DefaultLoggingManager>();
+            Kernel.Bind<ILoggingManager>().To<CustomLoggingManager>();
 
             // Bind loggers according to the settings
             settings.Loggers.ForEach(loggersettings =>
@@ -64,7 +61,7 @@ namespace GeoGen.ConsoleLauncher
                     default:
 
                         // Otherwise we forgot something
-                        throw new Exception($"Unhandled type of the settings ('{loggersettings.GetType()}') in the NInject settings.");
+                        throw new SettingsException($"Unhandled type of the settings ('{loggersettings.GetType()}') in the NInject bindings.");
                 }
             });
 

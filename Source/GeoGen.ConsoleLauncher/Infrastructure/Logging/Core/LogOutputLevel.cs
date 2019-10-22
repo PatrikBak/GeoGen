@@ -28,11 +28,6 @@
         /// <summary>
         /// Log only fatal messages.
         /// </summary>
-        Fatal = 5,
-
-        /// <summary>
-        /// The logger will never output anything
-        /// </summary>
-        Nothing = 6,
+        Fatal = 5
     }
 }

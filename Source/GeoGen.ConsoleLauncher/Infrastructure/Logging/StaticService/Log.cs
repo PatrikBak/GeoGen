@@ -18,9 +18,9 @@
         #region Backing field
 
         /// <summary>
-        /// The current manager, initialized with an empty manager (so it's never null)
+        /// The current manager, initialized with the default manager (so it's never null)
         /// </summary>
-        private static ILoggingManager _manager = new EmptyLoggingManager();
+        private static ILoggingManager _manager = new DefaultLoggingManager();
 
         #endregion
 
@@ -45,8 +45,8 @@
                 // Lock the setter
                 lock (_lock)
                 {
-                    // Set the value, if it's not all. Otherwise fall-back to an empty manager
-                    _manager = value ?? new EmptyLoggingManager();
+                    // Set the value, if it's not all. Otherwise fall-back to the logging manager
+                    _manager = value ?? new DefaultLoggingManager();
                 }
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace GeoGen.ConsoleLauncher
@@ -24,7 +23,7 @@ namespace GeoGen.ConsoleLauncher
 
         #endregion
 
-        #region BaseLogger Log method implementation
+        #region BaseLogger implementation
 
         /// <summary>
         /// Handles the logged message being passed in.
@@ -40,20 +39,11 @@ namespace GeoGen.ConsoleLauncher
             // Compose the final message
             var finalMessage = ComposeFinalMessage(message, level, time, origin, filePath, lineNumber);
 
-            try
-            {
-                // Open the stream writer for the file
-                using var streamWriter = new StreamWriter(_settings.FileLogPath, append: true);
+            // Open the stream writer for the file
+            using var streamWriter = new StreamWriter(_settings.FileLogPath, append: true);
 
-                // Write the message to the file
-                streamWriter.WriteLine(finalMessage);
-            }
-            // If there is any exception
-            catch (Exception e)
-            {
-                // Let the developer know
-                Debug.WriteLine($"Unable to write the log message to the log file. The exception: {Environment.NewLine}{e.Message}");
-            }
+            // Write the message to the file
+            streamWriter.WriteLine(finalMessage);
         }
 
         #endregion

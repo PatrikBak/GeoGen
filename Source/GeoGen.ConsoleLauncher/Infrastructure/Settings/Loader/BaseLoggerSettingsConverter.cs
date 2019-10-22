@@ -10,36 +10,64 @@ namespace GeoGen.ConsoleLauncher
     /// </summary>
     public class BaseLoggerSettingsConverter : JsonConverter
     {
+        #region Private constants
+
+        /// <summary>
+        /// The name of the property that identifier settings for a particular logger.
+        /// </summary>
+        private const string LoggerIdentifierPropertyName = "LoggerName";
+
+        #endregion
+
         #region JsonConverter implementation
 
+        /// <summary>
+        /// Determines whether this instance can convert the specified object type.
+        /// </summary>
+        /// <param name="objectType">Type of the object.</param>
+        /// <returns>true if this instance can convert the specified object type; otherwise, false.</returns>
         public override bool CanConvert(Type objectType)
-        {
             // We can convert only derived types of the BaseLoggerSettings
-            return typeof(BaseLoggerSettings).IsAssignableFrom(objectType);
-        }
+            => typeof(BaseLoggerSettings).IsAssignableFrom(objectType);
 
+        /// <summary>
+        /// Reads the JSON representation of the object.
+        /// </summary>
+        /// <param name="reader">The reader to read from.</param>
+        /// <param name="objectType">Type of the object.</param>
+        /// <param name="existingValue">The existing value of object being read.</param>
+        /// <param name="serializer">The calling serializer.</param>
+        /// <returns>The read object value.</returns>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // Get the JSON object representing the current settings
             var item = JObject.Load(reader);
 
-            // Find the name of the class that we should serialize
-            var name = item["Name"].Value<string>();
+            // Find the name of the logger whose settings that we should serialize
+            var loggerName = item[LoggerIdentifierPropertyName]?.Value<string>()
+                // Warn if there is no property with the name
+                ?? throw new SettingsException($"There should be a property \"{LoggerIdentifierPropertyName}\" identifying the settings.");
 
             // Distinguish between loggers
-            return name switch
+            return loggerName switch
             {
-                // If it's console logger...
+                // If it's a console logger...
                 "ConsoleLogger" => item.ToObject<ConsoleLoggerSettings>() as BaseLoggerSettings,
 
-                // If it's file logger...
+                // If it's a file logger...
                 "FileLogger" => item.ToObject<FileLoggerSettings>(),
 
-                // Otherwise we failed...
-                _ => throw new Exception("Unable to parse the settings file"),
+                // Otherwise we have a problem...
+                _ => throw new SettingsException($"Unhandled type of logger: {loggerName}"),
             };
         }
 
+        /// <summary>
+        /// Writes the JSON representation of the object.
+        /// </summary>
+        /// <param name="writer">The writer to write to.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="serializer">The calling serializer.</param>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             // Find the name of the logger
@@ -49,7 +77,7 @@ namespace GeoGen.ConsoleLauncher
             var jsonObject = (JObject)JToken.FromObject(value);
 
             // Add the name property
-            jsonObject.AddFirst(new JProperty("Name", new JValue(loggerName)));
+            jsonObject.AddFirst(new JProperty(LoggerIdentifierPropertyName, new JValue(loggerName)));
 
             // Write the object to the writer
             jsonObject.WriteTo(writer);
@@ -78,7 +106,7 @@ namespace GeoGen.ConsoleLauncher
                 // Return the value of the first group (the name of the logger) with the prefix 'Logger'
                 ? $"{match.Groups[1].Value}Logger"
                 // Otherwise throw an exception
-                : throw new Exception($"Invalid name for the logger class: {match}. It should end with the string 'LoggerSettings'.");
+                : throw new SettingsException($"Invalid name for the logger class: {match}. It should end with the string 'LoggerSettings'.");
         }
 
         #endregion
