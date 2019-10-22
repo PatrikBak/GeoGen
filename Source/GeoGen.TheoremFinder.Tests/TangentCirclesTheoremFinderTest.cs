@@ -21,18 +21,16 @@ namespace GeoGen.TheoremFinder.Tests
         /// <summary>
         /// Gets the instance of the finder that doesn't exclude tangencies inside the picture.
         /// </summary>
-        private static TangentCirclesTheoremFinder WithoutExcludingTangenciesInsidePicture => new TangentCirclesTheoremFinder(new TangentCirclesTheoremFinderSettings
-        {
-            ExcludeTangencyInsidePicture = false
-        });
+        private static TangentCirclesTheoremFinder WithoutExcludingTangenciesInsidePicture => new TangentCirclesTheoremFinder(
+            // Create the right settings
+            new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false));
 
         /// <summary>
         /// Gets the instance of the finder that excludes tangencies inside the picture.
         /// </summary>
-        private static TangentCirclesTheoremFinder WithExcludingTangenciesInsidePicture => new TangentCirclesTheoremFinder(new TangentCirclesTheoremFinderSettings
-        {
-            ExcludeTangencyInsidePicture = true
-        });
+        private static TangentCirclesTheoremFinder WithExcludingTangenciesInsidePicture => new TangentCirclesTheoremFinder(
+            // Create the right settings
+            new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true));
 
         #endregion
 

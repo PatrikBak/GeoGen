@@ -102,7 +102,7 @@ namespace GeoGen.Constructor
             }
 
             // If we got here, then there are no inconstructible objects and no duplicates
-            return (pictures, new ConstructionData());
+            return (pictures, new ConstructionData(default, default));
         }
 
         /// <summary>
@@ -146,15 +146,15 @@ namespace GeoGen.Constructor
         }
 
         /// <summary>
-        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
-        /// It is assumed that the constructed object can be construed in the passed pictures. Throws a 
-        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/>. It is assumed that the constructed 
+        /// object can be construed in each of the passed pictures using its objects or its remembered duplicates.
+        /// Throws a <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
         /// <param name="addToPictures">Indicates if we should add the object to the pictures.</param>
         /// <returns>The construction data.</returns>
-        public ConstructionData ExamineObject(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
+        public ConstructionData Construct(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
         {
             try
             {
@@ -333,13 +333,13 @@ namespace GeoGen.Constructor
 
             //  Now the object is handled with respect to all the pictures
             return new ConstructionData
-            {
+            (
                 // Set the inconstructible object to the given one, if it can't be constructed
-                InconstructibleObject = !canBeConstructed ? constructedObject : default,
+                inconstructibleObject: !canBeConstructed ? constructedObject : default,
 
                 // Set the duplicates to the pair of this object and the found duplicate, if there's any
-                Duplicates = duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default
-            };
+                duplicates: duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default
+            );
         }
 
         /// <summary>

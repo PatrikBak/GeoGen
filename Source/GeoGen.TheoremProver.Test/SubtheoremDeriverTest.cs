@@ -36,23 +36,18 @@ namespace GeoGen.TheoremProver.Test
         {
             // Initialize IoC
             var kernel = IoC.CreateKernel()
-                // Add theorem finder with no restrictions
-                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings
-                {
-                    ExcludeTangencyInsidePicture = false
-                },
-                new LineTangentToCircleTheoremFinderSettings
-                {
-                    ExcludeTangencyInsidePicture = false
-                },
-                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
+                // Add the theorem finder with no restrictions
+                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                                        new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false),
+                                        // Take all types except for equal objects for which there is no finder
+                                        typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToReadOnlyHashSet())
                 // Add constructor ignoring inconsistencies
                 .AddConstructor(new PicturesSettings
-                {
-                    NumberOfPictures = 5,
-                    MaximalAttemptsToReconstructOnePicture = 0,
-                    MaximalAttemptsToReconstructAllPictures = 0
-                });
+                (
+                    maximalAttemptsToReconstructAllPictures: 0,
+                    maximalAttemptsToReconstructOnePicture: 0,
+                    numberOfPictures: 5
+                ));
 
             // Create the constructor
             var constructor = kernel.Get<IGeometryConstructor>();

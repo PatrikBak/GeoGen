@@ -54,7 +54,7 @@ namespace GeoGen.ConsoleLauncher
         /// Runs the algorithm on a given output.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        public void Run(LoadedGeneratorInput input)
+        public void Run(LoadedAlgorithmInput input)
         {
             // Call the algorithm
             var (initialTheorems, outputs) = _algorithm.Run(input);

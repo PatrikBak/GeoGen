@@ -30,11 +30,11 @@ namespace GeoGen.Constructor.Tests
         {
             // Create pictures
             var pictures = new Pictures(configuration, new PicturesSettings
-            {
-                MaximalAttemptsToReconstructAllPictures = 0,
-                MaximalAttemptsToReconstructOnePicture = 0,
-                NumberOfPictures = allObjects.Length
-            });
+            (
+                maximalAttemptsToReconstructAllPictures: 0,
+                maximalAttemptsToReconstructOnePicture: 0,
+                numberOfPictures: allObjects.Length
+            ));
 
             // Add all objects to them. For a current picture
             pictures.ForEach((picture, pictureIndex) =>

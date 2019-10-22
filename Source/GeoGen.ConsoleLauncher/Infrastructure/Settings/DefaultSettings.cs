@@ -2,105 +2,84 @@
 using GeoGen.Core;
 using GeoGen.TheoremFinder;
 using System.Collections.Generic;
-using System.IO;
 
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// A default settings for the application.
+    /// The default settings for the application.
     /// </summary>
     public class DefaultSettings : Settings
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultSettings"/> class.
         /// </summary>
-        public DefaultSettings()
-        {
-            // The folder in which we're working by default
-            var workingFolder = "..\\..\\..\\Data";
-
-            // Create the loggers
-            Loggers = new List<BaseLoggerSettings>
+        public DefaultSettings() : base
+        (
+            loggers: new List<BaseLoggerSettings>
             {
                 // Console logger
                 new ConsoleLoggerSettings
-                {
-                    IncludeLoggingOrigin = false,
-                    IncludeTime = true,
-                    LogOutputLevel = LogOutputLevel.Info
-                },
+                (
+                    includeLoggingOrigin : false,
+                    includeTime : false,
+                    logOutputLevel : LogOutputLevel.Info
+                ),
 
                 // File logger
                 new FileLoggerSettings
+                (
+                    includeLoggingOrigin : true,
+                    includeTime : true,
+                    logOutputLevel : LogOutputLevel.Debug,
+                    fileLogPath : "log.txt"
+                )
+            },
+            algorithmSettings: new AlgorithmSettings
+            (
+                picturesSettings: new PicturesSettings
+                (
+                    maximalAttemptsToReconstructAllPictures: 0,
+                    maximalAttemptsToReconstructOnePicture: 0,
+                    numberOfPictures: 5
+                ),
+                tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                lineTangentToCircleTheoremFinderSettings: new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                soughtTheoremTypes: new[]
                 {
-                    IncludeLoggingOrigin = true,
-                    IncludeTime = true,
-                    LogOutputLevel = LogOutputLevel.Debug,
-                    FileLogPath = "log.txt"
+                    TheoremType.CollinearPoints,
+                    TheoremType.ConcurrentLines,
+                    TheoremType.ConcyclicPoints,
+                    TheoremType.EqualLineSegments,
+                    TheoremType.LineTangentToCircle,
+                    TheoremType.ParallelLines,
+                    TheoremType.PerpendicularLines,
+                    TheoremType.TangentCircles,
+                    TheoremType.Incidence
                 }
-            };
-
-            // Create default manager settings
-            PicturesManagerSettings = new PicturesSettings
-            {
-                NumberOfPictures = 5,
-                MaximalAttemptsToReconstructOnePicture = 0,
-                MaximalAttemptsToReconstructAllPictures = 0
-            };
-
-            // Create default folder settings
-            InputFolderSettings = new InputFolderSettings
-            {
-                InputFolderPath = workingFolder,
-                InputFilePrefix = "input",
-                FilesExtention = "txt",
-            };
-
-            // Create default algorithm runner settings
-            AlgorithmRunnerSettings = new AlgorithmRunnerSettings
-            {
-                OutputFolder = workingFolder,
-                OutputFileExtention = "txt",
-                OutputFilePrefix = "output",
-                GenerationProgresLoggingFrequency = 10,
-                LogProgress = true,
-                GenerateFullReport = true,
-                FullReportSuffix = " (full)",
-                DisplayProofAttempts = true
-            };
-
-            // Create default template theorems folder settings
-            TemplateTheoremsFolderSettings = new TemplateTheoremsFolderSettings
-            {
-                TheoremsFolderPath = Path.Combine(workingFolder, "TemplateTheorems"),
-                FilesExtention = "txt"
-            };
-
-            // Create settings for tangent circles theorem finder
-            TangentCirclesTheoremFinderSettings = new TangentCirclesTheoremFinderSettings
-            {
-                ExcludeTangencyInsidePicture = true
-            };
-
-            // Create settings for line tangent to circle theorem finder
-            LineTangentToCircleTheoremFinderSettings = new LineTangentToCircleTheoremFinderSettings
-            {
-                ExcludeTangencyInsidePicture = true
-            };
-
-            // Set the list of theorem types that we're looking for
-            SoughtTheoremTypes = new[]
-            {
-                TheoremType.CollinearPoints,
-                TheoremType.ConcurrentLines,
-                TheoremType.ConcyclicPoints,
-                TheoremType.EqualLineSegments,
-                TheoremType.LineTangentToCircle,
-                TheoremType.ParallelLines,
-                TheoremType.PerpendicularLines,
-                TheoremType.TangentCircles,
-                TheoremType.Incidence
-            };
-        }
+            ),
+            inputFolderSettings: new InputFolderSettings
+            (
+                inputFolderPath: "..\\..\\..\\Data",
+                inputFilePrefix: "input",
+                filesExtention: "txt"
+            ),
+            templateTheoremsFolderSettings: new TemplateTheoremsFolderSettings
+            (
+                theoremsFolderPath: "..\\..\\..\\Data\\TemplateTheorems",
+                filesExtention: "txt"
+            ),
+            algorithmRunnerSettings: new AlgorithmRunnerSettings
+            (
+                outputFolder: "..\\..\\..\\Data",
+                outputFileExtention: "txt",
+                outputFilePrefix: "output",
+                generationProgresLoggingFrequency: 10,
+                logProgress: true,
+                generateFullReport: true,
+                fullReportSuffix: " (full)",
+                displayProofAttempts: true
+            )
+        )
+        { }
     }
 }

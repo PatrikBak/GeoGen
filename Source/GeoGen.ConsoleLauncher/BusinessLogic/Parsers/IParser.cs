@@ -1,20 +1,20 @@
-﻿using GeoGen.Core;
-using GeoGen.Generator;
+﻿using GeoGen.Algorithm;
+using GeoGen.Core;
 using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// Represents a parser for <see cref="GeneratorInput"/> and <see cref="Theorem"/>s.
+    /// Represents a parser for <see cref="AlgorithmInput"/> and <see cref="Theorem"/>s.
     /// </summary>
     public interface IParser
     {
         /// <summary>
-        /// Parses a given content to a generator input.
+        /// Parses a given content to an algorithm input.
         /// </summary>
         /// <param name="content">The content of an input file.</param>
-        /// <returns>The parsed generator input.</returns>
-        GeneratorInput ParseInput(string content);
+        /// <returns>The parsed algorithm input.</returns>
+        AlgorithmInput ParseInput(string content);
 
         /// <summary>
         /// Parses a given content to the list of theorems and the configuration where the theorems hold.

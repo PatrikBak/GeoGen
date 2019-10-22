@@ -77,17 +77,17 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<IParser>().To<Parser>();
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
-            Kernel.Bind<IGeneratorInputsProvider>().To<GeneratorInputsProvider>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
 
             // Add generator
             Kernel.AddGenerator()
                 // With constructor that uses loaded settings
-                .AddConstructor(settings.PicturesManagerSettings)
+                .AddConstructor(settings.AlgorithmSettings.PicturesSettings)
                 // With theorem finder and its settings
-                .AddTheoremFinder(settings.TangentCirclesTheoremFinderSettings,
-                                  settings.LineTangentToCircleTheoremFinderSettings,
-                                  settings.SoughtTheoremTypes.ToReadOnlyHashSet())
+                .AddTheoremFinder(settings.AlgorithmSettings.TangentCirclesTheoremFinderSettings,
+                                  settings.AlgorithmSettings.LineTangentToCircleTheoremFinderSettings,
+                                  settings.AlgorithmSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
                 // With prover and its data
                 .AddTheoremProver(new TheoremProverData
                 (

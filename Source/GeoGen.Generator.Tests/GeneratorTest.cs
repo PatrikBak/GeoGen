@@ -1,8 +1,10 @@
 ﻿using FluentAssertions;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
+using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
+using System.Collections.Generic;
 
 namespace GeoGen.Generator.Tests
 {
@@ -32,15 +34,17 @@ namespace GeoGen.Generator.Tests
             // Prepare the configuration
             var configuration = Configuration.DeriveFromObjects(LooseObjectsLayout.Triangle, A, B, C);
 
-            // Prepare the input
+            // Prepare the input with just the midpoint construction
             var input = new GeneratorInput
-            {
-                InitialConfiguration = configuration,
-                Constructions = new[] { PredefinedConstructions.Midpoint },
-                NumberOfIterations = 3
-            };
+            (
+                initialConfiguration: configuration,
+                constructions: new HashSet<Construction> { PredefinedConstructions.Midpoint }.ToReadOnlyHashSet(),
+                numberOfIterations: 3,
+                objectFilter: _ => true,
+                configurationFilter: _ => true
+            );
 
-            // Assert count
+            // Assert count (can be verified by hand)
             Generator.Generate(input).Should().HaveCount(18);
         }
     }

@@ -1,5 +1,5 @@
-﻿using GeoGen.Core;
-using GeoGen.Generator;
+﻿using GeoGen.Algorithm;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -15,11 +15,11 @@ namespace GeoGen.ConsoleLauncher
     public class Parser : IParser
     {
         /// <summary>
-        /// Parses a given content to a generator input.
+        /// Parses a given content to an algorithm input.
         /// </summary>
         /// <param name="content">The content of an input file.</param>
-        /// <returns>The parsed generator input.</returns>
-        public GeneratorInput ParseInput(string content)
+        /// <returns>The parsed algorithm input.</returns>
+        public AlgorithmInput ParseInput(string content)
         {
             // Get the lines 
             var lines = content.Split('\n')
@@ -85,8 +85,8 @@ namespace GeoGen.ConsoleLauncher
             var constructions = lines.Skip(constructionLineIndex + 1).Take(configurationLineIndex - constructionLineIndex - 1)
                 // Each line defines a construction
                 .Select(ParseConstruction)
-                // Enumerate to a list
-                .ToList();
+                // Enumerate 
+                .ToReadOnlyHashSet();
 
             #endregion
 
@@ -94,12 +94,12 @@ namespace GeoGen.ConsoleLauncher
             var configuration = ParseConfiguration(lines.Skip(configurationLineIndex + 1).ToList()).configuration;
 
             // Return the final input
-            return new GeneratorInput
-            {
-                InitialConfiguration = configuration,
-                Constructions = constructions,
-                NumberOfIterations = numberOfIterations,
-            };
+            return new AlgorithmInput
+            (
+                initialConfiguration: configuration,
+                constructions: constructions,
+                numberOfIterations: numberOfIterations
+            );
         }
 
         /// <summary>

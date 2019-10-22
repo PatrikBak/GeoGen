@@ -79,9 +79,9 @@ namespace GeoGen.DependenciesResolver
         /// <param name="types">The types of theorems that we should be looking for.</param>
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremFinder(this IKernel kernel,
-                                                TangentCirclesTheoremFinderSettings tangentCirclesFinderSettings,
-                                                LineTangentToCircleTheoremFinderSettings lineTangentToCirclesFinderSettings,
-                                                IReadOnlyHashSet<TheoremType> types)
+                                               TangentCirclesTheoremFinderSettings tangentCirclesFinderSettings,
+                                               LineTangentToCircleTheoremFinderSettings lineTangentToCirclesFinderSettings,
+                                               IReadOnlyHashSet<TheoremType> types)
         {
             // Bind theorem finder
             kernel.Bind<ITheoremFinder>().To<TheoremFinder.TheoremFinder>().InSingletonScope();

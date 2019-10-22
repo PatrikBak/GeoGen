@@ -54,10 +54,9 @@ namespace GeoGen.TheoremFinder
         /// Converts given objects to theorems holding in a given configuration. These theorems
         /// represent the same statement, provided we can justify the used collinear and concyclic points.
         /// </summary>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <param name="geometricObjects">Flattened geometric objects that are converted to theorems.</param>
         /// <returns>The theorems.</returns>
-        protected IEnumerable<Theorem> ToTheorems(Configuration configuration, IEnumerable<GeometricObject> geometricObjects)
+        protected IEnumerable<Theorem> ToTheorems(IEnumerable<GeometricObject> geometricObjects)
         {
             // Map geometric objects to theorem objects
             return geometricObjects.Select(geometricObject =>

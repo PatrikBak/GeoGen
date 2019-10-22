@@ -73,11 +73,11 @@ namespace GeoGen.Algorithm
         #region IAlgorithm implementation
 
         /// <summary>
-        /// Executes the algorithm for a given generator input.
+        /// Executes the algorithm for a given algorithm input.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
         /// <returns>The theorems in the initial configuration and a lazy enumerable of all the generated output.</returns>
-        public (TheoremMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(GeneratorInput input)
+        public (TheoremMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(AlgorithmInput input)
         {
             #region Initial configuration
 
@@ -137,18 +137,10 @@ namespace GeoGen.Algorithm
 
             #endregion
 
-            #region Construction verification function
-
-            // The function that says if we should perform the construction on the configuration
-            // FEATURE: Don't automatically allow any construction for any configuration
-            static bool VerifyThatConstructionMightBeApplied(GeneratedConfiguration configuration, Construction construction) => true;
-
-            #endregion
-
             #region Object verification function
 
             // Prepare the function that checks if the generated object is correct
-            bool VerifyConstructedObjectCorrectness(GeneratedConfiguration currentConfiguration, ConstructedConfigurationObject constructedObject)
+            bool VerifyConstructedObjectCorrectness(ConstructedConfigurationObject constructedObject)
             {
                 // If it's been excluded, then it's not fine
                 if (excludedObjects.Contains(constructedObject))
@@ -162,7 +154,7 @@ namespace GeoGen.Algorithm
                 // TODO: Add tracing
                 var data = GeneralUtilities.TryExecute(
                     // Constructing of the object with adding it to the pictures
-                    () => _geometryConstructor.ExamineObject(objectTestingPictures, constructedObject, addToPictures: true),
+                    () => _geometryConstructor.Construct(objectTestingPictures, constructedObject, addToPictures: true),
                     // Ignoring a possible failure, which will be handled in the next step
                     (GeometryConstructionException e) => { });
 
@@ -295,16 +287,18 @@ namespace GeoGen.Algorithm
 
             #region Returning result
 
-            // Prepare the callbacks for the generation algorithm
-            var callbacks = new GenerationCallbacks
-            {
-                ObjectsFilter = VerifyConstructedObjectCorrectness,
-                ConfigurationsFilter = VerifyConfigurationCorrectness,
-                ConstructionFilter = VerifyThatConstructionMightBeApplied
-            };
+            // Prepare the generator input
+            var generatorInput = new GeneratorInput
+            (
+                numberOfIterations: input.NumberOfIterations,
+                constructions: input.Constructions,
+                initialConfiguration: input.InitialConfiguration,
+                objectFilter: VerifyConstructedObjectCorrectness,
+                configurationFilter: VerifyConfigurationCorrectness
+            );
 
             // Return the tuple of initial theorems and lazy algorithm enumerable
-            return (initialTheorems, _generator.Generate(input, callbacks)
+            return (initialTheorems, _generator.Generate(generatorInput)
                    // For each correct configuration perform the theorem analysis
                    .Select(configuration =>
                    {
@@ -338,11 +332,11 @@ namespace GeoGen.Algorithm
 
                        // Return the final output
                        return new AlgorithmOutput
-                       {
-                           Configuration = configuration,
-                           Theorems = newTheorems,
-                           ProverOutput = proverOutput
-                       };
+                       (
+                           configuration: configuration,
+                           theorems: newTheorems,
+                           proverOutput: proverOutput
+                       );
                    }));
 
             #endregion

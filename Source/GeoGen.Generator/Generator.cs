@@ -15,13 +15,11 @@ namespace GeoGen.Generator
     public class Generator : IGenerator
     {
         /// <summary>
-        /// Performs the generation algorithm on a given input. It can be adjusted
-        /// by specifying <see cref="GenerationCallbacks"/>.
+        /// Performs the generation algorithm on a given input. 
         /// </summary>
-        /// <param name="input">The input for the algorithm.</param>
-        /// <param name="callbacks">The callbacks to adjust the generation process.</param>
+        /// <param name="input">The input for the generator.</param>
         /// <returns>The generated configurations.</returns>
-        public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input, GenerationCallbacks callbacks = null)
+        public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input)
         {
             #region Preparing variables
 
@@ -63,8 +61,6 @@ namespace GeoGen.Generator
                     // For a given configuration we create all possible objects
                     // using the constructions from the input
                     return input.Constructions
-                        // Perform the construction filter if it is specified
-                        .Where(construction => callbacks?.ConstructionFilter?.Invoke(currentConfiguration, construction) ?? true)
                         // Generate new objects from the objects of the current configuration
                         .SelectMany(construction =>
                         {
@@ -108,8 +104,8 @@ namespace GeoGen.Generator
                         })
                         // Don't take the objects that would make duplicates in the configuration
                         .Where(newObject => !currentConfiguration.ConstructedObjectsSet.Contains(newObject))
-                        // Perform the object filter if it is specified
-                        .Where(newObject => callbacks?.ObjectsFilter?.Invoke(currentConfiguration, newObject) ?? true)
+                        // Perform the object filter
+                        .Where(input.ObjectFilter)
                         // Add the object to the current configuration
                         .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, iterationIndex + 1))
                         // Look whether we haven't generated a symmetric configuration
@@ -153,8 +149,8 @@ namespace GeoGen.Generator
                             // And return that it's fine
                             return true;
                         })
-                        // Perform the configuration filter if it is specified
-                        .Where(newConfiguration => callbacks?.ConfigurationsFilter?.Invoke(newConfiguration) ?? true);
+                        // Perform the configuration filter
+                        .Where(input.ConfigurationFilter);
                 });
 
                 #endregion

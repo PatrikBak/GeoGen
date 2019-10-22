@@ -30,25 +30,19 @@ namespace GeoGen.TheoremProver.Test
             get
             {
                 // Initialize IoC
-                var kernel = IoC.CreateKernel();
-
-                // Add the theorem finder with no restrictions
-                kernel.AddTheoremFinder(new TangentCirclesTheoremFinderSettings
-                {
-                    ExcludeTangencyInsidePicture = false
-                },
-                new LineTangentToCircleTheoremFinderSettings
-                {
-                    ExcludeTangencyInsidePicture = false
-                },
-                typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects, Incidence }).ToReadOnlyHashSet())
-                // Add constructor ignoring inconsistencies
-                .AddConstructor(new PicturesSettings
-                {
-                    NumberOfPictures = 5,
-                    MaximalAttemptsToReconstructOnePicture = 0,
-                    MaximalAttemptsToReconstructAllPictures = 0
-                });
+                var kernel = IoC.CreateKernel()
+                    // Add the theorem finder with no restrictions
+                    .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                                            new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false),
+                                            // Take all types except for equal objects for which there is no finder
+                                            typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToReadOnlyHashSet())
+                    // Add constructor ignoring inconsistencies
+                    .AddConstructor(new PicturesSettings
+                    (
+                        maximalAttemptsToReconstructAllPictures: 0,
+                        maximalAttemptsToReconstructOnePicture: 0,
+                        numberOfPictures: 5
+                    ));
 
                 // Bind producer
                 kernel.Bind<ITrivialTheoremProducer>().To<TrivialTheoremProducer>();

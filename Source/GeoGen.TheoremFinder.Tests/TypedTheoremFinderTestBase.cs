@@ -24,11 +24,11 @@ namespace GeoGen.TheoremFinder.Tests
         {
             // Prepare the kernel
             var kernel = IoC.CreateKernel().AddConstructor(new PicturesSettings
-            {
-                NumberOfPictures = 5,
-                MaximalAttemptsToReconstructAllPictures = 0,
-                MaximalAttemptsToReconstructOnePicture = 0
-            });
+            (
+                maximalAttemptsToReconstructAllPictures: 0,
+                maximalAttemptsToReconstructOnePicture: 0,
+                numberOfPictures: 5
+            ));
 
             // Create the pictures
             var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration).pictures;

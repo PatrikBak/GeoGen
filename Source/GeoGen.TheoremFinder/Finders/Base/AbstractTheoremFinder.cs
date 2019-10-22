@@ -26,7 +26,7 @@ namespace GeoGen.TheoremFinder
                 // That represent a true theorem
                 .Where(objects => RepresentsTrueTheorem(contextualPicture, objects))
                 // Cast each to theorems
-                .SelectMany(objects => ToTheorems(contextualPicture.Pictures.Configuration, objects));
+                .SelectMany(ToTheorems);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace GeoGen.TheoremFinder
                 // That represent a true theorem
                 .Where(objects => RepresentsTrueTheorem(contextualPicture, objects))
                 // Cast each to theorems
-                .SelectMany(objects => ToTheorems(contextualPicture.Pictures.Configuration, objects));
+                .SelectMany(ToTheorems);
         }
 
         #endregion

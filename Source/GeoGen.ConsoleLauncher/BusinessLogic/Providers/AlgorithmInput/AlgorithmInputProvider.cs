@@ -1,4 +1,4 @@
-﻿using GeoGen.Generator;
+﻿using GeoGen.Algorithm;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,10 +10,10 @@ using static GeoGen.ConsoleLauncher.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="IGeneratorInputsProvider"/> loading 
+    /// The default implementation of <see cref="IAlgorithmInputProvider"/> loading 
     /// data from the file system.
     /// </summary>
-    public class GeneratorInputsProvider : IGeneratorInputsProvider
+    public class AlgorithmInputProvider : IAlgorithmInputProvider
     {
         #region Dependencies
 
@@ -27,7 +27,7 @@ namespace GeoGen.ConsoleLauncher
         #region Private fields
 
         /// <summary>
-        /// The settings for the inputs folder.
+        /// The settings for the folder with inputs.
         /// </summary>
         private readonly InputFolderSettings _settings;
 
@@ -36,11 +36,11 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeneratorInputsProvider"/> class.
+        /// Initializes a new instance of the <see cref="AlgorithmInputProvider"/> class.
         /// </summary>
-        /// <param name="settings">The settings for the inputs folder.</param>
+        /// <param name="settings">The settings for the folder with inputs.</param>
         /// <param name="parser">The parser of input files.</param>
-        public GeneratorInputsProvider(InputFolderSettings settings, IParser parser)
+        public AlgorithmInputProvider(InputFolderSettings settings, IParser parser)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _parser = parser ?? throw new ArgumentNullException(nameof(parser));
@@ -48,13 +48,13 @@ namespace GeoGen.ConsoleLauncher
 
         #endregion
 
-        #region IGeneratorInputsProvider implementation
+        #region IAlgorithmInputProvider implementation
 
         /// <summary>
-        /// Gets generator inputs.
+        /// Gets algorithm inputs.
         /// </summary>
-        /// <returns>The generator inputs.</returns>
-        public async Task<List<LoadedGeneratorInput>> GetGeneratorInputsAsync()
+        /// <returns>The algorithm inputs.</returns>
+        public async Task<IReadOnlyList<LoadedAlgorithmInput>> GetAlgorithmInputsAsync()
         {
             // Log that we're starting
             LoggingManager.LogInfo($"Starting to search for input files in {_settings.InputFolderPath}");
@@ -77,14 +77,14 @@ namespace GeoGen.ConsoleLauncher
                 LoggingManager.LogWarning("No file found on which we could run the algorithm.");
 
                 // Finish the method
-                return new List<LoadedGeneratorInput>();
+                return new List<LoadedAlgorithmInput>();
             }
 
             // Inform about the found ones
             LoggingManager.LogInfo($"Found input files:\n\n{inputFiles.Select(file => $"  - {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
-            var result = new List<LoadedGeneratorInput>();
+            var result = new List<LoadedAlgorithmInput>();
 
             // Go through all the input files
             foreach (var (path, id) in inputFiles)
@@ -118,13 +118,13 @@ namespace GeoGen.ConsoleLauncher
 
                 #region Parsing it
 
-                // Prepare the generator input
-                var generatorInput = default(GeneratorInput);
+                // Prepare an algorithm input
+                var algorithmInput = default(AlgorithmInput);
 
                 try
                 {
                     // Try to parse it
-                    generatorInput = _parser.ParseInput(fileContent);
+                    algorithmInput = _parser.ParseInput(fileContent);
                 }
                 catch (ParserException)
                 {
@@ -137,15 +137,15 @@ namespace GeoGen.ConsoleLauncher
 
                 #endregion
 
-                // Add it to the results list
-                result.Add(new LoadedGeneratorInput
-                {
-                    FilePath = path,
-                    Id = id,
-                    Constructions = generatorInput.Constructions,
-                    InitialConfiguration = generatorInput.InitialConfiguration,
-                    NumberOfIterations = generatorInput.NumberOfIterations
-                });
+                // Add the loaded input to the result list
+                result.Add(new LoadedAlgorithmInput
+                (
+                    filePath: path,
+                    id: id,
+                    constructions: algorithmInput.Constructions,
+                    initialConfiguration: algorithmInput.InitialConfiguration,
+                    numberOfIterations: algorithmInput.NumberOfIterations
+                ));
             }
 
             // Return the found results

@@ -9,6 +9,6 @@
         /// Runs the algorithm on a given output.
         /// </summary>
         /// <param name="input">The input for the algorithm.</param>
-        void Run(LoadedGeneratorInput input);
+        void Run(LoadedAlgorithmInput input);
     }
 }

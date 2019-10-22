@@ -746,10 +746,10 @@ namespace GeoGen.TheoremProver
             // If there is no formally equal object...
             if (equalObject == null)
             {
-                // We need to examine this object with respect to the examined configuration
+                // We need to construct this object without adding it to the pictures
                 // TODO: Execute safely
                 // TODO: Add tracing
-                var newObjectData = _constructor.ExamineObject(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false);
+                var newObjectData = _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false);
 
                 // If the object is not constructible, then the mapping is incorrect
                 if (newObjectData.InconstructibleObject != default)

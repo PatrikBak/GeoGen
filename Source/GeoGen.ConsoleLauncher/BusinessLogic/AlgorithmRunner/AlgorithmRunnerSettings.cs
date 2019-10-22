@@ -1,49 +1,89 @@
-﻿namespace GeoGen.ConsoleLauncher
+﻿using System;
+
+namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// The settings for <see cref="AlgorithmRunner"/>
     /// </summary>
     public class AlgorithmRunnerSettings
     {
-        /// <summary>
-        /// Gets or sets the folder where the where the output of the algorithm should be written.
-        /// </summary>
-        public string OutputFolder { get; set; }
+        #region Public properties
 
         /// <summary>
-        /// Gets or sets the extensions of files where the output of the algorithm should be written.
+        /// The folder where the where the output of the algorithm should be written.
         /// </summary>
-        public string OutputFileExtention { get; set; }
+        public string OutputFolder { get; }
 
         /// <summary>
-        /// Gets or sets the prefix of files where the output of the algorithm should be written.
+        /// The extensions of files where the output of the algorithm should be written.
         /// </summary>
-        public object OutputFilePrefix { get; set; }
+        public string OutputFileExtention { get; }
 
         /// <summary>
-        /// Gets or sets how often we log the number of generated configurations.
+        /// The prefix of files where the output of the algorithm should be written.
+        /// </summary>
+        public string OutputFilePrefix { get; }
+
+        /// <summary>
+        /// Indicates how often we log the number of generated configurations.
         /// If this number is 'n', then after every n-th configuration there will be a message.
         /// </summary>
-        public int GenerationProgresLoggingFrequency { get; set; }
+        public int GenerationProgresLoggingFrequency { get; }
 
         /// <summary>
-        /// Gets or sets whether we should log the progress.
+        /// Indicates whether we should log the progress.
         /// </summary>
-        public bool LogProgress { get; set; }
+        public bool LogProgress { get; }
 
         /// <summary>
-        /// Gets or sets whether we should generate a report containing even resolved theorems.
+        /// Indicates whether we should generate a report containing even resolved theorems.
         /// </summary>
-        public bool GenerateFullReport { get; set; }
+        public bool GenerateFullReport { get; }
 
         /// <summary>
-        /// Gets or sets the suffix for the file containing the full report.
+        /// The suffix for the file containing the full report.
         /// </summary>
-        public string FullReportSuffix { get; set; }
+        public string FullReportSuffix { get; }
 
         /// <summary>
         /// Indicates if we should display attempts at proofs of theorems.
         /// </summary>
-        public bool DisplayProofAttempts { get; set; }
+        public bool DisplayProofAttempts { get; }
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AlgorithmRunnerSettings"/> class.
+        /// </summary>
+        /// <param name="outputFolder">The folder where the where the output of the algorithm should be written.</param>
+        /// <param name="outputFileExtention">The extensions of files where the output of the algorithm should be written.</param>
+        /// <param name="outputFilePrefix">The prefix of files where the output of the algorithm should be written.</param>
+        /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations.</param>
+        /// <param name="logProgress">Indicates whether we should log the progress.</param>
+        /// <param name="generateFullReport">Indicates whether we should generate a report containing even resolved theorems.</param>
+        /// <param name="fullReportSuffix">The suffix for the file containing the full report.</param>
+        /// <param name="displayProofAttempts">Indicates if we should display attempts at proofs of theorems.</param>
+        public AlgorithmRunnerSettings(string outputFolder,
+                                       string outputFileExtention,
+                                       string outputFilePrefix,
+                                       int generationProgresLoggingFrequency,
+                                       bool logProgress,
+                                       bool generateFullReport,
+                                       string fullReportSuffix,
+                                       bool displayProofAttempts)
+        {
+            OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
+            OutputFileExtention = outputFileExtention ?? throw new ArgumentNullException(nameof(outputFileExtention));
+            OutputFilePrefix = outputFilePrefix ?? throw new ArgumentNullException(nameof(outputFilePrefix));
+            GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
+            LogProgress = logProgress;
+            GenerateFullReport = generateFullReport;
+            FullReportSuffix = fullReportSuffix ?? throw new ArgumentNullException(nameof(fullReportSuffix));
+            DisplayProofAttempts = displayProofAttempts;
+        }
+
+        #endregion
     }
 }

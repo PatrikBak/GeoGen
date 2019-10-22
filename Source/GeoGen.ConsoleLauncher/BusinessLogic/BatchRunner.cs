@@ -12,9 +12,9 @@ namespace GeoGen.ConsoleLauncher
         #region Dependencies
 
         /// <summary>
-        /// The provider of algorithm inputs.
+        /// The provider of inputs for the algorithm.
         /// </summary>
-        private readonly IGeneratorInputsProvider _inputsProvider;
+        private readonly IAlgorithmInputProvider _inputProvider;
 
         /// <summary>
         /// The processor of the algorithm output.
@@ -28,17 +28,17 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="BatchRunner"/> class.
         /// </summary>
-        /// <param name="inputsProvider">The provider of algorithm inputs.</param>
+        /// <param name="inputProvider">The provider of inputs for the algorithm.</param>
         /// <param name="runner">The runner of the algorithm for particular input.</param>
-        public BatchRunner(IGeneratorInputsProvider inputsProvider, IAlgorithmRunner runner)
+        public BatchRunner(IAlgorithmInputProvider inputProvider, IAlgorithmRunner runner)
         {
-            _inputsProvider = inputsProvider ?? throw new ArgumentNullException(nameof(inputsProvider));
+            _inputProvider = inputProvider ?? throw new ArgumentNullException(nameof(inputProvider));
             _runner = runner ?? throw new ArgumentNullException(nameof(runner));
         }
 
         #endregion
 
-        #region IFolderScanner implementation
+        #region IBatchRunner implementation
 
         /// <summary>
         /// Scans the folder with input files and runs the algorithm on them.
@@ -47,7 +47,7 @@ namespace GeoGen.ConsoleLauncher
         public async Task FindAllInputFilesAndRunAlgorithmsAsync()
         {
             // Load all inputs
-            var inputs = await _inputsProvider.GetGeneratorInputsAsync();
+            var inputs = await _inputProvider.GetAlgorithmInputsAsync();
 
             // Run algorithm for each of them
             foreach (var input in inputs)
@@ -68,7 +68,7 @@ namespace GeoGen.ConsoleLauncher
                     // Log the internal exception
                     LoggingManager.LogDebug($"{e}\n");
 
-                    // Continue on the next file
+                    // Continue to the next file
                     continue;
                 }
             }
