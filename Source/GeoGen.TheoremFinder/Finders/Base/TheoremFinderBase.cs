@@ -90,7 +90,7 @@ namespace GeoGen.TheoremFinder
                                 // In line case we have 2 points
                                 LineObject _ => new LineTheoremObject(points[0], points[1]) as TheoremObject,
 
-                                // In circle case we have 2 points
+                                // In circle case we have 3 points
                                 CircleObject _ => new CircleTheoremObject(points[0], points[1], points[2]),
 
                                 // Default case
