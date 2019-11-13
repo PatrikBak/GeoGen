@@ -208,8 +208,23 @@ namespace GeoGen.TheoremProver
                             // In each step we have our current mappings and the current object
                             (currentMappings, constructedObject) =>
                             {
-                                // For each of the current mapping we use our helper method to include the current object
-                                return currentMappings.SelectMany(innerMapping => GenerateMappingsIncludingObject(innerMapping, constructedObject, input));
+                                // For each of the current mapping 
+                                return currentMappings.SelectMany(innerMapping =>
+                                {
+                                    try
+                                    {
+                                        // Use our helper method to generate mappings that include the current object
+                                        return GenerateMappingsIncludingObject(innerMapping, constructedObject, input);
+                                    }
+                                    catch (Exception e) when (e is InconstructibleContextualPicture || e is GeometryConstructionException)
+                                    {
+                                        // Quick fix of any potential exception that might arise from inconsistencies
+                                        // At the moment reconstruction is not supported, so any inconsistency won't be resolved
+                                        
+                                        // TODO: Remove this block entirely and handle particular things in the called method!
+                                        return Enumerable.Empty<MappingData>();
+                                    }
+                                });
                             }
                         );
                 })
