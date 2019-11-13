@@ -13,15 +13,17 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The main function.
         /// </summary>
-        /// <param name="arguments">The arguments of the application.</param>
+        /// <param name="arguments">One optional argument, a path to a settings file. Its default value is "settings.json".</param>
         public static async Task Main(string[] arguments)
         {
             try
             {
-                // Load the settings
                 // The first argument could be the settings file
                 // If it's not, fall-back to the default value
-                var settings = await SettingsLoader.LoadAsync(arguments.Length > 1 ? arguments[0] : "settings.json");
+                var settingsFileName = arguments.Length > 1 ? arguments[0] : "settings.json";
+
+                // Load the settings
+                var settings = await SettingsLoader.LoadAsync(settingsFileName);
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);
