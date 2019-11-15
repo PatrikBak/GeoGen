@@ -59,12 +59,12 @@ namespace GeoGen.DependenciesResolver
             // Factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InSingletonScope();
             kernel.Bind<IContextualPictureFactory>().ToFactory().InSingletonScope();
-            kernel.Bind<IPicturesFactory>().ToFactory().InSingletonScope();
+            kernel.Bind<IPicturesOfConfigurationFactory>().ToFactory().InSingletonScope();
 
             // Factory outputs
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
             kernel.Bind<ContextualPicture>().ToSelf();
-            kernel.Bind<Pictures>().ToSelf().WithConstructorArgument(settings);
+            kernel.Bind<PicturesOfConfiguration>().ToSelf().WithConstructorArgument(settings);
 
             // Return the kernel for chaining
             return kernel;

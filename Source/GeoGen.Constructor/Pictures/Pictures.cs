@@ -1,4 +1,3 @@
-using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections;
@@ -17,21 +16,12 @@ namespace GeoGen.Constructor
         /// <summary>
         /// The list of pictures that are contained in this collection.
         /// </summary>
-        private readonly IReadOnlyList<Picture> _pictures;
+        protected readonly IReadOnlyList<Picture> _pictures;
 
         /// <summary>
         /// The settings.
         /// </summary>
-        private readonly PicturesSettings _settings;
-
-        #endregion
-
-        #region Public properties
-
-        /// <summary>
-        /// Gets the configuration that is drawn in the pictures.
-        /// </summary>
-        public Configuration Configuration { get; }
+        protected readonly PicturesSettings _settings;
 
         #endregion
 
@@ -40,22 +30,19 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initializes a new instance of the <see cref="Pictures"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration that is drawn in the pictures.</param>
         /// <param name="settings">The settings.</param>
-        public Pictures(Configuration configuration, PicturesSettings settings)
-            : this(configuration, settings, GeneralUtilities.ExecuteNTimes(settings.NumberOfPictures, () => new Picture()).ToList())
+        public Pictures(PicturesSettings settings)
+            : this(settings, GeneralUtilities.ExecuteNTimes(settings.NumberOfPictures, () => new Picture()).ToList())
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Pictures"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration that is drawn in the pictures.</param>
         /// <param name="settings">The settings.</param>
         /// <param name="pictures">The list of pictures that are contained in this collection.</param>
-        private Pictures(Configuration configuration, PicturesSettings settings, IReadOnlyList<Picture> pictures)
+        protected Pictures(PicturesSettings settings, IReadOnlyList<Picture> pictures)
         {
-            Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
         }
@@ -68,7 +55,17 @@ namespace GeoGen.Constructor
         /// Clones the pictures.
         /// </summary>
         /// <returns>The cloned pictures.</returns>
-        public Pictures Clone() => Clone(Configuration);
+        public Pictures Clone()
+        {
+            // Clone the pictures
+            var picturesList = _pictures.Select(picture => picture.Clone()).ToList();
+
+            // Create a pictures instance with the cloned pictures
+            var pictures = new Pictures(_settings, picturesList);
+
+            // Return them
+            return pictures;
+        }
 
         #endregion
 
@@ -132,23 +129,6 @@ namespace GeoGen.Constructor
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Clones the pictures.
-        /// </summary>
-        /// <param name="configuration">The configuration that should be represented by the cloned pictures.</param>
-        /// <returns>The cloned pictures.</returns>
-        internal Pictures Clone(Configuration configuration)
-        {
-            // Clone the pictures
-            var picturesList = _pictures.Select(picture => picture.Clone()).ToList();
-
-            // Create a pictures instance with the cloned pictures
-            var pictures = new Pictures(configuration, _settings, picturesList);
-
-            // Return it
-            return pictures;
         }
 
         #endregion

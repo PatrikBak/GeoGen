@@ -114,7 +114,7 @@ namespace GeoGen.Algorithm
             var contextualPictureMap = new Dictionary<GeneratedConfiguration, ContextualPicture>();
 
             // Prepare the map for pictures
-            var picturesMap = new Dictionary<GeneratedConfiguration, Pictures>();
+            var picturesMap = new Dictionary<GeneratedConfiguration, PicturesOfConfiguration>();
 
             // Prepare the map for theorems
             var theoremMap = new Dictionary<GeneratedConfiguration, TheoremMap>();
@@ -122,8 +122,9 @@ namespace GeoGen.Algorithm
             // Prepare the set containing excluded objects. 
             var excludedObjects = new HashSet<ConfigurationObject>();
 
-            // Prepare the picture where we will draw all the objects to find geometrically equal ones
-            var objectTestingPictures = initialPictures.Clone();
+            // Prepare the pictures where we will draw all the objects to find geometrically equal ones
+            // These pictures won't represent a specific configuration
+            var objectTestingPictures = initialPictures.CloneAsRegularPictures();
 
             // Prepare the dictionary mapping configuration objects to their integer codes
             var allObjectCodes = new Dictionary<ConfigurationObject, int>(

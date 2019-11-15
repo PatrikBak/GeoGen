@@ -16,7 +16,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// The factory for creating pictures.
         /// </summary>
-        private readonly IPicturesFactory _factory;
+        private readonly IPicturesOfConfigurationFactory _factory;
 
         /// <summary>
         /// The resolver of object constructors for particular constructions.
@@ -38,7 +38,7 @@ namespace GeoGen.Constructor
         /// <param name="factory">The factory for creating pictures.</param>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
         /// <param name="tracer">The tracer for objects that couldn't be constructed because of inconsistencies between pictures.</param>
-        public GeometryConstructor(IPicturesFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
+        public GeometryConstructor(IPicturesOfConfigurationFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
@@ -55,7 +55,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        public (Pictures pictures, ConstructionData data) Construct(Configuration configuration)
+        public (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration)
         {
             // Create pictures for the configuration
             var pictures = _factory.CreatePictures(configuration);
@@ -114,7 +114,7 @@ namespace GeoGen.Constructor
         /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
         /// <param name="newConfiguration">The new configuration that should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        public (Pictures pictures, ConstructionData data) ConstructByCloning(Pictures oldConfigurationPictures, Configuration newConfiguration)
+        public (PicturesOfConfiguration pictures, ConstructionData data) ConstructByCloning(PicturesOfConfiguration oldConfigurationPictures, Configuration newConfiguration)
         {
             // Clone the pictures
             var pictures = oldConfigurationPictures.Clone(newConfiguration);
@@ -166,7 +166,8 @@ namespace GeoGen.Constructor
                     // Call the internal construction function
                     () => data = ConstructObject(constructedObject, pictures, addToPictures),
                     // Trace any inconsistency exception
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message));
+                    // TODO: Change API
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
 
                 // Return the data
                 return data;
@@ -175,7 +176,8 @@ namespace GeoGen.Constructor
             catch (UnresolvedInconsistencyException e)
             {
                 // We trace it
-                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message);
+                // TODO: Change API
+                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(null, constructedObject, e.Message);
 
                 // And re-throw the exception
                 throw new GeometryConstructionException("The object couldn't be examined.", e);
@@ -204,7 +206,8 @@ namespace GeoGen.Constructor
                     // Call the internal construction function
                     () => result = ConstructObject(pictures, constructedObject),
                     // Trace any inconsistency exception
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message));
+                    // TODO: Change API
+                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
 
                 // Return the data
                 return result;
@@ -213,7 +216,8 @@ namespace GeoGen.Constructor
             catch (UnresolvedInconsistencyException e)
             {
                 // We trace it
-                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(pictures.Configuration, constructedObject, e.Message);
+                // TODO: Change API
+                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(null, constructedObject, e.Message);
 
                 // And re-throw the exception
                 throw new GeometryConstructionException("The object couldn't be examined.", e);
@@ -345,7 +349,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Constructs analytic objects having a given layout.
         /// </summary>
-        /// <param name="layout">The layout of loose objects.</param>2
+        /// <param name="layout">The layout of loose objects.</param>
         /// <returns>The constructed analytic objects.</returns>
         private IAnalyticObject[] Construct(LooseObjectsLayout layout)
         {
@@ -407,7 +411,7 @@ namespace GeoGen.Constructor
 
                 // If we got here, we have an unsupported layout :/
                 default:
-                    throw new ConstructorException($"Unsupported loose objects layout: {layout}");
+                    throw new ConstructorException($"Construction of loose objects layout '{layout}' is not supported.");
             }
         }
 

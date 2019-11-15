@@ -220,7 +220,7 @@ namespace GeoGen.TheoremProver
                                     {
                                         // Quick fix of any potential exception that might arise from inconsistencies
                                         // At the moment reconstruction is not supported, so any inconsistency won't be resolved
-                                        
+
                                         // TODO: Remove this block entirely and handle particular things in the called method!
                                         return Enumerable.Empty<MappingData>();
                                     }

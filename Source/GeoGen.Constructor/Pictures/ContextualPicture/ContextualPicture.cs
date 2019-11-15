@@ -72,7 +72,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Gets the pictures that hold all the representations of the configuration.
         /// </summary>
-        public Pictures Pictures { get; }
+        public PicturesOfConfiguration Pictures { get; }
 
         /// <summary>
         /// Gets all lines and circles of the picture.
@@ -144,7 +144,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        public ContextualPicture(Pictures pictures, IContexualPictureConstructionFailureTracer tracer = null)
+        public ContextualPicture(PicturesOfConfiguration pictures, IContexualPictureConstructionFailureTracer tracer = null)
             : this(pictures, createEmpty: false, tracer)
         {
         }
@@ -156,7 +156,7 @@ namespace GeoGen.Constructor
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
         /// <param name="createEmpty">Indicates if we should leave the picture empty without adding any objects or pictures.</param>
         /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        private ContextualPicture(Pictures pictures, bool createEmpty, IContexualPictureConstructionFailureTracer tracer = null)
+        private ContextualPicture(PicturesOfConfiguration pictures, bool createEmpty, IContexualPictureConstructionFailureTracer tracer = null)
         {
             Pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
             _tracer = tracer;
@@ -183,7 +183,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="newPictures">The pictures that should be used to construct the contextual picture.</param>
         /// <returns>The contextual picture containing this cloned picture.</returns>
-        public ContextualPicture ConstructByCloning(Pictures newPictures)
+        public ContextualPicture ConstructByCloning(PicturesOfConfiguration newPictures)
         {
             // Create an empty picture
             var newPicture = new ContextualPicture(newPictures, createEmpty: true, _tracer);

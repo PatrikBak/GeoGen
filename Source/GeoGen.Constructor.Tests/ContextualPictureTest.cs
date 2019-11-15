@@ -29,7 +29,7 @@ namespace GeoGen.Constructor.Tests
         private static ContextualPicture CreatePicture(Configuration configuration, IAnalyticObject[][] allObjects)
         {
             // Create pictures
-            var pictures = new Pictures(configuration, new PicturesSettings
+            var pictures = new PicturesOfConfiguration(configuration, new PicturesSettings
             (
                 maximalAttemptsToReconstructAllPictures: 0,
                 maximalAttemptsToReconstructOnePicture: 0,

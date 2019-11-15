@@ -16,7 +16,7 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        (Pictures pictures, ConstructionData data) Construct(Configuration configuration);
+        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration);
 
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
@@ -27,7 +27,7 @@ namespace GeoGen.Constructor
         /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
         /// <param name="newConfiguration">The new configuration that should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        (Pictures pictures, ConstructionData data) ConstructByCloning(Pictures oldConfigurationPictures, Configuration newConfiguration);
+        (PicturesOfConfiguration pictures, ConstructionData data) ConstructByCloning(PicturesOfConfiguration oldConfigurationPictures, Configuration newConfiguration);
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/>. It is assumed that the constructed 
