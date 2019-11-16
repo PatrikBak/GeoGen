@@ -38,6 +38,11 @@ namespace GeoGen.Algorithm
         /// </summary>
         private readonly ITheoremProver _prover;
 
+        /// <summary>
+        /// The tracer of potential geometry failures.
+        /// </summary>
+        private readonly IGeometryFailureTracer _tracer;
+
         #endregion
 
         #region Constructor
@@ -49,12 +54,14 @@ namespace GeoGen.Algorithm
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="prover">The prover of theorems.</param>
-        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover)
+        /// <param name="tracer">The tracer of potential geometry failures.</param>
+        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover, IGeometryFailureTracer tracer = null)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
+            _tracer = tracer;
         }
 
         #endregion
@@ -144,9 +151,8 @@ namespace GeoGen.Algorithm
                 var data = GeneralUtilities.TryExecute(
                     // Constructing of the object with adding it to the pictures
                     () => _geometryConstructor.Construct(objectTestingPictures, constructedObject, addToPictures: true),
-                    // Ignoring a possible failure, which will be handled in the next step
-                    // TODO: Add tracing
-                    (InconsistentPicturesException e) => { });
+                    // Tracing a possible failure, which will be handled in the next step
+                    (InconsistentPicturesException e) => _tracer?.UndrawableObjectInBigPicture(constructedObject, objectTestingPictures, e));
 
                 // If it couldn't be drawn
                 if (data == null)
@@ -225,16 +231,24 @@ namespace GeoGen.Algorithm
                 var (pictures, constructionData) = GeneralUtilities.TryExecute(
                     // Constructing of the pictures for the configuration
                     () => _geometryConstructor.ConstructByCloning(previousPictures, configuration),
-                    // Ignoring a possible failure (such configurations will be discarded in the next step)
-                    // TODO: Add tracing
-                    (InconsistentPicturesException e) => { });
+                    // While tracing a possible failure (such configurations will be discarded in the next step)
+                    (InconsistentPicturesException e) => _tracer?.UndrawableObjectInPicturesOfConfiguration(configuration.LastConstructedObject, previousPictures, e));
 
                 // Since the configuration has been confirmed to be correct, there should not
-                // be any problem. If there is, then this is very weird, thought theoretically not impossible
-                // We're going to evaluate it as an incorrect configuration after all
-                // TODO: Add tracing
-                if (pictures == default || constructionData.InconstructibleObject != default || constructionData.Duplicates != default)
+                // be any problem regarding the construction of this object. This should be next to impossible
+                if (pictures == default)
                     return false;
+
+                // The object has already been confirmed as constructible and any potential
+                // duplicates should be resolved by now. Even this problem should be next to impossible                
+                if (constructionData.InconstructibleObject != default || constructionData.Duplicates != default)
+                {
+                    // Trace if something weird like this happens
+                    _tracer?.IncorrectPicturesAfterAddingNewObject(pictures, constructionData);
+
+                    // Assume the configuration is incorrect
+                    return false;
+                }
 
                 // We have to remember the pictures for further use
                 picturesMap.Add(configuration, pictures);
@@ -255,9 +269,8 @@ namespace GeoGen.Algorithm
                 var newContextualPicture = GeneralUtilities.TryExecute(
                     // Constructing the new contextual picture by cloning
                     () => previousContextualPicture.ConstructByCloning(pictures),
-                    // Ignoring a possible failure (such configurations will be discarded in the next step)
-                    // TODO: Add tracing
-                    (InconsistentPicturesException _) => { });
+                    // While tracing a possible failure (such configurations will be discarded in the next step)
+                    (InconsistentPicturesException e) => _tracer?.InconstructibleContextualPictureByCloning(previousContextualPicture, pictures, e));
 
                 // If the construction cannot be done, we can't use this configuration
                 if (newContextualPicture == default)
