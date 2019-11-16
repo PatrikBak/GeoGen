@@ -346,7 +346,7 @@ namespace GeoGen.TheoremProver
                 // Constructing of the new configuration
                 () => _constructor.Construct(configuration),
                 // While making sure any exception is caught and re-thrown
-                (GeometryConstructionException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
+                (InconsistentPicturesException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 
             // Make sure it has no inconstructible objects
             if (data.InconstructibleObject != default)
@@ -361,7 +361,7 @@ namespace GeoGen.TheoremProver
                 // Construction of the contextual picture
                 () => new ContextualPicture(pictures),
                 // While making sure any exception is caught and re-thrown
-                (InconstructibleContextualPicture e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
+                (InconsistentPicturesException e) => ThrowIncorrectConstructionException("The contextual picture for the defining configuration couldn't be drawn.", e));
 
             // Find the theorems
             return _finder.FindAllTheorems(contextualPicture).AllObjects

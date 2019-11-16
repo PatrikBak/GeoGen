@@ -11,7 +11,7 @@ namespace GeoGen.Constructor
     public interface IGeometryConstructor
     {
         /// <summary>
-        /// Constructs a given <see cref="Configuration"/>. Throws a <see cref="GeometryConstructionException"/>
+        /// Constructs a given <see cref="Configuration"/>. Throws an <see cref="InconsistentPicturesException"/>
         /// if the construction couldn't be carried out.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
@@ -21,8 +21,8 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
         /// It is assumed that the new configuration differs only by the last object from the already 
-        /// constructed one. Thus only the last object is constructed. Throws a 
-        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// constructed one. Thus only the last object is constructed. Throws an
+        /// <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
         /// </summary>
         /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
         /// <param name="newConfiguration">The new configuration that should be drawn.</param>
@@ -32,7 +32,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/>. It is assumed that the constructed 
         /// object can be construed in each of the passed pictures using its objects or its remembered duplicates.
-        /// Throws a <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
@@ -44,7 +44,7 @@ namespace GeoGen.Constructor
         /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
         /// It is assumed that the constructed object can be construed in the passed pictures. The fact whether
         /// the object is or is not already present in individual pictures is ignored. If the object is 
-        /// inconstructible, null is returned. Throws a <see cref="GeometryConstructionException"/> if the 
+        /// inconstructible, null is returned. Throws an <see cref="InconsistentPicturesException"/> if the 
         /// construction couldn't be carried out.
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>

@@ -80,7 +80,7 @@ namespace GeoGen.ConsoleLauncher
             // Add generator
             Kernel.AddGenerator()
                 // With constructor that uses loaded settings
-                .AddConstructor(settings.AlgorithmSettings.PicturesSettings)
+                .AddConstructor(settings.AlgorithmSettings.GeometryConstructorSettings)
                 // With theorem finder and its settings
                 .AddTheoremFinder(settings.AlgorithmSettings.TangentCirclesTheoremFinderSettings,
                                   settings.AlgorithmSettings.LineTangentToCircleTheoremFinderSettings,

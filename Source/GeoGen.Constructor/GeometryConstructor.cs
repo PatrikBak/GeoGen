@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,19 +15,18 @@ namespace GeoGen.Constructor
         #region Dependencies
 
         /// <summary>
-        /// The factory for creating pictures.
-        /// </summary>
-        private readonly IPicturesOfConfigurationFactory _factory;
-
-        /// <summary>
         /// The resolver of object constructors for particular constructions.
         /// </summary>
         private readonly IConstructorsResolver _resolver;
 
+        #endregion
+
+        #region Private fields
+
         /// <summary>
-        /// The tracer for objects that couldn't be constructed because of inconsistencies between pictures.
+        /// The settings for the constructor.
         /// </summary>
-        private readonly IGeometryConstructionFailureTracer _tracer;
+        private readonly GeometryConstructorSettings _settings;
 
         #endregion
 
@@ -35,14 +35,12 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Initializes a new instance of the <see cref="GeometryConstructor"/> class.
         /// </summary>
-        /// <param name="factory">The factory for creating pictures.</param>
+        /// <param name="settings">The settings for the constructor.</param>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
-        /// <param name="tracer">The tracer for objects that couldn't be constructed because of inconsistencies between pictures.</param>
-        public GeometryConstructor(IPicturesOfConfigurationFactory factory, IConstructorsResolver resolver, IGeometryConstructionFailureTracer tracer = null)
+        public GeometryConstructor(GeometryConstructorSettings settings, IConstructorsResolver resolver)
         {
-            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
-            _tracer = tracer;
         }
 
         #endregion
@@ -50,7 +48,7 @@ namespace GeoGen.Constructor
         #region IGeometryConstructor implementation
 
         /// <summary>
-        /// Constructs a given <see cref="Configuration"/>. Throws a <see cref="GeometryConstructionException"/>
+        /// Constructs a given <see cref="Configuration"/>. Throws an <see cref="InconsistentPicturesException"/>
         /// if the construction couldn't be carried out.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
@@ -58,43 +56,34 @@ namespace GeoGen.Constructor
         public (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration)
         {
             // Create pictures for the configuration
-            var pictures = _factory.CreatePictures(configuration);
+            var pictures = new PicturesOfConfiguration(configuration, _settings.NumberOfPictures);
 
             // First we add loose objects to all pictures
             foreach (var picture in pictures)
             {
-                // Objects are constructed using the private helper method
-                picture.AddObjects(configuration.LooseObjects, () => Construct(configuration.LooseObjectsHolder.Layout));
+                // Construct the loose object for the picture
+                var constructedLooseObjects = Construct(configuration.LooseObjectsHolder.Layout);
+
+                // Add them one by one
+                configuration.LooseObjects.Zip(constructedLooseObjects).ForEach(pair =>
+                {
+                    // Safely try to add them
+                    picture.TryAdd(pair.Item1, pair.Item2, out var equalObject);
+
+                    // If there is an equal object, then we have a weird problem
+                    if (equalObject != default)
+                        throw new ConstructorException("Construction of loose objects yielded equal objects! This must be a bug...");
+                });
             }
 
-            // Then we add all the constructed object
+            // Then we add all constructed object
             foreach (var constructedObject in configuration.ConstructedObjects)
             {
-                // Prepare the variable holding the final result
-                ConstructionData data = null;
+                // Construct the object using another method
+                var data = Construct(pictures, constructedObject, addToPictures: true);
 
-                try
-                {
-                    // Execute the construction using our helper function
-                    pictures.ExecuteAndReconstructAtIncosistencies(
-                        // Call the internal construction function
-                        () => data = ConstructObject(constructedObject, pictures, addToPictures: true),
-                        // Trace any inconsistency exception
-                        e => _tracer?.TraceInconsistencyWhileDrawingConfiguration(configuration, constructedObject, e.Message));
-                }
-                // If there are unresolvable inconsistencies...
-                catch (UnresolvedInconsistencyException e)
-                {
-                    // We trace it
-                    _tracer?.TraceUnresolvedInconsistencyWhileDrawingConfiguration(configuration, e.Message);
-
-                    // And re-throw the exception
-                    throw new GeometryConstructionException("The configuration couldn't be constructed.", e);
-                }
-
-                // At this point the construction of the object is completed
                 // Find out if the result is correct
-                var correctResult = data.InconstructibleObject == null && data.Duplicates == default;
+                var correctResult = data.InconstructibleObject == default && data.Duplicates == default;
 
                 // If it's not, we directly return the current data without dealing with the remaining objects
                 if (!correctResult)
@@ -108,8 +97,8 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
         /// It is assumed that the new configuration differs only by the last object from the already 
-        /// constructed one. Thus only the last object is constructed. Throws a 
-        /// <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// constructed one. Thus only the last object is constructed. Throws an
+        /// <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
         /// </summary>
         /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
         /// <param name="newConfiguration">The new configuration that should be drawn.</param>
@@ -119,36 +108,14 @@ namespace GeoGen.Constructor
             // Clone the pictures
             var pictures = oldConfigurationPictures.Clone(newConfiguration);
 
-            try
-            {
-                // Prepare the result
-                var data = default(ConstructionData);
-
-                // Execute the construction without adding the object to the picture
-                pictures.ExecuteAndReconstructAtIncosistencies(
-                    // Call the internal construction function
-                    () => data = ConstructObject(newConfiguration.LastConstructedObject, pictures, addToPictures: true),
-                    // Trace any inconsistency exception
-                    e => _tracer?.TraceInconsistencyWhileDrawingConfiguration(newConfiguration, newConfiguration.LastConstructedObject, e.Message));
-
-                // Return the data
-                return (pictures, data);
-            }
-            // If there are unresolvable inconsistencies...
-            catch (UnresolvedInconsistencyException e)
-            {
-                // We trace it
-                _tracer?.TraceInconsistencyWhileDrawingConfiguration(newConfiguration, newConfiguration.LastConstructedObject, e.Message);
-
-                // And re-throw the exception
-                throw new GeometryConstructionException("The configuration couldn't be constructed.", e);
-            }
+            // Return them with the construction data for the new object
+            return (pictures, Construct(pictures, newConfiguration.LastConstructedObject, addToPictures: true));
         }
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/>. It is assumed that the constructed 
         /// object can be construed in each of the passed pictures using its objects or its remembered duplicates.
-        /// Throws a <see cref="GeometryConstructionException"/> if the construction couldn't be carried out.
+        /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
@@ -156,85 +123,88 @@ namespace GeoGen.Constructor
         /// <returns>The construction data.</returns>
         public ConstructionData Construct(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
         {
-            try
+            // Initialize a variable indicating if the construction is possible
+            bool canBeConstructed = default;
+
+            // Initialize a variable holding a potential duplicate version of the object
+            ConfigurationObject duplicate = default;
+
+            // Let the resolver find the constructor and let it create the constructor function
+            var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
+
+            // Construct it in every picture
+            foreach (var picture in pictures)
             {
-                // Prepare the result
-                var data = default(ConstructionData);
+                // Prepare value indicating whether the object was constructed in the picture
+                var objectConstructed = default(bool);
 
-                // Execute the construction
-                pictures.ExecuteAndReconstructAtIncosistencies(
-                    // Call the internal construction function
-                    () => data = ConstructObject(constructedObject, pictures, addToPictures),
-                    // Trace any inconsistency exception
-                    // TODO: Change API
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
+                // Prepare value holding a potential equal object in the picture to this object
+                var equalObject = default(ConfigurationObject);
 
-                // Return the data
-                return data;
+                // Construct it
+                var analyticObject = constructorFunction(picture);
+
+                // Set if it the construction went fine
+                objectConstructed = analyticObject != null;
+
+                // If the object is constructed...
+                if (objectConstructed)
+                {
+                    // And we are supposed to add it to the pictures
+                    if (addToPictures)
+                    {
+                        // Do it and let the picture determine an equal object
+                        picture.TryAdd(constructedObject, analyticObject, out equalObject);
+                    }
+                    // Otherwise we find an equal object manually
+                    else
+                    {
+                        // Set if there is an equal object
+                        equalObject = picture.Contains(analyticObject) ? picture.Get(analyticObject) : null;
+                    }
+                }
+
+                // We need to first check if some other picture didn't mark constructibility in the opposite way
+                // If yes, we have an inconsistency
+                if (picture != pictures.First() && canBeConstructed != objectConstructed)
+                    throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
+
+                // Now we need to check if some other picture didn't find a different duplicate 
+                // If yes, we have an inconsistency
+                if (picture != pictures.First() && duplicate != equalObject)
+                    throw new InconsistentPicturesException("The fact whether the object has an equal version was not determined consistently.");
+
+                // If there is an equal object and we could manipulate the picture, mark the equality
+                if (equalObject != null && addToPictures)
+                    picture.MarkDuplicate(equalObject, constructedObject);
+
+                // Set the found values
+                canBeConstructed = objectConstructed;
+                duplicate = equalObject;
             }
-            // If there are unresolvable inconsistencies...
-            catch (UnresolvedInconsistencyException e)
-            {
-                // We trace it
-                // TODO: Change API
-                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(null, constructedObject, e.Message);
 
-                // And re-throw the exception
-                throw new GeometryConstructionException("The object couldn't be examined.", e);
-            }
+            //  Now the object is handled with respect to all the pictures
+            return new ConstructionData
+            (
+                // Set the inconstructible object to the given one, if it can't be constructed
+                inconstructibleObject: !canBeConstructed ? constructedObject : default,
+
+                // Set the duplicates to the pair of this object and the found duplicate, if there's any
+                duplicates: duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default
+            );
         }
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
         /// It is assumed that the constructed object can be construed in the passed pictures. The fact whether
         /// the object is or is not already present in individual pictures is ignored. If the object is 
-        /// inconstructible, null is returned. Throws a <see cref="GeometryConstructionException"/> if the 
+        /// inconstructible, null is returned. Throws an <see cref="InconsistentPicturesException"/> if the 
         /// construction couldn't be carried out.
         /// </summary>
         /// <param name="pictures">The pictures that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
         /// <returns>The dictionary mapping pictures to constructed objects, or null; if the object is inconstructible.</returns>
         public IReadOnlyDictionary<Picture, IAnalyticObject> Construct(Pictures pictures, ConstructedConfigurationObject constructedObject)
-        {
-            try
-            {
-                // Prepare the result
-                var result = default(IReadOnlyDictionary<Picture, IAnalyticObject>);
-
-                // Execute the construction without adding the object to the picture
-                pictures.ExecuteAndReconstructAtIncosistencies(
-                    // Call the internal construction function
-                    () => result = ConstructObject(pictures, constructedObject),
-                    // Trace any inconsistency exception
-                    // TODO: Change API
-                    e => _tracer?.TraceInconsistencyWhileExaminingObject(null, constructedObject, e.Message));
-
-                // Return the data
-                return result;
-            }
-            // If there are unresolvable inconsistencies...
-            catch (UnresolvedInconsistencyException e)
-            {
-                // We trace it
-                // TODO: Change API
-                _tracer?.TraceUnresolvedInconsistencyWhileExaminingObject(null, constructedObject, e.Message);
-
-                // And re-throw the exception
-                throw new GeometryConstructionException("The object couldn't be examined.", e);
-            }
-        }
-
-        #endregion
-
-        #region Private methods
-
-        /// <summary>
-        /// Performs the construction of a given constructed object with respect to all the pictures of given pictures.
-        /// </summary>
-        /// <param name="constructedObject">The object to be constructed.</param>
-        /// <param name="pictures">The pictures where the input for the construction is drawn.</param>
-        /// <returns>The map of pictures and construction results, if it can be performed; or null, if not.</returns>
-        private IReadOnlyDictionary<Picture, IAnalyticObject> ConstructObject(Pictures pictures, ConstructedConfigurationObject constructedObject)
         {
             // Prepare the result
             var result = new Dictionary<Picture, IAnalyticObject>();
@@ -270,81 +240,9 @@ namespace GeoGen.Constructor
             return canBeConstructed ? result : null;
         }
 
-        /// <summary>
-        /// Performs the construction of a given constructed object with respect to all the pictures of given pictures.
-        /// </summary>
-        /// <param name="constructedObject">The object to be constructed.</param>
-        /// <param name="pictures">The pictures where the input for the construction is drawn.</param>
-        /// <param name="addToPictures">Indicates if the object should be added to the pictures.</param>
-        /// <returns>The result of the construction.</returns>
-        private ConstructionData ConstructObject(ConstructedConfigurationObject constructedObject, Pictures pictures, bool addToPictures)
-        {
-            // Initialize a variable indicating if the construction is possible
-            bool canBeConstructed = default;
+        #endregion
 
-            // Initialize a variable holding a potential duplicate version of the object
-            ConfigurationObject duplicate = default;
-
-            // Let the resolver find the constructor and let it create the constructor function
-            var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
-
-            // Construct it in every picture
-            foreach (var picture in pictures)
-            {
-                // Prepare value indicating whether the object was constructed in the picture
-                var objectConstructed = default(bool);
-
-                // Prepare value holding a potential equal object in the picture to this object
-                var equalObject = default(ConfigurationObject);
-
-                // If we are supposed to add the object...
-                if (addToPictures)
-                {
-                    // Then ask the picture to do it (it will perform the construction)
-                    picture.TryAdd(constructedObject, () => constructorFunction(picture), out objectConstructed, out equalObject);
-                }
-                // Otherwise we need to perform the construction here
-                else
-                {
-                    // Construct it
-                    var analyticObject = constructorFunction(picture);
-
-                    // Set if it the construction went fine
-                    objectConstructed = analyticObject != null;
-
-                    // Set if there is an equal object
-                    equalObject = analyticObject != null && picture.Contains(analyticObject) ? picture.Get(analyticObject) : null;
-                }
-
-                // We need to first check if some other picture didn't mark constructibility in the opposite way
-                // If yes, we have an inconsistency
-                if (picture != pictures.First() && canBeConstructed != objectConstructed)
-                    throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
-
-                // Now we need to check if some other picture didn't find a different duplicate 
-                // If yes, we have an inconsistency
-                if (picture != pictures.First() && duplicate != equalObject)
-                    throw new InconsistentPicturesException("The fact whether the object has an equal version was not determined consistently.");
-
-                // If there is an equal object and we could manipulate the picture, mark the equality
-                if (equalObject != null && addToPictures)
-                    picture.MarkDuplicate(equalObject, constructedObject);
-
-                // Set the found values
-                canBeConstructed = objectConstructed;
-                duplicate = equalObject;
-            }
-
-            //  Now the object is handled with respect to all the pictures
-            return new ConstructionData
-            (
-                // Set the inconstructible object to the given one, if it can't be constructed
-                inconstructibleObject: !canBeConstructed ? constructedObject : default,
-
-                // Set the duplicates to the pair of this object and the found duplicate, if there's any
-                duplicates: duplicate != null ? (olderObject: duplicate, newerObject: constructedObject) : default
-            );
-        }
+        #region Private methods
 
         /// <summary>
         /// Constructs analytic objects having a given layout.

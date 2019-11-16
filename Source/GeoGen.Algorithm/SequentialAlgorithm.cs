@@ -29,11 +29,6 @@ namespace GeoGen.Algorithm
         private readonly IGeometryConstructor _geometryConstructor;
 
         /// <summary>
-        /// The factory for creating contextual pictures.
-        /// </summary>
-        private readonly IContextualPictureFactory _pictureFactory;
-
-        /// <summary>
         /// The finder of theorems in generated configurations.
         /// </summary>
         private readonly ITheoremFinder _finder;
@@ -52,18 +47,12 @@ namespace GeoGen.Algorithm
         /// </summary>
         /// <param name="generator">The generator of configurations.</param>
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
-        /// <param name="pictureFactory">The factory for creating contextual pictures.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="prover">The prover of theorems.</param>
-        public SequentialAlgorithm(IGenerator generator,
-                                   IGeometryConstructor geometryConstructor,
-                                   IContextualPictureFactory pictureFactory,
-                                   ITheoremFinder finder,
-                                   ITheoremProver prover)
+        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
-            _pictureFactory = pictureFactory ?? throw new ArgumentNullException(nameof(pictureFactory));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
         }
@@ -86,7 +75,7 @@ namespace GeoGen.Algorithm
                 // Constructing the configuration
                 () => _geometryConstructor.Construct(input.InitialConfiguration),
                 // Make sure a potential exception is caught and re-thrown
-                (GeometryConstructionException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
+                (InconsistentPicturesException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
 
             // Make sure it is constructible
             if (initialData.InconstructibleObject != default)
@@ -99,9 +88,9 @@ namespace GeoGen.Algorithm
             // Safely execute
             var initialContextualPicture = GeneralUtilities.TryExecute(
                  // Creating of the picture
-                 () => _pictureFactory.CreateContextualPicture(initialPictures),
+                 () => new ContextualPicture(initialPictures),
                  // Make sure a potential exception is caught and re-thrown
-                 (InconstructibleContextualPicture e) => throw new InitializationException("Drawing of the contextual container for the initial configuration failed.", e));
+                 (InconsistentPicturesException e) => throw new InitializationException("Drawing of the contextual container for the initial configuration failed.", e));
 
             // Find the initial theorems for the configuration
             var initialTheorems = _finder.FindAllTheorems(initialContextualPicture);
@@ -152,12 +141,12 @@ namespace GeoGen.Algorithm
                     return true;
 
                 // If it doesn't have a code, then safely execute
-                // TODO: Add tracing
                 var data = GeneralUtilities.TryExecute(
                     // Constructing of the object with adding it to the pictures
                     () => _geometryConstructor.Construct(objectTestingPictures, constructedObject, addToPictures: true),
                     // Ignoring a possible failure, which will be handled in the next step
-                    (GeometryConstructionException e) => { });
+                    // TODO: Add tracing
+                    (InconsistentPicturesException e) => { });
 
                 // If it couldn't be drawn
                 if (data == null)
@@ -237,7 +226,8 @@ namespace GeoGen.Algorithm
                     // Constructing of the pictures for the configuration
                     () => _geometryConstructor.ConstructByCloning(previousPictures, configuration),
                     // Ignoring a possible failure (such configurations will be discarded in the next step)
-                    (GeometryConstructionException e) => { });
+                    // TODO: Add tracing
+                    (InconsistentPicturesException e) => { });
 
                 // Since the configuration has been confirmed to be correct, there should not
                 // be any problem. If there is, then this is very weird, thought theoretically not impossible
@@ -266,10 +256,10 @@ namespace GeoGen.Algorithm
                     // Constructing the new contextual picture by cloning
                     () => previousContextualPicture.ConstructByCloning(pictures),
                     // Ignoring a possible failure (such configurations will be discarded in the next step)
-                    (InconstructibleContextualPicture _) => { });
+                    // TODO: Add tracing
+                    (InconsistentPicturesException _) => { });
 
                 // If the construction cannot be done, we can't use this configuration
-                // TODO: Add tracing
                 if (newContextualPicture == default)
                     return false;
 
@@ -278,7 +268,7 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
-                // FEATURE: Should we verify here whether the configuration has a normal picture?
+                // FEATURE: Should we verify here whether the configuration has a normal picture? E.g. no close points.
 
                 // If we got here, everything's fine
                 return true;

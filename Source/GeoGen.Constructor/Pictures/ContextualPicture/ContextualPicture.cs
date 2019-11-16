@@ -11,9 +11,6 @@ namespace GeoGen.Constructor
     /// Represents a picture that holds <see cref="GeometricObject"/>s. This picture
     /// is responsible for creating them and mapping them between <see cref="IAnalyticObject"/>s
     /// with respect to <see cref="Picture"/>s.
-    /// 
-    /// TODO: Make sure the container is reconstructed after the inner pictures are.
-    ///       
     /// </summary>
     public class ContextualPicture
     {
@@ -59,11 +56,6 @@ namespace GeoGen.Constructor
         /// The map of configuration objects represented in this picture to their corresponding geometric objects.
         /// </summary>
         private readonly Dictionary<ConfigurationObject, GeometricObject> _configurationObjectMap = new Dictionary<ConfigurationObject, GeometricObject>();
-
-        /// <summary>
-        /// The tracer of unsuccessful attempts to reconstruct the contextual picture.
-        /// </summary>
-        private readonly IContexualPictureConstructionFailureTracer _tracer;
 
         #endregion
 
@@ -140,26 +132,23 @@ namespace GeoGen.Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextualPicture"/> class. Throws
-        /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
+        /// an <see cref="InconsistentPicturesException"/> if it cannot be done.
         /// </summary>
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
-        /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        public ContextualPicture(PicturesOfConfiguration pictures, IContexualPictureConstructionFailureTracer tracer = null)
-            : this(pictures, createEmpty: false, tracer)
+        public ContextualPicture(PicturesOfConfiguration pictures)
+            : this(pictures, createEmpty: false)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ContextualPicture"/> class. Throws
-        /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
+        /// an <see cref="InconsistentPicturesException"/> if it cannot be done.
         /// </summary>
         /// <param name="pictures">The pictures that hold all the representations of the configuration.</param>
         /// <param name="createEmpty">Indicates if we should leave the picture empty without adding any objects or pictures.</param>
-        /// <param name="tracer">The tracer of unsuccessful attempts to reconstruct the contextual picture.</param>
-        private ContextualPicture(PicturesOfConfiguration pictures, bool createEmpty, IContexualPictureConstructionFailureTracer tracer = null)
+        private ContextualPicture(PicturesOfConfiguration pictures, bool createEmpty)
         {
             Pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
-            _tracer = tracer;
 
             // If we should add objects, do it
             if (!createEmpty)
@@ -167,8 +156,11 @@ namespace GeoGen.Constructor
                 // Initialize the dictionary mapping pictures to the object maps
                 Pictures.ForEach(picture => _objects.Add(picture, new Map<GeometricObject, IAnalyticObject>()));
 
-                // Add them
-                AddObjects(pictures.Configuration.AllObjects);
+                // Get the objects that will be added
+                var objects = pictures.Configuration.AllObjects;
+
+                // Add them, where the last object is a new one.
+                objects.ForEach((configurationObject, index) => Add(configurationObject, isNew: index == objects.Count - 1));
             }
         }
 
@@ -179,14 +171,14 @@ namespace GeoGen.Constructor
         /// <summary>
         /// Clones the contextual picture by cloning the current one and adding only 
         /// the last object of the configuration represented in the pictures. Throws
-        /// an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
+        /// an <see cref="InconsistentPicturesException"/> if it cannot be done.
         /// </summary>
         /// <param name="newPictures">The pictures that should be used to construct the contextual picture.</param>
         /// <returns>The contextual picture containing this cloned picture.</returns>
         public ContextualPicture ConstructByCloning(PicturesOfConfiguration newPictures)
         {
             // Create an empty picture
-            var newPicture = new ContextualPicture(newPictures, createEmpty: true, _tracer);
+            var newPicture = new ContextualPicture(newPictures, createEmpty: true);
 
             // We need to have geometric objects cloned
             // Thus we prepare a dictionary mapping old to newly created ones
@@ -259,43 +251,113 @@ namespace GeoGen.Constructor
             _oldCircles.Concat(_newCircles).ForEach(circle => newPicture._oldCircles.Add((CircleObject)geometricObjectMap[circle]));
 
             // Add the last object of the configuration to the new picture
-            newPicture.AddObjects(new[] { newPictures.Configuration.LastConstructedObject });
+            newPicture.Add(newPictures.Configuration.LastConstructedObject, isNew: true);
 
             // Return the picture
             return newPicture;
         }
 
         /// <summary>
-        /// Gets the geometric object corresponding to the object that can be constructed
-        /// via a given constructor.
+        /// Gets the geometric object corresponding to the object constructed on all the pictures.
+        /// This object might or might not be one already present in the contextual picture. If the 
+        /// object couldn't be determined, an <see cref="InconsistentPicturesException"/> is thrown. 
         /// </summary>
-        /// <param name="objectConstructor">The constructor for the objects in all pictures.</param>
+        /// <param name="constructedObjects">The constructor for the objects in all pictures.</param>
         /// <returns>The found object; or null, if such object is not present.</returns>
-        public GeometricObject GetGeometricObject(Func<IReadOnlyDictionary<Picture, IAnalyticObject>> objectConstructor)
+        public GeometricObject GetGeometricObject(IReadOnlyDictionary<Picture, IAnalyticObject> constructedObjects)
         {
-            try
+            // Prepare the result
+            var foundObject = default(GeometricObject);
+
+            #region Searching already created objects
+
+            // Go through all the pairs of picture-object
+            foreach (var picture in Pictures)
             {
-                // Prepare the result
-                var result = default(GeometricObject);
+                // Find out if this object is present
+                var equalObject = _objects[picture].GetLeftValueOrDefault(constructedObjects[picture]);
 
-                // Safely execute
-                GeneralUtilities.TryExecute(
-                    // Finding of the equivalent object
-                    () => result = FindEquivalentObject(objectConstructor),
-                    // While handling inconsistencies
-                    // TODO: Add tracing
-                    (InconsistentPicturesException e) => { });
+                // If this is not the first picture and we've marked the found object differently
+                // then we have an inconsistency
+                if (picture != Pictures.First() && foundObject != equalObject)
+                    throw new InconsistentPicturesException("Corresponding equal geometric object couldn't be determined consistently.");
 
-                // Return the result
-                return result;
+                // Otherwise set the found object
+                foundObject = equalObject;
             }
-            catch (UnresolvedInconsistencyException e)
-            {
-                // If we are unable to resolve inconsistencies, we trace it
-                _tracer?.TraceConstructionFailure(Pictures.Configuration, e.Message);
 
-                // And say the picture is not constructible
-                throw new InconstructibleContextualPicture($"The reconstruction of the contextual picture failed. The inner reason: {e.Message}.");
+            // If we found the object, we can return it 
+            if (foundObject != null)
+                return foundObject;
+
+            #endregion
+
+            // If we couldn't find it, we need to construct it
+            // We switch based on the type of object that we're dealing with
+            switch (constructedObjects.First().Value)
+            {
+                // Line or circle
+                case Line _:
+                case Circle _:
+
+                    // We need to find points that lie on this object
+                    // Prepare them
+                    var points = new HashSet<PointObject>();
+
+                    // Search all the point of the picture individually
+                    foreach (var point in AllPoints)
+                    {
+                        // Prepare the variable indicating whether the point
+                        // lies on the object
+                        bool? liesOn = null;
+
+                        #region Handling pictures
+
+                        // Iterate over pictures
+                        foreach (var picture in Pictures)
+                        {
+                            // Pull the analytic representations of the point and the line/circle
+                            var analyticPoint = (Point)_objects[picture].GetRightValue(point);
+                            var lineOrCircle = constructedObjects[picture];
+
+                            // Let the helper decide if the point lies on the object
+                            var liesOnInThisPicture = AnalyticHelpers.LiesOn(lineOrCircle, analyticPoint);
+
+                            // If the result has been set and it differs from the currently 
+                            // found value, then we have an inconsistency
+                            if (liesOn != null && liesOn.Value != liesOnInThisPicture)
+                                throw new InconsistentPicturesException($"The fact whether a point lies on a {(lineOrCircle is Line ? "line" : "circle")} is not the same in every picture.");
+
+                            // Otherwise we update the result
+                            liesOn = liesOnInThisPicture;
+                        }
+
+                        #endregion
+
+                        // If the point lies on our object, add it to the points set
+                        if (liesOn.Value)
+                            points.Add(point);
+                    }
+
+                    // Return the object based on the type
+                    return constructedObjects.First().Value switch
+                    {
+                        // Line
+                        Line _ => new LineObject(configurationObject: null, points) as GeometricObject,
+
+                        // Circle
+                        Circle _ => new CircleObject(configurationObject: null, points),
+
+                        // Default
+                        _ => throw new ConstructorException("Impossible situation")
+                    };
+
+                // Point
+                case Point _:
+                    throw new ConstructorException("Finding equivalent point is currently not supported.");
+
+                default:
+                    throw new ConstructorException($"Unhandled type of analytic object: {constructedObjects.First().Value.GetType()}");
             }
         }
 
@@ -317,57 +379,6 @@ namespace GeoGen.Constructor
         #endregion
 
         #region Private methods
-
-        /// <summary>
-        /// Adds all the objects to the contextual picture. Only the last object is added a new one.
-        /// Throws an <see cref="InconstructibleContextualPicture"/> if it cannot be done.
-        /// </summary>
-        /// <param name="objects">The objects to be added.</param>
-        private void AddObjects(IReadOnlyList<ConfigurationObject> objects)
-        {
-            // Prepare a variable holding the currently added object so we can access
-            // it the inconsistency exception callback
-            var currentObject = default(ConfigurationObject);
-
-            try
-            {
-                // Add all objects, safely through the pictures handling inconsistencies
-                Pictures.ExecuteAndReconstructAtIncosistencies(
-                    // Add all the objects
-                    () => objects.ForEach((configurationObject, index) =>
-                    {
-                        // Set that we're processing this object
-                        currentObject = configurationObject;
-
-                        // Add the current object. Only the last one is new
-                        Add(configurationObject, isNew: index == objects.Count - 1);
-                    }),
-                    // Inconsistency handler
-                    e =>
-                    {
-                        // Trace possible inconsistency exceptions
-                        _tracer?.TraceInconsistencyWhileConstructingPicture(Pictures.Configuration, currentObject, e.Message);
-
-                        // Reset fields
-                        _objects.Values.ForEach(map => map.Clear());
-                        _oldPoints.Clear();
-                        _oldLines.Clear();
-                        _oldCircles.Clear();
-                        _newPoints.Clear();
-                        _newLines.Clear();
-                        _newCircles.Clear();
-                        _configurationObjectMap.Clear();
-                    });
-            }
-            catch (UnresolvedInconsistencyException e)
-            {
-                // If we are unable to resolve inconsistencies, we trace it
-                _tracer?.TraceConstructionFailure(Pictures.Configuration, e.Message);
-
-                // And say the picture is not constructible
-                throw new InconstructibleContextualPicture($"The construction of the contextual picture failed. The inner reason: {e.Message}.");
-            }
-        }
 
         /// <summary>
         /// Adds a given object and all the objects it implicitly creates (lines / circles).
@@ -833,118 +844,6 @@ namespace GeoGen.Constructor
 
             // Finally we can return the result
             return result.Value;
-        }
-
-        /// <summary>
-        /// Finds the geometric object corresponding to the object that can be constructed
-        /// via a given constructor. The result might be an object of the picture, but it
-        /// doesn't have to be -- in that case it will, however, contain information about
-        /// the objects of the picture (for example a line will know its points).
-        /// </summary>
-        /// <param name="objectConstructor">The constructor for the objects in all pictures.</param>
-        /// <returns>The found object; or null, if such object is not present.</returns>
-        private GeometricObject FindEquivalentObject(Func<IReadOnlyDictionary<Picture, IAnalyticObject>> objectConstructor)
-        {
-            // Perform the construction 
-            var pictureToObject = objectConstructor();
-
-            // If it cannot be done, then we can't do more
-            if (pictureToObject == null)
-                return null;
-
-            // Prepare the result
-            var foundObject = default(GeometricObject);
-
-            #region Searching already created objects
-
-            // Go through all the pairs of picture-object
-            foreach (var picture in Pictures)
-            {
-                // Find out if this object is present
-                var equalObject = _objects[picture].GetLeftValueOrDefault(pictureToObject[picture]);
-
-                // If this is not the first picture and we've marked the found object differently
-                // then we have an inconsistency
-                if (picture != Pictures.First() && foundObject != equalObject)
-                    throw new InconsistentPicturesException("Corresponding equal geometric object couldn't be determined consistently.");
-
-                // Otherwise set the found object
-                foundObject = equalObject;
-            }
-
-            // If we found the object, we can return it 
-            if (foundObject != null)
-                return foundObject;
-
-            #endregion
-
-            // If we couldn't find it, we need to construct it
-            // We switch based on the type of object that we're dealing with
-            switch (pictureToObject.First().Value)
-            {
-                // Line or circle
-                case Line _:
-                case Circle _:
-
-                    // We need to find points that lie on this object
-                    // Prepare them
-                    var points = new HashSet<PointObject>();
-
-                    // Search all the point of the picture individually
-                    foreach (var point in AllPoints)
-                    {
-                        // Prepare the variable indicating whether the point
-                        // lies on the object
-                        bool? liesOn = null;
-
-                        #region Handling pictures
-
-                        // Iterate over pictures
-                        foreach (var picture in Pictures)
-                        {
-                            // Pull the analytic representations of the point and the line/circle
-                            var analyticPoint = (Point)_objects[picture].GetRightValue(point);
-                            var lineOrCircle = pictureToObject[picture];
-
-                            // Let the helper decide if the point lies on the object
-                            var liesOnInThisPicture = AnalyticHelpers.LiesOn(lineOrCircle, analyticPoint);
-
-                            // If the result has been set and it differs from the currently 
-                            // found value, then we have an inconsistency
-                            if (liesOn != null && liesOn.Value != liesOnInThisPicture)
-                                throw new InconsistentPicturesException($"The fact whether a point lies on a {(lineOrCircle is Line ? "line" : "circle")} is not the same in every picture.");
-
-                            // Otherwise we update the result
-                            liesOn = liesOnInThisPicture;
-                        }
-
-                        #endregion
-
-                        // If the point lies on our object, add it to the points set
-                        if (liesOn.Value)
-                            points.Add(point);
-                    }
-
-                    // Return the object based on the type
-                    return pictureToObject.First().Value switch
-                    {
-                        // Line
-                        Line _ => new LineObject(configurationObject: null, points) as GeometricObject,
-
-                        // Circle
-                        Circle _ => new CircleObject(configurationObject: null, points),
-
-                        // Default
-                        _ => throw new ConstructorException("Impossible situation")
-                    };
-
-                // Point
-                case Point _:
-                    throw new ConstructorException("Finding equivalent point is currently not supported.");
-
-                default:
-                    throw new ConstructorException($"Unhandled type of analytic object: {pictureToObject.First().Value.GetType()}");
-            }
         }
 
         #endregion

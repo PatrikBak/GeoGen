@@ -30,27 +30,24 @@ namespace GeoGen.TheoremFinder.Tests
         private static (TheoremMap oldTheorems, TheoremMap newTheorems, TheoremMap allTheorems) FindTheorems(Configuration configuration)
         {
             // Prepare the kernel
-            var kernel = IoC.CreateKernel().AddConstructor(new PicturesSettings
-            (
-                maximalAttemptsToReconstructAllPictures: 0,
-                maximalAttemptsToReconstructOnePicture: 0,
-                numberOfPictures: 5
-            ))
-            // Look for only some types
-            .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
-                              // We don't want line and circle tangencies
-                              lineTangentToCirclesFinderSettings: null,
-                              // The wanted types:
-                              types: new[]
-                              {
-                                  ParallelLines,
-                                  PerpendicularLines,
-                                  EqualLineSegments,
-                                  TangentCircles,
-                                  Incidence
-                              }
-                              // They're required as a set
-                              .ToReadOnlyHashSet());
+            var kernel = IoC.CreateKernel()
+                // Add constructor with 5 pictures
+                .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 5))
+                // Look for only some types
+                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
+                                  // We don't want line and circle tangencies
+                                  lineTangentToCirclesFinderSettings: null,
+                                  // The wanted types:
+                                  types: new[]
+                                  {
+                                      ParallelLines,
+                                      PerpendicularLines,
+                                      EqualLineSegments,
+                                      TangentCircles,
+                                      Incidence
+                                  }
+                                  // They're required as a set
+                                  .ToReadOnlyHashSet());
 
             // Create the finder
             var finder = kernel.Get<ITheoremFinder>();
@@ -64,7 +61,7 @@ namespace GeoGen.TheoremFinder.Tests
             var oldPictures = kernel.Get<IGeometryConstructor>().Construct(oldConfiguration).pictures;
 
             // Construct the old contextual picture
-            var oldContextualPicture = kernel.Get<IContextualPictureFactory>().CreateContextualPicture(oldPictures);
+            var oldContextualPicture = new ContextualPicture(oldPictures);
 
             // Finally get the old theorems
             var oldTheorems = finder.FindAllTheorems(oldContextualPicture);
@@ -73,7 +70,7 @@ namespace GeoGen.TheoremFinder.Tests
             var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration).pictures;
 
             // Create the contextual picture for the current configuration
-            var contextualPicture = kernel.Get<IContextualPictureFactory>().CreateContextualPicture(pictures);
+            var contextualPicture = new ContextualPicture(pictures);
 
             // Run both algorithms
             var newTheorems = finder.FindNewTheorems(contextualPicture, oldTheorems);

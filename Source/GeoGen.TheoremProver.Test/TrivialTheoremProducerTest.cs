@@ -36,13 +36,8 @@ namespace GeoGen.TheoremProver.Test
                                             new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false),
                                             // Take all types except for equal objects for which there is no finder
                                             typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToReadOnlyHashSet())
-                    // Add constructor ignoring inconsistencies
-                    .AddConstructor(new PicturesSettings
-                    (
-                        maximalAttemptsToReconstructAllPictures: 0,
-                        maximalAttemptsToReconstructOnePicture: 0,
-                        numberOfPictures: 5
-                    ));
+                    // Add constructor with 5 pictures
+                    .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 5));
 
                 // Bind producer
                 kernel.Bind<ITrivialTheoremProducer>().To<TrivialTheoremProducer>();

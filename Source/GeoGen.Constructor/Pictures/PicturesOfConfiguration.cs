@@ -14,7 +14,7 @@ namespace GeoGen.Constructor
         #region Public properties
 
         /// <summary>
-        /// Gets the configuration that is drawn in the pictures.
+        /// The configuration that is drawn in the pictures.
         /// </summary>
         public Configuration Configuration { get; }
 
@@ -26,9 +26,9 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="PicturesOfConfiguration"/> class.
         /// </summary>
         /// <param name="configuration">The configuration that is drawn in the pictures.</param>
-        /// <param name="settings">The settings.</param>
-        public PicturesOfConfiguration(Configuration configuration, PicturesSettings settings)
-            : this(configuration, settings, GeneralUtilities.ExecuteNTimes(settings.NumberOfPictures, () => new Picture()).ToList())
+        /// <param name="numberOfPictures">The number of pictures these pictures hold.</param>
+        public PicturesOfConfiguration(Configuration configuration, int numberOfPictures)
+            : this(configuration, GeneralUtilities.ExecuteNTimes(numberOfPictures, () => new Picture()).ToList())
         {
         }
 
@@ -36,10 +36,9 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="PicturesOfConfiguration"/> class.
         /// </summary>
         /// <param name="configuration">The configuration that is drawn in the pictures.</param>
-        /// <param name="settings">The settings.</param>
-        /// <param name="pictures">The list of pictures that are contained in this collection.</param>
-        private PicturesOfConfiguration(Configuration configuration, PicturesSettings settings, IReadOnlyList<Picture> pictures)
-            : base(settings, pictures)
+        /// <param name="pictures">The list of pictures that these pictures hold.</param>
+        private PicturesOfConfiguration(Configuration configuration, IReadOnlyList<Picture> pictures)
+            : base(pictures)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
@@ -69,7 +68,7 @@ namespace GeoGen.Constructor
             var picturesList = _pictures.Select(picture => picture.Clone()).ToList();
 
             // Create a pictures instance with the cloned pictures
-            var pictures = new PicturesOfConfiguration(newConfiguration, _settings, picturesList);
+            var pictures = new PicturesOfConfiguration(newConfiguration, picturesList);
 
             // Return them
             return pictures;

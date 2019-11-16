@@ -29,12 +29,7 @@ namespace GeoGen.Constructor.Tests
         private static ContextualPicture CreatePicture(Configuration configuration, IAnalyticObject[][] allObjects)
         {
             // Create pictures
-            var pictures = new PicturesOfConfiguration(configuration, new PicturesSettings
-            (
-                maximalAttemptsToReconstructAllPictures: 0,
-                maximalAttemptsToReconstructOnePicture: 0,
-                numberOfPictures: allObjects.Length
-            ));
+            var pictures = new PicturesOfConfiguration(configuration, allObjects.Length);
 
             // Add all objects to them. For a current picture
             pictures.ForEach((picture, pictureIndex) =>
@@ -49,7 +44,7 @@ namespace GeoGen.Constructor.Tests
                     var analyticObject = objects[i];
 
                     // Add it to the picture
-                    picture.TryAdd(configuration.AllObjects[i], () => analyticObject, out var _, out var _);
+                    picture.TryAdd(configuration.AllObjects[i], analyticObject, out var _);
                 }
             });
 
@@ -324,7 +319,7 @@ namespace GeoGen.Constructor.Tests
              });
 
             // Assert
-            action.Should().Throw<InconstructibleContextualPicture>("The points are collinear in one picture and not in the other.");
+            action.Should().Throw<InconsistentPicturesException>("The points are collinear in one picture and not in the other.");
         }
 
         [Test]
@@ -359,7 +354,7 @@ namespace GeoGen.Constructor.Tests
              });
 
             // Assert
-            action.Should().Throw<InconstructibleContextualPicture>("The points are collinear in one picture and not in the other.");
+            action.Should().Throw<InconsistentPicturesException>("The points are collinear in one picture and not in the other.");
         }
 
         #endregion

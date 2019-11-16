@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
 using System.Linq;
 
@@ -127,7 +128,15 @@ namespace GeoGen.Constructor
             var internalPicture = new Picture();
 
             // Add the loose objects to the picture
-            internalPicture.AddObjects(_construction.Configuration.LooseObjects, () => input.ToList());
+            _construction.Configuration.LooseObjects.Zip(input).ForEach(pair =>
+            {
+                // Safely try to add them
+                internalPicture.TryAdd(pair.Item1, pair.Item2, out var equalObject);
+
+                // If there is an equal object, then we have a weird problem
+                if (equalObject != default)
+                    throw new ConstructorException("The input for a composed construction doesn't contain distinct objects! This must be a bug...");
+            });
 
             // Add the constructed objects as well
             foreach (var constructedObject in _construction.Configuration.ConstructedObjects)
@@ -135,14 +144,18 @@ namespace GeoGen.Constructor
                 // For each one find the construction function
                 var constructorFunction = _constructionResolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
-                // Add the object to the picture using this function that gets passed the internal picture
-                internalPicture.TryAdd(constructedObject, () => constructorFunction(internalPicture), out var objectConstructed, out var equalObject);
+                // Perform the construction
+                var analyticObject = constructorFunction(internalPicture);
 
-                // Find out if we have a correct result, i.e. object was constructed without any duplicate
-                var correctResult = objectConstructed && equalObject == null;
+                // If it's not constructible, we can't do more
+                if (analyticObject == null)
+                    return null;
 
-                // If not, the construction failed
-                if (!correctResult)
+                // Otherwise add the object to the picture
+                internalPicture.TryAdd(constructedObject, analyticObject, out var equalObject);
+
+                // If there is an equal object, we say the construction is incorrect as well
+                if (equalObject != null)
                     return null;
             }
 

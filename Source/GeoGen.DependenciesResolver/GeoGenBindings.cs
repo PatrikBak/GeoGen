@@ -33,13 +33,13 @@ namespace GeoGen.DependenciesResolver
         /// Bindings for the dependencies from the Constructor module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="settings">The settings for <see cref="Pictures"/>.</param>
+        /// <param name="settings">The settings for <see cref="GeometryConstructor"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddConstructor(this IKernel kernel, PicturesSettings settings)
+        public static IKernel AddConstructor(this IKernel kernel, GeometryConstructorSettings settings)
         {
             // Stateless services
+            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>().InSingletonScope().WithConstructorArgument(settings);
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InSingletonScope();
-            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>().InSingletonScope();
 
             // Stateless predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>().InSingletonScope();
@@ -58,13 +58,9 @@ namespace GeoGen.DependenciesResolver
 
             // Factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory().InSingletonScope();
-            kernel.Bind<IContextualPictureFactory>().ToFactory().InSingletonScope();
-            kernel.Bind<IPicturesOfConfigurationFactory>().ToFactory().InSingletonScope();
 
             // Factory outputs
             kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
-            kernel.Bind<ContextualPicture>().ToSelf();
-            kernel.Bind<PicturesOfConfiguration>().ToSelf().WithConstructorArgument(settings);
 
             // Return the kernel for chaining
             return kernel;

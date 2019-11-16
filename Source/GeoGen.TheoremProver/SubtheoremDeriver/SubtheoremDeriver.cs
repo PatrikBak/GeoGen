@@ -211,19 +211,8 @@ namespace GeoGen.TheoremProver
                                 // For each of the current mapping 
                                 return currentMappings.SelectMany(innerMapping =>
                                 {
-                                    try
-                                    {
-                                        // Use our helper method to generate mappings that include the current object
-                                        return GenerateMappingsIncludingObject(innerMapping, constructedObject, input);
-                                    }
-                                    catch (Exception e) when (e is InconstructibleContextualPicture || e is GeometryConstructionException)
-                                    {
-                                        // Quick fix of any potential exception that might arise from inconsistencies
-                                        // At the moment reconstruction is not supported, so any inconsistency won't be resolved
-
-                                        // TODO: Remove this block entirely and handle particular things in the called method!
-                                        return Enumerable.Empty<MappingData>();
-                                    }
+                                    // Use our helper method to generate mappings that include the current object
+                                    return GenerateMappingsIncludingObject(innerMapping, constructedObject, input);
                                 });
                             }
                         );
@@ -724,18 +713,27 @@ namespace GeoGen.TheoremProver
                     // We need to create the object which we're looking for a random point on
                     var innerObject = new ConstructedConfigurationObject(randomPointConstruction.Construction, newArguments);
 
-                    // Now we prepare the constructor function of it for the contextual picture
-                    IReadOnlyDictionary<Picture, AnalyticGeometry.IAnalyticObject> ConstructorFunction() =>
-                        // That calls the constructor 
-                        _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject);
+                    // Safely execute
+                    var constructionDictionary = GeneralUtilities.TryExecute(
+                        // Its construction
+                        () => _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject),
+                        // While ignoring possible inconsistencies
+                        // TODO: Add tracing
+                        (InconsistentPicturesException _) => { });
 
-                    // We pass this function to the contextual picture to get the resulting object
-                    // TODO: Execute safely
-                    // TODO: Add tracing
-                    var foundObject = input.ExaminedConfigurationPicture.GetGeometricObject(ConstructorFunction);
+                    // If the construction couldn't be carried out, then there is no mapping
+                    if (constructionDictionary == null)
+                        return Enumerable.Empty<MappingData>();
 
-                    // If the found object is null, i.e. the construction is not possible, 
-                    // then there is no mapping
+                    // Safely execute
+                    var foundObject = GeneralUtilities.TryExecute(
+                        // Getting the corresponding geometric object from the contextual picture
+                        () => input.ExaminedConfigurationPicture.GetGeometricObject(constructionDictionary),
+                        // While ignoring possible inconsistencies
+                        // TODO: Add tracing
+                        (InconsistentPicturesException _) => { });
+
+                    // If there is no corresponding object, or there were inconsistencies, then there is no mapping
                     if (foundObject == null)
                         return Enumerable.Empty<MappingData>();
 
@@ -761,10 +759,17 @@ namespace GeoGen.TheoremProver
             // If there is no formally equal object...
             if (equalObject == null)
             {
-                // We need to construct this object without adding it to the pictures
-                // TODO: Execute safely
-                // TODO: Add tracing
-                var newObjectData = _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false);
+                // Safely execute
+                var newObjectData = GeneralUtilities.TryExecute(
+                    // Construction of this object without adding it to the pictures
+                    () => _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false),
+                    // While ignoring possible inconsistencies
+                    // TODO: Add tracing
+                    (InconsistentPicturesException _) => { });
+
+                // If the construction couldn't be carried out, then the mapping is incorrect
+                if (newObjectData == default)
+                    return Enumerable.Empty<MappingData>();
 
                 // If the object is not constructible, then the mapping is incorrect
                 if (newObjectData.InconstructibleObject != default)

@@ -36,12 +36,7 @@ namespace GeoGen.ConsoleLauncher
             },
             algorithmSettings: new AlgorithmSettings
             (
-                picturesSettings: new PicturesSettings
-                (
-                    maximalAttemptsToReconstructAllPictures: 0,
-                    maximalAttemptsToReconstructOnePicture: 0,
-                    numberOfPictures: 5
-                ),
+                geometryConstructorSettings: new GeometryConstructorSettings(numberOfPictures: 5),
                 tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
                 lineTangentToCircleTheoremFinderSettings: new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true),
                 soughtTheoremTypes: new[]
