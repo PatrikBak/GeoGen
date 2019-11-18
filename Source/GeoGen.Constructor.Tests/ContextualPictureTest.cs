@@ -354,7 +354,7 @@ namespace GeoGen.Constructor.Tests
              });
 
             // Assert
-            action.Should().Throw<InconsistentPicturesException>("The points are collinear in one picture and not in the other.");
+            action.Should().Throw<InconsistentPicturesException>("The points are concyclic in one picture and not in the other.");
         }
 
         #endregion

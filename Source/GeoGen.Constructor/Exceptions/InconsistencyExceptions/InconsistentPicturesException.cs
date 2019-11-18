@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Constructor
+﻿namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents an exception that is thrown when there is an inconsistency between 
@@ -27,17 +25,6 @@ namespace GeoGen.Constructor
         /// <param name="message">The message about what happened.</param>
         public InconsistentPicturesException(string message)
                 : base(message)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="InconsistentPicturesException"/> class
-        /// with a custom message about what happened, and the inner exception that caused this one.
-        /// </summary>
-        /// <param name="message">The message about what happened.</param>
-        /// <param name="innerException">The inner exception that caused this one.</param>
-        public InconsistentPicturesException(string message, Exception innerException)
-                : base(message, innerException)
         {
         }
     }

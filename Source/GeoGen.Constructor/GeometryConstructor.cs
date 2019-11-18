@@ -167,12 +167,18 @@ namespace GeoGen.Constructor
                 // We need to first check if some other picture didn't mark constructibility in the opposite way
                 // If yes, we have an inconsistency
                 if (picture != pictures.First() && canBeConstructed != objectConstructed)
-                    throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
+                    throw new InconsistentConstructibilityException(constructedObject);
 
                 // Now we need to check if some other picture didn't find a different duplicate 
                 // If yes, we have an inconsistency
                 if (picture != pictures.First() && duplicate != equalObject)
-                    throw new InconsistentPicturesException("The fact whether the object has an equal version was not determined consistently.");
+                {
+                    // Get the not-null equal objects
+                    var equalObjects = new[] { duplicate, equalObject }.Where(o => o != null).ToArray();
+
+                    // Throw an exception
+                    throw new InconsistentEqualityException(constructedObject, equalObjects);
+                }
 
                 // If there is an equal object and we could manipulate the picture, mark the equality
                 if (equalObject != null && addToPictures)
@@ -227,7 +233,7 @@ namespace GeoGen.Constructor
                 // We need to first check if some other picture didn't mark constructibility in the opposite way
                 // If yes, we have an inconsistency
                 if (picture != pictures.First() && canBeConstructed != objectConstructed)
-                    throw new InconsistentPicturesException("The fact whether the object can be constructed was not determined consistently.");
+                    throw new InconsistentConstructibilityException(constructedObject);
 
                 // Mark the construction result
                 canBeConstructed = objectConstructed;

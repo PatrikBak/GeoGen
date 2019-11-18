@@ -262,39 +262,21 @@ namespace GeoGen.Constructor
         /// This object might or might not be one already present in the contextual picture. If the 
         /// object couldn't be determined, an <see cref="InconsistentPicturesException"/> is thrown. 
         /// </summary>
-        /// <param name="constructedObjects">The constructor for the objects in all pictures.</param>
+        /// <param name="configurationObject">The object that was actually constructed.</param>
+        /// <param name="geometryData">The geometry data in particular pictures.</param>
         /// <returns>The found object; or null, if such object is not present.</returns>
-        public GeometricObject GetGeometricObject(IReadOnlyDictionary<Picture, IAnalyticObject> constructedObjects)
+        public GeometricObject GetGeometricObject(ConfigurationObject configurationObject, IReadOnlyDictionary<Picture, IAnalyticObject> geometryData)
         {
-            // Prepare the result
-            var foundObject = default(GeometricObject);
-
-            #region Searching already created objects
-
-            // Go through all the pairs of picture-object
-            foreach (var picture in Pictures)
-            {
-                // Find out if this object is present
-                var equalObject = _objects[picture].GetLeftValueOrDefault(constructedObjects[picture]);
-
-                // If this is not the first picture and we've marked the found object differently
-                // then we have an inconsistency
-                if (picture != Pictures.First() && foundObject != equalObject)
-                    throw new InconsistentPicturesException("Corresponding equal geometric object couldn't be determined consistently.");
-
-                // Otherwise set the found object
-                foundObject = equalObject;
-            }
+            // Try to find the object among our current geometric objects
+            var foundObject = FindGeometricObject(configurationObject, picture => geometryData[picture]);
 
             // If we found the object, we can return it 
             if (foundObject != null)
                 return foundObject;
 
-            #endregion
-
             // If we couldn't find it, we need to construct it
             // We switch based on the type of object that we're dealing with
-            switch (constructedObjects.First().Value)
+            switch (geometryData.First().Value)
             {
                 // Line or circle
                 case Line _:
@@ -318,7 +300,7 @@ namespace GeoGen.Constructor
                         {
                             // Pull the analytic representations of the point and the line/circle
                             var analyticPoint = (Point)_objects[picture].GetRightValue(point);
-                            var lineOrCircle = constructedObjects[picture];
+                            var lineOrCircle = geometryData[picture];
 
                             // Let the helper decide if the point lies on the object
                             var liesOnInThisPicture = AnalyticHelpers.LiesOn(lineOrCircle, analyticPoint);
@@ -326,7 +308,7 @@ namespace GeoGen.Constructor
                             // If the result has been set and it differs from the currently 
                             // found value, then we have an inconsistency
                             if (liesOn != null && liesOn.Value != liesOnInThisPicture)
-                                throw new InconsistentPicturesException($"The fact whether a point lies on a {(lineOrCircle is Line ? "line" : "circle")} is not the same in every picture.");
+                                throw new InconsistentIncidenceException(point, configurationObject);
 
                             // Otherwise we update the result
                             liesOn = liesOnInThisPicture;
@@ -340,7 +322,7 @@ namespace GeoGen.Constructor
                     }
 
                     // Return the object based on the type
-                    return constructedObjects.First().Value switch
+                    return geometryData.First().Value switch
                     {
                         // Line
                         Line _ => new LineObject(configurationObject: null, points) as GeometricObject,
@@ -357,7 +339,7 @@ namespace GeoGen.Constructor
                     throw new ConstructorException("Finding equivalent point is currently not supported.");
 
                 default:
-                    throw new ConstructorException($"Unhandled type of analytic object: {constructedObjects.First().Value.GetType()}");
+                    throw new ConstructorException($"Unhandled type of analytic object: {geometryData.First().Value.GetType()}");
             }
         }
 
@@ -388,7 +370,7 @@ namespace GeoGen.Constructor
         private void Add(ConfigurationObject configurationObject, bool isNew)
         {
             // Let the helper method get the geometric object that represents this object
-            var geometricObject = FindGeometricObject(configurationObject);
+            var geometricObject = FindGeometricObject(configurationObject, picture => picture.Get(configurationObject));
 
             // If this object is not null (i.e. there already is it's representation)...
             if (geometricObject != null)
@@ -463,8 +445,9 @@ namespace GeoGen.Constructor
         /// Finds the geometric object that corresponds to a given configuration object. 
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
+        /// <param name="analyticObjectFactory">The factory that for given picture returns the analytic representation of the concerned object.</param>
         /// <returns>The corresponding geometric object, if there is any; otherwise null.</returns>
-        private GeometricObject FindGeometricObject(ConfigurationObject configurationObject)
+        private GeometricObject FindGeometricObject(ConfigurationObject configurationObject, Func<Picture, IAnalyticObject> analyticObjectFactory)
         {
             // NOTE: We could have just taken one picture and look for the object
             // in it, but we didn't. There is a chance of inconsistency, that is 
@@ -479,41 +462,32 @@ namespace GeoGen.Constructor
             // is it happening incorrectly in all the pictures. But even once it is
             // very improbable :)
 
-            // Declare the result
-            GeometricObject result = null;
+            // Prepare the result
+            var foundObject = default(GeometricObject);
 
-            // We're gonna check all the pictures
+            // Go through all the pairs of picture-object
             foreach (var picture in Pictures)
             {
-                // Pull the analytic representation of this object. 
-                var analyticObject = picture.Get(configurationObject);
+                // Find out if this object is present
+                var equalObject = _objects[picture].GetLeftValueOrDefault(analyticObjectFactory(picture));
 
-                // If the analytic version of this object is not present...
-                if (!_objects[picture].ContainsRightKey(analyticObject))
+                // If this is not the first picture and we've marked the found object differently
+                // then we have an inconsistency
+                if (picture != Pictures.First() && foundObject != equalObject)
                 {
-                    // If this is not the first picture and our results
-                    // don't match, then we have an inconsistency
-                    if (picture != Pictures.First() && result != null)
-                        throw new InconsistentPicturesException("The geometric object corresponding to a configuration object could not be determined consistently.");
+                    // Get the not-null geometric objects that have been evaluated equal to our object
+                    var equalObjects = new[] { foundObject, equalObject }.Where(o => o != null).ToArray();
 
-                    // Otherwise we'll try another picture
-                    continue;
+                    // Throw an exception
+                    throw new InconsistentEqualityException(configurationObject, equalObjects);
                 }
 
-                // But if it exists in the picture, we pull its geometric version.
-                var geometricObject = _objects[picture].GetLeftValue(analyticObject);
-
-                // If this is not the first picture and our results
-                // don't match, then we have an inconsistency
-                if (picture != Pictures.First() && result != geometricObject)
-                    throw new InconsistentPicturesException("The geometric object corresponding to a configuration object could not be determined consistently.");
-
-                // If we're fine, we can set the result and test the next picture
-                result = geometricObject;
+                // Otherwise set the found object
+                foundObject = equalObject;
             }
 
-            // If we got here, then there are no inconsistencies and we can return the result
-            return result;
+            // Return the found object (which might be null, if no such object is present)
+            return foundObject;
         }
 
         /// <summary>
@@ -630,7 +604,22 @@ namespace GeoGen.Constructor
                     // If this is not the first picture and our results 
                     // don't match, then we have an inconsistency
                     if (picture != Pictures.First() && result != newResult)
-                        throw new InconsistentPicturesException("A line object couldn't be set consistently within more pictures (this should be very rare).");
+                    {
+                        // Gather points that are not consistently collinear. 
+                        // Take the points from the this new result
+                        var problematicPoints = ((LineObject)newResult).Points
+                            // Add the points from the current result, if is it not null
+                            .Concat(result?.Points ?? Enumerable.Empty<PointObject>())
+                            // Add the passed points
+                            .Concat(new[] { point1, point2 })
+                            // Take distinct ones
+                            .Distinct()
+                            // Enumerate
+                            .ToArray();
+
+                        // Throw an exception
+                        throw new InconsistentCollinearityException(problematicPoints);
+                    }
 
                     // Otherwise we can update the result
                     result = (LineObject)newResult;
@@ -638,7 +627,20 @@ namespace GeoGen.Constructor
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
                 else if (picture != Pictures.First() && result != null)
-                    throw new InconsistentPicturesException("A line object couldn't be set consistently within more pictures (this should be very rare).");
+                {
+                    // Gather points that are not consistently collinear. 
+                    // Take the points from the this result
+                    var problematicPoints = result.Points
+                        // Add the passed points
+                        .Concat(new[] { point1, point2 })
+                        // Take distinct ones
+                        .Distinct()
+                        // Enumerate
+                        .ToArray();
+
+                    // Throw an exception
+                    throw new InconsistentCollinearityException(problematicPoints);
+                }
             }
 
             // If the result is not null, i.e. the line already exists, we won't do anything else
@@ -695,8 +697,10 @@ namespace GeoGen.Constructor
                 var areCollinear = AnalyticHelpers.AreCollinear(analyticPoint1, analyticPoint2, analyticPoint3);
 
                 // If we got a different result than the one set, then we have an inconsistency 
+                // This should be very rare, because lines are resolved first and if is really
+                // is an inconsistency between collinearities, then it should have been spotted by now
                 if (collinear != null && collinear.Value != areCollinear)
-                    throw new InconsistentPicturesException("Three points are not collinear in every picture.");
+                    throw new InconsistentCollinearityException(new[] { point1, point2, point3 });
 
                 // We're fine, we can set the collinearity result
                 collinear = areCollinear;
@@ -716,7 +720,7 @@ namespace GeoGen.Constructor
                 catch (AnalyticException)
                 {
                     // If it fails, which is a very rare case, it will be considered an inconsistency
-                    throw new InconsistentPicturesException("Three points were evaluated collinear, but yet we weren't able to construct a circle through them (this is a rare case)");
+                    throw new InconsistentPicturesException("Three points were evaluated collinear, but yet we weren't able to construct a circle through them (this should be very rare)");
                 }
 
                 // Cache the result
@@ -731,7 +735,22 @@ namespace GeoGen.Constructor
                     // If this is not the first picture and our results 
                     // don't match, then we have an inconsistency
                     if (picture != Pictures.First() && result != newResult)
-                        throw new InconsistentPicturesException("A circle object couldn't be set consistently with more pictures (this should be very rare).");
+                    {
+                        // Gather points that are not consistently concyclic. 
+                        // Take the points from the this new result
+                        var problematicPoints = ((CircleObject)newResult).Points
+                            // Add the points from the current result, if is it not null
+                            .Concat(result?.Points ?? Enumerable.Empty<PointObject>())
+                            // Add the passed points
+                            .Concat(new[] { point1, point2, point3 })
+                            // Take distinct ones
+                            .Distinct()
+                            // Enumerate
+                            .ToArray();
+
+                        // Throw an exception
+                        throw new InconsistentConcyclityException(problematicPoints);
+                    }
 
                     // Otherwise we can update the result
                     result = (CircleObject)newResult;
@@ -739,7 +758,20 @@ namespace GeoGen.Constructor
                 // If this is not the first picture and the result is
                 // already set, then we also have an inconsistency
                 else if (picture != Pictures.First() && result != null)
-                    throw new InconsistentPicturesException("A circle object couldn't be set consistently with more pictures (this should be very rare).");
+                {
+                    // Gather points that are not consistently collinear. 
+                    // Take the points from the this result
+                    var problematicPoints = result.Points
+                        // Add the passed points
+                        .Concat(new[] { point1, point2, point3 })
+                        // Take distinct ones
+                        .Distinct()
+                        // Enumerate
+                        .ToArray();
+
+                    // Throw an exception
+                    throw new InconsistentConcyclityException(problematicPoints);
+                }
             }
 
             // If the result is not null, i.e. the circle already exists, we won't do anything else
@@ -836,7 +868,7 @@ namespace GeoGen.Constructor
                 // If the result has been set and it differs from the currently 
                 // found value, then we have an inconsistency
                 if (result != null && result.Value != liesOn)
-                    throw new InconsistentPicturesException($"The fact whether a point lies on a {(geometricObject is LineObject ? "line" : "circle")} is not the same in every picture.");
+                    throw new InconsistentIncidenceException(pointObject, (DefinableByPoints)geometricObject);
 
                 // Otherwise we update the result
                 result = liesOn;

@@ -734,7 +734,7 @@ namespace GeoGen.TheoremProver
                     // Safely execute
                     var foundObject = GeneralUtilities.TryExecute(
                         // Getting the corresponding geometric object from the contextual picture
-                        () => input.ExaminedConfigurationPicture.GetGeometricObject(constructionDictionary),
+                        () => input.ExaminedConfigurationPicture.GetGeometricObject(innerObject, constructionDictionary),
                         // While tracing possible inconsistencies
                         (InconsistentPicturesException e) => _tracer?.UnexaminableObjectInContextualPicture(mappedObject, input.ExaminedConfigurationPicture, e));
 
