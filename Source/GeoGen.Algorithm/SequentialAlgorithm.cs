@@ -231,24 +231,15 @@ namespace GeoGen.Algorithm
                 var (pictures, constructionData) = GeneralUtilities.TryExecute(
                     // Constructing of the pictures for the configuration
                     () => _geometryConstructor.ConstructByCloning(previousPictures, configuration),
-                    // While tracing a possible failure (such configurations will be discarded in the next step)
-                    (InconsistentPicturesException e) => _tracer?.UndrawableObjectInPicturesOfConfiguration(configuration.LastConstructedObject, previousPictures, e));
+                    // While ignoring a possible failure for now (this is practically not possible, see the next comment)
+                    (InconsistentPicturesException e) => { });
 
                 // Since the configuration has been confirmed to be correct, there should not
-                // be any problem regarding the construction of this object. This should be next to impossible
-                if (pictures == default)
+                // be any problem regarding the construction of this object. This seem to be next to impossible.
+                // Even after reducing the default precision of rounding doubles I couldn't make this happen
+                // In any case, it doesn't hurt us to have this check here
+                if (pictures == default || constructionData.InconstructibleObject != default || constructionData.Duplicates != default)
                     return false;
-
-                // The object has already been confirmed as constructible and any potential
-                // duplicates should be resolved by now. Even this problem should be next to impossible                
-                if (constructionData.InconstructibleObject != default || constructionData.Duplicates != default)
-                {
-                    // Trace if something weird like this happens
-                    _tracer?.IncorrectPicturesAfterAddingNewObject(pictures, constructionData);
-
-                    // Assume the configuration is incorrect
-                    return false;
-                }
 
                 // We have to remember the pictures for further use
                 picturesMap.Add(configuration, pictures);
