@@ -123,6 +123,17 @@ namespace GeoGen.Constructor
         /// <returns>The construction data.</returns>
         public ConstructionData Construct(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
         {
+            // Local function that restores all the pictures if there was an inconsistency
+            void Restore()
+            {
+                // If the pictures aren't manipulated, don't do anything
+                if (!addToPictures)
+                    return;
+
+                // Otherwise make sure the object is remove in all the pictures
+                pictures.ForEach(picture => picture.Remove(constructedObject));
+            }
+
             // Initialize a variable indicating if the construction is possible
             bool canBeConstructed = default;
 
@@ -167,12 +178,21 @@ namespace GeoGen.Constructor
                 // We need to first check if some other picture didn't mark constructibility in the opposite way
                 // If yes, we have an inconsistency
                 if (picture != pictures.First() && canBeConstructed != objectConstructed)
+                {
+                    // Make sure the pictures are restored
+                    Restore();
+
+                    // Throw an exception
                     throw new InconsistentConstructibilityException(constructedObject);
+                }
 
                 // Now we need to check if some other picture didn't find a different duplicate 
                 // If yes, we have an inconsistency
                 if (picture != pictures.First() && duplicate != equalObject)
                 {
+                    // Make sure the pictures are restored
+                    Restore();
+
                     // Get the not-null equal objects
                     var equalObjects = new[] { duplicate, equalObject }.Where(o => o != null).ToArray();
 

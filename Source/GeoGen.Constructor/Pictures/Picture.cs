@@ -154,6 +154,20 @@ namespace GeoGen.Constructor
             // Mark the equality in the equal objects dictionary
             => _equalObjects.Add(equalObject, existingObject);
 
+        /// <summary>
+        /// Removes any information that the picture has about a given object. This includes
+        /// removing the information about duplicate objects.
+        /// </summary>
+        /// <param name="configurationObject">The configuration object to be removed.</param>
+        internal void Remove(ConfigurationObject configurationObject)
+        {
+            // Remove the object from the map
+            _content.RemoveLeft(configurationObject);
+
+            // Remove any duplicity information
+            _equalObjects.Remove(configurationObject);
+        }
+
         #endregion
 
         #region IEnumerable implementation

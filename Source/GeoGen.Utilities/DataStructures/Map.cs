@@ -86,6 +86,42 @@ namespace GeoGen.Utilities
         public bool ContainsRightKey(T2 item) => _rightToLeft.ContainsKey(item);
 
         /// <summary>
+        /// Removes a given T1 item.
+        /// </summary>
+        /// <param name="item">The T1 item.</param>
+        public void RemoveLeft(T1 item)
+        {
+            // If the left value doesn't exist, don't do anything
+            if (!_leftToRight.ContainsKey(item))
+                return;
+
+            // Otherwise get the right value
+            var rightValue = _leftToRight[item];
+
+            // Remove from both the dictionaries
+            _leftToRight.Remove(item);
+            _rightToLeft.Remove(rightValue);
+        }
+
+        /// <summary>
+        /// Removes a given T2 item.
+        /// </summary>
+        /// <param name="item">The T2 item.</param>
+        public void RemoveRight(T2 item)
+        {
+            // If the right value doesn't exist, don't do anything
+            if (!_rightToLeft.ContainsKey(item))
+                return;
+
+            // Otherwise get the left value
+            var leftValue = _rightToLeft[item];
+
+            // Remove from both the dictionaries
+            _leftToRight.Remove(leftValue);
+            _rightToLeft.Remove(item);
+        }
+
+        /// <summary>
         /// Clears the content of the map.
         /// </summary>
         public void Clear()
