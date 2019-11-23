@@ -736,7 +736,7 @@ namespace GeoGen.TheoremProver
                         // Getting the corresponding geometric object from the contextual picture
                         () => input.ExaminedConfigurationPicture.GetGeometricObject(innerObject, constructionDictionary),
                         // While tracing possible inconsistencies
-                        (InconsistentPicturesException e) => _tracer?.UnexaminableObjectInContextualPicture(mappedObject, input.ExaminedConfigurationPicture, e));
+                        (InconsistentPicturesException e) => _tracer?.UnexaminableObjectInContextualPicture(innerObject, input.ExaminedConfigurationPicture, e));
 
                     // If there is no corresponding object, or there were inconsistencies, then there is no mapping
                     if (foundObject == null)
