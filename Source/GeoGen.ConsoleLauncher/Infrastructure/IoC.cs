@@ -1,4 +1,6 @@
-﻿using GeoGen.DependenciesResolver;
+﻿using GeoGen.Algorithm;
+using GeoGen.Constructor;
+using GeoGen.DependenciesResolver;
 using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using Ninject;
@@ -31,7 +33,7 @@ namespace GeoGen.ConsoleLauncher
             // Initialize the container
             Kernel = DependenciesResolver.IoC.CreateKernel();
 
-            #region Bind logging system
+            #region Logging system
 
             // Bind logging manager
             Kernel.Bind<ILoggingManager>().To<CustomLoggingManager>();
@@ -70,12 +72,23 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
+            #region Local dependencies
+
             // Add local dependencies
             Kernel.Bind<IParser>().To<Parser>();
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
+
+            // Add tracers
+            Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
+            Kernel.Bind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
+            Kernel.Bind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
+
+            #endregion
+
+            #region Algorithm
 
             // Add generator
             Kernel.AddGenerator()
@@ -93,6 +106,8 @@ namespace GeoGen.ConsoleLauncher
                 ))
                 // And finally the algorithm
                 .AddAlgorithm();
+
+            #endregion
         }
 
         #endregion

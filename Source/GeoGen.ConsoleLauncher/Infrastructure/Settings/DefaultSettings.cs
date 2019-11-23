@@ -73,6 +73,24 @@ namespace GeoGen.ConsoleLauncher
                 generateFullReport: true,
                 fullReportSuffix: " (full)",
                 displayProofAttempts: true
+            ),
+            tracersSettings: new TracersSettings
+            (
+                constructorFailureTracerSettings: new ConstructorFailureTracerSettings
+                (
+                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+                    logFailures: true
+                ),
+                geometryFailureTracerSettings: new GeometryFailureTracerSettings
+                (
+                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
+                    logFailures: true
+                ),
+                subtheoremDeriverGeometryFailureTracerSettings: new SubtheoremDeriverGeometryFailureTracerSettings
+                (
+                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\subtheorem_failures.txt",
+                    logFailures: true
+                )
             )
         )
         { }

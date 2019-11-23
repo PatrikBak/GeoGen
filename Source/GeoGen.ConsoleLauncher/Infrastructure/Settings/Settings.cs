@@ -35,6 +35,11 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public AlgorithmSettings AlgorithmSettings { get; }
 
+        /// <summary>
+        /// The settings for all tracers used in the batch runs.
+        /// </summary>
+        public TracersSettings TracersSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -47,17 +52,20 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="templateTheoremsFolderSettings">The settings for the folder containing template theorems.</param>
         /// <param name="algorithmRunnerSettings">The settings for the algorithm runner.</param>
         /// <param name="algorithmSettings">The settings related to the algorithm.</param>
+        /// <param name="tracersSettings">The settings for all tracers used in the batch runs.</param>
         public Settings(IReadOnlyList<BaseLoggerSettings> loggers,
                         InputFolderSettings inputFolderSettings,
                         TemplateTheoremsFolderSettings templateTheoremsFolderSettings,
                         AlgorithmRunnerSettings algorithmRunnerSettings,
-                        AlgorithmSettings algorithmSettings)
+                        AlgorithmSettings algorithmSettings,
+                        TracersSettings tracersSettings)
         {
             Loggers = loggers ?? throw new ArgumentNullException(nameof(loggers));
             InputFolderSettings = inputFolderSettings ?? throw new ArgumentNullException(nameof(inputFolderSettings));
             TemplateTheoremsFolderSettings = templateTheoremsFolderSettings ?? throw new ArgumentNullException(nameof(templateTheoremsFolderSettings));
             AlgorithmRunnerSettings = algorithmRunnerSettings ?? throw new ArgumentNullException(nameof(algorithmRunnerSettings));
             AlgorithmSettings = algorithmSettings ?? throw new ArgumentNullException(nameof(algorithmSettings));
+            TracersSettings = tracersSettings ?? throw new ArgumentNullException(nameof(tracersSettings));
         }
 
         #endregion
