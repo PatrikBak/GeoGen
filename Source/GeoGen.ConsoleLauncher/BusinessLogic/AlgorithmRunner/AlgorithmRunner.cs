@@ -91,12 +91,12 @@ namespace GeoGen.ConsoleLauncher
             #region Writing initial configuration
 
             // Prepare the formatter for the initial configuration
-            var initialFormatter = new OutputFormatter(input.InitialConfiguration);
+            var initialFormatter = new OutputFormatter(input.InitialConfiguration.AllObjects);
 
             // Write it
             WriteLineToBothReports("Initial configuration:");
             WriteLineToBothReports();
-            WriteLineToBothReports(initialFormatter.FormatConfiguration());
+            WriteLineToBothReports(initialFormatter.FormatConfiguration(input.InitialConfiguration));
 
             // Write its theorems, if there are any
             if (initialTheorems.Any())
@@ -175,7 +175,7 @@ namespace GeoGen.ConsoleLauncher
                 var anyInterestingTheorem = algorithmOutput.ProverOutput.ProvenTheorems.Count != algorithmOutput.Theorems.AllObjects.Count;
 
                 // Prepare a formatter for the generated configuration
-                var formatter = new OutputFormatter(algorithmOutput.Configuration);
+                var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
 
                 // Prepare the writing function that writes to both reports only when
                 // there is anything interesting to write (i.e. interesting theorems)
@@ -186,7 +186,7 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine($"Configuration {generatedConfigurations}");
                 WriteLine("------------------------------------------------");
                 WriteLine("");
-                WriteLine(formatter.FormatConfiguration());
+                WriteLine(formatter.FormatConfiguration(algorithmOutput.Configuration));
 
                 // Write the title
                 WriteLine("\nTheorems:\n");
@@ -502,7 +502,7 @@ namespace GeoGen.ConsoleLauncher
                     // Get the redundant objects
                     var redundantObjects = ((DefinableSimplerDerivationData)proofAttempt.Data).RedundantObjects
                         // Get their names
-                        .Select(formatter.GetNameOfObject)
+                        .Select(formatter.GetObjectName)
                         // Sort them
                         .Ordered()
                         // Join together

@@ -1,6 +1,6 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +8,7 @@ using System.Text;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// A helper class that converts a configuration and its theorems to formatted readable strings.
+    /// A helper class that converts GeoGen core objects to formatted readable strings.
     /// </summary>
     public class OutputFormatter
     {
@@ -19,26 +19,18 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly Dictionary<ConfigurationObject, string> _objectNames = new Dictionary<ConfigurationObject, string>();
 
-        /// <summary>
-        /// The configuration to be formatted.
-        /// </summary>
-        private readonly Configuration _configuration;
-
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="OutputFormatter"/> class 
-        /// handling the given configuration.
+        /// Initializes a new instance of the <see cref="OutputFormatter"/> class.
         /// </summary>
-        /// <param name="configuration">The configuration to be formatted.</param>
-        public OutputFormatter(Configuration configuration)
+        /// <param name="objects">The objects to be named and used later in formatting.</param>
+        public OutputFormatter(IEnumerable<ConfigurationObject> objects)
         {
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-
-            // Call the function that creates names for the objects in the configuration
-            NameObjects();
+            // Name the given objects
+            NameObjects(objects);
         }
 
         #endregion
@@ -46,27 +38,27 @@ namespace GeoGen.ConsoleLauncher
         #region Public methods
 
         /// <summary>
-        /// Creates a formatted string describing the configuration.
+        /// Creates a formatted string describing a given configuration.
         /// </summary>
         /// <returns>The string representing the configuration.</returns>
-        public string FormatConfiguration()
+        public string FormatConfiguration(Configuration configuration)
         {
             // Prepare the result
             var result = new StringBuilder();
 
             // Compose the loose objects string
-            var looseObjects = _configuration.LooseObjects.Select(looseObject => _objectNames[looseObject]).ToJoinedString();
+            var looseObjects = configuration.LooseObjects.Select(looseObject => _objectNames[looseObject]).ToJoinedString();
 
-            // Add the first line with loose objects
-            result.Append($"{_configuration.LooseObjectsHolder.Layout}: {looseObjects}\n");
+            // Add the first line with loose objects and its layout
+            result.Append($"{configuration.LooseObjectsHolder.Layout}: {looseObjects}\n");
 
             // Add every constructed object
-            foreach (var constructedObject in _configuration.ConstructedObjects)
+            foreach (var constructedObject in configuration.ConstructedObjects)
             {
                 // Prepare the object's definition
-                var objectsDefinition = ConfigurationObjectDefinition(constructedObject);
+                var objectsDefinition = FormatConfigurationObject(constructedObject);
 
-                // Add it to the result
+                // Add it to the result with the name
                 result.Append($"{_objectNames[constructedObject]} = {objectsDefinition}\n");
             }
 
@@ -75,7 +67,7 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Creates a formatted string describing a given theorem.
+        /// Creates a formatted string describing a given theorem. 
         /// </summary>
         /// <param name="theorem">The theorem.</param>
         /// <returns>The string representing the theorem.</returns>
@@ -144,11 +136,83 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
+        /// Gets the string definition of a passed configuration object. Loose objects have only
+        /// names as their definition, whereas constructed objects have the construction and arguments.
+        /// </summary>
+        /// <param name="configurationObject">The object that we're formatting.</param>
+        /// <returns>The string representing the object.</returns>
+        public string FormatConfigurationObject(ConfigurationObject configurationObject)
+        {
+            // Switch based on the object
+            return configurationObject switch
+            {
+                // Loose objects have their names as the definition
+                LooseConfigurationObject _ => _objectNames[configurationObject],
+
+                // For constructed objects we include the construction and arguments
+                ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString()})",
+
+                // Default
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
+            };
+        }
+
+        /// <summary>
+        /// Creates a formatted string describing a given geometric object. 
+        /// </summary>
+        /// <param name="geometricObject">The geometric object.</param>
+        /// <returns>The string representing the geometric object.</returns>
+        public string FormatGeometricObject(GeometricObject geometricObject)
+        {
+            // Prepare the result
+            var result = "";
+
+            // If the physical object is present, append it's name
+            if (geometricObject.ConfigurationObject != null)
+                result += GetObjectName(geometricObject.ConfigurationObject);
+
+            // Furthermore switch based on type
+            switch (geometricObject)
+            {
+                // If we have an object with points...
+                case DefinableByPoints objectWithPoints:
+
+                    // If there are no points, then we're done
+                    if (objectWithPoints.Points.IsEmpty())
+                        return result;
+
+                    // Otherwise we convert points
+                    var pointsString = objectWithPoints.Points.Select(p => GetObjectName(p.ConfigurationObject)).Ordered().ToJoinedString();
+
+                    // And return based on whether this is a line or circle
+                    return objectWithPoints switch
+                    {
+                        // Enclose line points in []
+                        LineObject _ => $"{result}[{pointsString}]",
+
+                        // Enclose circle points in ()
+                        CircleObject _ => $"{result}({pointsString})",
+
+                        // Otherwise we have an unhandled type
+                        _ => throw new GeoGenException($"Unhandled type of {nameof(DefinableByPoints)}: {objectWithPoints.GetType()}")
+                    };
+
+                // If we have a point, we do nothing else
+                case PointObject _:
+                    return result;
+
+                // Otherwise we have an unhandled type
+                default:
+                    throw new GeoGenException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
+            }
+        }
+
+        /// <summary>
         /// Gets the name of the passed object.
         /// </summary>
         /// <param name="configurationObject">The object.</param>
         /// <returns>The objects name.</returns>
-        public string GetNameOfObject(ConfigurationObject configurationObject) => _objectNames.GetOrDefault(configurationObject)
+        public string GetObjectName(ConfigurationObject configurationObject) => _objectNames.GetOrDefault(configurationObject)
             // If it's not there, make it known
             ?? throw new GeoGenException("Unknown object.");
 
@@ -157,10 +221,10 @@ namespace GeoGen.ConsoleLauncher
         #region Private methods
 
         /// <summary>
-        /// Names the objects of the <see cref="_configuration"/> and adds them 
-        /// to the <see cref="_objectNames"/> dictionary.
+        /// Names the passed objects and adds their names to the <see cref="_objectNames"/> dictionary.
         /// </summary>
-        private void NameObjects()
+        /// <param name="objects">The objects to be named.</param>
+        private void NameObjects(IEnumerable<ConfigurationObject> objects)
         {
             // Prepare the numbers of currently named objects of particular types
             var namedPoints = 0;
@@ -168,11 +232,11 @@ namespace GeoGen.ConsoleLauncher
             var namedLines = 0;
 
             // Helper values of the total numbers of points and lines
-            var numberOfLines = _configuration.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Line);
-            var numberOfCircles = _configuration.AllObjects.Count(o => o.ObjectType == ConfigurationObjectType.Circle);
+            var numberOfLines = objects.Count(o => o.ObjectType == ConfigurationObjectType.Line);
+            var numberOfCircles = objects.Count(o => o.ObjectType == ConfigurationObjectType.Circle);
 
             // Go through all the objects
-            foreach (var configurationObject in _configuration.AllObjects)
+            foreach (var configurationObject in objects)
             {
                 // Prepare the name
                 var name = default(string);
@@ -231,36 +295,14 @@ namespace GeoGen.ConsoleLauncher
             {
                 // If we have an object argument, ask directly for the name of its object
                 ObjectConstructionArgument objectArgument => _objectNames.GetOrDefault(objectArgument.PassedObject)
-                        // If there is none, we don't have a different option bu converting it (and get an ugly string)
-                        ?? ConfigurationObjectDefinition(objectArgument.PassedObject),
+                        // If there is none, we don't have a different option but converting it (and get an ugly string)
+                        ?? FormatConfigurationObject(objectArgument.PassedObject),
 
                 // For set argument we wrap the result in curly braces and convert the inner arguments
                 SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}",
 
-                // Default
+                // Default case
                 _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
-            };
-        }
-
-        /// <summary>
-        /// Gets the string definition of a passed configuration object. Loose objects have only
-        /// names as their definition, whereas constructed objects have the construction and arguments.
-        /// </summary>
-        /// <param name="configurationObject">The object for which we're for the definition.</param>
-        /// <returns>The resulting string.</returns>
-        private string ConfigurationObjectDefinition(ConfigurationObject configurationObject)
-        {
-            // Switch based on the object
-            return configurationObject switch
-            {
-                // Loose objects have their names as the definition
-                LooseConfigurationObject _ => _objectNames[configurationObject],
-
-                // For constructed objects we include the construction and arguments
-                ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString()})",
-
-                // Default
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
             };
         }
 
@@ -288,7 +330,7 @@ namespace GeoGen.ConsoleLauncher
                             return _objectNames[definingObject];
 
                         // Otherwise return the definition
-                        return ConfigurationObjectDefinition(definingObject);
+                        return FormatConfigurationObject(definingObject);
                     }
 
                     // If this object doesn't have an object part, it must be defined differently
@@ -311,7 +353,7 @@ namespace GeoGen.ConsoleLauncher
                                 // That don't have a name
                                 .Where(point => !_objectNames.ContainsKey(point))
                                 // Get their definition
-                                .Select(ConfigurationObjectDefinition)
+                                .Select(FormatConfigurationObject)
                                 // Order them
                                 .Ordered();
 
