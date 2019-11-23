@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Utilities;
+using System;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
 
@@ -50,10 +51,10 @@ namespace GeoGen.ConsoleLauncher
             var inputs = await _inputProvider.GetAlgorithmInputsAsync();
 
             // Run algorithm for each of them
-            foreach (var input in inputs)
+            inputs.ForEach((input, index) =>
             {
                 // Log the file being processed
-                LoggingManager.LogInfo($"Running algorithm for the input file {input.FilePath}.");
+                LoggingManager.LogInfo($"Running algorithm for input file {index + 1} with path {input.FilePath}");
 
                 try
                 {
@@ -63,12 +64,12 @@ namespace GeoGen.ConsoleLauncher
                 catch (Exception e)
                 {
                     // Log which file failed
-                    LoggingManager.LogError($"Couldn't perform the algorithm on the input file {input.FilePath}: {e.Message}");
+                    LoggingManager.LogError($"Couldn't perform the algorithm on input file {index + 1} with path {input.FilePath}: {e.Message}");
 
                     // Throw it further
                     throw;
                 }
-            }
+            });
         }
 
         #endregion

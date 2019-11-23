@@ -81,7 +81,7 @@ namespace GeoGen.ConsoleLauncher
             }
 
             // Inform about the found ones
-            LoggingManager.LogInfo($"Found input files:\n\n{inputFiles.Select(file => $"  - {file.path}").ToJoinedString("\n")}\n");
+            LoggingManager.LogInfo($"Found {inputFiles.Count} input file{(inputFiles.Count == 1 ? "" : "s")}:\n\n{inputFiles.Select(file => $"   - {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
             var result = new List<LoadedAlgorithmInput>();
