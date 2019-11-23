@@ -14,9 +14,10 @@ namespace GeoGen.Algorithm
         /// that the algorithm has generated.
         /// </summary>
         /// <param name="constructedObject">The object that couldn't be drawn consistently.</param>
+        /// <param name="initialLooseObjects">The loose objects of the initial configuration without which we can't provide full information about the constructed object.</param>
         /// <param name="pictures">The pictures to which the object was attempted to be drawn.</param>
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
-        void UndrawableObjectInBigPicture(ConstructedConfigurationObject constructedObject, Pictures pictures, InconsistentPicturesException exception);
+        void UndrawableObjectInBigPicture(ConstructedConfigurationObject constructedObject, LooseObjectsHolder initialLooseObjects, Pictures pictures, InconsistentPicturesException exception);
 
         /// <summary>
         /// Traces that a given contextual picture couldn't be cloned and extended with the new object

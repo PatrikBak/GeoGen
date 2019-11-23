@@ -152,7 +152,7 @@ namespace GeoGen.Algorithm
                     // Constructing of the object with adding it to the pictures
                     () => _geometryConstructor.Construct(objectTestingPictures, constructedObject, addToPictures: true),
                     // Tracing a possible failure, which will be handled in the next step
-                    (InconsistentPicturesException e) => _tracer?.UndrawableObjectInBigPicture(constructedObject, objectTestingPictures, e));
+                    (InconsistentPicturesException e) => _tracer?.UndrawableObjectInBigPicture(constructedObject, input.InitialConfiguration.LooseObjectsHolder, objectTestingPictures, e));
 
                 // If it couldn't be drawn
                 if (data == null)
