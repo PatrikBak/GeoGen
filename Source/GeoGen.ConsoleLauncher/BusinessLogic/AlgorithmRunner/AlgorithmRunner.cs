@@ -61,30 +61,38 @@ namespace GeoGen.ConsoleLauncher
 
             #region Prepare writers
 
-            // Prepare the output path
-            var outputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}.{_settings.OutputFileExtention}");
+            // Prepare the name of the output files
+            var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FilesExtention}";
 
             // Prepare the writer for the output
-            using var outputWriter = new StreamWriter(new FileStream(outputPath, FileMode.Create, FileAccess.Write, FileShare.Read));
+            using var outputWriter = new StreamWriter(new FileStream(Path.Combine(_settings.OutputFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read));
 
-            // Prepare the path for the full output
-            var fullOutputPath = Path.Combine(_settings.OutputFolder, $"{_settings.OutputFilePrefix}{input.Id}{_settings.FullReportSuffix}.{_settings.OutputFileExtention}");
+            // If we should generate the output with attempts
+            using var outputWithAttemptsWriter = _settings.WriteOutputWithAttempts
+                // Prepare the writer for it
+                ? new StreamWriter(new FileStream(Path.Combine(_settings.OutputWithAttemptsFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read))
+                // Otherwise take null
+                : null;
 
-            // Prepare the writer for the full output, if it's requested
-            using var fullOutputWriter = _settings.GenerateFullReport ? new StreamWriter(new FileStream(fullOutputPath, FileMode.Create, FileAccess.Write, FileShare.Read)) : null;
+            // If we should generate the output with attempt and proofs
+            using var outputWithAttemptsAndProofsWriter = _settings.WriteOutputWithAttemptsAndProofs
+                // Prepare the writer for it
+                ? new StreamWriter(new FileStream(Path.Combine(_settings.OutputWithAttemptsAndProofsFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read))
+                // Otherwise take null
+                : null;
 
-            // Helper function that writes to both the writers
-            void WriteLineToBothReports(string line = "")
+            // Local function that writes a line to all reports
+            void WriteLineToAllWriters(string line = "")
             {
-                // Write to the default
+                // Write to the main output
                 outputWriter.WriteLine(line);
 
-                // Write to the full, if it's specified
-                fullOutputWriter?.WriteLine(line);
-            }
+                // Write to the output with attempts file if it is provided
+                outputWithAttemptsWriter?.WriteLine(line);
 
-            // Helper function that writes to the full writer
-            void WriteLineToFullReport(string line = "") => fullOutputWriter?.WriteLine(line);
+                // Write to the output with attempts and proofs file if it is provided
+                outputWithAttemptsAndProofsWriter?.WriteLine(line);
+            }
 
             #endregion            
 
@@ -94,15 +102,15 @@ namespace GeoGen.ConsoleLauncher
             var initialFormatter = new OutputFormatter(input.InitialConfiguration.AllObjects);
 
             // Write it
-            WriteLineToBothReports("Initial configuration:");
-            WriteLineToBothReports();
-            WriteLineToBothReports(initialFormatter.FormatConfiguration(input.InitialConfiguration));
+            WriteLineToAllWriters("Initial configuration:");
+            WriteLineToAllWriters();
+            WriteLineToAllWriters(initialFormatter.FormatConfiguration(input.InitialConfiguration));
 
             // Write its theorems, if there are any
             if (initialTheorems.Any())
             {
-                WriteLineToBothReports("\nTheorems:\n");
-                WriteLineToBothReports(InitialTheoremsToString(initialFormatter, initialTheorems));
+                WriteLineToAllWriters("\nTheorems:\n");
+                WriteLineToAllWriters(InitialTheoremsToString(initialFormatter, initialTheorems));
             }
 
             #endregion
@@ -110,15 +118,15 @@ namespace GeoGen.ConsoleLauncher
             #region Writing Iterations, Constructions and Results title
 
             // Write iterations
-            WriteLineToBothReports($"\nIterations: {input.NumberOfIterations}\n");
+            WriteLineToAllWriters($"\nIterations: {input.NumberOfIterations}\n");
 
             // Write constructions
-            WriteLineToBothReports($"Constructions:\n");
-            input.Constructions.ForEach(construction => WriteLineToBothReports($" - {construction}"));
-            WriteLineToBothReports();
+            WriteLineToAllWriters($"Constructions:\n");
+            input.Constructions.ForEach(construction => WriteLineToAllWriters($" - {construction}"));
+            WriteLineToAllWriters();
 
             // Write results header
-            WriteLineToBothReports($"Results:");
+            WriteLineToAllWriters($"Results:");
 
             #endregion
 
@@ -154,10 +162,13 @@ namespace GeoGen.ConsoleLauncher
                 // Mark the configuration
                 generatedConfigurations++;
 
-                // Find out if we should log and if yes, do it
+                // Find out if we should log progress and if yes, do it
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
+                    // How many configurations did we generate?
                     Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
+                        // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
+                        // How many interesting theorems did we get?
                         $"with {interestingTheorems} interesting theorem(s).");
 
                 // Skip configurations without theorems
@@ -177,9 +188,23 @@ namespace GeoGen.ConsoleLauncher
                 // Prepare a formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
 
-                // Prepare the writing function that writes to both reports only when
-                // there is anything interesting to write (i.e. interesting theorems)
-                Action<string> WriteLine = anyInterestingTheorem ? (Action<string>)WriteLineToBothReports : WriteLineToFullReport;
+                // Local function to write line based on the number of interesting theorems
+                void WriteLine(string line = "")
+                {
+                    // If there is an interesting theorem
+                    if (anyInterestingTheorem)
+                    {
+                        // Write to all writes, which will take care of potentially not requested ones
+                        WriteLineToAllWriters(line);
+
+                        // Terminate
+                        return;
+                    }
+
+                    // Otherwise there are no interesting theorems. We might however want
+                    // to write the proofs of the proven ones. If that is requested, do it
+                    outputWithAttemptsAndProofsWriter?.WriteLine(line);
+                }
 
                 // Write the configuration
                 WriteLine("\n------------------------------------------------");
@@ -191,24 +216,38 @@ namespace GeoGen.ConsoleLauncher
                 // Write the title
                 WriteLine("\nTheorems:\n");
 
-                // Write the basic theorem string to the default output
+                // If there are interesting theorems
                 if (anyInterestingTheorem)
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, includeProven: false, algorithmOutput.ProverOutput));
+                {
+                    // Then write them to the standard output writer
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                        // We want to include only unproven ones, without their proof attempts
+                        includeProvenTheorems: false, displayTheoremProofsAndAttempts: false));
 
-                // Write the full report too (if it shouldn't be written, the function will do nothing)
-                WriteLineToFullReport(TheoremsToString(formatter, algorithmOutput.Theorems, includeProven: true, algorithmOutput.ProverOutput));
+                    // We also try to write them to the writer of the output with attempts, if it's provided
+                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                        // Here we want to include only unproven ones, but with their proof attempts
+                        includeProvenTheorems: false, displayTheoremProofsAndAttempts: true));
+                }
 
-                // Flush after each output so that we can see the results gradually
+                // In any case (whether we have or haven't interesting theorems) we want to write the info
+                // to the writer of theorems with attempts and proofs, if it's provided
+                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                    // Here we want to include even proven theorems with their proof attempts
+                    includeProvenTheorems: true, displayTheoremProofsAndAttempts: true));
+
+                // Flush the writers after each output so that we can see the results gradually
                 outputWriter.Flush();
-                fullOutputWriter?.Flush();
+                outputWithAttemptsWriter?.Flush();
+                outputWithAttemptsAndProofsWriter?.Flush();
             }
 
             // Write end
-            WriteLineToBothReports("\n------------------------------------------------");
-            WriteLineToBothReports($"Generated configurations: {generatedConfigurations}");
-            WriteLineToBothReports($"Theorems: {totalTheorems}");
-            WriteLineToBothReports($"Interesting theorems: {interestingTheorems}");
-            WriteLineToBothReports($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
+            WriteLineToAllWriters("\n------------------------------------------------");
+            WriteLineToAllWriters($"Generated configurations: {generatedConfigurations}");
+            WriteLineToAllWriters($"Theorems: {totalTheorems}");
+            WriteLineToAllWriters($"Interesting theorems: {interestingTheorems}");
+            WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
             Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
@@ -242,15 +281,20 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
         /// <param name="theorems">The theorems to be written.</param>
-        /// <param name="includeProven">Indicates if we should include the proved theorems as well.</param>
         /// <param name="proverOutput">The output of the theorem analyzer.</param>
+        /// <param name="includeProvenTheorems">Indicates if we should include the proved theorems as well.</param>
+        /// <param name="displayTheoremProofsAndAttempts">Indicates whether we should display proofs </param>
         /// <returns>The string representing the theorems.</returns>
-        private string TheoremsToString(OutputFormatter formatter, TheoremMap theorems, bool includeProven, TheoremProverOutput proverOutput)
+        private string TheoremsToString(OutputFormatter formatter,
+                                        TheoremMap theorems,
+                                        TheoremProverOutput proverOutput,
+                                        bool includeProvenTheorems,
+                                        bool displayTheoremProofsAndAttempts)
         {
             // First we find which theorems we're going to convert
             var allTheorems = theorems.AllObjects
-                // Include each theorem, if we should include proven ones, otherwise only proven ones
-                .Where(theorem => includeProven || !proverOutput.ProvenTheorems.ContainsKey(theorem))
+                // Include each theorem, if we should include proven ones, otherwise only unproven ones
+                .Where(theorem => includeProvenTheorems || !proverOutput.ProvenTheorems.ContainsKey(theorem))
                 // Order them by their formatted string
                 .OrderBy(theorem => formatter.FormatTheorem(theorem))
                 // Enumerate
@@ -266,31 +310,38 @@ namespace GeoGen.ConsoleLauncher
             // Process every theorem
             var theoremsString = allTheorems.Select((theorem, index) =>
             {
-                // Handle unfinished proofs
-                if (proverOutput.UnprovenTheorems.ContainsKey(theorem))
+                // If we should not display proofs of attempts, then we just convert the statement
+                if (!displayTheoremProofsAndAttempts)
+                    return $" {index + 1,2} {formatter.FormatTheorem(theorem)}";
+
+                // Otherwise if this is an unproven theorem, we use we use the helper method to handle unfinished proofs
+                else if (proverOutput.UnprovenTheorems.ContainsKey(theorem))
                     return $" {index + 1,2}. {UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags)}";
 
-                // Handle finished proofs
+                // Otherwise this must be a proven theorem and we use another helper method to handle it
                 else if (proverOutput.ProvenTheorems.ContainsKey(theorem))
                     return $" {index + 1,2}. {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
 
-                // Other cases shouldn't be possible
-                throw new GeoGenException("Incorrect output from the prover - not every theorem is included.");
+                // We should not get here
+                else
+                    throw new GeoGenException("Incorrect output from the prover - not every theorem is included.");
             })
             // Make each on a separate line
             .ToJoinedString("\n")
             // Ensure no white spaces at the end
             .TrimEnd();
 
-            // If there are any unproved discovered theorems and we are displaying them within attempts
-            if (proverOutput.UnprovenDiscoveredTheorems.Any() && _settings.DisplayProofAttempts)
+            // If we should write unproven theorems and there are any...
+            if (proverOutput.UnprovenDiscoveredTheorems.Any() && _settings.IncludeUnprovenDiscoveredTheorems)
             {
                 // Convert them to a string
                 var unprovenDiscoveredTheoremsString = proverOutput.UnprovenDiscoveredTheorems
                     // Initially sort them by their formatted versions
                     .OrderBy(pair => formatter.FormatTheorem(pair.Key))
-                    // Convert each to a string with the right index and the tag (which should be already assigned)
-                    .Select((pair, index) => $" {allTheorems.Count + index + 1,2}. {formatter.FormatTheorem(pair.Key)} - theorem {theoremTags[pair.Key]}")
+                    // Convert each to a string with the right index
+                    .Select((pair, index) => $" {allTheorems.Count + index + 1,2}. {formatter.FormatTheorem(pair.Key)}" +
+                        // And the tag, which is only present if we display theorem proofs, where it got this tag
+                        $"{(displayTheoremProofsAndAttempts ? $" - theorem {theoremTags[pair.Key]}" : "")}")
                     // Make each on a separate line
                     .ToJoinedString("\n")
                     // Ensure no white spaces at the end
@@ -321,10 +372,6 @@ namespace GeoGen.ConsoleLauncher
         {
             // First format the unfinished theorem
             var result = formatter.FormatTheorem(theorem);
-
-            // If we are not supposed to display attempts, then we're done
-            if (!_settings.DisplayProofAttempts)
-                return result;
 
             // Handle if there were no attempt to prove the theorem
             if (unfinishedProofs.Count == 0)

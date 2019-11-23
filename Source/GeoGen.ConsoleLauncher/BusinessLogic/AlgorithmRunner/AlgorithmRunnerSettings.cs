@@ -15,14 +15,38 @@ namespace GeoGen.ConsoleLauncher
         public string OutputFolder { get; }
 
         /// <summary>
-        /// The extensions of files where the output of the algorithm should be written.
+        /// The folder where the where the output of the algorithm with attempts at unproven 
+        /// theorems should be written.
         /// </summary>
-        public string OutputFileExtention { get; }
+        public string OutputWithAttemptsFolder { get; }
 
         /// <summary>
-        /// The prefix of files where the output of the algorithm should be written.
+        /// Indicates whether the output of the algorithm with attempts at unproven theorems 
+        /// should be written.
+        /// </summary>
+        public bool WriteOutputWithAttempts { get; }
+
+        /// <summary>
+        /// The folder where the where the output of the algorithm with attempts at unproven 
+        /// theorems and proofs of proved ones should be written.
+        /// </summary>
+        public string OutputWithAttemptsAndProofsFolder { get; }
+
+        /// <summary>
+        /// Indicates whether the output of the algorithm with attempts at unproven theorems 
+        /// and proofs of proved ones should be written.
+        /// </summary>
+        public bool WriteOutputWithAttemptsAndProofs { get; }
+
+        /// <summary>
+        /// The prefix for all types of output files.
         /// </summary>
         public string OutputFilePrefix { get; }
+
+        /// <summary>
+        /// The extensions of all types of output files.
+        /// </summary>
+        public string FilesExtention { get; }
 
         /// <summary>
         /// Indicates how often we log the number of generated configurations.
@@ -36,19 +60,10 @@ namespace GeoGen.ConsoleLauncher
         public bool LogProgress { get; }
 
         /// <summary>
-        /// Indicates whether we should generate a report containing even resolved theorems.
+        /// Indicates whether we should include discovered unproven theorems that were part of 
+        /// proof attempts at the main (unproven) theorems.
         /// </summary>
-        public bool GenerateFullReport { get; }
-
-        /// <summary>
-        /// The suffix for the file containing the full report.
-        /// </summary>
-        public string FullReportSuffix { get; }
-
-        /// <summary>
-        /// Indicates if we should display attempts at proofs of theorems.
-        /// </summary>
-        public bool DisplayProofAttempts { get; }
+        public bool IncludeUnprovenDiscoveredTheorems { get; }
 
         #endregion
 
@@ -58,30 +73,37 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="AlgorithmRunnerSettings"/> class.
         /// </summary>
         /// <param name="outputFolder">The folder where the where the output of the algorithm should be written.</param>
-        /// <param name="outputFileExtention">The extensions of files where the output of the algorithm should be written.</param>
-        /// <param name="outputFilePrefix">The prefix of files where the output of the algorithm should be written.</param>
-        /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations.</param>
+        /// <param name="outputWithAttemptsFolder">The folder where the where the output of the algorithm with attempts at unproven theorems should be written.</param>
+        /// <param name="writeOutputWithAttempts">Indicates whether the output of the algorithm with attempts at unproven theorems should be written.</param>
+        /// <param name="outputWithAttemptsAndProofsFolder">The folder where the where the output of the algorithm with attempts at unproven theorems and proofs of proved ones should be written.</param>
+        /// <param name="writeOutputWithAttemptsAndProofs">Indicates whether the output of the algorithm with attempts at unproven theorems and proofs of proved ones should be written.</param>
+        /// <param name="outputFilePrefix">The prefix for all types of output files.</param>
+        /// <param name="filesExtention">The extensions of all types of output files.</param>
+        /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log the progress.</param>
-        /// <param name="generateFullReport">Indicates whether we should generate a report containing even resolved theorems.</param>
-        /// <param name="fullReportSuffix">The suffix for the file containing the full report.</param>
-        /// <param name="displayProofAttempts">Indicates if we should display attempts at proofs of theorems.</param>
+        /// <param name="includeUnprovenDiscoveredTheorems">Indicates whether we should include discovered unproven theorems that were part of proof attempts at the main (unproven) theorems.</param>
+
         public AlgorithmRunnerSettings(string outputFolder,
-                                       string outputFileExtention,
+                                       string outputWithAttemptsFolder,
+                                       bool writeOutputWithAttempts,
+                                       string outputWithAttemptsAndProofsFolder,
+                                       bool writeOutputWithAttemptsAndProofs,
                                        string outputFilePrefix,
+                                       string filesExtention,
                                        int generationProgresLoggingFrequency,
                                        bool logProgress,
-                                       bool generateFullReport,
-                                       string fullReportSuffix,
-                                       bool displayProofAttempts)
+                                       bool includeUnprovenDiscoveredTheorems)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
-            OutputFileExtention = outputFileExtention ?? throw new ArgumentNullException(nameof(outputFileExtention));
+            OutputWithAttemptsFolder = outputWithAttemptsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsFolder));
+            WriteOutputWithAttempts = writeOutputWithAttempts;
+            OutputWithAttemptsAndProofsFolder = outputWithAttemptsAndProofsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsAndProofsFolder));
+            WriteOutputWithAttemptsAndProofs = writeOutputWithAttemptsAndProofs;
             OutputFilePrefix = outputFilePrefix ?? throw new ArgumentNullException(nameof(outputFilePrefix));
+            FilesExtention = filesExtention ?? throw new ArgumentNullException(nameof(filesExtention));
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
-            GenerateFullReport = generateFullReport;
-            FullReportSuffix = fullReportSuffix ?? throw new ArgumentNullException(nameof(fullReportSuffix));
-            DisplayProofAttempts = displayProofAttempts;
+            IncludeUnprovenDiscoveredTheorems = includeUnprovenDiscoveredTheorems;
         }
 
         #endregion

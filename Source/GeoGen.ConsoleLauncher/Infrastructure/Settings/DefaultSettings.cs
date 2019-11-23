@@ -20,18 +20,18 @@ namespace GeoGen.ConsoleLauncher
                 // Console logger
                 new ConsoleLoggerSettings
                 (
-                    includeLoggingOrigin : false,
-                    includeTime : false,
-                    logOutputLevel : LogOutputLevel.Info
+                    includeLoggingOrigin: false,
+                    includeTime: false,
+                    logOutputLevel: LogOutputLevel.Info
                 ),
 
                 // File logger
                 new FileLoggerSettings
                 (
-                    includeLoggingOrigin : true,
-                    includeTime : true,
-                    logOutputLevel : LogOutputLevel.Debug,
-                    fileLogPath : "log.txt"
+                    includeLoggingOrigin: true,
+                    includeTime: true,
+                    logOutputLevel: LogOutputLevel.Debug,
+                    fileLogPath: "log.txt"
                 )
             },
             algorithmSettings: new AlgorithmSettings
@@ -54,7 +54,7 @@ namespace GeoGen.ConsoleLauncher
             ),
             inputFolderSettings: new InputFolderSettings
             (
-                inputFolderPath: "..\\..\\..\\Data",
+                inputFolderPath: "..\\..\\..\\Data\\Inputs",
                 inputFilePrefix: "input",
                 filesExtention: "txt"
             ),
@@ -65,14 +65,16 @@ namespace GeoGen.ConsoleLauncher
             ),
             algorithmRunnerSettings: new AlgorithmRunnerSettings
             (
-                outputFolder: "..\\..\\..\\Data",
-                outputFileExtention: "txt",
+                outputFolder: "..\\..\\..\\Data\\Outputs",
+                outputWithAttemptsFolder: "..\\..\\..\\Data\\Outputs\\WithAttempts",
+                writeOutputWithAttempts: true,
+                outputWithAttemptsAndProofsFolder: "..\\..\\..\\Data\\Outputs\\WithAttemptsAndProofs",
+                writeOutputWithAttemptsAndProofs: true,
                 outputFilePrefix: "output",
-                generationProgresLoggingFrequency: 10,
+                filesExtention: "txt",
+                generationProgresLoggingFrequency: 15,
                 logProgress: true,
-                generateFullReport: true,
-                fullReportSuffix: " (full)",
-                displayProofAttempts: true
+                includeUnprovenDiscoveredTheorems: true
             ),
             tracersSettings: new TracersSettings
             (
