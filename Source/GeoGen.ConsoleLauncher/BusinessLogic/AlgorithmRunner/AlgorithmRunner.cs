@@ -543,7 +543,6 @@ namespace GeoGen.ConsoleLauncher
                     return "true in a previous configuration";
 
                 // Case when it's not in a previous configuration, but can be declared in one
-                // There are no needed theorems to make this conclusion, i.e. the theorem is right
                 case DerivationRule.DefinableSimpler:
 
                     // Get the redundant objects
@@ -556,6 +555,7 @@ namespace GeoGen.ConsoleLauncher
                         .ToJoinedString();
 
                     // Get the string stating that we needed reformulation
+                    // This might happen when this theorem has a needed assumption
                     var reformulation = proofAttempt.ProvenAssumptions.Any() || proofAttempt.UnprovenAssumptions.Any()
                         ? " after reformulation " : " ";
 
@@ -565,11 +565,11 @@ namespace GeoGen.ConsoleLauncher
                 // Case when it's a trivial consequence of the construction of the object
                 // There are no needed theorems to make this conclusion, i.e. the theorem is right
                 case DerivationRule.TrivialTheorem:
-                    return "trivial theorem";
+                    return "trivial consequence of the object's construction";
 
                 // Case when the theorem was attempted as a reformulation of a theorem
                 case DerivationRule.ReformulatedTheorem:
-                    return "reformulation of a theorem";
+                    return "reformulation of the theorem";
 
                 // Case when it's been derived using the transitivity rule
                 case DerivationRule.Transitivity:
@@ -615,11 +615,11 @@ namespace GeoGen.ConsoleLauncher
 
                 // Case when we put together 3 incidences and collinearity:
                 case DerivationRule.IncidencesAndCollinearity:
-                    return "incidences are related to collinearity";
+                    return "three incidences with the same line are equivalent with collinearity";
 
                 // Case when we put together 4 incidences and concyclicity:
                 case DerivationRule.IncidencesAndConcyclity:
-                    return "incidences are related to concyclicity";
+                    return "four incidences with the same line are equivalent with concyclity";
 
                 // Case when we have 4 concyclic points and their circumcenter in the same picture
                 case DerivationRule.ConcyclicPointsWithExplicitCenter:
@@ -635,19 +635,19 @@ namespace GeoGen.ConsoleLauncher
 
                 // Case when we have a parallelogram
                 case DerivationRule.Parallelogram:
-                    return "Parallelogram";
+                    return "two pairs of parallel lines are equivalent with the points making a parallelogram";
 
                 // Case when we have a rectangle
                 case DerivationRule.Rectangle:
-                    return "Rectangle";
+                    return "two pairs of parallel lines and perpendicularity are equivalent with the points making a rectangle (with equal diagonals)";
 
                 // Case when we have two equal line segments theorems and a perpendicularity
                 case DerivationRule.IsoscelesTrianglesPerpendicularity:
-                    return "Two isosceles triangles with are related to the perpendicularity";
+                    return "two isosceles triangles with the same base are equivalent with perpendicularity";
 
                 // Default case
                 default:
-                    throw new GeoGenException($"Unhandled type of derivation rule: {proofAttempt.Data.Rule}");
+                    throw new GeoGenException($"Unhandled type of {nameof(DerivationRule)}: {proofAttempt.Data.Rule}");
             }
         }
 

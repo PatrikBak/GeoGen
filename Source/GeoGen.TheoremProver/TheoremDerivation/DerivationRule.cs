@@ -120,7 +120,7 @@
         RadicalAxis,
 
         /// <summary>
-        /// If we have theorems t1: AB || CD, t2: BC || AD, t3: AB ⟂ CD => 
+        /// If we have theorems t1: AB || CD, t2: BC || AD, t3: AB ⟂ CD, then implies AC = BD.
         /// </summary>
         Rectangle,
 
