@@ -22,7 +22,7 @@ namespace GeoGen.TheoremProver
             // Go through the pair of equal line segments theorems
             foreach (var equalLineSegmentTheorems in theorems.GetTheoremsOfTypes(EqualLineSegments).Subsets(2))
             {
-                // Get the common points for both the theorems
+                // Get the common point for both the theorems
                 var commonPoints = equalLineSegmentTheorems.Select(theorem =>
                         // For a given theorem take the points of the first line segment object
                         theorem.InvolvedObjectsList[0].GetInnerConfigurationObjects()
@@ -37,17 +37,11 @@ namespace GeoGen.TheoremProver
                 if (!commonPoints.All(point => point != null))
                     continue;
 
-                // Get the base points by merging the points of the first theorem
-                var basePoints = equalLineSegmentTheorems[0].GetInnerConfigurationObjects()
-                    // With the points of the second theorem
-                    .Concat(equalLineSegmentTheorems[1].GetInnerConfigurationObjects())
-                    // Excluding the common points
-                    .Except(commonPoints)
-                    // Enumerating
-                    .ToArray();
-
+                // Get the base points that are equally distanced from the common point
+                var basePoints = equalLineSegmentTheorems[0].GetInnerConfigurationObjects().Except(commonPoints).ToArray();
+                    
                 // Make sure there are exactly two 
-                if (basePoints.Length != 2)
+                if (!equalLineSegmentTheorems[1].GetInnerConfigurationObjects().Except(commonPoints).OrderlessEquals(basePoints))
                     continue;
 
                 // Now we're sure the situation is okay
