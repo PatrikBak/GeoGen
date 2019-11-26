@@ -138,8 +138,8 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the number of generated configurations
             var generatedConfigurations = 0;
 
-            // Prepare the total number of theorems
-            var totalTheorems = 0;
+            // Prepare the total number of interesting theorem groups
+            var interestingTheoremGroups = 0;
 
             // Prepare the total number of interesting theorems
             var interestingTheorems = 0;
@@ -168,22 +168,21 @@ namespace GeoGen.ConsoleLauncher
                     Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
                         // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
-                        // How many interesting theorems did we get?
-                        $"with {interestingTheorems} interesting theorem(s).");
+                        // How many interesting theorem groups did we get?
+                        $"with {interestingTheoremGroups} interesting theorem group(s).");
 
                 // Skip configurations without theorems
                 if (algorithmOutput.Theorems.AllObjects.Count == 0)
                     continue;
 
-                // Count in all theorems
-                totalTheorems += algorithmOutput.Theorems.AllObjects.Count;
+                // Get the groups of unproven (i.e. interesting theorems)
+                var unprovenTheoremGroups = algorithmOutput.ProverOutput.GroupNewTheoremsIntoRelationGroups();
 
-                // Count in interesting theorems, i.e. the ones have weren't proven
-                interestingTheorems += algorithmOutput.Theorems.AllObjects.Count - algorithmOutput.ProverOutput.ProvenTheorems.Count;
+                // Count their number
+                interestingTheoremGroups += unprovenTheoremGroups.Count;
 
-                // Find out if there is any interesting theorem, which is when the number
-                // of proven theorems is distinct from the number of all theorems
-                var anyInterestingTheorem = algorithmOutput.ProverOutput.ProvenTheorems.Count != algorithmOutput.Theorems.AllObjects.Count;
+                // Count the interesting theorems
+                interestingTheorems += algorithmOutput.ProverOutput.UnprovenTheorems.Count;
 
                 // Prepare a formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
@@ -192,7 +191,7 @@ namespace GeoGen.ConsoleLauncher
                 void WriteLine(string line = "")
                 {
                     // If there is an interesting theorem
-                    if (anyInterestingTheorem)
+                    if (unprovenTheoremGroups.Any())
                     {
                         // Write to all writes, which will take care of potentially not requested ones
                         WriteLineToAllWriters(line);
@@ -217,22 +216,22 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine("\nTheorems:\n");
 
                 // If there are interesting theorems
-                if (anyInterestingTheorem)
+                if (unprovenTheoremGroups.Any())
                 {
                     // Then write them to the standard output writer
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
                         // We want to include only unproven ones, without their proof attempts
                         includeProvenTheorems: false, displayTheoremProofsAndAttempts: false));
 
                     // We also try to write them to the writer of the output with attempts, if it's provided
-                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
                         // Here we want to include only unproven ones, but with their proof attempts
                         includeProvenTheorems: false, displayTheoremProofsAndAttempts: true));
                 }
 
                 // In any case (whether we have or haven't interesting theorems) we want to write the info
                 // to the writer of theorems with attempts and proofs, if it's provided
-                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.Theorems, algorithmOutput.ProverOutput,
+                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
                     // Here we want to include even proven theorems with their proof attempts
                     includeProvenTheorems: true, displayTheoremProofsAndAttempts: true));
 
@@ -245,15 +244,15 @@ namespace GeoGen.ConsoleLauncher
             // Write end
             WriteLineToAllWriters("\n------------------------------------------------");
             WriteLineToAllWriters($"Generated configurations: {generatedConfigurations}");
-            WriteLineToAllWriters($"Theorems: {totalTheorems}");
             WriteLineToAllWriters($"Interesting theorems: {interestingTheorems}");
+            WriteLineToAllWriters($"Interesting groups of theorems: {interestingTheoremGroups}");
             WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
             Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
             Log.LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
-            Log.LoggingManager.LogInfo($"Theorems: {totalTheorems}");
             Log.LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
+            Log.LoggingManager.LogInfo($"Interesting groups of theorems: {interestingTheoremGroups}");
         }
 
         /// <summary>
@@ -277,50 +276,68 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Converts given theorems to a string, with their proofs or attempts to prove.
+        /// Converts given theorems to a string, optionally with their proofs or attempts to prove.
         /// </summary>
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
-        /// <param name="theorems">The theorems to be written.</param>
         /// <param name="proverOutput">The output of the theorem analyzer.</param>
+        /// <param name="relatedUnprovenTheoremsGroups">The groups of all unproven theorems that should be displayed together.</param>
         /// <param name="includeProvenTheorems">Indicates if we should include the proved theorems as well.</param>
-        /// <param name="displayTheoremProofsAndAttempts">Indicates whether we should display proofs </param>
+        /// <param name="displayTheoremProofsAndAttempts">Indicates whether we should display proofs.</param>
         /// <returns>The string representing the theorems.</returns>
         private string TheoremsToString(OutputFormatter formatter,
-                                        TheoremMap theorems,
                                         TheoremProverOutput proverOutput,
+                                        IReadOnlyList<IReadOnlyHashSet<Theorem>> relatedUnprovenTheoremsGroups,
                                         bool includeProvenTheorems,
                                         bool displayTheoremProofsAndAttempts)
         {
-            // First we find which theorems we're going to convert
-            var allTheorems = theorems.AllObjects
-                // Include each theorem, if we should include proven ones, otherwise only unproven ones
-                .Where(theorem => includeProvenTheorems || !proverOutput.ProvenTheorems.ContainsKey(theorem))
-                // Order them by their formatted string
-                .OrderBy(theorem => formatter.FormatTheorem(theorem))
+            // Prepare the groups in the sorted order that we're going to use
+            // First order the theorems inside
+            var sortedUnprovenTheoremsGroups = relatedUnprovenTheoremsGroups.Select(group => group.OrderBy(formatter.FormatTheorem).ToArray())
+                // Then order these groups first by the number of their theorems (ascending) and then by text
+                .OrderBy(group => (-group.Length, formatter.FormatTheorem(group[0])))
                 // Enumerate
-                .ToList();
+                .ToArray();
+
+            // Prepare the proven theorems, if we should include them
+            var provenTheorems = !includeProvenTheorems ? Array.Empty<Theorem>()
+                // If yes, order them by their text
+                : proverOutput.ProvenTheorems.Keys.OrderBy(formatter.FormatTheorem).ToArray();
 
             // Prepare the dictionary where we will store unique strings associated with 
             // these (and potentially other) theorems used in the reports
             var theoremTags = new Dictionary<Theorem, string>();
 
-            // Initially assign the value 'index + 1' to each of our theorem as their appear in the list
-            allTheorems.ForEach((theorem, index) => theoremTags.Add(theorem, $"{index + 1}."));
+            // Name the groups first
+            sortedUnprovenTheoremsGroups.ForEach((group, groupIndex) =>
+            {
+                // Each group will have its index which will start the tag of each theorem in the group
+                // If the group has only one them
+                if (group.Length == 1)
+                    // Then we don't need to include the theorem index
+                    theoremTags.Add(group[0], $"{groupIndex + 1}.");
+                // Otherwise
+                else
+                    // We name each theorem separately
+                    group.ForEach((theorem, theoremIndex) => theoremTags.Add(theorem, $"{groupIndex + 1}.{theoremIndex + 1}."));
+            });
+
+            // Name the proven theorems too. Remember we have already used some numbers for the group identifiers
+            provenTheorems.ForEach((theorem, theoremIndex) => theoremTags.Add(theorem, $"{sortedUnprovenTheoremsGroups.Length + theoremIndex + 1}."));
 
             // Process every theorem
-            var theoremsString = allTheorems.Select((theorem, index) =>
+            var theoremsString = sortedUnprovenTheoremsGroups.Flatten().Concat(provenTheorems).Select(theorem =>
             {
                 // If we should not display proofs of attempts, then we just convert the statement
                 if (!displayTheoremProofsAndAttempts)
-                    return $" {index + 1,2} {formatter.FormatTheorem(theorem)}";
+                    return $" {theoremTags[theorem]} {formatter.FormatTheorem(theorem)}";
 
                 // Otherwise if this is an unproven theorem, we use we use the helper method to handle unfinished proofs
                 else if (proverOutput.UnprovenTheorems.ContainsKey(theorem))
-                    return $" {index + 1,2}. {UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags)}";
+                    return $" {theoremTags[theorem]} {UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags)}";
 
                 // Otherwise this must be a proven theorem and we use another helper method to handle it
                 else if (proverOutput.ProvenTheorems.ContainsKey(theorem))
-                    return $" {index + 1,2}. {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
+                    return $" {theoremTags[theorem]} {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
 
                 // We should not get here
                 else
@@ -339,7 +356,7 @@ namespace GeoGen.ConsoleLauncher
                     // Initially sort them by their formatted versions
                     .OrderBy(pair => formatter.FormatTheorem(pair.Key))
                     // Convert each to a string with the right index
-                    .Select((pair, index) => $" {allTheorems.Count + index + 1,2}. {formatter.FormatTheorem(pair.Key)}" +
+                    .Select((pair, index) => $"{sortedUnprovenTheoremsGroups.Length + provenTheorems.Length + index + 1,2}. {formatter.FormatTheorem(pair.Key)}" +
                         // And the tag, which is only present if we display theorem proofs, where it got this tag
                         $"{(displayTheoremProofsAndAttempts ? $" - theorem {theoremTags[pair.Key]}" : "")}")
                     // Make each on a separate line
