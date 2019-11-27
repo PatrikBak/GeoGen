@@ -4,6 +4,7 @@ using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -183,6 +184,40 @@ namespace GeoGen.DependenciesResolver
         {
             // Stateless services
             kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>().InSingletonScope();
+
+            // Return the kernel for chaining
+            return kernel;
+        }
+
+        /// <summary>
+        /// Bindings for the dependencies from the TheoremRanker module.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        /// <param name="rankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/></param>
+        /// <returns>The kernel for chaining.</returns>
+        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankerSettings rankerSettings)
+        {
+            // Bind ranker
+            kernel.Bind<ITheoremRanker>().To<TheoremRanker.TheoremRanker>().WithConstructorArgument(rankerSettings);
+
+            // Bind requested rankers
+            foreach (var rankedAspect in rankerSettings.RankingCoefficients.Keys)
+            {
+                // Switch on the aspect
+                switch (rankedAspect)
+                {
+                    case RankedAspect.Symmetry:
+                        kernel.Bind<IAspectTheoremRanker>().To<SymmetryRanker>();
+                        break;
+
+                    case RankedAspect.Type:
+                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>();
+                        break;
+
+                    default:
+                        throw new GeoGenException($"Unhandled type of ranked aspect: {rankedAspect}");
+                }
+            }
 
             // Return the kernel for chaining
             return kernel;

@@ -39,7 +39,7 @@ namespace GeoGen.TheoremProver
 
                 // Get the base points that are equally distanced from the common point
                 var basePoints = equalLineSegmentTheorems[0].GetInnerConfigurationObjects().Except(commonPoints).ToArray();
-                    
+
                 // Make sure there are exactly two 
                 if (!equalLineSegmentTheorems[1].GetInnerConfigurationObjects().Except(commonPoints).OrderlessEquals(basePoints))
                     continue;

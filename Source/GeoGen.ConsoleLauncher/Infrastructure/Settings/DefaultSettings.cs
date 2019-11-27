@@ -1,6 +1,7 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.TheoremFinder;
+using GeoGen.TheoremRanker;
 using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
@@ -50,7 +51,12 @@ namespace GeoGen.ConsoleLauncher
                     TheoremType.PerpendicularLines,
                     TheoremType.TangentCircles,
                     TheoremType.Incidence
-                }
+                },
+                theoremRankerSettings: new TheoremRankerSettings(rankingCoefficients: new Dictionary<RankedAspect, double>
+                {
+                    { RankedAspect.Symmetry, 1},
+                    { RankedAspect.Type, 2}
+                })
             ),
             inputFolderSettings: new InputFolderSettings
             (

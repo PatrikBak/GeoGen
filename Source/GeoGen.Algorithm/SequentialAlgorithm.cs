@@ -3,6 +3,7 @@ using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -39,6 +40,11 @@ namespace GeoGen.Algorithm
         private readonly ITheoremProver _prover;
 
         /// <summary>
+        /// The ranker of theorems.
+        /// </summary>
+        private readonly ITheoremRanker _ranker;
+
+        /// <summary>
         /// The tracer of potential geometry failures.
         /// </summary>
         private readonly IGeometryFailureTracer _tracer;
@@ -54,13 +60,15 @@ namespace GeoGen.Algorithm
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="prover">The prover of theorems.</param>
+        /// <param name="ranker">The ranker of theorems.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
-        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover, IGeometryFailureTracer tracer = null)
+        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover, ITheoremRanker ranker, IGeometryFailureTracer tracer = null)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
+            _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
             _tracer = tracer;
         }
 
@@ -325,12 +333,18 @@ namespace GeoGen.Algorithm
                        // Analyze them
                        var proverOutput = _prover.Analyze(input);
 
+                       // Rank unproved theorems
+                       var rankings = proverOutput.UnprovenTheorems.Keys
+                            // Each rank separately
+                            .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, configuration, input.AllTheorems, proverOutput));
+
                        // Return the final output
                        return new AlgorithmOutput
                        (
                            configuration: configuration,
                            theorems: newTheorems,
-                           proverOutput: proverOutput
+                           proverOutput: proverOutput,
+                           rankings: rankings
                        );
                    }));
 

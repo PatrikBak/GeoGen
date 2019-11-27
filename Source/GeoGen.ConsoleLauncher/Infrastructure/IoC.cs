@@ -104,6 +104,8 @@ namespace GeoGen.ConsoleLauncher
                     // Template theorems are loaded at the beginning
                     templateTheorems: await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
                 ))
+                // With theorem ranker and its settings
+                .AddTheoremRanker(settings.AlgorithmSettings.TheoremRankerSettings)
                 // And finally the algorithm
                 .AddAlgorithm();
 
