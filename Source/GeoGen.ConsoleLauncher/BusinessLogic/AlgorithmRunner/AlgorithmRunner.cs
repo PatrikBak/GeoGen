@@ -1,6 +1,7 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Core;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -219,21 +220,21 @@ namespace GeoGen.ConsoleLauncher
                 if (unprovenTheoremGroups.Any())
                 {
                     // Then write them to the standard output writer
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups, algorithmOutput.Rankings,
                         // We want to include only unproven ones, without their proof attempts
-                        includeProvenTheorems: false, displayTheoremProofsAndAttempts: false));
+                        includeProvenTheorems: false, displayProofAttempts: false));
 
                     // We also try to write them to the writer of the output with attempts, if it's provided
-                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
+                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups, algorithmOutput.Rankings,
                         // Here we want to include only unproven ones, but with their proof attempts
-                        includeProvenTheorems: false, displayTheoremProofsAndAttempts: true));
+                        includeProvenTheorems: false, displayProofAttempts: true));
                 }
 
                 // In any case (whether we have or haven't interesting theorems) we want to write the info
                 // to the writer of theorems with attempts and proofs, if it's provided
-                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups,
-                    // Here we want to include even proven theorems with their proof attempts
-                    includeProvenTheorems: true, displayTheoremProofsAndAttempts: true));
+                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, unprovenTheoremGroups, algorithmOutput.Rankings,
+                    // Here we want to include even proven theorems and also proof attempts of unproven ones
+                    includeProvenTheorems: true, displayProofAttempts: true));
 
                 // Flush the writers after each output so that we can see the results gradually
                 outputWriter.Flush();
@@ -281,20 +282,23 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
         /// <param name="proverOutput">The output of the theorem analyzer.</param>
         /// <param name="relatedUnprovenTheoremsGroups">The groups of all unproven theorems that should be displayed together.</param>
+        /// <param name="rankings">The rankings of unproven theorems.</param>
         /// <param name="includeProvenTheorems">Indicates if we should include the proved theorems as well.</param>
-        /// <param name="displayTheoremProofsAndAttempts">Indicates whether we should display proofs.</param>
+        /// <param name="displayProofAttempts">Indicates whether we should display proof attempts.</param>
         /// <returns>The string representing the theorems.</returns>
         private string TheoremsToString(OutputFormatter formatter,
                                         TheoremProverOutput proverOutput,
                                         IReadOnlyList<IReadOnlyHashSet<Theorem>> relatedUnprovenTheoremsGroups,
+                                        IReadOnlyDictionary<Theorem, TheoremRanking> rankings,
                                         bool includeProvenTheorems,
-                                        bool displayTheoremProofsAndAttempts)
+                                        bool displayProofAttempts)
         {
             // Prepare the groups in the sorted order that we're going to use
-            // First order the theorems inside
-            var sortedUnprovenTheoremsGroups = relatedUnprovenTheoremsGroups.Select(group => group.OrderBy(formatter.FormatTheorem).ToArray())
-                // Then order these groups first by the number of their theorems (ascending) and then by text
-                .OrderBy(group => (-group.Length, formatter.FormatTheorem(group[0])))
+            var sortedUnprovenTheoremsGroups = relatedUnprovenTheoremsGroups.Select(group =>
+                    // First order the theorems inside one group by their overall ranking (ASC) and then by text
+                    group.OrderBy(theorem => (-rankings[theorem].TotalRanking, formatter.FormatTheorem(theorem))).ToArray())
+                // Then order these groups first by the ranking of the first theorem (ASC), then group size (ASC), then name
+                .OrderBy(group => (-rankings[group[0]].TotalRanking, -group.Length, formatter.FormatTheorem(group[0])))
                 // Enumerate
                 .ToArray();
 
@@ -327,21 +331,27 @@ namespace GeoGen.ConsoleLauncher
             // Process every theorem
             var theoremsString = sortedUnprovenTheoremsGroups.Flatten().Concat(provenTheorems).Select(theorem =>
             {
-                // If we should not display proofs of attempts, then we just convert the statement
-                if (!displayTheoremProofsAndAttempts)
-                    return $" {theoremTags[theorem]} {formatter.FormatTheorem(theorem)}";
-
-                // Otherwise if this is an unproven theorem, we use we use the helper method to handle unfinished proofs
-                else if (proverOutput.UnprovenTheorems.ContainsKey(theorem))
-                    return $" {theoremTags[theorem]} {UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags)}";
-
-                // Otherwise this must be a proven theorem and we use another helper method to handle it
-                else if (proverOutput.ProvenTheorems.ContainsKey(theorem))
+                // If this is a proven theorem, then we display it with its proof (no ranking has been done)
+                if (proverOutput.ProvenTheorems.ContainsKey(theorem))
                     return $" {theoremTags[theorem]} {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
 
-                // We should not get here
-                else
-                    throw new GeoGenException("Incorrect output from the prover - not every theorem is included.");
+                // Otherwise our theorem is not proven, i.e. we want to display the total ranking
+                var result = $" {theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {rankings[theorem].TotalRanking}\n\n";
+
+                // Add individual rankings ordered by the aspect name
+                rankings[theorem].Ranking.OrderBy(pair => pair.Key)
+                    // Add each on an individual line
+                    .ForEach(pair => result += $"  - {pair.Key}: Coefficient {pair.Value.coefficient}, Ranking {pair.Value.ranking} \n");
+
+                // If we shouldn't display proof attempts, then we're done
+                if (!displayProofAttempts)
+                    return result;
+
+                // Otherwise we include the proof on a new line
+                result += $"\n  Proof attempts{UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
+
+                // And return the correctly trimmed result
+                return $"{result.TrimEnd()}\n";
             })
             // Make each on a separate line
             .ToJoinedString("\n")
@@ -358,7 +368,7 @@ namespace GeoGen.ConsoleLauncher
                     // Convert each to a string with the right index
                     .Select((pair, index) => $"{sortedUnprovenTheoremsGroups.Length + provenTheorems.Length + index + 1,2}. {formatter.FormatTheorem(pair.Key)}" +
                         // And the tag, which is only present if we display theorem proofs, where it got this tag
-                        $"{(displayTheoremProofsAndAttempts ? $" - theorem {theoremTags[pair.Key]}" : "")}")
+                        $"{(displayProofAttempts ? $" - theorem {theoremTags[pair.Key]}" : "")}")
                     // Make each on a separate line
                     .ToJoinedString("\n")
                     // Ensure no white spaces at the end
@@ -379,16 +389,18 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="unfinishedProofs">The list of attempts to prove this theorem.</param>
         /// <param name="formatter">The formatter of the configuration in which the theorem holds.</param>
         /// <param name="theoremTags">The dictionary of already tagged theorems.</param>
+        /// <param name="includeStatement">Indicates whether we should include the statement of the theorem.</param>
         /// <param name="previousTag">The tag of the proof under which this one falls.</param>
         /// <returns>The string containing the report.</returns>
         private string UnfinishedProofsReport(Theorem theorem,
                                               IReadOnlyList<TheoremProofAttempt> unfinishedProofs,
                                               OutputFormatter formatter,
                                               Dictionary<Theorem, string> theoremTags,
+                                              bool includeStatement = true,
                                               string previousTag = "")
         {
-            // First format the unfinished theorem
-            var result = formatter.FormatTheorem(theorem);
+            // First format the unfinished theorem, if we should include the statement
+            var result = includeStatement ? formatter.FormatTheorem(theorem) : "";
 
             // Handle if there were no attempt to prove the theorem
             if (unfinishedProofs.Count == 0)
@@ -527,7 +539,7 @@ namespace GeoGen.ConsoleLauncher
                     // Find out the reasoning for the theorem
                     var reason = theoremIsUntagged ?
                        // If it's untagged, recursively find the report for it
-                       UnfinishedProofsReport(theorem, attempts, formatter, theoremTags, untrimmedTag) :
+                       UnfinishedProofsReport(theorem, attempts, formatter, theoremTags, previousTag: untrimmedTag) :
                        // Otherwise just state it again and add the reference to it
                        $"{formatter.FormatTheorem(theorem)} - theorem {theoremTags[theorem]} (unproven)";
 
