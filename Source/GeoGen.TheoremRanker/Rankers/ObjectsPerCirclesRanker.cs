@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.TheoremProver;
-using System.Linq;
 
 namespace GeoGen.TheoremRanker
 {

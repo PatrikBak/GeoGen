@@ -33,7 +33,7 @@ namespace GeoGen.ConsoleLauncher
         {
             TheoremRankerSettings = theoremRankerSettings ?? throw new ArgumentNullException(nameof(theoremRankerSettings));
             TypeRankerSettings = typeRankerSettings ?? throw new ArgumentNullException(nameof(typeRankerSettings));
-        } 
+        }
 
         #endregion
     }

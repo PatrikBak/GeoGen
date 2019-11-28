@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.TheoremProver;
-using System.Linq;
 
 namespace GeoGen.TheoremRanker
 {
@@ -19,6 +18,6 @@ namespace GeoGen.TheoremRanker
         /// <returns>A number representing the ranking of the theorem. The range of its values depends on the implementation.</returns>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
             // Simply apply the formula described in the documentation of RankedAspect.NumberOfProofAttempts
-            => 1 / (1 + proverOutput.UnprovenTheorems[theorem].Count);
+            => 1D / (1 + proverOutput.UnprovenTheorems[theorem].Count);
     }
 }
