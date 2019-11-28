@@ -3,7 +3,7 @@
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// Represents a thing that can be ranked on theorems
+    /// Represents a thing that can be ranked on theorems. The higher the rank the more interesting a theorem is.
     /// </summary>
     public enum RankedAspect
     {
@@ -26,6 +26,13 @@ namespace GeoGen.TheoremRanker
         /// The coefficient taking into account <see cref="TheoremType"/>. This is done solely based on 
         /// <see cref="TypeRankerSettings.TypeRankings"/>.
         /// </summary>
-        Type
+        Type,
+
+        /// <summary>
+        /// The ratio of the number of objects and theorems of the configuration. The idea behind this metrics is 
+        /// that if we have more theorems in a configuration, then it usually suggests the problem is not that difficult,
+        /// because we can make lots of conclusions. 
+        /// </summary>
+        ObjectsPerTheorem
     }
 }
