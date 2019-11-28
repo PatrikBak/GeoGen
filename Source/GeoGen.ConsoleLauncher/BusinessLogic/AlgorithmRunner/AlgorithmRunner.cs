@@ -23,6 +23,11 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly IAlgorithm _algorithm;
 
+        /// <summary>
+        /// The tracker of best theorems.
+        /// </summary>
+        private readonly IBestTheoremsTracker _tracker;
+
         #endregion
 
         #region Private fields
@@ -41,10 +46,12 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
-        public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithm algorithm)
+        /// <param name="tracker">The tracker of best theorems.</param>
+        public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithm algorithm, IBestTheoremsTracker tracker)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
         }
 
         #endregion
@@ -185,6 +192,13 @@ namespace GeoGen.ConsoleLauncher
                 // Count the interesting theorems
                 interestingTheorems += algorithmOutput.ProverOutput.UnprovenTheorems.Count;
 
+                // Within each group find the theorem with the highest ranking
+                unprovenTheoremGroups.Select(group => group.MaxItem(theorem => algorithmOutput.Rankings[theorem].TotalRanking))
+                    // Add the best one from each to the tracker of interesting theorems
+                    .ForEach(theorem => _tracker.AddTheorem(theorem, algorithmOutput.Configuration, algorithmOutput.Rankings[theorem],
+                        // As the id of the theorem construct string containing the id of configuration of the input file
+                        $"configuration {generatedConfigurations} of the output file {fileName}"));
+
                 // Prepare a formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
 
@@ -206,11 +220,15 @@ namespace GeoGen.ConsoleLauncher
                     outputWithAttemptsAndProofsWriter?.WriteLine(line);
                 }
 
+                // Prepare the header
+                var header = $"Configuration {generatedConfigurations}";
+
                 // Write the configuration
-                WriteLine("\n------------------------------------------------");
-                WriteLine($"Configuration {generatedConfigurations}");
-                WriteLine("------------------------------------------------");
-                WriteLine("");
+                WriteLine();
+                WriteLine(new string('-', header.Length));
+                WriteLine(header);
+                WriteLine(new string('-', header.Length));
+                WriteLine();
                 WriteLine(formatter.FormatConfiguration(algorithmOutput.Configuration));
 
                 // Write the title
@@ -339,7 +357,7 @@ namespace GeoGen.ConsoleLauncher
                 var result = $" {theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {rankings[theorem].TotalRanking}\n\n";
 
                 // Add individual rankings ordered by the aspect name
-                rankings[theorem].Ranking.OrderBy(pair => pair.Key)
+                rankings[theorem].Ranking.OrderBy(pair => pair.Key.ToString())
                     // Add each on an individual line
                     .ForEach(pair => result += $"  - {pair.Key}: Coefficient {pair.Value.coefficient}, Ranking {pair.Value.ranking} \n");
 

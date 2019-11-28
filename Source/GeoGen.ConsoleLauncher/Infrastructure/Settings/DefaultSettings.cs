@@ -99,6 +99,11 @@ namespace GeoGen.ConsoleLauncher
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\subtheorem_failures.txt",
                     logFailures: true
                 )
+            ),
+            bestTheoremsTrackerSettings: new BestTheoremsTrackerSettings
+            (
+                theoremFilePath: "..\\..\\..\\Data\\best_theorems.txt",
+                numberOfTheorems: 42
             )
         )
         { }

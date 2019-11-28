@@ -8,7 +8,7 @@ namespace GeoGen.TheoremRanker
     /// <summary>
     /// Represents a ranking of <see cref="Theorem"/> awarded by <see cref="ITheoremRanker"/>.
     /// </summary>
-    public class TheoremRanking
+    public class TheoremRanking : IComparable<TheoremRanking>
     {
         #region Public properties
 
@@ -20,7 +20,7 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// The total ranking calculated as the linear combination of the individual entries of <see cref="Ranking"/>.
         /// </summary>
-        public double TotalRanking => Ranking.Values.Select(pair => pair.coefficient * pair.ranking).Sum();
+        public double TotalRanking { get; }
 
         #endregion
 
@@ -33,7 +33,21 @@ namespace GeoGen.TheoremRanker
         public TheoremRanking(IReadOnlyDictionary<RankedAspect, (double coefficient, double ranking)> ranking)
         {
             Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
+
+            // Calculate the total ranking
+            TotalRanking = Ranking.Values.Select(pair => pair.coefficient * pair.ranking).Sum();
         }
+
+        #endregion
+
+        #region IComparable implementation
+
+        /// <summary>
+        /// Compares the <see cref="TotalRanking"/>s of this and given ranking object.
+        /// </summary>
+        /// <param name="otherRanking">The other ranking object..</param>
+        /// <returns>-1, if this ranking is smaller; 0, if they are the same; 1 if this ranking is larger.</returns>
+        public int CompareTo(TheoremRanking otherRanking) => TotalRanking.CompareTo(otherRanking.TotalRanking);
 
         #endregion
     }

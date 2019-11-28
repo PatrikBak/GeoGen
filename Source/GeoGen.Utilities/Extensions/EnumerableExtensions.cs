@@ -11,6 +11,63 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
+        /// Finds the item with the maximal value found for it by a given value selector.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
+        /// <typeparam name="TValue">The type of value that must be comparable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="valueSelector">The function that retrieves a value from an item.</param>
+        /// <returns>The first maximal item with the given value.</returns>
+        public static TItem MaxItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector)
+            where TValue : IComparable<TValue>
+        {
+            // The maximal element
+            TItem maxElement = default;
+
+            // The maximal value of an item
+            TValue maxValue = default;
+
+            // Variable indicating whether we have already set the max value
+            var valueAlreadySet = false;
+
+            // Go through the enumerable
+            foreach (var currentElement in enumerable)
+            {
+                // Find the current value
+                var currentValue = valueSelector(currentElement);
+
+                // If we haven't set the value...
+                if (!valueAlreadySet)
+                {
+                    // Do it
+                    maxElement = currentElement;
+                    maxValue = currentValue;
+
+                    // Mark it
+                    valueAlreadySet = true;
+                }
+                // Otherwise...
+                else
+                {
+                    // Find out if we don't have a higher value
+                    if (currentValue.CompareTo(maxValue) > 0)
+                    {
+                        // If yes, set it as the maximal
+                        maxElement = currentElement;
+                        currentValue = maxValue;
+                    }
+                }
+            }
+
+            // If there are no elements, throw an exception
+            if (!valueAlreadySet)
+                throw new InvalidOperationException("The enumerable cannot be empty");
+
+            // Return the found item
+            return maxElement;
+        }
+
+        /// <summary>
         /// Converts the enumerable of equivalent pairs to the list of collections,
         /// where each collections contains mutually equivalent objects, and no two 
         /// collections have equivalent elements (in other words, equivalence classes).
