@@ -23,7 +23,8 @@ namespace GeoGen.TheoremRanker
         Symmetry,
 
         /// <summary>
-        /// The coefficient taking into account <see cref="TheoremType"/>.
+        /// The coefficient taking into account <see cref="TheoremType"/>. This is done solely based on 
+        /// <see cref="TypeRankerSettings.TypeRankings"/>.
         /// </summary>
         Type
     }

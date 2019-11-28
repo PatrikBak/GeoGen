@@ -1,5 +1,4 @@
 ﻿using GeoGen.Constructor;
-using GeoGen.TheoremRanker;
 using System;
 
 namespace GeoGen.ConsoleLauncher
@@ -22,9 +21,9 @@ namespace GeoGen.ConsoleLauncher
         public TheoremFindingSettings TheoremFindingSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="TheoremRanker.TheoremRanker"/>.
+        /// The settings related to theorem ranking.
         /// </summary>
-        public TheoremRankerSettings TheoremRankerSettings { get; }
+        public TheoremRankingSettings TheoremRankingSettings { get; }
 
         #endregion
 
@@ -35,14 +34,14 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="geometryConstructorSettings">The settings for the <see cref="GeometryConstructor"/> used in the algorithm.</param>
         /// <param name="theoremFindingSettings">The settings related to theorem finding.</param>
-        /// <param name="theoremRankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/>.</param>
+        /// <param name="theoremRankingSettings">The settings related to theorem ranking.</param>
         public AlgorithmSettings(GeometryConstructorSettings geometryConstructorSettings,
                                  TheoremFindingSettings theoremFindingSettings,
-                                 TheoremRankerSettings theoremRankerSettings)
+                                 TheoremRankingSettings theoremRankingSettings)
         {
             GeometryConstructorSettings = geometryConstructorSettings ?? throw new ArgumentNullException(nameof(geometryConstructorSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
-            TheoremRankerSettings = theoremRankerSettings ?? throw new ArgumentNullException(nameof(theoremRankerSettings));
+            TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
         }
 
         #endregion

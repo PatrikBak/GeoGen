@@ -55,13 +55,31 @@ namespace GeoGen.ConsoleLauncher
                         TheoremType.Incidence
                     }
                 ),
-                theoremRankerSettings: new TheoremRankerSettings
+                theoremRankingSettings: new TheoremRankingSettings
                 (
-                    rankingCoefficients: new Dictionary<RankedAspect, double>
-                    {
-                        { RankedAspect.Symmetry, 1},
-                        { RankedAspect.Type, 2}
-                    }
+                    theoremRankerSettings: new TheoremRankerSettings
+                    (
+                        rankingCoefficients: new Dictionary<RankedAspect, double>
+                        {
+                            { RankedAspect.Symmetry, 100},
+                            { RankedAspect.Type, 10}
+                        }
+                    ),
+                    typeRankerSettings: new TypeRankerSettings
+                    (
+                        typeRankings: new Dictionary<TheoremType, double>
+                        {
+                            { TheoremType.TangentCircles, 10 },
+                            { TheoremType.LineTangentToCircle, 10 },
+                            { TheoremType.ConcurrentLines, 4 },
+                            { TheoremType.CollinearPoints, 2 },
+                            { TheoremType.ConcyclicPoints, 2 },
+                            { TheoremType.EqualLineSegments, 2 },
+                            { TheoremType.ParallelLines, 2 },
+                            { TheoremType.PerpendicularLines, 2 },
+                            { TheoremType.Incidence, 1 }
+                        }
+                    )
                 )
             ),
             inputFolderSettings: new InputFolderSettings

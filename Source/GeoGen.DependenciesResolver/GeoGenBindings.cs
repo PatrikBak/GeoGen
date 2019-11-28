@@ -194,8 +194,9 @@ namespace GeoGen.DependenciesResolver
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="rankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/></param>
+        /// <param name="typeRankerSettings">The settings for <see cref="TypeRanker"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankerSettings rankerSettings)
+        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankerSettings rankerSettings, TypeRankerSettings typeRankerSettings)
         {
             // Bind ranker
             kernel.Bind<ITheoremRanker>().To<TheoremRanker.TheoremRanker>().WithConstructorArgument(rankerSettings);
@@ -211,7 +212,7 @@ namespace GeoGen.DependenciesResolver
                         break;
 
                     case RankedAspect.Type:
-                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>();
+                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>().WithConstructorArgument(typeRankerSettings);
                         break;
 
                     default:
