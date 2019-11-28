@@ -219,6 +219,10 @@ namespace GeoGen.DependenciesResolver
                         kernel.Bind<IAspectTheoremRanker>().To<ObjectsPerTheoremRanker>();
                         break;
 
+                    case RankedAspect.ObjectsPerCircles:
+                        kernel.Bind<IAspectTheoremRanker>().To<ObjectsPerCirclesRanker>();
+                        break;
+
                     default:
                         throw new GeoGenException($"Unhandled type of ranked aspect: {rankedAspect}");
                 }

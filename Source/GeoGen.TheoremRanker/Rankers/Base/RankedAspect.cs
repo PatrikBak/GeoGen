@@ -31,8 +31,16 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// The ratio of the number of objects and theorems of the configuration. The idea behind this metrics is 
         /// that if we have more theorems in a configuration, then it usually suggests the problem is not that difficult,
-        /// because we can make lots of conclusions. 
+        /// because we can make lots of conclusions. It is the number of objects divided by the number of theorems.
         /// </summary>
-        ObjectsPerTheorem
+        ObjectsPerTheorem,
+
+        /// <summary>
+        /// The ratio of the number of objects and <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this
+        /// metrics is that in configurations with more concyclic points it is usually easier to prove things, because 
+        /// of the powerful properties of cyclic quadrilaterals. If there are no circles, then the rank is 2 times the number
+        /// of objects, otherwise it's the number of objects divided by the number of concylic points theorems.
+        /// </summary>
+        ObjectsPerCircles
     }
 }
