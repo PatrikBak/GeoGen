@@ -38,25 +38,31 @@ namespace GeoGen.ConsoleLauncher
             algorithmSettings: new AlgorithmSettings
             (
                 geometryConstructorSettings: new GeometryConstructorSettings(numberOfPictures: 5),
-                tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
-                lineTangentToCircleTheoremFinderSettings: new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true),
-                soughtTheoremTypes: new[]
-                {
-                    TheoremType.CollinearPoints,
-                    TheoremType.ConcurrentLines,
-                    TheoremType.ConcyclicPoints,
-                    TheoremType.EqualLineSegments,
-                    TheoremType.LineTangentToCircle,
-                    TheoremType.ParallelLines,
-                    TheoremType.PerpendicularLines,
-                    TheoremType.TangentCircles,
-                    TheoremType.Incidence
-                },
-                theoremRankerSettings: new TheoremRankerSettings(rankingCoefficients: new Dictionary<RankedAspect, double>
-                {
-                    { RankedAspect.Symmetry, 1},
-                    { RankedAspect.Type, 2}
-                })
+                theoremFindingSettings: new TheoremFindingSettings
+                (
+                    tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                    lineTangentToCircleTheoremFinderSettings: new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                    soughtTheoremTypes: new[]
+                    {
+                        TheoremType.CollinearPoints,
+                        TheoremType.ConcurrentLines,
+                        TheoremType.ConcyclicPoints,
+                        TheoremType.EqualLineSegments,
+                        TheoremType.LineTangentToCircle,
+                        TheoremType.ParallelLines,
+                        TheoremType.PerpendicularLines,
+                        TheoremType.TangentCircles,
+                        TheoremType.Incidence
+                    }
+                ),
+                theoremRankerSettings: new TheoremRankerSettings
+                (
+                    rankingCoefficients: new Dictionary<RankedAspect, double>
+                    {
+                        { RankedAspect.Symmetry, 1},
+                        { RankedAspect.Type, 2}
+                    }
+                )
             ),
             inputFolderSettings: new InputFolderSettings
             (

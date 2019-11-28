@@ -96,9 +96,9 @@ namespace GeoGen.ConsoleLauncher
                 // With constructor that uses loaded settings
                 .AddConstructor(settings.AlgorithmSettings.GeometryConstructorSettings)
                 // With theorem finder and its settings
-                .AddTheoremFinder(settings.AlgorithmSettings.TangentCirclesTheoremFinderSettings,
-                                  settings.AlgorithmSettings.LineTangentToCircleTheoremFinderSettings,
-                                  settings.AlgorithmSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
+                .AddTheoremFinder(settings.AlgorithmSettings.TheoremFindingSettings.TangentCirclesTheoremFinderSettings,
+                                  settings.AlgorithmSettings.TheoremFindingSettings.LineTangentToCircleTheoremFinderSettings,
+                                  settings.AlgorithmSettings.TheoremFindingSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
                 // With prover and its data
                 .AddTheoremProver(new TheoremProverData
                 (
