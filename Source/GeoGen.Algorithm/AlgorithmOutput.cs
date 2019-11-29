@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents an output of the <see cref="IAlgorithm"/>.
+    /// Represents an output of the <see cref="IAlgorithmFacade"/>.
     /// </summary>
     public class AlgorithmOutput
     {

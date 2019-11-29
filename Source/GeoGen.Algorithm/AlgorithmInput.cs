@@ -5,7 +5,7 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents an input for the <see cref="IAlgorithm"/>.
+    /// Represents an input for <see cref="IAlgorithmFacade"/>. 
     /// </summary>
     public class AlgorithmInput
     {

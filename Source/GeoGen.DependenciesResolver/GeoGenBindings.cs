@@ -183,7 +183,8 @@ namespace GeoGen.DependenciesResolver
         public static IKernel AddAlgorithm(this IKernel kernel)
         {
             // Stateless services
-            kernel.Bind<IAlgorithm>().To<SequentialAlgorithm>().InSingletonScope();
+            kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().InSingletonScope();
+            kernel.Bind<IBestTheoremsFinder>().To<BestTheoremsFinder>().InSingletonScope();
 
             // Return the kernel for chaining
             return kernel;

@@ -12,10 +12,9 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents a simple version of the algorithm where each configuration is tested 
-    /// for theorems immediately after it's generated.
+    /// The default implementation of <see cref="IAlgorithmFacade"/>.
     /// </summary>
-    public class SequentialAlgorithm : IAlgorithm
+    public class AlgorithmFacade : IAlgorithmFacade
     {
         #region Dependencies
 
@@ -54,7 +53,7 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SequentialAlgorithm"/> class.
+        /// Initializes a new instance of the <see cref="AlgorithmFacade"/> class.
         /// </summary>
         /// <param name="generator">The generator of configurations.</param>
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
@@ -62,7 +61,12 @@ namespace GeoGen.Algorithm
         /// <param name="prover">The prover of theorems.</param>
         /// <param name="ranker">The ranker of theorems.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
-        public SequentialAlgorithm(IGenerator generator, IGeometryConstructor geometryConstructor, ITheoremFinder finder, ITheoremProver prover, ITheoremRanker ranker, IGeometryFailureTracer tracer = null)
+        public AlgorithmFacade(IGenerator generator,
+                                IGeometryConstructor geometryConstructor,
+                                ITheoremFinder finder,
+                                ITheoremProver prover,
+                                ITheoremRanker ranker,
+                                IGeometryFailureTracer tracer = null)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
