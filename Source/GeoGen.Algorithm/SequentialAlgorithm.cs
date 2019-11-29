@@ -342,7 +342,8 @@ namespace GeoGen.Algorithm
                        return new AlgorithmOutput
                        (
                            configuration: configuration,
-                           theorems: newTheorems,
+                           oldTheorems: oldTheorems,
+                           newTheorems: newTheorems,
                            proverOutput: proverOutput,
                            rankings: rankings
                        );

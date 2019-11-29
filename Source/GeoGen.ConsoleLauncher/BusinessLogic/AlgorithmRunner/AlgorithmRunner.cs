@@ -180,7 +180,7 @@ namespace GeoGen.ConsoleLauncher
                         $"with {interestingTheoremGroups} interesting theorem group(s).");
 
                 // Skip configurations without theorems
-                if (algorithmOutput.Theorems.AllObjects.Count == 0)
+                if (algorithmOutput.NewTheorems.AllObjects.Count == 0)
                     continue;
 
                 // Get the groups of unproven (i.e. interesting theorems)
@@ -231,8 +231,16 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine();
                 WriteLine(formatter.FormatConfiguration(algorithmOutput.Configuration));
 
-                // Write the title
-                WriteLine("\nTheorems:\n");
+                // Write the title with simple statistics
+                WriteLine($"\nTheorems:");
+                WriteLine();
+                WriteLine($" All theorems: {algorithmOutput.OldTheorems.AllObjects.Count + algorithmOutput.NewTheorems.AllObjects.Count}");
+                WriteLine($" Old theorems: {algorithmOutput.OldTheorems.AllObjects.Count}");
+                WriteLine($" New theorems: {algorithmOutput.NewTheorems.AllObjects.Count}");
+                WriteLine($" Proven theorems: {algorithmOutput.ProverOutput.ProvenTheorems.Count}");
+                WriteLine($" Unproven theorems: {algorithmOutput.ProverOutput.UnprovenTheorems.Count}");
+                WriteLine($" Unproven theorem groups: {unprovenTheoremGroups.Count}");
+                WriteLine();
 
                 // If there are interesting theorems
                 if (unprovenTheoremGroups.Any())
@@ -351,22 +359,24 @@ namespace GeoGen.ConsoleLauncher
             {
                 // If this is a proven theorem, then we display it with its proof (no ranking has been done)
                 if (proverOutput.ProvenTheorems.ContainsKey(theorem))
-                    return $" {theoremTags[theorem]} {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
+                    return $"{theoremTags[theorem]} {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
 
                 // Otherwise our theorem is not proven, i.e. we want to display the total ranking
-                var result = $" {theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {rankings[theorem].TotalRanking}\n\n";
+                var result = $"{theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {rankings[theorem].TotalRanking}\n\n";
 
-                // Add individual rankings ordered by the aspect name
-                rankings[theorem].Ranking.OrderBy(pair => pair.Key.ToString())
-                    // Add each on an individual line
-                    .ForEach(pair => result += $"  - {pair.Key}: Coefficient {pair.Value.coefficient}, Ranking {pair.Value.ranking} \n");
+                // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
+                rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.coefficient * pair.Value.ranking, pair.Key.ToString()))
+                    // Add each on an individual line with info about the coefficient
+                    .ForEach(pair => result += $" {pair.Key,-25}coefficient = {pair.Value.coefficient.ToString("G5"),-10}" +
+                        // The ranking and the total contribution of this aspect
+                        $"ranking = {pair.Value.ranking.ToString("G5"),-10}contribution = {(pair.Value.coefficient * pair.Value.ranking).ToString("G5")}\n");
 
                 // If we shouldn't display proof attempts, then we're done
                 if (!displayProofAttempts)
                     return result;
 
                 // Otherwise we include the proof on a new line
-                result += $"\n  Proof attempts{UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
+                result += $"\nProof attempts{UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
 
                 // And return the correctly trimmed result
                 return $"{result.TrimEnd()}\n";
@@ -437,7 +447,7 @@ namespace GeoGen.ConsoleLauncher
                 // Create a new tag that will be used for the current theorem
                 // If there is no previous tag, we'll use the indented one from the list
                 // Otherwise we just add the indentation to the previous one
-                var newTag = previousTag.IsEmpty() ? $"    {theoremTags[theorem]}" : $"  {previousTag}";
+                var newTag = previousTag.IsEmpty() ? $"  {theoremTags[theorem]}" : $"  {previousTag}";
 
                 // Copy the spaces from the new tag, so that we have correct alignment 
                 var spaces = new string(' ', newTag.TakeWhile(c => c == ' ').Count());
@@ -511,7 +521,7 @@ namespace GeoGen.ConsoleLauncher
                     // Compose the tag with spaces. 
                     // If there is no previous tag, get the default one from the tags map (with spaces)
                     // Otherwise, take the previous one with more spaces and append the current index (and increase it)
-                    var untrimmedTag = $"{(previousTag.IsEmpty() ? $"    {theoremTags[proofAttempt.Theorem]}" : $"  {previousTag}")}{index++}.";
+                    var untrimmedTag = $"{(previousTag.IsEmpty() ? $"  {theoremTags[proofAttempt.Theorem]}" : $"  {previousTag}")}{index++}.";
 
                     // Find out if the theorem already has a tag
                     var theoremIsUntagged = !theoremTags.ContainsKey(theorem);

@@ -20,9 +20,14 @@ namespace GeoGen.Algorithm
         public GeneratedConfiguration Configuration { get; }
 
         /// <summary>
-        /// The found theorems for the configurations.
+        /// The found theorems for the configurations that don't use last object of the configuration.
         /// </summary>
-        public TheoremMap Theorems { get; }
+        public TheoremMap OldTheorems { get; }
+
+        /// <summary>
+        /// The found theorems for the configurations that use the last object of the configuration.
+        /// </summary>
+        public TheoremMap NewTheorems { get; }
 
         /// <summary>
         /// The output of the theorem prover.
@@ -42,13 +47,19 @@ namespace GeoGen.Algorithm
         /// Initializes a new instance of the <see cref="AlgorithmOutput"/> class.
         /// </summary>
         /// <param name="configuration">The generated configuration.</param>
-        /// <param name="theorems">The found theorems for the configurations.</param>
+        /// <param name="oldTheorems">The found theorems for the configurations that don't use last object of the configuration.</param>
+        /// <param name="newTheorems">The found theorems for the configurations that use the last object of the configuration.</param>
         /// <param name="proverOutput">The output of the theorem prover.</param>
         /// <param name="rankings">The rankings of unproven theorems.</param>
-        public AlgorithmOutput(GeneratedConfiguration configuration, TheoremMap theorems, TheoremProverOutput proverOutput, IReadOnlyDictionary<Theorem, TheoremRanking> rankings)
+        public AlgorithmOutput(GeneratedConfiguration configuration,
+                               TheoremMap oldTheorems,
+                               TheoremMap newTheorems,
+                               TheoremProverOutput proverOutput,
+                               IReadOnlyDictionary<Theorem, TheoremRanking> rankings)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            Theorems = theorems ?? throw new ArgumentNullException(nameof(theorems));
+            OldTheorems = oldTheorems ?? throw new ArgumentNullException(nameof(oldTheorems));
+            NewTheorems = newTheorems ?? throw new ArgumentNullException(nameof(newTheorems));
             ProverOutput = proverOutput ?? throw new ArgumentNullException(nameof(proverOutput));
             Rankings = rankings ?? throw new ArgumentNullException(nameof(rankings));
         }

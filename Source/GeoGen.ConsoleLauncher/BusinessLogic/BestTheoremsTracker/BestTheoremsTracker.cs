@@ -101,12 +101,14 @@ namespace GeoGen.ConsoleLauncher
                 streamWriter.WriteLine(formatter.FormatConfiguration(configuration));
 
                 // Write theorem
-                streamWriter.WriteLine($"\n {formatter.FormatTheorem(theorem)} - total ranking {rank.TotalRanking}\n");
+                streamWriter.WriteLine($"\n{formatter.FormatTheorem(theorem)} - total ranking {rank.TotalRanking.ToString("G5")}\n");
 
-                // Add individual rankings ordered by the aspect name
-                rank.Ranking.OrderBy(pair => pair.Key.ToString())
-                    // Add each on an individual line
-                    .ForEach(pair => streamWriter.WriteLine($" - {pair.Key}: Coefficient {pair.Value.coefficient}, Ranking {pair.Value.ranking}"));
+                // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
+                rank.Ranking.OrderBy(pair => (-pair.Value.coefficient * pair.Value.ranking, pair.Key.ToString()))
+                    // Add each on an individual line with info about the coefficient
+                    .ForEach(pair => streamWriter.WriteLine($"{pair.Key,-25}coefficient = {pair.Value.coefficient.ToString("G5"),-10}" +
+                        // The ranking and the total contribution of this aspect
+                        $"ranking = {pair.Value.ranking.ToString("G5"),-10}contribution = {(pair.Value.coefficient * pair.Value.ranking).ToString("G5")}"));
 
                 // Make a new line
                 streamWriter.WriteLine();
