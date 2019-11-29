@@ -4,9 +4,9 @@ using GeoGen.TheoremProver;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.ObjectsPerTheorem"/>.
+    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.TheoremsPerObject"/>.
     /// </summary>
-    public class ObjectsPerTheoremRanker : AspectTheoremRankerBase
+    public class TheoremsPerObjectRanker : AspectTheoremRankerBase
     {
         /// <summary>
         /// Ranks a given theorem, potentially using all given provided context.
@@ -17,8 +17,7 @@ namespace GeoGen.TheoremRanker
         /// <param name="proverOutput">The output from the theorem prover for all the theorems of the configuration.</param>
         /// <returns>A number representing the ranking of the theorem. The range of its values depends on the implementation.</returns>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
-            // Simply calculate the ratio
-            => (double)configuration.AllObjects.Count / allTheorems.AllObjects.Count;
-
+            // Simply apply the formula described in the documentation of RankedAspect.TheoremsPerObject
+            => 1 / (1 + (double)allTheorems.AllObjects.Count / configuration.AllObjects.Count);
     }
 }

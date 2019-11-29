@@ -215,12 +215,12 @@ namespace GeoGen.DependenciesResolver
                         kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>().WithConstructorArgument(typeRankerSettings);
                         break;
 
-                    case RankedAspect.ObjectsPerTheorem:
-                        kernel.Bind<IAspectTheoremRanker>().To<ObjectsPerTheoremRanker>();
+                    case RankedAspect.TheoremsPerObject:
+                        kernel.Bind<IAspectTheoremRanker>().To<TheoremsPerObjectRanker>();
                         break;
 
-                    case RankedAspect.ObjectsPerCircles:
-                        kernel.Bind<IAspectTheoremRanker>().To<ObjectsPerCirclesRanker>();
+                    case RankedAspect.CirclesPerObject:
+                        kernel.Bind<IAspectTheoremRanker>().To<CirclesPerObjectRanker>();
                         break;
 
                     case RankedAspect.NumberOfProofAttempts:

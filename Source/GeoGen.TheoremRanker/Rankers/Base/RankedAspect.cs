@@ -4,6 +4,8 @@ namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// Represents a thing that can be ranked on theorems. The higher the rank the more interesting a theorem is.
+    /// In order to be able to combine rankings better, it is supposed to that all ranking should be within 
+    /// the interval [0,1]. (This can currently be violated via <see cref="TypeRankerSettings.TypeRankings"/>.)
     /// </summary>
     public enum RankedAspect
     {
@@ -29,22 +31,22 @@ namespace GeoGen.TheoremRanker
         Type,
 
         /// <summary>
-        /// The ratio of the number of objects and theorems of the configuration. The idea behind this metrics is 
-        /// that if we have more theorems in a configuration, then it usually suggests the problem is not that difficult,
-        /// because we can make lots of conclusions. It is the number of objects divided by the number of theorems.
+        /// The ratio of theorems of the configuration. The idea behind this metrics is  that if we have more theorems in
+        /// a configuration, then it usually suggests the problem is not that difficult, because we can make lots of conclusions. 
+        /// It is calculated as 1 / (1 + Number of theorems in configuration / Number of objects).
         /// </summary>
-        ObjectsPerTheorem,
+        TheoremsPerObject,
 
         /// <summary>
-        /// The ratio of the number of objects and <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this
-        /// metrics is that in configurations with more concyclic points it is usually easier to prove things, because 
-        /// of the powerful properties of cyclic quadrilaterals. It is 1 / (1 + Number of concyclic points theorems)
+        /// The ratio of the number of <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this metrics
+        /// is that in configurations with more concyclic points it is usually easier to prove things, because of the powerful 
+        /// properties of cyclic quadrilaterals. It is calculated as  1 / (1 + Number of concyclic points theorems / Number of objects)
         /// </summary>
-        ObjectsPerCircles,
+        CirclesPerObject,
 
         /// <summary>
-        /// The value 1 / (1 + Number of proof attempts at this theorem). The idea is that if we couldn't even attempt 
-        /// to prove a theorem, then it must be really good. 
+        /// The value 1 / (1 + Number of proof attempts at this theorem). The idea behind this metrics is that if we couldn't 
+        /// even attempt to prove a theorem, then it is likely to be interesting.
         /// </summary>
         NumberOfProofAttempts
     }
