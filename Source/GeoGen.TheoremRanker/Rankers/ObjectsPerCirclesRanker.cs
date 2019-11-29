@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using GeoGen.TheoremProver;
+using System.Linq;
 
 namespace GeoGen.TheoremRanker
 {
@@ -17,11 +18,7 @@ namespace GeoGen.TheoremRanker
         /// <param name="proverOutput">The output from the theorem prover for all the theorems of the configuration.</param>
         /// <returns>A number representing the ranking of the theorem. The range of its values depends on the implementation.</returns>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
-            // If there are any circles...
-            => allTheorems.ContainsKey(TheoremType.ConcyclicPoints) ?
-                // Then we get the answer by dividing the number of objects and the number of these theorems
-                (double)configuration.AllObjects.Count / allTheorems[TheoremType.ConcyclicPoints].Count
-                // Otherwise, with no circles, we rank it as the number of objects
-                : 2 * configuration.AllObjects.Count;
+            // Simply apply the formula described in the documentation of RankedAspect.ObjectsPerCircles
+            => 1D / (1 + allTheorems.GetTheoremsOfTypes(TheoremType.ConcyclicPoints).Count());
     }
 }
