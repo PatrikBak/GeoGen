@@ -2,8 +2,10 @@
 using GeoGen.Constructor;
 using GeoGen.DependenciesResolver;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
@@ -99,7 +101,7 @@ namespace GeoGen.ConsoleLauncher
                 .AddTheoremFinder(settings.AlgorithmSettings.TheoremFindingSettings.TangentCirclesTheoremFinderSettings,
                                   settings.AlgorithmSettings.TheoremFindingSettings.LineTangentToCircleTheoremFinderSettings,
                                   settings.AlgorithmSettings.TheoremFindingSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
-                // With prover and its data
+                // With theorem prover and its data
                 .AddTheoremProver(new TheoremProverData
                 (
                     // Template theorems are loaded at the beginning
@@ -108,6 +110,12 @@ namespace GeoGen.ConsoleLauncher
                 // With theorem ranker and its settings
                 .AddTheoremRanker(settings.AlgorithmSettings.TheoremRankingSettings.TheoremRankerSettings,
                                   settings.AlgorithmSettings.TheoremRankingSettings.TypeRankerSettings)
+                // With theorem simplifier and its data
+                .AddTheoremSimplifier(new TheoremSimplifierData
+                (
+                    // TODO: Implement loading rules from a file
+                    rules: Enumerable.Empty<SimplificationRule>().ToReadOnlyHashSet()
+                ))
                 // And finally the algorithm
                 .AddAlgorithm();
 

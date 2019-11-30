@@ -35,9 +35,14 @@ namespace GeoGen.Algorithm
         public TheoremProverOutput ProverOutput { get; }
 
         /// <summary>
-        /// The rankings of unproven theorems.
+        /// The rankings of unproven theorems. Each should be ranked.
         /// </summary>
         public IReadOnlyDictionary<Theorem, TheoremRanking> Rankings { get; }
+
+        /// <summary>
+        /// The simplifications of unproven theorems. Not each must be simplified.
+        /// </summary>
+        public IReadOnlyDictionary<Theorem, (Configuration newConfiguration, Theorem newTheorem)> SimplifiedTheorems { get; }
 
         #endregion
 
@@ -50,18 +55,21 @@ namespace GeoGen.Algorithm
         /// <param name="oldTheorems">The found theorems for the configurations that don't use last object of the configuration.</param>
         /// <param name="newTheorems">The found theorems for the configurations that use the last object of the configuration.</param>
         /// <param name="proverOutput">The output of the theorem prover.</param>
-        /// <param name="rankings">The rankings of unproven theorems.</param>
+        /// <param name="rankings">The rankings of unproven theorems. Each should be ranked.</param>
+        /// <param name="simplifiedTheorems">The simplifications of unproven theorems. Not each must be simplified.</param>
         public AlgorithmOutput(GeneratedConfiguration configuration,
                                TheoremMap oldTheorems,
                                TheoremMap newTheorems,
                                TheoremProverOutput proverOutput,
-                               IReadOnlyDictionary<Theorem, TheoremRanking> rankings)
+                               IReadOnlyDictionary<Theorem, TheoremRanking> rankings,
+                               IReadOnlyDictionary<Theorem, (Configuration newConfiguration, Theorem newTheorem)> simplifiedTheorems)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             OldTheorems = oldTheorems ?? throw new ArgumentNullException(nameof(oldTheorems));
             NewTheorems = newTheorems ?? throw new ArgumentNullException(nameof(newTheorems));
             ProverOutput = proverOutput ?? throw new ArgumentNullException(nameof(proverOutput));
             Rankings = rankings ?? throw new ArgumentNullException(nameof(rankings));
+            SimplifiedTheorems = simplifiedTheorems ?? throw new ArgumentNullException(nameof(simplifiedTheorems));
         }
 
         #endregion

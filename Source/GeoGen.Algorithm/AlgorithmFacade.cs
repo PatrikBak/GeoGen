@@ -4,6 +4,7 @@ using GeoGen.Generator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -44,6 +45,11 @@ namespace GeoGen.Algorithm
         private readonly ITheoremRanker _ranker;
 
         /// <summary>
+        /// The simplifier of theorems.
+        /// </summary>
+        private readonly ITheoremSimplifier _simplifier;
+
+        /// <summary>
         /// The tracer of potential geometry failures.
         /// </summary>
         private readonly IGeometryFailureTracer _tracer;
@@ -60,12 +66,14 @@ namespace GeoGen.Algorithm
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="prover">The prover of theorems.</param>
         /// <param name="ranker">The ranker of theorems.</param>
+        /// <param name="simplifier">The simplifier of theorems.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
         public AlgorithmFacade(IGenerator generator,
                                 IGeometryConstructor geometryConstructor,
                                 ITheoremFinder finder,
                                 ITheoremProver prover,
                                 ITheoremRanker ranker,
+                                ITheoremSimplifier simplifier,
                                 IGeometryFailureTracer tracer = null)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
@@ -73,6 +81,7 @@ namespace GeoGen.Algorithm
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
             _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
+            _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
             _tracer = tracer;
         }
 
@@ -342,6 +351,15 @@ namespace GeoGen.Algorithm
                             // Each rank separately
                             .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, configuration, input.AllTheorems, proverOutput));
 
+                       // Simplify unproved theorems
+                       var simplifiedTheorems = proverOutput.UnprovenTheorems.Keys
+                            // Each is attempted to be simplified
+                            .Select(theorem => (theorem, simplification: _simplifier.Simplify(configuration, theorem, input.AllTheorems)))
+                            // Take only those where it has been successful
+                            .Where(result => result.simplification != null)
+                            // Wrap the results to a dictionary
+                            .ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
+
                        // Return the final output
                        return new AlgorithmOutput
                        (
@@ -349,7 +367,8 @@ namespace GeoGen.Algorithm
                            oldTheorems: oldTheorems,
                            newTheorems: newTheorems,
                            proverOutput: proverOutput,
-                           rankings: rankings
+                           rankings: rankings,
+                           simplifiedTheorems: simplifiedTheorems
                        );
                    }));
 

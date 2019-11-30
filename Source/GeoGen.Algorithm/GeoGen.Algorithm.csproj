@@ -11,6 +11,7 @@
     <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />
   </ItemGroup>
 
 </Project>

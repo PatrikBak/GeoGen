@@ -1,7 +1,6 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Core;
 using GeoGen.TheoremProver;
-using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -250,19 +249,19 @@ namespace GeoGen.ConsoleLauncher
                 if (algorithmOutput.ProverOutput.UnprovenTheorems.Any())
                 {
                     // Then write them to the standard output writer
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, algorithmOutput.Rankings,
+                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput,
                         // We want to include only unproven ones, without their proof attempts
                         includeProvenTheorems: false, displayProofAttempts: false));
 
                     // We also try to write them to the writer of the output with attempts, if it's provided
-                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, algorithmOutput.Rankings,
+                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput,
                         // Here we want to include only unproven ones, but with their proof attempts
                         includeProvenTheorems: false, displayProofAttempts: true));
                 }
 
                 // In any case (whether we have or haven't interesting theorems) we want to write the info
                 // to the writer of theorems with attempts and proofs, if it's provided
-                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput.ProverOutput, algorithmOutput.Rankings,
+                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput,
                     // Here we want to include even proven theorems and also proof attempts of unproven ones
                     includeProvenTheorems: true, displayProofAttempts: true));
 
@@ -310,30 +309,28 @@ namespace GeoGen.ConsoleLauncher
         /// Converts given theorems to a string, optionally with their proofs or attempts to prove.
         /// </summary>
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
-        /// <param name="proverOutput">The output of the theorem analyzer.</param>
-        /// <param name="rankings">The rankings of unproven theorems.</param>
+        /// <param name="algorithmOutput">The output of the algorithm.</param>
         /// <param name="includeProvenTheorems">Indicates if we should include the proved theorems as well.</param>
         /// <param name="displayProofAttempts">Indicates whether we should display proof attempts.</param>
         /// <returns>The string representing the theorems.</returns>
         private string TheoremsToString(OutputFormatter formatter,
-                                        TheoremProverOutput proverOutput,
-                                        IReadOnlyDictionary<Theorem, TheoremRanking> rankings,
+                                        AlgorithmOutput algorithmOutput,
                                         bool includeProvenTheorems,
                                         bool displayProofAttempts)
         {
             // Prepare the groups in the sorted order that we're going to use
-            var sortedUnprovenTheoremsGroups = proverOutput.UnprovenTheoremGroups.Select(group =>
+            var sortedUnprovenTheoremsGroups = algorithmOutput.ProverOutput.UnprovenTheoremGroups.Select(group =>
                     // First order the theorems inside one group by their overall ranking (ASC) and then by text
-                    group.OrderBy(theorem => (-rankings[theorem].TotalRanking, formatter.FormatTheorem(theorem))).ToArray())
+                    group.OrderBy(theorem => (-algorithmOutput.Rankings[theorem].TotalRanking, formatter.FormatTheorem(theorem))).ToArray())
                 // Then order these groups first by the ranking of the first theorem (ASC), then group size (ASC), then name
-                .OrderBy(group => (-rankings[group[0]].TotalRanking, -group.Length, formatter.FormatTheorem(group[0])))
+                .OrderBy(group => (-algorithmOutput.Rankings[group[0]].TotalRanking, -group.Length, formatter.FormatTheorem(group[0])))
                 // Enumerate
                 .ToArray();
 
             // Prepare the proven theorems, if we should include them
             var provenTheorems = !includeProvenTheorems ? Array.Empty<Theorem>()
                 // If yes, order them by their text
-                : proverOutput.ProvenTheorems.Keys.OrderBy(formatter.FormatTheorem).ToArray();
+                : algorithmOutput.ProverOutput.ProvenTheorems.Keys.OrderBy(formatter.FormatTheorem).ToArray();
 
             // Prepare the dictionary where we will store unique strings associated with 
             // these (and potentially other) theorems used in the reports
@@ -360,25 +357,52 @@ namespace GeoGen.ConsoleLauncher
             var theoremsString = sortedUnprovenTheoremsGroups.Flatten().Concat(provenTheorems).Select(theorem =>
             {
                 // If this is a proven theorem, then we display it with its proof (no ranking has been done)
-                if (proverOutput.ProvenTheorems.ContainsKey(theorem))
-                    return $"{theoremTags[theorem]} {ProofReport(proverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
+                if (algorithmOutput.ProverOutput.ProvenTheorems.ContainsKey(theorem))
+                    return $"{theoremTags[theorem]} {ProofReport(algorithmOutput.ProverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
+
+                #region Writing ranking
 
                 // Otherwise our theorem is not proven, i.e. we want to display the total ranking
-                var result = $"{theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {rankings[theorem].TotalRanking}\n\n";
+                var result = $"{theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {algorithmOutput.Rankings[theorem].TotalRanking}\n\n";
 
                 // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
-                rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.coefficient * pair.Value.ranking, pair.Key.ToString()))
+                algorithmOutput.Rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.coefficient * pair.Value.ranking, pair.Key.ToString()))
                     // Add each on an individual line with info about the coefficient
                     .ForEach(pair => result += $" {pair.Key,-25}coefficient = {pair.Value.coefficient.ToString("G5"),-10}" +
                         // The ranking and the total contribution of this aspect
                         $"ranking = {pair.Value.ranking.ToString("G5"),-10}contribution = {(pair.Value.coefficient * pair.Value.ranking).ToString("G5")}\n");
+
+                #endregion
+
+                #region Writing simplification
+
+                // If the theorem can be simplified...
+                if (algorithmOutput.SimplifiedTheorems.ContainsKey(theorem))
+                {
+                    // Append the header
+                    result += "\nCan be simplified:\n\n";
+
+                    // Get the new configuration and new statement
+                    var (newConfiguration, newTheorem) = algorithmOutput.SimplifiedTheorems[theorem];
+
+                    // Prepare the formatter for the new configuration
+                    var newFormatter = new OutputFormatter(newConfiguration.AllObjects);
+
+                    // Write the configuration
+                    result += $"{newFormatter.FormatConfiguration(newConfiguration).Indent(1)}\n\n";
+
+                    // Write the theorem
+                    result += $" {newFormatter.FormatTheorem(newTheorem)}\n";
+                }
+
+                #endregion
 
                 // If we shouldn't display proof attempts, then we're done
                 if (!displayProofAttempts)
                     return result;
 
                 // Otherwise we include the proof on a new line
-                result += $"\nProof attempts{UnfinishedProofsReport(theorem, proverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
+                result += $"\nProof attempts{UnfinishedProofsReport(theorem, algorithmOutput.ProverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
 
                 // And return the correctly trimmed result
                 return $"{result.TrimEnd()}\n";
@@ -389,10 +413,10 @@ namespace GeoGen.ConsoleLauncher
             .TrimEnd();
 
             // If we should write unproven theorems and there are any...
-            if (proverOutput.UnprovenDiscoveredTheorems.Any() && _settings.IncludeUnprovenDiscoveredTheorems)
+            if (algorithmOutput.ProverOutput.UnprovenDiscoveredTheorems.Any() && _settings.IncludeUnprovenDiscoveredTheorems)
             {
                 // Convert them to a string
-                var unprovenDiscoveredTheoremsString = proverOutput.UnprovenDiscoveredTheorems
+                var unprovenDiscoveredTheoremsString = algorithmOutput.ProverOutput.UnprovenDiscoveredTheorems
                     // Initially sort them by their formatted versions
                     .OrderBy(pair => formatter.FormatTheorem(pair.Key))
                     // Convert each to a string with the right index

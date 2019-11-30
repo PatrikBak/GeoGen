@@ -39,9 +39,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm", "GeoGen.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm.Tests", "GeoGen.Algorithm.Tests\GeoGen.Algorithm.Tests.csproj", "{0693E390-7513-4148-9255-648A69A09303}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.TheoremRanker", "GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj", "{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker", "GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj", "{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.TheoremRanker.Tests", "GeoGen.TheoremRanker.Tests\GeoGen.TheoremRanker.Tests.csproj", "{4D00204F-A00F-4DD0-A82C-052B99B4F37B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker.Tests", "GeoGen.TheoremRanker.Tests\GeoGen.TheoremRanker.Tests.csproj", "{4D00204F-A00F-4DD0-A82C-052B99B4F37B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.TheoremSimplifier", "GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj", "{146CCB0F-0822-442C-9BE9-AD3564C37F1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.TheoremSimplifierTests", "GeoGen.TheoremSimplifierTests\GeoGen.TheoremSimplifierTests.csproj", "{873143D8-BF71-478C-A933-A883799F2826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,6 +133,14 @@ Global
 		{4D00204F-A00F-4DD0-A82C-052B99B4F37B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4D00204F-A00F-4DD0-A82C-052B99B4F37B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4D00204F-A00F-4DD0-A82C-052B99B4F37B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{146CCB0F-0822-442C-9BE9-AD3564C37F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{146CCB0F-0822-442C-9BE9-AD3564C37F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{146CCB0F-0822-442C-9BE9-AD3564C37F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{146CCB0F-0822-442C-9BE9-AD3564C37F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{873143D8-BF71-478C-A933-A883799F2826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{873143D8-BF71-478C-A933-A883799F2826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{873143D8-BF71-478C-A933-A883799F2826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{873143D8-BF71-478C-A933-A883799F2826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

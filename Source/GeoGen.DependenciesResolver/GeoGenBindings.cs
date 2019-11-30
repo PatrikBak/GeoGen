@@ -5,6 +5,7 @@ using GeoGen.Generator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -232,6 +233,21 @@ namespace GeoGen.DependenciesResolver
                         throw new GeoGenException($"Unhandled type of ranked aspect: {rankedAspect}");
                 }
             }
+
+            // Return the kernel for chaining
+            return kernel;
+        }
+
+        /// <summary>
+        /// Bindings for the dependencies from the TheoremSimplifier module.
+        /// </summary>
+        /// <param name="kernel">The kernel.</param>
+        /// <param name="data">The data for the simplifier.</param>
+        /// <returns>The kernel for chaining.</returns>
+        public static IKernel AddTheoremSimplifier(this IKernel kernel, TheoremSimplifierData data)
+        {
+            // Bind the simplifier
+            kernel.Bind<ITheoremSimplifier>().To<TheoremSimplifier.TheoremSimplifier>().WithConstructorArgument(data);
 
             // Return the kernel for chaining
             return kernel;
