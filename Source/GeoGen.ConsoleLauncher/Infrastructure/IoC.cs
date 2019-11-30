@@ -5,7 +5,6 @@ using GeoGen.TheoremProver;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
@@ -82,7 +81,7 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<IBestTheoremsTracker>().To<BestTheoremsTracker>().WithConstructorArgument(settings.BestTheoremsTrackerSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
-            Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
+            Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
 
             // Add tracers
             Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);

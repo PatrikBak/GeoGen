@@ -1,10 +1,8 @@
-﻿using GeoGen.Algorithm;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace GeoGen.ConsoleLauncher
@@ -68,7 +66,7 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="lines">The lines with the configuration's definition.</param>
         /// <returns>The tuple consisting the parsed configuration and the dictionary mapping declared object names to their real objects.</returns>
-        public static (Configuration configuration, IReadOnlyDictionary<string, ConfigurationObject> namesToObjects) ParseConfiguration(IReadOnlyList<string> lines)
+        public static (Configuration configuration, Dictionary<string, ConfigurationObject> namesToObjects) ParseConfiguration(IReadOnlyList<string> lines)
         {
             // Make sure there is at least one line
             if (lines.Count == 0)
@@ -159,8 +157,8 @@ namespace GeoGen.ConsoleLauncher
 
                 try
                 {
-                    // Try to create a constructed object
-                    var constructedObject = ParseConstructedObject(objectString, namesToObjects);
+                    // Try to create a constructed object, without auto-creating
+                    var constructedObject = ParseConstructedObject(objectString, namesToObjects, autocreateUnnamedObjects: false);
 
                     // Associate it
                     namesToObjects.Add(newObjectName, constructedObject);
@@ -188,8 +186,9 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="objectString">The string to be parsed.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
+        /// <param name="autocreateUnnamedObjects">If this value is true, then objects without names will be automatically created as loose ones.</param>
         /// <returns>The parsed constructed object.</returns>
-        public static ConstructedConfigurationObject ParseConstructedObject(string objectString, IReadOnlyDictionary<string, ConfigurationObject> namesToObjects)
+        public static ConstructedConfigurationObject ParseConstructedObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects)
         {
             // Match the construction and input objects from the definition
             var definitionMatch = Regex.Match(objectString, "^(.+)\\((.*)\\)$");
@@ -213,17 +212,37 @@ namespace GeoGen.ConsoleLauncher
             }
 
             // Get the passed objects
-            var passedObjects = definitionMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).Where(s => !s.IsNullOrEmpty()).Select(name =>
-            {
-                // Make sure the name has been declared before
-                if (!namesToObjects.ContainsKey(name))
-                    throw new ParsingException($"Error while parsing '{objectString}'. Undeclared object '{name}'");
+            var passedObjects = definitionMatch.Groups[2].Value
+                // That should by split by 
+                .Split(",")
+                // Trim
+                .Select(objectName => objectName.Trim())
+                // Parse each
+                .Select((name, index) =>
+                {
+                    // If the object is named, return it directly
+                    if (namesToObjects.ContainsKey(name))
+                        return namesToObjects[name];
 
-                // Return the corresponding object
-                return namesToObjects[name];
-            })
-            // Enumerate
-            .ToArray();
+                    // Otherwise if we don't have the auto-create feature, then we have a problem
+                    if (!autocreateUnnamedObjects)
+                        throw new ParsingException($"Error while parsing '{objectString}'. Undeclared object '{name}'");
+
+                    // Otherwise we create this object as a loose one. We can get its type from the construction
+                    var looseObject = new LooseConfigurationObject(construction.Signature.ObjectTypes[index]);
+
+                    // Make sure the name is correct
+                    if (!name.All(char.IsLetterOrDigit))
+                        throw new ParsingException($"Error while parsing '{objectString}'. Name of an object can contain only letters and digits, this one is '{name}'");
+
+                    // Name it
+                    namesToObjects.Add(name, looseObject);
+
+                    // Return it
+                    return looseObject;
+                })
+                // Enumerate
+                .ToArray();
 
             try
             {
@@ -242,8 +261,9 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="theoremLine">The line with the theorem's description.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
+        /// <param name="autocreateUnnamedObjects">If this value is true, then objects without names will be automatically created as loose ones.</param>
         /// <returns>The parsed theorem.</returns>
-        public static Theorem ParseTheorem(string theoremLine, IReadOnlyDictionary<string, ConfigurationObject> namesToObjects)
+        public static Theorem ParseTheorem(string theoremLine, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects)
         {
             #region Parsing type
 
@@ -252,7 +272,7 @@ namespace GeoGen.ConsoleLauncher
 
             // Make sure there is a match...
             if (!typeDefinitionMatch.Success)
-                throw new ParsingException($"Error while parsing '{theoremLine}'. The theorem should be in the form 'name:definition'");
+                throw new ParsingException($"Error while parsing '{theoremLine}'. The theorem should be in the form 'name: definition'");
 
             // Parse the type
             if (!Enum.TryParse<TheoremType>(typeDefinitionMatch.Groups[1].Value, out var theoremType))
@@ -267,37 +287,16 @@ namespace GeoGen.ConsoleLauncher
 
             // In order to find theorem objects, we will look for those commas
             // that are not in any unclosed brackets of any type. For simplicity,
-            // we will replace them with semicolons and then split the split by them
-            // (speed does not matter here very much)
-
-            // Copy the definition so we can edit it
-            var definitionCopy = new StringBuilder(definition);
-
-            // Prepare the number of unclosed brackets
-            var unclosedBrackets = 0;
-
-            // Go through the characters
-            definition.ForEach((c, index) =>
-            {
-                // If we have an open bracket, count it in
-                if (c == '(' || c == '[')
-                    unclosedBrackets++;
-
-                // If we have a closed one, count it out
-                else if (c == ')' || c == ']')
-                    unclosedBrackets--;
-
-                // If we have a comma and there are no unclosed brackets,
-                // replace it with a semicolon
-                else if (c == ',' && unclosedBrackets == 0)
-                    definitionCopy[index] = ';';
-            });
-
-            // Split the copied string by created semicolons to get particular objects
-            var theoremObjectsStrings = definitionCopy.ToString().Split(';').Select(s => s.Trim());
-
-            // Parse the objects
-            var theoremObjects = theoremObjectsStrings.Select(theoremObject => ParseTheoremObject(theoremType, theoremObject, namesToObjects)).ToList();
+            // we will replace them with semicolons 
+            var theoremObjects = definition.ReplaceBalancedCommasWithSemicolons()
+                // Now we can split by semicolons
+                .Split(';')
+                // Trim
+                .Select(theoremObjectString => theoremObjectString.Trim())
+                // Parse each
+                .Select(theoremObjectString => ParseTheoremObject(theoremObjectString, namesToObjects, autocreateUnnamedObjects))
+                // Enumerate
+                .ToList();
 
             #endregion
 
@@ -316,57 +315,35 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Parses theorem object from a given string.
         /// </summary>
-        /// <param name="theoremType">The type of theorem being parsed.</param>
         /// <param name="objectString">The string containing the object's definition.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
+        /// <param name="autocreateUnnamedObjects">If this value is true, then objects without names will be automatically created as loose ones.</param>
         /// <returns>The parsed theorem object.</returns>
-        public static TheoremObject ParseTheoremObject(TheoremType theoremType, string objectString, IReadOnlyDictionary<string, ConfigurationObject> namesToObjects)
+        public static TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects)
         {
-            // First handle the two special types of theorems
-            switch (theoremType)
+            // Local function that converts an explicit configuration object to a theorem object
+            static TheoremObject Convert(ConfigurationObject configurationObject) => configurationObject.ObjectType switch
             {
-                // In these types we have two types of objects: 
-                // Named ones or explicitly defined ones (via a construction with arguments)
-                case TheoremType.Incidence:
-                case TheoremType.EqualObjects:
+                // Point case
+                ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
 
-                    // Prepare the parser object
-                    var parsedObject = default(ConfigurationObject);
+                // Line case
+                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
 
-                    // Try to parse it with a name
-                    if (namesToObjects.ContainsKey(objectString))
-                        parsedObject = namesToObjects[objectString];
+                // Circle case
+                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
-                    // Otherwise
-                    else
-                        try
-                        {
-                            // Or try to parse it as a configuration object
-                            parsedObject = ParseConstructedObject(objectString, namesToObjects);
-                        }
-                        catch (ParsingException e)
-                        {
-                            // Re-thrown an exception with the right message
-                            throw new ParsingException($"Error while parsing '{objectString}'. Object has to be defined correctly. {e.Message}");
-                        }
+                // Default case
+                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
+            };
 
-                    // Switch based on the figured type which constructor we'll use
-                    return parsedObject.ObjectType switch
-                    {
-                        // Point case
-                        ConfigurationObjectType.Point => new PointTheoremObject(parsedObject) as TheoremObject,
+            // If the object is named, then parse it as an explicit object
+            if (namesToObjects.ContainsKey(objectString))
+                return Convert(namesToObjects[objectString]);
 
-                        // Line case
-                        ConfigurationObjectType.Line => new LineTheoremObject(parsedObject),
+            #region Parsing implicit object
 
-                        // Circle case
-                        ConfigurationObjectType.Circle => new CircleTheoremObject(parsedObject),
-
-                        // Default case
-                        _ => throw new GeoGenException($"Unhandled type of configuration object: {parsedObject.ObjectType}"),
-                    };
-            }
-
+            // Otherwise we have to dig deeper. First we assume it is defined implicitly
             // Try to match a line defined implicitly
             var implicitLineMatch = Regex.Match(objectString, "^\\[(.+)\\]$");
 
@@ -379,25 +356,56 @@ namespace GeoGen.ConsoleLauncher
                              // They might not be defined at all, if the object is defined explicitly
                              null;
 
-            // Parse the points, if there are any
-            var theoremPoints = pointNames?.Split(",").Select(s => s.Trim()).Select(pointName =>
-            {
-                // Make sure such a point exist s
-                if (!namesToObjects.ContainsKey(pointName))
-                    throw new ParsingException($"Error while parsing '{objectString}'. Unknown object '{pointName}'.");
+            // Parse the points, if there are any. They are separated by commas, but there might 
+            // be inner ones...Thus we will replace balanced commas with semicolons
+            var theoremPoints = pointNames?.ReplaceBalancedCommasWithSemicolons()
+                // Now we can split by semicolons
+                .Split(";")
+                // Trim
+                .Select(pointDefinition => pointDefinition.Trim())
+                // Parse each point
+                .Select(pointDefinition =>
+                {
+                    // Prepare the point
+                    var pointObject = default(ConfigurationObject);
 
-                // Get the corresponding object
-                var pointObject = namesToObjects[pointName];
+                    // If the point is named, then we simply get it from the names dictionary
+                    if (namesToObjects.ContainsKey(pointDefinition))
+                        pointObject = namesToObjects[pointDefinition];
 
-                // Make sure it is a point
-                if (pointObject.ObjectType != ConfigurationObjectType.Point)
-                    throw new ParsingException($"Error while parsing '{objectString}'. Object {pointName} is not a point.");
+                    // Otherwise...
+                    else
+                        try
+                        {
+                            // We might try to parse the point as a constructed one
+                            pointObject = ParseConstructedObject(pointDefinition, namesToObjects, autocreateUnnamedObjects);
+                        }
+                        catch (ParsingException)
+                        {
+                            // Otherwise, if the auto-create feature is not on, we have a problem
+                            if (!autocreateUnnamedObjects)
+                                throw new ParsingException($"Error while parsing '{objectString}'. Unknown point '{pointDefinition}'.");
 
-                // Return it
-                return pointObject;
-            })
-            // Enumerate
-            .ToArray();
+                            // Otherwise we assume this is the name for a loose point
+                            pointObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
+
+                            // Make sure the name is correct
+                            if (!pointDefinition.All(char.IsLetterOrDigit))
+                                throw new ParsingException($"Error while parsing '{objectString}'. Name of an object can contain only letters and digits, this one is '{pointDefinition}'");
+
+                            // And name it
+                            namesToObjects.Add(pointDefinition, pointObject);
+                        }
+
+                    // Make sure we have a point
+                    if (pointObject.ObjectType != ConfigurationObjectType.Point)
+                        throw new ParsingException($"Error while parsing '{objectString}'. Object {pointDefinition} is not a point.");
+
+                    // Return it
+                    return pointObject;
+                })
+                // Enumerate
+                .ToArray();
 
             // If points are defined, we can return a line or circle
             if (theoremPoints != null)
@@ -407,7 +415,7 @@ namespace GeoGen.ConsoleLauncher
                     // If line matches
                     if (implicitLineMatch.Success)
                     {
-                        // Make sure we have enough points
+                        // Make sure we have the right number of points
                         if (theoremPoints.Length != 2)
                             throw new ParsingException("Line must have exactly 2 points.");
 
@@ -417,7 +425,7 @@ namespace GeoGen.ConsoleLauncher
                     // Otherwise circle matches 
                     else
                     {
-                        // Make sure we have enough points
+                        // Make sure we have the right number of points
                         if (theoremPoints.Length != 3)
                             throw new ParsingException("Circle must have exactly 3 points.");
 
@@ -432,29 +440,26 @@ namespace GeoGen.ConsoleLauncher
                 }
             }
 
-            // If we don't have points, then the object is defined implicitly and the string is it's name
-            // Make sure the name has been defined
-            if (!namesToObjects.ContainsKey(objectString))
-                throw new ParsingException($"Error while parsing '{objectString}'. Unknown object '{objectString}'.");
+            #endregion
 
-            // Get the object
-            var configurationObject = namesToObjects[objectString];
+            #region Trying to parse the object explicitly
 
-            // Switch based on the type which constructor we'll use
-            return configurationObject.ObjectType switch
+            // If we got here, then we have an unnamed explicitly stated object
+            try
             {
-                // Point case
-                ConfigurationObjectType.Point => new PointTheoremObject(configurationObject) as TheoremObject,
+                // Try to parse it as a constructed object
+                var parsedObject = ParseConstructedObject(objectString, namesToObjects, autocreateUnnamedObjects);
 
-                // Line case
-                ConfigurationObjectType.Line => new LineTheoremObject(configurationObject),
+                // Convert it to a theorem object
+                return Convert(parsedObject);
+            }
+            catch (ParsingException e)
+            {
+                // Re-thrown an exception with the right message
+                throw new ParsingException($"Error while parsing '{objectString}'. {e.Message}");
+            }
 
-                // Circle case
-                ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
-
-                // Default case
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
-            };
+            #endregion
         }
     }
 }

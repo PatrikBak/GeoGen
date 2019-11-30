@@ -72,7 +72,7 @@ namespace GeoGen.ConsoleLauncher
             // Go through all the files
             foreach (var path in theoremFiles)
             {
-                #region Reading theorems file
+                #region Reading theorem file
 
                 // Prepare the content
                 var fileContent = default(string);
@@ -93,12 +93,31 @@ namespace GeoGen.ConsoleLauncher
 
                 #endregion
 
-                #region Parsing theorems file
+                #region Parsing theorem file
+
+                // Get the lines 
+                var lines = fileContent.Split('\n')
+                    // Trimmed
+                    .Select(line => line.Trim())
+                    // That are not comments or empty ones
+                    .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
+                    // As a list
+                    .ToList();
+
+                // If there is no content
+                if (lines.IsEmpty())
+                {
+                    // Warn
+                    LoggingManager.LogWarning($"Empty theorem file {path}");
+
+                    // Move on
+                    continue;
+                }
 
                 try
                 {
                     // Try to parse it
-                    var (theorems, configuration) = ParseTheoremsAndConfiguration(fileContent);
+                    var (theorems, configuration) = ParseTheoremsAndConfiguration(lines);
 
                     // Create the template theorems
                     var templateTheorems = theorems.Select((theorem, i) => new TemplateTheorem(theorem,
@@ -168,25 +187,12 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Parses a given content to the list of theorems and the configuration where the theorems hold.
+        /// Parses given lines to a list of theorems and the configuration where the theorems hold.
         /// </summary>
-        /// <param name="content">The content of a file containing template theorems.</param>
+        /// <param name="lines">The trimmed non-empty lines without comments to be parsed.</param>
         /// <returns>The parsed theorems with configuration.</returns>
-        private static (List<Theorem> theorems, Configuration configuration) ParseTheoremsAndConfiguration(string content)
+        private static (List<Theorem> theorems, Configuration configuration) ParseTheoremsAndConfiguration(IReadOnlyList<string> lines)
         {
-            // Get the lines 
-            var lines = content.Split('\n')
-                // Trimmed
-                .Select(line => line.Trim())
-                // That are not comments or empty ones
-                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
-                // As a list
-                .ToList();
-
-            // There has to be some content
-            if (lines.IsEmpty())
-                throw new ParsingException("No lines");
-
             #region Finding configuration and theorems sections
 
             // The first line has to be the configuration
@@ -217,8 +223,8 @@ namespace GeoGen.ConsoleLauncher
             // Get the theorem lines
             var theoremLines = lines.ItemsBetween(theoremsLineIndex + 1, lines.Count);
 
-            // Parse the theorems from each line
-            var theorems = theoremLines.Select(line => Parser.ParseTheorem(line, namesToObjects)).ToList();
+            // Parse the theorems from each line, assuming its inner objects are declared
+            var theorems = theoremLines.Select(line => Parser.ParseTheorem(line, namesToObjects, autocreateUnnamedObjects: false)).ToList();
 
             #endregion
 

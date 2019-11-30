@@ -93,6 +93,10 @@ namespace GeoGen.ConsoleLauncher
                 theoremsFolderPath: "..\\..\\..\\Data\\TemplateTheorems",
                 filesExtention: "txt"
             ),
+            simplificationRulesProviderSettings: new SimplificationRulesProviderSettings
+            (
+                filePath: "..\\..\\..\\Data\\simplifications.txt"
+            ),
             algorithmRunnerSettings: new AlgorithmRunnerSettings
             (
                 outputFolder: "..\\..\\..\\Data\\Outputs",

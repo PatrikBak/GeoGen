@@ -104,13 +104,39 @@ namespace GeoGen.ConsoleLauncher
 
                 #region Parsing it
 
-                // Prepare an algorithm input
-                var algorithmInput = default(AlgorithmInput);
+                // Get the lines 
+                var lines = fileContent.Split('\n')
+                    // Trimmed
+                    .Select(line => line.Trim())
+                    // That are not comments or empty ones
+                    .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
+                    // As a list
+                    .ToList();
+
+                // If there is no content
+                if (lines.IsEmpty())
+                {
+                    // Warn
+                    LoggingManager.LogWarning($"Empty input file {path}");
+
+                    // Move on
+                    continue;
+                }
 
                 try
                 {
                     // Try to parse it
-                    algorithmInput = ParseInput(fileContent);
+                    var algorithmInput = ParseInput(lines);
+
+                    // Add the loaded input to the result list
+                    result.Add(new LoadedAlgorithmInput
+                    (
+                        filePath: path,
+                        id: id,
+                        constructions: algorithmInput.Constructions,
+                        initialConfiguration: algorithmInput.InitialConfiguration,
+                        numberOfIterations: algorithmInput.NumberOfIterations
+                    ));
                 }
                 catch (ParsingException)
                 {
@@ -125,16 +151,6 @@ namespace GeoGen.ConsoleLauncher
                 }
 
                 #endregion
-
-                // Add the loaded input to the result list
-                result.Add(new LoadedAlgorithmInput
-                (
-                    filePath: path,
-                    id: id,
-                    constructions: algorithmInput.Constructions,
-                    initialConfiguration: algorithmInput.InitialConfiguration,
-                    numberOfIterations: algorithmInput.NumberOfIterations
-                ));
             }
 
             // Return the found results
@@ -142,25 +158,12 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Parses a given content to an algorithm input.
+        /// Parses given lines to an algorithm input.
         /// </summary>
-        /// <param name="content">The content of an input file.</param>
+        /// <param name="lines">The trimmed non-empty lines without comments to be parsed.</param>
         /// <returns>The parsed algorithm input.</returns>
-        private static AlgorithmInput ParseInput(string content)
+        private static AlgorithmInput ParseInput(IReadOnlyList<string> lines)
         {
-            // Get the lines 
-            var lines = content.Split('\n')
-                // Trimmed
-                .Select(line => line.Trim())
-                // That are not comments or empty ones
-                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
-                // As a list
-                .ToList();
-
-            // There has to be some content
-            if (lines.IsEmpty())
-                throw new ParsingException("No lines");
-
             #region Parsing iterations
 
             // The first line should have iterations First find the iteration line
