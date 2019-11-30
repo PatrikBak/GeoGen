@@ -732,5 +732,35 @@ namespace GeoGen.Core
                 return new ComposedConstruction(nameof(OppositePointOnCircumcircle), configuration, parameters);
             }
         }
+
+        /// <summary>
+        /// The Nine-Point circle of triangle ABC (signature {A, B, C}).
+        /// </summary>
+        public static ComposedConstruction NinePointCircle
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var P = new ConstructedConfigurationObject(Midpoint, A, B);
+                var Q = new ConstructedConfigurationObject(Midpoint, B, C);
+                var R = new ConstructedConfigurationObject(Midpoint, C, A);
+                var c = new ConstructedConfigurationObject(Circumcircle, P, Q, R);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(Triangle, c);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(OppositePointOnCircumcircle), configuration, parameters);
+            }
+        }
     }
 }
