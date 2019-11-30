@@ -124,7 +124,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
-        public Theorem Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        public Theorem Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Remap objects, but only if none of them is null
             var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping))?.Distinct().ToList();

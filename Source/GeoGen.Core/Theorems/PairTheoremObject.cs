@@ -70,7 +70,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped objects, if mapping can be done; (null, null) otherwise.</returns>
-        protected (TheoremObject, TheoremObject) RemapObjects(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected (TheoremObject, TheoremObject) RemapObjects(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Map particular objects
             var o1 = Object1.Remap(mapping);

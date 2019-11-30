@@ -110,7 +110,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped objects, if the mapping can be done; otherwise the default value, i.e. (null, null).</returns>
-        protected (ConfigurationObject explicitObject, ConfigurationObject[] points) RemapObjectAndPoints(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected (ConfigurationObject explicitObject, ConfigurationObject[] points) RemapObjectAndPoints(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // If it's defined by an explicit object
             if (DefinedByExplicitObject)

@@ -19,7 +19,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
-        public abstract TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping);
+        public abstract TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping);
 
         /// <summary>
         /// Gets the configuration objects that internally define this theorem object.
@@ -36,12 +36,12 @@ namespace GeoGen.Core
         /// If the object is not present in the mapping, it assumed the passed object is 
         /// a constructed one and tries to construct it by remapping its arguments. If it fails,
         /// a <see cref="GeoGenException"/> is thrown. (This is a helper method used by implementations
-        /// of <see cref="Remap(Dictionary{ConfigurationObject, ConfigurationObject})"/>).
+        /// of <see cref="Remap(IReadOnlyDictionary{ConfigurationObject, ConfigurationObject})"/>).
         /// </summary>
         /// <param name="configurationObject">The configuration object to be mapped.</param>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped configuration object, or null, if mapping would yield a new incorrect constructed object.</returns>
-        protected static ConfigurationObject Map(ConfigurationObject configurationObject, Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected static ConfigurationObject Map(ConfigurationObject configurationObject, IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // If the object is directly present in the map, return it
             if (mapping.ContainsKey(configurationObject))

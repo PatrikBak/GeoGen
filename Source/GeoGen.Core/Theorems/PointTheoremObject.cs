@@ -42,7 +42,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
-        public override TheoremObject Remap(Dictionary<ConfigurationObject, ConfigurationObject> mapping)
+        public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
         {
             // Reuse the static helper from the base class    
             var mappedPoint = Map(ConfigurationObject, mapping);
