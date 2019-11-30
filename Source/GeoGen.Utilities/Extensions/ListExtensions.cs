@@ -37,7 +37,7 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Finds the index of an item in the list using a function to retrieve items.
+        /// Finds the index of an item in the list.
         /// </summary>        
         /// <typeparam name="T">The type of items of the list.</typeparam>
         /// <param name="list">The list.</param>
@@ -77,6 +77,21 @@ namespace GeoGen.Utilities
                 // Return the result
                 return hash;
             }
+        }
+
+        /// <summary>
+        /// Returns the items of the list with the indices from the interval [start, end)
+        /// </summary>
+        /// <typeparam name="T">The type of items of the list.</typeparam>
+        /// <param name="list">The list.</param>
+        /// <param name="start">The starting index (inclusive).</param>
+        /// <param name="end">The ending index (exclusive).</param>
+        /// <returns>The elements from the interval [start, end)</returns>
+        public static IEnumerable<T> ItemsBetween<T>(this IReadOnlyList<T> list, int start, int end)
+        {
+            // Simply iterate over the list
+            for (var index = start; index < end; index++)
+                yield return list[index];
         }
     }
 }

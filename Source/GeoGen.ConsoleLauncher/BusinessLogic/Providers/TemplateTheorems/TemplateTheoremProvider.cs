@@ -15,15 +15,6 @@ namespace GeoGen.ConsoleLauncher
     /// </summary>
     public class TemplateTheoremProvider : ITemplateTheoremProvider
     {
-        #region Dependencies
-
-        /// <summary>
-        /// The parser of theorems.
-        /// </summary>
-        private readonly IParser _parser;
-
-        #endregion
-
         #region Private fields
 
         /// <summary>
@@ -39,11 +30,9 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="TemplateTheoremProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings of the template theorems folder.</param>
-        /// <param name="parser">The parser of theorems.</param>
-        public TemplateTheoremProvider(TemplateTheoremsFolderSettings settings, IParser parser)
+        public TemplateTheoremProvider(TemplateTheoremsFolderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         #endregion
@@ -83,9 +72,6 @@ namespace GeoGen.ConsoleLauncher
             // Go through all the files
             foreach (var path in theoremFiles)
             {
-                // Log the current file
-                LoggingManager.LogDebug($"Processing theorems file {path}.");
-
                 #region Reading theorems file
 
                 // Prepare the content
@@ -95,9 +81,6 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // Get the content
                     fileContent = await File.ReadAllTextAsync(path);
-
-                    // Log it
-                    LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
                 }
                 catch (Exception)
                 {
@@ -115,7 +98,7 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Try to parse it
-                    var (theorems, configuration) = _parser.ParseTheoremsAndConfiguration(fileContent);
+                    var (theorems, configuration) = ParseTheoremsAndConfiguration(fileContent);
 
                     // Create the template theorems
                     var templateTheorems = theorems.Select((theorem, i) => new TemplateTheorem(theorem,
@@ -140,10 +123,13 @@ namespace GeoGen.ConsoleLauncher
                     // Otherwise add it to our result
                     result.Add((configuration, theoremMap));
                 }
-                catch (ParserException)
+                catch (ParsingException)
                 {
                     // Log the exception
                     LoggingManager.LogError($"Couldn't parse the input file {path}.");
+
+                    // Log the content
+                    LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                     // Throw further
                     throw;
@@ -179,6 +165,65 @@ namespace GeoGen.ConsoleLauncher
 
             // Return the result
             return result;
+        }
+
+        /// <summary>
+        /// Parses a given content to the list of theorems and the configuration where the theorems hold.
+        /// </summary>
+        /// <param name="content">The content of a file containing template theorems.</param>
+        /// <returns>The parsed theorems with configuration.</returns>
+        private static (List<Theorem> theorems, Configuration configuration) ParseTheoremsAndConfiguration(string content)
+        {
+            // Get the lines 
+            var lines = content.Split('\n')
+                // Trimmed
+                .Select(line => line.Trim())
+                // That are not comments or empty ones
+                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
+                // As a list
+                .ToList();
+
+            // There has to be some content
+            if (lines.IsEmpty())
+                throw new ParsingException("No lines");
+
+            #region Finding configuration and theorems sections
+
+            // The first line has to be the configuration
+            if (lines[0] != "Configuration:")
+                throw new ParsingException("The first line should be in the form: 'Configuration:'");
+
+            // Get the index of the theorem starting line
+            var theoremsLineIndex = lines.IndexOf("Theorems:");
+
+            // Make sure there is some
+            if (theoremsLineIndex == -1)
+                throw new ParsingException("No line starting the theorems section in the form: 'Theorems:'");
+
+            #endregion
+
+            #region Parsing configuration
+
+            // Get the configuration lines
+            var configurationLines = lines.ItemsBetween(1, theoremsLineIndex).ToList();
+
+            // Parse the configuration
+            var (configuration, namesToObjects) = Parser.ParseConfiguration(configurationLines);
+
+            #endregion
+
+            #region Parsing theorems
+
+            // Get the theorem lines
+            var theoremLines = lines.ItemsBetween(theoremsLineIndex + 1, lines.Count);
+
+            // Parse the theorems from each line
+            var theorems = theoremLines.Select(line => Parser.ParseTheorem(line, namesToObjects)).ToList();
+
+            #endregion
+
+            // Return the final result
+            return (theorems, configuration);
         }
 
         #endregion

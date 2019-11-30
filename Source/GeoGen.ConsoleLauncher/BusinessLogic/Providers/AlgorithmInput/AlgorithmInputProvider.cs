@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
 
@@ -15,15 +16,6 @@ namespace GeoGen.ConsoleLauncher
     /// </summary>
     public class AlgorithmInputProvider : IAlgorithmInputProvider
     {
-        #region Dependencies
-
-        /// <summary>
-        /// The parser of input files.
-        /// </summary>
-        private readonly IParser _parser;
-
-        #endregion
-
         #region Private fields
 
         /// <summary>
@@ -39,11 +31,9 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="AlgorithmInputProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings for the folder with inputs.</param>
-        /// <param name="parser">The parser of input files.</param>
-        public AlgorithmInputProvider(InputFolderSettings settings, IParser parser)
+        public AlgorithmInputProvider(InputFolderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
         #endregion
@@ -81,7 +71,9 @@ namespace GeoGen.ConsoleLauncher
             }
 
             // Inform about the found ones
-            LoggingManager.LogInfo($"Found {inputFiles.Count} input file{(inputFiles.Count == 1 ? "" : "s")}:\n\n{inputFiles.Select(file => $"   - {file.path}").ToJoinedString("\n")}\n");
+            LoggingManager.LogInfo($"Found {inputFiles.Count} input file{(inputFiles.Count == 1 ? "" : "s")}:\n\n" +
+                // With the description of their paths and indices
+                $"{inputFiles.Select((file, index) => $"   {index + 1}. {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
             var result = new List<LoadedAlgorithmInput>();
@@ -89,9 +81,6 @@ namespace GeoGen.ConsoleLauncher
             // Go through all the input files
             foreach (var (path, id) in inputFiles)
             {
-                // Log the file being processed
-                LoggingManager.LogDebug($"Processing input file {path}.");
-
                 #region Loading the file
 
                 // Prepare the file content
@@ -101,9 +90,6 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // Get the content of the file
                     fileContent = await File.ReadAllTextAsync(path);
-
-                    // Log the content
-                    LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
                 }
                 catch (Exception)
                 {
@@ -124,12 +110,15 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Try to parse it
-                    algorithmInput = _parser.ParseInput(fileContent);
+                    algorithmInput = ParseInput(fileContent);
                 }
-                catch (ParserException)
+                catch (ParsingException)
                 {
                     // Log the exception
                     LoggingManager.LogError($"Couldn't parse the input file {path}.");
+
+                    // Log the content
+                    LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                     // Throw further
                     throw;
@@ -150,6 +139,107 @@ namespace GeoGen.ConsoleLauncher
 
             // Return the found results
             return result;
+        }
+
+        /// <summary>
+        /// Parses a given content to an algorithm input.
+        /// </summary>
+        /// <param name="content">The content of an input file.</param>
+        /// <returns>The parsed algorithm input.</returns>
+        private static AlgorithmInput ParseInput(string content)
+        {
+            // Get the lines 
+            var lines = content.Split('\n')
+                // Trimmed
+                .Select(line => line.Trim())
+                // That are not comments or empty ones
+                .Where(line => !line.StartsWith('#') && !string.IsNullOrEmpty(line))
+                // As a list
+                .ToList();
+
+            // There has to be some content
+            if (lines.IsEmpty())
+                throw new ParsingException("No lines");
+
+            #region Parsing iterations
+
+            // The first line should have iterations First find the iteration line
+            var iterationsNumber = Regex.Match(lines[0], "^Iterations:(.+)$")
+                // Take the number from the group
+                ?.Groups[1].Value.Trim()
+                // If there is no match, make aware
+                ?? throw new ParsingException("No line specifying the number of iterations in the form 'Iterations: {number}'");
+
+            // Prepare the number of iterations
+            var numberOfIterations = default(int);
+
+            try
+            {
+                // Try to parse 
+                numberOfIterations = int.Parse(iterationsNumber);
+
+                // Make sure it's a correct value
+                if (numberOfIterations < 0)
+                    throw new ParsingException($"The number of iterations cannot be negative, the found value is {numberOfIterations}.");
+            }
+            catch (Exception e) when (e is FormatException || e is OverflowException)
+            {
+                // Make sure the user is aware
+                throw new ParsingException($"Cannot parse the number of iterations: '{iterationsNumber}'");
+            }
+
+            #endregion
+
+            #region Finding construction and configuration sections
+
+            // Find the construction section starting line
+            var constructionLineIndex = lines.IndexOf("Constructions:");
+
+            // Make sure there is some
+            if (constructionLineIndex == -1)
+                throw new ParsingException("No line starting the constructions section in the form: 'Constructions:'");
+
+            // Find the configuration section starting line
+            var configurationLineIndex = lines.IndexOf("Initial configuration:");
+
+            // Make sure there is some
+            if (configurationLineIndex == -1)
+                throw new ParsingException("No line starting the initial configuration section in the form: 'Initial configuration:'");
+
+            // Make sure the construction line is before the configuration one
+            if (constructionLineIndex > configurationLineIndex)
+                throw new ParsingException("Constructions should be specified before the initial configuration.");
+
+            #endregion
+
+            #region Parsing constructions
+
+            // Parse the constructions...Get the lines between the found indices
+            var constructions = lines.ItemsBetween(constructionLineIndex + 1, configurationLineIndex)
+                // Each line defines a construction
+                .Select(Parser.ParseConstruction)
+                // Enumerate 
+                .ToReadOnlyHashSet();
+
+            #endregion
+
+            #region Parsing configuration
+
+            // Get the configuration lines as the remaining lines
+            var configurationLines = lines.ItemsBetween(configurationLineIndex + 1, lines.Count).ToList();
+
+            // Parse the configuration from them
+            var configuration = Parser.ParseConfiguration(configurationLines).configuration;
+
+            #endregion
+
+            // Return the final input
+            return new AlgorithmInput
+            (
+                initialConfiguration: configuration,
+                constructions: constructions,
+                numberOfIterations: numberOfIterations
+            );
         }
 
         #endregion

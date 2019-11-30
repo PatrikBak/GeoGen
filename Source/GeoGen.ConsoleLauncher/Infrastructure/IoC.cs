@@ -77,12 +77,12 @@ namespace GeoGen.ConsoleLauncher
             #region Local dependencies
 
             // Add local dependencies
-            Kernel.Bind<IParser>().To<Parser>();
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
+            Kernel.Bind<IBestTheoremsTracker>().To<BestTheoremsTracker>().WithConstructorArgument(settings.BestTheoremsTrackerSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
-            Kernel.Bind<IBestTheoremsTracker>().To<BestTheoremsTracker>().WithConstructorArgument(settings.BestTheoremsTrackerSettings);
+            Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
 
             // Add tracers
             Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
@@ -113,8 +113,8 @@ namespace GeoGen.ConsoleLauncher
                 // With theorem simplifier and its data
                 .AddTheoremSimplifier(new TheoremSimplifierData
                 (
-                    // TODO: Implement loading rules from a file
-                    rules: Enumerable.Empty<SimplificationRule>().ToReadOnlyHashSet()
+                    // Simplification rules are loaded at the beginning
+                    rules: (await Kernel.Get<ISimplificationRulesProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
                 // And finally the algorithm
                 .AddAlgorithm();
