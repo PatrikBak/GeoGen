@@ -30,7 +30,12 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The tracker of best theorems.
         /// </summary>
-        private readonly IBestTheoremsTracker _tracker;
+        private readonly IBestTheoremTracker _tracker;
+
+        /// <summary>
+        /// The writer used to write best theorems to a file.
+        /// </summary>
+        private readonly ITheoremDataWriter _writer;
 
         #endregion
 
@@ -52,12 +57,17 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="algorithm">The algorithm that is run.</param>
         /// <param name="finder">The finder of best theorems.</param>
         /// <param name="tracker">The tracker of best theorems.</param>
-        public AlgorithmRunner(AlgorithmRunnerSettings settings, IAlgorithmFacade algorithm, IBestTheoremsFinder finder, IBestTheoremsTracker tracker)
+        public AlgorithmRunner(AlgorithmRunnerSettings settings,
+                               IAlgorithmFacade algorithm,
+                               IBestTheoremsFinder finder,
+                               IBestTheoremTracker tracker,
+                               ITheoremDataWriter writer)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
+            _writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
 
         #endregion
@@ -152,9 +162,6 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the number of generated configurations
             var generatedConfigurations = 0;
 
-            // Prepare the total number of interesting theorem groups
-            var interestingTheoremGroups = 0;
-
             // Prepare the total number of interesting theorems
             var interestingTheorems = 0;
 
@@ -183,24 +190,34 @@ namespace GeoGen.ConsoleLauncher
                         // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
                         // How many interesting theorem groups did we get?
-                        $"with {interestingTheoremGroups} interesting theorem group(s).");
+                        $"with {interestingTheorems} interesting theorems.");
 
                 // Skip configurations without theorems
                 if (algorithmOutput.NewTheorems.AllObjects.Count == 0)
                     continue;
 
-                // Count the number of interesting theorem groups
-                interestingTheoremGroups += algorithmOutput.ProverOutput.UnprovenTheoremGroups.Count;
+                #region Handling interesting theorems
 
-                // Count the interesting theorems
-                interestingTheorems += algorithmOutput.ProverOutput.UnprovenTheorems.Count;
-
-                // Find interesting theorems
-                _finder.FindInterestingTheorems(algorithmOutput)
-                     // Add the best one from each to the tracker of interesting theorems
-                     .ForEach(theorem => _tracker.AddTheorem(theorem, algorithmOutput.Configuration, algorithmOutput.Rankings[theorem],
+                // Find the best theorems
+                var bestTheorems = _finder.FindInterestingTheorems(algorithmOutput)
+                    // Wrap them in theorem data objects
+                    .Select(theorem => new TheoremData(theorem, algorithmOutput.Configuration, algorithmOutput.Rankings[theorem],
                          // As the id of the theorem construct string containing the id of configuration of the input file
-                         $"configuration {generatedConfigurations} of the output file {fileName}"));
+                         $"configuration {generatedConfigurations} of the output file {fileName}"))
+                    // Enumerate
+                    .ToArray();
+
+                // Count them in
+                interestingTheorems += bestTheorems.Length;
+
+                // Track them
+                _tracker.AddTheorems(bestTheorems, out var bestTheoremsChanged);
+
+                // If there are some new, write them
+                if (bestTheoremsChanged)
+                    _writer.WriteTheorems(_tracker.BestTheorems);
+
+                #endregion
 
                 // Prepare a formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
@@ -267,14 +284,12 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToAllWriters("\n------------------------------------------------");
             WriteLineToAllWriters($"Generated configurations: {generatedConfigurations}");
             WriteLineToAllWriters($"Interesting theorems: {interestingTheorems}");
-            WriteLineToAllWriters($"Interesting groups of theorems: {interestingTheoremGroups}");
             WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
             Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
             Log.LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
             Log.LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
-            Log.LoggingManager.LogInfo($"Interesting groups of theorems: {interestingTheoremGroups}");
         }
 
         /// <summary>

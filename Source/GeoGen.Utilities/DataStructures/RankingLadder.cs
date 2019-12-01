@@ -22,15 +22,6 @@ namespace GeoGen.Utilities
 
         #endregion
 
-        #region Public events
-
-        /// <summary>
-        /// Raises when the content of the ladder has changed, i.e. the top <see cref="Capacity"/> of items has changed.
-        /// </summary>
-        public event Action ContentChanged = () => { };
-
-        #endregion
-
         #region Public properties
 
         /// <summary>
@@ -81,7 +72,8 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="item">The item.</param>
         /// <param name="rank">The rank.</param>
-        public void Add(TItem item, TRank rank)
+        /// <param name="contentChanged">Indicates whether the content of the ladder has been changed.</param>
+        public void Add(TItem item, TRank rank, out bool contentChanged)
         {
             // If there is still room for the item, add it
             if (NumberOfItems < Capacity)
@@ -92,8 +84,8 @@ namespace GeoGen.Utilities
                 // Count it in
                 NumberOfItems++;
 
-                // Raise the change event
-                ContentChanged();
+                // Set the content changed value
+                contentChanged = true;
 
                 // We're done
                 return;
@@ -105,7 +97,13 @@ namespace GeoGen.Utilities
 
             // If this item doesn't have a higher rank, then we do nothing
             if (rank.CompareTo(smallestRank) <= 0)
+            {
+                // Set the content changed value
+                contentChanged = false;
+
+                // We're done
                 return;
+            }
 
             // Otherwise we add the item
             _content.GetOrAdd(rank, () => new List<TItem>()).Add(item);
@@ -121,8 +119,8 @@ namespace GeoGen.Utilities
             if (smallestRankedItems.IsEmpty())
                 _content.Remove(smallestRank);
 
-            // Raise the change event
-            ContentChanged();
+            // Set the content changed value
+            contentChanged = true;
         }
 
         #endregion

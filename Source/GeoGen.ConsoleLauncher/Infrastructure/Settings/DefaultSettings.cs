@@ -128,11 +128,8 @@ namespace GeoGen.ConsoleLauncher
                     logFailures: true
                 )
             ),
-            bestTheoremsTrackerSettings: new BestTheoremsTrackerSettings
-            (
-                theoremFilePath: "..\\..\\..\\Data\\best_theorems.txt",
-                numberOfTheorems: 42
-            )
+            bestTheoremsTrackerSettings: new BestTheoremTrackerSettings(numberOfTheorems: 42),
+            fileTheoremDataWriterSettings: new FileTheoremDataWriterSettings(theoremFilePath: "..\\..\\..\\Data\\best_theorems.txt")
         )
         { }
     }

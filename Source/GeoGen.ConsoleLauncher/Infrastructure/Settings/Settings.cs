@@ -46,9 +46,14 @@ namespace GeoGen.ConsoleLauncher
         public TracersSettings TracersSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="BestTheoremsTracker"/>.
+        /// The settings for <see cref="BestTheoremTracker"/>.
         /// </summary>
-        public BestTheoremsTrackerSettings BestTheoremsTrackerSettings { get; }
+        public BestTheoremTrackerSettings BestTheoremsTrackerSettings { get; }
+
+        /// <summary>
+        /// The settings for <see cref="FileTheoremDataWriter"/>.
+        /// </summary>
+        public FileTheoremDataWriterSettings FileTheoremDataWriterSettings { get; }
 
         #endregion
 
@@ -64,7 +69,8 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="algorithmRunnerSettings">The settings for the algorithm runner.</param>
         /// <param name="algorithmSettings">The settings related to the algorithm.</param>
         /// <param name="tracersSettings">The settings for all tracers used in the batch runs.</param>
-        /// <param name="bestTheoremsTrackerSettings">The settings for <see cref="BestTheoremsTracker"/>.</param>
+        /// <param name="bestTheoremsTrackerSettings">The settings for <see cref="BestTheoremTracker"/>.</param>
+        /// <param name="fileTheoremDataWriterSettings">The settings for <see cref="FileTheoremDataWriter"/>.</param>
         public Settings(IReadOnlyList<BaseLoggerSettings> loggers,
                         InputFolderSettings inputFolderSettings,
                         TemplateTheoremsFolderSettings templateTheoremsFolderSettings,
@@ -72,7 +78,8 @@ namespace GeoGen.ConsoleLauncher
                         AlgorithmRunnerSettings algorithmRunnerSettings,
                         AlgorithmSettings algorithmSettings,
                         TracersSettings tracersSettings,
-                        BestTheoremsTrackerSettings bestTheoremsTrackerSettings)
+                        BestTheoremTrackerSettings bestTheoremsTrackerSettings,
+                        FileTheoremDataWriterSettings fileTheoremDataWriterSettings)
         {
             Loggers = loggers ?? throw new ArgumentNullException(nameof(loggers));
             InputFolderSettings = inputFolderSettings ?? throw new ArgumentNullException(nameof(inputFolderSettings));
@@ -82,6 +89,7 @@ namespace GeoGen.ConsoleLauncher
             AlgorithmSettings = algorithmSettings ?? throw new ArgumentNullException(nameof(algorithmSettings));
             TracersSettings = tracersSettings ?? throw new ArgumentNullException(nameof(tracersSettings));
             BestTheoremsTrackerSettings = bestTheoremsTrackerSettings ?? throw new ArgumentNullException(nameof(bestTheoremsTrackerSettings));
+            FileTheoremDataWriterSettings = fileTheoremDataWriterSettings ?? throw new ArgumentNullException(nameof(fileTheoremDataWriterSettings));
         }
 
         #endregion
