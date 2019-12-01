@@ -129,12 +129,34 @@ namespace GeoGen.TheoremSimplifier
                                     // Now we can finally map the simplified object
                                     var newTheoremObject = simplifcationRule.SimplifiedObject.Remap(mapping);
 
-                                    // Add the object to the dictionary of replaced ones
-                                    replacedTheoremObjects.Add(theoremObject, newTheoremObject);
+                                    #endregion
+
+                                    #region Checking if the mapping doesn't increase the number of configuration objects
+
+                                    // We need to find how many configuration objects we would need if we did the replaced
+                                    // In order to find out take the theorem objects
+                                    var neededObjects = theorem.InvolvedObjects
+                                        // Exclude the one to be replaced
+                                        .Except(theoremObject.ToEnumerable())
+                                        // Include the new one
+                                        .Concat(newTheoremObject)
+                                        // Find the inner configuration objects for each theorem object
+                                        .SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects())
+                                        // Use our helper method to find all the objects needed to define these
+                                        .GetDefiningObjects()
+                                        // And simply take their count
+                                        .Count;
+
+                                    // If this replacement would complicate the theorem, we need to keep looking...
+                                    if (neededObjects > configuration.AllObjects.Count)
+                                        continue;
 
                                     #endregion
 
-                                    // At this point the mapping is okay and we don't have to look for another one
+                                    // At this point the mapping is okay and we can add the object
+                                    replacedTheoremObjects.Add(theoremObject, newTheoremObject);
+
+                                    // We don't have to look for another one
                                     break;
                                 }
 

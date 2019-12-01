@@ -52,6 +52,14 @@ namespace GeoGen.TheoremSimplifierTests
                     assumptions: Enumerable.Empty<Theorem>().ToReadOnlyHashSet()
                 ),
 
+                // Internal angle bisector simplification with incenter
+                new SimplificationRule
+                (
+                    simplifableObject: new LineTheoremObject(A, new ConstructedConfigurationObject(Incenter, A, B, C)),
+                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(InternalAngleBisector, A, B, C)),
+                    assumptions: Enumerable.Empty<Theorem>().ToReadOnlyHashSet()
+                ),
+
                 // Nine-point circle simplification
                 new SimplificationRule
                 (
@@ -136,7 +144,7 @@ namespace GeoGen.TheoremSimplifierTests
             var incircle = new ConstructedConfigurationObject(Incircle, A, B, C);
 
             // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(Triangle, incircle);
+            var configuration = Configuration.DeriveFromObjects(Triangle, incircle, P, Q, R);
 
             // Create the theorem
             var theorem = new Theorem(TangentCircles, new[]
@@ -358,6 +366,39 @@ namespace GeoGen.TheoremSimplifierTests
             // Assert
             result.Value.newConfiguration.Should().Be(newConfiguration);
             result.Value.newTheorem.Should().Be(newTheorem);
+        }
+
+        [Test]
+        public void Test_That_Simplification_Does_Not_Happen_When_It_Would_Add_More_Objects()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, D, B, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, D, A, C);
+            var G = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, D, A, B);
+            var l = new ConstructedConfigurationObject(ParallelLineToLineFromPoints, A, E, F);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, l);
+
+            // Create the theorem
+            var theorem = new Theorem(ConcurrentLines, new[]
+            {
+                new LineTheoremObject(C, D),
+                new LineTheoremObject(E, G),
+                new LineTheoremObject(l)
+            });
+
+            // Let it be simplified. Theoretically speaking, CD is the angle bisector and it could be applied,
+            // but neither C nor D could be removed from the configuration, i.e. we would have all the objects 
+            // + angle bisector after applying the rule. We don't want that
+            var result = Simplify(configuration, theorem);
+
+            // Assert it couldn't be done
+            result.Should().BeNull();
         }
     }
 }

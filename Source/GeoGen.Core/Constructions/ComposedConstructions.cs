@@ -759,7 +759,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new ComposedConstruction(nameof(OppositePointOnCircumcircle), configuration, parameters);
+                return new ComposedConstruction(nameof(NinePointCircle), configuration, parameters);
             }
         }
     }
