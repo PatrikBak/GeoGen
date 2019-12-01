@@ -1,5 +1,6 @@
 ﻿using GeoGen.Utilities;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using static GeoGen.ConsoleLauncher.Log;
 
@@ -50,6 +51,12 @@ namespace GeoGen.ConsoleLauncher
             // Load all inputs
             var inputs = await _inputProvider.GetAlgorithmInputsAsync();
 
+            // Prepare the stopwatch
+            var stopwatch = new Stopwatch();
+
+            // Start the stopwatch
+            stopwatch.Start();
+
             // Run algorithm for each of them
             inputs.ForEach((input, index) =>
             {
@@ -70,6 +77,12 @@ namespace GeoGen.ConsoleLauncher
                     throw;
                 }
             });
+
+            // Stop the stopwatch
+            stopwatch.Stop();
+
+            // Log how long it all took
+            LoggingManager.LogInfo($"Running algorithm on all files took {stopwatch.ElapsedMilliseconds} ms.");
         }
 
         #endregion
