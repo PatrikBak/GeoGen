@@ -235,15 +235,7 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine(formatter.FormatConfiguration(algorithmOutput.Configuration));
 
                 // Write the title with simple statistics
-                WriteLine($"\nTheorems:");
-                WriteLine();
-                WriteLine($" All theorems: {algorithmOutput.OldTheorems.AllObjects.Count + algorithmOutput.NewTheorems.AllObjects.Count}");
-                WriteLine($" Old theorems: {algorithmOutput.OldTheorems.AllObjects.Count}");
-                WriteLine($" New theorems: {algorithmOutput.NewTheorems.AllObjects.Count}");
-                WriteLine($" Proven theorems: {algorithmOutput.ProverOutput.ProvenTheorems.Count}");
-                WriteLine($" Unproven theorems: {algorithmOutput.ProverOutput.UnprovenTheorems.Count}");
-                WriteLine($" Unproven theorem groups: {algorithmOutput.ProverOutput.UnprovenTheoremGroups.Count}");
-                WriteLine();
+                WriteLine($"\nTheorems:\n");
 
                 // If there is any interesting theorem
                 if (algorithmOutput.ProverOutput.UnprovenTheorems.Any())
@@ -366,11 +358,11 @@ namespace GeoGen.ConsoleLauncher
                 var result = $"{theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {algorithmOutput.Rankings[theorem].TotalRanking}\n\n";
 
                 // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
-                algorithmOutput.Rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.coefficient * pair.Value.ranking, pair.Key.ToString()))
+                algorithmOutput.Rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.Coefficient * pair.Value.Ranking, pair.Key.ToString()))
                     // Add each on an individual line with info about the coefficient
-                    .ForEach(pair => result += $" {pair.Key,-25}coefficient = {pair.Value.coefficient.ToString("G5"),-10}" +
+                    .ForEach(pair => result += $" {pair.Key,-25}coefficient = {pair.Value.Coefficient.ToString("G5"),-10}" +
                         // The ranking and the total contribution of this aspect
-                        $"ranking = {pair.Value.ranking.ToString("G5"),-10}contribution = {(pair.Value.coefficient * pair.Value.ranking).ToString("G5")}\n");
+                        $"contribution = {(pair.Value.Coefficient * pair.Value.Ranking).ToString("G5"),-10}ranking = {pair.Value.Ranking.ToString("G5"),-10}{pair.Value.Message}\n");
 
                 #endregion
 

@@ -53,9 +53,9 @@ namespace GeoGen.TheoremRanker
         public TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
         {
             // Prepare the ranking dictionary by applying every ranker
-            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, ranking: ranker.Rank(theorem, configuration, allTheorems, proverOutput)))
+            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, rankerOutput: ranker.Rank(theorem, configuration, allTheorems, proverOutput)))
                 // And wrapping the result to a dictionary together with the coefficient from the settings
-                .ToDictionary(pair => pair.RankedAspect, pair => (_settings.RankingCoefficients[pair.RankedAspect], pair.ranking));
+                .ToDictionary(pair => pair.RankedAspect, pair => new RankingData(pair.rankerOutput.ranking, _settings.RankingCoefficients[pair.RankedAspect], pair.rankerOutput.message));
 
             // Wrap the final ranking in a ranking object
             return new TheoremRanking(ranking);

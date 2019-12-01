@@ -13,9 +13,9 @@ namespace GeoGen.TheoremRanker
         #region Public properties
 
         /// <summary>
-        /// The dictionary mapping ranked aspects to the particular rankings with their coefficients.
+        /// The dictionary mapping ranked aspects to the particular rankings.
         /// </summary>
-        public IReadOnlyDictionary<RankedAspect, (double coefficient, double ranking)> Ranking { get; }
+        public IReadOnlyDictionary<RankedAspect, RankingData> Ranking { get; }
 
         /// <summary>
         /// The total ranking calculated as the linear combination of the individual entries of <see cref="Ranking"/>.
@@ -29,13 +29,13 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremRanking"/> class.
         /// </summary>
-        /// <param name="ranking">The dictionary mapping ranked aspects to the particular rankings with their coefficients.</param>
-        public TheoremRanking(IReadOnlyDictionary<RankedAspect, (double coefficient, double ranking)> ranking)
+        /// <param name="ranking">The dictionary mapping ranked aspects to the particular rankings..</param>
+        public TheoremRanking(IReadOnlyDictionary<RankedAspect, RankingData> ranking)
         {
             Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
 
             // Calculate the total ranking
-            TotalRanking = Ranking.Values.Select(pair => pair.coefficient * pair.ranking).Sum();
+            TotalRanking = Ranking.Values.Select(data => data.Coefficient * data.Ranking).Sum();
         }
 
         #endregion
