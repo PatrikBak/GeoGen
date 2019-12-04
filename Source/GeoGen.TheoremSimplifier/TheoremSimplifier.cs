@@ -272,7 +272,7 @@ namespace GeoGen.TheoremSimplifier
                                 // Make sure there are no duplicates in the mapping
                                 // If yes, then it's incorrect
                                 if (currentMapping.Values.AnyDuplicates())
-                                    return null;
+                                    return Enumerable.Empty<Dictionary<ConfigurationObject, ConfigurationObject>>();
 
                                 // Otherwise it's fine
                                 return currentMapping.ToEnumerable();
