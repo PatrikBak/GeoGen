@@ -180,10 +180,22 @@ namespace GeoGen.TheoremProver
                 var (type, templateObjects) = pair;
 
                 // Get the number examined objects of this type
-                var numberOfNumbers = input.ExaminedConfigurationPicture.Pictures.Configuration.ObjectMap.GetOrDefault(type)?.Count ?? 0;
+                var numberOfObjects = input.ExaminedConfigurationPicture.Pictures.Configuration.ObjectMap.GetOrDefault(type)?.Count ?? 0;
+
+                // Ge the number of random objects of this type. They have to be constructed
+                var randomObjects = templateObjects.Count(configurationObject => configurationObject is ConstructedConfigurationObject constructedObject
+                    // And the construction must be random
+                    && constructedObject.Construction.IsRandom);
+
+                // Get the number of template objects. If there are no random objects,
+                // then the result is simply the number of all template objects
+                var numberOfTemplateObjects = randomObjects == 0 ? templateObjects.Count
+                    // Otherwise all the random objects are treated as a single one, 
+                    // because they might be mapped to a single object after all
+                    : templateObjects.Count - randomObjects + 1;
 
                 // This type is fine if there at least as many objects as the template ones
-                return numberOfNumbers >= templateObjects.Count;
+                return numberOfObjects >= numberOfTemplateObjects;
             });
 
             // If we don't have enough objects
