@@ -61,13 +61,8 @@ namespace GeoGen.ConsoleLauncher
             // Prepare the result
             var result = new List<(Configuration templateConfiguration, TheoremMap templateTheorems)>();
 
-            // Prepare the theorem files
-            // Load the theorem folders 
-            var theoremFiles = Directory.EnumerateDirectories(_settings.TheoremsFolderPath)
-                // Order them by names
-                .OrderBy(Path.GetDirectoryName)
-                // For each get the files 
-                .SelectMany(folder => Directory.EnumerateFiles(folder, $"*.{_settings.FilesExtention}", SearchOption.AllDirectories));
+            // Prepare the theorem files loaded from the theorems folder and its subdirectories
+            var theoremFiles = Directory.EnumerateFiles(_settings.TheoremsFolderPath, $"*.{_settings.FilesExtention}", SearchOption.AllDirectories).ToList();
 
             // Go through all the files
             foreach (var path in theoremFiles)
