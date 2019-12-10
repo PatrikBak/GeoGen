@@ -173,8 +173,7 @@ namespace GeoGen.TheoremSimplifier
 
                         // Default case
                         default:
-                            // TODO: Custom exception
-                            throw new GeoGenException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {theoremObject.GetType()}");
+                            throw new TheoremSimplifierException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {theoremObject.GetType()}");
                     }
 
                     // If the mapping has been successful, we don't have to look for another one
