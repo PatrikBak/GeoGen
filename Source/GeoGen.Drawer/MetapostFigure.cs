@@ -1,5 +1,4 @@
 ﻿using GeoGen.AnalyticGeometry;
-using System;
 
 namespace GeoGen.Drawer
 {
@@ -49,6 +48,10 @@ label.bot(btex $M$ etex, M);";
         }
 
         public void AddCircle(Circle circle, ObjectDrawingStyle style)
+        {
+        }
+
+        public void AddLabel(Point point, string label)
         {
         }
     }

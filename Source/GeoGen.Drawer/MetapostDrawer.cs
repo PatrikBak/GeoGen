@@ -513,6 +513,28 @@ namespace GeoGen.Drawer
 
             #endregion
 
+            #region Labeling
+
+            // Go through all the objects            
+            configuration.AllObjects
+                // That are points
+                // TODO: Support labels of other objects 
+                .Where(configurationObject => configurationObject.ObjectType == ConfigurationObjectType.Point)
+                // Make a label for each
+                .ForEach((configurationObject, index) =>
+                {
+                    // Create the label so that points are labeled A, B, C,...
+                    var label = $"${(char)('A' + index)}$";
+
+                    // Get the analytic version
+                    var analyticPoint = (Point)pictures.First().Get(configurationObject);
+
+                    // Add the label
+                    figure.AddLabel(analyticPoint, label);
+                });
+
+            #endregion
+
             // Return it
             return figure;
         }
