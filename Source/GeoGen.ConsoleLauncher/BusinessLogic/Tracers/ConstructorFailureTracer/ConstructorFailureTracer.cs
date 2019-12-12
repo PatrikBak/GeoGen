@@ -1,11 +1,12 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.IO;
 using System.Linq;
-using static GeoGen.ConsoleLauncher.Log;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConsoleLauncher
 {

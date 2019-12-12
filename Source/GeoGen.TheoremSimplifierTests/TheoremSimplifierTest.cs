@@ -2,6 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
+using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;

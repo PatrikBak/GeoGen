@@ -1,5 +1,6 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -155,7 +157,7 @@ namespace GeoGen.ConsoleLauncher
             #endregion
 
             // Log that we've started
-            Log.LoggingManager.LogInfo("Algorithm has started.");
+            LoggingManager.LogInfo("Algorithm has started.");
 
             #region Tracking variables
 
@@ -186,7 +188,7 @@ namespace GeoGen.ConsoleLauncher
                 // Find out if we should log progress and if yes, do it
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
                     // How many configurations did we generate?
-                    Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
+                    LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
                         // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
                         // How many interesting theorem groups did we get?
@@ -287,9 +289,9 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
-            Log.LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
-            Log.LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
-            Log.LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
+            LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
+            LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
+            LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
         }
 
         /// <summary>

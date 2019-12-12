@@ -1,4 +1,5 @@
 ﻿using GeoGen.Algorithm;
+using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GeoGen.ConsoleLauncher.Log;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConsoleLauncher
 {

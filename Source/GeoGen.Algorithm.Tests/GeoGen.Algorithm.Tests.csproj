@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Algorithm\GeoGen.Algorithm.csproj" />
-    <ProjectReference Include="..\GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj" />
   </ItemGroup>
 
 </Project>

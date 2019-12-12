@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj" />
+    <ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />
     <ProjectReference Include="..\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>

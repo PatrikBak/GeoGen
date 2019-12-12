@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeoGen.Infrastructure;
+using System;
 using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
@@ -11,9 +12,9 @@ namespace GeoGen.ConsoleLauncher
         #region Public properties
 
         /// <summary>
-        /// The list of the loggers settings.
+        /// The settings for the logging system.
         /// </summary>
-        public IReadOnlyList<BaseLoggerSettings> Loggers { get; }
+        public LoggingSettings LoggingSettings { get; }
 
         /// <summary>
         /// The settings of the folder containing inputs.
@@ -62,7 +63,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="Settings"/> class.
         /// </summary>
-        /// <param name="loggers">The list of the loggers settings.</param>
+        /// <param name="loggingSettings">The settings for the logging system.</param>
         /// <param name="inputFolderSettings">The settings of the folder containing inputs.</param>
         /// <param name="templateTheoremsFolderSettings">The settings for the folder containing template theorems.</param>
         /// <param name="simplificationRulesProviderSettings">The settings for the simplification rules provider.</param>
@@ -71,7 +72,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="tracersSettings">The settings for all tracers used in the batch runs.</param>
         /// <param name="bestTheoremsTrackerSettings">The settings for <see cref="BestTheoremTracker"/>.</param>
         /// <param name="fileTheoremDataWriterSettings">The settings for <see cref="FileTheoremDataWriter"/>.</param>
-        public Settings(IReadOnlyList<BaseLoggerSettings> loggers,
+        public Settings(LoggingSettings loggingSettings,
                         InputFolderSettings inputFolderSettings,
                         TemplateTheoremsFolderSettings templateTheoremsFolderSettings,
                         SimplificationRulesProviderSettings simplificationRulesProviderSettings,
@@ -81,7 +82,7 @@ namespace GeoGen.ConsoleLauncher
                         BestTheoremTrackerSettings bestTheoremsTrackerSettings,
                         FileTheoremDataWriterSettings fileTheoremDataWriterSettings)
         {
-            Loggers = loggers ?? throw new ArgumentNullException(nameof(loggers));
+            LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             InputFolderSettings = inputFolderSettings ?? throw new ArgumentNullException(nameof(inputFolderSettings));
             TemplateTheoremsFolderSettings = templateTheoremsFolderSettings ?? throw new ArgumentNullException(nameof(templateTheoremsFolderSettings));
             SimplificationRulesProviderSettings = simplificationRulesProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRulesProviderSettings));

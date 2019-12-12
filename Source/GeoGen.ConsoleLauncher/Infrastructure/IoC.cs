@@ -6,6 +6,7 @@ using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
 using System.Threading.Tasks;
+using GeoGen.Infrastructure;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -34,44 +35,8 @@ namespace GeoGen.ConsoleLauncher
             // Initialize the container
             Kernel = DependenciesResolver.IoC.CreateKernel();
 
-            #region Logging system
-
-            // Bind logging manager
-            Kernel.Bind<ILoggingManager>().To<CustomLoggingManager>();
-
-            // Bind loggers according to the settings
-            settings.Loggers.ForEach(loggersettings =>
-            {
-                // Switch based on the type of the settings
-                switch (loggersettings)
-                {
-                    // If this is console settings...
-                    case ConsoleLoggerSettings consoleLoggersettings:
-
-                        // Bind it
-                        Kernel.Bind<ILogger>().ToConstant(new ConsoleLogger(consoleLoggersettings));
-
-                        break;
-
-                    // If this is file logger settings...
-                    case FileLoggerSettings fileLoggersettings:
-
-                        // Bind it
-                        Kernel.Bind<ILogger>().ToConstant(new FileLogger(fileLoggersettings));
-
-                        break;
-
-                    default:
-
-                        // Otherwise we forgot something
-                        throw new SettingsException($"Unhandled type of the settings ('{loggersettings.GetType()}') in the NInject bindings.");
-                }
-            });
-
-            // Setup static log service
-            Log.LoggingManager = Kernel.Get<ILoggingManager>();
-
-            #endregion
+            // Add the logging system
+            Kernel.AddLogging(settings.LoggingSettings);
 
             #region Local dependencies
 

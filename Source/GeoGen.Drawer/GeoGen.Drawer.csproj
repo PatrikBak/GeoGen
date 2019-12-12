@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
-    <ProjectReference Include="..\GeoGen.DependenciesResolver\GeoGen.DependenciesResolver.csproj" />
+    <ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
   </ItemGroup>
 

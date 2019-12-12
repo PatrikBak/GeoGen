@@ -1,5 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremRanker;
 using System.Collections.Generic;
@@ -16,25 +17,28 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public DefaultSettings() : base
         (
-            loggers: new List<BaseLoggerSettings>
-            {
-                // Console logger
-                new ConsoleLoggerSettings
-                (
-                    includeLoggingOrigin: false,
-                    includeTime: false,
-                    logOutputLevel: LogOutputLevel.Info
-                ),
+            loggingSettings: new LoggingSettings
+            (
+                loggerSettings: new List<BaseLoggerSettings>
+                {
+                    // Console logger
+                    new ConsoleLoggerSettings
+                    (
+                        includeLoggingOrigin: false,
+                        includeTime: false,
+                        logOutputLevel: LogOutputLevel.Info
+                    ),
 
-                // File logger
-                new FileLoggerSettings
-                (
-                    includeLoggingOrigin: true,
-                    includeTime: true,
-                    logOutputLevel: LogOutputLevel.Debug,
-                    fileLogPath: "log.txt"
-                )
-            },
+                    // File logger
+                    new FileLoggerSettings
+                    (
+                        includeLoggingOrigin: true,
+                        includeTime: true,
+                        logOutputLevel: LogOutputLevel.Debug,
+                        fileLogPath: "log.txt"
+                    )
+                }
+            ),
             algorithmSettings: new AlgorithmSettings
             (
                 geometryConstructorSettings: new GeometryConstructorSettings(numberOfPictures: 5),

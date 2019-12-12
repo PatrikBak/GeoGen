@@ -1,6 +1,7 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.DependenciesResolver;
+using GeoGen.Infrastructure;
 using Ninject;
 using System.Threading.Tasks;
 using static GeoGen.Core.ConfigurationObjectType;

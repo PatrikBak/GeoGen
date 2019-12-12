@@ -1,7 +1,8 @@
-﻿using Ninject;
+﻿using GeoGen.Infrastructure;
+using Ninject;
 using System;
 using System.Threading.Tasks;
-using static GeoGen.ConsoleLauncher.Log;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -23,7 +24,7 @@ namespace GeoGen.ConsoleLauncher
                 var settingsFileName = arguments.Length > 1 ? arguments[0] : "settings.json";
 
                 // Load the settings
-                var settings = await SettingsLoader.LoadAsync(settingsFileName);
+                var settings = await SettingsLoader.LoadAsync<Settings>(settingsFileName, new DefaultSettings());
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);
