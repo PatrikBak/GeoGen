@@ -182,6 +182,22 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
+        /// Constructs a point C such that the A, B, C are collinear in this order and the
+        /// length of BC is equal to the passed one.
+        /// </summary>
+        /// <param name="A">The first point of the segment.</param>
+        /// <param name="B">The second point of the segment.</param>
+        /// <param name="shiftLength">The length of the shifted segment BC.</param>
+        /// <returns>The shifted point B in the direction AB so that its distance from B is the shift length.</returns>
+        public static Point ShiftSegment(Point A, Point B, double shiftLength)
+        {
+            // Our result point C lies on the ray opposite to BA and satisfies |BC| = shiftLength. Let us 
+            // express it as C = B + t(B-A), where t >= 0 is a real number. Then the distance between C and B
+            // is equal to t |AB|. In order for it to be equal to 'shiftLength', we need t = shiftLength / |AB|.
+            return B + shiftLength / A.DistanceTo(B) * (B - A);
+        }
+
+        /// <summary>
         /// Constructs a random scalene acute-angled triangle.
         /// </summary>
         /// <returns>Three points that make the triangle.</returns>

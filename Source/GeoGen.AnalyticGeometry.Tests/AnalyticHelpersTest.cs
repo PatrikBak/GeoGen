@@ -331,5 +331,29 @@ namespace GeoGen.AnalyticGeometry.Tests
             // Assert they're collinear
             AreCollinear(A, B, C, D).Should().BeTrue();
         }
+
+        [Test]
+        public void Test_Shift_Segment()
+        {
+            // Prepare some point
+            var A = new Point(42, 666);
+            var B = new Point(-11, -13);
+
+            // Prepare the shift length
+            var shiftLength = 4.2;
+
+            // Shift
+            var C = ShiftSegment(A, B, shiftLength);
+
+            // Make sure the collinearity is there
+            AreCollinear(A, B, C).Should().BeTrue();
+
+            // Make sure the length is okay
+            B.DistanceTo(C).Rounded().Should().Be(shiftLength.Rounded());
+
+            // Make sure C is beyond B
+            A.DistanceTo(C).Rounded().Should().BeGreaterThan(shiftLength.Rounded());
+            A.DistanceTo(C).Rounded().Should().BeGreaterThan(A.DistanceTo(B).Rounded());
+        }
     }
 }

@@ -1,134 +1,12 @@
-%%%%%%%%%%% GLOBAL VARIABLES
+%%%%%%%%%%% HELPER MACROS %%%%%%%%%%%
 
 %
-% The scale affecting the size of a point mark (small circle)
+% Returns a simple point mark, i.e. a circle filled with the background color, scaled by a given coefficient.
 %
-def PointMarkScale = (sqrt(u)*0.2) enddef;
-
-%
-% The distances from an angle arc mark to the intersection point
-%
-def AngleArcVerySmallRadius = (sqrt(u)*0.3) enddef;
-def AngleArcSmallRadius = (sqrt(u)*0.5) enddef;
-def AngleArcNormalRadius = (sqrt(u)*0.7) enddef;
-def AngleArcBigRadius = (sqrt(u)*0.9) enddef;
-def AngleArcVeryBigRadius = (sqrt(u)*1.1) enddef;
-
-%
-% The distances from a right angle arc mark to the intersection point
-%
-def RightAngleArcVerySmallRadius = (sqrt(u)*0.3) enddef;
-def RightAngleArcSmallRadius = (sqrt(u)*0.5) enddef;
-def RightAngleArcNormalRadius = (sqrt(u)*0.7) enddef;
-def RightAngleArcBigRadius = (sqrt(u)*0.9) enddef;
-def RightAngleArcVeryBigRadius = (sqrt(u)*1.1) enddef;
-
-%
-% The offset between consecutive angle arcs in a multi-arc angle mark
-%
-def AngleArcsOffset = (u*0.0075) enddef;
-
-%
-% The scale affecting right angle's dot
-%
-def RightAngleDotScale = (u*0.0045) enddef;
-
-%
-% The offset of dashdot-dots used in the dashdot pattern
-%
-def DashDotOffset = (u*0.0076) enddef;
-
-%
-% The offset of dots used in the dots pattern
-%
-def DotsOffset = (u*0.0045) enddef;
-
-%
-% The common scale for the dashed pattern
-%
-def DashesScale = (u*0.0076) enddef;
-
-%
-% The length of each line segment making a parallel lines mark
-%
-def ParallelMarkSegmentLength = (u*0.03) enddef;
-
-%
-% The offset between the two line segments making a parallell lines mark
-%
-def ParallelMarkSegmentOffset = (u*0.0045) enddef;
-
-%
-% The angle between the line segments making a parallell lines mark with the line
-%
-ParallelMarkSegmentAngle = 80;
-
-%%%%%%%%%%% LANGUAGE HELPERS
-
-%
-% Pen thickness (the normal one is 0.5)
-%
-VeryThinPenScale = 0.1;
-ThinPenScale = 0.3;
-NormalPenScale = 0.5;
-ThickPenScale = 0.7;
-VeryThickPenScale = 0.9;
-
-%
-% Shortcuts for using these degrees of thickness
-%
-def withverythinpen = withpen pencircle scaled VeryThinPenScale enddef;
-def withthinpen = withpen pencircle scaled ThinPenScale enddef;
-def withthickpen = withpen pencircle scaled ThickPenScale enddef;
-def withverythickpen = withpen pencircle scaled VeryThickPenScale enddef;
-
-% Shortcut for drawing dashdot pattern
-%
-% Used global variables: DashDotOffset
-%
-def withdashdots = dashed dashpattern
-	(on DashDotOffset 
-	off DashDotOffset
-	on 0 
-	off DashDotOffset 
-	on DashDotOffset) enddef;
-
-%	
-% Shortcut for drawing dotted pattern
-%
-def withdots = dashed dashpattern
-	(off DotsOffset
-	on 0
-	off DotsOffset) enddef;
-
-%
-% Shortcut for drawing dashed pattern
-%
-% Used global variables: DashesScale
-%
-def withdashes = dashed evenly scaled DashesScale enddef;
-
-%
-% Shortcut for the pink color
-%
-def pink = red+blue enddef;
-
-%
-% Debug helper to display the position of a point
-%
-vardef Display(expr point)= draw point withpen pencircle scaled 2 enddef;
-
-%%%%%%%%%%% MARKING POINTS / ANGLES / LINES
-
-%
-% Returns a simple point mark, i.e. a circle filled with the background color
-%
-% Used global variables: PointMarkScale
-%
-vardef PointMark(expr point) = 
+vardef PointMarkScaled(expr point, scale) = 
 	
 	% Prepare circle
-	save circle; path circle; circle = fullcircle scaled PointMarkScale shifted point;
+	save circle; path circle; circle = fullcircle scaled scale shifted point;
 	
 	% Fill it
 	fill circle withcolor background;
@@ -139,878 +17,324 @@ vardef PointMark(expr point) =
 enddef;
 
 %
-% Returns the angle arc for the given angle <AOB, with the
-% specified radius of the angle arc. It can be specified
-% whether the angel should be marked as right
-% (the markedAsRightAngle parameter), with a dot or not
-% (the isEdgy parameter).
-%
-% Used global variables: RightAngleDotScale
-%
-vardef AngleMarkInternal(expr A, O, B, arcRadius, markedAsRightAngle, isEdgy) = 
-
-		% Prepare the result
-		save result; picture result; result = nullpicture;
-	
-		% Add the mark for right angle, if requires
-		if markedAsRightAngle:
-			
-			% If it's edgy...
-			if isEdgy:
-
-				addto result 
-				doublepath (O+arcRadius*sqrt(2)/2*(unitvector(A-O)) -- 
-							O+arcRadius*(unitvector(A-O) rotated 45) --
-							O+arcRadius*sqrt(2)/2*(unitvector(B-O)));
-				
-			% If it's not edgy, i.e. an arc with a dot...
-			else:			
-				addto result 
-				contour fullcircle 
-				scaled RightAngleDotScale
-				shifted (O + arcRadius/2*(unitvector(A-O) rotated 45));
-				
-			fi;
-		fi;
-		
-		% If the angle is not edgy...
-		if (not isEdgy):
-
-			% Add the arc to the result
-			addto result 
-			doublepath (O + arcRadius*unitvector(A-O)) { unitvector(A-O) rotated 90 }
-				.. (O + arcRadius*unitvector(B-O)) { unitvector(B-O) rotated 90 };
-			
-		fi;
-		
-		% Return the result
-		result
-		
-enddef;
-
-%
-% Returns the angle arc for the given right angle <AOB, with the
-% specified radius of the angle arc.
-%
-def AngleMarkCustom(expr A, O, B, arcRadius) = 
-
-	% Call the internal macro that will assume this is not a right angle
-	AngleMarkInternal(A, O, B, arcRadius, false, false)
-	
-enddef;
-
-%
-% Returns the angle arc for the given angle <AOB, with the
-% very small radius of the angle arc.
-%
-% Used global variables: AngleArcVerySmallRadius
-%
-def AngleMarkVerySmall(expr A, O, B) = 
-
-	% Call the custom version of this macro
-	AngleMarkCustom(A, O, B, AngleArcVerySmallRadius)
-	
-enddef;
-
-%
-% Returns the angle arc for the given angle <AOB, with the
-% small radius of the angle arc.
-%
-% Used global variables: AngleArcSmallRadius
-%
-def AngleMarkSmall(expr A, O, B) = 
-
-	% Call the custom version of this macro
-	AngleMarkCustom(A, O, B, AngleArcSmallRadius)
-	
-enddef;
-
-%
-% Returns the angle arc for the given angle <AOB, with the
-% normal radius of the angle arc.
-%
-% Used global variables: AngleArcNormalRadius
-%
-def AngleMark(expr A, O, B) = 
-
-	% Call the custom version of this macro
-	AngleMarkCustom(A, O, B, AngleArcNormalRadius)
-	
-enddef;
-
-%
-% Returns the angle arc for the given angle <AOB, with the
-% big radius of the angle arc.
-%
-% Used global variables: AngleArcBigRadius
-%
-def AngleMarkBig(expr A, O, B) = 
-
-	% Call the custom version of this macro
-	AngleMarkCustom(A, O, B, AngleArcBigRadius)
-	
-enddef;
-
-%
-% Returns the angle arc for the given angle <AOB, with the
-% very big radius of the angle arc.
-%
-% Used global variables: AngleArcVeryBigRadius
-%
-def AngleMarkVeryBig(expr A, O, B) = 
-
-	% Call the custom version of this macro
-	AngleMarkCustom(A, O, B, AngleArcVeryBigRadius)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% specified radius of the angle arc.
-%
-def RightAngleMarkCustom(expr A, O, B, arcRadius, isEdgy) =
-
-	% Call the internal macro that will take this angle as a right one
-	AngleMarkInternal(A, O, B, arcRadius, true, isEdgy)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% very small radius of the angle arc.
-%
-% Used global variables: RightAngleArcVerySmallRadius
-%
-def RightAngleMarkVerySmall(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcVerySmallRadius, false)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% small radius of the angle arc.
-%
-% Used global variables: RightAngleArcSmallRadius
-%
-def RightAngleMarkSmall(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcSmallRadius, false)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% normal radius of the angle arc.
-%
-% Used global variables: RightAngleArcNormalRadius
-%
-def RightAngleMark(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcNormalRadius, false)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% big radius of the angle arc.
-%
-% Used global variables: RightAngleArcBigRadius
-%
-def RightAngleMarkBig(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcBigRadius, false)
-	
-enddef;
-
-%
-% Returns the angle arc with a dot for the given right angle <AOB, with the
-% big radius of the angle arc.
-%
-% Used global variables: RightAngleArcVeryBigRadius
-%
-def RightAngleMarkVeryBig(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcVeryBigRadius, false)
-	
-enddef;
-
-%
-% Returns the edgy angle arc for the given right angle <AOB, with the
-% very small radius of the angle arc.
-%
-% Used global variables: RightAngleArcVerySmallRadius
-%
-def EdgyRightAngleMarkVerySmall(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcVerySmallRadius, true)
-	
-enddef;
-
-%
-% Returns the edgy angle arc for the given right angle <AOB, with the
-% small radius of the angle arc.
-%
-% Used global variables: RightAngleArcSmallRadius
-%
-def EdgyRightAngleMarkSmall(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcSmallRadius, true)
-	
-enddef;
-
-%
-% Returns the edgy angle arc for the given right angle <AOB, with the
-% normal radius of the angle arc.
-%
-% Used global variables: RightAngleArcNormalRadius
-%
-def EdgyRightAngleMark(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcNormalRadius, true)
-	
-enddef;
-
-%
-% Returns the edgy angle arc for the given right angle <AOB, with the
-% big radius of the angle arc.
-%
-% Used global variables: RightAngleArcBigRadius
-%
-def EdgyRightAngleMarkBig(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcBigRadius, true)
-	
-enddef;
-
-%
-% Returns the edgy angle arc for the given right angle <AOB, with the
-% big radius of the angle arc.
-%
-% Used global variables: RightAngleArcVeryBigRadius
-%
-def EdgyRightAngleMarkVeryBig(expr A, O, B) =
-
-	% Call the custom version of this macro
-	RightAngleMarkCustom(A, O, B, RightAngleArcVeryBigRadius, true)
-	
-enddef;
-
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% specified radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset
-%
-vardef AngleMarkWithArcsCustom(expr A, O, B, arcsCount, arcRadius) = 
-
-	% Prepare result
-	save result; picture result; result = nullpicture;
-	
-	% Add the requested number of arcs
-	for i=0 upto arcsCount-1:
-	
-		% Call the internal macro (false indicates no right-angle mark)
-		addto result also AngleMarkInternal(A,O,B,arcRadius+AngleArcsOffset*i,false,false);
-		
-	endfor;	
-	
-	% Return the result
-	result
-	
-enddef;
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% very small radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset, AngleArcVerySmallRadius
-%
-vardef AngleMarkWithArcsVerySmall(expr A, O, B, arcsCount) = 
-		
-	% Call the custom version of this macro
-	AngleMarkWithArcsCustom(A, O, B, arcsCount, AngleArcVerySmallRadius)
-			
-enddef;
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% small radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset, AngleArcSmallRadius
-%
-vardef AngleMarkWithArcsSmall(expr A, O, B, arcsCount) = 
-		
-	% Call the custom version of this macro
-	AngleMarkWithArcsCustom(A, O, B, arcsCount, AngleArcSmallRadius)
-			
-enddef;
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% default radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset, AngleArcNormalRadius
-%
-vardef AngleMarkWithArcs(expr A, O, B, arcsCount) = 
-		
-	% Call the custom version of this macro
-	AngleMarkWithArcsCustom(A, O, B, arcsCount, AngleArcNormalRadius)
-			
-enddef;
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% big radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset, AngleArcBigRadius
-%
-vardef AngleMarkWithArcsBig(expr A, O, B, arcsCount) = 
-		
-	% Call the custom version of this macro
-	AngleMarkWithArcsCustom(A, O, B, arcsCount, AngleArcBigRadius)
-			
-enddef;
-
-%
-% Returns the angle arcs for the given angle <AOB, with the
-% very big radius of the angle arc and the number of the arcs to be used
-%
-% Used global variables: AngleArcsOffset, AngleArcVeryBigRadius
-%
-vardef AngleMarkWithArcsVeryBig(expr A, O, B, arcsCount) = 
-		
-	% Call the custom version of this macro
-	AngleMarkWithArcsCustom(A, O, B, arcsCount, AngleArcVeryBigRadius)
-			
-enddef;
-
-%
-% Returns a simple mark used for parallel lines with 2 small line segments
-% The marks are replaces according to the value of the 'placement'
-% parameter, for example: 0.5 for the middle, 1/3 in one third of AB
-%
-% Used global variables: ParallelMarkSegmentLength
-%					     ParallelMarkSegmentOffset
-%						 ParallelMarkSegmentAngle
-%
-vardef ParallelMark(expr A,B,placement) = 
-
-	% Prepare the midpoint of the mark
-	save middle; pair middle; middle = placement[A,B];
-	
-	% Prepare the left and the right point of the mark
-	save left, right; pair left, right;
-	left = ((abs(A-middle)-ParallelMarkSegmentOffset)/abs(A-B))[A,B];
-	right = ((abs(A-middle)+ParallelMarkSegmentOffset)/abs(A-B))[A,B];
-	
-	% Prepare the result
-	save result; picture result; result = nullpicture;
-	
-	% Add segments
-	addto result doublepath 
-	left + ParallelMarkSegmentLength/2 * unitvector(A-B) rotated ParallelMarkSegmentAngle -- 
-	left + ParallelMarkSegmentLength/2 * unitvector(B-A) rotated ParallelMarkSegmentAngle;
-	
-	addto result doublepath 
-	right + ParallelMarkSegmentLength/2 * unitvector(A-B) rotated ParallelMarkSegmentAngle 
-	-- 
-	right + ParallelMarkSegmentLength/2 * unitvector(B-A) rotated ParallelMarkSegmentAngle;
-	
-	% Return the result
-	result
-	
-enddef;
-
-%%%%%%%%%%% COMMON CONSTRUCTIONS
-
-%
-% Returns the interesection of two paths. If causes an error
-% if the paths don't interesect each other
-%
-vardef Intersection(expr firstPath, secondPath) = firstPath intersectionpoint secondPath enddef;
-
-%
-% Extends the line segment A, B in both direction by the given length 
-%
-vardef Line(expr A, B, length) = (-length/abs(A-B))[A,B] -- (-length/abs(A-B))[B,A] enddef;
-
-%
-% Returns the line perpendicular to AB at A with a given length
-%
-vardef PerpendicularLine(expr A, B, length)= 
-		
-	% Take line AB and rotate it around A by 90
-	Line(A, RotatedPoint(B, A, 90), length)
-
-enddef;
-
-%
-% Rotates the given point around the given center by the given angle.
-%
-vardef RotatedPoint(expr pointToRotate, centerOfRotation, angle) = 
-
-	% First shift to the origin, then rotate, and then shift back 
-	(pointToRotate-centerOfRotation) rotated angle + centerOfRotation
-
-enddef;
-
-%
-% Reflect the given point in the given center
-%
-vardef ReflectedPointInPoint(expr pointToReflect, center) = 	2[pointToReflect,center] enddef;
-
-%
-% Projects the given point onto the line given by two points
-%
-vardef ProjectedPoint(expr pointToProject, firstPoint, secondPoint) =
-	
-	% Prepare the result
-	save result; pair result; 
-	
-	% This result on the given line
-	result = whatever [firstPoint, secondPoint];
-	
-	% And line [result, pointToProject] is perpendicular to line [firstPoint, secondPoint]
-	result - pointToProject = whatever * (firstPoint - secondPoint) rotated 90;
-	
-	% Now it's computed
-	result
-	
-enddef;
-
-%
-% Return the line perpendicular to BC through A with a given length
-%
-vardef PerpendicularLineToLine(expr A, B, C, length) =
-	
-	% It's line from A to the projection of A onto BC
-	Line(A, ProjectedPoint(A,B,C), length)
-	
-enddef;
-
-%
-% Reflects the given point onto the line given by two points
-%
-vardef ReflectedPoint(expr pointToReflect, firstPoint, secondPoint) =
-
-	% Take the point 2 times further than the projection of pointToReflect
-	% on the given line from points [firstPoint, secondPoint]
-	2[pointToReflect, ProjectedPoint(pointToReflect, firstPoint, secondPoint)]
-
-enddef;
-
-%
-% Returns point D such that ABDC is a parallelogram
-%
-vardef Parallelogram(expr A,B,C) = ReflectedPointInPoint(A,0.5[B,C]) enddef;
-
-%
-% Returns the circumcenter of the triangle formed by 
-% the given three mutally distinct points.
-%
-vardef Circumcenter(expr A, B, C) = 
-
-	% O will hold the result
-	save O; pair O;
-	
-	% O Midpoint(A,B) is perpendicular to AB
-	O-1/2[A,B] = whatever  * (A-B) rotated 90;
-	
-	% O Midpoint(A,C) is perpendicular to AC
-	O-1/2[A,C] = whatever  * (A-C) rotated 90;
-	
-	% Now it's computed
-	O
-	
-enddef;
-
-%
-% Returns the circle with given diameter points
-%
-vardef CircleWithDiameter(expr A,B) = Circle(0.5[A,B], A) enddef;
-
-%
-% Returns the circumcircle of the triangle formed by 
-% the given three mutally distinct points.
-%
-vardef Circumcircle(expr A, B, C) =
-	
-	% Find the circumcenter 
-	save O; pair O; O = Circumcenter(A,B,C);
-	
-	% Return the circle with the center at O and the radius OA
-	fullcircle scaled 2abs(O-A) shifted O
-	
-enddef;
-
-%
-% Returns the radius of the circumcircle of ABC
-%
-def RadiusOfCircumcircle(expr A, B, C) = abs(Circumcenter(A, B, C)-A) enddef;
-
-%
-% Returns the diameter of the circumcircle of ABC
-%
-def DiameterOfCircumcircle(expr A, B, C) = 2RadiusOfCircumcircle(A, B, C) enddef;
-
-%
-% Returns the midpoint of the arc ABC of the circumcircle of ABC. The points
-% should be specified clockwisely
-%
-vardef MidpointOfArc(expr A, B, C) = 
-
-	% Find the diameter of the circle (ABC)
-	save diameter; numeric diameter; diameter = DiameterOfCircumcircle(A, B, C);
-	
-	% Interesect the arc with the long-enough perpendicular bisector of AC 
-	Intersection(Arc(A, B, C), PerpendicularBisector(A, C, 2diameter))
-
-enddef;
-
-%
-% Returns the midpoint of the arc (BA) of the circumcircle of ABC. The points
-% should be specified clockwisely
-%
-vardef MidpointOfOppositeArc(expr A, B, C) = 
-
-	% Find the diameter of the circle (ABC)
-	save diameter; numeric diameter; diameter = DiameterOfCircumcircle(A, B, C);
-	
-	% Interesect the opposite arc with the long-enough perpendicular bisector of AC 
-	Intersection(OppositeArc(A, B, C), PerpendicularBisector(A, C, 2diameter))
-
-enddef;
-
-%
-% Returns the arc BC or BC of the circumcircle of triangle ABC, based on the 
-% parameter indacting whether it should contain point A.
-% The points B, A, C should be specified clockwisely
-%
-vardef ArcInternal(expr B, A, C, shouldArcContainA) = 
-
-	% Find the circumcenter O of ABC
-	save O; pair O; O = Circumcenter(A,B,C);
-	
-	% Find the circumcircle of ABC
-	save circumcircle; path circumcircle; 
-	
-	% Pre-calculate the radius of the circle
-	save radius; numeric radius; radius = abs(O-A);
-	
-	% Construct the circumcircle so that in time 0 it is in point B
-	circumcircle = (fullcircle scaled 2radius) rotated angle(B-O) shifted O;
-	
-	% Find the intersection time of C
-	save timeC; numeric timeC; 
-	(timeC, whatever) = circumcircle intersectiontimes (O -- O + 2radius*unitvector(C-O));
-		
-	% If the desired arc contains point A...
-	if shouldArcContainA: 
-	
-		% Return the arc (CB) 
-		subpath (timeC, length(circumcircle)) of circumcircle		
-		
-	% Otherwise...
-	else:	
-	
-		% Return the arc (BC)
-		subpath(0, timeC) of circumcircle
-	fi
-enddef;
-
-%	
-% Returns the arc CB circumcircle of triangle ABC (i.e. the one containing A)
-% The points B, A, C should be specified clockwisely
-%
-vardef Arc(expr B, A, C) = ArcInternal(B, A, C, true) enddef;
-
-%
-% Returns the arc BC circumcircle of triangle ABC (i.e. the one not containing A).
-% The points B, A, C should be specified clockwisely
-%
-vardef OppositeArc(expr B, A, C) = ArcInternal(B, A, C, false) enddef;
-
-%
-% Returns the perpendicular bisector of line segment AB. The length parameter
-% specifiec the length on both sides (i.e. the total length is 2length)
-%
-vardef PerpendicularBisector(expr A, B, length) = 
-	
-	% Find the midpoint of AB
-	save M; pair M; M = 1/2[A,B];
-	
-	% Rotate A around M by 90 degrees
-	% (so we have the second point on the desired bisector)
-	save N; pair N; N = RotatedPoint(A, M, 90);
-	
-	% Shift N so it's distance from M is the given length
-	save T; pair T; T = (length/abs(M-N))[M,N];
-		
-	% The result is the line from T to the point 2 times further in direction M,N
-	T -- 2[T,M]
-	
-enddef;
-
-%
-% Find point D such that ABCD (or ABDC) is an isoscles trapezoid
-% (AC and BD will be symmetric wrt the perpendicular bisector of AB)
-%
-vardef IsoscelesTrapezoid(expr A,B,C) =
-
-  % Reflect C wrt the perpendicular bisector of AB
-  % which is defined by the midpoint of AB
-  % and one point lying on it which could be 
-  % A rotated by 90 around the midpoint of AB
-  ReflectedPoint(C, 1/2[A,B], RotatedPoint(A, 1/2[A,B], 90)) 
- 
-enddef;
-
-%
-% Returns the internal angle bisector of angle ABC with a given length
-% going both sides (i.e. the length of each side is equal to length/2)
-%
-vardef InternalAngleBisector(expr A,B,C,length)= 
-
-	% Find one point lying on this bisector with the distance length/2 from B
-	save P; pair P; P = (length/2,0) rotated 1/2(angle(A-B)+angle(C-B)) shifted B;
-	
-	% Extend it to both directions so the total length is 2length
-	P--2[P,B]
-
-enddef;
-
-%
-% Returns the external angle bisector of angle ABC with a given length
-%
-vardef ExternalAngleBisector(expr A,B,C,length)= 
-
-	% Get internal bisector and rotate it by 90 around B
-	InternalAngleBisector(A,B,C,length) shifted -B rotated 90 shifted B
-
-enddef;
-
-%
-% Returns the line passing through A parallel to BC with a given length
-% going both sides (i.e. the length of each side is equal to length/2)
-%
-vardef ParallelLine(expr A,B,C,length)=
-	A+(length/2)*unitvector(B-C) -- A+(length/2)*unitvector(C-B)
-enddef;
-
-%
-% Returns the semicircle going from A to B clockwisely
-%
-vardef Semicircle(expr A,B) = 
-
-	% Find its midpoint (the midpoint of AB)
-	save O; pair O; O = 1/2[A,B];
-	
-	% Find its radius 
-	save radius; radius = abs(A-B)/2;
-	
-	% Create a full circle with diameter AB rotated so that the point at time 0 is A
-	save circle; path circle; circle = fullcircle rotated angle(A-B) scaled 2radius shifted O;
-	
-	% Find intersection time of B on the circle 
-	save timeB; save timeB; 
-	(timeB, whatever) = circle intersectiontimes (O -- O + 2radius*unitvector(B-O));
-	
-	% Cut it to a semicircle
-	subpath (0,timeB) of circle
-
-enddef;
-
-%
-% Returns point D such that OAB, OCD are spirally similar triangles
-%
-vardef SpiralSimilarity(expr O,A,B,C)= 
-	
-	% We need to make O origin first. 
-	% Then we rotate C around by the needed angle
-	% Then use homothety so the triangles are similar
-	% And shift the result back
-	C shifted -O rotated (angle(O-B)-angle(O-A)) scaled (abs(O-B)/abs(O-A)) shifted O
-	
-enddef;
-
-%
-% Returns the arc (AB) of the circle centered at O passing through A,B
-% This macro assumes OA = OB. The arc should be specified clockwisely.
-%
-vardef ArcWithCenter(expr A,B,O) = 
-	
-	% Draw the whole circle so that A is the point at time 0
-	save circle; path circle; 
-	circle = fullcircle rotated angle(A-O) scaled 2abs(A-O) shifted O;
-	
-	% Find intersection time B on the circle 
-	save timeB; save timeB; 
-	(timeB, whatever) = circle intersectiontimes (O -- O + 2abs(A-O)*unitvector(B-O));
-	
-	% Return the subarc
-	subpath(0,timeB) of circle
-		
-enddef;
-
-%
-% Returns the circle centered at O passing through A
-%
-vardef Circle(expr O,A) = CircleWithRadius(O, abs(O-A)) enddef;
-
-%
 % Returns the circle centered at O with given radius
 %
-vardef CircleWithRadius(expr O, radius) = fullcircle scaled 2radius shifted O enddef;
+vardef CircleWithRadius(expr O, r) = fullcircle scaled 2radius shifted O enddef;
 
 %
-% Returns the ray opposite to ray AB with given length.
+% Labels a given point so that the label is intelligently placed (the code will be cleaned)
 %
-vardef OppositeRay(expr A,B,length)= ShiftedOppositeRay(A,B,length,0) enddef;
-
-%
-% Returns the ray opposite to ray AB with given length which 'first' point
-% has a distance equal to 'shiftLength' from A. The use-case for this is when 
-% want to intersect a ray and we don't want to include the first point
-%
-vardef ShiftedOppositeRay(expr A,B,length,shiftLength) = 
-
-	% Get the shifted point and connect it with the point distanced 'length' from A
-	(A - shiftLength*unitvector(B-A)) -- (-length/abs(B-A))[A,B]
-
-enddef;
-
-%
-% Returns the ray AB with given length.
-%
-vardef Ray(expr A,B,length)= ShiftedRay(A,B,length,0) enddef;
-
-%
-% Returns the ray AB with given length which 'first' point
-% has a distance equal to 'shiftLength' from A. The use-case for this is when 
-% want to intersect a ray and we don't want to include the first point
-%
-vardef ShiftedRay(expr A,B,length,shiftLength) = 
-
-	% Get the shifted point and connect it with the point distanced 'length' from A
-	(A - shiftLength*unitvector(A-B)) -- (length/abs(B-A))[A,B]
-
-enddef;
-
-%
-% Shifts the given point by the given angle and the given length
-%
-vardef ShiftedInDirection(expr P, angle, length)= P + length * unitvector(dir angle) enddef;
-
-%
-% Draws the segment AB extended by a given length
-%
-vardef ExtendedSegment(expr A, B, length) = Ray(A, B, abs(A-B)+length) enddef;
-
-%
-% Draws the segment AB extended by given lengths
-%
-vardef ExtendedSegmentDouble(expr leftLength, A, B, rightLength) = ShiftedRay(A, B, abs(A-B)+rightLength, leftLength) enddef;
-
-% Returns the centroid of triangle ABC
-vardef Centroid(expr A,B,C) = (A+B+C)/3 enddef;
-
-%
-% Returns the orthocenter of triangle ABC
-%
-def Orthocenter(expr A,B,C) = 
-	A + whatever*(B-C) rotated 90 = 
-	B + whatever*(A-C) rotated 90 
-enddef;
-
-%
-% Returns the incenter of triangle ABC
-%
-vardef Incenter(expr A,B,C) = 
-
-	% Prepare the result
-	save I; pair I;
-
-	% I lies on two angle bisectors
-	(I-A) = whatever * (A-C) rotated 1/2( angle(B-A) - angle(C-A));
-	(I-B) = whatever * (B-A) rotated 1/2( angle(C-B) - angle(A-B));
+vardef LabelPoint(expr label, P) =
 	
-	% Return the result which should be calculated now
-	I
-
-enddef;
-
-%
-% Finds the point where the A-excircle touch a specified side.
-% This side is specified with the 'pointId' parameter like this:
-%
-%   pointId = 0 --> BC
-%   pointId = 1 --> AB
-%   pointId = 2 --> AC
-%
-vardef ExcircleTouchPoint(expr A, B, C, pointId) =
+	bboxmargin:=1;
+	save pic; picture pic; pic:=currentpicture;
+	save box; path box; box:=bbox label;
 	
-	% Calculate the sides of the triangle
-	save a; a = abs(B-C);
-	save b; b = abs(A-C);
-	save c; c = abs(A-B);
+	minD:= 2+abs((llcorner box) + (urcorner box))/2;
+	maxD:= 1.5minD;
 	
-	% The point on BC is distanced (a+b-c)/2 from B
-	if pointId = 0:
-		Intersection(B--C, CircleWithRadius(B, (a+b-c)/2))
+	n:=40;
+	m:=20;
+	
+	vardef place_it(expr angle, d, erasing) = 
 		
-	% The point on AB is distanced (a+b+c)/2 from A
-	% which is less than 2a
-	elseif pointId = 1:
-		Intersection(Ray(A,B,2a), CircleWithRadius(A, (a+b+c)/2))
+		save pp; picture pp; 
+		bboxmargin:=2;
 		
-	% The point on AC is distanced (a+b+c)/2 from A
-	% which is less than 2a
-	elseif pointId = 2:
-		Intersection(Ray(A,C,2a), CircleWithRadius(A, (a+b+c)/2))
+		pp:=label shifted P
+		          shifted (d*cosd(angle),d*sind(angle))
+				  shifted (-((llcorner box)+(urcorner box))/2);
 		
-	else:
-		errmessage("Incorrect value of the pointId parameter. It should be 0, 1, or 2.");
-	fi
-
-enddef;
-
-% 
-% Returns the A-excenter of the triangle ABC
-%
-vardef Excenter(expr A, B, C) =
-
-	% Reuse the circumcircle and the touch points
-	Circumcenter(ExcircleTouchPoint(A,B,C,0),
-			     ExcircleTouchPoint(A,B,C,1),
-				 ExcircleTouchPoint(A,B,C,2))
-
-enddef;
-
-% 
-% Return the A-excircle of the triangle ABC
-%
-vardef Excircle(expr A, B, C) =
+		if erasing:
+		
+			fill fullcircle scaled (abs(llcorner(bbox pp) - urcorner(bbox pp))/2)
+				shifted ((llcorner bbox(pp) + urcorner bbox(pp))/2)
+				withcolor background;
+			fi;
+		
+		draw pp;
+				
+	enddef;
 	
-	% Reuse the excenter and the touch point
-	Circle(Excenter(A,B,C),ExcircleTouchPoint(A,B,C,0))
+	image(	
+		save all_c;
+		d_index:=0;		
+	
+		save placed; boolean placed; placed:=false;
+	
+		for d=minD step ((maxD-minD)/(m-1)) until maxD:
+			
+			for k=0 upto n-1:
+						
+				save new_box; path new_box;
+				
+				new_box:=bbox(label shifted (P+(d*cosd(k*(360/n)),d*sind(k*(360/n)))
+								-((llcorner box)+(urcorner box))/2));
+				
+				c:=0;
+														
+				for item within pic:
+					
+					save p,q,r,z; path p,q,r; pair z[];
+		
+					p:= new_box;
+					q:= pathpart item;					
+					r:= p;
+					
+					i:= 0;
+					
+					forever:
+					
+						save a;	
+						(a, whatever) = q intersectiontimes r;
+						
+						if a <>-1:
+							zz[i]:=a;
+						fi;
+					
+						r := r cutbefore q;
+						exitif length cuttings = 0;
+						
+						
+						factor:=epsilon;
+						
+						forever: 
+							z[i]:= (point 0 of r);
+							r := subpath(factor, length r) of r;	
+							factor:= 2factor;
+							exitif i=0;
+							exitif abs(z[i-1]-z[i]) > eps;
+						endfor;
+						
+						i := i + 1;
+					endfor;
+					
+					vardef is_inside(expr p) = 
+					    ((xpart p >= xpart (ulcorner new_box)) and
+						( xpart p <= xpart (urcorner new_box)) and
+						( ypart p >= ypart (llcorner new_box)) and
+						( ypart p <= ypart (ulcorner new_box)))
+					enddef;
+					
+					if i=0:
+						if is_inside(point (length q)/2 of q):
+							c:= c + abs((point 0 of q) - (point length q of q));
+						fi;
+					
+					elseif i=1:
+						
+						% We need to find out which endpoint of the path
+						% is inside. 
+						save ends; pair ends[];
+						
+						% Get them first
+						ends[0] = point 0 of q;
+						ends[1] = point infinity of q;
+						
+										
+						if (is_inside(ends[0])):
+							c:= c + abs(ends[0]-z[0]);
+						else:                       
+							c:= c + abs(ends[1]-z[0]);
+						fi;	                        
+						                            
+					else:						    
+						for j=0 upto (i-2):         
+							c:= c + abs(z[j]-z[j+1]);
+						endfor;						
+					fi;		
+				
+				endfor;
+						
+				all_c[d_index][k]:=c;
+						
+				if all_c[d_index][k] < 0:
+					all_c[d_index][k]:=0;
+				fi;
+									
+			endfor;
+						
+			save smallest; smallest:=infinity; 
+			save last_non_zero_index; last_non_zero_index:=-1;
+			
+			for i=0 upto n-1:
+			
+				if all_c[d_index][i] < smallest:
+					smallest:=all_c[d_index][i];
+				fi;
+				
+				if all_c[d_index][i] > 0:
+					last_non_zero_index:=i;
+				fi;
+				
+			endfor;
+						
+			if last_non_zero_index=-1:
+				place_it(90,d,false);
+				placed:=true;
+				exitif true;
+			fi;
+			
+			if smallest=0:
+						
+				i:=last_non_zero_index;
+				
+				forever:
+					
+					exitif all_c[d_index][i] = 0;
+					
+					i:=i+1;
+					if i=n:
+						i:=0;
+					fi;					
+					
+				endfor;
+								
+				longest:=0;
+				longest_start:=0;
+				longest_end:=0;
+				
+				save in; boolean in; in:=false;
+				current_length := 0;
+				current_start := 0;
+				current_end := 0;
+				
+				j:=i;
+				
+				forever:
+								
+					if all_c[d_index][j]=0:
+						
+						if in:
+							current_length:=current_length+1;
+							current_end:=j;
+						else:
+							in:=true;
+							current_start:=j;
+							current_end:=j;
+							current_length:=1;
+						fi;
+					else:
+						
+						if in:
+							in:=false;
+							
+							if current_length > longest:
+								longest:= current_length;
+								longest_start:= current_start;
+								longest_end:= current_end;
+							fi;
+						fi;
+					fi;
+						
+					
+					j:=j+1;
+					if j=n:
+						j:=0;
+					fi;
+					
+					exitif j=i;
+				
+				endfor;
+								
+				if longest_start > longest_end:
+					longest_end:=longest_end + n;
+				fi;
+				
+				place_it((360/n)*(longest_start+longest_end)/2,d,false);
+				placed:=true;				
+				exitif true;				
+			fi;
+			
+			d_index:=d_index+1;
+		
+		endfor;
+		
+		if not placed:
+			
+			minimal:=infinity;
+			min_d:=-1;
+			min_k:=-1;
+			
+			for d=0 upto (d_index-1):
+				for k=0 upto n-1:
+					if all_c[d][k] < minimal:
+						min_d:=d;
+						min_k:=k;
+						minimal:=all_c[d][k];
+					fi;
+				endfor;
+			endfor;
+			
+			place_it((360/n)*min_k,minD+min_d*(maxD-minD)/(m-1),true);
+						
+		fi;
+	)
 	
 enddef;
 
-%
-% Returns the second intersection of the circles (ABC), (ADE),
-% i.e. the one distinct from A
-%
-vardef SecondIntersectionOfCircumcenters(expr A,B,C,D,E) =
-	ReflectedPoint(A,Circumcenter(A,B,C),Circumcenter(A,D,E))
-enddef
+%%%%%%%%%%% LINE STYLES %%%%%%%%%%%
+
+def WithAuxiliaryStyle = 
+	withpen pencircle scaled 0.5
+	withdots
+enddef;
+
+
+def WithNormalStyle =
+	withpen pencircle scaled 0.5
+enddef;
+
+
+def WithTheoremStyle = 
+	withpen pencircle scaled 1 
+	withcolor red
+	dashed evenly scaled 0.5	
+enddef;
+
+%%%%%%%%%%% DRAWING MACROS %%%%%%%%%%%
+
+
+def CircleAuxiliaryStyle(expr center, radius) = 
+	CircleWithRadius(center, radius) WithAuxiliaryStyle
+enddef;
+
+
+def CircleNormalStyle(expr O, r) = 
+	CircleWithRadius(O, r) WithNormalStyle
+enddef;
+
+
+def CircleTheoremStyle(expr O, r) = 
+	CircleWithRadius(O, r) WithTheoremStyle
+enddef;
+
+
+def LineSegmentAuxiliaryStyle(expr A, B) = 
+	A--B WithAuxiliaryStyle
+enddef;
+
+
+def LineSegmentNormalStyle(expr A, B) = 
+	A--B 
+enddef;
+
+
+def LineSegmentTheoremStyle(expr A, B) = 
+	A--B WithTheoremStyle
+enddef;
+
+
+def PointMarkAuxiliaryStyle(expr P) = 
+	PointMarkScaled(P, 1.5)
+enddef;
+
+
+def PointMarkNormalStyle(expr P) = 
+	PointMarkScaled(P, 2)
+enddef;
+
+
+def PointMarkTheoremStyle(expr P) = 
+	PointMarkScaled(P, 3.5) withcolor red
+enddef; 

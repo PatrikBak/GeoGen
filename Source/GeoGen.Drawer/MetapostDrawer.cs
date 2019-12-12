@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// Represents a drawer that generates MetaPost figures
+    /// Represents a drawer that generates MetaPost figures.
     /// </summary>
     public class MetapostDrawer : IDrawer
     {
@@ -29,6 +29,11 @@ namespace GeoGen.Drawer
         /// </summary>
         private readonly IReadOnlyDictionary<Construction, DrawingRule> _drawingRules;
 
+        /// <summary>
+        /// The data with MetaPost-related commands.
+        /// </summary>
+        private readonly MetapostDrawingData _drawingData;
+
         #endregion
 
         #region Constructor
@@ -43,7 +48,7 @@ namespace GeoGen.Drawer
 
             #region Dummy drawing rules 
 
-            // Prepare the loose points
+            // Prepare the points
             var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
             var M = new ConstructedConfigurationObject(PredefinedConstructions.Midpoint, A, B);
@@ -60,6 +65,38 @@ namespace GeoGen.Drawer
 
             // Prepare the dictionary of rules
             _drawingRules = new Dictionary<Construction, DrawingRule> { { PredefinedConstructions.Midpoint, midpointRule } };
+
+            #endregion
+
+            #region Hard-coded drawing data
+
+            // Prepare the drawing data
+            // TODO: Settings
+            _drawingData = new MetapostDrawingData
+            (
+                scaleVariable: "u",
+                shiftLength: 0.4,
+                boundingBoxOffset: 1,
+                pointLabelMacro: "LabelPoint",
+                pointMarkMacros: new Dictionary<ObjectDrawingStyle, string>
+                {
+                    { ObjectDrawingStyle.AuxiliaryObject, "PointMarkAuxiliaryStyle" },
+                    { ObjectDrawingStyle.NormalObject, "PointMarkNormalStyle" },
+                    { ObjectDrawingStyle.TheoremObject, "PointMarkTheoremStyle" }
+                },
+                lineSegmentMacros: new Dictionary<ObjectDrawingStyle, string>
+                {
+                    { ObjectDrawingStyle.AuxiliaryObject, "LineSegmentAuxiliaryStyle" },
+                    { ObjectDrawingStyle.NormalObject, "LineSegmentNormalStyle" },
+                    { ObjectDrawingStyle.TheoremObject, "LineSegmentTheoremStyle" }
+                },
+                circleMacros: new Dictionary<ObjectDrawingStyle, string>
+                {
+                    { ObjectDrawingStyle.AuxiliaryObject, "CircleAuxiliaryStyle" },
+                    { ObjectDrawingStyle.NormalObject, "CircleNormalStyle" },
+                    { ObjectDrawingStyle.TheoremObject, "CircleTheoremStyle" }
+                }
+            );
 
             #endregion
         }
@@ -102,7 +139,7 @@ namespace GeoGen.Drawer
                 var input = $"figures.{i}";
 
                 // Run the command
-                // TODO: Settings (potential conversion to png)
+                // TODO: Settings (potentially more commands)
                 await RunCommandAsync(@"C:\Program Files\SumatraPDF\SumatraPDF.exe", $"\"{input}\"");
             }
         }
@@ -122,7 +159,6 @@ namespace GeoGen.Drawer
 
             // Construct the configuration
             // TODO: Handle errors
-            // TODO: Quality check
             var pictures = _constructor.Construct(configuration).pictures;
 
             #region Loose object layout construction
@@ -202,7 +238,7 @@ namespace GeoGen.Drawer
                         // If marking a point
                         case DrawingCommandType.Point:
 
-                            // Then there is exactly of object of type point that we easily mark
+                            // Then there is exactly one object of type point that we easily mark
                             figure.AddPoint((Point)objectsBeingDrawn[0], command.Style);
 
                             break;
@@ -215,7 +251,7 @@ namespace GeoGen.Drawer
 
                             break;
 
-                        // If drawing a segment shifted a bit
+                        // If drawing a shifted segment 
                         case DrawingCommandType.ShiftedSegment:
 
                             // Then there are two points
@@ -276,12 +312,11 @@ namespace GeoGen.Drawer
                     // Otherwise we construct it from its points
                     new Circle((Point)pictures.First().Get(circle.PointsList[0]), (Point)pictures.First().Get(circle.PointsList[1]), (Point)pictures.First().Get(circle.PointsList[2]));
 
-
             // Helper function adds a given theorem line to the picture, together with the points it should pass through
             // It can be specified whether the line should be drawn as a shifted one, or a regular one
             void DrawTheoremLine(LineTheoremObject line, bool shifted, params Point[] passingPoints)
             {
-                // If the current one is defined explicitly...
+                // If the line is defined explicitly...
                 if (line.DefinedByExplicitObject)
                 {
                     // Then we only know about the passed points passing through it
@@ -299,7 +334,7 @@ namespace GeoGen.Drawer
                     .ToArray();
 
                 // Finally draw it
-                figure.AddLine(ConstructLine(line), passingPoints, ObjectDrawingStyle.TheoremObject, shifted);
+                figure.AddLine(ConstructLine(line), finalPassingPoints, ObjectDrawingStyle.TheoremObject, shifted);
             }
 
             // Switch based on theorem type
@@ -371,7 +406,7 @@ namespace GeoGen.Drawer
                 // With parallel lines
                 case TheoremType.ParallelLines:
 
-                    // We just don't draw them, without knowing about any other points they pass through
+                    // We just draw them, without knowing about any other points they pass through
                     theorem.InvolvedObjects.Cast<LineTheoremObject>().ForEach(line => DrawTheoremLine(line, shifted: false));
 
                     break;
@@ -508,7 +543,7 @@ namespace GeoGen.Drawer
 
                 // If something else...
                 default:
-                    throw new DrawerException($"Unhandled type of {nameof(TheoremObject)}: {theorem.Type.GetType()}");
+                    throw new DrawerException($"Unhandled type of {nameof(TheoremType)}: {theorem.Type.GetType()}");
             }
 
             #endregion
@@ -543,7 +578,6 @@ namespace GeoGen.Drawer
         /// The method that generates the actual MetaPost code to be complied. 
         /// </summary>
         /// <param name="figures">The figures to be drawn.</param>
-        /// <param name="unit">The unit by which all the objects should be scaled.</param>
         /// <returns>A compilable MetaPost code of the figures.</returns>
         private string CreateCode(IEnumerable<MetapostFigure> figures)
         {
@@ -552,7 +586,7 @@ namespace GeoGen.Drawer
 
             // Append the preamble
             // TODO: Settings
-            code.Append("input macros\n\n;");
+            code.Append("input macros;\n\n");
 
             // Declare the unit
             // TODO: Settings
@@ -565,14 +599,14 @@ namespace GeoGen.Drawer
                 code.Append($"beginfig({index});\n\n");
 
                 // Append the actual code of the picture
-                code.Append(figure.ToCode());
+                code.Append(figure.ToCode(_drawingData));
 
                 // Append the end
-                code.Append($"endfig;\n\n");
+                code.Append($"\nendfig;\n\n");
             });
 
             // Append the end
-            code.Append("end;");
+            code.Append("end");
 
             // Return the result
             return code.ToString();

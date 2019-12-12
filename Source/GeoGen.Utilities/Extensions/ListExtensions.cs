@@ -8,6 +8,19 @@ namespace GeoGen.Utilities
     public static class ListExtensions
     {
         /// <summary>
+        /// Enumerates all consecutive pairs of items of the list.
+        /// </summary>
+        /// <typeparam name="T">The type of items.</typeparam>
+        /// <param name="list">The list.</param>
+        /// <returns>An enumerable of all the consecutive pairs.</returns>
+        public static IEnumerable<(T, T)> ConsecutiveItems<T>(this IReadOnlyList<T> list)
+        {
+            // Go through the items up the penultimate one and return the tuples
+            for (var i = 0; i < list.Count - 1; i++)
+                yield return (list[i], list[i + 1]);
+        }
+
+        /// <summary>
         /// Enumerates all the unordered pairs of distinct items of the list.
         /// </summary>
         /// <typeparam name="T">The type of items.</typeparam>
