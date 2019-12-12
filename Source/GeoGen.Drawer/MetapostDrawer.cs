@@ -159,7 +159,7 @@ namespace GeoGen.Drawer
 
             // Construct the configuration
             // TODO: Handle errors
-            var pictures = _constructor.Construct(configuration).pictures;
+            var pictures = _constructor.Construct(configuration, 1).pictures;
 
             #region Loose object layout construction
 

@@ -23,13 +23,11 @@ namespace GeoGen.TheoremFinder.Tests
         /// <returns>The new and all theorems.</returns>
         protected (List<Theorem> newTheorems, List<Theorem> allTheorems) FindTheorems(Configuration configuration, Func<T> instanceFactory = null)
         {
-            // Prepare the kernel
-            var kernel = IoC.CreateKernel()
-                // Add constructor with 5 pictures
-                .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 5));
+            // Prepare the kernel with the constructor module
+            var kernel = IoC.CreateKernel().AddConstructor();
 
             // Create the pictures
-            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration).pictures;
+            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 5).pictures;
 
             // Create the contextual picture
             var contextualPicture = new ContextualPicture(pictures);

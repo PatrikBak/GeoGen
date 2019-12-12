@@ -32,8 +32,8 @@ namespace GeoGen.TheoremFinder.Tests
         {
             // Prepare the kernel
             var kernel = IoC.CreateKernel()
-                // Add constructor with 5 pictures
-                .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 5))
+                // With constructor
+                .AddConstructor()
                 // Look for only some types
                 .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
                                   // We don't want line and circle tangencies
@@ -59,7 +59,7 @@ namespace GeoGen.TheoremFinder.Tests
                 configuration.ConstructedObjects.Except(new[] { configuration.LastConstructedObject }).ToList());
 
             // Construct the old configuration
-            var oldPictures = kernel.Get<IGeometryConstructor>().Construct(oldConfiguration).pictures;
+            var oldPictures = kernel.Get<IGeometryConstructor>().Construct(oldConfiguration, numberOfPictures: 5).pictures;
 
             // Construct the old contextual picture
             var oldContextualPicture = new ContextualPicture(oldPictures);
@@ -68,7 +68,7 @@ namespace GeoGen.TheoremFinder.Tests
             var oldTheorems = finder.FindAllTheorems(oldContextualPicture);
 
             // Create the pictures for the current configuration
-            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration).pictures;
+            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 5).pictures;
 
             // Create the contextual picture for the current configuration
             var contextualPicture = new ContextualPicture(pictures);

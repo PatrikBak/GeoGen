@@ -1,4 +1,4 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.Algorithm;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
@@ -41,7 +41,7 @@ namespace GeoGen.ConsoleLauncher
             ),
             algorithmSettings: new AlgorithmSettings
             (
-                geometryConstructorSettings: new GeometryConstructorSettings(numberOfPictures: 5),
+                algorithmFacadeSettings: new AlgorithmFacadeSettings(numberOfPictures: 5),
                 theoremFindingSettings: new TheoremFindingSettings
                 (
                     tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),

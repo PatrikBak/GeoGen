@@ -1,12 +1,11 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Constructor;
-using GeoGen.DependenciesResolver;
+using GeoGen.Infrastructure;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
 using System.Threading.Tasks;
-using GeoGen.Infrastructure;
 
 namespace GeoGen.ConsoleLauncher
 {
@@ -60,8 +59,8 @@ namespace GeoGen.ConsoleLauncher
 
             // Add generator
             Kernel.AddGenerator()
-                // With constructor that uses loaded settings
-                .AddConstructor(settings.AlgorithmSettings.GeometryConstructorSettings)
+                // With constructor
+                .AddConstructor()
                 // With theorem finder and its settings
                 .AddTheoremFinder(settings.AlgorithmSettings.TheoremFindingSettings.TangentCirclesTheoremFinderSettings,
                                   settings.AlgorithmSettings.TheoremFindingSettings.LineTangentToCircleTheoremFinderSettings,
@@ -81,8 +80,8 @@ namespace GeoGen.ConsoleLauncher
                     // Simplification rules are loaded at the beginning
                     rules: (await Kernel.Get<ISimplificationRulesProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
-                // And finally the algorithm
-                .AddAlgorithm();
+                // And finally the algorithm with its settings
+                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings);
 
             #endregion
         }

@@ -82,12 +82,11 @@ namespace GeoGen.Infrastructure
         /// Bindings for the dependencies from the Constructor module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="settings">The settings for <see cref="GeometryConstructor"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddConstructor(this IKernel kernel, GeometryConstructorSettings settings)
+        public static IKernel AddConstructor(this IKernel kernel)
         {
             // Stateless services
-            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>().InSingletonScope().WithConstructorArgument(settings);
+            kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>().InSingletonScope();
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>().InSingletonScope();
 
             // Stateless predefined constructors
@@ -138,47 +137,47 @@ namespace GeoGen.Infrastructure
                 switch (type)
                 {
                     case TheoremType.CollinearPoints:
-                        kernel.Bind<ITypedTheoremFinder>().To<CollinearPointsTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<CollinearPointsTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.ConcyclicPoints:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcyclicPointsTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcyclicPointsTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.ConcurrentObjects:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentObjectsTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentObjectsTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.ConcurrentLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentLinesTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentLinesTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.ParallelLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<ParallelLinesTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<ParallelLinesTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.PerpendicularLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<PerpendicularLinesTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<PerpendicularLinesTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.TangentCircles:
-                        kernel.Bind<ITypedTheoremFinder>().To<TangentCirclesTheoremFinder>().WithConstructorArgument(tangentCirclesFinderSettings);
+                        kernel.Bind<ITypedTheoremFinder>().To<TangentCirclesTheoremFinder>().InSingletonScope().WithConstructorArgument(tangentCirclesFinderSettings);
                         break;
 
                     case TheoremType.LineTangentToCircle:
-                        kernel.Bind<ITypedTheoremFinder>().To<LineTangentToCircleTheoremFinder>().WithConstructorArgument(lineTangentToCirclesFinderSettings);
+                        kernel.Bind<ITypedTheoremFinder>().To<LineTangentToCircleTheoremFinder>().InSingletonScope().WithConstructorArgument(lineTangentToCirclesFinderSettings);
                         break;
 
                     case TheoremType.EqualLineSegments:
-                        kernel.Bind<ITypedTheoremFinder>().To<EqualLineSegmentsTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<EqualLineSegmentsTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.EqualAngles:
-                        kernel.Bind<ITypedTheoremFinder>().To<EqualAnglesTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<EqualAnglesTheoremFinder>().InSingletonScope();
                         break;
 
                     case TheoremType.Incidence:
-                        kernel.Bind<ITypedTheoremFinder>().To<IncidenceTheoremFinder>();
+                        kernel.Bind<ITypedTheoremFinder>().To<IncidenceTheoremFinder>().InSingletonScope();
                         break;
 
                     default:
@@ -227,11 +226,12 @@ namespace GeoGen.Infrastructure
         /// Bindings for the dependencies from the Algorithm module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
+        /// <param name="settings">The settings for the algorithm facade.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddAlgorithm(this IKernel kernel)
+        public static IKernel AddAlgorithm(this IKernel kernel, AlgorithmFacadeSettings settings)
         {
             // Stateless services
-            kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().InSingletonScope();
+            kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().InSingletonScope().WithConstructorArgument(settings);
             kernel.Bind<IBestTheoremsFinder>().To<BestTheoremsFinder>().InSingletonScope();
 
             // Return the kernel for chaining
@@ -257,23 +257,23 @@ namespace GeoGen.Infrastructure
                 switch (rankedAspect)
                 {
                     case RankedAspect.Symmetry:
-                        kernel.Bind<IAspectTheoremRanker>().To<SymmetryRanker>();
+                        kernel.Bind<IAspectTheoremRanker>().To<SymmetryRanker>().InSingletonScope();
                         break;
 
                     case RankedAspect.Type:
-                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>().WithConstructorArgument(typeRankerSettings);
+                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>().InSingletonScope().WithConstructorArgument(typeRankerSettings);
                         break;
 
                     case RankedAspect.TheoremsPerObject:
-                        kernel.Bind<IAspectTheoremRanker>().To<TheoremsPerObjectRanker>();
+                        kernel.Bind<IAspectTheoremRanker>().To<TheoremsPerObjectRanker>().InSingletonScope();
                         break;
 
                     case RankedAspect.CirclesPerObject:
-                        kernel.Bind<IAspectTheoremRanker>().To<CirclesPerObjectRanker>();
+                        kernel.Bind<IAspectTheoremRanker>().To<CirclesPerObjectRanker>().InSingletonScope();
                         break;
 
                     case RankedAspect.NumberOfProofAttempts:
-                        kernel.Bind<IAspectTheoremRanker>().To<NumberOfProofAttemptsRanker>();
+                        kernel.Bind<IAspectTheoremRanker>().To<NumberOfProofAttemptsRanker>().InSingletonScope();
                         break;
 
                     default:
@@ -294,7 +294,7 @@ namespace GeoGen.Infrastructure
         public static IKernel AddTheoremSimplifier(this IKernel kernel, TheoremSimplifierData data)
         {
             // Bind the simplifier
-            kernel.Bind<ITheoremSimplifier>().To<TheoremSimplifier.TheoremSimplifier>().WithConstructorArgument(data);
+            kernel.Bind<ITheoremSimplifier>().To<TheoremSimplifier.TheoremSimplifier>().InSingletonScope().WithConstructorArgument(data);
 
             // Return the kernel for chaining
             return kernel;

@@ -11,12 +11,13 @@ namespace GeoGen.Constructor
     public interface IGeometryConstructor
     {
         /// <summary>
-        /// Constructs a given <see cref="Configuration"/>. Throws an <see cref="InconsistentPicturesException"/>
-        /// if the construction couldn't be carried out.
+        /// Constructs a given <see cref="Configuration"/> to a given number of pictures.
+        /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out consistently.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
+        /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration);
+        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures);
 
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.

@@ -9,7 +9,7 @@ namespace GeoGen.Infrastructure
     public class LoggingSettings
     {
         #region Public properties
-        
+
         /// <summary>
         /// The list of the loggers settings.
         /// </summary>

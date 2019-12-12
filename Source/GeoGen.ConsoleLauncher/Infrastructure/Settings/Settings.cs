@@ -1,6 +1,5 @@
 ﻿using GeoGen.Infrastructure;
 using System;
-using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {

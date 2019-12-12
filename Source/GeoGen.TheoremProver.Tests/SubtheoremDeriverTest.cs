@@ -42,8 +42,8 @@ namespace GeoGen.TheoremProver.Test
                                         new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false),
                                         // Take all types except for equal objects for which there is no finder
                                         typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToReadOnlyHashSet())
-                // Add constructor with 5 pictures
-                .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 5));
+                // And constructor 
+                .AddConstructor();
 
             // Create the constructor
             var constructor = kernel.Get<IGeometryConstructor>();
@@ -52,7 +52,7 @@ namespace GeoGen.TheoremProver.Test
             var deriver = new SubtheoremDeriver(constructor);
 
             // Draw the examined configuration
-            var pictures = constructor.Construct(examinedConfiguration).pictures;
+            var pictures = constructor.Construct(examinedConfiguration, numberOfPictures: 5).pictures;
 
             // Draw the contextual picture
             var contextualPicture = new ContextualPicture(pictures);

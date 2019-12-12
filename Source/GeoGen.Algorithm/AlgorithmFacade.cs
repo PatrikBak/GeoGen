@@ -17,6 +17,15 @@ namespace GeoGen.Algorithm
     /// </summary>
     public class AlgorithmFacade : IAlgorithmFacade
     {
+        #region Private fields
+
+        /// <summary>
+        /// The settings for the algorithm.
+        /// </summary>
+        private readonly AlgorithmFacadeSettings _settings;
+
+        #endregion
+
         #region Dependencies
 
         /// <summary>
@@ -61,6 +70,7 @@ namespace GeoGen.Algorithm
         /// <summary>
         /// Initializes a new instance of the <see cref="AlgorithmFacade"/> class.
         /// </summary>
+        /// <param name="settings">The settings for the algorithm.</param>
         /// <param name="generator">The generator of configurations.</param>
         /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
@@ -68,14 +78,16 @@ namespace GeoGen.Algorithm
         /// <param name="ranker">The ranker of theorems.</param>
         /// <param name="simplifier">The simplifier of theorems.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
-        public AlgorithmFacade(IGenerator generator,
-                                IGeometryConstructor geometryConstructor,
-                                ITheoremFinder finder,
-                                ITheoremProver prover,
-                                ITheoremRanker ranker,
-                                ITheoremSimplifier simplifier,
-                                IGeometryFailureTracer tracer = null)
+        public AlgorithmFacade(AlgorithmFacadeSettings settings,
+                               IGenerator generator,
+                               IGeometryConstructor geometryConstructor,
+                               ITheoremFinder finder,
+                               ITheoremProver prover,
+                               ITheoremRanker ranker,
+                               ITheoremSimplifier simplifier,
+                               IGeometryFailureTracer tracer = null)
         {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
@@ -101,7 +113,7 @@ namespace GeoGen.Algorithm
             // Safely execute
             var (initialPictures, initialData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
-                () => _geometryConstructor.Construct(input.InitialConfiguration),
+                () => _geometryConstructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
 

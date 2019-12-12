@@ -18,6 +18,15 @@ namespace GeoGen.TheoremProver
     /// </summary>
     public class TrivialTheoremProducer : ITrivialTheoremProducer
     {
+        #region Private constants
+
+        /// <summary>
+        /// The number of pictures that are used for finding trivial theorems of composed constructions.
+        /// </summary>
+        private const int NumberOfPicturesForFindingTrivialTheorems = 5;
+
+        #endregion
+
         #region Dependencies
 
         /// <summary>
@@ -344,7 +353,7 @@ namespace GeoGen.TheoremProver
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(
                 // Constructing of the new configuration
-                () => _constructor.Construct(configuration),
+                () => _constructor.Construct(configuration, NumberOfPicturesForFindingTrivialTheorems),
                 // While making sure any exception is caught and re-thrown
                 (InconsistentPicturesException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 

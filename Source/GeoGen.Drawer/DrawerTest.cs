@@ -1,5 +1,4 @@
-﻿using GeoGen.Constructor;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 using GeoGen.DependenciesResolver;
 using GeoGen.Infrastructure;
 using Ninject;
@@ -23,10 +22,8 @@ namespace GeoGen.Drawer
         {
             #region Prepare IoC
 
-            // Create kernel
-            var kernel = IoC.CreateKernel()
-                // Add constructor (the number of pictures is not important now)
-                .AddConstructor(new GeometryConstructorSettings(numberOfPictures: 1));
+            // Create the kernel with the constructor module
+            var kernel = IoC.CreateKernel().AddConstructor();
 
             // Bind the drawer
             kernel.Bind<IDrawer>().To<MetapostDrawer>();

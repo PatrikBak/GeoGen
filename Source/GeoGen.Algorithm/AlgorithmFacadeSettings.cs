@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace GeoGen.Constructor
+namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents the settings for <see cref="GeometryConstructor"/>.
+    /// Represents the settings for <see cref="AlgorithmFacade"/>.
     /// </summary>
-    public class GeometryConstructorSettings
+    public class AlgorithmFacadeSettings
     {
         #region Public properties
 
@@ -19,10 +19,10 @@ namespace GeoGen.Constructor
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeometryConstructorSettings"/> class.
+        /// Initializes a new instance of the <see cref="AlgorithmFacadeSettings"/> class.
         /// </summary>
         /// <param name="numberOfPictures">The number of pictures to which a configuration is drawn.</param>
-        public GeometryConstructorSettings(int numberOfPictures)
+        public AlgorithmFacadeSettings(int numberOfPictures)
         {
             // Check validity
             if (numberOfPictures <= 0)

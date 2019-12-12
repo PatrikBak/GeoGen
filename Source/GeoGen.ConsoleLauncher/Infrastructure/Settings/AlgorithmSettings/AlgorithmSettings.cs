@@ -1,4 +1,4 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.Algorithm;
 using System;
 
 namespace GeoGen.ConsoleLauncher
@@ -11,9 +11,9 @@ namespace GeoGen.ConsoleLauncher
         #region Public properties
 
         /// <summary>
-        /// The settings for the <see cref="GeometryConstructor"/> used in the algorithm.
+        /// The settings for the algorithm facade.
         /// </summary>
-        public GeometryConstructorSettings GeometryConstructorSettings { get; }
+        public AlgorithmFacadeSettings AlgorithmFacadeSettings { get; }
 
         /// <summary>
         /// The settings related to theorem finding.
@@ -32,14 +32,14 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="AlgorithmSettings"/> class.
         /// </summary>
-        /// <param name="geometryConstructorSettings">The settings for the <see cref="GeometryConstructor"/> used in the algorithm.</param>
+        /// <param name="algorithmFacadeSettings">The settings for the algorithm facade.</param>
         /// <param name="theoremFindingSettings">The settings related to theorem finding.</param>
         /// <param name="theoremRankingSettings">The settings related to theorem ranking.</param>
-        public AlgorithmSettings(GeometryConstructorSettings geometryConstructorSettings,
+        public AlgorithmSettings(AlgorithmFacadeSettings algorithmFacadeSettings,
                                  TheoremFindingSettings theoremFindingSettings,
                                  TheoremRankingSettings theoremRankingSettings)
         {
-            GeometryConstructorSettings = geometryConstructorSettings ?? throw new ArgumentNullException(nameof(geometryConstructorSettings));
+            AlgorithmFacadeSettings = algorithmFacadeSettings ?? throw new ArgumentNullException(nameof(algorithmFacadeSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
             TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
         }
