@@ -66,7 +66,7 @@ namespace GeoGen.ConsoleLauncher
             var theoremFiles = Directory.EnumerateFiles(_settings.TheoremsFolderPath, $"*.{_settings.FilesExtention}", SearchOption.AllDirectories).ToList();
 
             // Go through all the files
-            foreach (var path in theoremFiles)
+            foreach (var templateTheoremsFilePath in theoremFiles)
             {
                 #region Reading theorem file
 
@@ -76,15 +76,12 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Get the content
-                    fileContent = await File.ReadAllTextAsync(path);
+                    fileContent = await File.ReadAllTextAsync(templateTheoremsFilePath);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // Log the exception
-                    LoggingManager.LogError($"Couldn't read the theorems file {path}.");
-
-                    // Throw further
-                    throw;
+                    // If it cannot be done, make aware
+                    throw new GeoGenException($"Couldn't load the template theorems file '{templateTheoremsFilePath}'", e);
                 }
 
                 #endregion
@@ -104,7 +101,7 @@ namespace GeoGen.ConsoleLauncher
                 if (lines.IsEmpty())
                 {
                     // Warn
-                    LoggingManager.LogWarning($"Empty theorem file {path}");
+                    LoggingManager.LogWarning($"Empty theorem file {templateTheoremsFilePath}");
 
                     // Move on
                     continue;
@@ -118,7 +115,7 @@ namespace GeoGen.ConsoleLauncher
                     // Create the template theorems
                     var templateTheorems = theorems.Select((theorem, i) => new TemplateTheorem(theorem,
                                 // To get file we look for relative path
-                                Path.GetRelativePath(_settings.TheoremsFolderPath, path),
+                                Path.GetRelativePath(_settings.TheoremsFolderPath, templateTheoremsFilePath),
                                 // Set the theorem number according to the file
                                 i + 1));
 
@@ -129,7 +126,7 @@ namespace GeoGen.ConsoleLauncher
                     if (theoremMap.AllObjects.IsEmpty())
                     {
                         // Log that we're skipping it
-                        LoggingManager.LogWarning($"No theorems in file {path}.");
+                        LoggingManager.LogWarning($"No theorems in file {templateTheoremsFilePath}.");
 
                         // Skip
                         continue;
@@ -138,16 +135,13 @@ namespace GeoGen.ConsoleLauncher
                     // Otherwise add it to our result
                     result.Add((configuration, theoremMap));
                 }
-                catch (ParsingException)
+                catch (ParsingException e)
                 {
-                    // Log the exception
-                    LoggingManager.LogError($"Couldn't parse the input file {path}.");
-
                     // Log the content
                     LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                     // Throw further
-                    throw;
+                    throw new GeoGenException($"Couldn't parse the template theorems file {templateTheoremsFilePath}.", e);
                 }
 
                 #endregion

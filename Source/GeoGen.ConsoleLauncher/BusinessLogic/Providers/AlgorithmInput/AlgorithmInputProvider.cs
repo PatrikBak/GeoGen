@@ -1,4 +1,5 @@
 ﻿using GeoGen.Algorithm;
+using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
@@ -80,7 +81,7 @@ namespace GeoGen.ConsoleLauncher
             var result = new List<LoadedAlgorithmInput>();
 
             // Go through all the input files
-            foreach (var (path, id) in inputFiles)
+            foreach (var (inputFilePath, id) in inputFiles)
             {
                 #region Loading the file
 
@@ -90,15 +91,12 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Get the content of the file
-                    fileContent = await File.ReadAllTextAsync(path);
+                    fileContent = await File.ReadAllTextAsync(inputFilePath);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    // Log the exception
-                    LoggingManager.LogError($"Couldn't read the input file {path}.");
-
-                    // Throw further
-                    throw;
+                    // If it cannot be done, make aware
+                    throw new GeoGenException($"Couldn't load the input file '{inputFilePath}'", e);
                 }
 
                 #endregion
@@ -118,7 +116,7 @@ namespace GeoGen.ConsoleLauncher
                 if (lines.IsEmpty())
                 {
                     // Warn
-                    LoggingManager.LogWarning($"Empty input file {path}");
+                    LoggingManager.LogWarning($"Empty input file {inputFilePath}");
 
                     // Move on
                     continue;
@@ -132,23 +130,20 @@ namespace GeoGen.ConsoleLauncher
                     // Add the loaded input to the result list
                     result.Add(new LoadedAlgorithmInput
                     (
-                        filePath: path,
+                        filePath: inputFilePath,
                         id: id,
                         constructions: algorithmInput.Constructions,
                         initialConfiguration: algorithmInput.InitialConfiguration,
                         numberOfIterations: algorithmInput.NumberOfIterations
                     ));
                 }
-                catch (ParsingException)
+                catch (ParsingException e)
                 {
-                    // Log the exception
-                    LoggingManager.LogError($"Couldn't parse the input file {path}.");
-
                     // Log the content
                     LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                     // Throw further
-                    throw;
+                    throw new GeoGenException($"Couldn't parse the input file {inputFilePath}.", e);
                 }
 
                 #endregion

@@ -57,13 +57,10 @@ namespace GeoGen.ConsoleLauncher
                 // Get the content of the file
                 fileContent = await File.ReadAllTextAsync(_settings.FilePath);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                // Warn
-                LoggingManager.LogWarning($"Couldn't load the simplification file {_settings.FilePath}.");
-
-                // We're done
-                return new List<SimplificationRule>();
+                // If it cannot be done, make aware
+                throw new GeoGenException($"Couldn't load the simplification rules file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -100,16 +97,13 @@ namespace GeoGen.ConsoleLauncher
                 // Return them
                 return rules;
             }
-            catch (ParsingException)
+            catch (ParsingException e)
             {
-                // Warn the exception
-                LoggingManager.LogError($"Couldn't parse the simplification rules file {_settings.FilePath}.");
-
                 // Log the content
                 LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                 // Throw further
-                throw;
+                throw new GeoGenException($"Couldn't parse the simplification rules file {_settings.FilePath}.", e);
             }
 
             #endregion
