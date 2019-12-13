@@ -132,53 +132,64 @@ namespace GeoGen.ConsoleLauncher
             #region Parse constructed objects
 
             // Skip the first line and parse the rest
-            var constructedObjects = lines.Skip(1).Select(line =>
-            {
-                // Let us match the name and the definition first
-                var nameDefinitionMatch = Regex.Match(line, "^(.+)=(.+)$");
-
-                // Make sure there's a match...
-                if (!nameDefinitionMatch.Success)
-                    throw new ParsingException($"Error while parsing '{line}'. The line should be in the form 'name = definition'.");
-
-                // Get the name
-                var newObjectName = nameDefinitionMatch.Groups[1].Value.Trim();
-
-                // Make sure the name is correct
-                if (!newObjectName.All(char.IsLetterOrDigit))
-                    throw new ParsingException($"Error while parsing '{line}'. Name of an object can contain only letters and digits, this one is '{newObjectName}'");
-
-                // Make sure the name hasn't been used
-                if (namesToObjects.ContainsKey(newObjectName))
-                    throw new ParsingException($"Error while parsing '{line}'. The object with the name '{newObjectName}' has been already declared at least twice.");
-
-                // Get the object string
-                var objectString = nameDefinitionMatch.Groups[2].Value.Trim();
-
-                try
-                {
-                    // Try to create a constructed object, without auto-creating
-                    var constructedObject = ParseConstructedObject(objectString, namesToObjects, autocreateUnnamedObjects: false);
-
-                    // Associate it
-                    namesToObjects.Add(newObjectName, constructedObject);
-
-                    // Return it
-                    return constructedObject;
-                }
-                catch (ParsingException e)
-                {
-                    // Make sure the user is aware of the problem
-                    throw new ParsingException($"Error while parsing '{line}'. Couldn't parse the object. {e.Message}");
-                }
-            })
-            // Enumerate
-            .ToList();
+            var constructedObjects = lines.Skip(1)
+                // Each line is parsed without auto-creating of unknown objects (all objects have to be defined)
+                .Select(line => ParseObjectWithDefinition(line, namesToObjects, autocreateUnnamedObjects: false))
+                // Enumerate
+                .ToList();
 
             #endregion
 
             // Finally create the result
             return (new Configuration(holder, constructedObjects), namesToObjects);
+        }
+
+        /// <summary>
+        /// Parses the constructed object represented as 'name = definition'. 
+        /// </summary>
+        /// <param name="definitionString">The name and the definition of the object of the form 'name = definition'</param>
+        /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
+        /// <param name="autocreateUnnamedObjects">If this value is true, then objects without names will be automatically created as loose ones.</param>
+        /// <returns>The parsed constructed object.</returns>
+        public static ConstructedConfigurationObject ParseObjectWithDefinition(string definitionString, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects)
+        {
+            // Let us match the name and the definition first
+            var nameDefinitionMatch = Regex.Match(definitionString, "^(.+)=(.+)$");
+
+            // Make sure there's a match...
+            if (!nameDefinitionMatch.Success)
+                throw new ParsingException($"Error while parsing '{definitionString}'. The line should be in the form 'name = definition'.");
+
+            // Get the name
+            var newObjectName = nameDefinitionMatch.Groups[1].Value.Trim();
+
+            // Make sure the name is correct
+            if (!newObjectName.All(char.IsLetterOrDigit))
+                throw new ParsingException($"Error while parsing '{definitionString}'. Name of an object can contain only letters and digits, this one is '{newObjectName}'");
+
+            // Make sure the name hasn't been used
+            if (namesToObjects.ContainsKey(newObjectName))
+                throw new ParsingException($"Error while parsing '{definitionString}'. The object with the name '{newObjectName}' has been already declared at least twice.");
+
+            // Get the string defining the object
+            var objectString = nameDefinitionMatch.Groups[2].Value.Trim();
+
+            try
+            {
+                // Try to create a constructed object
+                var constructedObject = ParseConstructedObject(objectString, namesToObjects, autocreateUnnamedObjects);
+
+                // Associate it
+                namesToObjects.Add(newObjectName, constructedObject);
+
+                // Return it with the name
+                return constructedObject;
+            }
+            catch (ParsingException e)
+            {
+                // Make sure the user is aware of the problem
+                throw new ParsingException($"Error while parsing '{definitionString}'. Couldn't parse the object. {e.Message}");
+            }
         }
 
         /// <summary>

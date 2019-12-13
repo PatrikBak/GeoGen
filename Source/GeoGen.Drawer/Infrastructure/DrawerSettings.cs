@@ -20,6 +20,11 @@ namespace GeoGen.Drawer
         /// </summary>
         public MetapostDrawerSettings MetapostDrawerSettings { get; }
 
+        /// <summary>
+        /// The settings for the provider of drawing rules.
+        /// </summary>
+        public DrawingRulesProviderSettings DrawingRulesProviderSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -29,10 +34,14 @@ namespace GeoGen.Drawer
         /// </summary>
         /// <param name="metapostDrawerSettings">The settings for the MetaPost drawer.</param>
         /// <param name="loggingSettings">The settings for the logging system.</param>
-        public DrawerSettings(LoggingSettings loggingSettings, MetapostDrawerSettings metapostDrawerSettings)
+        /// <param name="drawingRulesProviderSettings">The settings for the provider of drawing rules.</param>
+        public DrawerSettings(LoggingSettings loggingSettings,
+                              MetapostDrawerSettings metapostDrawerSettings,
+                              DrawingRulesProviderSettings drawingRulesProviderSettings)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             MetapostDrawerSettings = metapostDrawerSettings ?? throw new ArgumentNullException(nameof(metapostDrawerSettings));
+            DrawingRulesProviderSettings = drawingRulesProviderSettings ?? throw new ArgumentNullException(nameof(drawingRulesProviderSettings));
         }
 
         #endregion

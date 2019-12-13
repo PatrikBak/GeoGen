@@ -3,7 +3,7 @@ using GeoGen.DependenciesResolver;
 using GeoGen.Infrastructure;
 using Ninject;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
@@ -34,11 +34,17 @@ namespace GeoGen.Drawer
                     // And the constructor module
                     .AddConstructor();
 
+                // Bind the rules provider
+                kernel.Bind<IDrawingRulesProvider>().To<DrawingRulesProvider>().WithConstructorArgument(settings.DrawingRulesProviderSettings);
+
                 // Bind the drawer with its settings
                 kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
                     // And its data
-                    // TODO: Parse and load them from a file
-                    .WithConstructorArgument(new MetapostDrawerData(DrawingRules()));
+                    .WithConstructorArgument(new MetapostDrawerData
+                    (
+                        // Loaded via the drawing rules provider
+                        (await kernel.Get<IDrawingRulesProvider>().GetDrawingRulesAsync()).ToDictionary(rule => rule.ObjectToDraw.Construction, rule => rule)
+                    ));
 
                 // Get the drawer and try run it on some configurations
                 await kernel.Get<IDrawer>().DrawAsync(new[]
@@ -78,27 +84,6 @@ namespace GeoGen.Drawer
                 // This is a sad end
                 Environment.Exit(-1);
             }
-        }
-
-        private static IReadOnlyDictionary<Construction, DrawingRule> DrawingRules()
-        {
-            // Prepare the points
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var M = new ConstructedConfigurationObject(Midpoint, A, B);
-
-            // Prepare the rule
-            var midpointRule = new DrawingRule(M, Array.Empty<ConstructedConfigurationObject>(), new List<DrawingCommand>
-            {
-                // We want to mark the midpoint
-                new DrawingCommand(DrawingCommandType.Point, ObjectDrawingStyle.NormalObject, new[] { M }),
-
-                // As well as the segment 
-                new DrawingCommand(DrawingCommandType.Segment, ObjectDrawingStyle.NormalObject, new[] { A, B })
-            });
-
-            // Return it in a dictionary
-            return new Dictionary<Construction, DrawingRule> { { Midpoint, midpointRule } };
         }
 
         private static (Configuration, Theorem) MediansAreConcurrent()

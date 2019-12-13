@@ -68,7 +68,8 @@ namespace GeoGen.Drawer
                 postcompilationCommand: "post-compile.bat",
                 logCommandOutput: true,
                 numberOfPictures: 20
-            )
+            ),
+            drawingRulesProviderSettings: new DrawingRulesProviderSettings(filePath: "..\\..\\..\\drawing_rules.txt")
         )
         { }
     }

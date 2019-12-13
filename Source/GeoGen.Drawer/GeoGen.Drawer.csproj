@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj" />
     <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
