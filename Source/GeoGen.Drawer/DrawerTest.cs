@@ -5,6 +5,7 @@ using Ninject;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectsLayout;
 using static GeoGen.Core.PredefinedConstructions;
@@ -49,7 +50,8 @@ namespace GeoGen.Drawer
                 // Get the drawer and try run it on some configurations
                 await kernel.Get<IDrawer>().DrawAsync(new[]
                 {
-                    MediansAreConcurrent()
+                    MediansAreConcurrent(),
+                    IncircleTouchesNinePointCircle()
                 });
             }
             // Catch for any unhandled exception
@@ -88,7 +90,7 @@ namespace GeoGen.Drawer
 
         private static (Configuration, Theorem) MediansAreConcurrent()
         {
-            // Prepare the objects
+            // Create the objects
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
@@ -96,15 +98,40 @@ namespace GeoGen.Drawer
             var E = new ConstructedConfigurationObject(Midpoint, C, A);
             var F = new ConstructedConfigurationObject(Midpoint, A, B);
 
-            // Prepare the configuration
+            // Create the configuration
             var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F);
 
-            // Prepare the theorem
+            // Create the theorem
             var theorem = new Theorem(ConcurrentLines, new[]
             {
                 new LineTheoremObject(A, D),
                 new LineTheoremObject(B, E),
                 new LineTheoremObject(C, F)
+            });
+
+            // Return them
+            return (configuration, theorem);
+        }
+
+        private static (Configuration, Theorem) IncircleTouchesNinePointCircle()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var i = new ConstructedConfigurationObject(Incircle, A, B, C);
+            var P = new ConstructedConfigurationObject(Midpoint, B, C);
+            var Q = new ConstructedConfigurationObject(Midpoint, C, A);
+            var R = new ConstructedConfigurationObject(Midpoint, A, B);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, i, P, Q, R);
+
+            // Create the theorem
+            var theorem = new Theorem(TangentCircles, new[]
+            {
+                new CircleTheoremObject(P, Q, R),
+                new CircleTheoremObject(i),
             });
 
             // Return them

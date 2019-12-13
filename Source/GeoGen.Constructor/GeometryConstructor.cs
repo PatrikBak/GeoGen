@@ -258,20 +258,39 @@ namespace GeoGen.Constructor
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the picture.
-        /// It is assumed that the constructed object can be construed in the passed picture. The fact whether
+        /// It is assumed that the constructed object can be constructed in the passed picture. The fact whether
         /// the object is or is not already present in individual pictures is ignored. If the object is 
         /// inconstructible, null is returned. 
         /// </summary>
-        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="picture">The picture that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <param name="addToPicture">Indicates if we should add the object to the picture.</param>
         /// <returns>The constructed object or null; if the object is inconstructible.</returns>
-        public IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject)
+        public IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject, bool addToPicture)
         {
             // Let the resolver find the constructor and let it create the constructor function
             var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
 
             // Perform the construction
-            return constructorFunction(picture);
+            var analyticObject = constructorFunction(picture);
+
+            // If the object couldn't be constructed, return null
+            if (analyticObject == null)
+                return null;
+
+            // Otherwise the object is fine
+            // If we are supposed to add it to the pictures...
+            if (addToPicture)
+            {
+                // Then let's do it
+                picture.TryAdd(constructedObject, analyticObject, out var equalObject);
+
+                // If there was an equal object, then we just mark the duplicate
+                picture.MarkDuplicate(equalObject, constructedObject);
+            }
+
+            // Return the object
+            return analyticObject;
         }
 
         #endregion

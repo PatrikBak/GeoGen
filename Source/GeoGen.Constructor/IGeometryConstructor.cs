@@ -55,13 +55,14 @@ namespace GeoGen.Constructor
 
         /// <summary>
         /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the picture.
-        /// It is assumed that the constructed object can be construed in the passed picture. The fact whether
+        /// It is assumed that the constructed object can be constructed in the passed picture. The fact whether
         /// the object is or is not already present in individual pictures is ignored. If the object is 
         /// inconstructible, null is returned. 
         /// </summary>
-        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="picture">The picture that should contain the input for the construction.</param>
         /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <param name="addToPicture">Indicates if we should add the object to the picture.</param>
         /// <returns>The constructed object or null; if the object is inconstructible.</returns>
-        IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject);
+        IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject, bool addToPicture);
     }
 }

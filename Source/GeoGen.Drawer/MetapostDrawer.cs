@@ -227,36 +227,41 @@ namespace GeoGen.Drawer
                 // Remap the template objects
                 var objectMap = rule.ObjectToDraw.PassedArguments.FlattenedList
                     // To the actual objects
-                    .Zip(constructedObject.PassedArguments.FlattenedList)
-                    // Specifically to their analytic versions
-                    .ToDictionary(pair => pair.Item1, pair => picture.Get(pair.Item2));
+                    .ZipToDictionary(constructedObject.PassedArguments.FlattenedList);
 
                 // Add the actual object to the mapping
-                objectMap.Add(rule.ObjectToDraw, picture.Get(constructedObject));
+                objectMap.Add(rule.ObjectToDraw, constructedObject);
 
                 // Add the auxiliary objects too
                 rule.AuxiliaryObjects.ForEach(auxiliaryObject =>
                 {
-                    // Construct the object using the constructor
-                    var analyticObject = _constructor.Construct(picture, auxiliaryObject);
+                    // Remap the object by taking the same construction
+                    var remmapedObject = new ConstructedConfigurationObject(auxiliaryObject.Construction,
+                        // And remapping its arguments
+                        auxiliaryObject.PassedArguments.FlattenedList.Select(argument => objectMap[argument]).ToArray());
+
+                    // The remapped object now has the real object as its arguments, so we can construct it
+                    var analyticObject = _constructor.Construct(picture, remmapedObject, addToPicture: true);
 
                     // If the object cannot be constructed, make aware
                     if (analyticObject == null)
                         throw new ConstructionException($"A drawing command of the drawing rule for {rule.ObjectToDraw.Construction} contains an inconstructible object.");
 
-                    // Add them to the map
-                    objectMap.Add(auxiliaryObject, analyticObject);
+                    // It might be used in other constructions, so we need to put it into the map
+                    objectMap.Add(auxiliaryObject, remmapedObject);
                 });
 
                 // Perform the individual drawing commands
                 rule.DrawingCommands.ForEach(command =>
                 {
-                    // Find the analytic versions of objects being drawn
+                    // Find the remapped versions of objects being drawn
                     var objectsBeingDrawn = command.Arguments.Select(configurationObject =>
                             // Object has to be already mapped
                             objectMap.GetOrDefault(configurationObject)
                                 // Otherwise we have a huge problem...
                                 ?? throw new DrawerException($"A drawing command of the drawing rule for {rule.ObjectToDraw.Construction} contains an undefined object."))
+                        // Or even their analytic version
+                        .Select(configurationObject => picture.Get(configurationObject))
                         // Enumerate
                         .ToArray();
 

@@ -546,7 +546,7 @@ namespace GeoGen.Drawer
                     ?? throw new DrawerException($"The style {style} doesn't have its macro defined for drawing circles.");
 
                 // Use the macro to draw the circle
-                code.AppendLine($"draw {macroName}({ConvertPoint(circle.Center)}, {drawingData.ScaleVariable}{circle.Radius.ToString(CultureInfo.InvariantCulture)})");
+                code.AppendLine($"draw {macroName}({ConvertPoint(circle.Center)}, {drawingData.ScaleVariable}*{circle.Radius.ToString(CultureInfo.InvariantCulture)});");
             });
 
             #endregion

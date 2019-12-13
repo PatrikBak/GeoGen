@@ -21,7 +21,7 @@ enddef;
 %
 % Returns the circle centered at O with given radius
 %
-vardef CircleWithRadius(expr O, r) = fullcircle scaled 2radius shifted O enddef;
+vardef CircleWithRadius(expr O, r) = fullcircle scaled (2r) shifted O enddef;
 
 %
 % Labels a given point so that the label is intelligently placed (the code will be cleaned)
