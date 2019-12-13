@@ -121,7 +121,7 @@ namespace GeoGen.ConsoleLauncher
             if (lines[0].StartsWith('-'))
                 throw new ParsingException($"The first line cannot start with '-', since this character starts lines with assumptions.");
 
-            // We need to find lines that are not assumption lines, i.e. those that rules
+            // We need to find lines that are not assumption lines, i.e. those that begin rules
             // First index lines
             return lines.Select((line, index) => (line, index))
                 // The rules not starting with '-' are what we want 
