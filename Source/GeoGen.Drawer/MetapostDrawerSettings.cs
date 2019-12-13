@@ -41,6 +41,11 @@ namespace GeoGen.Drawer
         /// </summary>
         public bool LogCommandOutput { get; }
 
+        /// <summary>
+        /// The number of pictures that are drawn for a single configuration in order to find the best looking one.
+        /// </summary>
+        public int NumberOfPictures { get; }
+
         #endregion
 
         #region Constructor
@@ -54,12 +59,14 @@ namespace GeoGen.Drawer
         /// <param name="compilationCommand">The command used to compile the created MetaPost file.</param>
         /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null.</param>
         /// <param name="logCommandOutput">Indicates whether we should log the output provided by the compilation and post-compilation command.</param>
+        /// <param name="numberOfPictures">The number of pictures that are drawn for a single configuration in order to find the best looking one.</param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,
                                       string metapostCodeFilePath,
                                       string metapostMacrosLibraryPath,
                                       (string program, string arguments) compilationCommand,
                                       string postcompilationCommand,
-                                      bool logCommandOutput)
+                                      bool logCommandOutput,
+                                      int numberOfPictures)
         {
             DrawingData = drawingData ?? throw new ArgumentNullException(nameof(drawingData));
             MetapostCodeFilePath = metapostCodeFilePath ?? throw new ArgumentNullException(nameof(metapostCodeFilePath));
@@ -67,6 +74,7 @@ namespace GeoGen.Drawer
             CompilationCommand = compilationCommand;
             PostcompilationCommand = postcompilationCommand;
             LogCommandOutput = logCommandOutput;
+            NumberOfPictures = numberOfPictures;
         }
 
         #endregion

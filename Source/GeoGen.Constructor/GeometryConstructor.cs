@@ -256,6 +256,24 @@ namespace GeoGen.Constructor
             return canBeConstructed ? result : null;
         }
 
+        /// <summary>
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the picture.
+        /// It is assumed that the constructed object can be construed in the passed picture. The fact whether
+        /// the object is or is not already present in individual pictures is ignored. If the object is 
+        /// inconstructible, null is returned. 
+        /// </summary>
+        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <returns>The constructed object or null; if the object is inconstructible.</returns>
+        public IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject)
+        {
+            // Let the resolver find the constructor and let it create the constructor function
+            var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
+
+            // Perform the construction
+            return constructorFunction(picture);
+        }
+
         #endregion
 
         #region Private methods

@@ -65,8 +65,9 @@ namespace GeoGen.Drawer
                 metapostCodeFilePath: "figures.mp",
                 metapostMacrosLibraryPath: "macros.mp",
                 compilationCommand: (program: "mpost", arguments: "-interaction=nonstopmode -s prologues=3"),
-                postcompilationCommand: null,
-                logCommandOutput: true
+                postcompilationCommand: "post-compile.bat",
+                logCommandOutput: true,
+                numberOfPictures: 20
             )
         )
         { }

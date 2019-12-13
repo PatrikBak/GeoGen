@@ -159,17 +159,64 @@ namespace GeoGen.Drawer
             // Deconstruct
             var (configuration, theorem) = configurtionTheoremPair;
 
+            // Safely execute
+            var (pictures, constructionData) = GeneralUtilities.TryExecute(
+                // Constructing the configuration
+                () => _constructor.Construct(configuration, _settings.NumberOfPictures),
+                // Make sure a potential exception is caught and re-thrown
+                (InconsistentPicturesException e) => throw new ConstructionException("Drawing of the initial configuration failed.", e));
+
+            // Make sure there is no inconstructible object
+            if (constructionData.InconstructibleObject != default)
+                throw new ConstructionException("The configuration cannot be constructed, because it contains an inconstructible object.");
+
+            // Make sure there are no duplicates
+            if (constructionData.Duplicates != default)
+                throw new ConstructionException("The configuration cannot be constructed, because it contains duplicate objects");
+
+            // Construct the figures
+            return pictures.Select(picture =>
+            {
+                try
+                {
+                    // Try to construct the figure
+                    var figure = ConstructFigure(configuration, theorem, picture);
+
+                    // Rank it
+                    var rank = figure.CalculateVisualBadness();
+
+                    // Return the tuple
+                    return (figure, rank);
+                }
+                catch (AnalyticException e)
+                {
+                    // Make aware if there is a weird problem
+                    throw new ConstructionException("Cannot construct a figure because analytic geometry failed.", e);
+                }
+            })
+            // Find the one with the smallest ranking, i.e. the most beautiful one
+            .MinItem(item => item.rank)
+            // Unwrap it
+            .figure;
+        }
+
+        /// <summary>
+        /// Performs the construction of a MetaPost figure holding the passed configuration and theorem
+        /// with respect to the passed picture containing needed analytic objects.
+        /// </summary>
+        /// <param name="configuration">The configuration to be constructed.</param>
+        /// <param name="theorem">The theorem to be constructed.</param>
+        /// <param name="picture">The picture with analytic representations of the objects.</param>
+        /// <returns>The constructed MetaPost figure.</returns>
+        private MetapostFigure ConstructFigure(Configuration configuration, Theorem theorem, Picture picture)
+        {
             // Create an empty figure
             var figure = new MetapostFigure();
-
-            // Construct the configuration
-            // TODO: Handle errors
-            var pictures = _constructor.Construct(configuration, 1).pictures;
 
             #region Loose object layout construction
 
             // Get the loose objects
-            var looseObjects = configuration.LooseObjects.Select(pictures.First().Get).ToArray();
+            var looseObjects = configuration.LooseObjects.Select(picture.Get).ToArray();
 
             // Switch based on the loose objects layout
             switch (configuration.LooseObjectsHolder.Layout)
@@ -210,16 +257,20 @@ namespace GeoGen.Drawer
                     // To the actual objects
                     .Zip(constructedObject.PassedArguments.FlattenedList)
                     // Specifically to their analytic versions
-                    .ToDictionary(pair => pair.Item1, pair => pictures.First().Get(pair.Item2));
+                    .ToDictionary(pair => pair.Item1, pair => picture.Get(pair.Item2));
 
                 // Add the actual object to the mapping
-                objectMap.Add(rule.ObjectToDraw, pictures.First().Get(constructedObject));
+                objectMap.Add(rule.ObjectToDraw, picture.Get(constructedObject));
 
                 // Add the auxiliary objects too
                 rule.AuxiliaryObjects.ForEach(auxiliaryObject =>
                 {
                     // Construct the object using the constructor
-                    var analyticObject = _constructor.Construct(pictures, auxiliaryObject)[pictures.First()];
+                    var analyticObject = _constructor.Construct(picture, auxiliaryObject);
+
+                    // If the object cannot be constructed, make aware
+                    if (analyticObject == null)
+                        throw new ConstructionException($"A drawing command of the drawing rule for {rule.ObjectToDraw.Construction} contains an inconstructible object.");
 
                     // Add them to the map
                     objectMap.Add(auxiliaryObject, analyticObject);
@@ -304,18 +355,18 @@ namespace GeoGen.Drawer
                 // If the line is specified explicitly...
                 line.DefinedByExplicitObject ?
                     // Then we just pull the analytic version of it from the picture
-                    (Line)pictures.First().Get(line.ConfigurationObject) :
+                    (Line)picture.Get(line.ConfigurationObject) :
                     // Otherwise we construct it from its points
-                    new Line((Point)pictures.First().Get(line.PointsList[0]), (Point)pictures.First().Get(line.PointsList[1]));
+                    new Line((Point)picture.Get(line.PointsList[0]), (Point)picture.Get(line.PointsList[1]));
 
             // Helper function that constructs a circle
             Circle ConstructCircle(CircleTheoremObject circle) =>
                 // If the line is specified explicitly...
                 circle.DefinedByExplicitObject ?
                     // Then we just pull the analytic version of it from the picture
-                    (Circle)pictures.First().Get(circle.ConfigurationObject) :
+                    (Circle)picture.Get(circle.ConfigurationObject) :
                     // Otherwise we construct it from its points
-                    new Circle((Point)pictures.First().Get(circle.PointsList[0]), (Point)pictures.First().Get(circle.PointsList[1]), (Point)pictures.First().Get(circle.PointsList[2]));
+                    new Circle((Point)picture.Get(circle.PointsList[0]), (Point)picture.Get(circle.PointsList[1]), (Point)picture.Get(circle.PointsList[2]));
 
             // Helper function adds a given theorem line to the picture, together with the points it should pass through
             // It can be specified whether the line should be drawn as a shifted one, or a regular one
@@ -332,7 +383,7 @@ namespace GeoGen.Drawer
                 }
 
                 // Otherwise we want to say that the line passes through its defining points
-                var finalPassingPoints = line.Points.Select(pictures.First().Get).Cast<Point>()
+                var finalPassingPoints = line.Points.Select(picture.Get).Cast<Point>()
                     // As well as through the passed passing points
                     .Concat(passingPoints)
                     // Enumerate
@@ -351,7 +402,7 @@ namespace GeoGen.Drawer
                     // We get the points
                     var points = theorem.InvolvedObjects.Cast<PointTheoremObject>()
                         // And their analytic versions
-                        .Select(theoremObject => (Point)pictures.First().Get(theoremObject.ConfigurationObject))
+                        .Select(theoremObject => (Point)picture.Get(theoremObject.ConfigurationObject))
                         // Enumerate
                         .ToArray();
 
@@ -373,7 +424,7 @@ namespace GeoGen.Drawer
                     // We get the points
                     var points = theorem.InvolvedObjects.Cast<PointTheoremObject>()
                         // And their analytic versions
-                        .Select(theoremObject => (Point)pictures.First().Get(theoremObject.ConfigurationObject))
+                        .Select(theoremObject => (Point)picture.Get(theoremObject.ConfigurationObject))
                         // Enumerate
                         .ToArray();
 
@@ -496,7 +547,7 @@ namespace GeoGen.Drawer
                         // And for each
                         .Select(segment => segment.ObjectsSet.Cast<PointTheoremObject>()
                             // Get the points
-                            .Select(point => (Point)pictures.First().Get(point.ConfigurationObject)).ToArray())
+                            .Select(point => (Point)picture.Get(point.ConfigurationObject)).ToArray())
                         // Enumerate
                         .ToArray();
 
@@ -517,7 +568,7 @@ namespace GeoGen.Drawer
                     var lineOrCircle = theorem.InvolvedObjects.OfType<TheoremObjectWithPoints>().First();
 
                     // Mark the point
-                    figure.AddPoint((Point)pictures.First().Get(point.ConfigurationObject), ObjectDrawingStyle.TheoremObject);
+                    figure.AddPoint((Point)picture.Get(point.ConfigurationObject), ObjectDrawingStyle.TheoremObject);
 
                     // Switch on the other object's type
                     switch (lineOrCircle)
@@ -526,7 +577,7 @@ namespace GeoGen.Drawer
                         case LineTheoremObject line:
 
                             // Then draw it so it passes through the point and is shifted a bit
-                            DrawTheoremLine(line, shifted: true, (Point)pictures.First().Get(point.ConfigurationObject));
+                            DrawTheoremLine(line, shifted: true, (Point)picture.Get(point.ConfigurationObject));
 
                             break;
 
@@ -567,7 +618,7 @@ namespace GeoGen.Drawer
                     var label = $"${(char)('A' + index)}$";
 
                     // Get the analytic version
-                    var analyticPoint = (Point)pictures.First().Get(configurationObject);
+                    var analyticPoint = (Point)picture.Get(configurationObject);
 
                     // Add the label
                     figure.AddLabel(analyticPoint, label);

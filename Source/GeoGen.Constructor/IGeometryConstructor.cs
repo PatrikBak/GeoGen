@@ -52,5 +52,16 @@ namespace GeoGen.Constructor
         /// <param name="constructedObject">The object that is about to be constructed.</param>
         /// <returns>The dictionary mapping pictures to constructed objects, or null; if the object is inconstructible.</returns>
         IReadOnlyDictionary<Picture, IAnalyticObject> Construct(Pictures pictures, ConstructedConfigurationObject constructedObject);
+
+        /// <summary>
+        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the picture.
+        /// It is assumed that the constructed object can be construed in the passed picture. The fact whether
+        /// the object is or is not already present in individual pictures is ignored. If the object is 
+        /// inconstructible, null is returned. 
+        /// </summary>
+        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
+        /// <param name="constructedObject">The object that is about to be constructed.</param>
+        /// <returns>The constructed object or null; if the object is inconstructible.</returns>
+        IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject);
     }
 }

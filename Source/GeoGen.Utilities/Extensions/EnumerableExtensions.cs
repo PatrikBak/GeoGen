@@ -17,10 +17,26 @@ namespace GeoGen.Utilities
         /// <typeparam name="TValue">The type of value that must be comparable.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="valueSelector">The function that retrieves a value from an item.</param>
+        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
         /// <returns>The first maximal item with the given value.</returns>
-        public static TItem MaxItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector)
-            where TValue : IComparable<TValue>
+        public static TItem MinItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector, IComparer<TValue> comparer = null)
+            // Reuse the function for the maximal item by reversing the comparer 
+            => enumerable.MaxItem(valueSelector, Comparer<TValue>.Create((x, y) => (comparer ?? Comparer<TValue>.Default).Compare(y, x)));
+
+        /// <summary>
+        /// Finds the item with the maximal value found for it by a given value selector.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
+        /// <typeparam name="TValue">The type of value that must be comparable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="valueSelector">The function that retrieves a value from an item.</param>
+        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
+        /// <returns>The first maximal item with the given value.</returns>
+        public static TItem MaxItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector, IComparer<TValue> comparer = null)
         {
+            // Make sure we have a comparer
+            comparer ??= Comparer<TValue>.Default;
+
             // The maximal element
             TItem maxElement = default;
 
@@ -50,11 +66,11 @@ namespace GeoGen.Utilities
                 else
                 {
                     // Find out if we don't have a higher value
-                    if (currentValue.CompareTo(maxValue) > 0)
+                    if (comparer.Compare(currentValue, maxValue) > 0)
                     {
                         // If yes, set it as the maximal
                         maxElement = currentElement;
-                        currentValue = maxValue;
+                        maxValue = currentValue;
                     }
                 }
             }
