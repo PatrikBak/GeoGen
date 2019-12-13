@@ -19,7 +19,7 @@ namespace GeoGen.ConsoleLauncher
         (
             loggingSettings: new LoggingSettings
             (
-                loggerSettings: new List<BaseLoggerSettings>
+                loggers: new List<BaseLoggerSettings>
                 {
                     // Console logger
                     new ConsoleLoggerSettings

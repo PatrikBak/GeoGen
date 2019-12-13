@@ -22,10 +22,10 @@ namespace GeoGen.Infrastructure
         /// <summary>
         /// Initializes a new instance of the <see cref="LoggingSettings"/> class.
         /// </summary>
-        /// <param name="loggerSettings">The settings for particular loggers.</param>
-        public LoggingSettings(IReadOnlyList<BaseLoggerSettings> loggerSettings)
+        /// <param name="loggers">The settings for particular loggers.</param>
+        public LoggingSettings(IReadOnlyList<BaseLoggerSettings> loggers)
         {
-            Loggers = loggerSettings ?? throw new ArgumentNullException(nameof(loggerSettings));
+            Loggers = loggers ?? throw new ArgumentNullException(nameof(loggers));
         }
 
         #endregion

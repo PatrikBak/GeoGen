@@ -38,6 +38,10 @@ namespace GeoGen.Infrastructure
                 // Try to deserialize the settings.
                 var settings = JsonConvert.DeserializeObject<TSettings>(settingsJson, new BaseLoggerSettingsConverter());
 
+                // If it's null, make aware
+                if (settings == null)
+                    throw new SettingsException("The deserializer of settings returned null.");
+
                 // Log that we're done
                 LoggingManager.LogInfo($"Settings loaded from: {settingsFilePath}");
 

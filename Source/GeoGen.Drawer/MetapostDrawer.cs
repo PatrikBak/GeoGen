@@ -1,14 +1,15 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.Drawer
 {
@@ -20,19 +21,23 @@ namespace GeoGen.Drawer
         #region Private fields
 
         /// <summary>
+        /// The settings for the drawer.
+        /// </summary>
+        private readonly MetapostDrawerSettings _settings;
+
+        /// <summary>
+        /// The data for the drawer.
+        /// </summary>
+        private readonly MetapostDrawerData _data;
+
+        #endregion
+
+        #region Dependencies
+
+        /// <summary>
         /// The constructor that calculates coordinates for us.
         /// </summary>
         private readonly IGeometryConstructor _constructor;
-
-        /// <summary>
-        /// The dictionary mapping construction to the rules explaining what should be drawn while performing them.
-        /// </summary>
-        private readonly IReadOnlyDictionary<Construction, DrawingRule> _drawingRules;
-
-        /// <summary>
-        /// The data with MetaPost-related commands.
-        /// </summary>
-        private readonly MetapostDrawingData _drawingData;
 
         #endregion
 
@@ -41,64 +46,14 @@ namespace GeoGen.Drawer
         /// <summary>
         /// Initializes a new instance of the <see cref="MetapostDrawer"/> class.
         /// </summary>
+        /// <param name="data">The data for the drawer.</param>
+        /// <param name="settings">The settings for the drawer.</param>
         /// <param name="constructor">The constructor that calculates coordinates for us.</param>
-        public MetapostDrawer(IGeometryConstructor constructor)
+        public MetapostDrawer(MetapostDrawerSettings settings, MetapostDrawerData data, IGeometryConstructor constructor)
         {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _data = data ?? throw new ArgumentNullException(nameof(data));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-
-            #region Dummy drawing rules 
-
-            // Prepare the points
-            var A = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var B = new LooseConfigurationObject(ConfigurationObjectType.Point);
-            var M = new ConstructedConfigurationObject(PredefinedConstructions.Midpoint, A, B);
-
-            // Prepare the rule
-            var midpointRule = new DrawingRule(M, Array.Empty<ConstructedConfigurationObject>(), new List<DrawingCommand>
-            {
-                // We want to mark the midpoint
-                new DrawingCommand(DrawingCommandType.Point, ObjectDrawingStyle.NormalObject, new[] { M }),
-
-                // As well as the segment 
-                new DrawingCommand(DrawingCommandType.Segment, ObjectDrawingStyle.NormalObject, new[] { A, B })
-            });
-
-            // Prepare the dictionary of rules
-            _drawingRules = new Dictionary<Construction, DrawingRule> { { PredefinedConstructions.Midpoint, midpointRule } };
-
-            #endregion
-
-            #region Hard-coded drawing data
-
-            // Prepare the drawing data
-            // TODO: Settings
-            _drawingData = new MetapostDrawingData
-            (
-                scaleVariable: "u",
-                shiftLength: 0.4,
-                boundingBoxOffset: 1,
-                pointLabelMacro: "LabelPoint",
-                pointMarkMacros: new Dictionary<ObjectDrawingStyle, string>
-                {
-                    { ObjectDrawingStyle.AuxiliaryObject, "PointMarkAuxiliaryStyle" },
-                    { ObjectDrawingStyle.NormalObject, "PointMarkNormalStyle" },
-                    { ObjectDrawingStyle.TheoremObject, "PointMarkTheoremStyle" }
-                },
-                lineSegmentMacros: new Dictionary<ObjectDrawingStyle, string>
-                {
-                    { ObjectDrawingStyle.AuxiliaryObject, "LineSegmentAuxiliaryStyle" },
-                    { ObjectDrawingStyle.NormalObject, "LineSegmentNormalStyle" },
-                    { ObjectDrawingStyle.TheoremObject, "LineSegmentTheoremStyle" }
-                },
-                circleMacros: new Dictionary<ObjectDrawingStyle, string>
-                {
-                    { ObjectDrawingStyle.AuxiliaryObject, "CircleAuxiliaryStyle" },
-                    { ObjectDrawingStyle.NormalObject, "CircleNormalStyle" },
-                    { ObjectDrawingStyle.TheoremObject, "CircleTheoremStyle" }
-                }
-            );
-
-            #endregion
         }
 
         #endregion
@@ -115,33 +70,83 @@ namespace GeoGen.Drawer
             // Create a figure from configuration-theorem pair
             var figures = configurationWithTheorems.Select(CreateFigure).ToArray();
 
+            #region Writing code file
+
             // Get the code for them 
             var code = CreateCode(figures);
 
-            // Log
-            Console.WriteLine("Writing MetaPost file");
-
-            // Create the file that will be compiled
-            // TODO: Settings 
-            await File.WriteAllTextAsync("figures.mp", code);
-
-            // Log
-            Console.WriteLine("Running compilation");
-
-            // Compile
-            // TODO: Settings
-            await RunCommandAsync("mpost", "-interaction=nonstopmode -s prologues=3 \"figures.mp\"");
-
-            // Open them 
-            for (var i = 0; i < figures.Length; i++)
+            try
             {
-                // Get the input file name
-                var input = $"figures.{i}";
-
-                // Run the command
-                // TODO: Settings (potentially more commands)
-                await RunCommandAsync(@"C:\Program Files\SumatraPDF\SumatraPDF.exe", $"\"{input}\"");
+                // Create the file that will be compiled
+                await File.WriteAllTextAsync(_settings.MetapostCodeFilePath, code);
             }
+            catch (Exception e)
+            {
+                // Throw further
+                throw new DrawerException($"Couldn't write the MetaPost code to the path {_settings.MetapostCodeFilePath}", e);
+            }
+
+            #endregion
+
+            #region Compiling
+
+            // Construct the command with parameters
+            var command = $"{_settings.CompilationCommand.program} \"{_settings.MetapostCodeFilePath}\"";
+
+            // If we should log the command output, log that we're about to run it
+            if (_settings.LogCommandOutput)
+                LoggingManager.LogInfo($"Running '{command}'");
+
+            // Run the compilation command
+            var exitCode = await ProcessUtilities.RunCommandAsync(_settings.CompilationCommand.program,
+                // With the appended file path at the end
+                arguments: $"{_settings.CompilationCommand.arguments} \"{_settings.MetapostCodeFilePath}\"",
+                // With output handler using the log system, if we should log, or null, if not
+                outputDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogInfo(data)) : null,
+                // With error handler using the log system, if we should log, or null, if not
+                errorDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogError(data)) : null);
+
+            // If the error code is not OK, i.e. not zero, make aware
+            if (exitCode != 0)
+                throw new DrawerException($"MetaPost compilation code '{command}' finished with an exit code of {exitCode}");
+
+            // Log that we're done, if we should log            
+            if (_settings.LogCommandOutput)
+                LoggingManager.LogInfo($"Command '{command}' has been executed successfully.");
+
+            #endregion
+
+            #region Post-compilation command
+
+            // If there was no error, we run post-compilation command, if it's there
+            if (_settings.PostcompilationCommand != null)
+            {
+                // Construct the command with parameters
+                command = $"{_settings.PostcompilationCommand} {figures.Length}";
+
+                // If we should log the command output, log that we're about to run it
+                if (_settings.LogCommandOutput)
+                    LoggingManager.LogInfo($"Running '{command}'");
+
+                // Run it
+                exitCode = await ProcessUtilities.RunCommandAsync(_settings.PostcompilationCommand,
+                    // With the argument equal to the number of generated files
+                    arguments: $"{figures.Length}",
+                    // With output handler using the log system, if we should log, or null, if not
+                    outputDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogInfo(data)) : null,
+                    // With error handler using the log system, if we should log, or null, if not
+                    errorDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogError(data)) : null);
+
+                // If the error code is not OK, i.e. not zero, make aware
+                if (exitCode != 0)
+                    throw new DrawerException($"The post-compilation command '{command}' finished with an exit code of {exitCode}");
+
+                // Log that we're done, if we should log
+                if (_settings.LogCommandOutput)
+                    LoggingManager.LogInfo($"Command '{command}' has been executed successfully.");
+            }
+
+            #endregion
         }
 
         /// <summary>
@@ -196,7 +201,7 @@ namespace GeoGen.Drawer
             configuration.ConstructedObjects.ForEach(constructedObject =>
             {
                 // Make sure it has a rule
-                var rule = _drawingRules.GetOrDefault(constructedObject.Construction)
+                var rule = _data.DrawingRules.GetOrDefault(constructedObject.Construction)
                     // If not, make aware
                     ?? throw new DrawerException($"Cannot draw the picture, because construction {constructedObject.Construction} has no drawing rule.");
 
@@ -585,21 +590,16 @@ namespace GeoGen.Drawer
             var code = new StringBuilder();
 
             // Append the preamble
-            // TODO: Settings
-            code.Append("input macros;\n\n");
-
-            // Declare the unit
-            // TODO: Settings
-            code.Append("u=8cm;\n\n");
+            code.Append($"input \"{_settings.MetapostMacrosLibraryPath}\"\n\n");
 
             // Append all the figures
             figures.ForEach((figure, index) =>
             {
                 // Append the preamble
-                code.Append($"beginfig({index});\n\n");
+                code.Append($"beginfig({index + 1});\n\n");
 
-                // Append the actual code of the picture
-                code.Append(figure.ToCode(_drawingData));
+                // Append the actual code of the picture using the provided drawing data
+                code.Append(figure.ToCode(_settings.DrawingData));
 
                 // Append the end
                 code.Append($"\nendfig;\n\n");
@@ -610,55 +610,6 @@ namespace GeoGen.Drawer
 
             // Return the result
             return code.ToString();
-        }
-
-        /// <summary>
-        /// A helper method that runs a given command with arguments asynchronously
-        /// </summary>
-        /// <param name="command">The command to be run.</param>
-        /// <param name="arguments">The arguments of the command.</param>
-        /// <returns>The task representing the result.</returns>
-        private static Task RunCommandAsync(string command, string arguments)
-        {
-            // Prepare the task completion source that will indicate the end of the command
-            var taskCompletionSource = new TaskCompletionSource<bool>();
-
-            // Prepare the process
-            var process = new Process
-            {
-                // Setup the start
-                StartInfo =
-                {
-                    // Pass the command
-                    FileName = command,
-
-                    // With its arguments
-                    Arguments = arguments
-                },
-
-                // This is needed for the exit event to be fired
-                EnableRaisingEvents = true
-            };
-
-            // Handle when it exists
-            process.Exited += (sender, args) =>
-            {
-                // Make sure the result is set
-                taskCompletionSource.SetResult(true);
-
-                // Dispose the process
-                process.Dispose();
-            };
-
-            // Simply write all the output to the console for now
-            process.OutputDataReceived += (s, e) => Console.WriteLine(e.Data);
-            process.ErrorDataReceived += (s, e) => Console.Error.WriteLine(e.Data);
-
-            // Start the process
-            process.Start();
-
-            // Return the task represented by this asynchronous operation
-            return taskCompletionSource.Task;
         }
 
         #endregion
