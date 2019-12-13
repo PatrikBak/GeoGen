@@ -305,7 +305,7 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
-                // FEATURE: Should we verify here whether the configuration has a normal picture? E.g. no close points.
+                // FEAUTURE: Should we verify here whether the configuration has a normal picture? E.g. no close points.
 
                 // If we got here, everything's fine
                 return true;
