@@ -3,19 +3,19 @@
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// Represents an exception that is thrown when something incorrect happens in the drawer module.
+    /// Represents an exception that is thrown when it was supposed to draw something undrawable.
     /// </summary>
     public class ConstructionException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawerException"/> class.
+        /// Initializes a new instance of the <see cref="ConstructionException"/> class.
         /// </summary>
         public ConstructionException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawerException"/> class
+        /// Initializes a new instance of the <see cref="ConstructionException"/> class
         /// with a custom message about what happened.
         /// </summary>
         /// <param name="message">The message about what happened.</param>
@@ -25,7 +25,7 @@ namespace GeoGen.Drawer
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawerException"/> class
+        /// Initializes a new instance of the <see cref="ConstructionException"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <param name="message">The message about what happened.</param>

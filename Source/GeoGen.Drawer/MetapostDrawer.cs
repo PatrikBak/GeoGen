@@ -1,7 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.Drawer
 {
@@ -93,26 +91,14 @@ namespace GeoGen.Drawer
             // Construct the command with parameters
             var command = $"{_settings.CompilationCommand.program} \"{_settings.MetapostCodeFilePath}\"";
 
-            // If we should log the command output, log that we're about to run it
-            if (_settings.LogCommandOutput)
-                LoggingManager.LogInfo($"Running '{command}'");
-
             // Run the compilation command
-            var exitCode = await ProcessUtilities.RunCommandAsync(_settings.CompilationCommand.program,
+            var (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.CompilationCommand.program,
                 // With the appended file path at the end
-                arguments: $"{_settings.CompilationCommand.arguments} \"{_settings.MetapostCodeFilePath}\"",
-                // With output handler using the log system, if we should log, or null, if not
-                outputDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogInfo(data)) : null,
-                // With error handler using the log system, if we should log, or null, if not
-                errorDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogError(data)) : null);
+                arguments: $"{_settings.CompilationCommand.arguments} \"{_settings.MetapostCodeFilePath}\"");
 
             // If the error code is not OK, i.e. not zero, make aware
             if (exitCode != 0)
-                throw new DrawerException($"MetaPost compilation code '{command}' finished with an exit code of {exitCode}");
-
-            // Log that we're done, if we should log            
-            if (_settings.LogCommandOutput)
-                LoggingManager.LogInfo($"Command '{command}' has been executed successfully.");
+                throw new CommandException($"The compilation of the MetaPost code file '{_settings.MetapostCodeFilePath}' failed.", command, exitCode, output, errors);
 
             #endregion
 
@@ -124,26 +110,12 @@ namespace GeoGen.Drawer
                 // Construct the command with parameters
                 command = $"{_settings.PostcompilationCommand} {figures.Length}";
 
-                // If we should log the command output, log that we're about to run it
-                if (_settings.LogCommandOutput)
-                    LoggingManager.LogInfo($"Running '{command}'");
-
-                // Run it
-                exitCode = await ProcessUtilities.RunCommandAsync(_settings.PostcompilationCommand,
-                    // With the argument equal to the number of generated files
-                    arguments: $"{figures.Length}",
-                    // With output handler using the log system, if we should log, or null, if not
-                    outputDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogInfo(data)) : null,
-                    // With error handler using the log system, if we should log, or null, if not
-                    errorDataHandler: _settings.LogCommandOutput ? (Action<string>)(data => LoggingManager.LogError(data)) : null);
+                // Run it with the argument equal to the number of generated files
+                (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.PostcompilationCommand, arguments: $"{figures.Length}");
 
                 // If the error code is not OK, i.e. not zero, make aware
                 if (exitCode != 0)
-                    throw new DrawerException($"The post-compilation command '{command}' finished with an exit code of {exitCode}");
-
-                // Log that we're done, if we should log
-                if (_settings.LogCommandOutput)
-                    LoggingManager.LogInfo($"Command '{command}' has been executed successfully.");
+                    throw new CommandException($"The execution of the post-compilation command failed.", command, exitCode, output, errors);
             }
 
             #endregion

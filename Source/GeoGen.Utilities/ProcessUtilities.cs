@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace GeoGen.Utilities
@@ -10,17 +9,15 @@ namespace GeoGen.Utilities
     public static class ProcessUtilities
     {
         /// <summary>
-        /// A helper method that runs a given command with arguments asynchronously and returns the exit code.
+        /// A helper method that runs a given command with arguments asynchronously.
         /// </summary>
         /// <param name="command">The command to be run.</param>
         /// <param name="arguments">The arguments of the command.</param>
-        /// <param name="outputDataHandler">The handler for output data of the process' standard output stream.</param>
-        /// <param name="errorDataHandler">The handler for error data of the process' standard output stream.</param>
-        /// <returns>The exit code.</returns>
-        public static Task<int> RunCommandAsync(string command, string arguments, Action<string> outputDataHandler = null, Action<string> errorDataHandler = null)
+        /// <returns>The exit code, the output from the standard output stream, the output from the standard error stream.</returns>
+        public static Task<(int exitCode, string output, string error)> RunCommandAsync(string command, string arguments)
         {
             // Prepare the task completion source that will indicate the end of the command and hold the exit code
-            var taskCompletionSource = new TaskCompletionSource<int>();
+            var taskCompletionSource = new TaskCompletionSource<(int exitCode, string output, string error)>();
 
             // Prepare the process
             var process = new Process
@@ -48,33 +45,21 @@ namespace GeoGen.Utilities
             // Handle when it exists
             process.Exited += (sender, args) =>
             {
-                // Make sure the result is set
-                taskCompletionSource.SetResult(process.ExitCode);
+                // Get the standard output 
+                var standardOutput = process.StandardOutput.ReadToEnd();
+
+                // Get the error output
+                var errorOutput = process.StandardError.ReadToEnd();
+
+                // Set the result
+                taskCompletionSource.SetResult((process.ExitCode, standardOutput, errorOutput));
 
                 // Dispose the process
                 process.Dispose();
             };
 
-            // Handle the data using the provided handlers
-            process.OutputDataReceived += (s, e) =>
-            {
-                // If the data isn't data (which surprisingly could happen), write them
-                if (e.Data != null)
-                    outputDataHandler?.Invoke(e.Data);
-            };
-            process.ErrorDataReceived += (s, e) =>
-            {
-                // If the data isn't data (which surprisingly could happen), write them
-                if (e.Data != null)
-                    errorDataHandler?.Invoke(e.Data);
-            };
-
             // Start the process
             process.Start();
-
-            // Start reading the output and error stream
-            process.BeginOutputReadLine();
-            process.BeginErrorReadLine();
 
             // Return the task represented by this asynchronous operation
             return taskCompletionSource.Task;

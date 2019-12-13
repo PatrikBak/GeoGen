@@ -49,8 +49,31 @@ namespace GeoGen.Drawer
             // Catch for any unhandled exception
             catch (Exception e)
             {
-                // Log if there is any
-                Log.LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
+                // Handle known cases holding additional data
+                switch (e)
+                {
+                    // Exception when compiling / post-compiling
+                    case CommandException commandException:
+
+                        // Write out the command
+                        Log.LoggingManager.LogFatal($"An exception when performing the command '{commandException.CommandWithArguments}', " +
+                            // And the code
+                            $"exit code {commandException.ExitCode}, message: {commandException.Message}\n\n" +
+                            // And the standard output
+                            $"Standard output: {commandException.StandardOutput}\n\n" +
+                            // And the error output
+                            $"Error output: {commandException.ErrorOutput}\n\n");
+
+                        break;
+
+                    // The default case is a generic message
+                    default:
+
+                        // Log it
+                        Log.LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
+
+                        break;
+                }
 
                 // This is a sad end
                 Environment.Exit(-1);
