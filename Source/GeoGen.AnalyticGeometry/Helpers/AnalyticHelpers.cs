@@ -253,7 +253,7 @@ namespace GeoGen.AnalyticGeometry
             var c = new Point(x, y);
 
             // And return all of them
-            return (a, b, c);
+            return (c, a, b);
         }
 
         /// <summary>
