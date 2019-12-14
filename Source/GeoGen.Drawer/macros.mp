@@ -12,7 +12,9 @@ enddef;
 
 vardef TexTextOnTheRight(expr text) = 
 		
-	save p; picture p; p:=TEX("\parskip=10pt\parindent=0pt\hsize=8cm\vbox{" & text & "}");
+	save p; picture p; p:=TEX("\parskip=10pt\parindent=0pt\hsize=" &
+	decimal(max(8cm,abs(urcorner bbox(currentpicture) - ulcorner bbox(currentpicture))) ) 
+	& "pt\vbox{" & text & "}");
 			
 	p shifted (urcorner bbox(currentpicture))
 	       shifted -(0,ypart urcorner(bbox(p)))
@@ -27,8 +29,32 @@ def Midpoint_Text(expr M,A,B) =
 	"Let~$" & M & "$ be the midpoint of~$" & A & B & "$. "		
 enddef;
 
+def PerpendicularBisector_Text(expr l,A,B) = 
+	"Let~$" & l & "$ be the perpendicular bisector of~$" & A & B & "$. "		
+enddef;
+
+def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
+enddef;
+
+def IntersectionOfLines_Text(expr P,k,l) = 
+	"Let~$" & P & "$ be the intersection point of~$" & k & "$ and $" & l & "$. "		
+enddef;
+
+def IntersectionOfLineAndLineFromPoints_Text(expr P,k,A,B) = 
+	"Let~$" & P & "$ be the intersection point of~$" & k & "$ and $" & A & B & "$. "		
+enddef;
+
+def IntersectionOfLinesFromPoints_Text(expr P,A,B,C,D) = 
+	"Let~$" & P & "$ be the intersection point of~$" & A & B & "$ and $" & C & D & "$. "		
+enddef;
+
 def Incircle_Text(expr c,A,B,C) = 
 	"Let~$" & c & "$ be the incircle of~$" & A & B & C & "$. "		
+enddef;
+
+def EqualLineSegments_Text(expr k,l) =
+	"Show that $" & k & "=" & l & "$. "
 enddef;
 
 def ConcurrentLines_Text(expr p,q,r) =

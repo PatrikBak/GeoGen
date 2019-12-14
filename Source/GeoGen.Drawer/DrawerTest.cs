@@ -51,7 +51,8 @@ namespace GeoGen.Drawer
                 await kernel.Get<IDrawer>().DrawAsync(new[]
                 {
                     MediansAreConcurrent(),
-                    IncircleTouchesNinePointCircle()
+                    IncircleTouchesNinePointCircle(),
+                    HomeRound()
                 });
             }
             // Catch for any unhandled exception
@@ -132,6 +133,34 @@ namespace GeoGen.Drawer
             {
                 new CircleTheoremObject(P, Q, R),
                 new CircleTheoremObject(i),
+            });
+
+            // Return them
+            return (configuration, theorem);
+        }
+
+        private static (Configuration, Theorem) HomeRound()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var l1 = new ConstructedConfigurationObject(PerpendicularBisector, A, B);
+            var l2 = new ConstructedConfigurationObject(PerpendicularBisector, A, C);
+            var D = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, l1, B, C);
+            var E = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, l2, B, C);
+            var p1 = new ConstructedConfigurationObject(ParallelLineToLineFromPoints, D, A, C);
+            var p2 = new ConstructedConfigurationObject(ParallelLineToLineFromPoints, E, A, B);
+            var F = new ConstructedConfigurationObject(IntersectionOfLines, p1, p2);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, F);
+
+            // Create the theorem
+            var theorem = new Theorem(EqualLineSegments, new[]
+            {
+                new LineSegmentTheoremObject(F, B),
+                new LineSegmentTheoremObject(F, C)
             });
 
             // Return them
