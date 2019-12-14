@@ -647,7 +647,7 @@ namespace GeoGen.Drawer
                     // That is different from this one
                     .Where(_point => _point != point)
                     // We calculate the distance to it normalized to the interval (0,1]
-                    .Select(_point => point.DistanceTo(point) / maxDistance)
+                    .Select(_point => point.DistanceTo(_point) / maxDistance)
                     // Enumerate
                     .ToArray();
 
