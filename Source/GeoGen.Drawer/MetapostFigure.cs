@@ -56,6 +56,11 @@ namespace GeoGen.Drawer
         /// </summary>
         private readonly Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>> _lineShiftedSegments = new Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>>();
 
+        /// <summary>
+        /// The text to be added to the right of the picture.
+        /// </summary>
+        private string _text;
+
         #endregion
 
         #region Public methods
@@ -189,6 +194,13 @@ namespace GeoGen.Drawer
             // Otherwise add the label
             _labels.Add(analyticObject, label);
         }
+
+        /// <summary>
+        /// Adds the text. The text will be displayed to the right of the picture. It will be rendered with TeX,
+        /// i.e. it might (and should) include TeX commands.
+        /// </summary>
+        /// <param name="text">The text to be displayed.</param>
+        public void AddText(string text) => _text = text;
 
         /// <summary>
         /// Generates a code of the picture using the drawing data holding necessary MetaPost-related information to do so.
@@ -579,7 +591,6 @@ namespace GeoGen.Drawer
                 var (analyticObject, label) = pair;
 
                 // Switch based on the object type
-                // TODO: Figure out line and circle cases
                 switch (analyticObject)
                 {
                     // Point case
@@ -590,11 +601,24 @@ namespace GeoGen.Drawer
 
                         break;
 
+                    // TODO: Figure out line and circle cases
+                    case Line _:
+                    case Circle _:
+                        break;
+
                     // If something else...
                     default:
                         throw new DrawerException($"Unhandled type of {nameof(IAnalyticObject)}: {analyticObject.GetType()}");
                 }
             });
+
+            #endregion
+
+            #region Text
+
+            // If there is text to be included, do so via the provided macro
+            if (!string.IsNullOrEmpty(_text))
+                code.AppendLine($"draw {drawingData.TextMacro}({_text});");
 
             #endregion
 

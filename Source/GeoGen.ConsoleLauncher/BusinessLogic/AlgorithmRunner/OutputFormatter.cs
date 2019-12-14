@@ -27,10 +27,11 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="OutputFormatter"/> class.
         /// </summary>
         /// <param name="objects">The objects to be named and used later in formatting.</param>
-        public OutputFormatter(IEnumerable<ConfigurationObject> objects)
+        /// <param name="includeSubscriptsBeforeNumbers">Indicates whether the names of objects should have subscript marks '_' in from of their numbers. False by default.</param>
+        public OutputFormatter(IEnumerable<ConfigurationObject> objects, bool includeSubscriptsBeforeNumbers = false)
         {
             // Name the given objects
-            NameObjects(objects);
+            NameObjects(objects, includeSubscriptsBeforeNumbers);
         }
 
         #endregion
@@ -150,7 +151,7 @@ namespace GeoGen.ConsoleLauncher
                 LooseConfigurationObject _ => _objectNames[configurationObject],
 
                 // For constructed objects we include the construction and arguments
-                ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString()})",
+                ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(FormatArgument).ToJoinedString()})",
 
                 // Default
                 _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
@@ -207,6 +208,30 @@ namespace GeoGen.ConsoleLauncher
             }
         }
 
+
+        /// <summary>
+        /// Converts a given construction argument to a string using the curly braces notation.
+        /// </summary>
+        /// <param name="argument">The argument to be converted.</param>
+        /// <returns>The resulting string.</returns>
+        public string FormatArgument(ConstructionArgument argument)
+        {
+            // Switch based on the argument type
+            return argument switch
+            {
+                // If we have an object argument, ask directly for the name of its object
+                ObjectConstructionArgument objectArgument => _objectNames.GetOrDefault(objectArgument.PassedObject)
+                        // If there is none, we don't have a different option but converting it (and get an ugly string)
+                        ?? FormatConfigurationObject(objectArgument.PassedObject),
+
+                // For set argument we wrap the result in curly braces and convert the inner arguments
+                SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(FormatArgument).Ordered().ToJoinedString()}}}",
+
+                // Default case
+                _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
+            };
+        }
+
         /// <summary>
         /// Gets the name of the passed object.
         /// </summary>
@@ -224,7 +249,8 @@ namespace GeoGen.ConsoleLauncher
         /// Names the passed objects and adds their names to the <see cref="_objectNames"/> dictionary.
         /// </summary>
         /// <param name="objects">The objects to be named.</param>
-        private void NameObjects(IEnumerable<ConfigurationObject> objects)
+        /// <param name="includeSubscriptsBeforeNumbers">Indicates whether the names of objects should have subscript marks '_' in from of their numbers. False by default.</param>
+        private void NameObjects(IEnumerable<ConfigurationObject> objects, bool includeSubscriptsBeforeNumbers = false)
         {
             // Prepare the numbers of currently named objects of particular types
             var namedPoints = 0;
@@ -259,7 +285,7 @@ namespace GeoGen.ConsoleLauncher
                     case ConfigurationObjectType.Line:
 
                         // Compose the name
-                        name = numberOfLines == 1 ? "l" : $"l{namedLines + 1}";
+                        name = numberOfLines == 1 ? "l" : $"l{(includeSubscriptsBeforeNumbers ? "_" : "")}{namedLines + 1}";
 
                         // Count it 
                         namedLines++;
@@ -270,7 +296,7 @@ namespace GeoGen.ConsoleLauncher
                     case ConfigurationObjectType.Circle:
 
                         // Compose the name
-                        name = numberOfCircles == 1 ? "c" : $"c{namedCircles + 1}";
+                        name = numberOfCircles == 1 ? "c" : $"c{(includeSubscriptsBeforeNumbers ? "_" : "")}{namedCircles + 1}";
 
                         // Count it 
                         namedCircles++;
@@ -281,29 +307,6 @@ namespace GeoGen.ConsoleLauncher
                 // Register the name
                 _objectNames.Add(configurationObject, name);
             }
-        }
-
-        /// <summary>
-        /// Converts a given construction argument to a string using the curly braces notation.
-        /// </summary>
-        /// <param name="argument">The argument to be converted.</param>
-        /// <returns>The resulting string.</returns>
-        private string ArgumentToString(ConstructionArgument argument)
-        {
-            // Switch based on the argument type
-            return argument switch
-            {
-                // If we have an object argument, ask directly for the name of its object
-                ObjectConstructionArgument objectArgument => _objectNames.GetOrDefault(objectArgument.PassedObject)
-                        // If there is none, we don't have a different option but converting it (and get an ugly string)
-                        ?? FormatConfigurationObject(objectArgument.PassedObject),
-
-                // For set argument we wrap the result in curly braces and convert the inner arguments
-                SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString()}}}",
-
-                // Default case
-                _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
-            };
         }
 
         /// <summary>

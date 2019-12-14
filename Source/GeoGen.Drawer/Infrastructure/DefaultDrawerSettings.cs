@@ -60,10 +60,12 @@ namespace GeoGen.Drawer
                         { ObjectDrawingStyle.AuxiliaryObject, "CircleAuxiliaryStyle" },
                         { ObjectDrawingStyle.NormalObject, "CircleNormalStyle" },
                         { ObjectDrawingStyle.TheoremObject, "CircleTheoremStyle" }
-                    }
+                    },
+                    textMacro: "TexTextOnTheRight"
                 ),
                 metapostCodeFilePath: "figures.mp",
                 metapostMacrosLibraryPath: "macros.mp",
+                constructionTextMacroPrefix: "_Text",
                 compilationCommand: (program: "mpost", arguments: "-interaction=nonstopmode -s prologues=3"),
                 postcompilationCommand: "post-compile.bat",
                 logCommandOutput: true,

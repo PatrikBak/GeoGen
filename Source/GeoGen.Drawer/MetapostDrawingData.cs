@@ -52,6 +52,11 @@ namespace GeoGen.Drawer
         /// </summary>
         public IReadOnlyDictionary<ObjectDrawingStyle, string> CircleMacros { get; }
 
+        /// <summary>
+        /// The name of the macro that accepts one text parameter and draws it.
+        /// </summary>
+        public string TextMacro { get; }
+
         #endregion
 
         #region Constructor
@@ -66,13 +71,15 @@ namespace GeoGen.Drawer
         /// <param name="pointMarkMacros">The dictionary mapping drawing styles to names of point mark macros handling this style.</param>
         /// <param name="lineSegmentMacros">The dictionary mapping drawing styles to names of segment mark macros handling this style.</param>
         /// <param name="circleMacros">The dictionary mapping drawing styles to names of circle macros handling this style.</param>
+        /// <param name="textMacro">The name of the macro that accepts one text parameter and draws it.</param>
         public MetapostDrawingData(string scaleVariable,
                                    double shiftLength,
                                    double boundingBoxOffset,
                                    string pointLabelMacro,
                                    IReadOnlyDictionary<ObjectDrawingStyle, string> pointMarkMacros,
                                    IReadOnlyDictionary<ObjectDrawingStyle, string> lineSegmentMacros,
-                                   IReadOnlyDictionary<ObjectDrawingStyle, string> circleMacros)
+                                   IReadOnlyDictionary<ObjectDrawingStyle, string> circleMacros,
+                                   string textMacro)
         {
             ScaleVariable = scaleVariable ?? throw new ArgumentNullException(nameof(scaleVariable));
             ShiftLength = shiftLength;
@@ -81,6 +88,7 @@ namespace GeoGen.Drawer
             PointMarkMacros = pointMarkMacros ?? throw new ArgumentNullException(nameof(pointMarkMacros));
             LineSegmentMacros = lineSegmentMacros ?? throw new ArgumentNullException(nameof(lineSegmentMacros));
             CircleMacros = circleMacros ?? throw new ArgumentNullException(nameof(circleMacros));
+            TextMacro = textMacro ?? throw new ArgumentNullException(nameof(textMacro));
         }
 
         #endregion

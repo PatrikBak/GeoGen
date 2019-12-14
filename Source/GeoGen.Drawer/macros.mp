@@ -1,4 +1,43 @@
 u:=5cm;
+input TEX;
+
+let old_endfig = endfig;
+
+vardef endfig = 	
+	draw bbox(currentpicture) withcolor background;	
+	old_endfig
+enddef; 
+
+%%%%%%%%%%% TEXT CONVERSION MACROS %%%%%%%%%%%
+
+vardef TexTextOnTheRight(expr text) = 
+		
+	save p; picture p; p:=TEX("\parskip=10pt\parindent=0pt\hsize=8cm\vbox{" & text & "}");
+			
+	p shifted (urcorner bbox(currentpicture))
+	       shifted -(0,ypart urcorner(bbox(p)))
+		
+enddef;
+
+def Triangle_Text(expr A,B,C) = 
+	"Let~$" & A & B & C & "$ be an acute triangle. "
+enddef;
+
+def Midpoint_Text(expr M,A,B) = 
+	"Let~$" & M & "$ be the midpoint of~$" & A & B & "$. "		
+enddef;
+
+def Incircle_Text(expr c,A,B,C) = 
+	"Let~$" & c & "$ be the incircle of~$" & A & B & C & "$. "		
+enddef;
+
+def ConcurrentLines_Text(expr p,q,r) =
+	"Show that lines~$" & p & "," & q & "," & r & "$ are concurrent. "
+enddef;
+
+def TangentCircles_Text(expr k,l) =
+	"Show that circles~$" & k & "$ and $" & l & "$ are tangent to each other. "
+enddef;
 
 %%%%%%%%%%% HELPER MACROS %%%%%%%%%%%
 
@@ -289,9 +328,8 @@ enddef;
 
 
 def WithTheoremStyle = 
-	withpen pencircle scaled 1 
+	withpen pencircle scaled 0.5
 	withcolor red
-	dashed evenly scaled 0.5	
 enddef;
 
 %%%%%%%%%%% DRAWING MACROS %%%%%%%%%%%
@@ -333,10 +371,10 @@ enddef;
 
 
 def PointMarkNormalStyle(expr P) = 
-	PointMarkScaled(P, 2)
+	PointMarkScaled(P, 2.4)
 enddef;
 
 
 def PointMarkTheoremStyle(expr P) = 
-	PointMarkScaled(P, 3.5) withcolor red
+	PointMarkScaled(P, 2.4) withcolor red
 enddef; 

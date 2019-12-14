@@ -1,4 +1,5 @@
 ﻿using GeoGen.AnalyticGeometry;
+using GeoGen.ConsoleLauncher;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
@@ -581,25 +582,128 @@ namespace GeoGen.Drawer
 
             #endregion
 
-            #region Labeling
+            #region Labeling and statement
 
-            // Go through all the objects            
-            configuration.AllObjects
-                // That are points
-                // TODO: Support labels of other objects 
-                .Where(configurationObject => configurationObject.ObjectType == ConfigurationObjectType.Point)
-                // Make a label for each
-                .ForEach((configurationObject, index) =>
-                {
-                    // Create the label so that points are labeled A, B, C,...
-                    var label = $"${(char)('A' + index)}$";
+            // Prepare the output formatter that does all the naming
+            var formatter = new OutputFormatter(configuration.AllObjects);
 
-                    // Get the analytic version
-                    var analyticPoint = (Point)picture.Get(configurationObject);
+            // Go through all the objects and add a label for each            
+            configuration.AllObjects.ForEach((configurationObject, index) =>
+            {
+                // Get the analytic version
+                var analyticPoint = picture.Get(configurationObject);
 
-                    // Add the label
-                    figure.AddLabel(analyticPoint, label);
-                });
+                // Add the label with the TeX dollars
+                figure.AddLabel(analyticPoint, $"${formatter.GetObjectName(configurationObject)}$");
+            });
+
+            // Prepare the call for the macro that will define the loose objects layout
+            var looseObjectsMacro = $"{configuration.LooseObjectsHolder.Layout}{_settings.ConstructionTextMacroPrefix}" +
+                // Get individual loose objects
+                $"({configuration.LooseObjects.Select(looseObject => $"\"{formatter.GetObjectName(looseObject)}\"").ToJoinedString()})";
+
+            // Now we converted individual constructed objects
+            var constructedObjectMacros = configuration.ConstructedObjects.Select(constructedObject =>
+                // Get the construction name that is used with the prefix in the macro call
+                $"{constructedObject.Construction.Name}{_settings.ConstructionTextMacroPrefix}(" +
+                // Append the actual object name
+                $"\"{formatter.GetObjectName(constructedObject)}\", " +
+                // Append the converted arguments
+                constructedObject.PassedArguments.Select(formatter.FormatArgument)
+                    // Join them
+                    .ToJoinedString()
+                    // Get rid of curly brackets that TeX won't read
+                    .Replace("{", "").Replace("}", "")
+                    // Now we need to split them again 
+                    .Split(',')
+                    // And trim and append double quotes
+                    .Select(s => $"\"{s.Trim()}\"")
+                    // And join again
+                    .ToJoinedString()
+                // And finally append the end of the call
+                + ")");
+
+            // Local helper function that converts a theorem object
+            string ConvertTheoremObject(TheoremObject theoremObject) =>
+                    // By taking it's inner objects
+                    theoremObject.GetInnerConfigurationObjects()
+                    // Converting those
+                    .Select(formatter.GetObjectName)
+                    // Gluing them together 
+                    // NOT: This does not for look good for angles, but those are not supported at the time)
+                    .ToJoinedString("");
+
+            // Prepare the value holding the converted and sorted theorem objects
+            string theoremObjectsString;
+
+            // Convert theorem objects based on the type of theorem
+            switch (theorem.Type)
+            {
+                // In these cases we just want an alphabetical order
+                case TheoremType.CollinearPoints:
+                case TheoremType.ConcyclicPoints:
+                case TheoremType.ConcurrentLines:
+                case TheoremType.ParallelLines:
+                case TheoremType.PerpendicularLines:
+                case TheoremType.TangentCircles:
+                case TheoremType.EqualLineSegments:
+
+                    // Simply convert individual objects 
+                    theoremObjectsString = theorem.InvolvedObjects.Select(theoremObject => $"\"{ConvertTheoremObject(theoremObject)}\"")
+                        // Sort
+                        .Ordered()
+                        // Join
+                        .ToJoinedString();
+
+                    break;
+
+                // Here we want the line to be first
+                case TheoremType.LineTangentToCircle:
+
+                    // Get the line and the circle
+                    var lineName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<LineTheoremObject>().First().ConfigurationObject);
+                    var circleName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<CircleTheoremObject>().First().ConfigurationObject);
+
+                    // Compose the final string 
+                    theoremObjectsString = $"\"{lineName}\", \"{circleName}\"";
+
+                    break;
+
+                // Here we want the point to be first
+                case TheoremType.Incidence:
+
+                    // Get the point and the other object
+                    var pointName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<PointTheoremObject>().First().ConfigurationObject);
+                    var lineOrCircleName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<TheoremObjectWithPoints>().First().ConfigurationObject);
+
+                    // Compose the final string 
+                    theoremObjectsString = $"\"{pointName}\", \"{lineOrCircleName}\"";
+
+                    break;
+
+                // If something else...
+                default:
+                    throw new DrawerException($"Unhandled value of {nameof(TheoremType)}: {theorem.Type}.");
+            }
+
+            // The final theorem macro consists of the theorem type with the prefix, which makes
+            // the macro name, and already composed arguments for this macro 
+            var theoremMacro = $"{theorem.Type}{_settings.ConstructionTextMacroPrefix}({theoremObjectsString})";
+
+            // Now we are ready to prepare the final text. We take the definition of the layout
+            var finalText = looseObjectsMacro.ToEnumerable()
+                // Append the constructed objects
+                .Concat(constructedObjectMacros)
+                // Append a new line written as a TeX command
+                .Concat("\"{\\par}\"")
+                // Append the theorem macro
+                .Concat(theoremMacro)
+                // And we join these things by '&', which is the concatenation operator in MetaPost
+                // For better readability we add some spaces and new lines
+                .ToJoinedString($"\n& ");
+
+            // Finally we can add the text to the picture
+            figure.AddText(finalText);
 
             #endregion
 
