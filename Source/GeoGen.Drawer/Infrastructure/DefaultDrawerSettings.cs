@@ -40,7 +40,7 @@ namespace GeoGen.Drawer
                 drawingData: new MetapostDrawingData
                 (
                     scaleVariable: "u",
-                    shiftLength: 0.4,
+                    shiftLength: 0.05,
                     boundingBoxOffset: 1,
                     pointLabelMacro: "LabelPoint",
                     pointMarkMacros: new Dictionary<ObjectDrawingStyle, string>
