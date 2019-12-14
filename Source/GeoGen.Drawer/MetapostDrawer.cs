@@ -529,9 +529,6 @@ namespace GeoGen.Drawer
                         // Enumerate
                         .ToArray();
 
-                    // Mark all the points
-                    points.Flatten().ForEach(point => figure.AddPoint(point, ObjectDrawingStyle.TheoremObject));
-
                     // Draw the segments
                     points.ForEach(segmentPoints => figure.AddSegment(segmentPoints[0], segmentPoints[1], ObjectDrawingStyle.TheoremObject, shifted: false));
 
@@ -585,7 +582,7 @@ namespace GeoGen.Drawer
             #region Labeling and statement
 
             // Prepare the output formatter that does all the naming
-            var formatter = new OutputFormatter(configuration.AllObjects);
+            var formatter = new OutputFormatter(configuration.AllObjects, includeSubscriptsBeforeNumbers: true);
 
             // Go through all the objects and add a label for each            
             configuration.AllObjects.ForEach((configurationObject, index) =>
