@@ -32,7 +32,7 @@ namespace GeoGen.ConsoleLauncher
         public static async Task InitializeAsync(Settings settings)
         {
             // Initialize the container
-            Kernel = DependenciesResolver.IoC.CreateKernel();
+            Kernel = Infrastructure.IoC.CreateKernel();
 
             // Add the logging system
             Kernel.AddLogging(settings.LoggingSettings);

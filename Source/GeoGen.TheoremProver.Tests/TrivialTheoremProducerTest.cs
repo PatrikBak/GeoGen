@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using GeoGen.Core;
-using GeoGen.DependenciesResolver;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
 using GeoGen.Utilities;

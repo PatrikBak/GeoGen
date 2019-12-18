@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.DependenciesResolver;
 using GeoGen.Infrastructure;
 using Ninject;
 using System;

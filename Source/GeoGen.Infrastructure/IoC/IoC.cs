@@ -3,7 +3,7 @@ using Ninject.Extensions.ContextPreservation;
 using Ninject.Extensions.Factory;
 using Ninject.Planning.Bindings.Resolvers;
 
-namespace GeoGen.DependenciesResolver
+namespace GeoGen.Infrastructure
 {
     /// <summary>
     /// Utilities for the IoC module.
