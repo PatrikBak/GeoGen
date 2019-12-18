@@ -12,6 +12,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Finds the objects that define these objects, in an order in which they can be constructed, including these ones.
         /// </summary>
+        /// <param name="objects">The enumerable of objects.</param>
         /// <returns>The collection of the defining objects.</returns>
         public static IReadOnlyList<ConfigurationObject> GetDefiningObjects(this IEnumerable<ConfigurationObject> objects)
         {
@@ -100,7 +101,35 @@ namespace GeoGen.Core
         /// <summary>
         /// Finds the objects that define this object, in an order in which they can be constructed, including this one.
         /// </summary>
+        /// <param name="configurationObject">The configuration object.</param>
         /// <returns>The collection of the defining objects.</returns>
         public static IReadOnlyList<ConfigurationObject> GetDefiningObjects(this ConfigurationObject configurationObject) => configurationObject.ToEnumerable().GetDefiningObjects();
+
+        /// <summary>
+        /// Finds out if the objects are ordered in such a way that there are no two objects A, B in this order
+        /// such that A needs B in its construction. 
+        /// </summary>
+        /// <param name="objects">The list of objects.</param>
+        /// <returns>true, if the order of the objects is correct; false otherwise.</returns>
+        public static bool RepresentsConstructibleOrder(this IReadOnlyList<ConfigurationObject> objects)
+        {
+            // We're going through all the objects of the permutation
+            for (var i = 0; i < objects.Count; i++)
+            {
+                // This object is at a correct place if and only if its defining objects
+                var isObjectCorrect = objects[i].GetDefiningObjects()
+                        // Are either not among the permuted objects
+                        .All(definingObject => !objects.Contains(definingObject)
+                            // Or are among them, but not after the current one
+                            || objects.ItemsBetween(0, i + 1).Contains(definingObject));
+
+                // If the object is not correct, then the whole order is incorrect
+                if (!isObjectCorrect)
+                    return false;
+            }
+
+            // If we got here, then the order is correct
+            return true;
+        }
     }
 }
