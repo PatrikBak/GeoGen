@@ -41,7 +41,11 @@ namespace GeoGen.ConsoleLauncher
             ),
             algorithmSettings: new AlgorithmSettings
             (
-                algorithmFacadeSettings: new AlgorithmFacadeSettings(numberOfPictures: 5),
+                algorithmFacadeSettings: new AlgorithmFacadeSettings
+                (
+                    numberOfPictures: 5,
+                    excludeAsymmetricConfigurations: false
+                ),
                 theoremFindingSettings: new TheoremFindingSettings
                 (
                     tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
@@ -65,8 +69,11 @@ namespace GeoGen.ConsoleLauncher
                     (
                         rankingCoefficients: new Dictionary<RankedAspect, double>
                         {
-                            { RankedAspect.Symmetry, 100},
-                            { RankedAspect.Type, 10}
+                            { RankedAspect.Symmetry, 200},
+                            { RankedAspect.Type, 10},
+                            { RankedAspect.NumberOfProofAttempts, 5},
+                            { RankedAspect.TheoremsPerObject, 3},
+                            { RankedAspect.CirclesPerObject, 1}
                         }
                     ),
                     typeRankerSettings: new TypeRankerSettings

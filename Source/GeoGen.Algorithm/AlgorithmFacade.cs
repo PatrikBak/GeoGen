@@ -275,6 +275,11 @@ namespace GeoGen.Algorithm
                        // Cache the theorems for this configuration
                        theoremMapCache.Push(allTheorems);
 
+                       // Before going further check if we should exclude asymmetric configurations...
+                       // If yes, we need to find out if this one is and if yes, then do it
+                       if (_settings.ExcludeAsymmetricConfigurations && !configuration.IsSymmetric())
+                           return null;
+
                        // Prepare the input for the theorem prover
                        var input = new TheoremProverInput
                        (
@@ -310,7 +315,9 @@ namespace GeoGen.Algorithm
                            rankings: rankings,
                            simplifiedTheorems: simplifiedTheorems
                        );
-                   }));
+                   })
+                   // Ignore excluded ones
+                   .Where(output => output != null));
 
             #endregion
         }

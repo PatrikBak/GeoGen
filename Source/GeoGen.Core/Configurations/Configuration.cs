@@ -85,6 +85,33 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region Public methods
+
+        /// <summary>
+        /// Determines if the configuration is symmetric, i.e. its loose objects can be 
+        /// reorder to obtain the same configuration.
+        /// </summary>
+        /// <returns>true, if the configuration is symmetric; false otherwise.</returns>
+        public bool IsSymmetric()
+        {
+            // Go through the possible mappings of loose objects
+            return LooseObjectsHolder.GetSymmetryMappings()
+                // Except for the identity
+                .Where(mapping => mapping.Any(pair => pair.Key != pair.Value))
+                // The configuration is symmetric if and only if any of these
+                // mappings yields the same constructed objects
+                // For a given one remap all the objects
+                .Any(mapping => ConstructedObjects.Select(constructedObject => constructedObject.Remap(mapping))
+                    // We're sure they are constructed
+                    .Cast<ConstructedConfigurationObject>()
+                    // Make a set from them
+                    .ToReadOnlyHashSet()
+                    // Compare to this one
+                    .Equals(ConstructedObjectsSet));
+        }
+
+        #endregion
+
         #region Public static methods
 
         /// <summary>
