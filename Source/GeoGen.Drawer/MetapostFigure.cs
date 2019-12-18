@@ -632,12 +632,7 @@ namespace GeoGen.Drawer
         /// <returns>The badness ranking.</returns>
         public double CalculateVisualBadness()
         {
-            // For each point we calculate the standard deviation of the distances to the other points
-            // and pick the highest one. That way, if there are two close points or two fairly distances
-            // points, then their deviations will be high.
-
-            // Find the maximal distance between two points
-            var maxDistance = _pointStyles.Keys.ToArray().UnorderedPairs().Select(pair => pair.Item1.DistanceTo(pair.Item2)).Max();
+            // TODO: There definitely will be a better approach to calculate Badness
 
             // Rank each point
             return _pointStyles.Keys.Select(point =>
@@ -646,8 +641,8 @@ namespace GeoGen.Drawer
                 var distances = _pointStyles.Keys
                     // That is different from this one
                     .Where(_point => _point != point)
-                    // We calculate the distance to it normalized to the interval (0,1]
-                    .Select(_point => point.DistanceTo(_point) / maxDistance)
+                    // We calculate the distance to it
+                    .Select(_point => point.DistanceTo(_point))
                     // Enumerate
                     .ToArray();
 
@@ -655,7 +650,7 @@ namespace GeoGen.Drawer
                 var averageDistance = distances.Average();
 
                 // And now we can do the math
-                return distances.Select(distance => (distance - averageDistance).Squared()).Sum();
+                return distances.Select(distance => (distance - averageDistance).Squared().Squared()).Sum();
             })
             // Find the worst point
             .Max();
