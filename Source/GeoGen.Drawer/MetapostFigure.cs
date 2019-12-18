@@ -37,22 +37,22 @@ namespace GeoGen.Drawer
         private readonly Dictionary<Line, ObjectDrawingStyle> _lineStyles = new Dictionary<Line, ObjectDrawingStyle>();
 
         /// <summary>
-        /// The dictionary mapping lines to the points that are supposed to be visually lie on them.
+        /// The dictionary mapping lines to the points that are supposed to visually lie on them.
         /// </summary>
         private readonly Dictionary<Line, List<Point>> _linePoints = new Dictionary<Line, List<Point>>();
 
         /// <summary>
-        /// The dictionary mapping lines to the points that are supposed to be visually lie on them and be shifted at them a bit.
+        /// The dictionary mapping lines to the points that are supposed to visually lie on them and be shifted at them a bit.
         /// </summary>
         private readonly Dictionary<Line, List<Point>> _shiftLinePoints = new Dictionary<Line, List<Point>>();
 
         /// <summary>
-        /// The dictionary lines to segments with their styles that are part of them.
+        /// The dictionary mapping lines to segments with their styles that are part of them.
         /// </summary>
         private readonly Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>> _lineSegments = new Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>>();
 
         /// <summary>
-        /// The dictionary lines to shifted segments with their styles that are part of them.
+        /// The dictionary mapping lines to shifted segments with their styles that are part of them.
         /// </summary>
         private readonly Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>> _lineShiftedSegments = new Dictionary<Line, List<(Point, Point, ObjectDrawingStyle)>>();
 
