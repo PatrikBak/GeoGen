@@ -5,7 +5,6 @@ using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.IO;
-using System.Linq;
 using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConsoleLauncher
@@ -44,44 +43,36 @@ namespace GeoGen.ConsoleLauncher
         #region IGeometryFailureTracer implementation
 
         /// <summary>
-        /// Traces that there is an object that cannot be consistently drawn to the pictures holding all the objects
-        /// that the algorithm has generated.
+        /// Traces that given pictures couldn't be cloned and extended with the new object
+        /// already drawn in pictures representing some configuration.
         /// </summary>
-        /// <param name="constructedObject">The object that couldn't be drawn consistently.</param>
-        /// <param name="initialLooseObjects">The loose objects of the initial configuration without which we can't provide full information about the constructed object.</param>
-        /// <param name="pictures">The pictures to which the object was attempted to be drawn.</param>
+        /// <param name="previousPictures">The pictures that were correct and failed to add the new object.</param>
+        /// <param name="newConfiguration">The new configuration that was attempted to be drawn.</param>
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
-        public void UndrawableObjectInBigPicture(ConstructedConfigurationObject constructedObject, LooseObjectsHolder initialLooseObjects, Pictures pictures, InconsistentPicturesException exception)
+        public void InconstructiblePicturesByCloning(PicturesOfConfiguration previousPictures, Configuration newConfiguration, InconsistentPicturesException exception)
         {
-            // Prepare the configuration that can be used to fully define the constructed object
-            // and the objects mentioned in the exception
-            var configuration = new Configuration(initialLooseObjects,
-                // Take the inner exception objects plus the undrawable object
-                exception.GetInnerObjects().Concat(constructedObject)
-                // Use the helper method to get all the constructed object needed to construct these objects in the right order
-                .GetDefiningObjects().OfType<ConstructedConfigurationObject>().ToArray());
-
             // Prepare the formatter for the configuration
-            var formatter = new OutputFormatter(configuration.AllObjects);
+            var formatter = new OutputFormatter(newConfiguration.AllObjects);
 
             // Prepare the initial information string
-            var infoString = $"Undrawable object into the big picture (with {pictures.First().Count()} objects).";
+            var infoString = $"Undrawable object into pictures.";
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
                 LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailuresFilePath} for more detail.");
 
             // Add the data about how the object can be drawn
-            infoString += $"\n\nConsider the following configuration defining all needed objects:\n\n{formatter.FormatConfiguration(configuration).Indent(2)}";
+            infoString += $"\n\nThe object is the last object of the following defining configuration:\n\n{formatter.FormatConfiguration(newConfiguration).Indent(2)}";
 
             // Add the exception
-            infoString += $"\n\nObject '{formatter.GetObjectName(constructedObject)}' couldn't be drawn. The details of the exception: {exception.Format(formatter)}\n";
+            infoString += $"\n\nThe details of the exception: {exception.Format(formatter)}\n";
 
             // Open the stream writer for the file
             using var streamWriter = new StreamWriter(_settings.FailuresFilePath, append: true);
 
             // Write indented message to the file
             streamWriter.WriteLine($"- {infoString.Indent(3).TrimStart()}");
+
         }
 
         /// <summary>

@@ -46,7 +46,6 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
-                objectFilter: _ => true,
                 configurationFilter: _ => true
             );
 
@@ -74,7 +73,6 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
-                objectFilter: _ => true,
                 configurationFilter: _ => true
             );
 

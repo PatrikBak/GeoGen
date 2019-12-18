@@ -27,13 +27,6 @@ namespace GeoGen.Generator
         public int NumberOfIterations { get; }
 
         /// <summary>
-        /// Gets or sets the function that is applied on a <see cref="ConstructedConfigurationObject"/>
-        /// that is about to be added to a given configuration. It should return true if and only if
-        /// this object is correct and should be added to the configuration.
-        /// </summary>
-        public Func<ConstructedConfigurationObject, bool> ObjectFilter { get; }
-
-        /// <summary>
         /// Gets or sets the function that is applied on a valid <see cref="GeneratedConfiguration"/>.
         /// It should return true if and only if this configuration should be extended in the next iteration.
         /// </summary>
@@ -49,18 +42,15 @@ namespace GeoGen.Generator
         /// <param name="initialConfiguration">The initial configuration from which the generation process starts. </param>
         /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
         /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
-        /// <param name="objectFilter">The function for filtrating constructed objects.</param>
         /// <param name="configurationFilter">The function for filtrating generated configurations.</param>
         public GeneratorInput(Configuration initialConfiguration,
                               IReadOnlyHashSet<Construction> constructions,
                               int numberOfIterations,
-                              Func<ConstructedConfigurationObject, bool> objectFilter,
                               Func<GeneratedConfiguration, bool> configurationFilter)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));
             NumberOfIterations = numberOfIterations;
-            ObjectFilter = objectFilter ?? throw new ArgumentNullException(nameof(objectFilter));
             ConfigurationFilter = configurationFilter ?? throw new ArgumentNullException(nameof(configurationFilter));
         }
 

@@ -10,14 +10,13 @@ namespace GeoGen.Algorithm
     public interface IGeometryFailureTracer
     {
         /// <summary>
-        /// Traces that there is an object that cannot be consistently drawn to the pictures holding all the objects
-        /// that the algorithm has generated.
+        /// Traces that given pictures couldn't be cloned and extended with the new object
+        /// already drawn in pictures representing some configuration.
         /// </summary>
-        /// <param name="constructedObject">The object that couldn't be drawn consistently.</param>
-        /// <param name="initialLooseObjects">The loose objects of the initial configuration without which we can't provide full information about the constructed object.</param>
-        /// <param name="pictures">The pictures to which the object was attempted to be drawn.</param>
+        /// <param name="previousPictures">The pictures that were correct and failed to add the new object.</param>
+        /// <param name="newConfiguration">The new configuration that was attempted to be drawn.</param>
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
-        void UndrawableObjectInBigPicture(ConstructedConfigurationObject constructedObject, LooseObjectsHolder initialLooseObjects, Pictures pictures, InconsistentPicturesException exception);
+        void InconstructiblePicturesByCloning(PicturesOfConfiguration previousPictures, Configuration newConfiguration, InconsistentPicturesException exception);
 
         /// <summary>
         /// Traces that a given contextual picture couldn't be cloned and extended with the new object
