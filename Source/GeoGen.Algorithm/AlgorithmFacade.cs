@@ -165,6 +165,11 @@ namespace GeoGen.Algorithm
             // While doing so it construct pictures that we can reuse further for finding theorems
             bool VerifyConfigurationCorrectness(GeneratedConfiguration configuration)
             {
+                // If we should exclude asymmetric configurations and this one is like that and is also
+                // on the last iteration, then we don't have to even construct it 
+                if (_settings.ExcludeAsymmetricConfigurations && configuration.IterationIndex == input.NumberOfIterations && !configuration.IsSymmetric())
+                    return false;
+
                 // We assume that the generator uses a memory-efficient DFS approach, i.e.
                 // when we are done with extending a configuration, we will never need it again
                 // and we move to the next one. This way we just need to cache the initial configuration
@@ -275,8 +280,8 @@ namespace GeoGen.Algorithm
                        // Cache the theorems for this configuration
                        theoremMapCache.Push(allTheorems);
 
-                       // Before going further check if we should exclude asymmetric configurations...
-                       // If yes, we need to find out if this one is and if yes, then do it
+                       // If we should exclude asymmetric configurations and this one is not like that,
+                       // then we don't need to try to prove the theorems of this one
                        if (_settings.ExcludeAsymmetricConfigurations && !configuration.IsSymmetric())
                            return null;
 
