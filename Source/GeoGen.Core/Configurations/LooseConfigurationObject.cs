@@ -38,14 +38,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the loose configuration object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
         public override string ToString() => $"{ObjectType}({Id})";
+
+#endif
 
         #endregion
     }

@@ -45,7 +45,6 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Converts the set construction parameter to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => $"{{{Enumerable.Repeat(TypeOfParameters.ToString(), NumberOfParameters).ToJoinedString()}}}";

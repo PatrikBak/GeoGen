@@ -77,11 +77,12 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the line theorem object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString()
@@ -91,8 +92,10 @@ namespace GeoGen.Core
                 return ConfigurationObject.Id.ToString();
 
             // Otherwise it's defined by points
-            return $"[{Points.Select(p => p.Id).Ordered().ToJoinedString()}]";
+            return $"[{Points.Select(point => point.Id).Ordered().ToJoinedString()}]";
         }
+
+#endif
 
         #endregion
     }

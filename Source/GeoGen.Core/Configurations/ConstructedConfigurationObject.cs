@@ -106,14 +106,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the constructed configuration object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the object.</returns>
         public override string ToString() => $"{Id}={Construction.Name}({PassedArguments})";
+
+#endif
 
         #endregion
     }

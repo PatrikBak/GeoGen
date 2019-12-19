@@ -85,7 +85,6 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Converts the construction to a string. 
-        /// NOTE: This method i used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the construction.</returns>
         public override string ToString() => $"{Name}({Signature})";

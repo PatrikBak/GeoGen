@@ -109,14 +109,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the pair theorem object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
-        public override string ToString() => new[] { Object1, Object2 }.Select(o => o.ToString()).Ordered().ToJoinedString();
+        public override string ToString() => new[] { Object1, Object2 }.Select(theoremObject => theoremObject.ToString()).Ordered().ToJoinedString();
+
+#endif
 
         #endregion
     }

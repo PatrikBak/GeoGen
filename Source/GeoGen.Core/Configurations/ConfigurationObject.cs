@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace GeoGen.Core
 {
@@ -8,7 +7,9 @@ namespace GeoGen.Core
     /// </summary>
     public abstract class ConfigurationObject
     {
-        #region Debugging code
+        #region Debug-only code
+
+#if DEBUG
 
         /// <summary>
         /// The id of the last globally created object. 
@@ -16,12 +17,17 @@ namespace GeoGen.Core
         private static int _id;
 
         /// <summary>
-        /// The lock for incrementing and setting the global id.
+        /// The lock for setting the global id.
         /// </summary>
         private static readonly object _lock = new object();
 
         /// <summary>
-        /// Sets up the id of the object in a thread-safe manner.
+        /// The global id of the configuration object.
+        /// </summary>
+        public int Id { get; private set; }
+
+        /// <summary>
+        /// Sets up the global id of the object in a thread-safe manner.
         /// </summary>
         private void SetupId()
         {
@@ -33,12 +39,7 @@ namespace GeoGen.Core
             }
         }
 
-        /// <summary>
-        /// Gets the id of the configuration object.
-        /// This property should be used only for diagnostic purposes.
-        /// </summary>
-        public int Id { get; private set; }
-
+#endif
         #endregion
 
         #region Public properties
@@ -60,9 +61,10 @@ namespace GeoGen.Core
         {
             ObjectType = objectType;
 
-            // Setup Id only when we're debugging
-            if (Debugger.IsAttached)
-                SetupId();
+#if DEBUG
+            // Setup the id in the debug mode
+            SetupId();
+#endif
         }
 
         #endregion

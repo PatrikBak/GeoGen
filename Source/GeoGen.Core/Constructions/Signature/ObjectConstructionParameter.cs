@@ -33,7 +33,6 @@
 
         /// <summary>
         /// Converts the object construction parameter to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => ObjectType.ToString()[0].ToString();

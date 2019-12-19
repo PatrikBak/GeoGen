@@ -53,11 +53,12 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
-        /// Converts the line object to a string. 
-        /// NOTE: This method is used only for debugging purposes.
+        /// Converts the circle object to a string. 
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString()
@@ -66,11 +67,13 @@ namespace GeoGen.Constructor
             var objectPart = ConfigurationObject == null ? "" : $"{ConfigurationObject.Id}";
 
             // If there are points, include them
-            var pointsPart = Points.Any() ? $"({Points.Select(p => p.ToString()).Ordered().ToJoinedString()})" : "";
+            var pointsPart = Points.Any() ? $"({Points.Select(point => point.ToString()).Ordered().ToJoinedString()})" : "";
 
             // Construct the final string including the points
             return $"{objectPart}{pointsPart}";
         }
+
+#endif
 
         #endregion
     }

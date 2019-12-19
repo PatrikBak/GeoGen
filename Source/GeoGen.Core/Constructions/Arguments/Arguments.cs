@@ -152,14 +152,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the arguments to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => ArgumentsList.ToJoinedString();
+
+#endif
 
         #endregion
     }

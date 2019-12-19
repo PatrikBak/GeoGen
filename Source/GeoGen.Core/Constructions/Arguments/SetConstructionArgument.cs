@@ -77,14 +77,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the set construction argument to a string. 
-        /// NOTE: This method is used only for debugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => $"{{{PassedArguments.Select(argument => argument.ToString()).Ordered().ToJoinedString()}}}";
+
+#endif
 
         #endregion
     }

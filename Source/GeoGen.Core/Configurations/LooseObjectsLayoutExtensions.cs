@@ -64,6 +64,5 @@ namespace GeoGen.Core
                 // Default case
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),
             };
-
     }
 }

@@ -72,14 +72,17 @@ namespace GeoGen.Core
 
         #endregion
 
-        #region To String
+        #region Debug-only to string
+
+#if DEBUG
 
         /// <summary>
         /// Converts the object construction argument to a string. 
-        /// NOTE: This method is used only for debObjecugging purposes.
         /// </summary>
         /// <returns>A human-readable string representation of the configuration.</returns>
         public override string ToString() => PassedObject.Id.ToString();
+
+#endif
 
         #endregion
     }
