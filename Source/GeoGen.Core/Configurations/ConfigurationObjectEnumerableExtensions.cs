@@ -107,17 +107,18 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Finds out if the objects are ordered in such a way that there are no two objects A, B in this order
-        /// such that A needs B in its construction. 
+        /// such that A needs B in its construction. It automatically assumes that objects that are in arguments of
+        /// these objects are constructible.
         /// </summary>
         /// <param name="objects">The list of objects.</param>
         /// <returns>true, if the order of the objects is correct; false otherwise.</returns>
-        public static bool RepresentsConstructibleOrder(this IReadOnlyList<ConfigurationObject> objects)
+        public static bool RepresentsConstructibleOrder(this IReadOnlyList<ConstructedConfigurationObject> objects)
         {
             // We're going through all the objects of the permutation
             for (var i = 0; i < objects.Count; i++)
             {
-                // This object is at a correct place if and only if its defining objects
-                var isObjectCorrect = objects[i].GetDefiningObjects()
+                // This object is at a correct place if and only if its passed objects
+                var isObjectCorrect = objects[i].PassedArguments.FlattenedList
                         // Are either not among the permuted objects
                         .All(definingObject => !objects.Contains(definingObject)
                             // Or are among them, but not after the current one

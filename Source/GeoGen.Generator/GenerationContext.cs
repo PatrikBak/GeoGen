@@ -28,7 +28,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The initial objects of every configuration.
         /// </summary>
-        private readonly IReadOnlyList<ConfigurationObject> _initialObjects;
+        private readonly IReadOnlyList<ConstructedConfigurationObject> _initialObjects;
 
         #endregion
 
@@ -66,7 +66,7 @@ namespace GeoGen.Generator
         /// not the representant of the equivalence class of equal configurations.
         /// </summary>
         /// <param name="configuration">The configuration that should be tested for exclusion.</param>
-        /// <returns>true, if the configuration should be excluded; false otherwise</returns>
+        /// <returns>true, if the configuration should be excluded; false otherwise.</returns>
         public bool ShouldBeExcluded(Configuration configuration)
         {
             // We're going to take all configurations equal to this that can be generated (contain the 
@@ -74,12 +74,15 @@ namespace GeoGen.Generator
             // remaining added constructed objects. This way we determine the unique representant that
             // can be generated. It's not easy to see why this works...
 
+            // Prepare the cache dictionary of string representations of constructed objects
+            var objectStringsCache = new Dictionary<ConstructedConfigurationObject, string>();
+
             // Take all mappings to symmetry classes
             var normalOrderOfAddedObjects = configuration.LooseObjectsHolder.GetSymmetryMappings()
                 // For a given mapping take the constructed objects
                 .Select(mapping => configuration.ConstructedObjects
                     // Reconstruct them
-                    .Select(construtedObject => construtedObject.Remap(mapping))
+                    .Select(construtedObject => (ConstructedConfigurationObject)construtedObject.Remap(mapping))
                     // Exclude the initial objects
                     .Except(_initialObjects)
                     // Enumerate
@@ -87,8 +90,8 @@ namespace GeoGen.Generator
                 // Take only those mappings that don't change the initial objects
                 // Other configurations certainly won't be correct
                 .Where(objects => objects.Length + _initialObjects.Count == configuration.ConstructedObjects.Count)
-                // For each set of added constructed objects we find the normal order
-                .Select(addedObjects => addedObjects
+                // For each set of added constructed objects we find the possible correct orders
+                .SelectMany(addedObjects => addedObjects
                         // Consider their permutations
                         .Permutations()
                         // That represent a correctly constructible order
@@ -96,17 +99,11 @@ namespace GeoGen.Generator
                         // Enumerate each
                         .Select(permutation => (permutation: permutation.ToArray(),
                             // And also convert each permutation to an array of string
-                            strings: permutation.Select(ConfigurationObjectToString).ToArray()))
-                        // Take the one with lexicographically smallest one
-                        .Min((pair1, pair2) => pair1.strings.CompareToLexicographically(pair2.strings))
-                        // Unwrap the permutation
-                        .permutation)
-                // From each order we find its string representation (again)
-                .Select(pair => (order: pair.ToArray(), strings: pair.Select(ConfigurationObjectToString).ToArray()))
-                // Find the lexicographically smallest one
+                            strings: permutation.Select(configurationObject => ConfigurationObjectToString(configurationObject, objectStringsCache)).ToArray())))
+                // Find the lexicographically smallest one among all the orders
                 .MinItem(pair => pair.strings, Comparer<string[]>.Create((a1, a2) => a1.CompareToLexicographically(a2)))
                 // And unwrap the order
-                .order;
+                .permutation;
 
             // The configuration is correct if and only if its order of added objects is the normal object
             // Therefore the take the constructed objects
@@ -125,33 +122,53 @@ namespace GeoGen.Generator
         /// Converts a given configuration object to a string.
         /// </summary>
         /// <param name="configurationObject">The configuration object to be converted.</param>
+        /// <param name="cache">The cached converted constructed objects.</param>
         /// <returns>The string representation of the configuration object.</returns>
-        private string ConfigurationObjectToString(ConfigurationObject configurationObject) => configurationObject switch
+        private string ConfigurationObjectToString(ConfigurationObject configurationObject, Dictionary<ConstructedConfigurationObject, string> cache)
         {
-            // If we have a loose object, simply check the dictionary
-            LooseConfigurationObject looseObject => _looseObjectsId[looseObject].ToString(),
+            switch (configurationObject)
+            {
+                // If we have a loose object, simply check the dictionary
+                case LooseConfigurationObject looseObject:
+                    return _looseObjectsId[looseObject].ToString();
 
-            // If we have a constructed object, then add the construction 
-            ConstructedConfigurationObject constructedObject => $"{_constructionsId[constructedObject.Construction]}" +
-                    // And the joined arguments
-                    $"({constructedObject.PassedArguments.Select(ArgumentToString).ToJoinedString(",")})",
+                // If we have a constructed object...
+                case ConstructedConfigurationObject constructedObject:
 
-            // Something else...
-            _ => throw new GeneratorException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}")
-        };
+                    // Then check the cache first
+                    if (cache.ContainsKey(constructedObject))
+                        return cache[constructedObject];
+
+                    // If it's not there, we need to actually convert it by gluing the construction
+                    var result = $"{_constructionsId[constructedObject.Construction]}" +
+                        // And the joined arguments
+                        $"({constructedObject.PassedArguments.Select(argument => ArgumentToString(argument, cache)).ToJoinedString(",")})";
+
+                    // Now we can cache it
+                    cache.Add(constructedObject, result);
+
+                    // And return it
+                    return result;
+
+                // Something else...
+                default:
+                    throw new GeneratorException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}");
+            }
+        }
 
         /// <summary>
         /// Converts a given argument to a string.
         /// </summary>
         /// <param name="argument">The argument to be converted.</param>
+        /// <param name="cache">The cached converted constructed objects.</param>
         /// <returns>The string representation of the argument.</returns>
-        private string ArgumentToString(ConstructionArgument argument) => argument switch
+        private string ArgumentToString(ConstructionArgument argument, Dictionary<ConstructedConfigurationObject, string> cache) => argument switch
         {
             // If we have an object arguments, then use the method to convert its inner object
-            ObjectConstructionArgument objectArgument => ConfigurationObjectToString(objectArgument.PassedObject),
+            ObjectConstructionArgument objectArgument => ConfigurationObjectToString(objectArgument.PassedObject, cache),
 
             // If we have a set argument, then convert the individual arguments, join them, and wrap in curly braces
-            SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(ArgumentToString).Ordered().ToJoinedString(";")}}}",
+            SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(argument => ArgumentToString(argument, cache)).Ordered().ToJoinedString(";")}}}",
 
             // Something else...
             _ => throw new GeneratorException($"Unhandled type of {nameof(ConstructionArgument)}: {argument.GetType()}")
