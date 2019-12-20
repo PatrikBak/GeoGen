@@ -165,10 +165,23 @@ namespace GeoGen.Algorithm
             // While doing so it construct pictures that we can reuse further for finding theorems
             bool VerifyConfigurationCorrectness(GeneratedConfiguration configuration)
             {
-                // If we should exclude asymmetric configurations and this one is like that and is also
-                // on the last iteration, then we don't have to even construct it 
-                if (_settings.ExcludeAsymmetricConfigurations && configuration.IterationIndex == input.NumberOfIterations && !configuration.IsSymmetric())
+                #region Exclusion based on symmetry
+
+                // Find out if we should exclude this configuration because of symmetry
+                // That can happen only if we are told to do so...
+                var excludeBecauseOfSymmetry = _settings.ExcludeAsymmetricConfigurations &&
+                    // And there is no chance for this configuration to yield a symmetric one by 
+                    // extending it in the remaining iterations. This covers even the case where
+                    // this is the last iteration and the configuration is not symmetric 
+                    configuration.IterationIndex + configuration.GetMinimalNumberOfObjectsToMakeThisSymmetric() > input.NumberOfIterations;
+
+                // If we should exclude this configuration because of symmetry, do it
+                if (excludeBecauseOfSymmetry)
                     return false;
+
+                #endregion
+
+                #region Handling cache
 
                 // We assume that the generator uses a memory-efficient DFS approach, i.e.
                 // when we are done with extending a configuration, we will never need it again
@@ -185,6 +198,8 @@ namespace GeoGen.Algorithm
                     contextualPictureCache.Pop();
                     theoremMapCache.Pop();
                 });
+
+                #endregion
 
                 #region Pictures construction
 
