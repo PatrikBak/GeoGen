@@ -52,17 +52,35 @@ namespace GeoGen.ConsoleLauncher
 
             #region Tracers
 
+            #region SubtheoremDeriverGeometryFailerTracer
+
             // Bind Subtheorem Deriver Tracer only if we're supposed be tracing
             if (settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings != null)
                 Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
+            else
+                Log.LoggingManager.LogWarning($"No settings for {nameof(SubtheoremDeriverGeometryFailureTracer)}, i.e. there will be no tracing.");
+
+            #endregion
+
+            #region ConstructorFailureTracer
 
             // Bind Constructor Failure Tracer only if we're supposed be tracing
             if (settings.TracersSettings.ConstructorFailureTracerSettings != null)
                 Kernel.Bind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
+            else
+                Log.LoggingManager.LogWarning($"No settings for {nameof(ConstructorFailureTracer)}, i.e. there will be no tracing.");
+
+            #endregion
+
+            #region GeometryFailureTracer
 
             // Bind Geometry Failure Tracer only if we're supposed be tracing
             if (settings.TracersSettings.GeometryFailureTracerSettings != null)
                 Kernel.Bind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
+            else
+                Log.LoggingManager.LogWarning($"No settings for {nameof(GeometryFailureTracer)}, i.e. there will be no tracing.");
+
+            #endregion
 
             #endregion
 
