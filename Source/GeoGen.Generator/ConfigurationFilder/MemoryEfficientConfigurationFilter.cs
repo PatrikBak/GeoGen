@@ -6,12 +6,11 @@ using System.Linq;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// A helper class that is able to detect whether a given <see cref="Configuration"/> should be excluded
-    /// during the generation process. This is done via a non-trivial algorithm that assigns to every
-    /// set of equal configurations that could be generated the unique representant that was the 
-    /// representant of such a set in the previous iteration.
+    /// Represents a <see cref="IConfigurationFilter"/> that used O(1) memory. The exclusion is done via 
+    /// a non-trivial algorithm that assigns to every set of equal configurations that could be generated
+    /// the unique representant that was the representant of such a set in the previous iteration.
     /// </summary>
-    public class GenerationContext
+    public class MemoryEfficientConfigurationFilter : ConfigurationFilterBase
     {
         #region Private fields
 
@@ -35,22 +34,21 @@ namespace GeoGen.Generator
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenerationContext"/> class.
+        /// Initializes a new instance of the <see cref="MemoryEfficientConfigurationFilter"/> class.
         /// </summary>
-        /// <param name="initialConfiguration">The initial configuration of the generation process.</param>
-        /// <param name="constructions">The constructions used in the generation process.</param>
-        public GenerationContext(Configuration initialConfiguration, IReadOnlyHashSet<Construction> constructions)
+        /// <param name="generatorInput">The input for the generator.</param>
+        public MemoryEfficientConfigurationFilter(GeneratorInput generatorInput) : base(generatorInput)
         {
             // Set the initial objects
-            _initialObjects = initialConfiguration.ConstructedObjects;
+            _initialObjects = generatorInput.InitialConfiguration.ConstructedObjects;
 
             // Assign ids to loose objects
-            initialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, index));
+            generatorInput.InitialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, index));
 
             // Assign ids to constructions used in the generation
-            constructions
+            generatorInput.Constructions
                 // As well as to the constructions from the initial objects that are not a part of the generation
-                .Concat(initialConfiguration.ConstructedObjects.Select(constructedObject => constructedObject.Construction))
+                .Concat(generatorInput.InitialConfiguration.ConstructedObjects.Select(constructedObject => constructedObject.Construction))
                 // We need distinct ones so that we don't identify the same one twice
                 .Distinct()
                 // Add the id to the dictionary
@@ -59,7 +57,7 @@ namespace GeoGen.Generator
 
         #endregion
 
-        #region Public methods
+        #region Public abstract methods implementation
 
         /// <summary>
         /// Finds out if the configuration should be excluded by the algorithm, because it is 
@@ -67,7 +65,7 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="configuration">The configuration that should be tested for exclusion.</param>
         /// <returns>true, if the configuration should be excluded; false otherwise.</returns>
-        public bool ShouldBeExcluded(Configuration configuration)
+        public override bool ShouldBeExcluded(Configuration configuration)
         {
             // We're going to take all configurations equal to this that can be generated (contain the 
             // initial constructed objects) and for each look for their 'normal', minimal order of the 

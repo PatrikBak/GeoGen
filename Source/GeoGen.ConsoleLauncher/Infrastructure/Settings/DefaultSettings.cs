@@ -1,5 +1,6 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Core;
+using GeoGen.Generator;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremRanker;
@@ -91,7 +92,8 @@ namespace GeoGen.ConsoleLauncher
                             { TheoremType.Incidence, 1 }
                         }
                     )
-                )
+                ),
+                generationSettings: new GenerationSettings(configurationFilterType: ConfigurationFilterType.Fast)
             ),
             inputFolderSettings: new InputFolderSettings
             (

@@ -58,7 +58,7 @@ namespace GeoGen.ConsoleLauncher
             #region Algorithm
 
             // Add generator
-            Kernel.AddGenerator()
+            Kernel.AddGenerator(settings.AlgorithmSettings.GenerationSettings.ConfigurationFilterType)
                 // With constructor
                 .AddConstructor()
                 // With theorem finder and its settings

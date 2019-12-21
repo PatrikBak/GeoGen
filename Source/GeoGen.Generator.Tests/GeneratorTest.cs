@@ -18,12 +18,13 @@ namespace GeoGen.Generator.Tests
     [TestFixture]
     public class GeneratorTest
     {
-        #region Generator instance
+        #region GetGenerator method 
 
         /// <summary>
-        /// The instance of the generator.
+        /// Gets an instance of the generator.
         /// </summary>
-        private static IGenerator Generator => IoC.CreateKernel().AddGenerator().Get<IGenerator>();
+        /// <param name="filterType">The type of configuration filter to be used</param>
+        private static IGenerator GetGenerator(ConfigurationFilterType filterType) => IoC.CreateKernel().AddGenerator(filterType).Get<IGenerator>();
 
         #endregion
 
@@ -49,8 +50,9 @@ namespace GeoGen.Generator.Tests
                 configurationFilter: _ => true
             );
 
-            // Assert count (can be verified by hand)
-            Generator.Generate(input).ToArray().Length.Should().Be(expectedCount);
+            // Assert counts (can be verified by hand)
+            GetGenerator(ConfigurationFilterType.Fast).Generate(input).ToArray().Length.Should().Be(expectedCount);
+            GetGenerator(ConfigurationFilterType.MemoryEfficient).Generate(input).ToArray().Length.Should().Be(expectedCount);
         }
 
         [TestCase(1, 3)]
@@ -76,8 +78,9 @@ namespace GeoGen.Generator.Tests
                 configurationFilter: _ => true
             );
 
-            // Assert count (can be verified by hand)
-            Generator.Generate(input).ToArray().Length.Should().Be(expectedCount);
+            // Assert counts (can be verified by hand)
+            GetGenerator(ConfigurationFilterType.Fast).Generate(input).ToArray().Length.Should().Be(expectedCount);
+            GetGenerator(ConfigurationFilterType.MemoryEfficient).Generate(input).ToArray().Length.Should().Be(expectedCount);
         }
     }
 }

@@ -25,6 +25,11 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public TheoremRankingSettings TheoremRankingSettings { get; }
 
+        /// <summary>
+        /// The settings related to the generator module.
+        /// </summary>
+        public GenerationSettings GenerationSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -35,13 +40,16 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="algorithmFacadeSettings">The settings for the algorithm facade.</param>
         /// <param name="theoremFindingSettings">The settings related to theorem finding.</param>
         /// <param name="theoremRankingSettings">The settings related to theorem ranking.</param>
+        /// <param name="generationSettings">The settings related to the generator module.</param>
         public AlgorithmSettings(AlgorithmFacadeSettings algorithmFacadeSettings,
                                  TheoremFindingSettings theoremFindingSettings,
-                                 TheoremRankingSettings theoremRankingSettings)
+                                 TheoremRankingSettings theoremRankingSettings,
+                                 GenerationSettings generationSettings)
         {
             AlgorithmFacadeSettings = algorithmFacadeSettings ?? throw new ArgumentNullException(nameof(algorithmFacadeSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
             TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
+            GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));
         }
 
         #endregion

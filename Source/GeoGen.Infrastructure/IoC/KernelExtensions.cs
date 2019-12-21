@@ -68,11 +68,30 @@ namespace GeoGen.Infrastructure
         /// Bindings for the dependencies from the Generator module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
+        /// <param name="filterType">The type of configuration filter to be used.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddGenerator(this IKernel kernel)
+        public static IKernel AddGenerator(this IKernel kernel, ConfigurationFilterType filterType)
         {
             // Stateless service
             kernel.Bind<IGenerator>().To<Generator.Generator>().InSingletonScope();
+
+            // Factory
+            kernel.Bind<IConfigurationFilterFactory>().ToFactory();
+
+            // Bind the filter according to the type
+            switch (filterType)
+            {
+                case ConfigurationFilterType.MemoryEfficient:
+                    kernel.Bind<IConfigurationFilter>().To<MemoryEfficientConfigurationFilter>().InSingletonScope();
+                    break;
+
+                case ConfigurationFilterType.Fast:
+                    kernel.Bind<IConfigurationFilter>().To<FastConfigurationFilter>().InSingletonScope();
+                    break;
+
+                default:
+                    throw new GeoGenException($"Unhandled value of {nameof(ConfigurationFilterType)}: {filterType}");
+            }
 
             // Return the kernel for chaining
             return kernel;
@@ -181,7 +200,7 @@ namespace GeoGen.Infrastructure
                         break;
 
                     default:
-                        throw new GeoGenException($"Unhandled type of theorem: {type}");
+                        throw new GeoGenException($"Unhandled value of {nameof(TheoremType)}: {type}");
                 }
             });
 
@@ -277,7 +296,7 @@ namespace GeoGen.Infrastructure
                         break;
 
                     default:
-                        throw new GeoGenException($"Unhandled type of ranked aspect: {rankedAspect}");
+                        throw new GeoGenException($"Unhandled value of {nameof(RankedAspect)}: {rankedAspect}");
                 }
             }
 

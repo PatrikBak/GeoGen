@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,6 +15,30 @@ namespace GeoGen.Generator
     /// </summary>
     public class Generator : IGenerator
     {
+        #region Dependencies
+
+        /// <summary>
+        /// The factory for creating <see cref="IConfigurationFilter"/> for the whole generation process.
+        /// </summary>
+        private readonly IConfigurationFilterFactory _factory;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Generator"/> class.
+        /// </summary>
+        /// <param name="factory">The factory for creating <see cref="IConfigurationFilter"/> for the whole generation process.</param>
+        public Generator(IConfigurationFilterFactory factory)
+        {
+            _factory = factory ?? throw new ArgumentNullException(nameof(Generator));
+        }
+
+        #endregion
+
+        #region IGeneration implementation
+
         /// <summary>
         /// Performs the generation algorithm on a given input. 
         /// </summary>
@@ -21,14 +46,14 @@ namespace GeoGen.Generator
         /// <returns>The generated configurations.</returns>
         public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input)
         {
-            // Prepare the instance of the class that helps us determine unique configurations
-            var generationContext = new GenerationContext(input.InitialConfiguration, input.Constructions);
+            // Let the factory create the filter to be used
+            var configurationFilter = _factory.Create(input);
 
             // Prepare the stack holding the current enumerator
             var enumerators = new Stack<IEnumerator<GeneratedConfiguration>>();
 
             // The first one will be the one that uses the original configuration
-            enumerators.Push(ExtendConfiguration(new GeneratedConfiguration(input.InitialConfiguration), input, generationContext));
+            enumerators.Push(ExtendConfiguration(new GeneratedConfiguration(input.InitialConfiguration), input, configurationFilter));
 
             // Generate until there is something
             while (enumerators.Any())
@@ -69,7 +94,7 @@ namespace GeoGen.Generator
                 yield return currentEnumerator.Current;
 
                 // Now we need to prepare the configurations that can be generated from this one
-                enumerators.Push(ExtendConfiguration(currentEnumerator.Current, input, generationContext));
+                enumerators.Push(ExtendConfiguration(currentEnumerator.Current, input, configurationFilter));
             }
         }
 
@@ -78,9 +103,9 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="currentConfiguration">The current configuration being extended.</param>
         /// <param name="input">The input for the generator.</param>
-        /// <param name="context">The context of the generation that ensures that we generate distinct configurations.</param>
+        /// <param name="filter">The filter of generated configurations that should ensure that we generate distinct configurations.</param>
         /// <returns>The enumerator of generated configurations.</returns>
-        private IEnumerator<GeneratedConfiguration> ExtendConfiguration(GeneratedConfiguration currentConfiguration, GeneratorInput input, GenerationContext context)
+        private IEnumerator<GeneratedConfiguration> ExtendConfiguration(GeneratedConfiguration currentConfiguration, GeneratorInput input, IConfigurationFilter filter)
         {
             // For a given configuration we create all possible objects using the constructions from the input
             return input.Constructions.SelectMany(construction =>
@@ -129,12 +154,14 @@ namespace GeoGen.Generator
             .Where(newObject => !currentConfiguration.ConstructedObjectsSet.Contains(newObject))
             // Add the object to the current configuration
             .Select(newObject => new GeneratedConfiguration(currentConfiguration, newObject, currentConfiguration.IterationIndex + 1))
-            // Check the configuration by the helper class for exclusion
-            .Where(configuration => !context.ShouldBeExcluded(configuration))
-            // Apply the configuration filter
+            // Check the configuration by the filter
+            .Where(configuration => !filter.ShouldBeExcluded(configuration))
+            // Apply the custom configuration filter
             .Where(input.ConfigurationFilter.Invoke)
             // Finally get the enumerator
             .GetEnumerator();
         }
+
+        #endregion
     }
 }
