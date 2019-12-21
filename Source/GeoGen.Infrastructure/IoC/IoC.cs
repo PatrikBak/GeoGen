@@ -1,6 +1,4 @@
 ﻿using Ninject;
-using Ninject.Extensions.ContextPreservation;
-using Ninject.Extensions.Factory;
 using Ninject.Planning.Bindings.Resolvers;
 
 namespace GeoGen.Infrastructure
@@ -16,11 +14,8 @@ namespace GeoGen.Infrastructure
         /// <returns>The kernel.</returns>
         public static IKernel CreateKernel()
         {
-            // Create the function module (that is disposable)
-            using var funcModule = new FuncModule();
-
             // Create a kernel that will perform the resolution
-            var kernel = new StandardKernel(funcModule, new ContextPreservationModule());
+            var kernel = new StandardKernel();
 
             // Make sure we can bind to null 
             // This is used only for tracers, that are not compulsory
