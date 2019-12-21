@@ -9,10 +9,10 @@ namespace GeoGen.Infrastructure
     public static class IoC
     {
         /// <summary>
-        /// Creates a kernel with all needed modules for <see cref="GeoGenBindings"/>.
+        /// Creates and sets up a <see cref="StandardKernel"/>.
         /// </summary>
         /// <returns>The kernel.</returns>
-        public static IKernel CreateKernel()
+        public static StandardKernel CreateKernel()
         {
             // Create a kernel that will perform the resolution
             var kernel = new StandardKernel();
