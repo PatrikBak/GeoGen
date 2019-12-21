@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ConsoleLauncher
+﻿namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// Contains all settings used in tracers writing information per batch.
@@ -10,17 +8,17 @@ namespace GeoGen.ConsoleLauncher
         #region Public properties
 
         /// <summary>
-        /// The settings for <see cref="ConstructorFailureTracer"/>.
+        /// The settings for <see cref="ConstructorFailureTracer"/>. The value should be null if the tracing shouldn't happen.
         /// </summary>
         public ConstructorFailureTracerSettings ConstructorFailureTracerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="GeometryFailureTracer"/>.
+        /// The settings for <see cref="GeometryFailureTracer"/>. The value should be null if the tracing shouldn't happen.
         /// </summary>
         public GeometryFailureTracerSettings GeometryFailureTracerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>.
+        /// The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>. The value should be null if the tracing shouldn't happen.
         /// </summary>
         public SubtheoremDeriverGeometryFailureTracerSettings SubtheoremDeriverGeometryFailureTracerSettings { get; }
 
@@ -31,16 +29,16 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="TracersSettings"/> class.
         /// </summary>
-        /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>.</param>
-        /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>.</param>
-        /// <param name="subtheoremDeriverGeometryFailureTracerSettings">The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>.</param>
+        /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>. The value should be null if the tracing shouldn't happen.</param>
+        /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>. The value should be null if the tracing shouldn't happen.</param>
+        /// <param name="subtheoremDeriverGeometryFailureTracerSettings">The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>. The value should be null if the tracing shouldn't happen.</param>
         public TracersSettings(ConstructorFailureTracerSettings constructorFailureTracerSettings,
                                GeometryFailureTracerSettings geometryFailureTracerSettings,
                                SubtheoremDeriverGeometryFailureTracerSettings subtheoremDeriverGeometryFailureTracerSettings)
         {
-            ConstructorFailureTracerSettings = constructorFailureTracerSettings ?? throw new ArgumentNullException(nameof(constructorFailureTracerSettings));
-            GeometryFailureTracerSettings = geometryFailureTracerSettings ?? throw new ArgumentNullException(nameof(geometryFailureTracerSettings));
-            SubtheoremDeriverGeometryFailureTracerSettings = subtheoremDeriverGeometryFailureTracerSettings ?? throw new ArgumentNullException(nameof(subtheoremDeriverGeometryFailureTracerSettings));
+            ConstructorFailureTracerSettings = constructorFailureTracerSettings;
+            GeometryFailureTracerSettings = geometryFailureTracerSettings;
+            SubtheoremDeriverGeometryFailureTracerSettings = subtheoremDeriverGeometryFailureTracerSettings;
         }
 
         #endregion

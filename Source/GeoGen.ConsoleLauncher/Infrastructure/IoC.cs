@@ -48,10 +48,21 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
             Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
 
-            // Add tracers
-            Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
-            Kernel.Bind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
-            Kernel.Bind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
+            #endregion
+
+            #region Tracers
+
+            // Bind Subtheorem Deriver Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings != null)
+                Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
+
+            // Bind Constructor Failure Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.ConstructorFailureTracerSettings != null)
+                Kernel.Bind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
+
+            // Bind Geometry Failure Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.GeometryFailureTracerSettings != null)
+                Kernel.Bind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
 
             #endregion
 
