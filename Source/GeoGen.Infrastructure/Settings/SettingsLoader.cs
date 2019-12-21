@@ -13,11 +13,13 @@ namespace GeoGen.Infrastructure
     public static class SettingsLoader
     {
         /// <summary>
-        /// Loads the settings for the class. If not successful, uses default values.
+        /// Loads the JSON settings of a given type from a file.
         /// </summary>
+        /// <typeparam name="TSettings">The type of settings to be loaded.</typeparam>
         /// <param name="settingsFilePath">The path to the settings file.</param>
+        /// <param name="defaultSettings">The default settings, used as an example for how the JSON should look like.</param>
         /// <returns>The loaded settings.</returns>
-        public static async Task<TSettings> LoadAsync<TSettings>(string settingsFilePath, TSettings defaultSettings)
+        public static async Task<TSettings> LoadFromFileAsync<TSettings>(string settingsFilePath, TSettings defaultSettings)
         {
             // Prepare the settings content
             string settingsJson;
@@ -33,6 +35,19 @@ namespace GeoGen.Infrastructure
                 throw new SettingsException($"Unable to read the settings file: {settingsFilePath}", e);
             }
 
+            // Delegate the call to the other method
+            return LoadFromString(settingsJson, defaultSettings);
+        }
+
+        /// <summary>
+        /// Loads the JSON settings of a given type from a string.
+        /// </summary>
+        /// <typeparam name="TSettings">The type of settings to be loaded.</typeparam>
+        /// <param name="settingsJson">The JSON string with the settings to be loaded.</param>
+        /// <param name="defaultSettings">The default settings, used as an example for how the JSON should look like.</param>
+        /// <returns>The loaded settings.</returns>
+        public static TSettings LoadFromString<TSettings>(string settingsJson, TSettings defaultSettings)
+        {
             try
             {
                 // Try to deserialize the settings.
@@ -43,7 +58,7 @@ namespace GeoGen.Infrastructure
                     throw new SettingsException("The deserializer of settings returned null.");
 
                 // Log that we're done
-                LoggingManager.LogInfo($"Settings loaded from: {settingsFilePath}");
+                LoggingManager.LogInfo($"Settings successfully loaded.");
 
                 // Return the settings
                 return settings;
@@ -55,7 +70,7 @@ namespace GeoGen.Infrastructure
                 var defaultSettingsJson = JsonConvert.SerializeObject(defaultSettings, Formatting.Indented, new BaseLoggerSettingsConverter(), new StringEnumConverter());
 
                 // Throw a problem with the most informative message
-                throw new SettingsException($"Couldn't parse the settings from '{settingsFilePath}', the message: {e.Message}\n\n" +
+                throw new SettingsException($"Couldn't parse the settings, the message: {e.Message}\n\n" +
                                             $"For inspiration, these are the default settings: \n\n{defaultSettingsJson}\n\n");
             }
         }

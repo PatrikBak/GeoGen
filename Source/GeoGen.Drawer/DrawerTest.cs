@@ -25,7 +25,7 @@ namespace GeoGen.Drawer
             try
             {
                 // Load the settings
-                var settings = await SettingsLoader.LoadAsync<DrawerSettings>("settings.json", new DefaultDrawerSettings());
+                var settings = await SettingsLoader.LoadFromFileAsync<DrawerSettings>("settings.json", new DefaultDrawerSettings());
 
                 // Create the kernel 
                 var kernel = IoC.CreateKernel()
