@@ -26,8 +26,11 @@ namespace GeoGen.Infrastructure
 
             try
             {
+                // Open the stream
+                using var reader = new StreamReader(new FileStream(settingsFilePath, FileMode.Open));
+
                 // Read the settings file
-                settingsJson = await File.ReadAllTextAsync(settingsFilePath);
+                settingsJson = await reader.ReadToEndAsync();
             }
             catch (Exception e)
             {

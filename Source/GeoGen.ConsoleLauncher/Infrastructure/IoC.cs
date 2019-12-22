@@ -1,7 +1,10 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Constructor;
+using GeoGen.Generator;
 using GeoGen.Infrastructure;
+using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremRanker;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;

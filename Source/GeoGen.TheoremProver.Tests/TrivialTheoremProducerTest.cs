@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
