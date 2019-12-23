@@ -34,6 +34,11 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         private readonly IRankedTheoremsWriter _writer;
 
+        /// <summary>
+        /// The factory for creating lazy writers of best theorems.
+        /// </summary>
+        private readonly ITheoremsWithRankingJsonLazyWriterFactory _writerFactory;
+
         #endregion
 
         #region Private fields
@@ -54,15 +59,18 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="algorithm">The algorithm that is run.</param>
         /// <param name="finder">The finder of best theorems.</param>
         /// <param name="writer">The writer used to write best theorems to a file.</param>
+        /// <param name="writerFactory">The factory for creating lazy writers of best theorems.</param>
         public AlgorithmRunner(AlgorithmRunnerSettings settings,
                                IAlgorithmFacade algorithm,
                                IBestTheoremsFinder finder,
-                               IRankedTheoremsWriter writer)
+                               IRankedTheoremsWriter writer,
+                               ITheoremsWithRankingJsonLazyWriterFactory writerFactory)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
+            _writerFactory = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
         }
 
         #endregion
@@ -80,8 +88,14 @@ namespace GeoGen.ConsoleLauncher
 
             #region Prepare writers
 
+            // Prepare the writer of all the output as JSON
+            var outputJsonWriter = _writerFactory.Create(Path.Combine(_settings.OutputJsonFolder, $"{_settings.OutputFilePrefix}{input.Id}.json"));
+
+            // Prepare the writer of best theorems
+            var bestTheoremsJsonWriter = _writerFactory.Create(_settings.BestTheoremsJsonFilePath);
+
             // Prepare the name of the output files
-            var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FilesExtention}";
+            var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FilesExtension}";
 
             // Prepare the writer for the output
             using var outputWriter = new StreamWriter(new FileStream(Path.Combine(_settings.OutputFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read));
@@ -172,6 +186,9 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
+            // Begin writing of a JSON output file
+            outputJsonWriter.BeginWriting();
+
             // Run the algorithm
             foreach (var algorithmOutput in outputs)
             {
@@ -194,11 +211,7 @@ namespace GeoGen.ConsoleLauncher
                 #region Handling interesting theorems
 
                 // Find the best theorems
-                var bestTheorems = algorithmOutput.FindInterestingTheorems()
-                    // For each add as an id the string containing the id of configuration of the input file
-                    //.Select(theorem => (theorem, $"configuration {generatedConfigurations} of the output file {fileName}"))
-                    // Enumerate
-                    .ToArray();
+                var bestTheorems = algorithmOutput.FindInterestingTheorems().ToArray();
 
                 // Count them in
                 interestingTheorems += bestTheorems.Length;
@@ -213,10 +226,18 @@ namespace GeoGen.ConsoleLauncher
                     var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurations} of the output file {fileName}"));
 
                     // Write them
-                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremsFilePath);
+                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremsReadableFilePath);
+
+                    // Write their JSON version too
+                    bestTheoremsJsonWriter.WriteEagerly(_finder.BestTheorems);
                 }
 
                 #endregion
+
+                // Write JSON output
+                outputJsonWriter.Write(bestTheorems);
+
+                #region Human-readable output
 
                 // Prepare a formatter for the generated configuration
                 var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
@@ -277,6 +298,8 @@ namespace GeoGen.ConsoleLauncher
                 outputWriter.Flush();
                 outputWithAttemptsWriter?.Flush();
                 outputWithAttemptsAndProofsWriter?.Flush();
+
+                #endregion
             }
 
             // Write end
@@ -289,6 +312,9 @@ namespace GeoGen.ConsoleLauncher
             LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
             LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
             LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
+
+            // Close JSON output writer
+            outputJsonWriter.EndWriting();
         }
 
         /// <summary>

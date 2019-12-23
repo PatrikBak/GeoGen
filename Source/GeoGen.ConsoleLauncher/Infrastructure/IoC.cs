@@ -8,6 +8,7 @@ using GeoGen.TheoremRanker;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using Ninject;
+using Ninject.Extensions.Factory;
 using System.Threading.Tasks;
 
 namespace GeoGen.ConsoleLauncher
@@ -49,6 +50,8 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
             Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
             Kernel.Bind<IRankedTheoremsWriter>().To<RankedTheoremsWriter>();
+            Kernel.Bind<ITheoremsWithRankingJsonLazyWriterFactory>().ToFactory();
+            Kernel.Bind<ITheoremsWithRankingJsonLazyWriter>().To<TheoremsWithRankingJsonLazyWriter>();
 
             #endregion
 

@@ -39,14 +39,20 @@ namespace GeoGen.ConsoleLauncher
         public bool WriteOutputWithAttemptsAndProofs { get; }
 
         /// <summary>
+        /// The folder where the output of the algorithm in JSON should be written. This output
+        /// is easily readable backwards by a program.
+        /// </summary>
+        public string OutputJsonFolder { get; }
+
+        /// <summary>
         /// The prefix for all types of output files.
         /// </summary>
         public string OutputFilePrefix { get; }
 
         /// <summary>
-        /// The extensions of all types of output files.
+        /// The extensions of all types of output files, except for JSON files, which has .json extension.
         /// </summary>
-        public string FilesExtention { get; }
+        public string FilesExtension { get; }
 
         /// <summary>
         /// Indicates how often we log the number of generated configurations.
@@ -66,9 +72,14 @@ namespace GeoGen.ConsoleLauncher
         public bool IncludeUnprovenDiscoveredTheorems { get; }
 
         /// <summary>
-        /// The path to the file where the best theorems should be written to.
+        /// The path to the human-readable file where the best theorems should be written to.
         /// </summary>
-        public string BestTheoremsFilePath { get; }
+        public string BestTheoremsReadableFilePath { get; }
+
+        /// <summary>
+        /// The path to the JSON file where the best theorems should be written to.
+        /// </summary>
+        public string BestTheoremsJsonFilePath { get; }
 
         #endregion
 
@@ -82,35 +93,41 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="writeOutputWithAttempts">Indicates whether the output of the algorithm with attempts at unproven theorems should be written.</param>
         /// <param name="outputWithAttemptsAndProofsFolder">The folder where the where the output of the algorithm with attempts at unproven theorems and proofs of proved ones should be written.</param>
         /// <param name="writeOutputWithAttemptsAndProofs">Indicates whether the output of the algorithm with attempts at unproven theorems and proofs of proved ones should be written.</param>
+        /// <param name="outputJsonFolder">he folder where the output of the algorithm in JSON should be written. This output is easily readable backwards by a program.</param>
         /// <param name="outputFilePrefix">The prefix for all types of output files.</param>
-        /// <param name="filesExtention">The extensions of all types of output files.</param>
+        /// <param name="filesExtension">The extensions of all types of output files, except for JSON files, which has .json extension.</param>
         /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log the progress.</param>
         /// <param name="includeUnprovenDiscoveredTheorems">Indicates whether we should include discovered unproven theorems that were part of proof attempts at the main (unproven) theorems.</param>
-        /// <param name="bestTheoremsFilePath">The path to the file where the best theorems should be written to.</param>
+        /// <param name="bestTheoremsReadableFilePath">The path to the human-readable file where the best theorems should be written to.</param>
+        /// <param name="bestTheoremsJsonFilePath">The path to the JSON file where the best theorems should be written to.</param>
         public AlgorithmRunnerSettings(string outputFolder,
                                        string outputWithAttemptsFolder,
                                        bool writeOutputWithAttempts,
                                        string outputWithAttemptsAndProofsFolder,
                                        bool writeOutputWithAttemptsAndProofs,
+                                       string outputJsonFolder,
                                        string outputFilePrefix,
-                                       string filesExtention,
+                                       string filesExtension,
                                        int generationProgresLoggingFrequency,
                                        bool logProgress,
                                        bool includeUnprovenDiscoveredTheorems,
-                                       string bestTheoremsFilePath)
+                                       string bestTheoremsReadableFilePath,
+                                       string bestTheoremsJsonFilePath)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
             OutputWithAttemptsFolder = outputWithAttemptsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsFolder));
             WriteOutputWithAttempts = writeOutputWithAttempts;
             OutputWithAttemptsAndProofsFolder = outputWithAttemptsAndProofsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsAndProofsFolder));
             WriteOutputWithAttemptsAndProofs = writeOutputWithAttemptsAndProofs;
+            OutputJsonFolder = outputJsonFolder ?? throw new ArgumentNullException(nameof(outputJsonFolder));
             OutputFilePrefix = outputFilePrefix ?? throw new ArgumentNullException(nameof(outputFilePrefix));
-            FilesExtention = filesExtention ?? throw new ArgumentNullException(nameof(filesExtention));
+            FilesExtension = filesExtension ?? throw new ArgumentNullException(nameof(filesExtension));
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
             IncludeUnprovenDiscoveredTheorems = includeUnprovenDiscoveredTheorems;
-            BestTheoremsFilePath = bestTheoremsFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsFilePath));
+            BestTheoremsReadableFilePath = bestTheoremsReadableFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsReadableFilePath));
+            BestTheoremsJsonFilePath = bestTheoremsJsonFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsJsonFilePath));
         }
 
         #endregion

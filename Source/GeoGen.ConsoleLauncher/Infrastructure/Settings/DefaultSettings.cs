@@ -119,17 +119,19 @@ namespace GeoGen.ConsoleLauncher
             ),
             algorithmRunnerSettings: new AlgorithmRunnerSettings
             (
-                outputFolder: "..\\..\\..\\Data\\Outputs",
+                outputFolder: "..\\..\\..\\Data\\Outputs\\Readable",
                 outputWithAttemptsFolder: "..\\..\\..\\Data\\Outputs\\WithAttempts",
                 writeOutputWithAttempts: true,
                 outputWithAttemptsAndProofsFolder: "..\\..\\..\\Data\\Outputs\\WithAttemptsAndProofs",
                 writeOutputWithAttemptsAndProofs: true,
+                outputJsonFolder: "..\\..\\..\\Data\\Outputs\\Json",
                 outputFilePrefix: "output",
-                filesExtention: "txt",
+                filesExtension: "txt",
                 generationProgresLoggingFrequency: 15,
                 logProgress: true,
                 includeUnprovenDiscoveredTheorems: true,
-                bestTheoremsFilePath: "..\\..\\..\\Data\\best_theorems.txt"
+                bestTheoremsReadableFilePath: "..\\..\\..\\Data\\best_theorems.txt",
+                bestTheoremsJsonFilePath: "..\\..\\..\\Data\\best_theorems.json"
             ),
             tracersSettings: new TracersSettings
             (
