@@ -65,6 +65,11 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public bool IncludeUnprovenDiscoveredTheorems { get; }
 
+        /// <summary>
+        /// The path to the file where the best theorems should be written to.
+        /// </summary>
+        public string BestTheoremsFilePath { get; }
+
         #endregion
 
         #region Constructor
@@ -82,7 +87,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log the progress.</param>
         /// <param name="includeUnprovenDiscoveredTheorems">Indicates whether we should include discovered unproven theorems that were part of proof attempts at the main (unproven) theorems.</param>
-
+        /// <param name="bestTheoremsFilePath">The path to the file where the best theorems should be written to.</param>
         public AlgorithmRunnerSettings(string outputFolder,
                                        string outputWithAttemptsFolder,
                                        bool writeOutputWithAttempts,
@@ -92,7 +97,8 @@ namespace GeoGen.ConsoleLauncher
                                        string filesExtention,
                                        int generationProgresLoggingFrequency,
                                        bool logProgress,
-                                       bool includeUnprovenDiscoveredTheorems)
+                                       bool includeUnprovenDiscoveredTheorems,
+                                       string bestTheoremsFilePath)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
             OutputWithAttemptsFolder = outputWithAttemptsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsFolder));
@@ -104,6 +110,7 @@ namespace GeoGen.ConsoleLauncher
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
             IncludeUnprovenDiscoveredTheorems = includeUnprovenDiscoveredTheorems;
+            BestTheoremsFilePath = bestTheoremsFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsFilePath));
         }
 
         #endregion

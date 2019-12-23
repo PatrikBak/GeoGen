@@ -45,11 +45,10 @@ namespace GeoGen.ConsoleLauncher
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IAlgorithmRunner>().To<AlgorithmRunner>().WithConstructorArgument(settings.AlgorithmRunnerSettings);
-            Kernel.Bind<IBestTheoremTracker>().To<BestTheoremTracker>().WithConstructorArgument(settings.BestTheoremsTrackerSettings);
-            Kernel.Bind<ITheoremDataWriter>().To<FileTheoremDataWriter>().WithConstructorArgument(settings.FileTheoremDataWriterSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
             Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
+            Kernel.Bind<IRankedTheoremsWriter>().To<RankedTheoremsWriter>();
 
             #endregion
 
@@ -113,7 +112,7 @@ namespace GeoGen.ConsoleLauncher
                     rules: (await Kernel.Get<ISimplificationRulesProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
                 // And finally the algorithm with its settings
-                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings);
+                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings, settings.AlgorithmSettings.BestTheoremsFinderSettings);
 
             #endregion
         }

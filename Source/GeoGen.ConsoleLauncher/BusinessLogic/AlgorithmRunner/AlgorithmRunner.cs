@@ -30,14 +30,9 @@ namespace GeoGen.ConsoleLauncher
         private readonly IBestTheoremsFinder _finder;
 
         /// <summary>
-        /// The tracker of best theorems.
-        /// </summary>
-        private readonly IBestTheoremTracker _tracker;
-
-        /// <summary>
         /// The writer used to write best theorems to a file.
         /// </summary>
-        private readonly ITheoremDataWriter _writer;
+        private readonly IRankedTheoremsWriter _writer;
 
         #endregion
 
@@ -58,17 +53,15 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
         /// <param name="finder">The finder of best theorems.</param>
-        /// <param name="tracker">The tracker of best theorems.</param>
+        /// <param name="writer">The writer used to write best theorems to a file.</param>
         public AlgorithmRunner(AlgorithmRunnerSettings settings,
                                IAlgorithmFacade algorithm,
                                IBestTheoremsFinder finder,
-                               IBestTheoremTracker tracker,
-                               ITheoremDataWriter writer)
+                               IRankedTheoremsWriter writer)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
-            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
+            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
 
@@ -201,23 +194,27 @@ namespace GeoGen.ConsoleLauncher
                 #region Handling interesting theorems
 
                 // Find the best theorems
-                var bestTheorems = _finder.FindInterestingTheorems(algorithmOutput)
-                    // Wrap them in theorem data objects
-                    .Select(theorem => new TheoremData(theorem, algorithmOutput.Configuration, algorithmOutput.Rankings[theorem],
-                         // As the id of the theorem construct string containing the id of configuration of the input file
-                         $"configuration {generatedConfigurations} of the output file {fileName}"))
+                var bestTheorems = algorithmOutput.FindInterestingTheorems()
+                    // For each add as an id the string containing the id of configuration of the input file
+                    //.Select(theorem => (theorem, $"configuration {generatedConfigurations} of the output file {fileName}"))
                     // Enumerate
                     .ToArray();
 
                 // Count them in
                 interestingTheorems += bestTheorems.Length;
 
-                // Track them
-                _tracker.AddTheorems(bestTheorems, out var bestTheoremsChanged);
+                // Let the finder judge them
+                _finder.AddTheorems(bestTheorems, out var bestTheoremsChanged);
 
-                // If there are some new, write them
+                // If there are some new ones
                 if (bestTheoremsChanged)
-                    _writer.WriteTheorems(_tracker.BestTheorems);
+                {
+                    // Prepare an enumerable that identifies each so they could be found back in the output file
+                    var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurations} of the output file {fileName}"));
+
+                    // Write them
+                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremsFilePath);
+                }
 
                 #endregion
 

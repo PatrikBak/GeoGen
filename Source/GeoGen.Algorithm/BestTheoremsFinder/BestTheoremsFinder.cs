@@ -1,5 +1,4 @@
-﻿using GeoGen.Core;
-using GeoGen.TheoremProver;
+﻿using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,30 +6,67 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The default implementation of <see cref="IBestTheoremsFinder"/>. This implementation does this: 
-    /// 
-    /// 1. Look at each group of <see cref="TheoremProverOutput.UnprovenTheoremGroups"/>.
-    /// 2. From each group select the theorem with the highest ranking that can't be simplified.
-    /// 3. Return these theorems.
-    /// 
+    /// The default implementation of <see cref="IBestTheoremsFinder"/> can track a specified number of theorems.
+    /// The current implementation doesn't do any check whether we have duplicated (potentially from multiple sources).
     /// </summary>
     public class BestTheoremsFinder : IBestTheoremsFinder
     {
+        #region Private fields
+
         /// <summary>
-        /// Processes a given algorithm output in order to find interesting theorems. 
+        /// The ladder of best theorems.
         /// </summary>
-        /// <param name="output">The algorithm output to be processed.</param>
-        /// <returns>The interesting theorems of the output.</returns>
-        public IEnumerable<Theorem> FindInterestingTheorems(AlgorithmOutput output)
+        private readonly RankingLadder<TheoremWithRanking, TheoremRanking> _ladder;
+
+        #endregion
+
+        #region IBestTheoremTracker properties
+
+        /// <summary>
+        /// The best theorems that currently have been found.
+        /// </summary>
+        public IEnumerable<TheoremWithRanking> BestTheorems => _ladder.Select(pair => pair.item);
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BestTheoremsFinder"/> class.
+        /// </summary>
+        /// <param name="settings">The settings for the finder.</param>
+        public BestTheoremsFinder(BestTheoremsFinderSettings settings)
         {
-            // Take the groups
-            return output.ProverOutput.UnprovenTheoremGroups
-                // For each group find its non-simplified theorems
-                .Select(group => group.Where(theorem => !output.SimplifiedTheorems.ContainsKey(theorem)).ToList())
-                // Take only groups where there is an least one theorem
-                .Where(group => group.Any())
-                // From each group take the theorem with the highest ranking
-                .Select(group => group.MaxItem(theorem => output.Rankings[theorem].TotalRanking));
+            // Initialize the ladder with the requested capacity
+            _ladder = new RankingLadder<TheoremWithRanking, TheoremRanking>(capacity: settings.NumberOfTheorems);
         }
+
+        #endregion
+
+        #region IBestTheoremsTracker methods
+
+        /// <summary>
+        /// Gives given theorems for the finder to judge them.
+        /// </summary>
+        /// <param name="theorems">The theorems to be examined.</param>
+        /// <param name="bestTheoremsChanged">Indicates whether <see cref="BestTheorems"/> has changed after adding all theorems.</param>
+        public void AddTheorems(IEnumerable<TheoremWithRanking> theorems, out bool bestTheoremsChanged)
+        {
+            // Set the that the best theorems hasn't initially changed
+            bestTheoremsChanged = false;
+
+            // Add all the theorems to the ladder
+            foreach (var theoremData in theorems)
+            {
+                // Add the current data
+                _ladder.Add(theoremData, theoremData.Ranking, out var contentChanged);
+
+                // If this adding changed the content, then we mark it
+                if (contentChanged)
+                    bestTheoremsChanged = true;
+            }
+        }
+
+        #endregion
     }
 }

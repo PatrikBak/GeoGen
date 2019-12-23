@@ -47,6 +47,10 @@ namespace GeoGen.ConsoleLauncher
                     numberOfPictures: 5,
                     excludeAsymmetricConfigurations: false
                 ),
+                bestTheoremsFinderSettings: new BestTheoremsFinderSettings
+                (
+                    numberOfTheorems: 42
+                ),
                 theoremFindingSettings: new TheoremFindingSettings
                 (
                     tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
@@ -93,7 +97,10 @@ namespace GeoGen.ConsoleLauncher
                         }
                     )
                 ),
-                generationSettings: new GenerationSettings(configurationFilterType: ConfigurationFilterType.Fast)
+                generationSettings: new GenerationSettings
+                (
+                    configurationFilterType: ConfigurationFilterType.Fast
+                )
             ),
             inputFolderSettings: new InputFolderSettings
             (
@@ -121,7 +128,8 @@ namespace GeoGen.ConsoleLauncher
                 filesExtention: "txt",
                 generationProgresLoggingFrequency: 15,
                 logProgress: true,
-                includeUnprovenDiscoveredTheorems: true
+                includeUnprovenDiscoveredTheorems: true,
+                bestTheoremsFilePath: "..\\..\\..\\Data\\best_theorems.txt"
             ),
             tracersSettings: new TracersSettings
             (
@@ -140,9 +148,7 @@ namespace GeoGen.ConsoleLauncher
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\subtheorem_failures.txt",
                     logFailures: true
                 )
-            ),
-            bestTheoremsTrackerSettings: new BestTheoremTrackerSettings(numberOfTheorems: 42),
-            fileTheoremDataWriterSettings: new FileTheoremDataWriterSettings(theoremFilePath: "..\\..\\..\\Data\\best_theorems.txt")
+            )
         )
         { }
     }
