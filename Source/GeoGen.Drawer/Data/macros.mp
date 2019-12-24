@@ -37,6 +37,26 @@ def ParallelLineToLineFromPoints_Text(expr l,A,B,C) =
 	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
 enddef;
 
+def PerpendicularProjectionOnLineFromPoints_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the projection of~$" & A & "$ on~$" & B & C & "$. "
+enddef;
+
+def MidpointOfArc_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the midpoint of arc~$" & B & A & C "$. "
+enddef;
+
+def MidpointOfOppositeArc_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the midpoint of opposite arc~$" & B & A & C & "$. "
+enddef;
+
+def OppositePointOnCircumcircle_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the point opposite to~$" & A & "$ on circle~$" & B & A & C & "$. "
+enddef;
+
+def Circumcenter_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the circumcenter of~$" & A & B & C & "$. "
+enddef;
+
 def IntersectionOfLines_Text(expr P,k,l) = 
 	"Let~$" & P & "$ be the intersection point of~$" & k & "$ and $" & l & "$. "		
 enddef;
@@ -53,6 +73,10 @@ def Incircle_Text(expr c,A,B,C) =
 	"Let~$" & c & "$ be the incircle of~$" & A & B & C & "$. "		
 enddef;
 
+def Excircle_Text(expr c,A,B,C) = 
+	"Let~$" & c & "$ be the~$" & A & "$-excircle of~$" & A & B & C & "$. "		
+enddef;
+
 def EqualLineSegments_Text(expr k,l) =
 	"Show that $" & k & "=" & l & "$. "
 enddef;
@@ -63,6 +87,10 @@ enddef;
 
 def TangentCircles_Text(expr k,l) =
 	"Show that circles~$" & k & "$ and $" & l & "$ are tangent to each other. "
+enddef;
+
+def ConcyclicPoints_Text(expr A,B,C,D) =
+	"Show that points~$" & A & "," & B & "," & C & "," & D & "$ are concyclic. "
 enddef;
 
 %%%%%%%%%%% HELPER MACROS %%%%%%%%%%%
@@ -344,7 +372,7 @@ enddef;
 
 def WithAuxiliaryStyle = 
 	withpen pencircle scaled 0.5
-	withdots
+	dashed withdots scaled 0.3
 enddef;
 
 

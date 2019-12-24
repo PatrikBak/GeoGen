@@ -1,4 +1,5 @@
-﻿using GeoGen.Constructor;
+﻿using GeoGen.ConsoleLauncher;
+using GeoGen.Constructor;
 using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using Ninject;
@@ -40,6 +41,9 @@ namespace GeoGen.Drawer
 
             // Bind the rules provider
             Kernel.Bind<IDrawingRulesProvider>().To<DrawingRulesProvider>().WithConstructorArgument(settings.DrawingRulesProviderSettings);
+
+            // Bind the reader
+            Kernel.Bind<ITheoremsWithRankingJsonLazyReader>().To<TheoremsWithRankingJsonLazyReader>();
 
             // Bind the drawer with its settings
             Kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
