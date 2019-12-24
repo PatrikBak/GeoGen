@@ -13,18 +13,22 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj" />
-    <ProjectReference Include="..\GeoGen.Core\GeoGen.Core.csproj" />
     <ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
+    <ProjectReference Include="..\GeoGen.Algorithm\GeoGen.Algorithm.csproj" />
   </ItemGroup>
-
+  
   <ItemGroup>
-    <None Update="macros.mp">
+
+    <ContentWithTargetPath Include="Data\macros.mp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="post-compile.bat">
+      <TargetPath>macros.mp</TargetPath>
+    </ContentWithTargetPath>
+
+    <ContentWithTargetPath Include="Data\post-compile.bat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+      <TargetPath>post-compile.bat</TargetPath>
+    </ContentWithTargetPath>
+
   </ItemGroup>
 
 </Project>

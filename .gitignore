@@ -252,4 +252,3 @@ paket-files/
 *.sln.iml
 
 Source/GeoGen.ConsoleLauncher/Data/
-Source/GeoGen.Drawer/Data/

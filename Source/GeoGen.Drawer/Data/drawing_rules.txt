@@ -1,0 +1,212 @@
+# Circles
+
+c = CircleWithCenterThroughPoint(A,B)
+  - draw Circle(c)
+
+c = CircleWithDiameter(A,B)
+  - draw Circle(c)
+  - draw Segment(A,B)
+ 
+c = Incircle(A,B,C)
+  - let D = CenterOfCircle(c)
+  - let E = PerpendicularProjectionOnLineFromPoints(D,A,B)
+  - let F = PerpendicularProjectionOnLineFromPoints(D,B,C)
+  - let G = PerpendicularProjectionOnLineFromPoints(D,A,C)
+  - draw Point(E) auxiliary
+  - draw Point(F) auxiliary
+  - draw Point(G) auxiliary
+  - draw Segment(A,B)
+  - draw Segment(A,C)
+  - draw Segment(B,C)
+
+c = Excircle(A,B,C)
+  - let D = CenterOfCircle(c)
+  - let E = PerpendicularProjectionOnLineFromPoints(D,A,B)
+  - let F = PerpendicularProjectionOnLineFromPoints(D,A,C)
+  - let G = PerpendicularProjectionOnLineFromPoints(D,B,C)
+  - draw Point(E) auxiliary
+  - draw Point(F) auxiliary
+  - draw Point(G) auxiliary
+  - draw Circle(c)
+  - draw ShiftedSegment(A,E)
+  - draw ShiftedSegment(A,F)
+  - draw Segment(B,C)
+  
+c = NinePointCircle(A,B,C)
+  - let D = Midpoint(A,B)
+  - let E = Midpoint(A,C)
+  - let F = Midpoint(B,C)
+  - draw Point(D) auxiliary
+  - draw Point(E) auxiliary
+  - draw Point(F) auxiliary
+  - draw Circle(c) 
+   
+# Lines
+
+l = TangentLine(A,B,C)
+  - let c = Circumcircle(A,B,C)
+  - draw Circle(c)
+  - draw ShiftedLine(l,A)
+  
+l = ParallelLine(A,k)
+  - draw Line(l,A)
+  - draw Line(k)
+
+l = ParallelLineToLineFromPoints(A,B,C)
+  - draw Line(l,A)
+  - draw Segment(B,C)  
+  
+l = PerpendicularLine(A,k)
+  - let M = PerpendicularProjection(A,k)
+  - draw Point(M) auxiliary
+  - draw Line(k,M)
+  - draw Line(l,A)
+
+l = PerpendicularLineToLineFromPoints(A,B,C)
+  - let M = PerpendicularProjectionOnLineFromPoints(A,B,C)
+  - draw Point(M) auxiliary
+  - draw Line(l,A,M)
+  - draw Segment(M,B)
+  - draw Segment(M,C)  
+  
+l = PerpendicularLineAtPointOfLine(A,B)
+  - draw Line(l,A)
+  - draw Segment(A,B) 
+  
+l = PerpendicularBisector(A,B)
+  - let M = Midpoint(A,B)
+  - draw Point(M) auxiliary
+  - draw ShiftedLine(l,M)
+  
+l = ExternalAngleBisector(A,B,C)
+  - draw Line(l,A)
+  - draw ShiftedSegment(B,A)
+  - draw ShiftedSegment(C,A)
+  
+l = InternalAngleBisector(A,B,C)
+  - draw Line(l,A)
+  - draw Segment(A,B)
+  - draw Segment(A,C)
+
+l = LineThroughCircumcenter(A,B,C)
+  - let O = Circumcenter(A,B,C)
+  - draw Point(O) auxiliary
+  - draw Line(l,A,O)
+  
+l = Median(A,B,C)
+  - let M = Midpoint(B,C)
+  - draw Point(M) auxiliary
+  - draw Line(l,A,M)
+  
+l = Midline(A,B,C)
+  - let M = Midpoint(A,B)
+  - let N = Midpoint(A,C)
+  - draw Point(M) auxiliary
+  - draw Point(N) auxiliary
+  - draw Line(l,M,N)
+
+# Points
+
+P = CenterOfCircle(c)
+  - draw Circle(c)
+  - draw Point(P)
+  
+P = Circumcenter(A,B,C)
+  - draw Point(P)
+ 
+P = Orthocenter(A,B,C)
+  - draw Point(P) 
+ 
+P = Incenter(A,B,C)
+  - draw Point(P)
+
+P = Excenter(A,B,C)
+  - draw Point(P)
+ 
+P = Midpoint(A,B)
+  - draw Segment(A,B)
+  - draw Point(P)
+ 
+P = MidpointOfArc(A,B,C)
+  - let c = Circumcircle(A,B,C)
+  - draw Circle(c)
+  - draw Point(P)
+  
+P = MidpointOfOppositeArc(A,B,C)
+  - let c = Circumcircle(A,B,C)
+  - draw Circle(c)
+  - draw Point(P) 
+
+  P = IntersectionOfLines(l1, l2)
+  - draw Line(l1, P)
+  - draw Line(l2, P)
+  - draw Point(P)
+  
+P = IntersectionOfLinesFromPoints(A, B, C, D)
+  - draw Segment(P,A)
+  - draw Segment(P,B)
+  - draw Segment(P,C)
+  - draw Segment(P,D)
+  - draw Point(P)
+ 
+P = IntersectionOfLineAndLineFromPoints(l, A, B)
+  - draw Segment(P,A)
+  - draw Segment(P,B)
+  - draw Line(l,P)
+  - draw Point(P)
+ 
+P = ParallelogramPoint(A, B, C)
+  - let M = Midpoint(B,C)
+  - draw Segment(A,P)
+  - draw Point(M) auxiliary
+  - draw Point(P)
+ 
+P = PointReflection(A,B)
+  - draw Segment(A,P)
+  - draw Point(P)
+  
+P = ReflectionInLine(l,A)
+  - let M = PerpendicularProjection(A,l)
+  - draw Point(M) auxiliary
+  - draw Line(l,M)
+  - draw Segment(A,P)
+  - draw Point(P)
+  
+P = ReflectionInLineFromPoints(A,B,C)
+  - let M = PerpendicularProjectionOnLineFromPoints(A,B,C)
+  - draw Segment(M,B) auxiliary
+  - draw Segment(M,C) auxiliary
+  - draw Segment(A,P)
+  - draw Point(M) auxiliary
+  - draw Point(P)
+
+P = PerpendicularProjection(A,l)
+  - draw Line(l,P)
+  - draw Segment(A,P)
+  - draw Point(P)
+  
+P = PerpendicularProjectionOnLineFromPoints(A,B,C)
+  - draw Segment(P,B)
+  - draw Segment(P,C)
+  - draw Segment(A,P)
+  - draw Point(P)
+  
+P = OppositePointOnCircumcircle(A,B,C)
+  - let c = Circumcircle(A,B,C)
+  - draw Circle(c)
+  - draw Segment(A,P) auxiliary
+  - draw Point(P)
+
+P = SecondIntersectionOfCircleAndLineFromPoints(A,B,C,D)
+  - let c = Circumcircle(A,C,D)
+  - draw Circle(c)
+  - draw Segment(P,A)
+  - draw Segment(P,B)
+  - draw Point(P)
+  
+P = SecondIntersectionOfTwoCircumcircles(A,B,C,D,E)
+  - let c1 = Circumcircle(A,C,D)
+  - let c2 = Circumcircle(A,D,E)
+  - draw Circle(c1)
+  - draw Circle(c2)
+  - draw Point(P)

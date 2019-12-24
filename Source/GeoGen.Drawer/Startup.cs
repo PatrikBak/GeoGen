@@ -1,9 +1,8 @@
-﻿using GeoGen.Constructor;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
+using GeoGen.Utilities;
 using Ninject;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
@@ -16,7 +15,7 @@ namespace GeoGen.Drawer
     /// <summary>
     /// The class that runs tests of drawing.
     /// </summary>
-    public static class DrawerTest
+    public static class Startup
     {
         /// <summary>
         /// The main method.
@@ -28,27 +27,11 @@ namespace GeoGen.Drawer
                 // Load the settings
                 var settings = await SettingsLoader.LoadFromFileAsync<DrawerSettings>("settings.json", new DefaultDrawerSettings());
 
-                // Create the kernel 
-                var kernel = IoC.CreateKernel()
-                    // With logging
-                    .AddLogging(settings.LoggingSettings)
-                    // And the constructor module
-                    .AddConstructor();
-
-                // Bind the rules provider
-                kernel.Bind<IDrawingRulesProvider>().To<DrawingRulesProvider>().WithConstructorArgument(settings.DrawingRulesProviderSettings);
-
-                // Bind the drawer with its settings
-                kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
-                    // And its data
-                    .WithConstructorArgument(new MetapostDrawerData
-                    (
-                        // Loaded via the drawing rules provider
-                        (await kernel.Get<IDrawingRulesProvider>().GetDrawingRulesAsync()).ToDictionary(rule => rule.ObjectToDraw.Construction, rule => rule)
-                    ));
+                // Initialize the IoC system
+                await IoC.InitializeAsync(settings);
 
                 // Get the drawer and try run it on some configurations
-                await kernel.Get<IDrawer>().DrawAsync(new[]
+                await IoC.Kernel.Get<IDrawer>().DrawAsync(new[]
                 {
                     MediansAreConcurrent(),
                     IncircleTouchesNinePointCircle(),
@@ -64,14 +47,25 @@ namespace GeoGen.Drawer
                     // Exception when compiling / post-compiling
                     case CommandException commandException:
 
-                        // Write out the command
-                        Log.LoggingManager.LogFatal($"An exception when performing the command '{commandException.CommandWithArguments}', " +
-                            // And the code
-                            $"exit code {commandException.ExitCode}, message: {commandException.Message}\n\n" +
-                            // And the standard output
-                            $"Standard output: {commandException.StandardOutput}\n\n" +
-                            // And the error output
-                            $"Error output: {commandException.ErrorOutput}\n\n");
+                        // Prepare the message containing the command
+                        var message = $"An exception when performing the command '{commandException.CommandWithArguments}', " +
+                            // And the exit code
+                            $"exit code {commandException.ExitCode}";
+
+                        // If the message isn't empty, append it
+                        if (!commandException.Message.IsEmpty())
+                            message += $" message: {commandException.Message}";
+
+                        // If the standard output isn't empty, append it
+                        if (!commandException.StandardOutput.IsEmpty())
+                            message += $"\n\nStandard output:\n\n{commandException.StandardOutput}";
+
+                        // If the standard output isn't empty, append it
+                        if (!commandException.ErrorOutput.IsEmpty())
+                            message = $"{message.Trim()}\n\nError output:\n\n{commandException.ErrorOutput}";
+
+                        // Write out the exception
+                        Log.LoggingManager.LogFatal(message);
 
                         break;
 
