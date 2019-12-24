@@ -117,7 +117,7 @@ namespace GeoGen.ConsoleLauncher
             (
                 filePath: "..\\..\\..\\Data\\simplifications.txt"
             ),
-            algorithmRunnerSettings: new AlgorithmRunnerSettings
+            debugAlgorithmRunnerSettings: new DebugAlgorithmRunnerSettings
             (
                 outputFolder: "..\\..\\..\\Data\\Outputs\\Readable",
                 outputWithAttemptsFolder: "..\\..\\..\\Data\\Outputs\\WithAttempts",

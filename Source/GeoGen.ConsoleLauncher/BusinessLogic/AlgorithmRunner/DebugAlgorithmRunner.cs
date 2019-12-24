@@ -13,9 +13,9 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="AlgorithmRunner"/>.
+    /// The default implementation of <see cref="DebugAlgorithmRunner"/>.
     /// </summary>
-    public class AlgorithmRunner : IAlgorithmRunner
+    public class DebugAlgorithmRunner : IAlgorithmRunner
     {
         #region Dependencies
 
@@ -46,25 +46,25 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings for this runner.
         /// </summary>
-        private readonly AlgorithmRunnerSettings _settings;
+        private readonly DebugAlgorithmRunnerSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmRunner"/> class.
+        /// Initializes a new instance of the <see cref="DebugAlgorithmRunner"/> class.
         /// </summary>
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
         /// <param name="finder">The finder of best theorems.</param>
         /// <param name="writer">The writer used to write best theorems to a file.</param>
         /// <param name="writerFactory">The factory for creating lazy writers of best theorems.</param>
-        public AlgorithmRunner(AlgorithmRunnerSettings settings,
-                               IAlgorithmFacade algorithm,
-                               IBestTheoremsFinder finder,
-                               IRankedTheoremsWriter writer,
-                               ITheoremsWithRankingJsonLazyWriterFactory writerFactory)
+        public DebugAlgorithmRunner(DebugAlgorithmRunnerSettings settings,
+                                    IAlgorithmFacade algorithm,
+                                    IBestTheoremsFinder finder,
+                                    IRankedTheoremsWriter writer,
+                                    ITheoremsWithRankingJsonLazyWriterFactory writerFactory)
         {
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));

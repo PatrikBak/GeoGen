@@ -3,9 +3,9 @@
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The settings for <see cref="AlgorithmRunner"/>
+    /// The settings for <see cref="DebugAlgorithmRunner"/>
     /// </summary>
-    public class AlgorithmRunnerSettings
+    public class DebugAlgorithmRunnerSettings
     {
         #region Public properties
 
@@ -86,7 +86,7 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmRunnerSettings"/> class.
+        /// Initializes a new instance of the <see cref="DebugAlgorithmRunnerSettings"/> class.
         /// </summary>
         /// <param name="outputFolder">The folder where the where the output of the algorithm should be written.</param>
         /// <param name="outputWithAttemptsFolder">The folder where the where the output of the algorithm with attempts at unproven theorems should be written.</param>
@@ -101,19 +101,19 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="includeUnprovenDiscoveredTheorems">Indicates whether we should include discovered unproven theorems that were part of proof attempts at the main (unproven) theorems.</param>
         /// <param name="bestTheoremsReadableFilePath">The path to the human-readable file where the best theorems should be written to.</param>
         /// <param name="bestTheoremsJsonFilePath">The path to the JSON file where the best theorems should be written to.</param>
-        public AlgorithmRunnerSettings(string outputFolder,
-                                       string outputWithAttemptsFolder,
-                                       bool writeOutputWithAttempts,
-                                       string outputWithAttemptsAndProofsFolder,
-                                       bool writeOutputWithAttemptsAndProofs,
-                                       string outputJsonFolder,
-                                       string outputFilePrefix,
-                                       string filesExtension,
-                                       int generationProgresLoggingFrequency,
-                                       bool logProgress,
-                                       bool includeUnprovenDiscoveredTheorems,
-                                       string bestTheoremsReadableFilePath,
-                                       string bestTheoremsJsonFilePath)
+        public DebugAlgorithmRunnerSettings(string outputFolder,
+                                            string outputWithAttemptsFolder,
+                                            bool writeOutputWithAttempts,
+                                            string outputWithAttemptsAndProofsFolder,
+                                            bool writeOutputWithAttemptsAndProofs,
+                                            string outputJsonFolder,
+                                            string outputFilePrefix,
+                                            string filesExtension,
+                                            int generationProgresLoggingFrequency,
+                                            bool logProgress,
+                                            bool includeUnprovenDiscoveredTheorems,
+                                            string bestTheoremsReadableFilePath,
+                                            string bestTheoremsJsonFilePath)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
             OutputWithAttemptsFolder = outputWithAttemptsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsFolder));
