@@ -2,7 +2,6 @@
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -212,8 +211,7 @@ namespace GeoGen.Drawer
             // Helper function that converts a point to a string readable by MetaPost
             string ConvertPoint(Point point) =>
                 // Include the scaling variable and both coordinates
-                // CultureInfo.InvariantCulture is there to make sure we will get a decimal point
-                $"{drawingData.ScaleVariable}*({point.X.ToString(CultureInfo.InvariantCulture)},{point.Y.ToString(CultureInfo.InvariantCulture)})";
+                $"{drawingData.ScaleVariable}*({point.X.ToStringReadableByMetapost()},{point.Y.ToStringReadableByMetapost()})";
 
             // Prepare the resulting code
             var code = new StringBuilder();
@@ -306,6 +304,8 @@ namespace GeoGen.Drawer
                 var passingPoints = (_linePoints.GetOrDefault(line) ?? Enumerable.Empty<Point>())
                         // Append those of them that are shifted (the shift will be resolved later)
                         .Concat(_shiftLinePoints.GetOrDefault(line) ?? Enumerable.Empty<Point>())
+                        // Take distinct 
+                        .Distinct()
                         // Sort them
                         .OrderBy(point => point, comparer)
                         // Enumerate
@@ -340,8 +340,8 @@ namespace GeoGen.Drawer
                 {
                     // In order to make the line to go across the picture, we need the bounding box points
                     // Get the leftmost topmost and rightmost bottommost point
-                    var leftUpperCorner = _pointStyles.Keys.OrderBy(point => point, comparer).First();
-                    var rightBottomCorner = _pointStyles.Keys.OrderBy(point => point, comparer).Last();
+                    var leftUpperCorner = new Point(_pointStyles.Keys.Select(point => point.X).Min(), _pointStyles.Keys.Select(point => point.Y).Max());
+                    var rightBottomCorner = new Point(_pointStyles.Keys.Select(point => point.X).Max(), _pointStyles.Keys.Select(point => point.Y).Min());
 
                     // Shift the points according to the bounding box offset
                     leftUpperCorner += new Point(-drawingData.BoundingBoxOffset, drawingData.BoundingBoxOffset);
@@ -403,6 +403,25 @@ namespace GeoGen.Drawer
                     var newLeftPoint = comparer.Compare(point1, point2) < 0 ? point1 : point2;
                     var newRightPoint = comparer.Compare(point1, point2) < 0 ? point2 : point1;
 
+                    // If this is the first segment...
+                    if (segmentPoints.IsEmpty())
+                    {
+                        // Then add the points
+                        segmentPoints.TryAdd(newLeftPoint, newLeftPoint);
+                        segmentPoints.TryAdd(newRightPoint, newRightPoint);
+
+                        // Add the segment with the style
+                        segmentStyles.Add(newLeftPoint, segmentStyle);
+
+                        // We're done for now
+                        return;
+                    }
+
+                    // At this point we're sure this is not the first segment being drawn on this line
+                    // Therefore there is the leftmost and the rightmost point. Find them
+                    var leftmostPoint = segmentPoints.Keys[0];
+                    var rightmostPoint = segmentPoints.Keys[segmentPoints.Count - 1];
+
                     // Make sure the points are added to the points of the already segmented line
                     segmentPoints.TryAdd(newLeftPoint, newLeftPoint);
                     segmentPoints.TryAdd(newRightPoint, newRightPoint);
@@ -423,7 +442,7 @@ namespace GeoGen.Drawer
                         // This happens when the new one has its left point to the right (or equal)
                         var isThisSubsegmentOfNewOne = comparer.Compare(newLeftPoint, leftPoint) <= 0
                             // And its left point to the left (or equal)
-                            && comparer.Compare(newRightPoint, rightPoint) <= 0;
+                            && comparer.Compare(rightPoint, newRightPoint) <= 0;
 
                         // If the segment has a style...
                         if (segmentStyles.ContainsKey(leftPoint))
@@ -450,16 +469,16 @@ namespace GeoGen.Drawer
 
                         // If we got here, the segment doesn't have a style yet. These options are possible:
                         // 
-                        // 1. It is the new segment being inserted that doesn't overlap any other segment. 
-                        // 2. It is an empty segment that got inserted when the new segment has been inserted to the right or left.
+                        // 1. It is the new segment being inserted so that it doesn't overlap any other segment. 
+                        // 2. It is an empty segment that got inserted when the new segment has been inserted to the very right or left.
                         // 3. It is a segment that was created by splitting an existing segment.
                         //
                         // Let us handle these cases individually
                         // 
-                        // The first one happened either if the segment is on the very left, i.e. its points are the first two points 
-                        var firstCaseHappened = (segmentPoints.Keys[0] == leftPoint && segmentPoints.Keys[1] == rightPoint)
-                            // Or when it is on the very right, i.e. its points are the last two points of the big segment
-                            || (segmentPoints.Keys[segmentPoints.Count - 2] == leftPoint && segmentPoints.Keys[segmentPoints.Count - 1] == rightPoint);
+                        // The first case happens when the current segment is to the left of the initially leftmost one
+                        var firstCaseHappened = comparer.Compare(rightPoint, leftmostPoint) <= 0
+                            // Or the current segment is to the right of the initially rightmost one
+                            || comparer.Compare(rightmostPoint, leftPoint) <= 0;
 
                         // If it happened...
                         if (firstCaseHappened)
@@ -471,11 +490,10 @@ namespace GeoGen.Drawer
                             continue;
                         }
 
-                        // We now know that the first case didn't happen, which also means there are at least 3 points
-                        // The second case happened either if the segment is almost on the very left, i.e. its points are the second and third
-                        var secondCaseHappened = (segmentPoints.Keys[1] == leftPoint && segmentPoints.Keys[2] == rightPoint)
-                            // Or when it is almost on the very right, i.e. its points are the penultimate point and the point before
-                            || (segmentPoints.Keys[segmentPoints.Count - 3] == leftPoint && segmentPoints.Keys[segmentPoints.Count - 2] == rightPoint);
+                        // The second case happens either on the left, when the originally leftmost point is the current right point
+                        var secondCaseHappened = leftmostPoint == rightPoint
+                            // Or on the right, where the originally rightmost point is the current left one
+                            || rightmostPoint == leftPoint;
 
                         // If it happened...
                         if (secondCaseHappened)
@@ -558,7 +576,7 @@ namespace GeoGen.Drawer
                     ?? throw new DrawerException($"The style {style} doesn't have its macro defined for drawing circles.");
 
                 // Use the macro to draw the circle
-                code.AppendLine($"draw {macroName}({ConvertPoint(circle.Center)}, {drawingData.ScaleVariable}*{circle.Radius.ToString(CultureInfo.InvariantCulture)});");
+                code.AppendLine($"draw {macroName}({ConvertPoint(circle.Center)}, {drawingData.ScaleVariable}*{circle.Radius.ToStringReadableByMetapost()});");
             });
 
             #endregion

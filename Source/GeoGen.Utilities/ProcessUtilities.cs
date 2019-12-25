@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GeoGen.Utilities
@@ -13,10 +14,10 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="command">The command to be run.</param>
         /// <param name="arguments">The arguments of the command.</param>
-        /// <returns>The exit code, the output from the standard output stream, the output from the standard error stream.</returns>
-        public static Task<(int exitCode, string output, string error)> RunCommandAsync(string command, string arguments)
+        /// <returns>The exit code, the output from the command's output stream, the output from the command's error stream.</returns>
+        public static Task<(int exitCode, string outputData, string errorData)> RunCommandAsync(string command, string arguments)
         {
-            // Prepare the task completion source that will indicate the end of the command and hold the exit code
+            // Prepare the task that will indicate the end of the command and hold the data
             var taskCompletionSource = new TaskCompletionSource<(int exitCode, string output, string error)>();
 
             // Prepare the process
@@ -42,17 +43,19 @@ namespace GeoGen.Utilities
                 EnableRaisingEvents = true
             };
 
+            // Prepare the string builders for the incoming output and error data
+            var ouputData = new StringBuilder();
+            var errorData = new StringBuilder();
+
+            // Handle any incoming output and error data
+            process.OutputDataReceived += (s, ea) => ouputData.Append(ea.Data);
+            process.ErrorDataReceived += (s, ea) => errorData.Append(ea.Data);
+
             // Handle when it exists
             process.Exited += (sender, args) =>
             {
-                // Get the standard output 
-                var standardOutput = process.StandardOutput.ReadToEnd();
-
-                // Get the error output
-                var errorOutput = process.StandardError.ReadToEnd();
-
                 // Set the result
-                taskCompletionSource.SetResult((process.ExitCode, standardOutput, errorOutput));
+                taskCompletionSource.SetResult((process.ExitCode, ouputData.ToString(), errorData.ToString()));
 
                 // Dispose the process
                 process.Dispose();
@@ -60,6 +63,10 @@ namespace GeoGen.Utilities
 
             // Start the process
             process.Start();
+
+            // Start reading the output and error streams
+            process.BeginOutputReadLine();
+            process.BeginErrorReadLine();
 
             // Return the task represented by this asynchronous operation
             return taskCompletionSource.Task;

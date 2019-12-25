@@ -41,7 +41,7 @@ namespace GeoGen.Drawer
                 (
                     scaleVariable: "u",
                     shiftLength: 0.05,
-                    boundingBoxOffset: 1,
+                    boundingBoxOffset: 0.01,
                     pointLabelMacro: "LabelPoint",
                     pointMarkMacros: new Dictionary<ObjectDrawingStyle, string>
                     {

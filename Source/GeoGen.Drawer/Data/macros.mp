@@ -41,8 +41,12 @@ def PerpendicularProjectionOnLineFromPoints_Text(expr P,A,B,C) =
 	"Let~$" & P & "$ be the projection of~$" & A & "$ on~$" & B & C & "$. "
 enddef;
 
+def ReflectionInLineFromPoints_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the reflection of~$" & A & "$ in~$" & B & C & "$. "
+enddef;
+
 def MidpointOfArc_Text(expr P,A,B,C) = 
-	"Let~$" & P & "$ be the midpoint of arc~$" & B & A & C "$. "
+	"Let~$" & P & "$ be the midpoint of arc~$" & B & A & C & "$. "
 enddef;
 
 def MidpointOfOppositeArc_Text(expr P,A,B,C) = 
@@ -55,6 +59,10 @@ enddef;
 
 def Circumcenter_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the circumcenter of~$" & A & B & C & "$. "
+enddef;
+
+def Median_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the~$" & A & "$-median of~$" & A & B & C & "$. "
 enddef;
 
 def IntersectionOfLines_Text(expr P,k,l) = 
@@ -91,6 +99,14 @@ enddef;
 
 def ConcyclicPoints_Text(expr A,B,C,D) =
 	"Show that points~$" & A & "," & B & "," & C & "," & D & "$ are concyclic. "
+enddef;
+
+def CollinearPoints_Text(expr A,B,C) =
+	"Show that points~$" & A & "," & B & "," & C & "$ are collinear. "
+enddef;
+
+def ParallelLines_Text(expr A,B,C,D) =
+	"Show that lines~$" & A & B & "$ and~$" & C & D & "$ are parallel. "
 enddef;
 
 %%%%%%%%%%% HELPER MACROS %%%%%%%%%%%
