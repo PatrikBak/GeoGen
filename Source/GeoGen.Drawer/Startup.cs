@@ -1,5 +1,6 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.ConsoleLauncher;
+using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using Ninject;
@@ -188,7 +189,11 @@ namespace GeoGen.Drawer
                 try
                 {
                     // Get the needed configurations and theorems for drawing
-                    var drawerInput = content.ItemsBetween(start - 1, end).Select(theoremWithRanking => (theoremWithRanking.Configuration, theoremWithRanking.Theorem));
+                    var drawerInput = content.ItemsBetween(start - 1, end)
+                        // Pull the configuration and theorem
+                        .Select(theoremWithRanking => (theoremWithRanking.Configuration, theoremWithRanking.Theorem))
+                        // Make them symmetric 
+                        .Select(pair => (MakeSymmetric(pair), pair.Theorem));
 
                     // Perform the drawing for the desired input
                     await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput);
@@ -207,6 +212,76 @@ namespace GeoGen.Drawer
 
                 #endregion
             }
+        }
+
+        /// <summary>
+        /// Reorders the loose object of a configuration that have a triangle layout in such a way that 
+        /// the first will be the one that is fixed in the symmetry remapping (the drawing will cause
+        /// it to be 'above').
+        /// </summary>
+        /// <param name="pair">The configuration and the theorem that determine the symmetry.</param>
+        /// <returns>The configuration with changed loose objects, or the same configuration if the change cannot be done.</returns>
+        private static Configuration MakeSymmetric((Configuration, Theorem) pair)
+        {
+            // Deconstruct
+            var (configuration, theorem) = pair;
+
+            // Make sure we have a triangle
+            if (configuration.LooseObjectsHolder.Layout != LooseObjectsLayout.Triangle)
+                throw new DrawerException("Unsupported layout, currently only triangle is supported :/");
+
+            // Find the mapping that makes this symmetric
+            var symmetricMapping = configuration.LooseObjectsHolder.GetSymmetryMappings().FirstOrDefault(mapping =>
+            {
+                // Exclude the identity
+                if (mapping.All(pair => pair.Key == pair.Value))
+                    return false;
+
+                // Reconstruct constructed objects
+                var constructedObjectsMapping = configuration.ConstructedObjects.ToDictionary(o => (ConfigurationObject)o, o => o.Remap(mapping));
+
+                // Wrap them in a new configuration
+                var newConfiguration = new Configuration(configuration.LooseObjectsHolder, constructedObjectsMapping.Values.Cast<ConstructedConfigurationObject>().ToList());
+
+                // If the configurations are distinct, then this is not a symmetry mapping
+                if (!configuration.Equals(newConfiguration))
+                    return false;
+
+                // Otherwise we have to remap the theorem
+                // For that reason we merge the mapping of loose objects
+                var finalMapping = mapping.Select(pair => ((ConfigurationObject)pair.Key, (ConfigurationObject)pair.Value))
+                    // With the mapping of constructed objects
+                    .Concat(constructedObjectsMapping.Select(pair => (pair.Key, pair.Value)))
+                    // As a dictionary
+                    .ToDictionary(pair => pair.Item1, pair => pair.Item2);
+
+                // We can use this final mapping to remap the theorem
+                var newTheorem = theorem.Remap(finalMapping);
+
+                // If the theorems are not the same, then this is not correct either
+                if (!theorem.Equals(newTheorem))
+                    return false;
+
+                // Now we know the configuration is symmetric. Since it's a triangle, we know there is a mapping
+                // with a fixed point. Find out if this one is the one 
+                return mapping.Any(pair => pair.Key == pair.Value);
+            });
+
+            // If this is not symmetric one, we can't do more
+            if (symmetricMapping == null)
+                return configuration;
+
+            // Otherwise get the fixed point
+            var fixedPoint = symmetricMapping.First(pair => pair.Key == pair.Value).Key;
+
+            // Get the other points
+            var otherPoints = symmetricMapping.Keys.Where(point => point != fixedPoint);
+
+            // Get the final order
+            var newLooseObjects = new LooseObjectsHolder(fixedPoint.ToEnumerable().Concat(otherPoints), LooseObjectsLayout.Triangle);
+
+            // Return the final result
+            return new Configuration(newLooseObjects, configuration.ConstructedObjects);
         }
 
         /// <summary>
