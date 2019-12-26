@@ -282,9 +282,8 @@ namespace GeoGen.Drawer
                     return 0;
                 });
 
-                // We're going to keep our points in a SortedList and use it as an identity dictionary 
-                // (i.e. it's mapping points to themselves)
-                var segmentPoints = new SortedList<Point, Point>(comparer);
+                // We're going to keep our points in a SortedList
+                var segmentPoints = new SortedList<Point>(comparer);
 
                 // We also need to maintain a list of styles of particular segments that we have
                 // Each segment has a starting point that is mapped to the style of the segment
@@ -407,8 +406,8 @@ namespace GeoGen.Drawer
                     if (segmentPoints.IsEmpty())
                     {
                         // Then add the points
-                        segmentPoints.TryAdd(newLeftPoint, newLeftPoint);
-                        segmentPoints.TryAdd(newRightPoint, newRightPoint);
+                        segmentPoints.TryAdd(newLeftPoint);
+                        segmentPoints.TryAdd(newRightPoint);
 
                         // Add the segment with the style
                         segmentStyles.Add(newLeftPoint, segmentStyle);
@@ -419,12 +418,12 @@ namespace GeoGen.Drawer
 
                     // At this point we're sure this is not the first segment being drawn on this line
                     // Therefore there is the leftmost and the rightmost point. Find them
-                    var leftmostPoint = segmentPoints.Keys[0];
-                    var rightmostPoint = segmentPoints.Keys[segmentPoints.Count - 1];
+                    var leftmostPoint = segmentPoints[0];
+                    var rightmostPoint = segmentPoints[segmentPoints.Count - 1];
 
                     // Make sure the points are added to the points of the already segmented line
-                    segmentPoints.TryAdd(newLeftPoint, newLeftPoint);
-                    segmentPoints.TryAdd(newRightPoint, newRightPoint);
+                    segmentPoints.TryAdd(newLeftPoint);
+                    segmentPoints.TryAdd(newRightPoint);
 
                     #region Reevaluating individual segment styles
 
@@ -435,8 +434,8 @@ namespace GeoGen.Drawer
                     for (var i = 0; i < segmentPoints.Count - 1; i++)
                     {
                         // Get the left and right point
-                        var leftPoint = segmentPoints.Keys[i];
-                        var rightPoint = segmentPoints.Keys[i + 1];
+                        var leftPoint = segmentPoints[i];
+                        var rightPoint = segmentPoints[i + 1];
 
                         // It's going to be useful to know whether this segment is part of the segment being inserted
                         // This happens when the new one has its left point to the right (or equal)
@@ -508,7 +507,7 @@ namespace GeoGen.Drawer
                         // We're left with the third case. In this case we need to have 
                         // a look at the segment that got split in order for us to get this 
                         // segment in the first place. We know it exists at the left index
-                        var originalStyle = segmentStyles[segmentPoints.Keys[i - 1]];
+                        var originalStyle = segmentStyles[segmentPoints[i - 1]];
 
                         // This style might get changed if our split part is contained in it
                         var shouldWeOverrideOriginalStyle = isThisSubsegmentOfNewOne
@@ -544,7 +543,7 @@ namespace GeoGen.Drawer
                         return;
 
                     // Otherwise get the right point for the segment, i.e. the one after left
-                    var rightPoint = segmentPoints.Keys[segmentPoints.IndexOfKey(leftPoint) + 1];
+                    var rightPoint = segmentPoints[segmentPoints.IndexOf(leftPoint) + 1];
 
                     // Get the macro name
                     var macroName = drawingData.LineSegmentMacros.GetOrDefault(style.Value)
