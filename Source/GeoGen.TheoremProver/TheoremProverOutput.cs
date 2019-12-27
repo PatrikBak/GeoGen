@@ -71,7 +71,7 @@ namespace GeoGen.TheoremProver
         /// that don't have any attempts and don't appear in any other attempt will have groups of size 1.
         /// </summary>
         /// <returns>The theorem groups.</returns>
-        public IReadOnlyList<IReadOnlyHashSet<Theorem>> GroupNewTheoremsIntoRelationGroups()
+        private IReadOnlyList<IReadOnlyHashSet<Theorem>> GroupNewTheoremsIntoRelationGroups()
         {
             // If there are no unproven theorems, we're done
             if (UnprovenTheorems.IsEmpty())
