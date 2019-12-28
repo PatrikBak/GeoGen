@@ -315,7 +315,7 @@ namespace GeoGen.Drawer
                 {
                     // Then the first (leftmost) and last (rightmost) make a segment
                     var left = passingPoints[0];
-                    var right = passingPoints[passingPoints.Length - 1];
+                    var right = passingPoints[^1];
 
                     // Some of them might be shifted, we need to check that
                     var isLeftShifted = _shiftLinePoints.GetOrDefault(line)?.Contains(left) ?? false;

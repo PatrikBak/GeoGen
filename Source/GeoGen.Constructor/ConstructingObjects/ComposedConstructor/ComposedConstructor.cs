@@ -131,7 +131,7 @@ namespace GeoGen.Constructor
             _construction.Configuration.LooseObjects.Zip(input).ForEach(pair =>
             {
                 // Safely try to add them
-                internalPicture.TryAdd(pair.Item1, pair.Item2, out var equalObject);
+                internalPicture.TryAdd(pair.First, pair.Second, out var equalObject);
 
                 // If there is an equal object, then we have a weird problem
                 if (equalObject != default)

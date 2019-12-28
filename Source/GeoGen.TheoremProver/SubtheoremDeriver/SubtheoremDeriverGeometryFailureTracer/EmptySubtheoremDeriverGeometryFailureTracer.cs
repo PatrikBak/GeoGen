@@ -27,7 +27,7 @@ namespace GeoGen.TheoremProver
         /// <param name="contextualPicture">The contextual picture where that was used to perform the examination.</param>
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
         public void UnexaminableObjectInContextualPicture(ConstructedConfigurationObject constructedObject, ContextualPicture contextualPicture, InconsistentPicturesException exception)
-        { 
+        {
         }
     }
 }

@@ -386,7 +386,7 @@ namespace GeoGen.TheoremSimplifier
                             var newMapping = currentMapping.ToDictionary(pair => pair.Key, pair => pair.Value);
 
                             // Add the mapped pair to the new mapping
-                            objectsToBeMapped.Zip(variation).ForEach(pair => newMapping.Add(pair.Item1, pair.Item2));
+                            objectsToBeMapped.Zip(variation).ForEach(pair => newMapping.Add(pair.First, pair.Second));
 
                             // We need to find out if this new mapping yields a true assumption
                             // Therefore we're going to use it to remap the template one

@@ -354,20 +354,6 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Glues this enumerable with another given one into one enumerable of tuples of their elements.
-        /// </summary>
-        /// <typeparam name="TSource">The type of items in this enumerable.</typeparam>
-        /// <typeparam name="TOther">The types of element in the other enumerable.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="other">The other enumerable.</param>
-        /// <returns>The enumerable of tuples.</returns>
-        public static IEnumerable<(TSource, TOther)> Zip<TSource, TOther>(this IEnumerable<TSource> enumerable, IEnumerable<TOther> other)
-        {
-            // Reuse the original zip method
-            return enumerable.Zip(other, (sourceItem, otherItem) => (sourceItem, otherItem));
-        }
-
-        /// <summary>
         /// Flattens the enumerable of enumerables into a single enumerable.
         /// </summary>
         /// <typeparam name="T">The type of the elements.</typeparam>
