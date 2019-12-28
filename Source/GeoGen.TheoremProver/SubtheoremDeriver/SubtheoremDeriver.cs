@@ -154,10 +154,10 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="constructor">The constructor of geometric objects that allows us to find geometrical properties of the mappings.</param>
         /// <param name="tracer">The tracer of any geometric failures while drawing and examining objects.</param>
-        public SubtheoremDeriver(IGeometryConstructor constructor, ISubtheoremDeriverGeometryFailureTracer tracer = null)
+        public SubtheoremDeriver(IGeometryConstructor constructor, ISubtheoremDeriverGeometryFailureTracer tracer)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-            _tracer = tracer;
+            _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }
 
         #endregion
@@ -737,7 +737,7 @@ namespace GeoGen.TheoremProver
                         // Its construction
                         () => _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, innerObject),
                         // While tracing possible inconsistencies
-                        (InconsistentPicturesException e) => _tracer?.UndrawableObject(mappedObject, input.ExaminedConfigurationPicture.Pictures, e));
+                        (InconsistentPicturesException e) => _tracer.UndrawableObject(mappedObject, input.ExaminedConfigurationPicture.Pictures, e));
 
                     // If the construction couldn't be carried out, then there is no mapping
                     if (constructionDictionary == null)
@@ -748,7 +748,7 @@ namespace GeoGen.TheoremProver
                         // Getting the corresponding geometric object from the contextual picture
                         () => input.ExaminedConfigurationPicture.GetGeometricObject(innerObject, constructionDictionary),
                         // While tracing possible inconsistencies
-                        (InconsistentPicturesException e) => _tracer?.UnexaminableObjectInContextualPicture(innerObject, input.ExaminedConfigurationPicture, e));
+                        (InconsistentPicturesException e) => _tracer.UnexaminableObjectInContextualPicture(innerObject, input.ExaminedConfigurationPicture, e));
 
                     // If there is no corresponding object, or there were inconsistencies, then there is no mapping
                     if (foundObject == null)
@@ -781,7 +781,7 @@ namespace GeoGen.TheoremProver
                     // Construction of this object without adding it to the pictures
                     () => _constructor.Construct(input.ExaminedConfigurationPicture.Pictures, mappedObject, addToPictures: false),
                     // While tracing possible inconsistencies
-                    (InconsistentPicturesException e) => _tracer?.UndrawableObject(mappedObject, input.ExaminedConfigurationPicture.Pictures, e));
+                    (InconsistentPicturesException e) => _tracer.UndrawableObject(mappedObject, input.ExaminedConfigurationPicture.Pictures, e));
 
                 // If the construction couldn't be carried out, then the mapping is incorrect
                 if (newObjectData == default)

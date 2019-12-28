@@ -34,6 +34,9 @@ namespace GeoGen.Constructor
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>();
 
+            // Tracer
+            kernel.Bind<IConstructorFailureTracer>().To<EmptyConstructorFailureTracer>();
+
             // Factories
             kernel.Bind<IComposedConstructorFactory>().ToFactory();
 

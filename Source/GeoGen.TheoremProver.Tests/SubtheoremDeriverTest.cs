@@ -48,7 +48,7 @@ namespace GeoGen.TheoremProver.Test
             var constructor = kernel.Get<IGeometryConstructor>();
 
             // Create the deriver
-            var deriver = new SubtheoremDeriver(constructor);
+            var deriver = new SubtheoremDeriver(constructor, new EmptySubtheoremDeriverGeometryFailureTracer());
 
             // Draw the examined configuration
             var pictures = constructor.Construct(examinedConfiguration, numberOfPictures: 5).pictures;

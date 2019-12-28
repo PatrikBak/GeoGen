@@ -41,7 +41,7 @@ namespace GeoGen.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="SortedList"/> class.
         /// </summary>
-        /// <param name="comparer">The comparer of items. If the value is then, the  default comparer is used.</param>
+        /// <param name="comparer">The comparer of items. If the value is then, the default comparer is used.</param>
         public SortedList(IComparer<T> comparer = null)
         {
             // Either use this comparer, if it's not null, of the default one

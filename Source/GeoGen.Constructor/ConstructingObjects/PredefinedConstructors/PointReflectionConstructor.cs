@@ -14,7 +14,7 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="PointReflectionConstructor"/> class.
         /// </summary>
         /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
-        public PointReflectionConstructor(IConstructorFailureTracer tracer = null)
+        public PointReflectionConstructor(IConstructorFailureTracer tracer)
             : base(tracer)
         {
         }

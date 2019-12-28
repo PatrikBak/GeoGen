@@ -36,6 +36,9 @@ namespace GeoGen.TheoremProver
             kernel.Bind<ITheoremDeriver>().To<ExplicitCircleWithIncidencesDeriver>();
             kernel.Bind<ITheoremDeriver>().To<IsoscelesTrianglesPerpendicularityDeriver>();
 
+            // Tracer
+            kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<EmptySubtheoremDeriverGeometryFailureTracer>();
+
             // Return the kernel for chaining
             return kernel;
         }

@@ -85,7 +85,7 @@ namespace GeoGen.Algorithm
                                ITheoremProver prover,
                                ITheoremRanker ranker,
                                ITheoremSimplifier simplifier,
-                               IGeometryFailureTracer tracer = null)
+                               IGeometryFailureTracer tracer)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
@@ -94,7 +94,7 @@ namespace GeoGen.Algorithm
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
             _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
             _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
-            _tracer = tracer;
+            _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }
 
         #endregion
@@ -211,7 +211,7 @@ namespace GeoGen.Algorithm
                     // Constructing the pictures for the configuration
                     () => _geometryConstructor.ConstructByCloning(previousPictures, configuration),
                     // While tracing a possible failure (such configurations will be discarded in the next step)
-                    (InconsistentPicturesException e) => _tracer?.InconstructiblePicturesByCloning(previousPictures, configuration, e));
+                    (InconsistentPicturesException e) => _tracer.InconstructiblePicturesByCloning(previousPictures, configuration, e));
 
                 // The configuration is incorrect if it couldn't be carried out...
                 var configurationIncorrect = newPictures == default
@@ -239,7 +239,7 @@ namespace GeoGen.Algorithm
                     // Constructing the new contextual picture by cloning
                     () => previousContextualPicture.ConstructByCloning(newPictures),
                     // While tracing a possible failure (such configurations will be discarded in the next step)
-                    (InconsistentPicturesException e) => _tracer?.InconstructibleContextualPictureByCloning(previousContextualPicture, newPictures, e));
+                    (InconsistentPicturesException e) => _tracer.InconstructibleContextualPictureByCloning(previousContextualPicture, newPictures, e));
 
                 // If the construction of the picture cannot be done...
                 if (newContextualPicture == default)

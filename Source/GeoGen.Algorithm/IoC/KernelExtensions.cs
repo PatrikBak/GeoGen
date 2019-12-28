@@ -20,6 +20,9 @@ namespace GeoGen.Algorithm
             kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().WithConstructorArgument(facadeSettings);
             kernel.Bind<IBestTheoremsFinder>().To<BestTheoremsFinder>().WithConstructorArgument(finderSettings);
 
+            // Tracer
+            kernel.Bind<IGeometryFailureTracer>().To<EmptyGeometryFailureTracer>();
+
             // Return the kernel for chaining
             return kernel;
         }

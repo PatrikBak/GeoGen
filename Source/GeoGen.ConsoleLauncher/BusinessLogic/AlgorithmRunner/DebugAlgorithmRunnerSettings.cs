@@ -116,9 +116,9 @@ namespace GeoGen.ConsoleLauncher
                                             string bestTheoremsJsonFilePath)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
-            OutputWithAttemptsFolder = outputWithAttemptsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsFolder));
+            OutputWithAttemptsFolder = outputWithAttemptsFolder;
             WriteOutputWithAttempts = writeOutputWithAttempts;
-            OutputWithAttemptsAndProofsFolder = outputWithAttemptsAndProofsFolder ?? throw new ArgumentNullException(nameof(outputWithAttemptsAndProofsFolder));
+            OutputWithAttemptsAndProofsFolder = outputWithAttemptsAndProofsFolder;
             WriteOutputWithAttemptsAndProofs = writeOutputWithAttemptsAndProofs;
             OutputJsonFolder = outputJsonFolder ?? throw new ArgumentNullException(nameof(outputJsonFolder));
             OutputFilePrefix = outputFilePrefix ?? throw new ArgumentNullException(nameof(outputFilePrefix));

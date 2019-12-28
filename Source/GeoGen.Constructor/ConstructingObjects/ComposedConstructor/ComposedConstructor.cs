@@ -38,7 +38,7 @@ namespace GeoGen.Constructor
         /// <param name="construction">The composed construction performed by the constructor.</param>
         /// <param name="constructionResolver">The resolver of constructors used while constructing the internal configuration of the composed construction.</param>
         /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
-        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IConstructorFailureTracer tracer = null)
+        public ComposedConstructor(ComposedConstruction construction, IConstructorsResolver constructionResolver, IConstructorFailureTracer tracer)
             : base(tracer)
         {
             _construction = construction ?? throw new ArgumentNullException(nameof(construction));

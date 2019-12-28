@@ -28,7 +28,7 @@ namespace GeoGen.Constructor
         /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
         protected ObjectsConstructorBase(IConstructorFailureTracer tracer)
         {
-            _tracer = tracer;
+            _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }
 
         #endregion
@@ -58,7 +58,7 @@ namespace GeoGen.Constructor
                 catch (AnalyticException e)
                 {
                     // We trace it
-                    _tracer?.TraceUnexpectedConstructionFailure(configurationObject, analyticObjects, e.Message);
+                    _tracer.TraceUnexpectedConstructionFailure(configurationObject, analyticObjects, e.Message);
 
                     // And return null indicating the constructor didn't work out
                     return null;

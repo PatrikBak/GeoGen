@@ -135,16 +135,19 @@ namespace GeoGen.ConsoleLauncher
             ),
             tracersSettings: new TracersSettings
             (
+                traceConstructorFailures: true,
                 constructorFailureTracerSettings: new ConstructorFailureTracerSettings
                 (
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
                     logFailures: true
                 ),
+                traceGeometryFailures: true,
                 geometryFailureTracerSettings: new GeometryFailureTracerSettings
                 (
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
                     logFailures: true
                 ),
+                traceSubtheoremDeriverFailures: true,
                 subtheoremDeriverGeometryFailureTracerSettings: new SubtheoremDeriverGeometryFailureTracerSettings
                 (
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\subtheorem_failures.txt",

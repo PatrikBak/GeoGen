@@ -72,7 +72,6 @@ namespace GeoGen.ConsoleLauncher
 
             // Write indented message to the file
             streamWriter.WriteLine($"- {infoString.Indent(3).TrimStart()}");
-
         }
 
         /// <summary>

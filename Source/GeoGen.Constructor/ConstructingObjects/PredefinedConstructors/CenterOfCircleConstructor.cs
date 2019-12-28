@@ -14,7 +14,7 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="CenterOfCircleConstructor"/> class.
         /// </summary>
         /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
-        public CenterOfCircleConstructor(IConstructorFailureTracer tracer = null)
+        public CenterOfCircleConstructor(IConstructorFailureTracer tracer)
             : base(tracer)
         {
         }

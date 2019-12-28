@@ -53,41 +53,7 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<ITheoremsWithRankingJsonLazyWriterFactory>().ToFactory();
             Kernel.Bind<ITheoremsWithRankingJsonLazyWriter>().To<TheoremsWithRankingJsonLazyWriter>();
 
-            #endregion
-
-            #region Tracers
-
-            #region SubtheoremDeriverGeometryFailerTracer
-
-            // Bind Subtheorem Deriver Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings != null)
-                Kernel.Bind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
-            else
-                Log.LoggingManager.LogWarning($"No settings for {nameof(SubtheoremDeriverGeometryFailureTracer)}, i.e. there will be no tracing.");
-
-            #endregion
-
-            #region ConstructorFailureTracer
-
-            // Bind Constructor Failure Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.ConstructorFailureTracerSettings != null)
-                Kernel.Bind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
-            else
-                Log.LoggingManager.LogWarning($"No settings for {nameof(ConstructorFailureTracer)}, i.e. there will be no tracing.");
-
-            #endregion
-
-            #region GeometryFailureTracer
-
-            // Bind Geometry Failure Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.GeometryFailureTracerSettings != null)
-                Kernel.Bind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
-            else
-                Log.LoggingManager.LogWarning($"No settings for {nameof(GeometryFailureTracer)}, i.e. there will be no tracing.");
-
-            #endregion
-
-            #endregion
+            #endregion           
 
             #region Algorithm
 
@@ -116,6 +82,34 @@ namespace GeoGen.ConsoleLauncher
                 ))
                 // And finally the algorithm with its settings
                 .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings, settings.AlgorithmSettings.BestTheoremsFinderSettings);
+
+            #endregion
+
+            #region Tracers
+
+            #region SubtheoremDeriverGeometryFailerTracer
+
+            // Rebind Subtheorem Deriver Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.TraceSubtheoremDeriverFailures)
+                Kernel.Rebind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
+
+            #endregion
+
+            #region ConstructorFailureTracer
+
+            // Rebind Constructor Failure Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.ConstructorFailureTracerSettings != null)
+                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
+
+            #endregion
+
+            #region GeometryFailureTracer
+
+            // Rebind Geometry Failure Tracer only if we're supposed be tracing
+            if (settings.TracersSettings.GeometryFailureTracerSettings != null)
+                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
+
+            #endregion
 
             #endregion
         }
