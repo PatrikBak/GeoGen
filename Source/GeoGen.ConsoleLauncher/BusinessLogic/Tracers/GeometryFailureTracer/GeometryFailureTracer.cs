@@ -51,15 +51,15 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
         public void InconstructiblePicturesByCloning(PicturesOfConfiguration previousPictures, Configuration newConfiguration, InconsistentPicturesException exception)
         {
-            // Prepare the formatter for the configuration
-            var formatter = new OutputFormatter(newConfiguration.AllObjects);
-
             // Prepare the initial information string
             var infoString = $"Undrawable object into pictures.";
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
                 LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailuresFilePath} for more detail.");
+
+            // Prepare the formatter for the configuration
+            var formatter = new OutputFormatter(newConfiguration.AllObjects);
 
             // Add the data about how the object can be drawn
             infoString += $"\n\nThe object is the last object of the following defining configuration:\n\n{formatter.FormatConfiguration(newConfiguration).Indent(2)}";
@@ -84,15 +84,15 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
         public void InconstructibleContextualPictureByCloning(ContextualPicture previousContextualPicture, PicturesOfConfiguration newConfigurationPictures, InconsistentPicturesException exception)
         {
-            // Prepare the formatter for the configuration
-            var formatter = new OutputFormatter(newConfigurationPictures.Configuration.AllObjects);
-
             // Prepare the initial information string
             var infoString = $"Undrawable object into a contextual picture.";
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
                 LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailuresFilePath} for more detail.");
+
+            // Prepare the formatter for the configuration
+            var formatter = new OutputFormatter(newConfigurationPictures.Configuration.AllObjects);
 
             // Add the data about how the object can be drawn
             infoString += $"\n\nThe object is the last object of the following defining configuration:\n\n{formatter.FormatConfiguration(newConfigurationPictures.Configuration).Indent(2)}";
