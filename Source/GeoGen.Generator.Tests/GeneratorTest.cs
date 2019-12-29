@@ -47,6 +47,10 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
+                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                {
+                    { Point, int.MaxValue }
+                },
                 configurationFilter: _ => true
             );
 
@@ -75,12 +79,80 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
+                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                {
+                    { Point, int.MaxValue }
+                },
                 configurationFilter: _ => true
             );
 
             // Assert counts (can be verified by hand)
             GetGenerator(ConfigurationFilterType.Fast).Generate(input).ToArray().Length.Should().Be(expectedCount);
             GetGenerator(ConfigurationFilterType.MemoryEfficient).Generate(input).ToArray().Length.Should().Be(expectedCount);
+        }
+
+        [TestCase(1, 1)]
+        [TestCase(2, 4)]
+        [TestCase(3, 18)]
+        [TestCase(4, 18)]
+        [TestCase(5, 18)]
+        public void Test_Triangle_And_Midpoint_With_Limiting_Number_Of_Objects(int iterations, int expectedCount)
+        {
+            // Prepare the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+
+            // Prepare the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
+
+            // Prepare the input with just the midpoint construction
+            var input = new GeneratorInput
+            (
+                initialConfiguration: configuration,
+                constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
+                numberOfIterations: iterations,
+                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                {
+                    { Point, 6 }
+                },
+                configurationFilter: _ => true
+            );
+
+            // Assert counts (can be verified by hand)
+            GetGenerator(ConfigurationFilterType.Fast).Generate(input).ToArray().Length.Should().Be(expectedCount);
+            GetGenerator(ConfigurationFilterType.MemoryEfficient).Generate(input).ToArray().Length.Should().Be(expectedCount);
+        }
+
+        [Test]
+        public void Test_Triangle_And_Various_Constructions_With_Limiting_Number_Of_Objects()
+        {
+            // Prepare the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+
+            // Prepare the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
+
+            // Prepare the input with just the midpoint construction
+            var input = new GeneratorInput
+            (
+                initialConfiguration: configuration,
+                constructions: new HashSet<Construction> { Midpoint, LineFromPoints, Circumcircle }.ToReadOnlyHashSet(),
+                numberOfIterations: 42,
+                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                {
+                    { Point, 4 },
+                    { Line, 1 },
+                    { Circle, 0 },
+                },
+                configurationFilter: _ => true
+            );
+
+            // Assert counts (can be verified by hand)
+            GetGenerator(ConfigurationFilterType.Fast).Generate(input).ToArray().Length.Should().Be(6);
+            GetGenerator(ConfigurationFilterType.MemoryEfficient).Generate(input).ToArray().Length.Should().Be(6);
         }
     }
 }

@@ -272,6 +272,7 @@ namespace GeoGen.Algorithm
                 numberOfIterations: input.NumberOfIterations,
                 constructions: input.Constructions,
                 initialConfiguration: input.InitialConfiguration,
+                maximalObjectCounts: input.MaximalObjectCounts,
                 configurationFilter: VerifyConfigurationCorrectness
             );
 

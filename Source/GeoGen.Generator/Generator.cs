@@ -114,6 +114,11 @@ namespace GeoGen.Generator
                 if (!construction.Signature.CanBeMatched(currentConfiguration.ObjectMap))
                     return Enumerable.Empty<ConstructedConfigurationObject>();
 
+                // Now we check whether adding an object of the current type wouldn't exceed
+                // the maximal number of objects of this type that are allowed to be added
+                if (currentConfiguration.ObjectMap.GetObjectsForKeys(construction.OutputType).Count() + 1 > input.MaximalObjectCounts[construction.OutputType])
+                    return Enumerable.Empty<ConstructedConfigurationObject>();
+
                 // Now we're sure we can generate some objects
                 // First we take all the available pairs [object type, objects]
                 return currentConfiguration.ObjectMap

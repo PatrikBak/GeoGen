@@ -134,7 +134,8 @@ namespace GeoGen.ConsoleLauncher
                         id: id,
                         constructions: algorithmInput.Constructions,
                         initialConfiguration: algorithmInput.InitialConfiguration,
-                        numberOfIterations: algorithmInput.NumberOfIterations
+                        numberOfIterations: algorithmInput.NumberOfIterations,
+                        maximalObjectCounts: algorithmInput.MaximalObjectCounts
                     ));
                 }
                 catch (ParsingException e)
@@ -160,61 +161,26 @@ namespace GeoGen.ConsoleLauncher
         /// <returns>The parsed algorithm input.</returns>
         private static AlgorithmInput ParseInput(IReadOnlyList<string> lines)
         {
-            #region Parsing iterations
-
-            // The first line should have iterations First find the iteration line
-            var iterationsNumber = Regex.Match(lines[0], "^Iterations:(.+)$")
-                // Take the number from the group
-                ?.Groups[1].Value.Trim()
-                // If there is no match, make aware
-                ?? throw new ParsingException("No line specifying the number of iterations in the form 'Iterations: {number}'");
-
-            // Prepare the number of iterations
-            var numberOfIterations = default(int);
-
-            try
-            {
-                // Try to parse 
-                numberOfIterations = int.Parse(iterationsNumber);
-
-                // Make sure it's a correct value
-                if (numberOfIterations < 0)
-                    throw new ParsingException($"The number of iterations cannot be negative, the found value is {numberOfIterations}.");
-            }
-            catch (Exception e) when (e is FormatException || e is OverflowException)
-            {
-                // Make sure the user is aware
-                throw new ParsingException($"Cannot parse the number of iterations: '{iterationsNumber}'");
-            }
-
-            #endregion
-
             #region Finding construction and configuration sections
 
-            // Find the construction section starting line
-            var constructionLineIndex = lines.IndexOf("Constructions:");
-
-            // Make sure there is some
-            if (constructionLineIndex == -1)
-                throw new ParsingException("No line starting the constructions section in the form: 'Constructions:'");
+            // Make sure the first line beings constructions
+            if (lines[0] != "Constructions:")
+                throw new ParsingException($"The first line should be 'Constructions:' to start the constructions section");
 
             // Find the configuration section starting line
             var configurationLineIndex = lines.IndexOf("Initial configuration:");
 
             // Make sure there is some
             if (configurationLineIndex == -1)
-                throw new ParsingException("No line starting the initial configuration section in the form: 'Initial configuration:'");
-
-            // Make sure the construction line is before the configuration one
-            if (constructionLineIndex > configurationLineIndex)
-                throw new ParsingException("Constructions should be specified before the initial configuration.");
+                throw new ParsingException("There should be a line ''Initial configuration:'' starting the initial configuration");
 
             #endregion
 
             #region Parsing constructions
 
-            // Parse the constructions...Get the lines between the found indices
-            var constructions = lines.ItemsBetween(constructionLineIndex + 1, configurationLineIndex)
+            // Parse the constructions...Get the lines between the first 
+            // index and the one starting the configuration section
+            var constructions = lines.ItemsBetween(1, configurationLineIndex)
                 // Each line defines a construction
                 .Select(Parser.ParseConstruction)
                 // Enumerate 
@@ -224,11 +190,102 @@ namespace GeoGen.ConsoleLauncher
 
             #region Parsing configuration
 
-            // Get the configuration lines as the remaining lines
-            var configurationLines = lines.ItemsBetween(configurationLineIndex + 1, lines.Count).ToList();
+            // Get the configuration lines from the remaining lines
+            var configurationLines = lines.ItemsBetween(configurationLineIndex + 1, lines.Count)
+                // Unless we run into a line specifying iterations
+                .TakeWhile(line => !line.StartsWith("Iterations:"))
+                // Enumerate
+                .ToList();
 
             // Parse the configuration from them
             var configuration = Parser.ParseConfiguration(configurationLines).configuration;
+
+            #endregion
+
+            #region Parsing iterations
+
+            // Find the index of the iteration line, which should be after the configuration declaration
+            var iterationLineIndex = configurationLineIndex + configurationLines.Count + 1;
+
+            // Make sure we have enough lines
+            if (iterationLineIndex >= lines.Count)
+                throw new ParsingException("The line after the specification of the configuration should be in the form 'Iterations: {number}'");
+
+            // Now we can parse the line
+            var iterationsNumberMatch = Regex.Match(lines[iterationLineIndex], "^Iterations:(.+)$");
+
+            // If there is no match, make aware
+            if (!iterationsNumberMatch.Success)
+                throw new ParsingException("The line after the specification of the configuration should be in the form 'Iterations: {number}'");
+
+            // Prepare the number of iterations
+            var numberOfIterations = default(int);
+
+            try
+            {
+                // Try to parse 
+                numberOfIterations = int.Parse(iterationsNumberMatch.Groups[1].Value.Trim());
+
+                // Make sure it's a correct value
+                if (numberOfIterations < 0)
+                    throw new ParsingException($"The number of iterations cannot be negative, the found value is {numberOfIterations}.");
+            }
+            catch (Exception e) when (e is FormatException || e is OverflowException)
+            {
+                // Make sure the user is aware
+                throw new ParsingException($"Cannot parse the number of iterations: '{iterationsNumberMatch.Groups[1].Value.Trim()}'");
+            }
+
+            #endregion
+
+            #region Parsing maximal object counts
+
+            // Find the configuration object types
+            var objectTypes = Enum.GetValues(typeof(ConfigurationObjectType)).Cast<ConfigurationObjectType>().ToList();
+
+            // Each type needs to have a line now
+            // Make sure we have enough lines
+            if (objectTypes.Count != lines.Count - 1 - iterationLineIndex)
+                throw new ParsingException($"There should be exactly {objectTypes.Count} lines after the iterations, " +
+                    $"each specifying the maximal number of objects of the given type of this configuration.");
+
+            // Look for them
+            var maximalObjectCounts = objectTypes.ToDictionary(objectType => objectType, objectType =>
+            {
+                // Go through the remaining lines...
+                var maximalNumberMatch = lines.ItemsBetween(iterationLineIndex, lines.Count)
+                    // The line should be for example 'MaximalPoints: 4'
+                    .Select(line => Regex.Match(line, $"^Maximal{objectType}s:(.+)$"))
+                    // Take the first match, if there is any
+                    .FirstOrDefault(match => match.Success)
+                    // If not, make aware
+                    ?? throw new ParsingException($"No line in the form Maximal{objectType}s: {{number}}");
+
+                // Prepare the maximal number
+                var maximalNumber = default(int);
+
+                try
+                {
+                    // Try to parse 
+                    maximalNumber = int.Parse(maximalNumberMatch.Groups[1].Value.Trim());
+
+                    // Make sure it's a correct value
+                    if (numberOfIterations < 0)
+                        throw new ParsingException($"The maximal number of {objectType}s cannot be negative, the found value is {maximalNumber}.");
+
+                    // Make sure it's at least the number of objects of this type of the configuration
+                    if (maximalNumber < configuration.ObjectMap.GetObjectsForKeys(objectType).Count())
+                        throw new ParsingException($"The maximal number of {objectType}s must be at least the number of objects of this type of the initial configuration.");
+                }
+                catch (Exception e) when (e is FormatException || e is OverflowException)
+                {
+                    // Make sure the user is aware
+                    throw new ParsingException($"Cannot parse the maximal number of {objectTypes}s: '{maximalNumberMatch.Groups[1].Value.Trim()}'");
+                }
+
+                // Now we have it parse and we can finally return it
+                return maximalNumber;
+            });
 
             #endregion
 
@@ -237,7 +294,8 @@ namespace GeoGen.ConsoleLauncher
             (
                 initialConfiguration: configuration,
                 constructions: constructions,
-                numberOfIterations: numberOfIterations
+                numberOfIterations: numberOfIterations,
+                maximalObjectCounts: maximalObjectCounts
             );
         }
 
