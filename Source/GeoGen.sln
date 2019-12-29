@@ -47,7 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifierTes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Drawer", "GeoGen.Drawer\GeoGen.Drawer.csproj", "{7A853A9F-E8CC-4E9E-B712-0403E695E0E0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.Infrastructure", "GeoGen.Infrastructure\GeoGen.Infrastructure.csproj", "{A07B9861-3C4C-41C1-9B44-44BE53262B51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Infrastructure", "GeoGen.Infrastructure\GeoGen.Infrastructure.csproj", "{A07B9861-3C4C-41C1-9B44-44BE53262B51}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GenerationLauncher", "GeoGen.GenerationLauncher\GeoGen.GenerationLauncher.csproj", "{BCFCDED3-4701-4C31-A92F-6CA364548CA8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -147,6 +149,10 @@ Global
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
