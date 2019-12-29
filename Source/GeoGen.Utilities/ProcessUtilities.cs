@@ -48,8 +48,8 @@ namespace GeoGen.Utilities
             var errorData = new StringBuilder();
 
             // Handle any incoming output and error data
-            process.OutputDataReceived += (s, ea) => ouputData.Append(ea.Data);
-            process.ErrorDataReceived += (s, ea) => errorData.Append(ea.Data);
+            process.OutputDataReceived += (s, ea) => ouputData.AppendLine(ea.Data);
+            process.ErrorDataReceived += (s, ea) => errorData.AppendLine(ea.Data);
 
             // Handle when it exists
             process.Exited += (sender, args) =>
