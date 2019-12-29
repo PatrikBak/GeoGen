@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the triples of concyclities
-            foreach (var concyclities in theorems.GetTheoremsOfTypes(ConcyclicPoints).Subsets(3))
+            foreach (var concyclities in theorems.GetObjectsForKeys(ConcyclicPoints).Subsets(3))
             {
                 // Get the concyclic points of each concyclity
                 var pointQuadruples = concyclities.Select(concyclity => concyclity.InvolvedObjects

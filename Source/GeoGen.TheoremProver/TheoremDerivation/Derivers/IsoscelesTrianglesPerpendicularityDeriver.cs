@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the pair of equal line segments theorems
-            foreach (var equalLineSegmentTheorems in theorems.GetTheoremsOfTypes(EqualLineSegments).Subsets(2))
+            foreach (var equalLineSegmentTheorems in theorems.GetObjectsForKeys(EqualLineSegments).Subsets(2))
             {
                 // Get the common point for both the theorems
                 var commonPoints = equalLineSegmentTheorems.Select(theorem =>

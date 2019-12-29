@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the collinearities
-            foreach (var collinearity in theorems.GetTheoremsOfTypes(CollinearPoints))
+            foreach (var collinearity in theorems.GetObjectsForKeys(CollinearPoints))
             {
                 // Get the collinear points of this collinearity
                 var collinearPoints = collinearity.InvolvedObjects
@@ -30,7 +30,7 @@ namespace GeoGen.TheoremProver
                     .ToArray();
 
                 // Go through all the theorems that might have a line
-                foreach (var theorem in theorems.GetTheoremsOfTypes(ParallelLines, PerpendicularLines, ConcurrentLines, ConcurrentObjects, LineTangentToCircle))
+                foreach (var theorem in theorems.GetObjectsForKeys(ParallelLines, PerpendicularLines, ConcurrentLines, ConcurrentObjects, LineTangentToCircle))
                 {
                     // Get the redefinable line
                     var redefinableLine = theorem.InvolvedObjects.OfType<LineTheoremObject>()

@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the pairs of parallelities
-            foreach (var parallelities in theorems.GetTheoremsOfTypes(ParallelLines).Subsets(2))
+            foreach (var parallelities in theorems.GetObjectsForKeys(ParallelLines).Subsets(2))
             {
                 // Get the lines
                 var lines = parallelities.Select(theorem => theorem.InvolvedObjects.Cast<LineTheoremObject>().ToArray()).ToArray();

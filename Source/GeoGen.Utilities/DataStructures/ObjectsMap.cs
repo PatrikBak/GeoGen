@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Utilities
 {
@@ -61,6 +62,19 @@ namespace GeoGen.Utilities
             // Set the list of all objects
             AllObjects = allObjects;
         }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Enumerates all objects associated with given keys.
+        /// </summary>
+        /// <param name="keys">The keys.</param>
+        /// <returns>The enumerable of all the values corresponding to the requested keys.</returns>
+        public IEnumerable<TValue> GetObjectsForKeys(params TKey[] keys) =>
+            // Merge the vales from each key, if they're present
+            keys.Distinct().Where(ContainsKey).SelectMany(key => this[key]);
 
         #endregion
 

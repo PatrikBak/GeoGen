@@ -20,7 +20,7 @@ namespace GeoGen.TheoremRanker
         public override (double ranking, string message) Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
         {
             // Get the number of concyclic theorems
-            var concyclicTheorems = allTheorems.GetTheoremsOfTypes(TheoremType.ConcyclicPoints).Count();
+            var concyclicTheorems = allTheorems.GetObjectsForKeys(TheoremType.ConcyclicPoints).Count();
 
             // Get the number of objects
             var numberOfObjects = configuration.AllObjects.Count;

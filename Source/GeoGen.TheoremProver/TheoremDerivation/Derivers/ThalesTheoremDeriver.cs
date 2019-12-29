@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through all the pair of perpendicular lines
-            foreach (var perpendicularLineTheorems in theorems.GetTheoremsOfTypes(PerpendicularLines).Subsets(2))
+            foreach (var perpendicularLineTheorems in theorems.GetObjectsForKeys(PerpendicularLines).Subsets(2))
             {
                 // Get the lines
                 var lines = perpendicularLineTheorems.SelectMany(theorem => theorem.InvolvedObjects).Cast<LineTheoremObject>();

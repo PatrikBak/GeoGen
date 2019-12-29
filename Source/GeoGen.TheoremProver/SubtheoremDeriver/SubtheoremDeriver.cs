@@ -447,9 +447,9 @@ namespace GeoGen.TheoremProver
         private static IEnumerable<MappingData> GenerateInitialMappingsForTrapezoidLayout(SubtheoremDeriverInput input)
         {
             // Take the parallel lines theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(ParallelLines)
+            return input.ExaminedConfigurationTheorems.GetObjectsForKeys(ParallelLines)
                 // Where both the lines objects are defined by points
-                ?.Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
+                .Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
                 // From each theorem object unwrap points
                 .Select(theorem => (theorem,
                     // We now know we have two lines defined by points
@@ -471,9 +471,7 @@ namespace GeoGen.TheoremProver
                     (pair.theorem, points: new[] { pair.points[3], pair.points[2], pair.points[1], pair.points[0] })
                 })
                 // These points finally represent one of our sought trapezoids
-                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
-                // If there are no parallel line theorems, we have no mapping
-                ?? Enumerable.Empty<MappingData>();
+                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem));
         }
 
         /// <summary>
@@ -486,9 +484,9 @@ namespace GeoGen.TheoremProver
         private static IEnumerable<MappingData> GenerateInitialMappingsForRightTriangleLayout(SubtheoremDeriverInput input)
         {
             // Take the perpendicular lines theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(PerpendicularLines)
+            return input.ExaminedConfigurationTheorems.GetObjectsForKeys(PerpendicularLines)
                 // Where both the lines objects are defined by points
-                ?.Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
+                .Where(theorem => theorem.InvolvedObjects.All(line => ((LineTheoremObject)line).DefinedByPoints))
                 // From each theorem object unwrap points
                 .Select(theorem => (theorem,
                     // We now know we have two lines defined by points
@@ -512,9 +510,7 @@ namespace GeoGen.TheoremProver
                     (triple.theorem, points: new[] { triple.commonPoint, triple.otherPoint2, triple.otherPoint1 })
                 })
                 // These points finally represent one of our sought right triangle
-                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
-                // If there are no perpendicular line theorems, we have no mapping
-                ?? Enumerable.Empty<MappingData>();
+                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem));
         }
 
         /// <summary>
@@ -527,9 +523,9 @@ namespace GeoGen.TheoremProver
         private static IEnumerable<MappingData> GenerateInitialMappingsForCircleAndTangentLineLayout(SubtheoremDeriverInput input)
         {
             // Take the line tangent to circle theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(LineTangentToCircle)
+            return input.ExaminedConfigurationTheorems.GetObjectsForKeys(LineTangentToCircle)
                 // Where both line and circle are defined by points
-                ?.Where(theorem => theorem.InvolvedObjects.All(lineOrCircle => ((TheoremObjectWithPoints)lineOrCircle).DefinedByPoints))
+                .Where(theorem => theorem.InvolvedObjects.All(lineOrCircle => ((TheoremObjectWithPoints)lineOrCircle).DefinedByPoints))
                 // From particular theorem objects unwrap points
                 .Select(theorem => (theorem, lineCirclePoints: new[]
                 {
@@ -554,9 +550,7 @@ namespace GeoGen.TheoremProver
                     (tuple.theorem, points: new[] { tuple.commonPoint, tuple.circlePoints[1], tuple.circlePoints[0], tuple.linePoint })
                 })
                 // These points finally represent one of our sought situation
-                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
-                // If there are no line tangent to circle theorems, we have no mapping
-                ?? Enumerable.Empty<MappingData>();
+                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem));
         }
 
         /// <summary>
@@ -569,9 +563,9 @@ namespace GeoGen.TheoremProver
         private static IEnumerable<MappingData> GenerateInitialMappingsForIsoscelesTriangleLayout(SubtheoremDeriverInput input)
         {
             // Take the equal line segments theorems from the configuration
-            return input.ExaminedConfigurationTheorems.GetOrDefault(EqualLineSegments)
+            return input.ExaminedConfigurationTheorems.GetObjectsForKeys(EqualLineSegments)
                 // From each theorem object unwrap line segments
-                ?.Select(theorem => (theorem, lineSegments: new[]
+                .Select(theorem => (theorem, lineSegments: new[]
                 {
                     (LineSegmentTheoremObject)theorem.InvolvedObjectsList[0],
                     (LineSegmentTheoremObject)theorem.InvolvedObjectsList[1],
@@ -598,9 +592,7 @@ namespace GeoGen.TheoremProver
                     (triple.theorem, points: new[] {triple.commonPoint, triple.otherPoint2, triple.otherPoint1})
                 })
                 // These points finally represent one of our sought situation
-                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem))
-                // If there are no equal line segments theorems, we have no mapping
-                ?? Enumerable.Empty<MappingData>();
+                .Select(pair => new MappingData(input.TemplateConfiguration.LooseObjects, pair.points, pair.theorem));
         }
 
         /// <summary>
@@ -645,11 +637,9 @@ namespace GeoGen.TheoremProver
                     // TODO: Don't allow duplicate mapping
 
                     // Then we do so by pulling the map and looking at points
-                    return configuration.ObjectMap.GetOrDefault(Point)?
+                    return configuration.ObjectMap.GetObjectsForKeys(Point)?
                         // And using our helper function
-                        .Select(point => new MappingData(data, (constructedObject, point)))
-                        // In case there in no point (which I doubt that will ever happen), return nothing
-                        ?? Enumerable.Empty<MappingData>();
+                        .Select(point => new MappingData(data, (constructedObject, point)));
 
                 // If the construction is predefined...
                 case PredefinedConstruction predefinedConstruction when

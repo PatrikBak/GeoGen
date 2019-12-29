@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the quadruples of incidences
-            foreach (var incidences in theorems.GetTheoremsOfTypes(Incidence).Subsets(3))
+            foreach (var incidences in theorems.GetObjectsForKeys(Incidence).Subsets(3))
             {
                 // Extract the common circle
                 var commonCircle = incidences[0].InvolvedObjects.Intersect(incidences[1].InvolvedObjects).Intersect(incidences[2].InvolvedObjects).FirstOrDefault();
@@ -40,7 +40,7 @@ namespace GeoGen.TheoremProver
                     .ToArray();
 
                 // Go through all the theorems that might have a circle
-                foreach (var theorem in theorems.GetTheoremsOfTypes(LineTangentToCircle, TangentCircles, ConcurrentObjects))
+                foreach (var theorem in theorems.GetObjectsForKeys(LineTangentToCircle, TangentCircles, ConcurrentObjects))
                 {
                     // Get the redefinable circle
                     var redefinableCircle = theorem.InvolvedObjects.OfType<CircleTheoremObject>()

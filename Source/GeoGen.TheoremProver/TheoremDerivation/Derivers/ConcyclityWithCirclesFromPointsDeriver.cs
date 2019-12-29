@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the concyclities
-            foreach (var concyclity in theorems.GetTheoremsOfTypes(ConcyclicPoints))
+            foreach (var concyclity in theorems.GetObjectsForKeys(ConcyclicPoints))
             {
                 // Get the concyclic points of this concyclity
                 var concyclicPoints = concyclity.InvolvedObjects
@@ -30,7 +30,7 @@ namespace GeoGen.TheoremProver
                     .ToArray();
 
                 // Go through all the theorems that have a circle
-                foreach (var theorem in theorems.GetTheoremsOfTypes(LineTangentToCircle, TangentCircles, ConcurrentObjects))
+                foreach (var theorem in theorems.GetObjectsForKeys(LineTangentToCircle, TangentCircles, ConcurrentObjects))
                 {
                     // Get the redefinable circle
                     var redefinableCircle = theorem.InvolvedObjects.OfType<CircleTheoremObject>()

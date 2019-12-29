@@ -21,7 +21,7 @@ namespace GeoGen.TheoremProver
         {
             // Find the points that might be potential centers
             // From the equal line segments theorems
-            var relevantObjects = theorems.GetTheoremsOfTypes(EqualLineSegments)
+            var relevantObjects = theorems.GetObjectsForKeys(EqualLineSegments)
                 // Take the inner objects
                 .SelectMany(theorem => theorem.GetInnerConfigurationObjects())
                 // Only distinct ones
@@ -30,7 +30,7 @@ namespace GeoGen.TheoremProver
                 .ToArray();
 
             // Go through the concyclities
-            foreach (var concyclity in theorems.GetTheoremsOfTypes(ConcyclicPoints))
+            foreach (var concyclity in theorems.GetObjectsForKeys(ConcyclicPoints))
             {
                 // Get the concyclic points
                 var concyclicPoints = concyclity.InvolvedObjects

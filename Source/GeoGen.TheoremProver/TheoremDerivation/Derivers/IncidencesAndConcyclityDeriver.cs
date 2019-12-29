@@ -20,7 +20,7 @@ namespace GeoGen.TheoremProver
         public override IEnumerable<(IReadOnlyList<Theorem> assumptions, Theorem impliedTheorem)> DeriveTheorems(TheoremMap theorems)
         {
             // Go through the quadruples of incidences
-            foreach (var incidences in theorems.GetTheoremsOfTypes(Incidence).Subsets(4))
+            foreach (var incidences in theorems.GetObjectsForKeys(Incidence).Subsets(4))
             {
                 // Get their points
                 var points = incidences.Select(i => i.InvolvedObjects.OfType<PointTheoremObject>().First().ConfigurationObject).ToArray();
