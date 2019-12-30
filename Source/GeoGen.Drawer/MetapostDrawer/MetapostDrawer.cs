@@ -241,15 +241,19 @@ namespace GeoGen.Drawer
                         // And remapping its arguments
                         auxiliaryObject.PassedArguments.FlattenedList.Select(argument => objectMap[argument]).ToArray());
 
+                    // It might be used in other constructions, so we need to put it into the map
+                    objectMap.Add(auxiliaryObject, remmapedObject);
+
+                    // If the picture already contains the object, don't carry out the construction
+                    if (picture.Contains(remmapedObject))
+                        return;
+
                     // The remapped object now has the real object as its arguments, so we can construct it
                     var analyticObject = _constructor.Construct(picture, remmapedObject, addToPicture: true);
 
                     // If the object cannot be constructed, make aware
                     if (analyticObject == null)
                         throw new ConstructionException($"A drawing command of the drawing rule for {rule.ObjectToDraw.Construction} contains an inconstructible object.");
-
-                    // It might be used in other constructions, so we need to put it into the map
-                    objectMap.Add(auxiliaryObject, remmapedObject);
                 });
 
                 // Perform the individual drawing commands

@@ -372,7 +372,17 @@ namespace GeoGen.Drawer
                     // Unwrap
                     .Select(point => point.Value)
                     // Take those that lie within the bounding box
-                    .Where(point => comparer.Compare(point, leftUpperCorner) >= 0 && comparer.Compare(point, rightBottomCorner) <= 0)
+                    .Where(point =>
+                    {
+                        // Which happens when it is to the right of the leftmost coordinate
+                        return point.X.Rounded() >= leftUpperCorner.X.Rounded() &&
+                            // But to the left of the rightmost coordinate
+                            point.X.Rounded() <= rightUpperCorner.X.Rounded() &&
+                            // And below the topmost coordinate
+                            point.Y.Rounded() <= leftUpperCorner.Y.Rounded() &&
+                            // But above the bottommost one
+                            point.Y.Rounded() >= leftBottomCorner.Y.Rounded();
+                    })
                     // Distinct ones (it might happen a line intersects two of them in the corner)
                     .Distinct()
                     // Order

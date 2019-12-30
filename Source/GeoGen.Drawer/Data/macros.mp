@@ -16,7 +16,7 @@ vardef TexTextOnTheRight(expr text) =
 	decimal(max(8cm,abs(urcorner bbox(currentpicture) - ulcorner bbox(currentpicture))) ) 
 	& "pt\vbox{" & text & "}");
 			
-	p shifted (urcorner bbox(currentpicture))
+	p shifted ((5,0) + urcorner bbox(currentpicture))
 	       shifted -(0,ypart urcorner(bbox(p)))
 		
 enddef;
@@ -29,20 +29,52 @@ def Midpoint_Text(expr M,A,B) =
 	"Let~$" & M & "$ be the midpoint of~$" & A & B & "$. "		
 enddef;
 
-def PerpendicularBisector_Text(expr l,A,B) = 
-	"Let~$" & l & "$ be the perpendicular bisector of~$" & A & B & "$. "		
+def PointReflection_Text(expr P,A,B) = 
+	"Let~$" & P & "$ be the reflection of~$" & A & "$ in~$" & B & "$. "
+enddef;
+
+def PerpendicularLineAtPointOfLine_Text(expr l,A,B) = 
+	"Let~$" & l & "$ be the line through~$" & A & "$ such that~$" & l & " \perp " & A & B & "$. "		
 enddef;
 
 def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
 	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
 enddef;
 
+def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
+enddef;
+
+def PerpendicularBisector_Text(expr l,A,B) = 
+	"Let~$" & l & "$ be the perpendicular bisector of the segment~$" & A & B & "$. "
+enddef;
+
+def TangentLine_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the line tanget to circle~$" & A & B & C & "$ at~$" & A & "$. "
+enddef;
+
+def InternalAngleBisector_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the internal angle bisector of~$\angle " & B & A & C & "$. "
+enddef;
+
+def ExternalAngleBisector_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the external angle bisector of~$\angle " & B & A & C & "$. "
+enddef;
+
 def PerpendicularProjectionOnLineFromPoints_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the projection of~$" & A & "$ on~$" & B & C & "$. "
 enddef;
 
+def PerpendicularProjection_Text(expr P,A,l) = 
+	"Let~$" & P & "$ be the projection of~$" & A & "$ on~$" & l & "$. "
+enddef;
+
 def ReflectionInLineFromPoints_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the reflection of~$" & A & "$ in~$" & B & C & "$. "
+enddef;
+
+def ReflectionInLine_Text(expr P,l,A) = 
+	"Let~$" & P & "$ be the reflection of~$" & A & "$ in~$" & l & "$. "
 enddef;
 
 def MidpointOfArc_Text(expr P,A,B,C) = 
@@ -53,12 +85,20 @@ def MidpointOfOppositeArc_Text(expr P,A,B,C) =
 	"Let~$" & P & "$ be the midpoint of opposite arc~$" & B & A & C & "$. "
 enddef;
 
+def ParallelogramPoint_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be such a~point that~$" & A & B & P & C & "$ is a~parallelogram. "
+enddef;
+
 def OppositePointOnCircumcircle_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the point opposite to~$" & A & "$ on circle~$" & B & A & C & "$. "
 enddef;
 
 def Circumcenter_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the circumcenter of~$" & A & B & C & "$. "
+enddef;
+
+def Orthocenter_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the orthocenter of~$" & A & B & C & "$. "
 enddef;
 
 def Median_Text(expr l,A,B,C) = 
@@ -85,6 +125,14 @@ def Excircle_Text(expr c,A,B,C) =
 	"Let~$" & c & "$ be the~$" & A & "$-excircle of~$" & A & B & C & "$. "		
 enddef;
 
+def Incenter_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the incenter of~$" & A & B & C & "$. "		
+enddef;
+
+def Excenter_Text(expr P,A,B,C) = 
+	"Let~$" & P & "$ be the~$" & A & "$-excenter of~$" & A & B & C & "$. "		
+enddef;
+
 def EqualLineSegments_Text(expr k,l) =
 	"Show that $" & k & "=" & l & "$. "
 enddef;
@@ -105,8 +153,12 @@ def CollinearPoints_Text(expr A,B,C) =
 	"Show that points~$" & A & "," & B & "," & C & "$ are collinear. "
 enddef;
 
-def ParallelLines_Text(expr A,B,C,D) =
-	"Show that lines~$" & A & B & "$ and~$" & C & D & "$ are parallel. "
+def ParallelLines_Text(expr k,l) =
+	"Show that $" & k & " \parallel " & l & "$. "
+enddef;
+
+def PerpendicularLines_Text(expr k,l) =
+	"Show that $" & k & " \perp " & l & "$. "
 enddef;
 
 %%%%%%%%%%% HELPER MACROS %%%%%%%%%%%

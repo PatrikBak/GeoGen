@@ -156,9 +156,8 @@ P = IntersectionOfLineAndLineFromPoints(l, A, B)
   - draw Point(P)
  
 P = ParallelogramPoint(A, B, C)
-  - let M = Midpoint(B,C)
-  - draw Segment(A,P)
-  - draw Point(M) auxiliary
+  - draw Segment(B,P)
+  - draw Segment(C,P)
   - draw Point(P)
  
 P = PointReflection(A,B)
