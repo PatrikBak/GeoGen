@@ -198,9 +198,13 @@ namespace GeoGen.ConsoleLauncher
                 // Find out if we should log progress and if yes, do it
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
                     // How many configurations did we generate?
-                    LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
+                    LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}, " +
                         // How long did it take?
-                        $"after {stopwatch.ElapsedMilliseconds} milliseconds, " +
+                        $"after {stopwatch.ElapsedMilliseconds} ms, " +
+                        // With the info about the frequency
+                        $"{_settings.GenerationProgresLoggingFrequency} in " +
+                        // Average time
+                        $"{(double)stopwatch.ElapsedMilliseconds / generatedConfigurations * _settings.GenerationProgresLoggingFrequency:F2} ms on average, " +
                         // How many interesting theorem groups did we get?
                         $"with {interestingTheorems} interesting theorems.");
 
