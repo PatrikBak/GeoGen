@@ -472,7 +472,6 @@ namespace GeoGen.Utilities
         /// <returns>The sorted set of the enumerable's items.</returns>
         public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> enumerable) => new SortedSet<T>(enumerable);
 
-
         /// <summary>
         /// Converts an enumerable to a <see cref="Dictionary{TKey, TValue}"/> using a custom key selector and a custom value selector.
         /// </summary>

@@ -71,7 +71,8 @@ namespace GeoGen.Drawer
                 logCommandOutput: true,
                 numberOfPictures: 20
             ),
-            drawingRulesProviderSettings: new DrawingRulesProviderSettings(filePath: "..\\..\\..\\drawing_rules.txt")
+            drawingRulesProviderSettings: new DrawingRulesProviderSettings(filePath: "..\\..\\..\\drawing_rules.txt"),
+            reorderObjects: true
         )
         { }
     }

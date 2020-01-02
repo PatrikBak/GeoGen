@@ -105,6 +105,10 @@ def Median_Text(expr l,A,B,C) =
 	"Let~$" & l & "$ be the~$" & A & "$-median of~$" & A & B & C & "$. "
 enddef;
 
+def ParallelLine_Text(expr l,P,k) = 
+	"Let~$" & l & "$ be the line through~$" & P & "$ parallel to~$" & k & "$. "		
+enddef;
+
 def IntersectionOfLines_Text(expr P,k,l) = 
 	"Let~$" & P & "$ be the intersection point of~$" & k & "$ and $" & l & "$. "		
 enddef;

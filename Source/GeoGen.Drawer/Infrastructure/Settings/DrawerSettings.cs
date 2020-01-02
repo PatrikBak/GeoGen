@@ -25,6 +25,11 @@ namespace GeoGen.Drawer
         /// </summary>
         public DrawingRulesProviderSettings DrawingRulesProviderSettings { get; }
 
+        /// <summary>
+        /// Indicates whether we should reorder objects to get a better picture, i.e. A upwards.
+        /// </summary>
+        public bool ReorderObjects { get; }
+
         #endregion
 
         #region Constructor
@@ -35,13 +40,16 @@ namespace GeoGen.Drawer
         /// <param name="metapostDrawerSettings">The settings for the MetaPost drawer.</param>
         /// <param name="loggingSettings">The settings for the logging system.</param>
         /// <param name="drawingRulesProviderSettings">The settings for the provider of drawing rules.</param>
+        /// <param name="reorderObjects">Indicates whether we should reorder objects to get a better picture, i.e. A upwards.</param>
         public DrawerSettings(LoggingSettings loggingSettings,
                               MetapostDrawerSettings metapostDrawerSettings,
-                              DrawingRulesProviderSettings drawingRulesProviderSettings)
+                              DrawingRulesProviderSettings drawingRulesProviderSettings,
+                              bool reorderObjects)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             MetapostDrawerSettings = metapostDrawerSettings ?? throw new ArgumentNullException(nameof(metapostDrawerSettings));
             DrawingRulesProviderSettings = drawingRulesProviderSettings ?? throw new ArgumentNullException(nameof(drawingRulesProviderSettings));
+            ReorderObjects = reorderObjects;
         }
 
         #endregion

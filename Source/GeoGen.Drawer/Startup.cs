@@ -30,7 +30,7 @@ namespace GeoGen.Drawer
                 await IoC.InitializeAsync(settings);
 
                 // Run the UI loop
-                await UILoopAsync();
+                await UILoopAsync(reorderObjects: settings.ReorderObjects);
             }
             // Catch for any unhandled exception
             catch (Exception e)
@@ -46,8 +46,9 @@ namespace GeoGen.Drawer
         /// <summary>
         /// The main loop of a simple UI. 
         /// </summary>
+        /// <param name="reorderObjects">Indicates whether we should reorder objects to get a better picture, i.e. A upwards.</param>
         /// <returns>The task representing the asynchronous operation.</returns>
-        private static async Task UILoopAsync()
+        private static async Task UILoopAsync(bool reorderObjects)
         {
             // Empty line
             Console.WriteLine();
@@ -192,8 +193,8 @@ namespace GeoGen.Drawer
                     var drawerInput = content.ItemsBetween(start - 1, end)
                         // Pull the configuration and theorem
                         .Select(theoremWithRanking => (theoremWithRanking.Configuration, theoremWithRanking.Theorem))
-                        // Make them symmetric 
-                        .Select(pair => (MakeSymmetric(pair), pair.Theorem));
+                        // Make them symmetric if we are supposed to
+                        .Select(pair => reorderObjects ? (MakeSymmetric(pair), pair.Theorem) : pair);
 
                     // Perform the drawing for the desired input
                     await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput);
