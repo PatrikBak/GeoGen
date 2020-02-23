@@ -35,7 +35,7 @@ namespace GeoGen.Core
                 var usedObjects = configurationObject switch
                 {
                     // If we have a constructed object, then we look at its flattened arguments
-                    ConstructedConfigurationObject constructedObject => constructedObject.PassedArguments.FlattenedList.ToSet(),
+                    ConstructedConfigurationObject constructedObject => constructedObject.PassedArguments.FlattenedList.ToHashSet(),
 
                     // If we have a loose object, we have no internal objects
                     LooseConfigurationObject _ => new HashSet<ConfigurationObject>(),

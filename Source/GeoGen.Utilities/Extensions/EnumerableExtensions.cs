@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,36 +10,23 @@ namespace GeoGen.Utilities
     public static class EnumerableExtensions
     {
         /// <summary>
-        /// Finds the item with the maximal value found for it by a given value selector.
+        /// Finds the item with the maximal value retrieved from items via a value factory, potentially using a custom comparer.
         /// </summary>
         /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
-        /// <typeparam name="TValue">The type of value that must be comparable.</typeparam>
+        /// <typeparam name="TValue">The type of value that should be compared.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
-        /// <param name="valueSelector">The function that retrieves a value from an item.</param>
+        /// <param name="valueSelector">The function that retrieves a value from an item that should be compared.</param>
         /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
-        /// <returns>The first maximal item with the given value.</returns>
-        public static TItem MinItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector, IComparer<TValue> comparer = null)
-            // Reuse the function for the maximal item by reversing the comparer 
-            => enumerable.MaxItem(valueSelector, Comparer<TValue>.Create((x, y) => (comparer ?? Comparer<TValue>.Default).Compare(y, x)));
-
-        /// <summary>
-        /// Finds the item with the maximal value found for it by a given value selector.
-        /// </summary>
-        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
-        /// <typeparam name="TValue">The type of value that must be comparable.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="valueSelector">The function that retrieves a value from an item.</param>
-        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
-        /// <returns>The first maximal item with the given value.</returns>
+        /// <returns>The first maximal item.</returns>
         public static TItem MaxItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector, IComparer<TValue> comparer = null)
         {
             // Make sure we have a comparer
             comparer ??= Comparer<TValue>.Default;
 
-            // The maximal element
+            // Prepare the maximal element
             TItem maxElement = default;
 
-            // The maximal value of an item
+            // Prepare the maximal value of an item
             TValue maxValue = default;
 
             // Variable indicating whether we have already set the max value
@@ -84,60 +70,39 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Converts the enumerable of equivalent pairs to the list of collections,
-        /// where each collections contains mutually equivalent objects, and no two 
-        /// collections have equivalent elements (in other words, equivalence classes).
+        /// Finds the item with the minimal value retrieved from items via a value factory, potentially using a custom comparer.
         /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="equivalentObjects">The enumerable of equivalent pairs.</param>
-        /// <returns>The list of equivalence classes.</returns>
-        public static IReadOnlyList<IReadOnlyCollection<T>> CreateEqualityClasses<T>(this IEnumerable<(T, T)> equivalentObjects)
-        {
-            // Prepare the result
-            var equivalencyClasses = new List<HashSet<T>>();
+        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
+        /// <typeparam name="TValue">The type of value that should be compared.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="valueSelector">The function that retrieves a value from an item that should be compared.</param>
+        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
+        /// <returns>The first minimal item.</returns>
+        public static TItem MinItem<TItem, TValue>(this IEnumerable<TItem> enumerable, Func<TItem, TValue> valueSelector, IComparer<TValue> comparer = null)
+            // Reuse the function for the maximal item by reversing the comparer 
+            => enumerable.MaxItem(valueSelector, Comparer<TValue>.Create((x, y) => (comparer ?? Comparer<TValue>.Default).Compare(y, x)));
 
-            // Go through the equivalences
-            foreach (var (object1, object2) in equivalentObjects)
-            {
-                // Find the groups where the objects belong 
-                var group1 = equivalencyClasses.FirstOrDefault(set => set.Contains(object1));
-                var group2 = equivalencyClasses.FirstOrDefault(set => set.Contains(object2));
+        /// <summary>
+        /// Finds the item with the maximal value, potentially using a custom comparer.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
+        /// <returns>The first maximal item.</returns>
+        public static TItem MaxItem<TItem>(this IEnumerable<TItem> enumerable, IComparer<TItem> comparer = null)
+            // Reuse the other method with an identity value factory
+            => enumerable.MaxItem(_ => _, comparer);
 
-                // If both are in the same group, then we don't have anything new
-                if (group1 == group2 && group2 != null)
-                    continue;
-
-                // If neither group exists, add a new group with our objects to the list
-                if (group1 == null && group2 == null)
-                    equivalencyClasses.Add(new HashSet<T> { object1, object2 });
-
-                // If both group exists
-                else if (group1 != null && group2 != null)
-                {
-                    // Add all objects from the first group to the second
-                    group2.UnionWith(group1);
-
-                    // Remove the first group
-                    equivalencyClasses.Remove(group1);
-                }
-
-                // If exactly one group exists
-                else
-                {
-                    // Get the group
-                    var group = group1 ?? group2;
-
-                    // Get the object that is not in it
-                    var newObject = group.Contains(object1) ? object2 : object1;
-
-                    // Add the object to the group
-                    group.Add(newObject);
-                }
-            }
-
-            // Return the result
-            return equivalencyClasses;
-        }
+        /// <summary>
+        /// Finds the item with the minimal value, potentially using a custom comparer.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items of the enumerable.</typeparam>
+        /// <param name="enumerable">The enumerable.</param>
+        /// <param name="comparer">The comparer of values to be used. If it's null, then the default comparer will be used.</param>
+        /// <returns>The first minimal item.</returns>
+        public static TItem MinItem<TItem>(this IEnumerable<TItem> enumerable, IComparer<TItem> comparer = null)
+            // Reuse the other method with an identity value factory
+            => enumerable.MinItem(_ => _, comparer);
 
         /// <summary>
         /// Finds out if this enumerable has equivalent elements as the other one.
@@ -234,41 +199,6 @@ namespace GeoGen.Utilities
 
             // Otherwise they're equal
             return 0;
-        }
-
-        /// <summary>
-        /// Finds the minimal element of the enumerable with respect to a given comparer 
-        /// function.
-        /// </summary>
-        /// <typeparam name="T">The type of elements of the enumerable.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="comparer">The comparer function taking a,b and returning -1 if a < b; 0 if a == b; 1 if a > b.</param>
-        /// <returns>The minimal element of the enumerable.</returns>
-        public static T Min<T>(this IEnumerable<T> enumerable, Func<T, T, int> comparer)
-        {
-            // Get the enumerator
-            using var enumerator = enumerable.GetEnumerator();
-
-            // Make sure there is an element
-            if (!enumerator.MoveNext())
-                throw new InvalidOperationException("Sequence contains no elements.");
-
-            // Assume the current element is the minimum
-            var minimum = enumerator.Current;
-
-            // Enumerate
-            while (enumerator.MoveNext())
-            {
-                // Take the current candidate
-                var candidate = enumerator.Current;
-
-                // Change the minimum if it's smaller
-                if (comparer(candidate, minimum) < 0)
-                    minimum = candidate;
-            }
-
-            // Return the found minimum
-            return minimum;
         }
 
         /// <summary>
@@ -401,36 +331,12 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Invokes a given action for each element in the enumerable.
-        /// </summary>
-        /// <typeparam name="T">The type of the elements.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="action">The action to invoke.</param>
-        public static void ForEach(this IEnumerable enumerable, Action<object> action)
-        {
-            // For each element...
-            foreach (var element in enumerable)
-            {
-                // Invoke the action
-                action(element);
-            }
-        }
-
-        /// <summary>
         /// Checks if the enumerable has no elements.
         /// </summary>
         /// <typeparam name="T">The type of elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <returns>true, if the enumerable is empty; false otherwise.</returns>
         public static bool IsEmpty<T>(this IEnumerable<T> enumerable) => !enumerable.Any();
-
-        /// <summary>
-        /// Checks if the enumerable is null or has no elements.
-        /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <returns>true, if the enumerable is null or empty; false otherwise.</returns>
-        public static bool IsNullOrEmpty<T>(this IEnumerable<T> enumerable) => enumerable == null || enumerable.IsEmpty();
 
         /// <summary>
         /// Creates a single-element enumerable containing a given item.
@@ -444,17 +350,6 @@ namespace GeoGen.Utilities
         }
 
         /// <summary>
-        /// Converts an enumerable to a <see cref="HashSet{T}"/>.
-        /// </summary>
-        /// <typeparam name="T">The type of elements.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="equalityComparer">The equality comparer.</param>
-        /// <returns>The hash set of the enumerable's items.</returns>
-        public static HashSet<T> ToSet<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> equalityComparer = null)
-            // Reuse the constructor that will take care of the null case
-            => new HashSet<T>(enumerable, equalityComparer);
-
-        /// <summary>
         /// Converts an enumerable to a <see cref="ReadOnlyHashSet{T}"/>.
         /// </summary>
         /// <typeparam name="T">The type of elements.</typeparam>
@@ -462,7 +357,7 @@ namespace GeoGen.Utilities
         /// <returns>The hash set of the enumerable's items.</returns>
         public static ReadOnlyHashSet<T> ToReadOnlyHashSet<T>(this IEnumerable<T> enumerable, IEqualityComparer<T> equalityComparer = null)
             // Wrap a newly created set with the comparer
-            => new ReadOnlyHashSet<T>(enumerable.ToSet(equalityComparer));
+            => new ReadOnlyHashSet<T>(enumerable.ToHashSet(equalityComparer));
 
         /// <summary>
         /// Converts an enumerable to a <see cref="SortedSet{T}"/>.
@@ -471,22 +366,6 @@ namespace GeoGen.Utilities
         /// <param name="enumerable">The enumerable.</param>
         /// <returns>The sorted set of the enumerable's items.</returns>
         public static SortedSet<T> ToSortedSet<T>(this IEnumerable<T> enumerable) => new SortedSet<T>(enumerable);
-
-        /// <summary>
-        /// Converts an enumerable to a <see cref="Dictionary{TKey, TValue}"/> using a custom key selector and a custom value selector.
-        /// </summary>
-        /// <typeparam name="TKey">The type of keys of the dictionary.</typeparam>
-        /// <typeparam name="TValue">The type of values of the dictionary.</typeparam>
-        /// <typeparam name="TSource">The type of the enumerable source items.</typeparam>
-        /// <param name="enumerable">The enumerable.</param>
-        /// <param name="keySelector">The key selector accepting the source item and its enumeration index as parameters.</param>
-        /// <param name="valueSelector">The value selector accepting the source item and its enumeration index as parameters.</param>
-        /// <returns>The dictionary.</returns>
-        public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue, TSource>(this IEnumerable<TSource> enumerable, Func<TSource, int, TKey> keySelector, Func<TSource, int, TValue> valueSelector)
-        {
-            // Cast each item to a (item, index) tuple and then use the .NET ToDictionary method
-            return enumerable.Select((item, index) => (item, index)).ToDictionary(pair => keySelector(pair.item, pair.index), pair => valueSelector(pair.item, pair.index));
-        }
 
         /// <summary>
         /// Generates all possible variations with a given size of the elements of

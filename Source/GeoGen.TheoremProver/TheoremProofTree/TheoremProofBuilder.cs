@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GeoGen.Core.TheoremType;
@@ -179,7 +178,7 @@ namespace GeoGen.TheoremProver
                         // Such pairs make a used non-trivial equality theorem
                         .Select(pair => new Theorem(EqualObjects, pair.First, pair.Second))
                         // Enumerate, just in case to a set (we will be adding other equalities to it)
-                        .ToSet();
+                        .ToHashSet();
 
                     // If the equality of the first objects is not trivial, mark it
                     if (!equalArgumentsTriple.innerObject1.Equals(object1))

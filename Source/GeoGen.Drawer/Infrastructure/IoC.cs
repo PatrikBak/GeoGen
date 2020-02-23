@@ -1,7 +1,6 @@
 ﻿using GeoGen.ConsoleLauncher;
 using GeoGen.Constructor;
 using GeoGen.Infrastructure;
-using GeoGen.Utilities;
 using Ninject;
 using System.Linq;
 using System.Threading.Tasks;

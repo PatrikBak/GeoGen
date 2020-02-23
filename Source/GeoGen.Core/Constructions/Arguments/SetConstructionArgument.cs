@@ -43,10 +43,8 @@ namespace GeoGen.Core
         /// <param name="mapping">The mapping of the loose objects.</param>
         /// <returns>The remapped argument.</returns>
         public override ConstructionArgument Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
-        {
             // Remap individual arguments using their remap method 
-            return new SetConstructionArgument(PassedArguments.Select(argument => argument.Remap(mapping)).ToSet());
-        }
+            => new SetConstructionArgument(PassedArguments.Select(argument => argument.Remap(mapping)).ToHashSet());
 
         #endregion
 

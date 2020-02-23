@@ -72,7 +72,7 @@ namespace GeoGen.Generator
                         // that are remapped using this mapping
                         .Select(constructedObject => (ConstructedConfigurationObject)constructedObject.Remap(mapping))))
                     // Take the lexicographically minimal ids set
-                    .Min((a1, a2) => a1.CompareToLexicographically(a2));
+                    .MinItem(Comparer<SortedSet<int>>.Create((a1, a2) => a1.CompareToLexicographically(a2)));
 
             // If this configuration is not the representant of its symmetry class,
             // then we say it is not correct
