@@ -71,7 +71,7 @@ namespace GeoGen.TheoremProver
         /// <returns>An enumerable of objects equal to the passed one, including the passed one.</returns>
         public IEnumerable<ConfigurationObject> GetEqualObjects(ConfigurationObject configurationObject)
             // They should be in the dictionary, or if not, we only have this object
-            => _equalObjects.GetOrDefault(configurationObject) ?? configurationObject.ToEnumerable();
+            => _equalObjects.GetValueOrDefault(configurationObject) ?? configurationObject.ToEnumerable();
 
         /// <summary>
         /// Finds out if given two objects are equal according to the already marked equalities.
@@ -103,8 +103,8 @@ namespace GeoGen.TheoremProver
             var (object1, object2) = equalObjects;
 
             // Find the equality groups for the objects
-            var group1 = _equalObjects.GetOrDefault(object1) ?? new HashSet<ConfigurationObject> { object1 };
-            var group2 = _equalObjects.GetOrDefault(object2) ?? new HashSet<ConfigurationObject> { object2 };
+            var group1 = _equalObjects.GetValueOrDefault(object1) ?? new HashSet<ConfigurationObject> { object1 };
+            var group2 = _equalObjects.GetValueOrDefault(object2) ?? new HashSet<ConfigurationObject> { object2 };
 
             // If they are the same, we won't do more
             if (group1 == group2)

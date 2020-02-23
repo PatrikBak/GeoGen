@@ -167,7 +167,7 @@ namespace GeoGen.Core
             return argument switch
             {
                 // If we have an object argument, ask directly for the name of its object
-                ObjectConstructionArgument objectArgument => _objectNames.GetOrDefault(objectArgument.PassedObject)
+                ObjectConstructionArgument objectArgument => _objectNames.GetValueOrDefault(objectArgument.PassedObject)
                         // If there is none, we don't have a different option but converting it (and get an ugly string)
                         ?? FormatConfigurationObject(objectArgument.PassedObject),
 
@@ -276,9 +276,9 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="configurationObject">The object.</param>
         /// <returns>The objects name.</returns>
-        public string GetObjectName(ConfigurationObject configurationObject) => _objectNames.GetOrDefault(configurationObject)
-            // If it's not there, make it known
-            ?? throw new GeoGenException("Unknown object.");
+        public string GetObjectName(ConfigurationObject configurationObject) =>
+            // Try to get it from the dictionary and make it known if it's not there
+            _objectNames.GetValueOrDefault(configurationObject) ?? throw new GeoGenException("Unknown object.");
 
         #endregion
 

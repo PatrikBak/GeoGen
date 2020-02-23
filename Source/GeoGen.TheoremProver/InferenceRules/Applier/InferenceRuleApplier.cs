@@ -161,7 +161,7 @@ namespace GeoGen.TheoremProver
                 // Take the template objects 
                 => templateObjects
                     // Find their real mapped pair
-                    .Select(_theoremObjectMapping.GetOrDefault)
+                    .Select(_theoremObjectMapping.GetValueOrDefault)
                     // That is there
                     .Where(realObject => realObject != null)
                     // Enumerate
@@ -176,7 +176,7 @@ namespace GeoGen.TheoremProver
                 // Take the template objects 
                 => templateObjects
                     // Find their real mapped pair
-                    .Select(ConfigurationObjectMapping.GetOrDefault)
+                    .Select(ConfigurationObjectMapping.GetValueOrDefault)
                     // That is there
                     .Where(realObject => realObject != null)
                     // Enumerate

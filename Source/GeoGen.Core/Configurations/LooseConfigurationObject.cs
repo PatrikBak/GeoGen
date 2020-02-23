@@ -1,5 +1,4 @@
-﻿using GeoGen.Utilities;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -33,7 +32,7 @@ namespace GeoGen.Core
         public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
         {
             // Simply access the object from the mapping (there's no need to recreate it)
-            return mapping.GetOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
+            return mapping.GetValueOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
         }
 
         #endregion

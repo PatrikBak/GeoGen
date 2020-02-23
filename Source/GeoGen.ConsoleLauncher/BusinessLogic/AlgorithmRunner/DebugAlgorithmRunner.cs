@@ -308,10 +308,10 @@ namespace GeoGen.ConsoleLauncher
                     .Select(theorem =>
                     {
                         // Get the configuration based on whether the simplification was successful
-                        var finalConfiguration = simplifiedTheorems.GetOrDefault(theorem).newConfiguration ?? output.Configuration;
+                        var finalConfiguration = simplifiedTheorems.GetValueOrDefault(theorem).newConfiguration ?? output.Configuration;
 
                         // Get the configuration based on whether the simplification was successful
-                        var finalTheorem = simplifiedTheorems.GetOrDefault(theorem).newTheorem ?? theorem;
+                        var finalTheorem = simplifiedTheorems.GetValueOrDefault(theorem).newTheorem ?? theorem;
 
                         // Get the ranking 
                         // NOTE: This might not be the best way, because the ranking might not have the newest info

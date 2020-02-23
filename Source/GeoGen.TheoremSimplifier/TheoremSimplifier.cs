@@ -183,7 +183,7 @@ namespace GeoGen.TheoremSimplifier
             // Otherwise we can recreate the theorem
             var newTheorem = new Theorem(theorem.Type, theorem.InvolvedObjects
                 // Each object is either preserved or taken from the mapping
-                .Select(theoremObject => replacedTheoremObjects.GetOrDefault(theoremObject) ?? theoremObject));
+                .Select(theoremObject => replacedTheoremObjects.GetValueOrDefault(theoremObject) ?? theoremObject));
 
             // Now we need to find the new configuration. We do that by finding 
             // the objects that are now unnecessary with respect to the new theorem

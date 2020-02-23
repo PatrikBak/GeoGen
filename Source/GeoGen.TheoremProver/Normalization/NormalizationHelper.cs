@@ -166,7 +166,7 @@ namespace GeoGen.TheoremProver
         /// <returns>The proved theorems with the passed type.</returns>
         public IEnumerable<Theorem> GetProvedTheoremOfType(TheoremType theoremType)
             // Try to get it from the dictionary or return an empty enumerable
-            => _provedTheoremsByType.GetOrDefault(theoremType) ?? Enumerable.Empty<Theorem>();
+            => _provedTheoremsByType.GetValueOrDefault(theoremType) ?? Enumerable.Empty<Theorem>();
 
         /// <summary>
         /// Gets the constructed objects that have a given construction.
@@ -175,7 +175,7 @@ namespace GeoGen.TheoremProver
         /// <returns>The constructed objects with the passed construction.</returns>
         public IEnumerable<ConstructedConfigurationObject> GetObjectsWithConstruction(Construction construction)
              // Try to get it from the dictionary or return an empty enumerable
-             => _objectsByConstruction.GetOrDefault(construction) ?? Enumerable.Empty<ConstructedConfigurationObject>();
+             => _objectsByConstruction.GetValueOrDefault(construction) ?? Enumerable.Empty<ConstructedConfigurationObject>();
 
         /// <summary>
         /// Gets the normal version of a passed object, or null, if the object is no known to the helper.
@@ -184,7 +184,7 @@ namespace GeoGen.TheoremProver
         /// <returns>Either the normal version of the object; if it is known to the helper, or null otherwise.</returns>
         public ConfigurationObject GetNormalVersionOfObjectOrNull(ConfigurationObject configurationObject)
             // Try to get it from the dictionary. If it's not there, null will be returned
-            => _objectToItsNormalVersion.GetOrDefault(configurationObject);
+            => _objectToItsNormalVersion.GetValueOrDefault(configurationObject);
 
         /// <summary>
         /// Gets the constructed objects that have a given construction and are equal to the passed object.
@@ -198,7 +198,7 @@ namespace GeoGen.TheoremProver
             var normalVersion = _objectToItsNormalVersion[configurationObject];
 
             // Take all the objects with the passed construction
-            return _objectsByConstruction.GetOrDefault(construction)?
+            return _objectsByConstruction.GetValueOrDefault(construction)?
                 // Whose normal version is equal to the normal version of the passed object, i.e. they are equal
                 .Where(constructedObject => _objectToItsNormalVersion[constructedObject].Equals(normalVersion))
                 // If there are no such subjects, return an empty enumerable
@@ -230,7 +230,7 @@ namespace GeoGen.TheoremProver
                 // Look for one that has an argument
                 .Any(innerObject => innerObject.PassedArguments.FlattenedList
                     // That is not equal to its normalized version
-                    .Any(argument => !argument.Equals(_objectToItsNormalVersion.GetOrDefault(argument))));
+                    .Any(argument => !argument.Equals(_objectToItsNormalVersion.GetValueOrDefault(argument))));
 
         /// <summary>
         /// Marks that a given theorem, whose type is <see cref="EqualObjects"/>, is proved, and performs normalization if needed.
@@ -554,7 +554,7 @@ namespace GeoGen.TheoremProver
             // to their current normal versions lying now. We need to fix this as well. Take all the pairs
             _introducedObjectsNormalVersions
                // Where the normal version is no longer normal
-               .Where(pair => !pair.Value.Equals(_objectToItsNormalVersion.GetOrDefault(pair.Value)))
+               .Where(pair => !pair.Value.Equals(_objectToItsNormalVersion.GetValueOrDefault(pair.Value)))
                // Enumerate so we can modify the dictionary
                .ToArray()
                // Handle each change
@@ -627,7 +627,7 @@ namespace GeoGen.TheoremProver
                     // Find out if we should remove the current object. This is true if 
                     var shouldBeRemoved = constructedObject.PassedArguments.FlattenedList
                         // It has an argument that is not equal to its normal version
-                        .Any(argumentObject => !argumentObject.Equals(_objectToItsNormalVersion.GetOrDefault(argumentObject)));
+                        .Any(argumentObject => !argumentObject.Equals(_objectToItsNormalVersion.GetValueOrDefault(argumentObject)));
 
                     // If we should remove this object, do it
                     if (shouldBeRemoved)
@@ -877,7 +877,7 @@ namespace GeoGen.TheoremProver
             // Go through the normal versions to be removed
             normalVersionsToBeRemoved.ForEach(normalVersionToBeRemoved =>
                 // Get the theorems that hold for the current one
-                _provedTheoremsByObject.GetOrDefault(normalVersionToBeRemoved)
+                _provedTheoremsByObject.GetValueOrDefault(normalVersionToBeRemoved)
                     // Enumerate so that we can modify 
                     ?.ToArray()
                     // Remove each

@@ -85,17 +85,17 @@ namespace GeoGen.TheoremProver
         /// <inheritdoc/>
         public IEnumerable<InferenceRule> GetGeneralRulesThatProve(TheoremType theoremType)
             // Try to get it from the conclusion type dictionary or return an empty enumerable
-            => _conclusionTypeToGeneralRules.GetOrDefault(theoremType) ?? Enumerable.Empty<InferenceRule>();
+            => _conclusionTypeToGeneralRules.GetValueOrDefault(theoremType) ?? Enumerable.Empty<InferenceRule>();
 
         /// <inheritdoc/>
         public IEnumerable<(InferenceRule rule, Theorem assumptionTemplate)> GetGeneralRulesWithAssumptionsOfType(TheoremType theoremType)
             // Try to get it from the assumption type dictionary or return an empty enumerable
-            => _assumptionTypeToGeneralRules.GetOrDefault(theoremType) ?? Enumerable.Empty<(InferenceRule, Theorem)>();
+            => _assumptionTypeToGeneralRules.GetValueOrDefault(theoremType) ?? Enumerable.Empty<(InferenceRule, Theorem)>();
 
         /// <inheritdoc/>
         public IEnumerable<(InferenceRule rule, ConstructedConfigurationObject objectTemplateTemplate)> GetObjectRulesWithObjectWithConstruction(Construction construction)
             // Try to get it from the construction to object dictionary or return an empty enumerable
-            => _constructionToObjectRules.GetOrDefault(construction) ?? Enumerable.Empty<(InferenceRule, ConstructedConfigurationObject)>();
+            => _constructionToObjectRules.GetValueOrDefault(construction) ?? Enumerable.Empty<(InferenceRule, ConstructedConfigurationObject)>();
 
         #endregion
     }

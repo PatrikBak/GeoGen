@@ -56,7 +56,7 @@ namespace GeoGen.Core
             // Convert the individual passed objects
             var mappedObjects = constructedObject.PassedArguments.FlattenedList
                 // Look for the inner objects in the mapping
-                .Select(innerObject => mapping.GetOrDefault(innerObject)
+                .Select(innerObject => mapping.GetValueOrDefault(innerObject)
                     // They must be there
                     ?? throw new GeoGenException("Cannot do the mapping, because not all the arguments of the passed object are in the map."))
                 // Enumerate

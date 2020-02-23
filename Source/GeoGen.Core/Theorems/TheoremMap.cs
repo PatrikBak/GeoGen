@@ -29,7 +29,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="theorem">The theorem.</param>
         /// <returns>true, if the given theorem is contained in the map; false otherwise.</returns>
-        public bool ContainsTheorem(Theorem theorem) => this.GetOrDefault(theorem.Type)?.Contains(theorem) ?? false;
+        public bool ContainsTheorem(Theorem theorem) => this.GetValueOrDefault(theorem.Type)?.Contains(theorem) ?? false;
 
         #endregion
 

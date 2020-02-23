@@ -300,9 +300,9 @@ namespace GeoGen.Drawer
                 #region Creating a segment from passing points
 
                 // First find the points that are supposed to visually lie on this line
-                var passingPoints = (_linePoints.GetOrDefault(line) ?? Enumerable.Empty<Point>())
+                var passingPoints = (_linePoints.GetValueOrDefault(line) ?? Enumerable.Empty<Point>())
                         // Append those of them that are shifted (the shift will be resolved later)
-                        .Concat(_shiftLinePoints.GetOrDefault(line) ?? Enumerable.Empty<Point>())
+                        .Concat(_shiftLinePoints.GetValueOrDefault(line) ?? Enumerable.Empty<Point>())
                         // Take distinct 
                         .Distinct()
                         // Sort them
@@ -318,8 +318,8 @@ namespace GeoGen.Drawer
                     var right = passingPoints[^1];
 
                     // Some of them might be shifted, we need to check that
-                    var isLeftShifted = _shiftLinePoints.GetOrDefault(line)?.Contains(left) ?? false;
-                    var isRightShifted = _shiftLinePoints.GetOrDefault(line)?.Contains(right) ?? false;
+                    var isLeftShifted = _shiftLinePoints.GetValueOrDefault(line)?.Contains(left) ?? false;
+                    var isRightShifted = _shiftLinePoints.GetValueOrDefault(line)?.Contains(right) ?? false;
 
                     // If the left is shifted, do the shift
                     if (isLeftShifted)
@@ -556,7 +556,7 @@ namespace GeoGen.Drawer
                     var rightPoint = segmentPoints[segmentPoints.IndexOf(leftPoint) + 1];
 
                     // Get the macro name
-                    var macroName = drawingData.LineSegmentMacros.GetOrDefault(style.Value)
+                    var macroName = drawingData.LineSegmentMacros.GetValueOrDefault(style.Value)
                         // Make sure it's known when it's not present
                         ?? throw new DrawerException($"The style {style} doesn't have its macro defined for drawing line segments.");
 
@@ -580,7 +580,7 @@ namespace GeoGen.Drawer
                 var (circle, style) = pair;
 
                 // Get the macro name
-                var macroName = drawingData.CircleMacros.GetOrDefault(style)
+                var macroName = drawingData.CircleMacros.GetValueOrDefault(style)
                     // Make sure it's known when it's not present
                     ?? throw new DrawerException($"The style {style} doesn't have its macro defined for drawing circles.");
 
@@ -599,7 +599,7 @@ namespace GeoGen.Drawer
                 var (point, style) = pair;
 
                 // Get the macro name
-                var macroName = drawingData.PointMarkMacros.GetOrDefault(style)
+                var macroName = drawingData.PointMarkMacros.GetValueOrDefault(style)
                     // Make sure it's known when it's not present
                     ?? throw new DrawerException($"The style {style} doesn't have its macro defined for marking points.");
 

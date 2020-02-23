@@ -220,7 +220,7 @@ namespace GeoGen.Drawer
             configuration.ConstructedObjects.ForEach(constructedObject =>
             {
                 // Make sure it has a rule
-                var rule = _data.DrawingRules.GetOrDefault(constructedObject.Construction)
+                var rule = _data.DrawingRules.GetValueOrDefault(constructedObject.Construction)
                     // If not, make aware
                     ?? throw new DrawerException($"Cannot draw the picture, because construction {constructedObject.Construction} has no drawing rule.");
 
@@ -261,7 +261,7 @@ namespace GeoGen.Drawer
                     // Find the remapped versions of objects being drawn
                     var objectsBeingDrawn = command.Arguments.Select(configurationObject =>
                             // Object has to be already mapped
-                            objectMap.GetOrDefault(configurationObject)
+                            objectMap.GetValueOrDefault(configurationObject)
                                 // Otherwise we have a huge problem...
                                 ?? throw new DrawerException($"A drawing command of the drawing rule for {rule.ObjectToDraw.Construction} contains an undefined object."))
                         // Or even their analytic version

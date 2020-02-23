@@ -169,7 +169,7 @@ namespace GeoGen.TheoremProver
             #region Schedule saved object rules
 
             // Take the object rules that have an assumption of the current type
-            _assumptionTypeToObjectData.GetOrDefault(provedTheorem.Type)
+            _assumptionTypeToObjectData.GetValueOrDefault(provedTheorem.Type)
                 // Do the scheduling for every data and every assumption template
                 ?.ForEach(pair =>
                 {

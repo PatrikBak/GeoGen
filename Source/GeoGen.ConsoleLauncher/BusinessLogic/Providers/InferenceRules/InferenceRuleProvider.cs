@@ -318,7 +318,7 @@ namespace GeoGen.ConsoleLauncher
                                 var negativeAssumptionName = groupString.Substring(1);
 
                                 // Parse it
-                                var negativeAssumption = namesToTheorems.GetOrDefault(negativeAssumptionName)
+                                var negativeAssumption = namesToTheorems.GetValueOrDefault(negativeAssumptionName)
                                     // Make aware if it is not named
                                     ?? throw new ParsingException($"Error while parsing '{line}', unknown theorem '{negativeAssumptionName}'");
 
@@ -344,7 +344,7 @@ namespace GeoGen.ConsoleLauncher
                                 // Trim each
                                 .Select(assumptionName => assumptionName.Trim())
                                 // Each is supposed to be named
-                                .Select(assumptionName => namesToTheorems.GetOrDefault(assumptionName)
+                                .Select(assumptionName => namesToTheorems.GetValueOrDefault(assumptionName)
                                         // Make aware it is named
                                         ?? throw new ParsingException($"Error while parsing '{line}', unknown theorem '{assumptionName}'"))
                                 // Enumerate to a read-only hash set

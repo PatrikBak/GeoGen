@@ -33,23 +33,5 @@ namespace GeoGen.Utilities
             // And return it
             return value;
         }
-
-        /// <summary>
-        /// Tries to get the value corresponding to a given key, or returns the default of the 
-        /// <typeparamref name="TValue"/> type if the key is not present.
-        /// </summary>
-        /// <typeparam name="TKey">The key type.</typeparam>
-        /// <typeparam name="TValue">The value type.</typeparam>
-        /// <param name="dictionary">The dictionary.</param>
-        /// <param name="key">The key.</param>
-        /// <returns>The value from the dictionary, or the default value of the type <typeparamref name="TValue"/>.</returns>
-        public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key)
-        {
-            // Try to get it
-            dictionary.TryGetValue(key, out var value);
-
-            // Return it
-            return value;
-        }
     }
 }

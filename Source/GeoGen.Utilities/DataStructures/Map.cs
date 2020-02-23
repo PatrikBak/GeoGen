@@ -61,7 +61,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="key">The T2 key.</param>
         /// <returns>The corresponding T1 item, or null, if the key is not present.</returns>
-        public T1 GetLeftValueOrDefault(T2 key) => _rightToLeft.GetOrDefault(key);
+        public T1 GetLeftValueOrDefault(T2 key) => _rightToLeft.GetValueOrDefault(key);
 
         /// <summary>
         /// Gets the T2 item corresponding to a given T1 key, or the default value,
@@ -69,7 +69,7 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="key">The T1 key.</param>
         /// <returns>The corresponding T2 item; or null, if the key is not present.</returns>
-        public T2 GetRightValueOrDefault(T1 key) => _leftToRight.GetOrDefault(key);
+        public T2 GetRightValueOrDefault(T1 key) => _leftToRight.GetValueOrDefault(key);
 
         /// <summary>
         /// Checks if the map contains a given T1 item.

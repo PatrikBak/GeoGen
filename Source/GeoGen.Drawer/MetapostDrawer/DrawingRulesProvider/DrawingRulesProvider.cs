@@ -227,7 +227,7 @@ namespace GeoGen.Drawer
                                     // Trim each
                                     .Select(objectName => objectName.Trim())
                                     // Find the object (that must already exist)
-                                    .Select(objectName => namesToObjects.GetOrDefault(objectName)
+                                    .Select(objectName => namesToObjects.GetValueOrDefault(objectName)
                                         // If it doesn't exist, make aware
                                         ?? throw new ParsingException($"Error while parsing '{commandLine}' of the rule for {ruleLine}. Unknown object '{objectName}'"))
                                     // Enumerate
