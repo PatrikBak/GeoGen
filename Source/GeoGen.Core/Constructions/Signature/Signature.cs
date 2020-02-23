@@ -133,7 +133,11 @@ namespace GeoGen.Core
                             var newArgument = CreateArgument(setParameter.TypeOfParameters);
 
                             // And update the arguments set
-                            arguments.Add(newArgument);
+                            var hasBeenAdded = arguments.Add(newArgument);
+
+                            // If it hasn't been added, i.e. there are duplicates, make aware
+                            if (!hasBeenAdded)
+                                throw new GeoGenException($"The object contains duplicate arguments.");
                         });
 
                         // Finally return the set construction argument wrapping the filled set

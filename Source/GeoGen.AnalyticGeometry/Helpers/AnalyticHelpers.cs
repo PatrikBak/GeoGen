@@ -106,6 +106,20 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
+        /// Finds out if given distinct points are concyclic.
+        /// </summary>
+        /// <param name="points">The points to be checked.</param>
+        /// <returns>true, if all the passed points are concyclic; false otherwise.</returns>
+        public static bool AreConcyclic(params Point[] points)
+        {
+            // Take three and construct their circle
+            var circle = new Circle(points[0], points[1], points[2]);
+
+            // Return if all other points lie on this circle
+            return points.Skip(3).All(circle.Contains);
+        }
+
+        /// <summary>
         /// Constructs the perpendicular bisector of the line defined by given distinct points.
         /// </summary>
         /// <param name="point1">The first point.</param>
@@ -275,6 +289,36 @@ namespace GeoGen.AnalyticGeometry
 
             // Return all the points
             return (A, B, E, D);
+        }
+
+        /// <summary>
+        /// Construct a random cyclic convex quadrilateral that is guaranteed to have
+        /// its sides not parallel to each other.
+        /// </summary>
+        /// <returns>The four points making a convex quadrilateral.</returns>
+        public static (Point, Point, Point, Point) ConstructRandomCyclicConvexQuadrilateral()
+        {
+            // First we construct an acute scalene triangle ABC
+            var (A, B, C) = ConstructRandomScaleneAcuteTriangle();
+
+            // We want to find point D such that the angle CBD is smaller than CBA. 
+            // Let's calculate the angle CBA first
+            var CBA = AngleBetweenLines(new Line(B, A), new Line(B, C));
+
+            // We will take the angle CBD as something around CBA/2. Let's say
+            // something between 0.3 CBA and 0.7 CBA
+            var CBD = RandomnessHelper.NextDouble(0.3, 0.7) * CBA;
+
+            // Now we need to construct D. We can use rotation to get the line BD
+            var lineBD = new Line(B, C.Rotate(B, MathematicalHelpers.ToDegrees(CBD)));
+
+            // We intersect this line with the circumcenter ABC
+            var D = new Circle(A, B, C).IntersectWith(lineBD)
+                    // And take the intersection different from B
+                    .Single(intersection => intersection != B);
+
+            // Return the points
+            return (A, B, C, D);
         }
 
         /// <summary>

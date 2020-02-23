@@ -2,6 +2,8 @@
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremRanker;
+using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -25,6 +27,21 @@ namespace GeoGen.ConsoleLauncher
         private readonly IAlgorithmFacade _algorithm;
 
         /// <summary>
+        /// The prover of theorems.
+        /// </summary>
+        private readonly ITheoremProver _prover;
+
+        /// <summary>
+        /// The ranker of theorems.
+        /// </summary>
+        private readonly ITheoremRanker _ranker;
+
+        /// <summary>
+        /// The simplifier of theorems.
+        /// </summary>
+        private readonly ITheoremSimplifier _simplifier;
+
+        /// <summary>
         /// The finder of best theorems.
         /// </summary>
         private readonly IBestTheoremsFinder _finder;
@@ -38,6 +55,11 @@ namespace GeoGen.ConsoleLauncher
         /// The factory for creating lazy writers of best theorems.
         /// </summary>
         private readonly ITheoremsWithRankingJsonLazyWriterFactory _writerFactory;
+
+        /// <summary>
+        /// The tracker of the used inference rules in theorem proofs.
+        /// </summary>
+        private readonly IInferenceRuleUsageTracker _tracker;
 
         #endregion
 
@@ -57,20 +79,32 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
+        /// <param name="prover">The prover of theorems.</param>
+        /// <param name="ranker">The ranker of theorems.</param>
+        /// <param name="simplifier">The simplifier of theorems.</param>
         /// <param name="finder">The finder of best theorems.</param>
         /// <param name="writer">The writer used to write best theorems to a file.</param>
         /// <param name="writerFactory">The factory for creating lazy writers of best theorems.</param>
+        /// <param name="tracker">The tracker of the used inference rules in theorem proofs.</param>
         public DebugAlgorithmRunner(DebugAlgorithmRunnerSettings settings,
                                     IAlgorithmFacade algorithm,
+                                    ITheoremProver prover,
+                                    ITheoremRanker ranker,
+                                    ITheoremSimplifier simplifier,
                                     IBestTheoremsFinder finder,
                                     IRankedTheoremsWriter writer,
-                                    ITheoremsWithRankingJsonLazyWriterFactory writerFactory)
+                                    ITheoremsWithRankingJsonLazyWriterFactory writerFactory,
+                                    IInferenceRuleUsageTracker tracker)
         {
-            _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
+            _prover = prover ?? throw new ArgumentNullException(nameof(prover));
+            _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
+            _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
             _writerFactory = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
+            _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
         }
 
         #endregion
@@ -88,43 +122,36 @@ namespace GeoGen.ConsoleLauncher
 
             #region Prepare writers
 
+            // Prepare the name of the JSON output file
+            var jsonOutputFileName = $"{_settings.OutputFilePrefix}{input.Id}.json";
+
             // Prepare the writer of all the output as JSON
-            var outputJsonWriter = _writerFactory.Create(Path.Combine(_settings.OutputJsonFolder, $"{_settings.OutputFilePrefix}{input.Id}.json"));
+            var outputJsonWriter = _writerFactory.Create(Path.Combine(_settings.OutputJsonFolder, jsonOutputFileName));
 
             // Prepare the writer of best theorems
             var bestTheoremsJsonWriter = _writerFactory.Create(_settings.BestTheoremsJsonFilePath);
 
-            // Prepare the name of the output files
-            var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FilesExtension}";
+            // Prepare the name of the other human-readable output files
+            var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FileExtension}";
 
             // Prepare the writer for the output
             using var outputWriter = new StreamWriter(new FileStream(Path.Combine(_settings.OutputFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read));
 
             // If we should generate the output with attempts
-            using var outputWithAttemptsWriter = _settings.WriteOutputWithAttempts
+            using var outputWithProofsWriter = _settings.WriteOutputWithProofs
                 // Prepare the writer for it
-                ? new StreamWriter(new FileStream(Path.Combine(_settings.OutputWithAttemptsFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read))
-                // Otherwise take null
+                ? new StreamWriter(new FileStream(Path.Combine(_settings.OutputFolderWithProofs, fileName), FileMode.Create, FileAccess.Write, FileShare.Read))
+                // Otherwise null
                 : null;
 
-            // If we should generate the output with attempt and proofs
-            using var outputWithAttemptsAndProofsWriter = _settings.WriteOutputWithAttemptsAndProofs
-                // Prepare the writer for it
-                ? new StreamWriter(new FileStream(Path.Combine(_settings.OutputWithAttemptsAndProofsFolder, fileName), FileMode.Create, FileAccess.Write, FileShare.Read))
-                // Otherwise take null
-                : null;
-
-            // Local function that writes a line to all reports
+            // Local function that writes a line to all non-JSON writers
             void WriteLineToAllWriters(string line = "")
             {
                 // Write to the main output
                 outputWriter.WriteLine(line);
 
                 // Write to the output with attempts file if it is provided
-                outputWithAttemptsWriter?.WriteLine(line);
-
-                // Write to the output with attempts and proofs file if it is provided
-                outputWithAttemptsAndProofsWriter?.WriteLine(line);
+                outputWithProofsWriter?.WriteLine(line);
             }
 
             #endregion            
@@ -179,13 +206,13 @@ namespace GeoGen.ConsoleLauncher
             #region Tracking variables
 
             // Prepare the number of generated configurations
-            var generatedConfigurations = 0;
+            var generatedConfigurationsCount = 0;
 
-            // Prepare the total number of interesting theorems
-            var interestingTheorems = 0;
+            // Prepare the total number of interesting theorems, i.e. unproven and unsimplifiable ones
+            var interestingTheoremsCount = 0;
 
-            // Prepare the total number of unproven theorems
-            var unprovenTheorems = 0;
+            // Prepare the total number of configurations with an interesting theorem
+            var configurationsWithInterestingTheoremCount = 0;
 
             #endregion
 
@@ -203,47 +230,108 @@ namespace GeoGen.ConsoleLauncher
             outputJsonWriter.BeginWriting();
 
             // Run the algorithm
-            foreach (var algorithmOutput in outputs)
+            foreach (var output in outputs)
             {
                 // Mark the configuration
-                generatedConfigurations++;
+                generatedConfigurationsCount++;
 
                 // Find out if we should log progress and if yes, do it
-                if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
+                if (_settings.LogProgress && generatedConfigurationsCount % _settings.GenerationProgresLoggingFrequency == 0)
                     // How many configurations did we generate?
-                    LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}, " +
+                    LoggingManager.LogInfo($"Generated configurations: {generatedConfigurationsCount}, " +
                         // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} ms, " +
                         // With the info about the frequency
                         $"{_settings.GenerationProgresLoggingFrequency} in " +
                         // Average time
-                        $"{(double)stopwatch.ElapsedMilliseconds / generatedConfigurations * _settings.GenerationProgresLoggingFrequency:F2} ms on average, " +
-                        // How many interesting theorem groups did we get?
-                        $"with {interestingTheorems} interesting theorems.");
+                        $"{(double)stopwatch.ElapsedMilliseconds / generatedConfigurationsCount * _settings.GenerationProgresLoggingFrequency:F2} ms on average, " +
+                        // How many interesting configurations and theorems
+                        $"with {configurationsWithInterestingTheoremCount} interesting configurations ({interestingTheoremsCount} theorems in total).");
 
                 // Skip configurations without theorems
-                if (algorithmOutput.NewTheorems.AllObjects.Count == 0)
+                if (output.NewTheorems.AllObjects.Count == 0)
                     continue;
 
-                // Count in unproven theorems
-                unprovenTheorems += algorithmOutput.ProverOutput.UnprovenTheorems.Count;
+                #region Finding interesting theorems
 
-                #region Handling interesting theorems
+                // Find the theorems definable simpler by taking the new theorems
+                var theoremsDefinableSimpler = output.NewTheorems.AllObjects
+                    // That have an unnecessary object
+                    .Where(theorem => theorem.GetUnnecessaryObjects(output.Configuration).Any())
+                    // Enumerate
+                    .ToArray();
 
-                // Find the current interesting theorems
-                var currentInterestingTheorems = algorithmOutput.FindInterestingTheorems().ToArray();
+                // Call the prover
+                var provedTheorems = _prover.ProveTheoremsAndConstructProofs(output.OldTheorems, output.NewTheorems, output.ContextualPicture);
 
-                // Count them in
-                interestingTheorems += currentInterestingTheorems.Length;
+                // Get the unproven theorems by taking all the new theorems
+                var unprovenTheorems = output.NewTheorems.AllObjects
+                    // Excluding those that are proven
+                    .Where(theorem => !provedTheorems.ContainsKey(theorem))
+                    // Enumerate
+                    .ToArray();
+
+                // Count in interesting theorems
+                interestingTheoremsCount += unprovenTheorems.Length;
+
+                // If this is a configuration with an interesting, count it in
+                if (unprovenTheorems.Any())
+                    configurationsWithInterestingTheoremCount++;
+
+                // Prepare the map of all theorems
+                var allTheoremsMap = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
+
+                // Rank the interesting theorems
+                var theoremRankings = unprovenTheorems
+                    // Enumerate rankings to a dictionary
+                    .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, output.Configuration, allTheoremsMap));
+
+                // Simplify the interesting theorems
+                var simplifiedTheorems = unprovenTheorems
+                    // Attempt to simplify each
+                    .Select(theorem => (theorem, simplification: _simplifier.Simplify(output.Configuration, theorem, allTheoremsMap)))
+                    // Take those where it worked out
+                    .Where(pair => pair.simplification != null)
+                    // Enumerate to a dictionary
+                    .ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
+
+                // Sort the interesting theorems 
+                unprovenTheorems = unprovenTheorems
+                     // By rankings ASC (that's why -)
+                     .OrderBy(theorem => -theoremRankings[theorem].TotalRanking)
+                     // Enumerate
+                     .ToArray();
+
+                // Wrap rankings into objects that will be serialized to JSON
+                var theoremsWithRanking = unprovenTheorems
+                    // Attempt to simplify each and construct the ranking
+                    .Select(theorem =>
+                    {
+                        // Get the configuration based on whether the simplification was successful
+                        var finalConfiguration = simplifiedTheorems.GetOrDefault(theorem).newConfiguration ?? output.Configuration;
+
+                        // Get the configuration based on whether the simplification was successful
+                        var finalTheorem = simplifiedTheorems.GetOrDefault(theorem).newTheorem ?? theorem;
+
+                        // Get the ranking 
+                        // NOTE: This might not be the best way, because the ranking might not have the newest info
+                        //       Probably the only solution is to construct simplified things again and rank them...
+                        var ranking = theoremRankings[theorem];
+
+                        // Construct the theorem with ranking
+                        return new TheoremWithRanking(finalTheorem, ranking, finalConfiguration, isSimplified: simplifiedTheorems.ContainsKey(theorem));
+                    })
+                    // Enumerate
+                    .ToArray();
 
                 // Let the finder judge them
-                _finder.AddTheorems(currentInterestingTheorems, out var bestTheoremsChanged);
+                _finder.AddTheorems(theoremsWithRanking, out var bestTheoremsChanged);
 
-                // If there are some change in the global ranking
+                // If there are some change in the global ladder
                 if (bestTheoremsChanged)
                 {
                     // Prepare an enumerable that identifies each so they could be found back in the output file
-                    var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurations} of the output file {fileName}"));
+                    var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurationsCount} of the output file {fileName}"));
 
                     // Write them
                     _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremsReadableFilePath);
@@ -257,13 +345,13 @@ namespace GeoGen.ConsoleLauncher
                 #region Human-readable output
 
                 // Prepare a formatter for the generated configuration
-                var formatter = new OutputFormatter(algorithmOutput.Configuration.AllObjects);
+                var formatter = new OutputFormatter(output.Configuration.AllObjects);
 
                 // Local function to write line based on the number of interesting theorems
                 void WriteLine(string line = "")
                 {
                     // If there is any interesting theorem
-                    if (algorithmOutput.ProverOutput.UnprovenTheorems.Any())
+                    if (unprovenTheorems.Any())
                     {
                         // Write to all writes, which will take care of potentially not requested ones
                         WriteLineToAllWriters(line);
@@ -274,11 +362,11 @@ namespace GeoGen.ConsoleLauncher
 
                     // Otherwise there are no interesting theorems. We might however want
                     // to write the proofs of the proven ones. If that is requested, do it
-                    outputWithAttemptsAndProofsWriter?.WriteLine(line);
+                    outputWithProofsWriter?.WriteLine(line);
                 }
 
                 // Prepare the header
-                var header = $"Configuration {generatedConfigurations}";
+                var header = $"Configuration {generatedConfigurationsCount}";
 
                 // Write the configuration
                 WriteLine();
@@ -286,78 +374,97 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine(header);
                 WriteLine(new string('-', header.Length));
                 WriteLine();
-                WriteLine(formatter.FormatConfiguration(algorithmOutput.Configuration));
+                WriteLine(formatter.FormatConfiguration(output.Configuration));
+                WriteLine();
 
-                // Write the title with simple statistics
-                WriteLine("\nTheorems:\n");
-
-                // Prepare the global index of the first unproven theorem (starting from 1)
+                // Prepare the global index of the first interesting theorem (starting from 1)
                 // The idea is to have these indices in our output files so we can then use them
-                // in Drawer to quickly draw them. Hopefully drawing unproven theorems will be enough
-                var firstUnprovenTheoremGlobalIndex = unprovenTheorems - algorithmOutput.ProverOutput.UnprovenTheorems.Count + 1;
+                // in Drawer to quickly identify them.
+                var firstInterestingTheoremIndex = interestingTheoremsCount - unprovenTheorems.Length + 1;
 
                 // If there is any interesting theorem
-                if (algorithmOutput.ProverOutput.UnprovenTheorems.Any())
+                if (unprovenTheorems.Any())
                 {
                     // Then write them to the standard output writer
-                    outputWriter.WriteLine(TheoremsToString(formatter, algorithmOutput,
-                        // We want to include only unproven ones, without their proof attempts
-                        includeProvenTheorems: false, displayProofAttempts: false,
-                        // Include the global index of the first unproven theorem
-                        firstUnprovenTheoremGlobalIndex: firstUnprovenTheoremGlobalIndex));
-
-                    // We also try to write them to the writer of the output with attempts, if it's provided
-                    outputWithAttemptsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput,
-                        // Here we want to include only unproven ones, but with their proof attempts
-                        includeProvenTheorems: false, displayProofAttempts: true,
-                        // Include the global index of the first unproven theorem
-                        firstUnprovenTheoremGlobalIndex: firstUnprovenTheoremGlobalIndex));
+                    outputWriter.WriteLine(TheoremsToString(formatter,
+                        // Proofs are not relevant now
+                        theoremProofs: null,
+                        // In this case we don't want to write proofs
+                        writeUninterestingTheorems: false,
+                        // Pass other interesting data
+                        theoremsDefinableSimpler, unprovenTheorems, theoremRankings, simplifiedTheorems,
+                        // Include the global index of the first interesting theorem
+                        firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
                 }
 
                 // In any case (whether we have or haven't interesting theorems) we want to write the info
                 // to the writer of theorems with attempts and proofs, if it's provided
-                outputWithAttemptsAndProofsWriter?.WriteLine(TheoremsToString(formatter, algorithmOutput,
-                    // Here we want to include even proven theorems and also proof attempts of unproven ones
-                    includeProvenTheorems: true, displayProofAttempts: true,
-                        // Include the global index of the first unproven theorem
-                        firstUnprovenTheoremGlobalIndex: firstUnprovenTheoremGlobalIndex));
+                outputWithProofsWriter?.WriteLine(TheoremsToString(formatter,
+                        // Set the proofs
+                        theoremProofs: provedTheorems,
+                        // In this case we do want to write proofs
+                        writeUninterestingTheorems: true,
+                        // Pass other interesting data
+                        theoremsDefinableSimpler, unprovenTheorems, theoremRankings, simplifiedTheorems,
+                        // Include the global index of the first interesting theorem
+                        firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
 
                 // Flush the writers after each output so that we can see the results gradually
                 outputWriter.Flush();
-                outputWithAttemptsWriter?.Flush();
-                outputWithAttemptsAndProofsWriter?.Flush();
+                outputWithProofsWriter?.Flush();
 
                 #endregion
 
-                #region Writing unproven theorems to JSON
-
-                // Prepare the unproven theorems with ranking to be written 
-                var unprovenTheoremsWithRanking = GetSortedUnprovenTheoremGroups(formatter, algorithmOutput)
-                    // Get rid of groups
-                    .Flatten()
-                    // Get the ranking
-                    .Select(theorem => new TheoremWithRanking(theorem, algorithmOutput.Rankings[theorem], algorithmOutput.Configuration, isSimplified: false));
-
                 // Write JSON output
-                outputJsonWriter.Write(unprovenTheoremsWithRanking);
+                outputJsonWriter.Write(theoremsWithRanking);
+
+                #region Inference rule usage statistics
+
+                // Track the proofs
+                _tracker.MarkProofs(provedTheorems.Values);
+
+                // Prepare the string representing the current state by taking the usages
+                var usagesString = _tracker.UsedRulesCounts
+                    // Sort them by count ASC
+                    .OrderBy(pair => -pair.Value)
+                    // Convert each to string
+                    .Select(pair =>
+                    {
+                        // The rule should be loaded
+                        var loadedRule = (LoadedInferenceRule)pair.Key;
+
+                        // Get the count
+                        var count = pair.Value;
+
+                        // Compose the string
+                        return $"[{count}] --> {loadedRule}";
+                    })
+                    // Make each on a line new
+                    .ToJoinedString("\n");
+
+                // Prepare the writer for the statistics
+                using var inferenceRuleUsageWriter = new StreamWriter(new FileStream(_settings.InferenceRuleUsageFile, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+                // Rewrite the stats file
+                inferenceRuleUsageWriter.Write(usagesString);
 
                 #endregion
             }
 
             // Write end
             WriteLineToAllWriters("\n------------------------------------------------");
-            WriteLineToAllWriters($"Generated configurations: {generatedConfigurations}");
-            WriteLineToAllWriters($"Interesting theorems: {interestingTheorems}");
-            WriteLineToAllWriters($"Unproven theorems: {unprovenTheorems}");
+            WriteLineToAllWriters($"Generated configurations: {generatedConfigurationsCount}");
+            WriteLineToAllWriters($"Configurations with an interesting theorem: {configurationsWithInterestingTheoremCount}");
+            WriteLineToAllWriters($"Interesting theorems: {interestingTheoremsCount}");
             WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
-            LoggingManager.LogInfo($"Algorithm has finished in {stopwatch.ElapsedMilliseconds} ms.");
-            LoggingManager.LogInfo($"Generated configurations: {generatedConfigurations}");
-            LoggingManager.LogInfo($"Interesting theorems: {interestingTheorems}");
-            LoggingManager.LogInfo($"Unproven theorems: {unprovenTheorems}");
+            LoggingManager.LogInfo($"Generated configurations: {generatedConfigurationsCount}");
+            LoggingManager.LogInfo($"Configurations with an interesting theorem: {configurationsWithInterestingTheoremCount}");
+            LoggingManager.LogInfo($"Interesting theorems: {interestingTheoremsCount}");
+            LoggingManager.LogInfo($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
-            // Close JSON output writer
+            // Close the JSON output writer
             outputJsonWriter.EndWriting();
         }
 
@@ -375,455 +482,154 @@ namespace GeoGen.ConsoleLauncher
                 .Select(initialFormatter.FormatTheorem)
                 // Sort them alphabetically
                 .Ordered()
-                // Append the index to each
+                // Append an index to each
                 .Select((theoremString, index) => $" {index + 1,2}. {theoremString}")
                 // Make each on a separate line
                 .ToJoinedString("\n");
         }
 
         /// <summary>
-        /// Finds the group of unproven theorems, sorts them within these group by ranking and their string
-        /// version, and sorts these groups by the first theorem of each group. This way we get an unified order
-        /// and we can write them to both JSON and Readable output file in the same order.
-        /// </summary>
-        /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
-        /// <param name="algorithmOutput">The output of the algorithm.</param>
-        /// <returns>The array of groups of theorems.</returns>
-        private static Theorem[][] GetSortedUnprovenTheoremGroups(OutputFormatter formatter, AlgorithmOutput algorithmOutput)
-        {
-            // Prepare the groups in the sorted order that we're going to use
-            return algorithmOutput.ProverOutput.UnprovenTheoremGroups.Select(group =>
-                    // First order the theorems inside one group by their overall ranking (ASC) and then by text
-                    group.OrderBy(theorem => (-algorithmOutput.Rankings[theorem].TotalRanking, formatter.FormatTheorem(theorem))).ToArray())
-                // Then order these groups first by the ranking of the first theorem (ASC), then group size (ASC), then name
-                .OrderBy(group => (-algorithmOutput.Rankings[group[0]].TotalRanking, -group.Length, formatter.FormatTheorem(group[0])))
-                // Enumerate
-                .ToArray();
-        }
-
-        /// <summary>
         /// Converts given theorems to a string, optionally with their proofs or attempts to prove.
         /// </summary>
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
-        /// <param name="algorithmOutput">The output of the algorithm.</param>
-        /// <param name="includeProvenTheorems">Indicates if we should include the proved theorems as well.</param>
-        /// <param name="displayProofAttempts">Indicates whether we should display proof attempts.</param>
-        /// <param name="firstUnprovenTheoremGlobalIndex">The global index of the first unproven theorem.</param>
+        /// <param name="theoremProofs">The dictionary mapping theorems to their proofs.</param>
+        /// <param name="writeUninterestingTheorems">Indicates whether we should write uninteresting theorems, i.e. proved or definable simpler ones.</param>
+        /// <param name="theoremsDefinableSimpler">The list of theorems that can be defined simpler.</param>
+        /// <param name="interestingTheorems">The list of interesting theorems, i.e. unproven and undefinable simpler.</param>
+        /// <param name="rankings">The dictionary mapping theorems to their ranking.</param>
+        /// <param name="simplifiedTheorems">The dictionary mapping theorems to their simplified versions.</param>
+        /// <param name="firstInterestingTheoremGlobalIndex">The global index of the first interesting theorem.</param>
         /// <returns>The string representing the theorems.</returns>
         private string TheoremsToString(OutputFormatter formatter,
-                                        AlgorithmOutput algorithmOutput,
-                                        bool includeProvenTheorems,
-                                        bool displayProofAttempts,
-                                        int firstUnprovenTheoremGlobalIndex)
+                                        IReadOnlyDictionary<Theorem, TheoremProof> theoremProofs,
+                                        bool writeUninterestingTheorems,
+                                        IReadOnlyList<Theorem> theoremsDefinableSimpler,
+                                        IReadOnlyList<Theorem> interestingTheorems,
+                                        IReadOnlyDictionary<Theorem, TheoremRanking> rankings,
+                                        IReadOnlyDictionary<Theorem, (Configuration, Theorem)> simplifiedTheorems,
+                                        int firstInterestingTheoremGlobalIndex)
         {
-            // Prepare the dictionary where we will store unique strings 
-            // associated with all theorems used in the reports
-            var theoremTags = new Dictionary<Theorem, string>();
+            // Prepare the result
+            var result = "";
 
-            // Get the unproven theorems grouped and sorted
-            var sortedUnprovenTheoremsGroups = GetSortedUnprovenTheoremGroups(formatter, algorithmOutput);
+            // Prepare a local theorem index
+            var localTheoremIndex = 1;
 
-            // Name the groups first
-            sortedUnprovenTheoremsGroups.ForEach((group, groupIndex) =>
+            #region Proven theorems
+
+            // If we should write uninteresting theorems and there are any proven theorems...
+            if (writeUninterestingTheorems && theoremProofs.Any())
             {
-                // Each group will have its index which will start the tag of each theorem in the group
-                // If the group has only one them
-                if (group.Length == 1)
-                    // Then we don't need to include the theorem index
-                    theoremTags.Add(group[0], $"{groupIndex + 1}.");
-                // Otherwise
-                else
-                    // We name each theorem separately
-                    group.ForEach((theorem, theoremIndex) => theoremTags.Add(theorem, $"{groupIndex + 1}.{theoremIndex + 1}."));
-            });
+                // Add the header
+                result = $"{result.TrimEnd()}\n\nProved theorems:\n\n";
 
-            // Prepare the proven theorems, if we should include them
-            var provenTheorems = !includeProvenTheorems ? Array.Empty<Theorem>()
-                // If yes, order them by their text
-                : algorithmOutput.ProverOutput.ProvenTheorems.Keys.OrderBy(formatter.FormatTheorem).ToArray();
-
-            // Name the proven theorems too. Remember we have already used some numbers for the group identifiers
-            provenTheorems.ForEach((theorem, theoremIndex) => theoremTags.Add(theorem, $"{sortedUnprovenTheoremsGroups.Length + theoremIndex + 1}."));
-
-            // Process every theorem
-            var theoremsString = sortedUnprovenTheoremsGroups.Flatten().Concat(provenTheorems).Select((theorem, index) =>
-            {
-                // If this is a proven theorem, then we display it with its proof (no ranking has been done)
-                if (algorithmOutput.ProverOutput.ProvenTheorems.ContainsKey(theorem))
-                    return $"{theoremTags[theorem]} {ProofReport(algorithmOutput.ProverOutput.ProvenTheorems[theorem], formatter, theoremTags)}";
-
-                #region Writing ranking
-
-                // Otherwise our theorem is not proven, i.e. we want to display the global index and the total ranking
-                var result = $"[{firstUnprovenTheoremGlobalIndex + index}] {theoremTags[theorem]} {formatter.FormatTheorem(theorem)} - total ranking {algorithmOutput.Rankings[theorem].TotalRanking}\n\n";
-
-                // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
-                algorithmOutput.Rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.Coefficient * pair.Value.Ranking, pair.Key.ToString()))
-                    // Add each on an individual line with info about the coefficient
-                    .ForEach(pair => result += $" {pair.Key,-25}coefficient = {pair.Value.Coefficient.ToString("G5"),-10}" +
-                        // The ranking and the total contribution of this aspect
-                        $"contribution = {(pair.Value.Coefficient * pair.Value.Ranking).ToString("G5"),-10}ranking = {pair.Value.Ranking.ToString("G5"),-10}{pair.Value.Message}\n");
-
-                #endregion
-
-                #region Writing simplification
-
-                // If the theorem can be simplified...
-                if (algorithmOutput.SimplifiedTheorems.ContainsKey(theorem))
-                {
-                    // Append the header
-                    result += "\nCan be simplified:\n\n";
-
-                    // Get the new configuration and new statement
-                    var (newConfiguration, newTheorem) = algorithmOutput.SimplifiedTheorems[theorem];
-
-                    // Prepare the formatter for the new configuration
-                    var newFormatter = new OutputFormatter(newConfiguration.AllObjects);
-
-                    // Write the configuration
-                    result += $"{newFormatter.FormatConfiguration(newConfiguration).Indent(1)}\n\n";
-
-                    // Write the theorem
-                    result += $" {newFormatter.FormatTheorem(newTheorem)}\n";
-                }
-
-                #endregion
-
-                // If we shouldn't display proof attempts, then we're done
-                if (!displayProofAttempts)
-                    return result;
-
-                // Otherwise we include the proof on a new line
-                result += $"\nProof attempts{UnfinishedProofsReport(theorem, algorithmOutput.ProverOutput.UnprovenTheorems[theorem], formatter, theoremTags, includeStatement: false)}";
-
-                // And return the correctly trimmed result
-                return $"{result.TrimEnd()}\n";
-            })
-            // Make each on a separate line
-            .ToJoinedString("\n")
-            // Ensure no white spaces at the end
-            .TrimEnd();
-
-            // If we should write unproven theorems and there are any...
-            if (algorithmOutput.ProverOutput.UnprovenDiscoveredTheorems.Any() && _settings.IncludeUnprovenDiscoveredTheorems)
-            {
-                // Convert them to a string
-                var unprovenDiscoveredTheoremsString = algorithmOutput.ProverOutput.UnprovenDiscoveredTheorems
-                    // Initially sort them by their formatted versions
+                // Append theorem proofs by taking them
+                result += theoremProofs
+                    // Sorting by the statement of the proved theorem
                     .OrderBy(pair => formatter.FormatTheorem(pair.Key))
-                    // Convert each to a string with the right index
-                    .Select((pair, index) => $"{sortedUnprovenTheoremsGroups.Length + provenTheorems.Length + index + 1,2}. {formatter.FormatTheorem(pair.Key)}" +
-                        // And the tag, which is only present if we display theorem proofs, where it got this tag
-                        $"{(displayProofAttempts ? $" - theorem {theoremTags[pair.Key]}" : "")}")
+                    // Write proof for each with a local id
+                    .Select(pair => $"{localTheoremIndex++}. {formatter.FormatTheoremProof(pair.Value)}")
+                    // Make each on a separate line
+                    .ToJoinedString("\n")
+                    // Ensure no white spaces at the end
+                    .TrimEnd();
+            }
+
+            #endregion
+
+            #region Definable simpler
+
+            // If we should write uninteresting theorems and there are any definable simpler...
+            if (writeUninterestingTheorems && theoremsDefinableSimpler.Any())
+            {
+                // Add the header
+                result = $"{result.TrimEnd()}\n\nTheorems definable simpler:\n\n";
+
+                // Append theorems definable simpler by taking them
+                result += theoremsDefinableSimpler
+                    // Sorting by their statement
+                    .OrderBy(formatter.FormatTheorem)
+                    // Write it with a local index
+                    .Select(theorem => $"{localTheoremIndex++}. {formatter.FormatTheorem(theorem)}")
                     // Make each on a separate line
                     .ToJoinedString("\n")
                     // Ensure no white spaces at the end
                     .TrimEnd();
 
-                // Append the created string to the result
-                theoremsString += $"\n\nDiscovered unproved theorems:\n\n{unprovenDiscoveredTheoremsString}";
+                // Append a new line
+                result += "\n";
             }
 
-            // Return the final string
-            return theoremsString;
-        }
+            #endregion
 
-        /// <summary>
-        /// Creates a report for unfinished proofs of a given theorem.
-        /// </summary>
-        /// <param name="theorem">The theorem that was attempted to be proven.</param>
-        /// <param name="unfinishedProofs">The list of attempts to prove this theorem.</param>
-        /// <param name="formatter">The formatter of the configuration in which the theorem holds.</param>
-        /// <param name="theoremTags">The dictionary of already tagged theorems.</param>
-        /// <param name="includeStatement">Indicates whether we should include the statement of the theorem.</param>
-        /// <param name="previousTag">The tag of the proof under which this one falls.</param>
-        /// <returns>The string containing the report.</returns>
-        private string UnfinishedProofsReport(Theorem theorem,
-                                              IReadOnlyList<TheoremProofAttempt> unfinishedProofs,
-                                              OutputFormatter formatter,
-                                              Dictionary<Theorem, string> theoremTags,
-                                              bool includeStatement = true,
-                                              string previousTag = "")
-        {
-            // First format the unfinished theorem, if we should include the statement
-            var result = includeStatement ? formatter.FormatTheorem(theorem) : "";
+            #region Interesting theorems
 
-            // Handle if there were no attempt to prove the theorem
-            if (unfinishedProofs.Count == 0)
-                return $"{result} - no clue";
+            // If there are no interesting theorems, we're done
+            if (interestingTheorems.IsEmpty())
+                return result.Trim();
 
-            // Otherwise there was at least one attempt, append the information about their count
-            result += $" - not proven, {unfinishedProofs.Count} attempt{(unfinishedProofs.Count == 1 ? "" : "s")} to prove it:\n\n";
+            // Add the header
+            result = $"{result.TrimEnd()}\n\nInteresting theorems:\n\n";
 
-            // We're going to create an enumerable of reports from every (unsuccessful) attempt
-            var unfinishedProofsReports = unfinishedProofs.Select((proofAttempt, index) =>
-            {
-                // Get the string identifying the current attempt, based on the fact
-                // whether there is just one or more of them
-                var attemptsString = unfinishedProofs.Count == 1 ? "The attempt" : $"Attempt {index + 1}";
-
-                // Create a new tag that will be used for the current theorem
-                // If there is no previous tag, we'll use the indented one from the list
-                // Otherwise we just add the indentation to the previous one
-                var newTag = previousTag.IsEmpty() ? $"  {theoremTags[theorem]}" : $"  {previousTag}";
-
-                // Copy the spaces from the new tag, so that we have correct alignment 
-                var spaces = new string(' ', newTag.TakeWhile(c => c == ' ').Count());
-
-                // Find out if we want to append the index of the attempt
-                // We certainly want to do it when there are more of them
-                if (unfinishedProofs.Count != 1
-                    // Or if there is exactly one proof, and the inner assumptions have also exactly
-                    // one proof altogether (i.e. they naturally won't be numbered and we want to 
-                    // distinguish between this proof and the inner one)
-                    || unfinishedProofs[0].ProvenAssumptions.Count + unfinishedProofs[0].UnprovenAssumptions.Count == 1)
+            // Append interesting theorems by taking them
+            result += interestingTheorems
+                // Converting each
+                .Select((theorem, index) =>
                 {
-                    // Append the index
-                    newTag += $"{index + 1}.";
-                }
+                    // Prepare the local result with the global and local index
+                    var result = $"{localTheoremIndex++}. [{firstInterestingTheoremGlobalIndex + index}] {formatter.FormatTheorem(theorem)}";
 
-                // Call the general method for the report of a general proof 
-                // (that might or might not be successful). 
-                var reportString = ProofReport(proofAttempt, formatter, theoremTags, newTag,
-                    // We don't we want repeat the statement in the description
-                    includeStatement: false);
+                    #region Writing ranking
 
-                // Append the final string with the report to the result, 
-                // making sure it has no white-spaces at the end
-                return $"{spaces}{attemptsString}{reportString.TrimEnd()}";
-            });
+                    result += $" - total ranking {rankings[theorem].TotalRanking}\n\n";
 
-            // Enumerate the reports while making them each on separate line with empty ones
-            return $"{result}{unfinishedProofsReports.ToJoinedString("\n\n")}\n";
-        }
+                    // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
+                    rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.Coefficient * pair.Value.Ranking, pair.Key.ToString()))
+                        // Add each on an individual line with info about the coefficient
+                        .ForEach(pair => result += $"  {pair.Key,-25}coefficient = {pair.Value.Coefficient.ToString("G5"),-10}" +
+                            // The ranking and the total contribution of this aspect
+                            $"contribution = {(pair.Value.Coefficient * pair.Value.Ranking).ToString("G5"),-10}ranking = {pair.Value.Ranking.ToString("G5"),-10}{pair.Value.Message}\n");
 
-        /// <summary>
-        /// Creates a report of a given proof attempt. The method handles both successful and unsuccessful proofs.
-        /// </summary>
-        /// <param name="proofAttempt">The proof attempt to be reported.</param>
-        /// <param name="formatter">The formatter of the configuration in which the theorem holds.</param>
-        /// <param name="theoremTags">The dictionary of already tagged theorems.</param>
-        /// <param name="previousTag">The tag of the proof under which this one falls.</param>
-        /// <param name="includeStatement">Indicates if we should start the report with the statement of the theorem.</param>
-        /// <returns>The string containing the report.</returns>
-        private string ProofReport(TheoremProofAttempt proofAttempt,
-                                   OutputFormatter formatter,
-                                   Dictionary<Theorem, string> theoremTags,
-                                   string previousTag = "",
-                                   bool includeStatement = true)
-        {
-            // Start composing the result by formatting the theorem, if it's requested
-            var result = includeStatement ? formatter.FormatTheorem(proofAttempt.Theorem) : "";
+                    #endregion
 
-            // Append the explanation
-            result += $" - {GetExplanation(proofAttempt, formatter)}";
+                    #region Writing simplification
 
-            // If there is nothing left to write, i.e. no attempts, then we can't do more
-            if (proofAttempt.ProvenAssumptions.Count == 0 && proofAttempt.UnprovenAssumptions.Count == 0)
-                return result;
+                    // If the theorem can be simplified...
+                    if (simplifiedTheorems.ContainsKey(theorem))
+                    {
+                        // Append the header
+                        result += "\n Can be simplified:\n\n";
 
-            // Otherwise we want an empty line
-            result += "\n\n";
+                        // Get the new configuration and new statement
+                        var (newConfiguration, newTheorem) = simplifiedTheorems[theorem];
 
-            // Prepare the index of the next theorem to be described
-            var index = 1;
+                        // Prepare the formatter for the new configuration
+                        var newFormatter = new OutputFormatter(newConfiguration.AllObjects);
 
-            // Create an enumerable of reports of proven assumptions, ordered by theorem
-            var provenAssumptionsStrings = proofAttempt.ProvenAssumptions.OrderBy(attempt => formatter.FormatTheorem(attempt.Theorem))
-                // Process a given one
-                .Select(innerAttempt =>
-                {
-                    // Get the theorem for comfort
-                    var theorem = innerAttempt.Theorem;
+                        // Write the configuration
+                        result += $"{newFormatter.FormatConfiguration(newConfiguration).Indent(2)}\n\n";
 
-                    // Compose the tag with spaces. 
-                    // If there is no previous tag, get the default one from the tags map (with spaces)
-                    // Otherwise, take the previous one with more spaces and append the current index (and increase it)
-                    var untrimmedTag = $"{(previousTag.IsEmpty() ? $"  {theoremTags[proofAttempt.Theorem]}" : $"  {previousTag}")}{index++}.";
+                        // Write the theorem
+                        result += $"  {newFormatter.FormatTheorem(newTheorem)}\n";
+                    }
 
-                    // Find out if the theorem already has a tag
-                    var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
+                    #endregion
 
-                    // If the theorem is not tagged yet, tag it
-                    if (theoremIsUntagged)
-                        theoremTags.Add(theorem, untrimmedTag.Trim());
+                    // Return the final result
+                    return $"{result.Trim()}\n";
+                })
+                // Make each on a separate line
+                .ToJoinedString("\n")
+                // Ensure no white spaces at the end
+                .TrimEnd();
 
-                    // Find out the reasoning for the theorem
-                    var reason = theoremIsUntagged ?
-                        // If it's untagged, recursively find the report for it
-                        ProofReport(innerAttempt, formatter, theoremTags, untrimmedTag) :
-                        // Otherwise just state it again and add the explanation and the reference to it
-                        $"{formatter.FormatTheorem(theorem)} - {GetExplanation(innerAttempt, formatter)} - theorem {theoremTags[theorem]}";
+            // Append a new line
+            result += "\n";
 
-                    // Add the description to the result
-                    return $"{untrimmedTag} {reason}";
-                });
+            #endregion
 
-            // Create an enumerable of reports of proven assumptions, ordered by theorem
-            var unprovenAssumptionsStrings = proofAttempt.UnprovenAssumptions.OrderBy(attempt => formatter.FormatTheorem(attempt.theorem))
-                // Process a given one
-                .Select(pair =>
-                {
-                    // Deconstruct
-                    var (theorem, attempts) = pair;
-
-                    // Start the construction of an untrimmed tag by adding spaces before the previous one
-                    var untrimmedTag = $"  {previousTag}";
-
-                    // We want to start indexing these theorems only if there won't be exactly one theorem
-                    // (including the ones that are already there)
-                    if (proofAttempt.UnprovenAssumptions.Count + proofAttempt.ProvenAssumptions.Count != 1)
-                        untrimmedTag += $"{index++}.";
-
-                    // Find out if the theorem already has a tag
-                    var theoremIsUntagged = !theoremTags.ContainsKey(theorem);
-
-                    // If the theorem is not tagged yet, tag it
-                    if (theoremIsUntagged)
-                        theoremTags.Add(theorem, untrimmedTag.Trim());
-
-                    // Find out the reasoning for the theorem
-                    var reason = theoremIsUntagged ?
-                       // If it's untagged, recursively find the report for it
-                       UnfinishedProofsReport(theorem, attempts, formatter, theoremTags, previousTag: untrimmedTag) :
-                       // Otherwise just state it again and add the reference to it
-                       $"{formatter.FormatTheorem(theorem)} - theorem {theoremTags[theorem]} (unproven)";
-
-                    // Add the description to the result
-                    return $"{untrimmedTag} {reason}";
-                });
-
-            // Append the particular reports, each on a separate line, while making sure 
-            // there is exactly one line break at the end
-            return $"{result}{provenAssumptionsStrings.Concat(unprovenAssumptionsStrings).ToJoinedString("\n").TrimEnd()}\n";
-        }
-
-        /// <summary>
-        /// Returns a string representation of how the theorem was proved or was attempted to be proven.
-        /// </summary>
-        /// <param name="proofAttempt">The attempt.</param>
-        /// <param name="formatter">The formatter of the configuration in which the theorem holds.</param>
-        /// <returns>The explanation.</returns>
-        private static string GetExplanation(TheoremProofAttempt proofAttempt, OutputFormatter formatter)
-        {
-            // Prepare the helper variable indicating whether the theorem has been proven
-            var isProved = proofAttempt.UnprovenAssumptions.IsEmpty();
-
-            // Switch based on the type of used derivation rule
-            switch (proofAttempt.Rule)
-            {
-                // Case when it's a theorem from a previous configuration
-                // There are no needed theorems to make this conclusion, i.e. the theorem is right
-                case DerivationRule.TrueInPreviousConfiguration:
-                    return "true in a previous configuration";
-
-                // Case when it's not in a previous configuration, but can be declared in one
-                case DerivationRule.DefinableSimpler:
-
-                    // Get the redundant objects
-                    var redundantObjects = ((DefinableSimplerDerivationData)proofAttempt.Data).RedundantObjects
-                        // Get their names
-                        .Select(formatter.GetObjectName)
-                        // Sort them
-                        .Ordered()
-                        // Join together
-                        .ToJoinedString();
-
-                    // Get the string stating that we needed reformulation
-                    // This might happen when this theorem has a needed assumption
-                    var reformulation = proofAttempt.ProvenAssumptions.Any() || proofAttempt.UnprovenAssumptions.Any()
-                        ? " after reformulation " : " ";
-
-                    // Return the final conclusion with these objects included
-                    return isProved ? $"can be stated{reformulation}without {redundantObjects}" : $"could be stated{reformulation}without {redundantObjects}";
-
-                // Case when it's a trivial consequence of the construction of the object
-                // There are no needed theorems to make this conclusion, i.e. the theorem is right
-                case DerivationRule.TrivialTheorem:
-                    return "trivial consequence of the object's construction";
-
-                // Case when the theorem was attempted as a reformulation of a theorem
-                case DerivationRule.ReformulatedTheorem:
-                    return "reformulation of the theorem";
-
-                // Case when it's been derived using the transitivity rule
-                case DerivationRule.Transitivity:
-
-                    // Append the right conclusion based on whether it is proved or not
-                    return isProved ? "true because of the transitivity rule" : "attempted with the transitivity rule";
-
-                // Case when it's been derived as a consequence of a template theorem
-                case DerivationRule.Subtheorem:
-
-                    // Pull the template theorem
-                    var templateTheorem = (TemplateTheorem)((SubtheoremDerivationData)proofAttempt.Data).TemplateTheorem;
-
-                    // Return the right message based on whether is proven
-                    return isProved ? $"consequence of {templateTheorem.Number} from {templateTheorem.FileName}"
-                                    : $"attempted as a consequence of {templateTheorem.Number} from {templateTheorem.FileName}";
-
-                // Case when we're connecting collinearity with other line theorems
-                case DerivationRule.CollinearityWithLinesFromPoints:
-
-                    // If we have a collinearity
-                    return proofAttempt.Theorem.Type == TheoremType.CollinearPoints
-                        // Get the corresponding message
-                        ? "using uniquely constructed line to prove collinearity"
-                        // Otherwise the message is a bit different
-                        : "reformulation using collinearity";
-
-                // Case when we're connecting concyclity with other circle theorems
-                case DerivationRule.ConcyclityWithCirclesFromPoints:
-                    return "reformulation using concyclity";
-
-                // Case when we have two perpendicular lines and one parallelity
-                case DerivationRule.PerpendicularLineToParallelLines:
-                    return "two perpendicular lines with a common line are equivalent with parallelity";
-
-                // Case when we combine incidences to restate a theorem
-                case DerivationRule.ExplicitLineWithIncidences:
-                    return "restating using incidences";
-
-                // Case when we combine incidences to restate a theorem
-                case DerivationRule.ExplicitCircleWithIncidences:
-                    return "restating using incidences";
-
-                // Case when we put together 3 incidences and collinearity:
-                case DerivationRule.IncidencesAndCollinearity:
-                    return "three incidences with the same line are equivalent with collinearity";
-
-                // Case when we put together 4 incidences and concyclicity:
-                case DerivationRule.IncidencesAndConcyclity:
-                    return "four incidences with the same line are equivalent with concyclity";
-
-                // Case when we have 4 concyclic points and their circumcenter in the same picture
-                case DerivationRule.ConcyclicPointsWithExplicitCenter:
-                    return "concyclic points with explicit center";
-
-                // Case when we have 3 radical axis implying concurrency, or another concyclity
-                case DerivationRule.RadicalAxis:
-                    return "radical axis theorem";
-
-                // Case when we have 3 radical axis implying concurrency, or another concyclity
-                case DerivationRule.ThalesTheorem:
-                    return "Thales theorem";
-
-                // Case when we have a parallelogram
-                case DerivationRule.Parallelogram:
-                    return "two pairs of parallel lines are equivalent with the points making a parallelogram";
-
-                // Case when we have a rectangle
-                case DerivationRule.Rectangle:
-                    return "two pairs of parallel lines and perpendicularity are equivalent with the points making a rectangle (with equal diagonals)";
-
-                // Case when we have two equal line segments theorems and a perpendicularity
-                case DerivationRule.IsoscelesTrianglesPerpendicularity:
-                    return "two isosceles triangles with the same base are equivalent with perpendicularity";
-
-                // Default case
-                default:
-                    throw new GeoGenException($"Unhandled type of {nameof(DerivationRule)}: {proofAttempt.Data.Rule}");
-            }
+            // Return the final string with no trailing spaces
+            return result.Trim();
         }
 
         #endregion

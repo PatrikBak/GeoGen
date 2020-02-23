@@ -4,8 +4,8 @@ using System;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents a type of a <see cref="GeoGenException"/> that is thrown
-    /// when something incorrect happens in the theorem prover module.
+    /// Represents a type of a <see cref="GeoGenException"/> that is thrown when something incorrect 
+    /// happens in the theorem prover module.
     /// </summary>
     public class TheoremProverException : GeoGenException
     {

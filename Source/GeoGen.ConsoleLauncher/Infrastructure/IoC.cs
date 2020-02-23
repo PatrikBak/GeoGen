@@ -47,13 +47,19 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IAlgorithmRunner>().To<DebugAlgorithmRunner>().WithConstructorArgument(settings.DebugAlgorithmRunnerSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
-            Kernel.Bind<ITemplateTheoremProvider>().To<TemplateTheoremProvider>().WithConstructorArgument(settings.TemplateTheoremsFolderSettings);
+            Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleFolderSettings);
             Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
             Kernel.Bind<IRankedTheoremsWriter>().To<RankedTheoremsWriter>();
             Kernel.Bind<ITheoremsWithRankingJsonLazyWriterFactory>().ToFactory();
             Kernel.Bind<ITheoremsWithRankingJsonLazyWriter>().To<TheoremsWithRankingJsonLazyWriter>();
 
             #endregion           
+
+            // Load the inference rules
+            var managerData = new InferenceRuleManagerData(await Kernel.Get<IInferenceRuleProvider>().GetInferenceRulesAsync());
+
+            // Use them to find the tracker
+            Kernel.Bind<IInferenceRuleUsageTracker>().To<InferenceRuleUsageTracker>().WithConstructorArgument(managerData);
 
             #region Algorithm
 
@@ -65,15 +71,11 @@ namespace GeoGen.ConsoleLauncher
                 .AddTheoremFinder(settings.AlgorithmSettings.TheoremFindingSettings.TangentCirclesTheoremFinderSettings,
                                   settings.AlgorithmSettings.TheoremFindingSettings.LineTangentToCircleTheoremFinderSettings,
                                   settings.AlgorithmSettings.TheoremFindingSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
-                // With theorem prover and its data
-                .AddTheoremProver(new TheoremProverData
-                (
-                    // Template theorems are loaded at the beginning
-                    templateTheorems: await Kernel.Get<ITemplateTheoremProvider>().GetTemplateTheoremsAsync()
-                ))
                 // With theorem ranker and its settings
                 .AddTheoremRanker(settings.AlgorithmSettings.TheoremRankingSettings.TheoremRankerSettings,
                                   settings.AlgorithmSettings.TheoremRankingSettings.TypeRankerSettings)
+                // With theorem prover and its data
+                .AddTheoremProver(managerData)
                 // With theorem simplifier and its data
                 .AddTheoremSimplifier(new TheoremSimplifierData
                 (
@@ -86,14 +88,6 @@ namespace GeoGen.ConsoleLauncher
             #endregion
 
             #region Tracers
-
-            #region SubtheoremDeriverGeometryFailerTracer
-
-            // Rebind Subtheorem Deriver Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.TraceSubtheoremDeriverFailures)
-                Kernel.Rebind<ISubtheoremDeriverGeometryFailureTracer>().To<SubtheoremDeriverGeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.SubtheoremDeriverGeometryFailureTracerSettings);
-
-            #endregion
 
             #region ConstructorFailureTracer
 

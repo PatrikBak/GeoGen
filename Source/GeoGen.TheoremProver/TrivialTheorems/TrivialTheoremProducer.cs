@@ -11,17 +11,18 @@ using static GeoGen.Core.TheoremType;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// The default implementation of <see cref="ITrivialTheoremProducer"/>. This implementation 
-    /// caches trivial theorems that are true for general <see cref="ComposedConstruction"/>s.
-    /// These are found by constructing the underlying <see cref="ComposedConstruction.Configuration"/>
-    /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremFinder"/>.
+    /// The default implementation of <see cref="ITrivialTheoremProducer"/>. This implementation caches trivial theorems for 
+    /// <see cref="ComposedConstruction"/>s. They are found by constructing the underlying <see cref="ComposedConstruction.Configuration"/>
+    /// using <see cref="IGeometryConstructor"/> and finding the theorems in it via <see cref="ITheoremFinder"/>. When it comes to
+    /// objects constructed via <see cref="PredefinedConstruction"/>s, these have their trivial theorems listed manually.
     /// </summary>
     public class TrivialTheoremProducer : ITrivialTheoremProducer
     {
         #region Private constants
 
         /// <summary>
-        /// The number of pictures that are used for finding trivial theorems of composed constructions.
+        /// The number of pictures that are used for finding trivial theorems of composed constructions. In practice,
+        /// this value is not very important therefore it is not made configurable.
         /// </summary>
         private const int NumberOfPicturesForFindingTrivialTheorems = 5;
 
@@ -30,12 +31,12 @@ namespace GeoGen.TheoremProver
         #region Dependencies
 
         /// <summary>
-        /// The constructor used to determine theorems of composed constructions.
+        /// The constructor used to construct underlying configurations of composed constructions.
         /// </summary>
         private readonly IGeometryConstructor _constructor;
 
         /// <summary>
-        /// The finder used to determine theorems of composed constructions.
+        /// The theorem finder used to determine theorems of composed constructions.
         /// </summary>
         private readonly ITheoremFinder _finder;
 
@@ -44,18 +45,17 @@ namespace GeoGen.TheoremProver
         #region Private fields
 
         /// <summary>
-        /// The cache dictionary mapping the <see cref="ComposedConstruction"/>s
-        /// to the theorems holding true in <see cref="ComposedConstruction.Configuration"/>.
-        /// Only theorems that can be then remapped to trivial theorem are stored, i.e. the ones
-        /// that can be stated with just the loose objects of the <see cref="ComposedConstruction.Configuration"/>.
+        /// The cache dictionary mapping <see cref="ComposedConstruction"/>s to the theorems holding true
+        /// for the loose objects of the <see cref="ComposedConstruction.Configuration"/> and the construction output.
         /// </summary>
-        private readonly Dictionary<ComposedConstruction, IReadOnlyList<Theorem>> _composedConstructionsTheorems;
+        private readonly Dictionary<ComposedConstruction, IReadOnlyList<Theorem>> _composedConstructionTheorems = new Dictionary<ComposedConstruction, IReadOnlyList<Theorem>>();
 
         /// <summary>
-        /// The cache dictionary mapping the names of composed constructions to the instances
-        /// that were used to determine the <see cref="_composedConstructionsTheorems"/>.
+        /// The cache dictionary mapping the names of composed constructions to the instances  that were used to
+        /// determine the <see cref="_composedConstructionTheorems"/>. This is important because in order to do remapping
+        /// of inner loose objects we need to use the original ones.
         /// </summary>
-        private readonly Dictionary<string, ComposedConstruction> _originalInstances;
+        private readonly Dictionary<string, ComposedConstruction> _originalInstances = new Dictionary<string, ComposedConstruction>();
 
         #endregion
 
@@ -64,32 +64,22 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Initializes a new instance of the <see cref="TrivialTheoremProducer"/> class.
         /// </summary>
-        /// <param name="constructor">The constructor used to determine theorems of composed constructions.</param>
-        /// <param name="finder">The finder used to determine theorems of composed constructions.</param>
+        /// <param name="constructor">The constructor used to construct underlying configurations of composed constructions.</param>
+        /// <param name="finder">The theorem finder used to determine theorems of composed constructions.</param>
         public TrivialTheoremProducer(IGeometryConstructor constructor, ITheoremFinder finder)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
-            _composedConstructionsTheorems = new Dictionary<ComposedConstruction, IReadOnlyList<Theorem>>();
-            _originalInstances = new Dictionary<string, ComposedConstruction>();
         }
 
         #endregion
 
-        #region ITrivialTheoremProducer
+        #region ITrivialTheoremProducer implementation
 
-        /// <summary>
-        /// Derive trivial theorems from a given constructed configuration object.
-        /// </summary>
-        /// <param name="constructedObject">The object from which we should derive theorems.</param>
-        /// <returns>The produced theorems.</returns>
-        public IReadOnlyList<Theorem> DeriveTrivialTheoremsFromObject(ConstructedConfigurationObject constructedObject)
+        /// <inheritdoc/>
+        public IReadOnlyList<Theorem> InferTrivialTheoremsFromObject(ConstructedConfigurationObject constructedObject)
         {
-            // If it has only loose objects, then do anything
-            if (constructedObject == null)
-                return Array.Empty<Theorem>();
-
-            // Get the passed objects to it for comfort
+            // Get the flattened arguments of the object for comfort
             var objects = constructedObject.PassedArguments.FlattenedList;
 
             // Switch on the construction
@@ -98,10 +88,10 @@ namespace GeoGen.TheoremProver
                 // If we have a predefined construction...
                 case PredefinedConstruction predefinedConstruction:
 
-                    // Switch based on its type
+                    // Switch on its type
                     switch (predefinedConstruction.Type)
                     {
-                        // An angle bisector makes equal angles and incidence
+                        // An angle bisector makes equal angles and an incidence
                         case InternalAngleBisector:
                         {
                             // Create theorem objects
@@ -109,19 +99,22 @@ namespace GeoGen.TheoremProver
                             var line2 = new LineTheoremObject(objects[0], objects[2]);
                             var bisector = new LineTheoremObject(constructedObject);
 
-                            // Create the theorem
+                            // Create the theorems
                             return new[]
                             {
+                                // Equal angles
                                 new Theorem(EqualAngles, new []
                                 {
                                     new AngleTheoremObject(line1, bisector),
                                     new AngleTheoremObject(line2, bisector)
                                 }),
+
+                                // Incidence
                                 new Theorem(Incidence, objects[0], constructedObject)
                             };
                         }
 
-                        // Point reflection makes collinear points and equally distances points
+                        // Point reflection makes collinear points and equally distanced points
                         case PointReflection:
 
                             // Create the theorems
@@ -138,7 +131,7 @@ namespace GeoGen.TheoremProver
                                 })
                             };
 
-                        // Point reflection makes collinear points and equally distances points
+                        // Point reflection makes collinear points and equally distanced points
                         case Midpoint:
 
                             // Create the theorems
@@ -161,39 +154,48 @@ namespace GeoGen.TheoremProver
                             // Create the theorem
                             return new[]
                             {
+                                // Perpendicular lines
                                 new Theorem(PerpendicularLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(objects[0], constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
+                                
+                                // Incidence
                                 new Theorem(Incidence, objects[1], constructedObject)
                             };
 
                         // Perpendicular line makes (surprisingly) perpendicular lines and incidence
                         case PerpendicularLine:
 
-                            // Create the theorem
+                            // Create the theorems
                             return new[]
                             {
+                                // Perpendicular lines
                                 new Theorem(PerpendicularLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
+
+                                // Incidence
                                 new Theorem(Incidence, objects[0], constructedObject)
                             };
 
                         // Parallel line makes (surprisingly) parallel lines and incidence
                         case ParallelLine:
 
-                            // Create the theorem
+                            // Create the theorems
                             return new[]
                             {
+                                // Parallel lines
                                 new Theorem(ParallelLines, new TheoremObject[]
                                 {
                                     new LineTheoremObject(constructedObject),
                                     new LineTheoremObject(objects[1])
                                 }),
+
+                                // Incidence
                                 new Theorem(Incidence, objects[0], constructedObject)
                             };
 
@@ -213,27 +215,11 @@ namespace GeoGen.TheoremProver
                             // Create the theorems
                             return new[]
                             {
+                                // Collinearity
                                 new Theorem(CollinearPoints, constructedObject, objects[0], objects[1]),
+
+                                // Concyclity
                                 new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[2], objects[3])
-                            };
-
-
-                        // Random point on a line makes collinear points
-                        case RandomPointOnLineFromPoints:
-
-                            // Create the theorem
-                            return new[]
-                            {
-                                new Theorem(CollinearPoints, constructedObject, objects[0], objects[1])
-                            };
-
-                        // Random point on a circles makes concyclic points
-                        case RandomPointOnCircleFromPoints:
-
-                            // Create the theorem
-                            return new[]
-                            {
-                                new Theorem(ConcyclicPoints, constructedObject, objects[0], objects[1], objects[2])
                             };
 
                         // Line makes incidences
@@ -257,7 +243,7 @@ namespace GeoGen.TheoremProver
                                 new Theorem(Incidence, constructedObject, objects[2])
                             };
 
-                        // Circle with center through point makes incidences
+                        // Circle with center through point makes incidence
                         case CircleWithCenterThroughPoint:
 
                             // Create the theorem
@@ -276,9 +262,8 @@ namespace GeoGen.TheoremProver
                                 new Theorem(Incidence, constructedObject, objects[1])
                             };
 
-                        // Here we can't say anything useful
+                        // Center of circle brings nothing :/
                         case CenterOfCircle:
-                        case RandomPoint:
                             return Array.Empty<Theorem>();
 
                         // Default case
@@ -296,7 +281,7 @@ namespace GeoGen.TheoremProver
                         var newTheorems = FindTheoremsForComposedConstruction(composedConstruction);
 
                         // Add them
-                        _composedConstructionsTheorems.Add(composedConstruction, newTheorems);
+                        _composedConstructionTheorems.Add(composedConstruction, newTheorems);
 
                         // Mark the used instance
                         _originalInstances.Add(composedConstruction.Name, composedConstruction);
@@ -306,54 +291,48 @@ namespace GeoGen.TheoremProver
                     composedConstruction = _originalInstances[composedConstruction.Name];
 
                     // Get the theorems
-                    var theorems = _composedConstructionsTheorems[composedConstruction];
+                    var theorems = _composedConstructionTheorems[composedConstruction];
 
-                    // Create mapping of loose objects of the template configuration 
+                    // Create the mapping of loose objects of the template configuration 
                     var mapping = composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>()
-                        // and the constructed object
+                        // and the template construction output
                         .Concat(composedConstruction.ConstructionOutput)
-                        // to the actual objects that created the constructed object and the constructed object
+                        // to the actual objects that created the constructed object and the constructed object itself
                         .ZipToDictionary(objects.Concat(constructedObject));
 
                     // Remap all the theorems
                     return theorems.Select(theorem => theorem.Remap(mapping)).ToList();
 
-                // There shouldn't be any other case
+                // Unhandled cases
                 default:
-                    throw new TheoremProverException($"Unhandled type of construction: {constructedObject.Construction.GetType()}");
+                    throw new TheoremProverException($"Unhandled type of {nameof(Construction)}: {constructedObject.Construction.GetType()}");
             }
         }
 
-        #endregion
-
-        #region Private methods
-
         /// <summary>
-        /// Find all theorems that hold true in the configuration of a given composed construction. 
-        /// Only theorems that can be stated with only loose objects are returned.
+        /// Find all theorems that hold true for the loose objects and the construction output of a given composed construction.
         /// </summary>
-        /// <param name="composedConstruction">The composed construction.</param>
-        /// <returns>The theorems.</returns>
-        private List<Theorem> FindTheoremsForComposedConstruction(ComposedConstruction composedConstruction)
+        /// <param name="composedConstruction">The composed construction to be examined.</param>
+        /// <returns>The theorems holding true for the loose objects and the construction output.</returns>
+        private IReadOnlyList<Theorem> FindTheoremsForComposedConstruction(ComposedConstruction composedConstruction)
         {
-            // Create an array of loose objects of the defining configuration
-            var looseObjects = composedConstruction.Configuration.LooseObjects.ToArray();
-
-            // Create a constructed object representing this construction, i.e. the one that gets passed the loose objects
-            var constructedObject = new ConstructedConfigurationObject(composedConstruction, looseObjects);
-
-            // Create a configuration holding the same loose objects, and the final constructed one
-            var configuration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { constructedObject });
-
-            // Local function that throws an exception about the examination failure
+            // Local function that throws an exception
             void ThrowIncorrectConstructionException(string message, Exception innerException = null)
                 // informing about the examination failure
                 => throw new TheoremProverException($"Cannot examine construction {composedConstruction.Name}. {message}", innerException);
 
+            // Create a helper constructed object that simulates the composed construction
+            var helperConstructedObject = new ConstructedConfigurationObject(composedConstruction,
+                // Its arguments will be the loose objects of the composed construction's configuration
+                composedConstruction.Configuration.LooseObjects.Cast<ConfigurationObject>().ToArray());
+
+            // Prepare the configuration that simulates the composed construction
+            var helperConfiguration = new Configuration(composedConstruction.Configuration.LooseObjectsHolder, new[] { helperConstructedObject });
+
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(
-                // Constructing of the new configuration
-                () => _constructor.Construct(configuration, NumberOfPicturesForFindingTrivialTheorems),
+                // Construction of the new configuration
+                () => _constructor.Construct(helperConfiguration, NumberOfPicturesForFindingTrivialTheorems),
                 // While making sure any exception is caught and re-thrown
                 (InconsistentPicturesException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 
@@ -374,22 +353,23 @@ namespace GeoGen.TheoremProver
 
             // Find the theorems
             return _finder.FindAllTheorems(contextualPicture).AllObjects
-                // For each theorem we need to replace the artificially created
-                // object with the original one from the defining configuration
+                // Take those that say something about the last object 
+                // (there might be theorems in the layout as well, for example in RightTriangle)
+                .Where(theorem => theorem.GetInnerConfigurationObjects().Contains(helperConstructedObject))
+                // We need to remap the helper constructed object to the one from the underlying configuration
                 .Select(theorem =>
                 {
-                    // We will create a mapping that maps loose objects to itself
-                    // and the artificial constructed object to the last object of 
-                    // the defining configuration. Take the loose objects first...
-                    var mapping = configuration.LooseObjects
-                        // Cast each to an identity tuple
-                        .Select(looseObject => ((ConfigurationObject)looseObject, (ConfigurationObject)looseObject))
-                        // Add the tuple of the constructed and last object
-                        .Concat((constructedObject, composedConstruction.ConstructionOutput))
-                        // Make the mapping
-                        .ToDictionary(pair => pair.Item1, pair => pair.Item2);
+                    // Prepare the mapping dictionary
+                    var mapping = new Dictionary<ConfigurationObject, ConfigurationObject>
+                    { 
+                        // That already has the helper object remapped to the construction output
+                        { helperConstructedObject, composedConstruction.ConstructionOutput }
+                    };
 
-                    // Delegate the work to the theorem
+                    // Add the loose objects to the mapping as identities
+                    composedConstruction.Configuration.LooseObjects.ForEach(looseObject => mapping.Add(looseObject, looseObject));
+
+                    // Do the mapping
                     return theorem.Remap(mapping);
                 })
                 // Enumerate

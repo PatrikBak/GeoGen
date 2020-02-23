@@ -36,11 +36,11 @@ namespace GeoGen.Utilities
             @string.ForEach((c, index) =>
             {
                 // If we have an open bracket, count it in
-                if (c == '(' || c == '[')
+                if (c == '(' || c == '[' || c == '{')
                     unclosedBrackets++;
 
                 // If we have a closed one, count it out
-                else if (c == ')' || c == ']')
+                else if (c == ')' || c == ']' || c == '}')
                     unclosedBrackets--;
 
                 // If we have a comma and there are no unclosed brackets, replace it with a semicolon

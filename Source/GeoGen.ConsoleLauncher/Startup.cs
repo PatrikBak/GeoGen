@@ -7,12 +7,12 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The entry point of the application.
+    /// The entry class of the application.
     /// </summary>
     public static class Startup
     {
         /// <summary>
-        /// The main function.
+        /// The entry method of the application.
         /// </summary>
         /// <param name="arguments">One optional argument, the serialized <see cref="Settings"/> in JSON format.
         /// If they are not specified, then they are attempted to be loaded from the default 'settings.json' file.</param>

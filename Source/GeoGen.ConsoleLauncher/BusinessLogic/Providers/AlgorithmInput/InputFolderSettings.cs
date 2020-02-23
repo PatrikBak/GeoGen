@@ -23,7 +23,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The file extension of input files.
         /// </summary>
-        public string FilesExtention { get; }
+        public string FileExtension { get; }
 
         #endregion
 
@@ -34,12 +34,12 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         /// <param name="inputFolderPath">The path to the folder containing input files.</param>
         /// <param name="inputFilePrefix">The prefix of inputs files.</param>
-        /// <param name="filesExtention">The file extension of input files.</param>
-        public InputFolderSettings(string inputFolderPath, string inputFilePrefix, string filesExtention)
+        /// <param name="fileExtension">The file extension of input files.</param>
+        public InputFolderSettings(string inputFolderPath, string inputFilePrefix, string fileExtension)
         {
             InputFolderPath = inputFolderPath ?? throw new ArgumentNullException(nameof(inputFolderPath));
             InputFilePrefix = inputFilePrefix ?? throw new ArgumentNullException(nameof(inputFilePrefix));
-            FilesExtention = filesExtention ?? throw new ArgumentNullException(nameof(filesExtention));
+            FileExtension = fileExtension ?? throw new ArgumentNullException(nameof(fileExtension));
         }
 
         #endregion

@@ -8,12 +8,12 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.GenerationLauncher
 {
     /// <summary>
-    /// The entry point of the application.
+    /// The entry class of the application.
     /// </summary>
     public static class Startup
     {
         /// <summary>
-        /// The main function.
+        /// The entry method of the application.
         /// </summary>
         public static async Task Main()
         {

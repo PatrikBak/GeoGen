@@ -68,31 +68,6 @@
         /// <summary>
         /// The second intersection of line AB, and circle given by points A, C, D (signature A, B, {C, D}).
         /// </summary>
-        SecondIntersectionOfCircleAndLineFromPoints,
-
-        /// <summary>
-        /// A random point lying on line l (signature l).
-        /// </summary>
-        RandomPointOnLine,
-
-        /// <summary>
-        /// A random point lying on circle c (signature c).
-        /// </summary>
-        RandomPointOnCircle,
-
-        /// <summary>
-        /// A random point lying on line AB (signature {A, B}).
-        /// </summary>
-        RandomPointOnLineFromPoints,
-
-        /// <summary>
-        /// A random point lying on circle ABC (signature {A, B, C}).
-        /// </summary>
-        RandomPointOnCircleFromPoints,
-
-        /// <summary>
-        /// A random point in a plane (empty signature).
-        /// </summary>
-        RandomPoint
+        SecondIntersectionOfCircleAndLineFromPoints
     }
 }

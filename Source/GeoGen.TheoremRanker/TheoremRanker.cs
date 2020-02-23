@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremProver;
 using System;
 using System.Linq;
 
@@ -48,12 +47,11 @@ namespace GeoGen.TheoremRanker
         /// <param name="theorem">The theorem to be ranked.</param>
         /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <param name="allTheorems">The map of all theorems of the configuration.</param>
-        /// <param name="proverOutput">The output from the theorem prover for all the theorems of the configuration.</param>
         /// <returns>The theorem ranking of the theorem containing ranking and coefficient for particular aspects of ranking.</returns>
-        public TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems, TheoremProverOutput proverOutput)
+        public TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
             // Prepare the ranking dictionary by applying every ranker
-            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, rankerOutput: ranker.Rank(theorem, configuration, allTheorems, proverOutput)))
+            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, rankerOutput: ranker.Rank(theorem, configuration, allTheorems)))
                 // And wrapping the result to a dictionary together with the coefficient from the settings
                 .ToDictionary(pair => pair.RankedAspect, pair => new RankingData(pair.rankerOutput.ranking, _settings.RankingCoefficients[pair.RankedAspect], pair.rankerOutput.message));
 

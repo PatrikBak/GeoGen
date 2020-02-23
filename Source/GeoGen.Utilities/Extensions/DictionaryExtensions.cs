@@ -43,6 +43,13 @@ namespace GeoGen.Utilities
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="key">The key.</param>
         /// <returns>The value from the dictionary, or the default value of the type <typeparamref name="TValue"/>.</returns>
-        public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key) => dictionary.ContainsKey(key) ? dictionary[key] : default;
+        public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key)
+        {
+            // Try to get it
+            dictionary.TryGetValue(key, out var value);
+
+            // Return it
+            return value;
+        }
     }
 }

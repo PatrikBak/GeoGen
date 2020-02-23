@@ -28,11 +28,6 @@ namespace GeoGen.Core
         /// </summary>
         public string Name { get; }
 
-        /// <summary>
-        /// Indicates if the construction construct an object whose construction is not defined deterministically.
-        /// </summary>
-        public bool IsRandom { get; }
-
         #endregion
 
         #region Constructor
@@ -43,13 +38,11 @@ namespace GeoGen.Core
         /// <param name="name">The name of the construction.</param>
         /// <param name="parameters">The parameters representing the signature of the construction.</param>
         /// <param name="outputType">The output type of the construction.</param>
-        /// <param name="isRandom">Indicates if the construction construct an object whose construction is not defined deterministically.</param>
-        protected Construction(string name, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType, bool isRandom)
+        protected Construction(string name, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType)
         {
             Name = name ?? throw new ArgumentNullException(nameof(name));
             Signature = new Signature(parameters);
             OutputType = outputType;
-            IsRandom = isRandom;
         }
 
         #endregion

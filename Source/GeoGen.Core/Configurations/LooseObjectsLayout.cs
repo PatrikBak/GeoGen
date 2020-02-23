@@ -17,11 +17,6 @@
         Triangle,
 
         /// <summary>
-        /// Represents three points A, B, C, where AB = AC.
-        /// </summary>
-        IsoscelesTriangle,
-
-        /// <summary>
         /// Represents three points A, B, C such that angle BAC is right.
         /// </summary>
         RightTriangle,
@@ -33,24 +28,10 @@
         Quadrilateral,
 
         /// <summary>
-        /// Represents 4 points that lie on a single circle.
+        /// Represents 4 points on a circle, where no 3 of them are collinear. When drawn they make 
+        /// a convex (cyclic) quadrilateral. 
         /// </summary>
         CyclicQuadrilateral,
-
-        /// <summary>
-        /// Represents points A, B, C, D such that AB is parallel to CD.
-        /// </summary>
-        Trapezoid,
-
-        /// <summary>
-        /// Represents points A, B, C, D such that DA is tangent to circle (ABC).
-        /// </summary>
-        CircleAndTangentLine,
-
-        /// <summary>
-        /// Represents a line
-        /// </summary>
-        ExplicitLine,
 
         /// <summary>
         /// Represents a line and a point that doesn't lie on it.
@@ -60,21 +41,6 @@
         /// <summary>
         /// Represents a line and two distinct points that don't lie on it.
         /// </summary>
-        ExplicitLineAndTwoPoints,
-
-        /// <summary>
-        /// Represents a circle.
-        /// </summary>
-        ExplicitCircle,
-
-        /// <summary>
-        /// Represents a circle and a point that doesn't lie on it.
-        /// </summary>
-        ExplicitCircleAndPoint,
-
-        /// <summary>
-        /// Represents a circle and two distinct points that don't lie on it.
-        /// </summary>
-        ExplicitCircleAndTwoPoints
+        ExplicitLineAndTwoPoints
     }
 }

@@ -4,15 +4,15 @@ using System.Collections.Generic;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents a service that can find theorems that be directly derived from a <see cref="ConstructedConfigurationObject"/>.
+    /// Represents a service that finds <see cref="Theorem"/>s that be directly inferred from a <see cref="ConstructedConfigurationObject"/>.
     /// </summary>
     public interface ITrivialTheoremProducer
     {
         /// <summary>
-        /// Derive trivial theorems from a given constructed configuration object.
+        /// Infers trivial theorems from a given constructed configuration object.
         /// </summary>
-        /// <param name="constructedObject">The object from which we should derive theorems.</param>
-        /// <returns>The produced theorems.</returns>
-        IReadOnlyList<Theorem> DeriveTrivialTheoremsFromObject(ConstructedConfigurationObject constructedObject);
+        /// <param name="constructedObject">The constructed object from which we should infer theorems.</param>
+        /// <returns>The inferred trivial theorems.</returns>
+        IReadOnlyList<Theorem> InferTrivialTheoremsFromObject(ConstructedConfigurationObject constructedObject);
     }
 }

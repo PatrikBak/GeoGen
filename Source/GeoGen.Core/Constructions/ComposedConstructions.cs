@@ -327,6 +327,35 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// Reflection of point A in the perpendicular bisector of BC (signature A, {B, C}). 
+        /// </summary>
+        public static ComposedConstruction IsoscelesTrapezoidPoint
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var bisectorBC = new ConstructedConfigurationObject(PerpendicularBisector, B, C);
+                var reflection = new ConstructedConfigurationObject(ReflectionInLine, bisectorBC, A);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, reflection);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(IsoscelesTrapezoidPoint), configuration, parameters);
+            }
+        }
+
+        /// <summary>
         /// Orthocenter of triangle ABC (signature {A, B, C}).
         /// </summary>
         public static ComposedConstruction Orthocenter
@@ -381,6 +410,35 @@ namespace GeoGen.Core
 
                 // Create the actual construction
                 return new ComposedConstruction(nameof(Incenter), configuration, parameters);
+            }
+        }
+
+        /// <summary>
+        /// Centroid of triangle ABC (signature {A, B, C}).
+        /// </summary>
+        public static ComposedConstruction Centroid
+        {
+            get
+            {
+                // Create objects
+                var A = new LooseConfigurationObject(Point);
+                var B = new LooseConfigurationObject(Point);
+                var C = new LooseConfigurationObject(Point);
+                var medianA = new ConstructedConfigurationObject(Median, A, B, C);
+                var medianB = new ConstructedConfigurationObject(Median, B, A, C);
+                var G = new ConstructedConfigurationObject(IntersectionOfLines, medianA, medianB);
+
+                // Create the actual configuration
+                var configuration = Configuration.DeriveFromObjects(Triangle, G);
+
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
+                };
+
+                // Create the actual construction
+                return new ComposedConstruction(nameof(Centroid), configuration, parameters);
             }
         }
 

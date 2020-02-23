@@ -5,13 +5,21 @@ using System.Collections.Generic;
 namespace GeoGen.Utilities
 {
     /// <summary>
-    /// The implementation of <see cref="IReadOnlyHashSet{T}"/> that simply wraps 
-    /// another <see cref="HashSet{T}"/>. This class conveniently implemented
-    /// equals and hash code by internally comparing the inner sets.
+    /// The implementation of <see cref="IReadOnlyHashSet{T}"/> that simply wraps another <see cref="HashSet{T}"/>. 
+    /// This class conveniently implements equals and hash code by internally comparing the inner sets.
     /// </summary>
     /// <typeparam name="T">The type of items of the set.</typeparam>
     public class ReadOnlyHashSet<T> : IReadOnlyHashSet<T>
     {
+        #region Public static fields
+
+        /// <summary>
+        /// An empty read only hash set.
+        /// </summary>
+        public static readonly ReadOnlyHashSet<T> Empty = new ReadOnlyHashSet<T>(new HashSet<T>());
+
+        #endregion
+
         #region Private static fields
 
         /// <summary>

@@ -97,6 +97,7 @@ l = Median(A,B,C)
   - let M = Midpoint(B,C)
   - draw Point(M) auxiliary
   - draw Line(l,A,M)
+  - draw Segment(B, C)
   
 l = Midline(A,B,C)
   - let M = Midpoint(A,B)

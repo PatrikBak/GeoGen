@@ -32,7 +32,7 @@ namespace GeoGen.Generator
         /// <param name="factory">The factory for creating <see cref="IConfigurationFilter"/> for the whole generation process.</param>
         public Generator(IConfigurationFilterFactory factory)
         {
-            _factory = factory ?? throw new ArgumentNullException(nameof(Generator));
+            _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
 
         #endregion

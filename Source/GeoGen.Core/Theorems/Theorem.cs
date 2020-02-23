@@ -123,11 +123,18 @@ namespace GeoGen.Core
         /// making a line are mapped to the same point), then null is returned.
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
         /// <returns>The remapped theorem, or null, if the mapping cannot be done.</returns>
-        public Theorem Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
+        public Theorem Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
-            // Remap objects, but only if none of them is null
-            var remappedObjects = InvolvedObjects.SelectIfNotDefault(o => o.Remap(mapping))?.Distinct().ToList();
+            // Remap objects
+            var remappedObjects = InvolvedObjects
+                // Only if none of them is null
+                .SelectIfNotDefault(involvedObject => involvedObject.Remap(mapping, flattenObjectsFromPoints))?
+                // Take distinct ones
+                .Distinct()
+                // Enumerate
+                .ToList();
 
             // If the remapped objects are null, then the theorem cannot be remapped
             if (remappedObjects == null)

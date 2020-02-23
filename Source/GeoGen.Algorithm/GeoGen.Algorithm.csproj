@@ -8,10 +8,8 @@
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
     <ProjectReference Include="..\GeoGen.Generator\GeoGen.Generator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />
   </ItemGroup>
 
 </Project>

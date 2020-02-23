@@ -95,16 +95,6 @@ namespace GeoGen.TheoremSimplifier
                                 // Enumerate them
                                 foreach (var mapping in potentialMappings)
                                 {
-                                    // In this mapping the template object will be mapped to our original object
-                                    // We need to check the assumptions are correct
-                                    var mappingIsCorrect = simplifcationRule.Assumptions
-                                        // Which is only if all the assumptions are met
-                                        .All(assumption => allTheorems.ContainsTheorem(assumption.Remap(mapping)));
-
-                                    // If it's not correct, then we must find another one
-                                    if (!mappingIsCorrect)
-                                        continue;
-
                                     #region Mapping the simplified object
 
                                     // Otherwise we can use it to come up with the new theorem object

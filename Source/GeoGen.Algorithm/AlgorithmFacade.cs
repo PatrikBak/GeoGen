@@ -2,9 +2,6 @@
 using GeoGen.Core;
 using GeoGen.Generator;
 using GeoGen.TheoremFinder;
-using GeoGen.TheoremProver;
-using GeoGen.TheoremRanker;
-using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -36,27 +33,12 @@ namespace GeoGen.Algorithm
         /// <summary>
         /// The constructor that perform the actual geometric construction of configurations.
         /// </summary>
-        private readonly IGeometryConstructor _geometryConstructor;
+        private readonly IGeometryConstructor _constructor;
 
         /// <summary>
         /// The finder of theorems in generated configurations.
         /// </summary>
         private readonly ITheoremFinder _finder;
-
-        /// <summary>
-        /// The prover of theorems.
-        /// </summary>
-        private readonly ITheoremProver _prover;
-
-        /// <summary>
-        /// The ranker of theorems.
-        /// </summary>
-        private readonly ITheoremRanker _ranker;
-
-        /// <summary>
-        /// The simplifier of theorems.
-        /// </summary>
-        private readonly ITheoremSimplifier _simplifier;
 
         /// <summary>
         /// The tracer of potential geometry failures.
@@ -72,34 +54,25 @@ namespace GeoGen.Algorithm
         /// </summary>
         /// <param name="settings">The settings for the algorithm.</param>
         /// <param name="generator">The generator of configurations.</param>
-        /// <param name="geometryConstructor">The constructor that perform the actual geometric construction of configurations.</param>
+        /// <param name="constructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
-        /// <param name="prover">The prover of theorems.</param>
-        /// <param name="ranker">The ranker of theorems.</param>
-        /// <param name="simplifier">The simplifier of theorems.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
         public AlgorithmFacade(AlgorithmFacadeSettings settings,
                                IGenerator generator,
-                               IGeometryConstructor geometryConstructor,
+                               IGeometryConstructor constructor,
                                ITheoremFinder finder,
-                               ITheoremProver prover,
-                               ITheoremRanker ranker,
-                               ITheoremSimplifier simplifier,
                                IGeometryFailureTracer tracer)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
-            _geometryConstructor = geometryConstructor ?? throw new ArgumentNullException(nameof(geometryConstructor));
+            _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
-            _prover = prover ?? throw new ArgumentNullException(nameof(prover));
-            _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
-            _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
             _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }
 
         #endregion
 
-        #region IAlgorithm implementation
+        #region IAlgorithmFacade implementation
 
         /// <summary>
         /// Executes the algorithm for a given algorithm input.
@@ -126,9 +99,9 @@ namespace GeoGen.Algorithm
             // Safely execute
             var (initialPictures, initialData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
-                () => _geometryConstructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures),
+                () => _constructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures),
                 // Make sure a potential exception is caught and re-thrown
-                (InconsistentPicturesException e) => throw new InitializationException("Drawing of the initial configuration failed.", e));
+                (InconsistentPicturesException e) => throw new InitializationException("Drawing the initial configuration failed.", e));
 
             // Make sure it is constructible
             if (initialData.InconstructibleObject != default)
@@ -146,7 +119,7 @@ namespace GeoGen.Algorithm
                  // Creating the contextual picture
                  () => new ContextualPicture(initialPictures),
                  // Make sure a potential exception is caught and re-thrown
-                 (InconsistentPicturesException e) => throw new InitializationException("Drawing of the contextual container for the initial configuration failed.", e));
+                 (InconsistentPicturesException e) => throw new InitializationException("Drawing the contextual container for the initial configuration failed.", e));
 
             // Cache the contextual picture
             contextualPictureCache.Push(initialContextualPicture);
@@ -161,16 +134,15 @@ namespace GeoGen.Algorithm
 
             #region Configuration verification function
 
-            // Prepare a function that does geometric verification of the configurations
+            // Prepare a function that does geometric verification of a generated configuration
             // While doing so it construct pictures that we can reuse further for finding theorems
             bool VerifyConfigurationCorrectness(GeneratedConfiguration configuration)
             {
                 #region Handling cache
 
                 // We assume that the generator uses a memory-efficient DFS approach, i.e.
-                // when we are done with extending a configuration, we will never need it again
-                // and we move to the next one. This way we just need to cache the initial configuration
-                // and N-1 subsequent ones, where N is the number of iterations. 
+                // we need to remember only the last N-1 configurations, where N is the number 
+                // of the current iteration. 
 
                 // We got a configuration. We need to make sure that our cache contains only 
                 // objects belonging to the previous configurations of this. There final number
@@ -209,19 +181,19 @@ namespace GeoGen.Algorithm
                 // Safely execute
                 var (newPictures, constructionData) = GeneralUtilities.TryExecute(
                     // Constructing the pictures for the configuration
-                    () => _geometryConstructor.ConstructByCloning(previousPictures, configuration),
+                    () => _constructor.ConstructByCloning(previousPictures, configuration),
                     // While tracing a possible failure (such configurations will be discarded in the next step)
                     (InconsistentPicturesException e) => _tracer.InconstructiblePicturesByCloning(previousPictures, configuration, e));
 
                 // The configuration is incorrect if it couldn't be carried out...
-                var configurationIncorrect = newPictures == default
-                    // If it contains an inconstructible object
+                var isConfigurationIncorrect = newPictures == default
+                    // Or if it contains an inconstructible object
                     || constructionData.InconstructibleObject != default
-                    // Or it contains the same object twice
+                    // Or if it contains the same object twice
                     || constructionData.Duplicates != default;
 
                 // Exclude incorrect configuration
-                if (configurationIncorrect)
+                if (isConfigurationIncorrect)
                     return false;
 
                 // We have to remember the pictures for further use
@@ -244,10 +216,10 @@ namespace GeoGen.Algorithm
                 // If the construction of the picture cannot be done...
                 if (newContextualPicture == default)
                 {
-                    // We need to make sure the pictures are discarded
+                    // We need to make sure the already constructed pictures are discarded
                     picturesCache.Pop();
 
-                    // And we can rule out the whole configuration
+                    // And we say the configuration is incorrect
                     return false;
                 }
 
@@ -269,26 +241,29 @@ namespace GeoGen.Algorithm
             // Prepare the generator input
             var generatorInput = new GeneratorInput
             (
+                // Pass the data from the algorithm input
                 numberOfIterations: input.NumberOfIterations,
                 constructions: input.Constructions,
                 initialConfiguration: input.InitialConfiguration,
                 maximalObjectCounts: input.MaximalObjectCounts,
+
+                // As a filter pass our verification that draws the configuration geometrically
                 configurationFilter: VerifyConfigurationCorrectness
             );
 
             // Return the tuple of initial theorems and a lazy algorithm enumerable
             return (initialTheorems, _generator.Generate(generatorInput)
-                   // For each correct configuration perform the subsequent algorithms
+                   // For each configuration perform the subsequent algorithms
                    .Select(configuration =>
                    {
                        // Get the contextual picture of the current configuration
-                       var picture = contextualPictureCache.Peek();
+                       var contextualPicture = contextualPictureCache.Peek();
 
-                       // Get the old theorems
+                       // Get the previous of the previous configuration
                        var oldTheorems = theoremMapCache.Peek();
 
                        // Find new theorems
-                       var newTheorems = _finder.FindNewTheorems(picture, oldTheorems);
+                       var newTheorems = _finder.FindNewTheorems(contextualPicture, oldTheorems);
 
                        // Find all theorems by merging the old and new ones
                        var allTheorems = new TheoremMap(oldTheorems.AllObjects.Concat(newTheorems.AllObjects));
@@ -296,48 +271,20 @@ namespace GeoGen.Algorithm
                        // Cache the theorems for this configuration
                        theoremMapCache.Push(allTheorems);
 
-                       // If we should exclude asymmetric configurations and this one is not like that,
-                       // then we don't need to try to prove the theorems of this one
-                       // We can't do this before finding theorems, because we couldn't get here on the
-                       // last iteration (such an asymmetric configuration wouldn't have been excluded),
-                       // and therefore we will need the theorems of this configurations later
+                       // If we should exclude asymmetric configurations and this one is like that,
+                       // then we don't need to try to return it as a correct one
+                       // We can't do this before finding theorems, because this asymmetric configuration
+                       // might still be extensible to get a symmetric one and we would need its theorems
                        if (_settings.ExcludeAsymmetricConfigurations && !configuration.IsSymmetric())
                            return null;
-
-                       // Prepare the input for the theorem prover
-                       var input = new TheoremProverInput
-                       (
-                           contextualPicture: picture,
-                           oldTheorems: oldTheorems,
-                           newTheorems: newTheorems
-                       );
-
-                       // Try to prove them
-                       var proverOutput = _prover.Analyze(input);
-
-                       // Rank all unproved theorems
-                       var rankings = proverOutput.UnprovenTheorems.Keys
-                            // Each rank separately
-                            .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, configuration, input.AllTheorems, proverOutput));
-
-                       // Simplify unproved theorems
-                       var simplifiedTheorems = proverOutput.UnprovenTheorems.Keys
-                            // Each is attempted to be simplified
-                            .Select(theorem => (theorem, simplification: _simplifier.Simplify(configuration, theorem, input.AllTheorems)))
-                            // Take only those where it has been successful
-                            .Where(result => result.simplification != null)
-                            // Wrap the results to a dictionary
-                            .ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
 
                        // Return the final output
                        return new AlgorithmOutput
                        (
                            configuration: configuration,
+                           contextualPicture: contextualPicture,
                            oldTheorems: oldTheorems,
-                           newTheorems: newTheorems,
-                           proverOutput: proverOutput,
-                           rankings: rankings,
-                           simplifiedTheorems: simplifiedTheorems
+                           newTheorems: newTheorems
                        );
                    })
                    // Ignore excluded ones

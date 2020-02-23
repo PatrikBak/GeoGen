@@ -18,8 +18,9 @@ namespace GeoGen.Core
         /// making a line are mapped to the same point), then null is returned.
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
-        public abstract TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping);
+        public abstract TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false);
 
         /// <summary>
         /// Gets the configuration objects that internally define this theorem object.

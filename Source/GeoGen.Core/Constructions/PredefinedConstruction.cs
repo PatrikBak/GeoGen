@@ -25,9 +25,8 @@ namespace GeoGen.Core
         /// <param name="type">The type of the predefined construction.</param>
         /// <param name="parameters">The parameters representing the signature of the construction.</param>
         /// <param name="outputType">The output type of the construction.</param>
-        /// <param name="isRandom">Indicates if the construction construct an object whose construction is not defined deterministically.</param>
-        public PredefinedConstruction(PredefinedConstructionType type, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType, bool isRandom)
-            : base(type.ToString(), parameters, outputType, isRandom)
+        public PredefinedConstruction(PredefinedConstructionType type, IReadOnlyList<ConstructionParameter> parameters, ConfigurationObjectType outputType)
+            : base(type.ToString(), parameters, outputType)
         {
             Type = type;
         }

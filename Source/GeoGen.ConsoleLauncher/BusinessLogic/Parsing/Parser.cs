@@ -21,40 +21,14 @@ namespace GeoGen.ConsoleLauncher
         {
             // Local helper that returns a string informing about available constructions
             static string AvailableConstructions() => $"Available: \n\n" +
-                // Get all constructions, prepend -, sort, and make every on a single line
-                $"{Constructions.GetAllConstructions().Select(c => $"  {c.Name}").Ordered().ToJoinedString("\n")}.\n";
+                // Get all constructions, prepend spaces, sort, and make every on a single line
+                $"{Constructions.GetAllConstructions().Select(construction => $"  {construction.Name}").Ordered().ToJoinedString("\n")}.\n";
 
             // Try to find if it is a predefined one
             if (Enum.TryParse<PredefinedConstructionType>(constructionName, out var type))
                 return Constructions.GetPredefinedconstruction(type);
 
-            // Try to find if the construction doesn't start with RandomPointOn
-            var match = Regex.Match(constructionName, "^RandomPointOn(.*)$");
-
-            // If yes
-            if (match.Success)
-            {
-                // Get the rest of the name
-                var restOfName = match.Groups[1].Value;
-
-                // Try to parse it 
-                // If it worked out, wrap the result in the RandomPointOn construction
-                if (Enum.TryParse(restOfName, out type))
-                    return RandomPointOnConstruction.RandomPointOn(type);
-
-                // Try to get the composed one
-                var composedConstruction = Constructions.GetComposedConstruction(restOfName);
-
-                // If it worked out, wrap the result in the RandomPointOn construction 
-                if (composedConstruction != null)
-                    return RandomPointOnConstruction.RandomPointOn(composedConstruction);
-
-                // Otherwise we won't allow a composed construction with a name like this
-                throw new ParsingException("If the name of a construction starts with RandomPointOn, " +
-                    $"then the rest must be a correct construction name. {AvailableConstructions()}");
-            }
-
-            // If not, it should be a composed one. 
+            // If it's not a predefined one, then it should be a composed one. 
             // Right now they are all stored in a static class. Try to find it there...
             return Constructions.GetComposedConstruction(constructionName)
                 // if it's not found, make the user aware
@@ -70,7 +44,7 @@ namespace GeoGen.ConsoleLauncher
         {
             // Make sure there is at least one line
             if (lines.Count == 0)
-                throw new ParsingException("The configuration has no definition.");
+                throw new ParsingException("The configuration has an empty definition.");
 
             // Prepare a dictionary between names and parsed objects
             var namesToObjects = new Dictionary<string, ConfigurationObject>();
@@ -88,11 +62,14 @@ namespace GeoGen.ConsoleLauncher
             var layoutString = looseObjectsMatch.Groups[1].Value.Trim();
 
             // Try to parse the layout
-            if (!Enum.TryParse(looseObjectsMatch.Groups[1].Value, out LooseObjectsLayout layout))
-                throw new ParsingException($"Cannot parse the loose objects layout '{looseObjectsMatch.Groups[1].Value}'");
+            if (!Enum.TryParse(layoutString, out LooseObjectsLayout layout))
+                throw new ParsingException($"Cannot parse the loose objects layout '{layoutString}'");
+
+            // Get the objects string
+            var objectsString = looseObjectsMatch.Groups[2].Value.Trim();
 
             // Get the loose objects names, separated by commas
-            var looseObjectsNames = looseObjectsMatch.Groups[2].Value.Split(",").Select(s => s.Trim()).ToList();
+            var looseObjectsNames = objectsString.Split(",").Select(looseObjectName => looseObjectName.Trim()).ToList();
 
             // Find the needed types of loose objects for the layout
             var neededObjectTypes = layout.ObjectTypes();
@@ -106,7 +83,7 @@ namespace GeoGen.ConsoleLauncher
             {
                 // Make sure the name hasn't been used
                 if (namesToObjects.ContainsKey(name))
-                    throw new ParsingException($"Error while parsing loose objects. The object with the name '{name}' has been already at least twice.");
+                    throw new ParsingException($"Error while parsing loose objects. The object with the name '{name}' has been declared twice.");
 
                 // Make sure the name is correct
                 if (!name.All(char.IsLetterOrDigit))
@@ -179,10 +156,10 @@ namespace GeoGen.ConsoleLauncher
                 // Try to create a constructed object
                 var constructedObject = ParseConstructedObject(objectString, namesToObjects, autocreateUnnamedObjects);
 
-                // Associate it
+                // Associate it with the name
                 namesToObjects.Add(newObjectName, constructedObject);
 
-                // Return it with the name
+                // Return it
                 return constructedObject;
             }
             catch (ParsingException e)
@@ -268,7 +245,7 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Parses a theorem from a theorem line.
+        /// Parses a theorem from a theorem line in form type: objects
         /// </summary>
         /// <param name="theoremLine">The line with the theorem's description.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
@@ -283,11 +260,14 @@ namespace GeoGen.ConsoleLauncher
 
             // Make sure there is a match...
             if (!typeDefinitionMatch.Success)
-                throw new ParsingException($"Error while parsing '{theoremLine}'. The theorem should be in the form 'name: definition'");
+                throw new ParsingException($"Error while parsing '{theoremLine}'. The theorem should be in the form 'type: objects'");
+
+            // Get the theorem type string
+            var typeString = typeDefinitionMatch.Groups[1].Value.Trim();
 
             // Parse the type
-            if (!Enum.TryParse<TheoremType>(typeDefinitionMatch.Groups[1].Value, out var theoremType))
-                throw new ParsingException($"Error while parsing '{theoremLine}'. Unknown theorem type '{typeDefinitionMatch.Groups[1].Value}'");
+            if (!Enum.TryParse<TheoremType>(typeString, out var theoremType))
+                throw new ParsingException($"Error while parsing '{theoremLine}'. Unknown theorem type '{typeString}'");
 
             #endregion
 
@@ -305,7 +285,32 @@ namespace GeoGen.ConsoleLauncher
                 // Trim
                 .Select(theoremObjectString => theoremObjectString.Trim())
                 // Parse each
-                .Select(theoremObjectString => ParseTheoremObject(theoremObjectString, namesToObjects, autocreateUnnamedObjects))
+                .Select(theoremObjectString =>
+                {
+                    // Prepare the hint for the object type based on the theorem type
+                    var typeHint = theoremType switch
+                    {
+                        // Points (EqualLineSegments are flattened)
+                        TheoremType.CollinearPoints => typeof(PointTheoremObject),
+                        TheoremType.ConcyclicPoints => typeof(PointTheoremObject),
+                        TheoremType.EqualLineSegments => typeof(PointTheoremObject),
+
+                        // Lines (EqualAngles are flattened)
+                        TheoremType.EqualAngles => typeof(LineTheoremObject),
+                        TheoremType.ConcurrentLines => typeof(LineTheoremObject),
+                        TheoremType.PerpendicularLines => typeof(LineTheoremObject),
+                        TheoremType.ParallelLines => typeof(LineTheoremObject),
+
+                        // Circles
+                        TheoremType.TangentCircles => typeof(CircleTheoremObject),
+
+                        // In other cases we can't do it 
+                        _ => null
+                    };
+
+                    // Parse it
+                    return ParseTheoremObject(theoremObjectString, namesToObjects, autocreateUnnamedObjects, typeHint);
+                })
                 // Enumerate
                 .ToList();
 
@@ -329,8 +334,9 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="objectString">The string containing the object's definition.</param>
         /// <param name="namesToObjects">The dictionary mapping declared object names to their real objects.</param>
         /// <param name="autocreateUnnamedObjects">If this value is true, then objects without names will be automatically created as loose ones.</param>
+        /// <param name="typeHint">Represents a hint for the type of the object. This value work only with automatic object creation.</param>
         /// <returns>The parsed theorem object.</returns>
-        public static TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects)
+        public static TheoremObject ParseTheoremObject(string objectString, Dictionary<string, ConfigurationObject> namesToObjects, bool autocreateUnnamedObjects, Type typeHint = null)
         {
             // Local function that converts an explicit configuration object to a theorem object
             static TheoremObject Convert(ConfigurationObject configurationObject) => configurationObject.ObjectType switch
@@ -464,13 +470,85 @@ namespace GeoGen.ConsoleLauncher
                 // Convert it to a theorem object
                 return Convert(parsedObject);
             }
-            catch (ParsingException e)
+            catch (ParsingException)
             {
-                // Re-thrown an exception with the right message
-                throw new ParsingException($"Error while parsing '{objectString}'. {e.Message}");
-            }
+                // If it cannot be then, then we're going to assume it's an unnamed object wrapping a loose object
+                LooseConfigurationObject looseObject;
 
-            #endregion
+                // If there is a hint to its type, we can simply infer the right choice from there
+                if (typeHint != null)
+                {
+                    // Point case
+                    if (typeHint.Equals(typeof(PointTheoremObject)))
+                        looseObject = new LooseConfigurationObject(ConfigurationObjectType.Point);
+
+                    // Line case
+                    else if (typeHint.Equals(typeof(LineTheoremObject)))
+                        looseObject = new LooseConfigurationObject(ConfigurationObjectType.Line);
+
+                    // Circle case
+                    else if (typeHint.Equals(typeof(CircleTheoremObject)))
+                        looseObject = new LooseConfigurationObject(ConfigurationObjectType.Circle);
+
+                    // Default case
+                    else
+                        throw new ParsingException($"Unhandled or incorrect type hint '{typeHint}'");
+
+                    // Name it
+                    namesToObjects.Add(objectString, looseObject);
+                }
+                // If there is no type hint...
+                else
+                {
+                    // We still have a chance to parse it. There are some theorem types where
+                    // it is unclear what particular objects mean, for example Incidence: x, y. 
+                    // But, in those cases we expect to receive a string {type}({name})
+                    // Let's try to match it
+                    var match = Regex.Match(objectString, "^(.*)\\((.*)\\)$");
+
+                    // If there is no match, we've failed
+                    if (!match.Success)
+                        throw new ParsingException($"Error while parsing {objectString}. It cannot be automatically inferred.");
+
+                    // Otherwise we get the type string
+                    var typeString = match.Groups[1].Value.Trim();
+
+                    // We need to parse this type
+                    if (!Enum.TryParse<ConfigurationObjectType>(typeString, out var type))
+                        throw new ParsingException($"Error while parsing {objectString}. Failed while trying to parse the type '{typeString}'");
+
+                    // Get the name
+                    var name = match.Groups[2].Value.Trim();
+
+                    // If the object is already there...
+                    if (namesToObjects.ContainsKey(name))
+                    {
+                        // Get it
+                        var namedObject = namesToObjects[name];
+
+                        // If it's not loose, we have a problem
+                        if (!(namedObject is LooseConfigurationObject looseNamedObject))
+                            throw new ParsingException($"Object with a name '{name}' has been declared twice inconsistently.");
+
+                        // If we got here, the object is okay...
+                        looseObject = looseNamedObject;
+                    }
+                    // If the object doesn't have a name
+                    else
+                    {
+                        // Create a new one of the parsed type
+                        looseObject = new LooseConfigurationObject(type);
+
+                        // Name it
+                        namesToObjects.Add(name, looseObject);
+                    }
+                }
+
+                // Finally convert the loose object to a theorem object
+                return Convert(looseObject);
+            }
         }
+
+        #endregion
     }
 }

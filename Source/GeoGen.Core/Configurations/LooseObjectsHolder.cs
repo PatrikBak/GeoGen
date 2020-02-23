@@ -73,13 +73,44 @@ namespace GeoGen.Core
                 case LineSegment:
                 case Triangle:
                 case Quadrilateral:
+                case CyclicQuadrilateral:
 
                     // Take all permutations and zip them with the objects
                     return LooseObjects.Permutations().Select(LooseObjects.ZipToDictionary);
 
-                // Default case
+                // Case where any permutation of the second two objects work
+                case RightTriangle:
+                case ExplicitLineAndTwoPoints:
+
+                    // Take all permutations and zip them with the objects
+                    return new[]
+                    {
+                        // Identity
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[1] },
+                            { LooseObjects[2], LooseObjects[2] }
+                        },
+
+                        // Changed the second two points
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[2] },
+                            { LooseObjects[2], LooseObjects[1] }
+                        }
+                    };
+
+                // Case where there is only identity
+                case ExplicitLineAndPoint:
+
+                    // Return just an identity dictionary
+                    return LooseObjects.ToDictionary(_ => _, _ => _).ToEnumerable();
+
+                // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled type of loose objects layout: {Layout}");
+                    throw new GeoGenException($"Unhandled type of {nameof(LooseObjectsLayout)}: {Layout}");
             }
         }
 

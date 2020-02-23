@@ -42,12 +42,6 @@ namespace GeoGen.TheoremRanker
         /// is that in configurations with more concyclic points it is usually easier to prove things, because of the powerful 
         /// properties of cyclic quadrilaterals. It is calculated as  1 / (1 + Number of concyclic points theorems / Number of objects)
         /// </summary>
-        CirclesPerObject,
-
-        /// <summary>
-        /// The value 1 / (1 + Number of proof attempts at this theorem). The idea behind this metrics is that if we couldn't 
-        /// even attempt to prove a theorem, then it is likely to be interesting.
-        /// </summary>
-        NumberOfProofAttempts
+        CirclesPerObject
     }
 }

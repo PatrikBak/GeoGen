@@ -42,7 +42,7 @@ namespace GeoGen.GenerationLauncher
             (
                 inputFolderPath: "..\\..\\..\\Data\\Inputs",
                 inputFilePrefix: "input",
-                filesExtention: "txt"
+                fileExtension: "txt"
             ),
             generationAlgorithmRunnerSettings: new GenerationAlgorithmRunnerSettings
             (

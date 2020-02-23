@@ -49,7 +49,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Drawer", "GeoGen.Dra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Infrastructure", "GeoGen.Infrastructure\GeoGen.Infrastructure.csproj", "{A07B9861-3C4C-41C1-9B44-44BE53262B51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.GenerationLauncher", "GeoGen.GenerationLauncher\GeoGen.GenerationLauncher.csproj", "{BCFCDED3-4701-4C31-A92F-6CA364548CA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.GenerationLauncher", "GeoGen.GenerationLauncher\GeoGen.GenerationLauncher.csproj", "{BCFCDED3-4701-4C31-A92F-6CA364548CA8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProverLauncher", "GeoGen.TheoremProverLauncher\GeoGen.TheoremProverLauncher.csproj", "{2260E6B2-1381-4F86-A74E-8B239B46316A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -153,6 +155,10 @@ Global
 		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

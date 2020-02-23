@@ -47,5 +47,12 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="angleInDegrees">The angle in degrees.</param>
         /// <returns>The angle in radians.</returns>
         public static double ToRadians(double angleInDegrees) => angleInDegrees * Math.PI / 180;
+
+        /// <summary>
+        /// Converts a given angle in radians to degrees.
+        /// </summary>
+        /// <param name="angleInRadians">The angle in radians.</param>
+        /// <returns>The angle in degrees.</returns>
+        public static double ToDegrees(double angleInRadians) => angleInRadians * 180 / Math.PI;
     }
 }

@@ -59,7 +59,7 @@ namespace GeoGen.TheoremProver.Test
             var I = new ConstructedConfigurationObject(Incenter, A, B, C);
 
             // Find the trivial theorems
-            Producer.DeriveTrivialTheoremsFromObject(I)
+            Producer.InferTrivialTheoremsFromObject(I)
                 // There should be only equal angles
                 .OrderlessEquals(new[]
                 {
@@ -111,7 +111,7 @@ namespace GeoGen.TheoremProver.Test
             };
 
             // Find the trivial theorems
-            Producer.DeriveTrivialTheoremsFromObject(M)
+            Producer.InferTrivialTheoremsFromObject(M)
                 // There should be these theorems
                 .OrderlessEquals(new[]
                 {
@@ -180,7 +180,7 @@ namespace GeoGen.TheoremProver.Test
                 .ForEach(constructedObject =>
                 {
                     // Prepare the action executing the algorithm
-                    Action action = () => Producer.DeriveTrivialTheoremsFromObject(constructedObject);
+                    Action action = () => Producer.InferTrivialTheoremsFromObject(constructedObject);
 
                     // Make sure there is no exception
                     action.Should().NotThrow($"The construction {constructedObject} has a problem.");

@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// The class that runs tests of drawing.
+    /// The entry class of the application.
     /// </summary>
     public static class Startup
     {
         /// <summary>
-        /// The main method.
+        /// The entry method of the application.
         /// </summary>
         private static async Task Main()
         {

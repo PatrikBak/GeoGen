@@ -47,7 +47,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="isSimplified">Indicates whether the theorem has been a result of theorem simplification.</param>
         public TheoremWithRankingIntermediate(string theoremString, TheoremRanking ranking, string configurationString, bool isSimplified)
         {
-            TheoremString = theoremString ?? throw new ArgumentNullException(nameof(String));
+            TheoremString = theoremString ?? throw new ArgumentNullException(nameof(theoremString));
             Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
             ConfigurationString = configurationString ?? throw new ArgumentNullException(nameof(configurationString));
             IsSimplified = isSimplified;

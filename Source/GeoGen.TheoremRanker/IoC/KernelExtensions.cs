@@ -41,10 +41,6 @@ namespace GeoGen.TheoremRanker
                         kernel.Bind<IAspectTheoremRanker>().To<CirclesPerObjectRanker>();
                         break;
 
-                    case RankedAspect.NumberOfProofAttempts:
-                        kernel.Bind<IAspectTheoremRanker>().To<NumberOfProofAttemptsRanker>();
-                        break;
-
                     default:
                         throw new TheoremRankerException($"Unhandled value of {nameof(RankedAspect)}: {rankedAspect}");
                 }

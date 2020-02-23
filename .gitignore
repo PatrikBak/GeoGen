@@ -251,5 +251,7 @@ paket-files/
 .idea/
 *.sln.iml
 
+**/launchSettings.json
+
 Source/GeoGen.ConsoleLauncher/Data/
 Source/GeoGen.GenerationLauncher/Data/

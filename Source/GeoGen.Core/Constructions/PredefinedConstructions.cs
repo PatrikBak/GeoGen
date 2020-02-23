@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using static GeoGen.Core.ConfigurationObjectType;
 
 namespace GeoGen.Core
@@ -24,7 +23,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.CenterOfCircle, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.CenterOfCircle, parameters, Point);
             }
         }
 
@@ -43,7 +42,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.Circumcircle, parameters, Circle, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.Circumcircle, parameters, Circle);
             }
         }
 
@@ -63,7 +62,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.CircleWithCenterThroughPoint, parameters, Circle, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.CircleWithCenterThroughPoint, parameters, Circle);
             }
         }
 
@@ -83,7 +82,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisector, parameters, Line, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.InternalAngleBisector, parameters, Line);
             }
         }
 
@@ -102,7 +101,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.IntersectionOfLines, parameters, Point);
             }
         }
 
@@ -121,7 +120,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.LineFromPoints, parameters, Line, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.LineFromPoints, parameters, Line);
             }
         }
 
@@ -140,7 +139,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.Midpoint, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.Midpoint, parameters, Point);
             }
         }
 
@@ -160,7 +159,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularProjection, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularProjection, parameters, Point);
             }
         }
 
@@ -180,7 +179,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLine, parameters, Line, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.PerpendicularLine, parameters, Line);
             }
         }
 
@@ -200,7 +199,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.ParallelLine, parameters, Line, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.ParallelLine, parameters, Line);
             }
         }
 
@@ -220,7 +219,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.PointReflection, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.PointReflection, parameters, Point);
             }
         }
 
@@ -241,7 +240,7 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints, parameters, Point);
             }
         }
 
@@ -261,94 +260,8 @@ namespace GeoGen.Core
                 };
 
                 // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles, parameters, Point, isRandom: false);
+                return new PredefinedConstruction(PredefinedConstructionType.SecondIntersectionOfTwoCircumcircles, parameters, Point);
             }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLine"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnLine
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(Line)
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLine, parameters, Point, isRandom: true);
-            }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircle"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnCircle
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new ObjectConstructionParameter(Circle)
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircle, parameters, Point, isRandom: true);
-            }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnLineFromPoints"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnLineFromPoints
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnLineFromPoints, parameters, Point, isRandom: true);
-            }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPointOnCircleFromPoints"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPointOnCircleFromPoints
-        {
-            get
-            {
-                // Create the parameters
-                var parameters = new List<ConstructionParameter>
-                {
-                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 3)
-                };
-
-                // Create the actual construction
-                return new PredefinedConstruction(PredefinedConstructionType.RandomPointOnCircleFromPoints, parameters, Point, isRandom: true);
-            }
-        }
-
-        /// <summary>
-        /// Creates a <see cref="PredefinedConstructionType.RandomPoint"/> construction.
-        /// </summary>
-        /// <returns>The construction.</returns>
-        public static PredefinedConstruction RandomPoint
-        {
-            // Create the actual construction, which has no parameters
-            get => new PredefinedConstruction(PredefinedConstructionType.RandomPoint, Array.Empty<ConstructionParameter>(), Point, isRandom: true);
         }
     }
 }

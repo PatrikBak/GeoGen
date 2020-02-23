@@ -58,8 +58,9 @@ namespace GeoGen.Core
         /// making a line are mapped to the same point), then null is returned.
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
         /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
-        public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
+        public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Remap object and points
             var objectPoints = RemapObjectAndPoints(mapping);
@@ -68,12 +69,30 @@ namespace GeoGen.Core
             if (objectPoints == default)
                 return null;
 
-            // If this is defined by an object, use the object constructor
-            if (DefinedByExplicitObject)
-                return new CircleTheoremObject(objectPoints.explicitObject);
+            // If this is defined by points, use the points constructor
+            if (DefinedByPoints)
+                return new CircleTheoremObject(objectPoints.points[0], objectPoints.points[1], objectPoints.points[2]);
 
-            // Otherwise use the points constructor
-            return new CircleTheoremObject(objectPoints.points[0], objectPoints.points[1], objectPoints.points[2]);
+            // Otherwise this is defined via an explicit object
+            // Find out if the explicit object is a circle from points, which is true if it is constructed
+            var isThisCircleFromPoints = objectPoints.explicitObject is ConstructedConfigurationObject constructedObject
+                // And the construction is predefined
+                && constructedObject.Construction is PredefinedConstruction predefinedConstruction
+                // With the type equal to Circumcircle
+                && predefinedConstruction.Type == PredefinedConstructionType.Circumcircle;
+
+            // If this is a circle from points and it should be made explicit, do it
+            if (isThisCircleFromPoints && flattenObjectsFromPoints)
+            {
+                // Get the points
+                var points = ((ConstructedConfigurationObject)objectPoints.explicitObject).PassedArguments.FlattenedList;
+
+                // And use them to map this explicit object to an implicit one with points
+                return new CircleTheoremObject(points[0], points[1], points[2]);
+            }
+
+            // Otherwise simply wrap the explicit object
+            return new CircleTheoremObject(objectPoints.explicitObject);
         }
 
         #endregion

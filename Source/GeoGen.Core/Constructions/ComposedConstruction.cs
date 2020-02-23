@@ -1,4 +1,5 @@
 ﻿using GeoGen.Utilities;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +42,7 @@ namespace GeoGen.Core
         /// <param name="configuration">The configuration that defines the construction steps. The output of the construction is its last constructed object.</param>
         /// <param name="parameters">The parameters representing the signature of the construction. They must match the loose objects of the defining configuration.</param>
         public ComposedConstruction(string name, Configuration configuration, IReadOnlyList<ConstructionParameter> parameters)
-            : base(name, parameters, configuration.LastConstructedObject.ObjectType, isRandom: false)
+            : base(name, parameters, configuration.LastConstructedObject.ObjectType)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
 

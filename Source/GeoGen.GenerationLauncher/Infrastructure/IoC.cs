@@ -4,9 +4,6 @@ using GeoGen.Constructor;
 using GeoGen.Generator;
 using GeoGen.Infrastructure;
 using GeoGen.TheoremFinder;
-using GeoGen.TheoremProver;
-using GeoGen.TheoremRanker;
-using GeoGen.TheoremSimplifier;
 using Ninject;
 using System.Threading.Tasks;
 
@@ -58,10 +55,7 @@ namespace GeoGen.GenerationLauncher
 
             // Add algorithm facade and its faked dependencies
             Kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().WithConstructorArgument(settings.AlgorithmFacadeSettings);
-            Kernel.Bind<ITheoremProver>().To<EmptyTheoremProver>();
             Kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();
-            Kernel.Bind<ITheoremRanker>().To<EmptyTheoremRanker>();
-            Kernel.Bind<ITheoremSimplifier>().To<EmptyTheoremSimplifier>();
 
             #endregion
 

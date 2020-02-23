@@ -18,6 +18,7 @@ namespace GeoGen.Constructor
             // Stateless services
             kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
             kernel.Bind<IConstructorsResolver>().To<ConstructorsResolver>();
+            kernel.Bind<IGeometricTheoremVerifier>().To<GeometricTheoremVerifier>();
 
             // Stateless predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();

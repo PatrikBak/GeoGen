@@ -1,46 +1,126 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using static GeoGen.Core.TheoremType;
-using static GeoGen.TheoremProver.DerivationRule;
+using static GeoGen.TheoremProver.InferenceRuleType;
 
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// The default implementation of <see cref="ITheoremProver"/>. This implementation combines
-    /// <see cref="ITrivialTheoremProducer"/>, <see cref="ISubtheoremDeriver"/>, 
-    /// and various <see cref="ITheoremDeriver"/>s. Most of the complicated algorithmic work
-    /// is delegated to a helper class <see cref="TheoremDerivationHelper"/>.
+    /// The default implementation of <see cref="ITheoremProver"/>. The main idea of this implementation
+    /// is to use <see cref="InferenceRule"/>s to come up with new theorems. They are retrieved by an
+    /// <see cref="IInferenceRuleManager"/> and applied by an <see cref="IInferenceRuleApplier"/>. The 
+    /// question which rules we should use at a particular moment is answered by a helper class 
+    /// <see cref="Scheduler"/>.
+    /// <para>
+    /// In order for this idea to work we need to have theorems that are initially true (axioms). For the
+    /// purpose of theorem filtering we will assume that any old theorem is true, i.e. a theorem that doesn't
+    /// use the last object of the current configuration in its definition. Furthermore, we will use 
+    /// a <see cref="ITrivialTheoremProducer"/> to find other theorems that be stated as trivial ones.
+    /// </para>
+    /// <para>
+    /// Any result retrieved via the <see cref="IInferenceRuleApplier"/> is check geometrically, which seems
+    /// like the most reasonable way to handle degenerated theorems and orientation issues. This is done 
+    /// via <see cref="IGeometricTheoremVerifier"/>. When there is an incorrectly inferred theorem, it is 
+    /// traced via an <see cref="IInvalidInferenceTracer"/>.
+    /// </para>
+    /// <para>
+    /// In order to make this efficient, this class uses a <see cref="NormalizationHelper"/>, that, in short,
+    /// ensures that any theorem and object has exactly one 'normal' definition, to reduce duplicity.
+    /// </para>
+    /// <para>
+    /// Sometimes even in very simple theorems we will to introduce new objects to a configuration in order
+    /// to prove something. This is done via an <see cref="IObjectIntroducer"/>. The 'boring' work that involves
+    /// communication with <see cref="NormalizationHelper"/> and ensuring that we don't introduce the same
+    /// object twice is then delegated to a helper class <see cref="ObjectIntroductionHelper"/>.
+    /// </para>
+    /// <para>
+    /// The prover is even able to construct <see cref="TheoremProof"/>s of the inferred theorems. This job is 
+    /// delegated to a helper class <see cref="TheoremProofBuilder"/>.
+    /// </para>
     /// </summary>
     public class TheoremProver : ITheoremProver
     {
-        #region Dependencies
+        #region ProofData class
 
         /// <summary>
-        /// The theorem derivers based on logical rules applied on the existing theorems.
+        /// A helper class that holds data needed for <see cref="TheoremProof"/> construction.
         /// </summary>
-        private readonly ITheoremDeriver[] _derivers;
+        private class ProofData
+        {
+            #region Public properties
 
-        /// <summary>
-        /// The producer of trivial theorems.
-        /// </summary>
-        private readonly ITrivialTheoremProducer _trivialTheoremProducer;
+            /// <summary>
+            /// The proof builder that builds actual <see cref="TheoremProof"/> instances.
+            /// </summary>
+            public TheoremProofBuilder ProofBuilder { get; }
 
-        /// <summary>
-        /// The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.
-        /// </summary>
-        private readonly ISubtheoremDeriver _subtheoremDeriver;
+            /// <summary>
+            /// The data explaining a theorem inference.
+            /// </summary>
+            public TheoremInferenceData InferenceData { get; }
+
+            /// <summary>
+            /// The assumptions of a theorem inference.
+            /// </summary>
+            public IReadOnlyList<Theorem> Assumptions { get; }
+
+            #endregion
+
+            #region Constructor
+
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ProofData"/> class.
+            /// </summary>
+            /// <param name="proofBuilder">The proof builder that builds actual <see cref="TheoremProof"/> instances.</param>
+            /// <param name="inferenceData">The data explaining a theorem inference.</param>
+            /// <param name="assumptions">The assumptions of a theorem inference.</param>
+            public ProofData(TheoremProofBuilder proofBuilder, TheoremInferenceData inferenceData, IReadOnlyList<Theorem> assumptions)
+            {
+                ProofBuilder = proofBuilder ?? throw new ArgumentNullException(nameof(proofBuilder));
+                InferenceData = inferenceData ?? throw new ArgumentNullException(nameof(inferenceData));
+                Assumptions = assumptions ?? throw new ArgumentNullException(nameof(assumptions));
+            }
+
+            #endregion
+        }
 
         #endregion
 
-        #region Private fields
+        #region Dependencies
 
         /// <summary>
-        /// The data for the prover.
+        /// The manager of <see cref="InferenceRule"/> that provides them categories.
         /// </summary>
-        private readonly TheoremProverData _data;
+        private readonly IInferenceRuleManager _manager;
+
+        /// <summary>
+        /// The applier of <see cref="InferenceRule"/> that infers theorems.
+        /// </summary>
+        private readonly IInferenceRuleApplier _applier;
+
+        /// <summary>
+        /// The produced of trivial <see cref="Theorem"/>s from <see cref="ConstructedConfigurationObject"/>s.
+        /// </summary>
+        private readonly ITrivialTheoremProducer _producer;
+
+        /// <summary>
+        /// The geometric verifier for inferred <see cref="Theorem"/>s.
+        /// </summary>
+        private readonly IGeometricTheoremVerifier _verifier;
+
+        /// <summary>
+        /// The introducer of new <see cref="ConstructedConfigurationObject"/>s that might be used in proofs.
+        /// </summary>
+        private readonly IObjectIntroducer _introducer;
+
+        /// <summary>
+        /// The tracer of invalid inferences, i.e. inferences that yielded invalid theorems.
+        /// </summary>
+        private readonly IInvalidInferenceTracer _tracer;
 
         #endregion
 
@@ -49,292 +129,327 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremProver"/> class.
         /// </summary>
-        /// <param name="data">The data for the prover.</param>
-        /// <param name="derivers">The theorem derivers based on logical rules applied on the existing theorems.</param>
-        /// <param name="trivialTheoremProducer">The producer of trivial theorems.</param>
-        /// <param name="subtheoremDeriver">The sub-theorems deriver. It gets template theorems from the <see cref="_data"/>.</param>
-        public TheoremProver(TheoremProverData data,
-                             ITheoremDeriver[] derivers,
-                             ITrivialTheoremProducer trivialTheoremProducer,
-                             ISubtheoremDeriver subtheoremDeriver)
+        /// <param name="manager">The manager of <see cref="InferenceRule"/> that provides them categories.</param>
+        /// <param name="applier">The applier of <see cref="InferenceRule"/> that infers theorems.</param>
+        /// <param name="producer">The produced of trivial <see cref="Theorem"/>s from <see cref="ConstructedConfigurationObject"/>s.</param>
+        /// <param name="verifier">The geometric verifier for inferred <see cref="Theorem"/>s.</param>
+        /// <param name="introducer">The introducer of new <see cref="ConstructedConfigurationObject"/>s that might be used in proofs.</param>
+        /// <param name="tracer">The tracer of invalid inferences, i.e. inferences that yielded invalid theorems.</param>
+        public TheoremProver(IInferenceRuleManager manager,
+                             IInferenceRuleApplier applier,
+                             ITrivialTheoremProducer producer,
+                             IGeometricTheoremVerifier verifier,
+                             IObjectIntroducer introducer,
+                             IInvalidInferenceTracer tracer)
         {
-            _data = data ?? throw new ArgumentNullException(nameof(data));
-            _derivers = derivers ?? throw new ArgumentNullException(nameof(derivers));
-            _trivialTheoremProducer = trivialTheoremProducer ?? throw new ArgumentNullException(nameof(trivialTheoremProducer));
-            _subtheoremDeriver = subtheoremDeriver ?? throw new ArgumentNullException(nameof(subtheoremDeriver));
+            _applier = applier ?? throw new ArgumentNullException(nameof(applier));
+            _manager = manager ?? throw new ArgumentNullException(nameof(manager));
+            _producer = producer ?? throw new ArgumentNullException(nameof(producer));
+            _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
+            _introducer = introducer ?? throw new ArgumentNullException(nameof(introducer));
+            _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }
 
         #endregion
 
         #region ITheoremProver implementation
 
+        /// <inheritdoc/>
+        public IReadOnlyHashSet<Theorem> ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
+            // Delegate the call to the general method and cast the result
+            => (IReadOnlyHashSet<Theorem>)ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: false);
+
+        /// <inheritdoc/>
+        public IReadOnlyDictionary<Theorem, TheoremProof> ProveTheoremsAndConstructProofs(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
+            // Delegate the call to the general method and cast the result
+            => (IReadOnlyDictionary<Theorem, TheoremProof>)ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: true);
+
         /// <summary>
-        /// Performs the analysis for a given input.
+        /// Proves given theorems that are true in the configuration drawn in a given picture.
         /// </summary>
-        /// <param name="input">The input for the analyzer.</param>
-        /// <returns>The output of the analysis.</returns>
-        public TheoremProverOutput Analyze(TheoremProverInput input)
+        /// <param name="oldTheorems">The theorems that hold in the configuration without the last object.</param>
+        /// <param name="newTheorems">The theorems that say something about the last object.</param>
+        /// <param name="picture">The picture where the configuration in which the theorems hold is drawn.</param>
+        /// <param name="shouldWeConstructProofs">Indicates whether we should construct proofs. This will affect the type of returned result.</param>
+        /// <returns>
+        /// Either the output as for <see cref="ProveTheoremsAndConstructProofs(TheoremMap, TheoremMap, ContextualPicture)"/>,
+        /// if we are constructing proof, or the output as for <see cref="ProveTheorems(TheoremMap, TheoremMap, ContextualPicture)"/> otherwise.
+        /// </returns>
+        private object ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture, bool shouldWeConstructProofs)
         {
-            // Initialize a theorem derivation helper that will do the proving. 
-            // We want it to prove the new theorems
-            var derivationHelper = new TheoremDerivationHelper(theorems: input.NewTheorems);
+            // Find the trivial theorems
+            var trivialTheorems = _producer.InferTrivialTheoremsFromObject(picture.Pictures.Configuration.LastConstructedObject);
 
-            // Prepare a tracker of equalities and incidences
-            var equalityAndIncidenceTracker = new EqualityAndIncidenceTracker();
+            #region Proof builder initialization
 
-            // Get the analyzed configuration for comfort
-            var configuration = input.ContextualPicture.Pictures.Configuration;
+            // Prepare a proof builder in case we are supposed to construct proofs
+            var proofBuilder = shouldWeConstructProofs ? new TheoremProofBuilder() : null;
 
-            // Add the listener for proved theorems
-            derivationHelper.TheoremProven += theorem =>
+            // Mark trivial theorems to the proof builder in case we are supposed to construct proofs
+            trivialTheorems.ForEach(theorem => proofBuilder?.AddImplication(TrivialTheorem, theorem, Array.Empty<Theorem>()));
+
+            // Mark old theorems in case we are supposed to construct proofs
+            oldTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(TrueInPreviousConfiguration, theorem, Array.Empty<Theorem>()));
+
+            #endregion
+
+            #region Normalization helper initialization
+
+            // Initially we are going to assume that the proved theorems are the old ones and the trivial theorems
+            var provedTheorems = oldTheorems.AllObjects.Concat(trivialTheorems);
+
+            // The theorems to prove will be the new ones except for the trivial ones
+            var theoremsToProve = newTheorems.AllObjects.Except(trivialTheorems);
+
+            // Prepare the cloned pictures that will be used to numerically verify new theorems
+            var clonedPictures = picture.Pictures.Clone();
+
+            // Prepare a normalization helper with all this information
+            var normalizationHelper = new NormalizationHelper(_verifier, clonedPictures, provedTheorems, theoremsToProve);
+
+            #endregion
+
+            #region Scheduler initialization
+
+            // Prepare a scheduler
+            var scheduler = new Scheduler(_manager);
+
+            // Do the initial scheduling
+            scheduler.PerformInitialScheduling(theoremsToProve, picture.Pictures.Configuration);
+
+            #endregion
+
+            // Prepare the object introduction helper
+            var objectIntroductionHelper = new ObjectIntroductionHelper(_introducer, normalizationHelper);
+
+            #region Inference loop
+
+            // Do until break
+            while (true)
             {
-                // Switch based on the theorem type
-                switch (theorem.Type)
+                // Ask the scheduler for the next inference data to be used
+                var data = scheduler.NextScheduledData();
+
+                // If there is no data, we will try to introduce objects
+                if (data == null)
                 {
-                    // If we have new equal objects...
-                    case EqualObjects:
-                    {
-                        #region Trivial theorems
+                    // Call the introduction helper
+                    var (removedObjects, introducedObjects) = objectIntroductionHelper.IntroduceObjects();
 
-                        // Get the objects
-                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
-                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
+                    // Invalidate removed objects
+                    removedObjects.ForEach(scheduler.InvalidateObject);
 
-                        // Enumerate them for comfort
-                        object1.ToEnumerable().Concat(object2)
-                            // Only constructed
-                            .OfType<ConstructedConfigurationObject>()
-                            // For each of them
-                            .ForEach(constructedObject =>
-                            {
-                                // Get the trivial theorems
-                                var trivialTheorems = _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(constructedObject);
+                    // Call the appropriate method to handle introduced objects
+                    introducedObjects.ForEach(introducedObject => HandleNewObject(introducedObject, normalizationHelper, scheduler, proofBuilder));
 
-                                // Mark them
-                                trivialTheorems.ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
-
-                                // Get the other object
-                                var otherObject = object1 == constructedObject ? object2 : object1;
-
-                                // Go through the trivial theorems
-                                trivialTheorems.ForEach(trivialTheorem =>
-                                {
-                                    // We're going use this other object to remap the theorem 
-                                    // We need to get all the inner objects first mapped to itself
-                                    var mapping = trivialTheorem.GetInnerConfigurationObjects().ToDictionary(o => o, o => o);
-
-                                    // Replace our object with the other equal object
-                                    mapping[constructedObject] = otherObject;
-
-                                    // Do the remapping
-                                    var remappedTheorem = trivialTheorem.Remap(mapping);
-
-                                    // In case we have something degenerated, do nothing
-                                    // TODO: Trace it. Ideally this shouldn't ever happen
-                                    if (remappedTheorem == null)
-                                        return;
-
-                                    // Add the derivation
-                                    derivationHelper.AddDerivation(remappedTheorem, ReformulatedTheorem, new[] { trivialTheorem, theorem });
-                                });
-                            });
-
-                        #endregion
-
-                        // Mark the proven equality to the tracker
-                        equalityAndIncidenceTracker.MarkEquality(theorem);
-
-                        break;
-                    }
-
-                    case Incidence:
-                    {
-                        #region Mark sure trivial theorems of both objects are registered
-
-                        // Get the objects
-                        var object1 = ((BaseTheoremObject)theorem.InvolvedObjectsList[0]).ConfigurationObject;
-                        var object2 = ((BaseTheoremObject)theorem.InvolvedObjectsList[1]).ConfigurationObject;
-
-                        // Enumerate them for comfort
-                        object1.ToEnumerable().Concat(object2)
-                            // Only constructed
-                            .OfType<ConstructedConfigurationObject>()
-                            // Take them
-                            .SelectMany(_trivialTheoremProducer.DeriveTrivialTheoremsFromObject)
-                            // Mark them
-                            .ForEach(theorem => derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>()));
-
-                        #endregion
-
-                        #region Using incidences to prove collinearity / concyclity
-
-                        // Go through the unproven ones
-                        derivationHelper.UnprovenTheoremsOfTypes(CollinearPoints, ConcyclicPoints)
-                            // Enumerate because they might change by proving
-                            .ToList()
-                            // Try to prove each of them
-                            .ForEach(theoremToProve =>
-                            {
-                                // Get the points
-                                var points = theoremToProve.GetInnerConfigurationObjects();
-
-                                // For each point
-                                var lineOrCircle = points
-                                    // Try to find the line or circle where each point lies
-                                    .Select(equalityAndIncidenceTracker.FindLinesOrCircles)
-                                    // Find the intersection of all these sets
-                                    .Aggregate((intersection, current) => intersection.Intersect(current).ToSet())
-                                    // Take the first common element or null
-                                    .FirstOrDefault();
-
-                                // If there is no common line or circle, we can't do much
-                                if (lineOrCircle == null)
-                                    return;
-
-                                // Otherwise we have it! Prepare the incidences
-                                var incidences = points.Select(point => new Theorem(Incidence, point, lineOrCircle)).ToArray();
-
-                                // If we're proving collinearity...
-                                if (theoremToProve.Type == CollinearPoints)
-                                    derivationHelper.AddDerivation(theoremToProve, IncidencesAndCollinearity, incidences);
-                                // Otherwise we're proving concyclities
-                                else
-                                    derivationHelper.AddDerivation(theoremToProve, IncidencesAndConcyclity, incidences);
-                            });
-
-                        #endregion
-
-                        // Mark the proven incidence to the tracker
-                        equalityAndIncidenceTracker.MarkIncidence(theorem);
-
-                        break;
-                    }
+                    // Ask the scheduler for the next inference data to be used
+                    data = scheduler.NextScheduledData();
                 }
-            };
 
-            // Add the listener for newly derived equalities
-            equalityAndIncidenceTracker.NewEqualities += derivations =>
-            {
-                // Add the derivation for all of them
-                derivations.ForEach(pair => derivationHelper.AddDerivation(pair.derivedEquality, Transitivity, pair.usedEqualities));
-            };
+                // If all theorems are proven or there is no data even after object introduction, we're done
+                if (!normalizationHelper.AnythingLeftToProve || data == null)
+                    // If we should construct proofs
+                    return shouldWeConstructProofs
+                        // Build them for the new theorems
+                        ? (object)proofBuilder.BuildProofs(newTheorems.AllObjects)
+                        // Otherwise just take the new theorems that happen to be proved
+                        : newTheorems.AllObjects.Where(normalizationHelper.ProvedTheorems.Contains).ToReadOnlyHashSet();
 
-            // Add the listener for newly derived incidences
-            equalityAndIncidenceTracker.NewIncidences += derivations =>
-            {
-                // Add the derivation for all of them
-                derivations.ForEach(triple => derivationHelper.AddDerivation(triple.newIncidence, ReformulatedTheorem,
-                    // The assumptions are the equalities and the old incidence
-                    triple.usedEqualities.Concat(triple.oldIncidence)));
-            };
+                #region Inference rule applier call
 
-            #region Basic derivations
+                // Try to apply the current scheduled data
+                var applierResults = _applier.InferTheorems(new InferenceRuleApplierInput
+                    (
+                        // Pass the data provided by the scheduler
+                        inferenceRule: data.InferenceRule,
+                        premappedAssumption: data.PremappedAssumption,
+                        premappedConclusion: data.PremappedConclusion,
+                        premappedObject: data.PremappedObject,
 
-            // Add old theorems as not interesting ones
-            foreach (var theorem in input.OldTheorems.AllObjects)
-                derivationHelper.AddDerivation(theorem, TrueInPreviousConfiguration, Array.Empty<Theorem>());
+                        // Pass the methods that the normalization helper offers
+                        mappableTheoremsFactory: normalizationHelper.GetProvedTheoremOfType,
+                        mappableObjectsFactory: normalizationHelper.GetObjectsWithConstruction,
+                        equalObjectsFactory: normalizationHelper.GetEqualObjects,
+                        normalizationFunction: normalizationHelper.GetNormalVersionOfObjectOrNull
+                    ))
+                    // Enumerate results. This step is needed because the applier could iterate over the 
+                    // collections of objects and theorems used by the normalization helper 
+                    .ToArray();
 
-            // Add all trivial theorems as not interesting ones
-            foreach (var theorem in _trivialTheoremProducer.DeriveTrivialTheoremsFromObject(configuration.LastConstructedObject))
-                derivationHelper.AddDerivation(theorem, TrivialTheorem, Array.Empty<Theorem>());
+                // Before handling results prepare a variable that will indicate whether there has been any change of the
+                // normal version of an object. 
+                var anyNormalVersionChange = false;
 
-            // Add theorems definable simpler as not interesting ones
-            foreach (var theorem in input.NewTheorems.AllObjects)
-            {
-                // For a theorem find unnecessary objects
-                var unnecessaryObjects = theorem.GetUnnecessaryObjects(configuration);
+                // Handle every inferred theorems
+                foreach (var (theorem, negativeAssumptions, possitiveAssumptions) in applierResults)
+                {
+                    // If in some previous iteration there has been a change of the normal version of an object, then
+                    // it might happen that some other theorems inferred in this loop no longer contain only correct objects,
+                    // therefore we need to verify them. The reason why we don't have to worry about incorrect objects in other
+                    // cases is that the normalization helper keeps everything normalized and the inference rule applier provides
+                    // only normalized objects. However, if there is a change of normal versions and the applier is already called
+                    // and the results are enumerated, then we have to check it manually
+                    if (anyNormalVersionChange && normalizationHelper.DoesTheoremContainAnyIncorrectObject(theorem))
+                        continue;
 
-                // If there are any...
-                if (unnecessaryObjects.Any())
-                    // Add the derivation
-                    derivationHelper.AddDerivation(theorem, new DefinableSimplerDerivationData(unnecessaryObjects), Array.Empty<Theorem>());
+                    // We need to check negative assumptions. The inference should be accepted only if all of them are false
+                    if (negativeAssumptions.Any(negativeAssumption => _verifier.IsTrueInAllPictures(clonedPictures, negativeAssumption)))
+                        continue;
+
+                    // Prepare the proof data in case we need to construct proofs
+                    var proofData = shouldWeConstructProofs ? new ProofData(proofBuilder, new CustomInferenceData(data.InferenceRule), possitiveAssumptions) : null;
+
+                    // Prepare the variable indicating whether the theorem is geometrically valid
+                    bool isValid;
+
+                    // If this is an equality
+                    if (theorem.Type == EqualObjects)
+                    {
+                        // Call the appropriate method to handle it while finding out whether there has been any normal version change
+                        HandleEquality(theorem, normalizationHelper, scheduler, proofData, out isValid, out var anyNormalVersionChangeInThisIteration);
+
+                        // If yes, then we set the outer loop variable indicating the same thing for the whole loop
+                        if (anyNormalVersionChangeInThisIteration)
+                            anyNormalVersionChange = true;
+                    }
+                    // If this is a non-equality
+                    else
+                        // Call the appropriate method to handle it
+                        HandleNonequality(theorem, normalizationHelper, scheduler, proofData, out isValid);
+
+                    // If the theorem turns out not to be geometrically valid, trace it
+                    if (!isValid)
+                        _tracer.MarkInvalidInferrence(picture.Pictures.Configuration, theorem, data.InferenceRule, negativeAssumptions, possitiveAssumptions);
+                }
+
+                #endregion
             }
 
-            // Use all derivers to make relations between all theorems
-            foreach (var deriver in _derivers)
-                foreach (var (assumptions, derivedTheorem) in deriver.DeriveTheorems(input.AllTheorems))
-                    derivationHelper.AddDerivation(derivedTheorem, deriver.Rule, assumptions);
+            #endregion
+        }
+
+        /// <summary>
+        /// Handles a new object by commuting it with the scheduler and finding its trivial theorems and passing those to be handled
+        /// by the normalization helper and scheduler.
+        /// </summary>
+        /// <param name="newObject">The new object to be handled.</param>
+        /// <param name="helper">The normalization helper used later for the trivial theorems of the object.</param>
+        /// <param name="scheduler">The scheduler of inference rules used for the new object and later for its trivial theorems.</param>
+        /// <param name="builder">Either the builder to build theorem proofs; or null, if we are not constructing proofs.</param>
+        private void HandleNewObject(ConstructedConfigurationObject newObject, NormalizationHelper helper, Scheduler scheduler, TheoremProofBuilder builder)
+        {
+            // Schedule after finding this object
+            scheduler.ScheduleAfterDiscoveringObject(newObject);
+
+            // Look for its trivial theorems
+            foreach (var trivialTheorem in _producer.InferTrivialTheoremsFromObject(newObject))
+            {
+                // Prepare the proof data in case we need to construct proofs
+                var proofData = builder != null ? new ProofData(builder, new TheoremInferenceData(TrivialTheorem), assumptions: Array.Empty<Theorem>()) : null;
+
+                // Let the other method handle this theorem, while ignoring whether it is geometrically valid (it just should be)
+                HandleNonequality(trivialTheorem, helper, scheduler, proofData, out var _);
+            }
+        }
+
+        /// <summary>
+        /// Handles an inferred theorem by communicating it with the normalization helper and scheduler, and also handling proof 
+        /// construction is the proof data is provided.
+        /// </summary>
+        /// <param name="theorem">The theorem to be handled.</param>
+        /// <param name="helper">The normalization helper that verifies and normalizes the theorem.</param>
+        /// <param name="scheduler">The scheduler of inference rules used for the theorem if it is correct.</param>
+        /// <param name="proofData">Either the data needed to mark the theorem's inference in case it's correct; or null, if we are not constructing proofs.</param>
+        /// <param name="isValid">Indicates whether the theorem has been found geometrically valid.</param>
+        private void HandleNonequality(Theorem theorem, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, out bool isValid)
+        {
+            // Mark the theorem to the helper
+            helper.MarkProvedNonequality(theorem, out var isNew, out isValid, out var normalizedTheorem, out var equalities);
+
+            // If it turns out not new or valid, we're done
+            if (!isNew || !isValid)
+                return;
+
+            #region Handle proof construction
+
+            // Mark the original theorem
+            proofData?.ProofBuilder.AddImplication(proofData.InferenceData, theorem, proofData.Assumptions);
+
+            // If any normalization happened
+            if (equalities.Any())
+                // Mark the normalized theorem too
+                proofData?.ProofBuilder.AddImplication(ReformulatedTheorem, normalizedTheorem, assumptions: equalities.Concat(theorem).ToArray());
 
             #endregion
 
-            #region Subtheorem derivation
+            // Let the scheduler know
+            scheduler.ScheduleAfterProving(normalizedTheorem);
+        }
 
-            // Prepare a set of used template configurations
-            var usedTemplates = new HashSet<(Configuration, TheoremMap)>();
+        /// <summary>
+        /// Handles an inferred equality theorem by communicating it with the normalization helper and scheduler, and also handling proof 
+        /// construction is the proof data is provided. 
+        /// </summary>
+        /// <param name="equality">The equality theorem to be handled.</param>
+        /// <param name="helper">The normalization helper that verifies and normalizes the theorem.</param>
+        /// <param name="scheduler">The scheduler of inference rules used for the new objects and theorems this equality might have brought.</param>
+        /// <param name="proofData">Either the data needed to mark the theorem's inference in case it's correct; or null, if we are not constructing proofs.</param>
+        /// <param name="isValid">Indicates whether the theorem has been found geometrically valid.</param>
+        /// <param name="anyChangeOfNormalVersion">Indicates whether this equality caused any change of the normal version of some object.</param>
+        private void HandleEquality(Theorem equality, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, out bool isValid, out bool anyChangeOfNormalVersion)
+        {
+            // Mark the equality to the helper
+            helper.MarkProvedEquality(equality, out var isNew, out isValid, out var result);
 
-            // We're going to execute the subtheorems algorithm in two phases
-            // In the first one we try to derive our theorems that we're interested
-            // in, and potentially some equalities / incidences. In the second run
-            // we then only look for deriving equalities / incidences, because 
-            // potential template theorems might have been skipped before we even
-            // knew about them.
-            GeneralUtilities.ExecuteNTimes(numberOfTimes: 2, action: () =>
+            // If it turns out not new or valid, we're done
+            if (!isNew || !isValid)
             {
-                // Go through the template theorems
-                foreach (var template in _data.TemplateTheorems)
-                {
-                    // If we have used this template, we can skip it
-                    if (usedTemplates.Contains(template))
-                        continue;
+                // No removed objects
+                anyChangeOfNormalVersion = false;
 
-                    // Deconstruct
-                    var (templateConfiguration, templateTheorems) = template;
+                // We're done
+                return;
+            }
 
-                    // If there are no main theorems to prove, we don't need to continue
-                    if (!derivationHelper.AnyTheoremLeftToProve())
-                        break;
+            // If we should construct proof, mark the inference to the proof builder
+            proofData?.ProofBuilder.AddImplication(proofData.InferenceData, equality, proofData.Assumptions);
 
-                    // If these doesn't yield special Incidence and EqualObjects theorems
-                    if (!templateTheorems.ContainsKey(Incidence) && !templateTheorems.ContainsKey(EqualObjects)
-                        // And there is no chance we will prove some theorem
-                        && !templateTheorems.Keys.Any(derivationHelper.AnyTheoremLeftToProveOfType))
-                        // Then we may skip the template
-                        continue;
+            #region Handling new normalized theorems
 
-                    // Otherwise we're going to do the derivation
-                    usedTemplates.Add(template);
+            // Go through all of them
+            foreach (var (originalTheorem, equalities, normalizedTheorem) in result.NormalizedNewTheorems)
+            {
+                // If we should construct proof, mark the normalized theorem to the proof builder
+                proofData?.ProofBuilder.AddImplication(ReformulatedTheorem, normalizedTheorem, assumptions: equalities.Concat(originalTheorem).ToArray());
 
-                    // Call the subtheorem algorithm
-                    var outputs = _subtheoremDeriver.DeriveTheorems(new SubtheoremDeriverInput
-                    (
-                        examinedConfigurationPicture: input.ContextualPicture,
-                        examinedConfigurationTheorems: input.AllTheorems,
-                        templateConfiguration: templateConfiguration,
-                        templateTheorems: templateTheorems
-                    ));
+                // Let the scheduler know about the new normalized theorem
+                scheduler.ScheduleAfterProving(normalizedTheorem);
+            }
 
-                    // Go through its outputs
-                    foreach (var output in outputs)
-                    {
-                        // Go through the theorems it derived
-                        foreach (var (derivedTheorem, templateTheorem) in output.DerivedTheorems)
-                        {
-                            // Prepare the used equality theorems
-                            var usedEqualities = output.UsedEqualities
-                                // Convert each equality to a theorem
-                                .Select(equality => new Theorem(EqualObjects, equality.originalObject, equality.equalObject));
+            #endregion
 
-                            // Prepare the used incidences theorems
-                            var usedIncidences = output.UsedIncidencies
-                                // Convert each incidence to a theorem
-                                .Select(incidence => new Theorem(Incidence, incidence.point, incidence.lineOrCircle));
+            // Invalidate theorems
+            result.DismissedTheorems.ForEach(scheduler.InvalidateTheorem);
 
-                            // Prepare the needed assumptions by merging the used acts, equalities and incidences
-                            var neededAsumptions = output.UsedFacts.Concat(usedEqualities).Concat(usedIncidences).ToArray();
+            // Invalidate removed objects
+            result.RemovedObjects.ForEach(scheduler.InvalidateObject);
 
-                            // Add the subtheorem derivation
-                            derivationHelper.AddDerivation(derivedTheorem, new SubtheoremDerivationData(templateTheorem), neededAsumptions);
-                        }
-                    }
-                }
+            // Handle changed objects
+            result.ChangedObjects.ForEach(changedObject =>
+            {
+                // First we will invalidate them
+                scheduler.InvalidateObject(changedObject);
+
+                // And now schedule for them again as if they were knew because now the results of schedules might be different
+                scheduler.ScheduleAfterDiscoveringObject(changedObject);
             });
 
-            #endregion
+            // Handle entirely new objects 
+            result.NewObjects.ForEach(newObject => HandleNewObject(newObject, helper, scheduler, proofData?.ProofBuilder));
 
-            // TODO: Trace discovered unproven equalities / incidences
-
-            // Let the helper construct the result
-            return derivationHelper.ConstructResult();
+            // Set if there has been any change of normal version, which is indicated by removing 
+            // an object or changing its normal version
+            anyChangeOfNormalVersion = result.RemovedObjects.Any() || result.ChangedObjects.Any();
         }
 
         #endregion

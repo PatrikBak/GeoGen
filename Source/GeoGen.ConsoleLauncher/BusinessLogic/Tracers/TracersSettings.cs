@@ -27,16 +27,6 @@
         /// </summary>
         public GeometryFailureTracerSettings GeometryFailureTracerSettings { get; }
 
-        /// <summary>
-        /// Indicates whether tracing of subtheorem deriver failures is on.
-        /// </summary>
-        public bool TraceSubtheoremDeriverFailures { get; }
-
-        /// <summary>
-        /// The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>.
-        /// </summary>
-        public SubtheoremDeriverGeometryFailureTracerSettings SubtheoremDeriverGeometryFailureTracerSettings { get; }
-
         #endregion
 
         #region Constructor
@@ -48,21 +38,15 @@
         /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>.</param>
         /// <param name="traceGeometryFailures">Indicates whether tracing of geometry failures is on.</param>
         /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>.</param>
-        /// <param name="traceSubtheoremDeriverFailures">Indicates whether tracing of subtheorem deriver failures is on.</param>
-        /// <param name="subtheoremDeriverGeometryFailureTracerSettings">The settings for <see cref="SubtheoremDeriverGeometryFailureTracer"/>.</param>
         public TracersSettings(bool traceConstructorFailures,
                                ConstructorFailureTracerSettings constructorFailureTracerSettings,
                                bool traceGeometryFailures,
-                               GeometryFailureTracerSettings geometryFailureTracerSettings,
-                               bool traceSubtheoremDeriverFailures,
-                               SubtheoremDeriverGeometryFailureTracerSettings subtheoremDeriverGeometryFailureTracerSettings)
+                               GeometryFailureTracerSettings geometryFailureTracerSettings)
         {
             TraceConstructorFailures = traceConstructorFailures;
             ConstructorFailureTracerSettings = constructorFailureTracerSettings;
             TraceGeometryFailures = traceGeometryFailures;
             GeometryFailureTracerSettings = geometryFailureTracerSettings;
-            TraceSubtheoremDeriverFailures = traceSubtheoremDeriverFailures;
-            SubtheoremDeriverGeometryFailureTracerSettings = subtheoremDeriverGeometryFailureTracerSettings;
         }
 
         #endregion

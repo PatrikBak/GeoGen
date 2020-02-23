@@ -69,15 +69,16 @@ namespace GeoGen.Core
         /// of the objects cannot be mapped, then returns the default value.
         /// </summary>
         /// <param name="mapping">The dictionary representing the mapping.</param>
+        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
         /// <returns>The remapped objects, if mapping can be done; (null, null) otherwise.</returns>
-        protected (TheoremObject, TheoremObject) RemapObjects(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
+        protected (TheoremObject, TheoremObject) RemapObjects(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Map particular objects
-            var o1 = Object1.Remap(mapping);
-            var o2 = Object2.Remap(mapping);
+            var mappedObject1 = Object1.Remap(mapping, flattenObjectsFromPoints);
+            var mappedObject2 = Object2.Remap(mapping, flattenObjectsFromPoints);
 
             // Return tuple only if none of them is null
-            return o1 != null && o2 != null ? (o1, o2) : default;
+            return mappedObject1 != null && mappedObject2 != null ? (mappedObject1, mappedObject2) : default;
         }
 
         #endregion

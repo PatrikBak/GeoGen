@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.Core
 {
@@ -75,6 +77,34 @@ namespace GeoGen.Core
 
         #endregion
 
+        #region Public methods
+
+        /// <summary>
+        /// Checks if given flattened reordered arguments would make the same object as this one.
+        /// </summary>
+        /// <param name="flattenedReorderedArguments">The flattened reordered arguments to be checked.</param>
+        /// <returns>true, if the arguments would make the same object; false otherwise.</returns>
+        public bool CanWeReorderArgumentsLikeThis(ConfigurationObject[] flattenedReorderedArguments)
+        {
+            // First find out if the types are correct
+            var doTypesFit = flattenedReorderedArguments
+                // For every passed object we take the type
+                .Select(argument => argument.ObjectType)
+                // These types must correspond to the signature
+                .SequenceEqual(Construction.Signature.ObjectTypes);
+
+            // If the types don't fit, then the answer is no
+            if (!doTypesFit)
+                return false;
+
+            // Now we can do the check by creating an artificial object with the passed arguments
+            return new ConstructedConfigurationObject(Construction, flattenedReorderedArguments)
+                // And compare this object with this one
+                .Equals(this);
+        }
+
+        #endregion
+
         #region HashCode and Equals
 
         /// <summary>
@@ -90,14 +120,12 @@ namespace GeoGen.Core
         /// <returns>true, if they are equal; false otherwise.</returns>
         public override bool Equals(object otherObject)
         {
-            // Either the references are equals
+            // Either the references are equal
             return this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a constructed object
                 && otherObject is ConstructedConfigurationObject constructedObject
-                // And neither of our two objects are 'Random' (such objects can't be ever equal)
-                && !Construction.IsRandom && !constructedObject.Construction.IsRandom
                 // And their constructions are equal
                 && constructedObject.Construction.Equals(Construction)
                 // And their arguments are equal

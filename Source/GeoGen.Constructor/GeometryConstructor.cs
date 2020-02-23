@@ -320,11 +320,21 @@ namespace GeoGen.Constructor
                     return new IAnalyticObject[] { point1, point2, point3 };
                 }
 
-                // With four points we'll create a convex quadrilateral
+                // In quadrilateral case we will a convex one
                 case LooseObjectsLayout.Quadrilateral:
                 {
                     // Create the points
                     var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
+
+                    // Return them in an array 
+                    return new IAnalyticObject[] { point1, point2, point3, point4 };
+                }
+
+                // In cyclic quadrilateral case we will a convex one
+                case LooseObjectsLayout.CyclicQuadrilateral:
+                {
+                    // Create the points
+                    var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomCyclicConvexQuadrilateral();
 
                     // Return them in an array 
                     return new IAnalyticObject[] { point1, point2, point3, point4 };

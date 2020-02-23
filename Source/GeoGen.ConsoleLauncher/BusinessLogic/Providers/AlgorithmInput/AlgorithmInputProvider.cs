@@ -52,7 +52,7 @@ namespace GeoGen.ConsoleLauncher
             LoggingManager.LogInfo($"Starting to search for input files in {_settings.InputFolderPath}");
 
             // Prepare the available input files
-            var inputFiles = Directory.EnumerateFiles(_settings.InputFolderPath, $"*.{_settings.FilesExtention}", SearchOption.AllDirectories)
+            var inputFiles = Directory.EnumerateFiles(_settings.InputFolderPath, $"*.{_settings.FileExtension}", SearchOption.AllDirectories)
                     // Find their file names
                     .Select(path => (path, fileName: Path.GetFileNameWithoutExtension(path)))
                     // Take only those that start with the requested pattern

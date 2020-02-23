@@ -66,7 +66,7 @@ namespace GeoGen.TheoremFinder
                 // If we have an incidence, we don't want to do anything 
                 // (it's not needed to state that A lies on line AB)
                 theorem.Type == TheoremType.Incidence ? Enumerable.Empty<Theorem>() :
-                // Otherwise  For each theorem we take its objects
+                // Otherwise for each theorem we take its objects
                 theorem.InvolvedObjects
                     // Find the possible definition changes for each
                     // (this includes the option of not changing the definition at all)
@@ -114,7 +114,7 @@ namespace GeoGen.TheoremFinder
                 // If we have an angle
                 case AngleTheoremObject angle:
 
-                    // Recursively get the re-definitions of both the objects first object
+                    // Recursively get the re-definitions of both the objects
                     return new[]
                     {
                         FindDefinitionChangeOptions(angle.Object1, contextualPicture),

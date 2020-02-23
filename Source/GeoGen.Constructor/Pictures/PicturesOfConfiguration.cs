@@ -48,10 +48,20 @@ namespace GeoGen.Constructor
         #region Public methods
 
         /// <summary>
-        /// Clones all the pictures and returns them as a <see cref="Pictures"/>, i.e. pictures without configuration.
+        /// Clones the pictures.
         /// </summary>
-        /// <returns>The clones pictures.</returns>
-        public Pictures CloneAsRegularPictures() => Clone();
+        /// <returns>The cloned pictures.</returns>
+        public new PicturesOfConfiguration Clone()
+        {
+            // Clone the pictures
+            var picturesList = _pictures.Select(picture => picture.Clone()).ToList();
+
+            // Create a pictures instance with the cloned pictures
+            var pictures = new PicturesOfConfiguration(Configuration, picturesList);
+
+            // Return them
+            return pictures;
+        }
 
         #endregion
 

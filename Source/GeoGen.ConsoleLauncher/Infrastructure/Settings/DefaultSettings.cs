@@ -22,7 +22,6 @@ namespace GeoGen.ConsoleLauncher
             (
                 loggers: new List<BaseLoggerSettings>
                 {
-                    // Console logger
                     new ConsoleLoggerSettings
                     (
                         includeLoggingOrigin: false,
@@ -30,7 +29,6 @@ namespace GeoGen.ConsoleLauncher
                         logOutputLevel: LogOutputLevel.Info
                     ),
 
-                    // File logger
                     new FileLoggerSettings
                     (
                         includeLoggingOrigin: true,
@@ -76,7 +74,6 @@ namespace GeoGen.ConsoleLauncher
                         {
                             { RankedAspect.Symmetry, 200},
                             { RankedAspect.Type, 10},
-                            { RankedAspect.NumberOfProofAttempts, 5},
                             { RankedAspect.TheoremsPerObject, 3},
                             { RankedAspect.CirclesPerObject, 1}
                         }
@@ -106,12 +103,12 @@ namespace GeoGen.ConsoleLauncher
             (
                 inputFolderPath: "..\\..\\..\\Data\\Inputs",
                 inputFilePrefix: "input",
-                filesExtention: "txt"
+                fileExtension: "txt"
             ),
-            templateTheoremsFolderSettings: new TemplateTheoremsFolderSettings
+            inferenceRuleFolderSettings: new InferenceRuleFolderSettings
             (
-                theoremsFolderPath: "..\\..\\..\\Data\\TemplateTheorems",
-                filesExtention: "txt"
+                ruleFolderPath: "..\\..\\..\\Data\\InferenceRules",
+                fileExtension: "txt"
             ),
             simplificationRulesProviderSettings: new SimplificationRulesProviderSettings
             (
@@ -120,18 +117,16 @@ namespace GeoGen.ConsoleLauncher
             debugAlgorithmRunnerSettings: new DebugAlgorithmRunnerSettings
             (
                 outputFolder: "..\\..\\..\\Data\\Outputs\\Readable",
-                outputWithAttemptsFolder: "..\\..\\..\\Data\\Outputs\\WithAttempts",
-                writeOutputWithAttempts: true,
-                outputWithAttemptsAndProofsFolder: "..\\..\\..\\Data\\Outputs\\WithAttemptsAndProofs",
-                writeOutputWithAttemptsAndProofs: true,
+                outputFolderWithProofs: "..\\..\\..\\Data\\Outputs\\WithAttempts",
+                writeOutputWithProofs: true,
                 outputJsonFolder: "..\\..\\..\\Data\\Outputs\\Json",
                 outputFilePrefix: "output",
-                filesExtension: "txt",
+                fileExtension: "txt",
                 generationProgresLoggingFrequency: 15,
                 logProgress: true,
-                includeUnprovenDiscoveredTheorems: true,
                 bestTheoremsReadableFilePath: "..\\..\\..\\Data\\best_theorems.txt",
-                bestTheoremsJsonFilePath: "..\\..\\..\\Data\\best_theorems.json"
+                bestTheoremsJsonFilePath: "..\\..\\..\\Data\\best_theorems.json",
+                inferenceRuleUsageFile: "..\\..\\..\\Data\\rule_usages.json"
             ),
             tracersSettings: new TracersSettings
             (
@@ -145,12 +140,6 @@ namespace GeoGen.ConsoleLauncher
                 geometryFailureTracerSettings: new GeometryFailureTracerSettings
                 (
                     failuresFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
-                    logFailures: true
-                ),
-                traceSubtheoremDeriverFailures: true,
-                subtheoremDeriverGeometryFailureTracerSettings: new SubtheoremDeriverGeometryFailureTracerSettings
-                (
-                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\subtheorem_failures.txt",
                     logFailures: true
                 )
             )

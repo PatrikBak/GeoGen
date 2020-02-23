@@ -91,7 +91,9 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configurationObject">The configuration object.</param>
         /// <returns>true, if the object is present in the picture; false otherwise.</returns>
-        public bool Contains(ConfigurationObject configurationObject) => _content.ContainsLeftKey(configurationObject);
+        public bool Contains(ConfigurationObject configurationObject) =>
+            // Return that the object is either in the dictionary or among duplicates
+            _content.ContainsLeftKey(configurationObject) || _equalObjects.ContainsKey(configurationObject);
 
         /// <summary>
         /// Clones the picture.

@@ -169,9 +169,9 @@ namespace GeoGen.Constructor
         #region Public methods
 
         /// <summary>
-        /// Clones the contextual picture by cloning the current one and adding only 
-        /// the last object of the configuration represented in the pictures. Throws
-        /// an <see cref="InconsistentPicturesException"/> if it cannot be done.
+        /// Clones the contextual picture by cloning the current one and adding only the last object of the configuration 
+        /// represented in the pictures. The last object must already be constructed in the underlying <see cref="Pictures"/>.
+        /// Throws  an <see cref="InconsistentPicturesException"/> if it cannot be done.
         /// </summary>
         /// <param name="newPictures">The pictures that should be used to construct the contextual picture.</param>
         /// <returns>The contextual picture containing this cloned picture.</returns>
@@ -255,92 +255,6 @@ namespace GeoGen.Constructor
 
             // Return the picture
             return newPicture;
-        }
-
-        /// <summary>
-        /// Gets the geometric object corresponding to the object constructed on all the pictures.
-        /// This object might or might not be one already present in the contextual picture. If the 
-        /// object couldn't be determined, an <see cref="InconsistentPicturesException"/> is thrown. 
-        /// </summary>
-        /// <param name="configurationObject">The object that was actually constructed.</param>
-        /// <param name="geometryData">The geometry data in particular pictures.</param>
-        /// <returns>The found object; or null, if such object is not present.</returns>
-        public GeometricObject GetGeometricObject(ConfigurationObject configurationObject, IReadOnlyDictionary<Picture, IAnalyticObject> geometryData)
-        {
-            // Try to find the object among our current geometric objects
-            var foundObject = FindGeometricObject(configurationObject, picture => geometryData[picture]);
-
-            // If we found the object, we can return it 
-            if (foundObject != null)
-                return foundObject;
-
-            // If we couldn't find it, we need to construct it
-            // We switch based on the type of object that we're dealing with
-            switch (geometryData.First().Value)
-            {
-                // Line or circle
-                case Line _:
-                case Circle _:
-
-                    // We need to find points that lie on this object
-                    // Prepare them
-                    var points = new HashSet<PointObject>();
-
-                    // Search all the point of the picture individually
-                    foreach (var point in AllPoints)
-                    {
-                        // Prepare the variable indicating whether the point
-                        // lies on the object
-                        bool? liesOn = null;
-
-                        #region Handling pictures
-
-                        // Iterate over pictures
-                        foreach (var picture in Pictures)
-                        {
-                            // Pull the analytic representations of the point and the line/circle
-                            var analyticPoint = (Point)_objects[picture].GetRightValue(point);
-                            var lineOrCircle = geometryData[picture];
-
-                            // Let the helper decide if the point lies on the object
-                            var liesOnInThisPicture = AnalyticHelpers.LiesOn(lineOrCircle, analyticPoint);
-
-                            // If the result has been set and it differs from the currently 
-                            // found value, then we have an inconsistency
-                            if (liesOn != null && liesOn.Value != liesOnInThisPicture)
-                                throw new InconsistentIncidenceException(point, configurationObject);
-
-                            // Otherwise we update the result
-                            liesOn = liesOnInThisPicture;
-                        }
-
-                        #endregion
-
-                        // If the point lies on our object, add it to the points set
-                        if (liesOn.Value)
-                            points.Add(point);
-                    }
-
-                    // Return the object based on the type
-                    return geometryData.First().Value switch
-                    {
-                        // Line
-                        Line _ => new LineObject(configurationObject: null, points) as GeometricObject,
-
-                        // Circle
-                        Circle _ => new CircleObject(configurationObject: null, points),
-
-                        // Default
-                        _ => throw new ConstructorException("Impossible situation")
-                    };
-
-                // Point
-                case Point _:
-                    throw new ConstructorException("Finding equivalent point is currently not supported.");
-
-                default:
-                    throw new ConstructorException($"Unhandled type of analytic object: {geometryData.First().Value.GetType()}");
-            }
         }
 
         /// <summary>
@@ -540,7 +454,6 @@ namespace GeoGen.Constructor
             // We use our helper method to do the hard work
             foreach (var point in points)
                 ResolveLine(pointObject, point, isNew);
-
 
             // Now we construct all circles that pass through our point
             // We iterate twice over to obtain all the non-ordered pairs of them

@@ -35,7 +35,7 @@ namespace GeoGen.Core
         /// <param name="numberOfParameters">The number of needed parameters of the given type.</param>
         public SetConstructionParameter(ConstructionParameter typeOfParameters, int numberOfParameters)
         {
-            TypeOfParameters = typeOfParameters ?? throw new ArgumentNullException(nameof(numberOfParameters));
+            TypeOfParameters = typeOfParameters ?? throw new ArgumentNullException(nameof(typeOfParameters));
             NumberOfParameters = numberOfParameters;
         }
 

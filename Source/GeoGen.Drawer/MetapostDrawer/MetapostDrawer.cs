@@ -1,5 +1,4 @@
 ﻿using GeoGen.AnalyticGeometry;
-using GeoGen.ConsoleLauncher;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
