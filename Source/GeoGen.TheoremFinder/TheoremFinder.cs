@@ -162,8 +162,8 @@ namespace GeoGen.TheoremFinder
                             // It certainly passes through the first point
                             CircleTheoremObject _ => geometricPoints[0].Circles.First(circle => circle.ContainsAll(geometricPoints)),
 
-                            // Default case
-                            _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
+                            // Unhandled cases
+                            _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
                         });
                     }
 
@@ -203,8 +203,8 @@ namespace GeoGen.TheoremFinder
                                         // If we have a circle, then we have two more points left to set (besides the new one)
                                         CircleTheoremObject _ => new CircleTheoremObject(points[0], points[1], newConfigurationObject),
 
-                                        // Default case
-                                        _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
+                                        // Unhandled cases
+                                        _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
                                     };
                                 })
                                 // Append the no-change definition
@@ -232,20 +232,20 @@ namespace GeoGen.TheoremFinder
                                 // Circle case
                                 CircleTheoremObject _ => new CircleTheoremObject(newConfigurationObject),
 
-                                // Default case
-                                _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
+                                // Unhandled cases
+                                _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
                             };
 
                             // Finally we can return our new definition, together
                             // with  the 'no change of definition' option
                             return new[] { oldTheoremObject, newDefinition };
 
-                        // Default case
+                        // Unhandled cases
                         default:
-                            throw new TheoremFinderException($"Unhandled type of configuration object: {newConfigurationObject.ObjectType}");
+                            throw new TheoremFinderException($"Unhandled value of {nameof(ConfigurationObjectType)}: {newConfigurationObject.ObjectType}");
                     }
 
-                // Default case
+                // Unhandled cases
                 default:
                     throw new TheoremFinderException($"Unhandled type of theorem object: {oldTheoremObject.GetType()}");
             }

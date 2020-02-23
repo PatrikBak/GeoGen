@@ -79,9 +79,9 @@ namespace GeoGen.Core
 
                         break;
 
-                    // Default case
+                    // Unhandled cases
                     default:
-                        throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}");
+                        throw new GeoGenException($"Unhandled type of {nameof(ConstructionArgument)}: {argument.GetType()}");
                 }
             }
 

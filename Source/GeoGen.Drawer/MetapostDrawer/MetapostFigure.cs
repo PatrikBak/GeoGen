@@ -633,7 +633,7 @@ namespace GeoGen.Drawer
                     case Circle _:
                         break;
 
-                    // If something else...
+                    // Unhandled cases
                     default:
                         throw new DrawerException($"Unhandled type of {nameof(IAnalyticObject)}: {analyticObject.GetType()}");
                 }

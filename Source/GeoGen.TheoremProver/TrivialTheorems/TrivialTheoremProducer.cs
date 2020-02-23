@@ -266,9 +266,9 @@ namespace GeoGen.TheoremProver
                         case CenterOfCircle:
                             return Array.Empty<Theorem>();
 
-                        // Default case
+                        // Unhandled cases
                         default:
-                            throw new TheoremProverException($"Unhandled type of predefined construction: {predefinedConstruction.Type}");
+                            throw new TheoremProverException($"Unhandled value of {nameof(PredefinedConstructionType)}: {predefinedConstruction.Type}");
                     }
 
                 // If we have a composed construction...

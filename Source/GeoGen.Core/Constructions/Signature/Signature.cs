@@ -143,9 +143,9 @@ namespace GeoGen.Core
                         // Finally return the set construction argument wrapping the filled set
                         return new SetConstructionArgument(arguments);
 
-                    // Default case
+                    // Unhandled cases
                     default:
-                        throw new GeoGenException($"Unhandled type of construction parameter: {parameter.GetType()}");
+                        throw new GeoGenException($"Unhandled type of {nameof(ConstructionParameter)}: {parameter.GetType()}");
                 }
             }
 
@@ -189,9 +189,9 @@ namespace GeoGen.Core
 
                         break;
 
-                    // Default case
+                    // Unhandled cases
                     default:
-                        throw new GeoGenException($"Unhandled type of construction parameter: {parameter.GetType()}");
+                        throw new GeoGenException($"Unhandled type of {nameof(ConstructionParameter)}: {parameter.GetType()}");
                 }
             }
 

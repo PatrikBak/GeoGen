@@ -207,9 +207,9 @@ namespace GeoGen.Drawer
 
                     break;
 
-                // Currently nothing else :/
+                // Unhandled cases
                 default:
-                    throw new DrawerException($"Unhandled type of {nameof(LooseObjectsLayout)}: {configuration.LooseObjectsHolder.Layout}");
+                    throw new DrawerException($"Unhandled value of {nameof(LooseObjectsLayout)}: {configuration.LooseObjectsHolder.Layout}");
             }
 
             #endregion

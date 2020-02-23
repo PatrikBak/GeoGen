@@ -40,7 +40,7 @@ namespace GeoGen.Core
                 // 1 line, 2 points
                 ExplicitLineAndTwoPoints => new[] { Line, Point, Point },
 
-                // Default case
+                // Unhandled cases
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),
             };
     }

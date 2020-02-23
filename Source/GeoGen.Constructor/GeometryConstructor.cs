@@ -370,9 +370,9 @@ namespace GeoGen.Constructor
                     return new IAnalyticObject[] { point1, point2, point3 };
                 }
 
-                // If we got here, we have an unsupported layout :/
+                // Unhandled cases
                 default:
-                    throw new ConstructorException($"Construction of loose objects layout '{layout}' is not supported.");
+                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectsLayout)}: {layout}.");
             }
         }
 

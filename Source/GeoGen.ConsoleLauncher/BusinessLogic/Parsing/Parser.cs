@@ -350,8 +350,8 @@ namespace GeoGen.ConsoleLauncher
                 // Circle case
                 ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
-                // Default case
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
+                // Unhandled cases
+                _ => throw new GeoGenException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}"),
             };
 
             // If the object is named, then parse it as an explicit object
@@ -490,7 +490,7 @@ namespace GeoGen.ConsoleLauncher
                     else if (typeHint.Equals(typeof(CircleTheoremObject)))
                         looseObject = new LooseConfigurationObject(ConfigurationObjectType.Circle);
 
-                    // Default case
+                    // Unhandled cases
                     else
                         throw new ParsingException($"Unhandled or incorrect type hint '{typeHint}'");
 

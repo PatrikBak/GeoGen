@@ -40,8 +40,8 @@ namespace GeoGen.Core
                     // If we have a loose object, we have no internal objects
                     LooseConfigurationObject _ => new HashSet<ConfigurationObject>(),
 
-                    // Default case
-                    _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
+                    // Unhandled cases
+                    _ => throw new GeoGenException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}")
                 };
 
                 // Mark found object

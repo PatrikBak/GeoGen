@@ -148,7 +148,7 @@ namespace GeoGen.Generator
                     // And return it
                     return result;
 
-                // Something else...
+                // Unhandled cases
                 default:
                     throw new GeneratorException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}");
             }

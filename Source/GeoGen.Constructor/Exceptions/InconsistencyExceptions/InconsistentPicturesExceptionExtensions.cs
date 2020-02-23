@@ -59,7 +59,7 @@ namespace GeoGen.Constructor
                 // Case when the exception doesn't bring any more information
                 InconsistentPicturesException e => e.Message,
 
-                // Default case
+                // Unhandled cases
                 _ => throw new GeoGenException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}")
             };
         }
@@ -95,7 +95,7 @@ namespace GeoGen.Constructor
                     case PointObject _:
                         yield break;
 
-                    // Otherwise we have an unhandled type
+                    // Unhandled cases
                     default:
                         throw new GeoGenException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
                 }
@@ -130,7 +130,7 @@ namespace GeoGen.Constructor
                 // Case when the exception doesn't bring any more objects
                 InconsistentPicturesException _ => Enumerable.Empty<ConfigurationObject>(),
 
-                // Default case
+                // Unhandled cases
                 _ => throw new GeoGenException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}"),
             };
         }

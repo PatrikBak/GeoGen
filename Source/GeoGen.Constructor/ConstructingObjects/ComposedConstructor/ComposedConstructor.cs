@@ -116,9 +116,9 @@ namespace GeoGen.Constructor
 
                     break;
 
-                // Default case
+                // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unsupported layout: {_construction.Configuration.LooseObjectsHolder.Layout}");
+                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectsLayout)}: {_construction.Configuration.LooseObjectsHolder.Layout}");
             }
 
             #endregion

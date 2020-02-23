@@ -286,9 +286,9 @@ namespace GeoGen.Drawer
 
                                         break;
 
-                                    // If something else...
+                                    // Unhandled cases
                                     default:
-                                        throw new ParsingException($"Unhandled type of {nameof(DrawingCommandType)}: {drawingCommandType}.");
+                                        throw new ParsingException($"Unhandled value of {nameof(DrawingCommandType)}: {drawingCommandType}.");
                                 }
 
                                 #endregion

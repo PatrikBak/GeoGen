@@ -73,8 +73,8 @@ namespace GeoGen.Core
                 // Circle case
                 ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
-                // Default case 
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.ObjectType}"),
+                // Unhandled cases
+                _ => throw new GeoGenException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}"),
             })
             // Enumerate to an array
             .ToReadOnlyHashSet();
@@ -211,9 +211,9 @@ namespace GeoGen.Core
 
                     break;
 
-                // Default case
+                // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled type of theorem: {type}");
+                    throw new GeoGenException($"Unhandled value of {nameof(TheoremType)}: {type}");
             }
 
             // Create a new theorem using the found objects

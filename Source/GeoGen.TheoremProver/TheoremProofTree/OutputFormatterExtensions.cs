@@ -101,7 +101,7 @@ namespace GeoGen.TheoremProver
                 EqualityTransitivity => "true because of the transitivity of equality",
 
                 // Unhandled cases
-                _ => throw new TheoremProverException($"Unhandled type of {nameof(InferenceRuleType)}: {proof.Rule}"),
+                _ => throw new TheoremProverException($"Unhandled value of {nameof(InferenceRuleType)}: {proof.Rule}"),
             };
     }
 }

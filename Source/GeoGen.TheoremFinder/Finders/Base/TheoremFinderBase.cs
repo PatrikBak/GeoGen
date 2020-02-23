@@ -93,8 +93,8 @@ namespace GeoGen.TheoremFinder
                                 // In circle case we have 3 points
                                 CircleObject _ => new CircleTheoremObject(points[0], points[1], points[2]),
 
-                                // Default case
-                                _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
+                                // Unhandled cases
+                                _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
                             };
                         })
                         // Add each newly created object to the resulting list
@@ -112,8 +112,8 @@ namespace GeoGen.TheoremFinder
                                 // Circle case
                                 CircleObject _ => new CircleTheoremObject(objectWithPoints.ConfigurationObject),
 
-                                // Default case
-                                _ => throw new TheoremFinderException($"Unhandled type of theorem object with points: {objectWithPoints.GetType()}")
+                                // Unhandled cases
+                                _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
                             };
 
                             // Add this newly created object to the resulting list
@@ -123,9 +123,9 @@ namespace GeoGen.TheoremFinder
                         // Finally return the resulting list
                         return objectsList;
 
-                    // Default case
+                    // Unhandled cases
                     default:
-                        throw new TheoremFinderException($"Unhandled type of geometric object: {geometricObject.GetType()}");
+                        throw new TheoremFinderException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
                 }
             })
             // Combine every possible definition of each object

@@ -194,8 +194,8 @@ namespace GeoGen.Constructor
                 // Circle
                 CircleObject circle => (oldObject: geometricObject, newObject: new CircleObject(circle.ConfigurationObject)),
 
-                // Default case
-                _ => throw new ConstructorException($"Unhandled type of geometric object: {geometricObject.GetType()}")
+                // Unhandled cases
+                _ => throw new ConstructorException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}")
             })
             // Wrap them in a dictionary
             .ToDictionary(pair => pair.oldObject, pair => pair.newObject);
@@ -319,8 +319,8 @@ namespace GeoGen.Constructor
                 // Circle case
                 ConfigurationObjectType.Circle => new CircleObject(configurationObject),
 
-                // Default case
-                _ => throw new ConstructorException($"Unhandled type of configuration object: {configurationObject.ObjectType}")
+                // Unhandled cases
+                _ => throw new ConstructorException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}")
             };
 
             // We add the geometric object to all the dictionaries
@@ -349,9 +349,9 @@ namespace GeoGen.Constructor
 
                     break;
 
-                // Default case
+                // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unhandled type of configuration object: {configurationObject.ObjectType}");
+                    throw new ConstructorException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}");
             }
         }
 

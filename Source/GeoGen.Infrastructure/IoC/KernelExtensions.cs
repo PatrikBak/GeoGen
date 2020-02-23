@@ -41,10 +41,9 @@ namespace GeoGen.Infrastructure
 
                         break;
 
+                    // Unhandled cases
                     default:
-
-                        // Otherwise we forgot something
-                        throw new SettingsException($"Unhandled type of the settings ('{loggersettings.GetType()}') in the NInject bindings.");
+                        throw new SettingsException($"Unhandled type of {nameof(BaseLoggerSettings)}: ({loggersettings.GetType()}");
                 }
             });
 

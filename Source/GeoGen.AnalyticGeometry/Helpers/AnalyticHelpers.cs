@@ -86,8 +86,8 @@ namespace GeoGen.AnalyticGeometry
                 // Circle
                 Circle circle => circle.Contains(point),
 
-                // Default case
-                _ => throw new AnalyticException($"Unhandled type of analytic object: {analyticObject.GetType()}"),
+                // Unhandled cases
+                _ => throw new AnalyticException($"Unhandled type of {nameof(IAnalyticObject)}: {analyticObject.GetType()}"),
             };
 
 

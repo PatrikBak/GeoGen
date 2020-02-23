@@ -50,8 +50,8 @@ namespace GeoGen.Core
             // 1 points lies on 1 line / circle
             Incidence => 2,
 
-            // Unhandled case
-            _ => throw new GeoGenException($"Unhandled type of theorem: {type}")
+            // Unhandled cases
+            _ => throw new GeoGenException($"Unhandled value of {nameof(TheoremType)}: {type}")
         };
     }
 }

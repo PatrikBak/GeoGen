@@ -60,7 +60,7 @@ namespace GeoGen.Constructor
                 case PointObject _:
                     return result;
 
-                // Otherwise we have an unhandled type
+                // Unhandled cases
                 default:
                     throw new GeoGenException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
             }

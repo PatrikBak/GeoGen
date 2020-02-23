@@ -151,8 +151,8 @@ namespace GeoGen.Core
                 // For constructed objects we include the construction and arguments
                 ConstructedConfigurationObject constructedObject => $"{constructedObject.Construction.Name}({constructedObject.PassedArguments.Select(FormatArgument).ToJoinedString()})",
 
-                // Default
-                _ => throw new GeoGenException($"Unhandled type of configuration object: {configurationObject.GetType()}")
+                // Unhandled cases
+                _ => throw new GeoGenException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}")
             };
         }
 
@@ -174,8 +174,8 @@ namespace GeoGen.Core
                 // For set argument we wrap the result in curly braces and convert the inner arguments
                 SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(FormatArgument).Ordered().ToJoinedString()}}}",
 
-                // Default case
-                _ => throw new GeoGenException($"Unhandled type of construction argument: {argument.GetType()}"),
+                // Unhandled cases
+                _ => throw new GeoGenException($"Unhandled type of {nameof(ConstructionArgument)}: {argument.GetType()}"),
             };
         }
 
@@ -242,13 +242,13 @@ namespace GeoGen.Core
                                 // If we have a circle, add () around points
                                 CircleTheoremObject _ => $"({pointsPart})",
 
-                                // Unhandled case
-                                _ => throw new GeoGenException($"Unhandled type of object with points: {objectWithPoints.GetType()}"),
+                                // Unhandled cases
+                                _ => throw new GeoGenException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}"),
                             };
 
-                        // If something else
+                        // Unhandled cases
                         default:
-                            throw new GeoGenException($"Unhandled type of base theorem object: {baseObject.GetType()}");
+                            throw new GeoGenException($"Unhandled type of {nameof(BaseTheoremObject)}: {baseObject.GetType()}");
                     }
 
                 // For a pair object...
@@ -265,9 +265,9 @@ namespace GeoGen.Core
                     // Compose the final string
                     return $"{smaller}, {larger}";
 
-                // If something else
+                // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled type of theorem object: {theoremObject.GetType()}");
+                    throw new GeoGenException($"Unhandled type of {nameof(TheoremObject)}: {theoremObject.GetType()}");
             }
         }
 

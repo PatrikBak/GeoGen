@@ -75,9 +75,9 @@ namespace GeoGen.TheoremFinder
                         // Each makes a valid incidence theorem
                         .Select(point => new Theorem(Type, point.ConfigurationObject, lastConfigurationObject));
 
-                // Default case
+                // Unhandled cases
                 default:
-                    throw new TheoremFinderException($"Unhandled type of configuration object: {lastConfigurationObject.ObjectType}");
+                    throw new TheoremFinderException($"Unhandled value of {nameof(ConfigurationObjectType)}: {lastConfigurationObject.ObjectType}");
             }
         }
     }

@@ -161,7 +161,7 @@ namespace GeoGen.TheoremSimplifier
 
                             break;
 
-                        // Default case
+                        // Unhandled cases
                         default:
                             throw new TheoremSimplifierException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {theoremObject.GetType()}");
                     }
@@ -325,7 +325,7 @@ namespace GeoGen.TheoremSimplifier
                                     // Take only correct results
                                     .Where(mapping => mapping != null);
 
-                            // Default case
+                            // Unhandled cases
                             default:
                                 throw new GeoGenException($"Unhandled type of {nameof(ConfigurationObject)}: {template.GetType()}");
                         }

@@ -110,7 +110,7 @@ namespace GeoGen.Core
 
                 // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled type of {nameof(LooseObjectsLayout)}: {Layout}");
+                    throw new GeoGenException($"Unhandled value of {nameof(LooseObjectsLayout)}: {Layout}");
             }
         }
 

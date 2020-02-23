@@ -74,7 +74,7 @@ namespace GeoGen.Constructor
                     catch (KeyNotFoundException)
                     {
                         // If not, we have a problem...
-                        throw new ConstructorException($"Unresolvable predefined constructor of type {predefinedConstruction.Type}.");
+                        throw new ConstructorException($"The predefined construction with type {predefinedConstruction.Type} does not have a constructor.");
                     }
 
                 // If we have a composed construction...
@@ -83,9 +83,9 @@ namespace GeoGen.Constructor
                     // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
                     return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));
 
-                // Default case
+                // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unhandled type of construction: {construction.GetType()}");
+                    throw new ConstructorException($"Unhandled type of {nameof(Construction)}: {construction.GetType()}");
             }
         }
 
