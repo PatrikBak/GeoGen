@@ -111,7 +111,7 @@ namespace GeoGen.Drawer
                 // Get the right dictionary according to the fact whether the line should be shifted around points
                 (shifted ? _shiftLinePoints : _linePoints)
                 // Make sure it contains the line and the corresponding list the point
-                .GetOrAdd(line, () => new List<Point>()).Add(point));
+                .GetValueOrCreateNewAddAndReturn(line).Add(point));
 
             // Make sure the line's style is added to the lines dictionary
             // If it's not there...
@@ -176,7 +176,7 @@ namespace GeoGen.Drawer
             // Get the right dictionary where we're going to add the segment based on the shift state
             (shifted ? _lineShiftedSegments : _lineSegments)
                 // Make sure the line is in the dictionary and add the segment
-                .GetOrAdd(new Line(point1, point2), () => new List<(Point, Point, ObjectDrawingStyle)>()).Add((point1, point2, style));
+                .GetValueOrCreateNewAddAndReturn(new Line(point1, point2)).Add((point1, point2, style));
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace GeoGen.Drawer
                 var (line, shiftedSegments) = pair;
 
                 // Make sure this line is in the new dictionary and get its segments
-                var currentSegments = segments.GetOrAdd(line, () => new List<(Point, Point, ObjectDrawingStyle)>());
+                var currentSegments = segments.GetValueOrCreateNewAddAndReturn(line);
 
                 // Shift each segment
                 shiftedSegments.ForEach(triple =>

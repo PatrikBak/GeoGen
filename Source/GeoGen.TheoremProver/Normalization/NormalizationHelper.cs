@@ -934,7 +934,7 @@ namespace GeoGen.TheoremProver
         /// <param name="constructedObject">The constructed object to be categorized by its construction.</param>
         private void MarkObjectByConstruction(ConstructedConfigurationObject constructedObject)
             // Get or create and return a new set for the construction and add the given object to it
-            => _objectsByConstruction.GetOrAdd(constructedObject.Construction, () => new HashSet<ConstructedConfigurationObject>()).Add(constructedObject);
+            => _objectsByConstruction.GetValueOrCreateNewAddAndReturn(constructedObject.Construction).Add(constructedObject);
 
         /// <summary>
         /// Adds a given theorem to all the collections related to proved theorems, i.e. <see cref="_provedTheorems"/>,
@@ -951,13 +951,13 @@ namespace GeoGen.TheoremProver
             _theoremsToProve.Remove(provedTheorem);
 
             // Add the theorem to the dictionary of proved ones
-            _provedTheoremsByType.GetOrAdd(provedTheorem.Type, () => new HashSet<Theorem>()).Add(provedTheorem);
+            _provedTheoremsByType.GetValueOrCreateNewAddAndReturn(provedTheorem.Type).Add(provedTheorem);
 
             // Add the theorem to the dictionary mapping objects to theorems
             // Take the inner objects
             provedTheorem.GetInnerConfigurationObjects()
                 // Register the theorem for each of them
-                .ForEach(innerObject => _provedTheoremsByObject.GetOrAdd(innerObject, () => new HashSet<Theorem>()).Add(provedTheorem));
+                .ForEach(innerObject => _provedTheoremsByObject.GetValueOrCreateNewAddAndReturn(innerObject).Add(provedTheorem));
         }
 
         /// <summary>

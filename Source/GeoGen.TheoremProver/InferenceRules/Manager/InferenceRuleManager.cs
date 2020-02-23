@@ -50,14 +50,14 @@ namespace GeoGen.TheoremProver
                 if (rule.DeclaredObjects.IsEmpty())
                 {
                     // Categorize it based on the type of the conclusion it proves
-                    _conclusionTypeToGeneralRules.GetOrAdd(rule.Conclusion.Type, () => new List<InferenceRule>()).Add(rule);
+                    _conclusionTypeToGeneralRules.GetValueOrCreateNewAddAndReturn(rule.Conclusion.Type).Add(rule);
 
                     // Categorize it based on the assumptions. From each group we just
                     // need to take one assumption and it is not important which one.
                     foreach (var assumption in rule.AssumptionGroups.Select(group => group.First()))
                     {
                         // Get the right list for the type
-                        _assumptionTypeToGeneralRules.GetOrAdd(assumption.Type, () => new List<(InferenceRule, Theorem)>())
+                        _assumptionTypeToGeneralRules.GetValueOrCreateNewAddAndReturn(assumption.Type)
                             // Add the rule with the assumption 
                             .Add((rule, assumption));
                     }
@@ -71,7 +71,7 @@ namespace GeoGen.TheoremProver
                 foreach (var declaredObject in rule.DeclaredObjects)
                 {
                     // Get the right list for this construction
-                    _constructionToObjectRules.GetOrAdd(declaredObject.Construction, () => new List<(InferenceRule, ConstructedConfigurationObject)>())
+                    _constructionToObjectRules.GetValueOrCreateNewAddAndReturn(declaredObject.Construction)
                         // Add the rule with the object
                         .Add((rule, declaredObject));
                 }

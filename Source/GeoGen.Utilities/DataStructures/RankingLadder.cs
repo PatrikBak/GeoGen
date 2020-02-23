@@ -79,7 +79,7 @@ namespace GeoGen.Utilities
             if (NumberOfItems < Capacity)
             {
                 // Add the item to the right list
-                _content.GetOrAdd(rank, () => new List<TItem>()).Add(item);
+                _content.GetValueOrCreateNewAddAndReturn(rank).Add(item);
 
                 // Count it in
                 NumberOfItems++;
@@ -106,7 +106,7 @@ namespace GeoGen.Utilities
             }
 
             // Otherwise we add the item
-            _content.GetOrAdd(rank, () => new List<TItem>()).Add(item);
+            _content.GetValueOrCreateNewAddAndReturn(rank).Add(item);
 
             // And we need to remove one of them with the smallest rank
             // Get the list of all of them

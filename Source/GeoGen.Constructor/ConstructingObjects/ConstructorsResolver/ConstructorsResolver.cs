@@ -81,7 +81,7 @@ namespace GeoGen.Constructor
                 case ComposedConstruction composedConstruction:
 
                     // Get it from the composed constructors dictionary, or create it (using the factory), add it, and return it
-                    return _composedConstructors.GetOrAdd(composedConstruction.Name, () => _factory.Create(composedConstruction));
+                    return _composedConstructors.GetValueOrCreateAddAndReturn(composedConstruction.Name, () => _factory.Create(composedConstruction));
 
                 // Unhandled cases
                 default:

@@ -291,7 +291,7 @@ namespace GeoGen.TheoremProver
                 .ForEach(assumption =>
                 {
                     // Get the right list for the assumption 
-                    _assumptionTypeToObjectData.GetOrAdd(assumption.Type, () => new List<(Theorem, ScheduleData)>())
+                    _assumptionTypeToObjectData.GetValueOrCreateNewAddAndReturn(assumption.Type)
                         // Add the data together with the assumption
                         .Add((assumption, data));
                 });

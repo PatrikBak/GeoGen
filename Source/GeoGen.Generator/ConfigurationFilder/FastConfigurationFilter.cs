@@ -52,9 +52,8 @@ namespace GeoGen.Generator
             // Helper function that makes sure the passed objects have ids in the ids dictionary, 
             // projects each to this id, and wraps them in a sorted set 
             SortedSet<int> MakeIdsSet(IEnumerable<ConstructedConfigurationObject> objects)
-                // We simply take each object, get its id from the 
-                // dictionary, or add a new one, based on its count
-                => objects.Select(currentObject => _objectIds.GetOrAdd(currentObject, () => _objectIds.Count))
+                // We simply take each object, get its id from the dictionary, or add a new one, based on its count
+                => objects.Select(currentObject => _objectIds.GetValueOrCreateAddAndReturn(currentObject, () => _objectIds.Count))
                     // And enumerate to a sorted set
                     .ToSortedSet();
 
