@@ -88,54 +88,30 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Determines if the configuration is symmetric, i.e. its loose objects can be 
-        /// reorder to obtain the same configuration.
+        /// Determines if the configuration is symmetric, i.e. its loose objects can be reordered to
+        /// obtain the same configuration.
         /// </summary>
         /// <returns>true, if the configuration is symmetric; false otherwise.</returns>
-        public bool IsSymmetric() => GetMinimalNumberOfObjectsToMakeThisSymmetric() == 0;
+        public bool IsSymmetric() => GetObjectsThatWouldMakeThisConfigurationSymmetric().Any(objects => objects.IsEmpty());
 
         /// <summary>
-        /// Determines the minimal number of objects that have to be added to this configuration
-        /// to make it symmetric. If the configuration is already symmetric, than the answer is 0.
+        /// Determines the objects that would make this configuration symmetric if they were added to it.
         /// </summary>
-        /// <returns>The minimal number of objects needed to be added to make this configuration symmetric.</returns>
-        public int GetMinimalNumberOfObjectsToMakeThisSymmetric()
-        {
-            // Prepare the enumerable of needed counts of objects
-            // to be added to make particular mappings the ones proving symmetry
+        /// <returns>An enumerable of objects with which the configuration would be symmetric.</returns>
+        public IEnumerable<IReadOnlyList<ConstructedConfigurationObject>> GetObjectsThatWouldMakeThisConfigurationSymmetric()
             // Take all mappings
-            var neededCounts = LooseObjectsHolder.GetSymmetryMappings()
+            => LooseObjectsHolder.GetSymmetryMappings()
                 // Excluding the identity mapping
                 .Where(mapping => mapping.Any(pair => pair.Key != pair.Value))
                 // For a given mapping take the constructed objects
                 .Select(mapping => ConstructedObjects
                     // Reconstruct them
-                    .Select(construtedObject => construtedObject.Remap(mapping))
+                    .Select(construtedObject => (ConstructedConfigurationObject)construtedObject.Remap(mapping))
                     // Exclude the ones that we already have. This way we get the objects 
                     // that are missing in order for this mapping to prove symmetry. 
                     .Except(ConstructedObjects)
-                    // We're interesting only in their count
-                    .Count());
-
-            // Prepare the resulting minimum
-            var minimalCountOfObjects = int.MaxValue;
-
-            // Go through the enumerable of needed counts...
-            foreach (var currentNeededCount in neededCounts)
-            {
-                // If there is a 0, then we know we won't get a smaller value
-                // This small optimization seems to work pretty well
-                if (currentNeededCount == 0)
-                    return 0;
-
-                // If we found a smaller value, then we update the current minimum
-                if (currentNeededCount < minimalCountOfObjects)
-                    minimalCountOfObjects = currentNeededCount;
-            }
-
-            // Return the resulting minimum
-            return minimalCountOfObjects;
-        }
+                    // Enumerate
+                    .ToArray());
 
         #endregion
 
