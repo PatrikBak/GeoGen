@@ -17,7 +17,7 @@ namespace GeoGen.Constructor
         /// <summary>
         /// The resolver of object constructors for particular constructions.
         /// </summary>
-        private readonly IConstructorsResolver _resolver;
+        private readonly IConstructorResolver _resolver;
 
         #endregion
 
@@ -27,7 +27,7 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="GeometryConstructor"/> class.
         /// </summary>
         /// <param name="resolver">The resolver of object constructors for particular constructions.</param>
-        public GeometryConstructor(IConstructorsResolver resolver)
+        public GeometryConstructor(IConstructorResolver resolver)
         {
             _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
         }

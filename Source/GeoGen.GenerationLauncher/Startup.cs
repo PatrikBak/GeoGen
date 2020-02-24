@@ -20,7 +20,7 @@ namespace GeoGen.GenerationLauncher
             try
             {
                 // Load the settings from the default file
-                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json", new DefaultSettings());
+                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);

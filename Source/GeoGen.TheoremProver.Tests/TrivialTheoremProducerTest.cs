@@ -32,10 +32,15 @@ namespace GeoGen.TheoremProver.Test
                 // Initialize IoC
                 var kernel = IoC.CreateKernel()
                     // Add the theorem finder with no restrictions
-                    .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
-                                      new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false),
-                                      // Take all types except for equal objects for which there is no finder
-                                      typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToReadOnlyHashSet())
+                    .AddTheoremFinder(new TheoremFindingSettings
+                                        (
+                                           // Look for any type except for EqualObjects
+                                           soughtTheoremTypes: typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToArray(),
+
+                                           // Don't exclude tangencies
+                                           new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
+                                           new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false)
+                                        ))
                     // And constructor
                     .AddConstructor();
 

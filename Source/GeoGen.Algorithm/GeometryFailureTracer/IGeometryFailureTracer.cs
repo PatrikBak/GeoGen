@@ -5,7 +5,7 @@ namespace GeoGen.Algorithm
 {
     /// <summary>
     /// Represents a tracer of geometry failures usually caused by an <see cref="InconsistentPicturesException"/>
-    /// during a run of <see cref="AlgorithmFacade"/>.
+    /// during a run of <see cref="Algorithm"/>.
     /// </summary>
     public interface IGeometryFailureTracer
     {

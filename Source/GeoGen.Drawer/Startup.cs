@@ -1,5 +1,4 @@
-﻿using GeoGen.Algorithm;
-using GeoGen.ConsoleLauncher;
+﻿using GeoGen.ConsoleLauncher;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.Utilities;
@@ -24,7 +23,7 @@ namespace GeoGen.Drawer
             try
             {
                 // Load the settings
-                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json", new DefaultSettings());
+                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);

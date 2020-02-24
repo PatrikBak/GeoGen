@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents an input for <see cref="IAlgorithmFacade"/>. 
+    /// Represents an input for <see cref="IAlgorithm"/>. 
     /// </summary>
     public class AlgorithmInput
     {

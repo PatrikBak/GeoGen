@@ -40,30 +40,43 @@ namespace GeoGen.GenerationLauncher
             #region Local dependencies
 
             // Add local dependencies
-            Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IAlgorithmRunner>().To<GenerationAlgorithmRunner>().WithConstructorArgument(settings.GenerationAlgorithmRunnerSettings);
-            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.AlgorithmInputProviderSettings);
 
             #endregion           
 
             #region Algorithm
 
             // Add generator
-            Kernel.AddGenerator(settings.GenerationSettings.ConfigurationFilterType)
-                // With constructor
-                .AddConstructor();
+            Kernel.AddGenerator(settings.GenerationSettings)
+                // Add constructor
+                .AddConstructor()
+                // Add algorithm
+                .AddAlgorithm(settings.AlgorithmSettings);
 
-            // Add algorithm facade and its faked dependencies
-            Kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().WithConstructorArgument(settings.AlgorithmFacadeSettings);
+            // Add an empty theorem finder
             Kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();
 
             #endregion
 
             #region Tracers
 
-            // Rebind tracers
-            Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.ConstructorFailureTracerSettings);
-            Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.GeometryFailureTracerSettings);
+            #region ConstructorFailureTracer
+
+            // Rebind Constructor Failure Tracer only if we're supposed be tracing
+            if (settings.TracingSettings.ConstructorFailureTracerSettings != null)
+                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracingSettings.ConstructorFailureTracerSettings);
+
+            #endregion
+
+            #region GeometryFailureTracer
+
+            // Rebind Geometry Failure Tracer only if we're supposed be tracing
+            if (settings.TracingSettings.GeometryFailureTracerSettings != null)
+                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracingSettings.GeometryFailureTracerSettings);
+
+            #endregion
 
             #endregion
 

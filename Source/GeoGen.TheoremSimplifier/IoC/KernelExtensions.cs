@@ -11,7 +11,7 @@ namespace GeoGen.TheoremSimplifier
         /// Bindings for the dependencies from the TheoremSimplifier module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="data">The data for the simplifier.</param>
+        /// <param name="data">The data for <see cref="TheoremSimplifier"/>.</param>
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremSimplifier(this IKernel kernel, TheoremSimplifierData data)
         {

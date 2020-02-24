@@ -85,6 +85,10 @@ namespace GeoGen.Drawer
             PostcompilationCommand = postcompilationCommand;
             LogCommandOutput = logCommandOutput;
             NumberOfPictures = numberOfPictures;
+
+            // Ensure there are some pictures
+            if (numberOfPictures <= 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfPictures), "The number of pictures must be at least 1");
         }
 
         #endregion

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace GeoGen.Algorithm
+namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// Represents a tracker of best <see cref="TheoremWithRanking"/>s. This service is supposed to 

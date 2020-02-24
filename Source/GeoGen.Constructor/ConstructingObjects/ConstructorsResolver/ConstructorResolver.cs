@@ -6,9 +6,10 @@ using System.Collections.Generic;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The default implementation of <see cref="IConstructorsResolver"/>.
+    /// The default implementation of <see cref="IConstructorResolver"/> that gets <see cref="IPredefinedConstructor"/>s
+    /// and <see cref="IComposedConstructorFactory"/> injected and based on those finds the right constructors.
     /// </summary>
-    public class ConstructorsResolver : IConstructorsResolver
+    public class ConstructorResolver : IConstructorResolver
     {
         #region Dependencies
 
@@ -37,11 +38,11 @@ namespace GeoGen.Constructor
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructorsResolver"/> class.
+        /// Initializes a new instance of the <see cref="ConstructorResolver"/> class.
         /// </summary>
         /// <param name="constructors">The array of all the predefined constructors.</param>
         /// <param name="factory">The factory for creating composed constructors for given composed constructions.</param>
-        public ConstructorsResolver(IPredefinedConstructor[] constructors, IComposedConstructorFactory factory)
+        public ConstructorResolver(IPredefinedConstructor[] constructors, IComposedConstructorFactory factory)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
 

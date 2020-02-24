@@ -1,5 +1,6 @@
 ﻿using Ninject;
 using Ninject.Extensions.Factory;
+using System;
 
 namespace GeoGen.Generator
 {
@@ -12,9 +13,9 @@ namespace GeoGen.Generator
         /// Bindings for the dependencies from the Generator module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="filterType">The type of configuration filter to be used.</param>
+        /// <param name="settings">The settings for the module.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddGenerator(this IKernel kernel, ConfigurationFilterType filterType)
+        public static IKernel AddGenerator(this IKernel kernel, GenerationSettings settings)
         {
             // Stateless service
             kernel.Bind<IGenerator>().To<Generator>();
@@ -22,20 +23,22 @@ namespace GeoGen.Generator
             // Factory
             kernel.Bind<IConfigurationFilterFactory>().ToFactory();
 
-            // Bind the filter according to the type
-            switch (filterType)
-            {
-                case ConfigurationFilterType.MemoryEfficient:
-                    kernel.Bind<IConfigurationFilter>().To<MemoryEfficientConfigurationFilter>();
-                    break;
+            #region Bind configuration filter
 
-                case ConfigurationFilterType.Fast:
-                    kernel.Bind<IConfigurationFilter>().To<FastConfigurationFilter>();
-                    break;
+            // Find the expected name of the class with the corresponding namespace
+            var classNameWithNamespace = $"{typeof(IConfigurationFilter).Namespace}.{settings.ConfigurationFilterType}ConfigurationFilter";
 
-                default:
-                    throw new GeneratorException($"Unhandled value of {nameof(ConfigurationFilterType)}: {filterType}");
-            }
+            // Find the type of the finder from the name
+            var configurationFilterType = Type.GetType(classNameWithNamespace);
+
+            // Handle if it couldn't be found
+            if (configurationFilterType == null)
+                throw new GeneratorException($"Couldn't find an implementation of {nameof(IConfigurationFilter)} for type '{settings.ConfigurationFilterType}', expected class name with namespace '{classNameWithNamespace}'");
+
+            // Otherwise do the binding
+            kernel.Bind(typeof(IConfigurationFilter)).To(configurationFilterType);
+
+            #endregion
 
             // Return the kernel for chaining
             return kernel;

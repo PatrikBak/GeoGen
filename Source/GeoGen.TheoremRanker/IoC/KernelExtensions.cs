@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using System;
 
 namespace GeoGen.TheoremRanker
 {
@@ -11,40 +12,42 @@ namespace GeoGen.TheoremRanker
         /// Bindings for the dependencies from the TheoremRanker module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="rankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/></param>
-        /// <param name="typeRankerSettings">The settings for <see cref="TypeRanker"/>.</param>
+        /// <param name="settings">The settings for the module.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankerSettings rankerSettings, TypeRankerSettings typeRankerSettings)
+        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankingSettings settings)
         {
             // Bind ranker
-            kernel.Bind<ITheoremRanker>().To<TheoremRanker>().WithConstructorArgument(rankerSettings);
+            kernel.Bind<ITheoremRanker>().To<TheoremRanker>().WithConstructorArgument(settings.TheoremRankerSettings);
 
-            // Bind requested rankers
-            foreach (var rankedAspect in rankerSettings.RankingCoefficients.Keys)
+            #region Bind theorem rankers for individual ranked aspects
+
+            // Bind aspect theorem rankers based on the aspects we're ranking
+            foreach (var rankedAspect in settings.TheoremRankerSettings.RankingCoefficients.Keys)
             {
-                // Switch on the aspect
+                // Find the expected name of the class with the corresponding namespace
+                var classNameWithNamespace = $"{typeof(IAspectTheoremRanker).Namespace}.{rankedAspect}Ranker";
+
+                // Find the type of the ranker from the name
+                var theoremRankerType = Type.GetType(classNameWithNamespace);
+
+                // Handle if it couldn't be found
+                if (theoremRankerType == null)
+                    throw new TheoremRankerException($"Couldn't find an implementation of {nameof(IAspectTheoremRanker)} for type '{rankedAspect}', expected class name with namespace '{classNameWithNamespace}'");
+
+                // Otherwise do the binding
+                var binding = kernel.Bind(typeof(IAspectTheoremRanker)).To(theoremRankerType);
+
+                // In some cases there is a constructor argument
                 switch (rankedAspect)
                 {
-                    case RankedAspect.Symmetry:
-                        kernel.Bind<IAspectTheoremRanker>().To<SymmetryRanker>();
-                        break;
-
+                    // Type of theorem
                     case RankedAspect.Type:
-                        kernel.Bind<IAspectTheoremRanker>().To<TypeRanker>().WithConstructorArgument(typeRankerSettings);
+                        binding.WithConstructorArgument(settings.TypeRankerSettings);
                         break;
-
-                    case RankedAspect.TheoremsPerObject:
-                        kernel.Bind<IAspectTheoremRanker>().To<TheoremsPerObjectRanker>();
-                        break;
-
-                    case RankedAspect.CirclesPerObject:
-                        kernel.Bind<IAspectTheoremRanker>().To<CirclesPerObjectRanker>();
-                        break;
-
-                    default:
-                        throw new TheoremRankerException($"Unhandled value of {nameof(RankedAspect)}: {rankedAspect}");
                 }
             }
+
+            #endregion
 
             // Return the kernel for chaining
             return kernel;

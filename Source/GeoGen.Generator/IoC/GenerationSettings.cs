@@ -1,6 +1,4 @@
-﻿using GeoGen.Generator;
-
-namespace GeoGen.ConsoleLauncher
+﻿namespace GeoGen.Generator
 {
     /// <summary>
     /// The settings related to the generator module.

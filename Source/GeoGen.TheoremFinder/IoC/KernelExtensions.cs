@@ -1,6 +1,7 @@
 ﻿using GeoGen.Core;
-using GeoGen.Utilities;
 using Ninject;
+using System;
+using System.Linq;
 
 namespace GeoGen.TheoremFinder
 {
@@ -13,72 +14,47 @@ namespace GeoGen.TheoremFinder
         /// Bindings for the dependencies from the Theorem Finder module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="tangentCirclesFinderSettings">The settings for the tangent circles theorem finder.</param>
-        /// <param name="lineTangentToCirclesFinderSettings">The settings for the line tangent to circles theorem finder.</param>
-        /// <param name="types">The types of theorems that we should be looking for.</param>
+        /// <param name="settings">The settings for the module.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremFinder(this IKernel kernel,
-                                               TangentCirclesTheoremFinderSettings tangentCirclesFinderSettings,
-                                               LineTangentToCircleTheoremFinderSettings lineTangentToCirclesFinderSettings,
-                                               IReadOnlyHashSet<TheoremType> types)
+        public static IKernel AddTheoremFinder(this IKernel kernel, TheoremFindingSettings settings)
         {
             // Bind theorem finder
             kernel.Bind<ITheoremFinder>().To<TheoremFinder>();
 
-            // Go through all requested types
-            types.ForEach(type =>
+            #region Bind theorem finders for individual types
+
+            // Bind typed theorem finders based on the types we're seeking
+            foreach (var theoremType in settings.SoughtTheoremTypes.Distinct())
             {
-                // Switch based on type and do the binding
-                switch (type)
+                // Find the expected name of the class with the corresponding namespace
+                var classNameWithNamespace = $"{typeof(ITheoremFinder).Namespace}.{theoremType}TheoremFinder";
+
+                // Find the type of the finder from the name
+                var theoremFinderType = Type.GetType(classNameWithNamespace);
+
+                // Handle if it couldn't be found
+                if (theoremFinderType == null)
+                    throw new TheoremFinderException($"Couldn't find an implementation of {nameof(ITypedTheoremFinder)} for type '{theoremType}', expected class name with namespace '{classNameWithNamespace}'");
+
+                // Otherwise do the binding
+                var binding = kernel.Bind(typeof(ITypedTheoremFinder)).To(theoremFinderType);
+
+                // In some cases there is a constructor argument
+                switch (theoremType)
                 {
-                    case TheoremType.CollinearPoints:
-                        kernel.Bind<ITypedTheoremFinder>().To<CollinearPointsTheoremFinder>();
-                        break;
-
-                    case TheoremType.ConcyclicPoints:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcyclicPointsTheoremFinder>();
-                        break;
-
-                    case TheoremType.ConcurrentObjects:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentObjectsTheoremFinder>();
-                        break;
-
-                    case TheoremType.ConcurrentLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<ConcurrentLinesTheoremFinder>();
-                        break;
-
-                    case TheoremType.ParallelLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<ParallelLinesTheoremFinder>();
-                        break;
-
-                    case TheoremType.PerpendicularLines:
-                        kernel.Bind<ITypedTheoremFinder>().To<PerpendicularLinesTheoremFinder>();
-                        break;
-
-                    case TheoremType.TangentCircles:
-                        kernel.Bind<ITypedTheoremFinder>().To<TangentCirclesTheoremFinder>().WithConstructorArgument(tangentCirclesFinderSettings);
-                        break;
-
+                    // Line and circle tangency 
                     case TheoremType.LineTangentToCircle:
-                        kernel.Bind<ITypedTheoremFinder>().To<LineTangentToCircleTheoremFinder>().WithConstructorArgument(lineTangentToCirclesFinderSettings);
+                        binding.WithConstructorArgument(settings.LineTangentToCircleTheoremFinderSettings);
                         break;
 
-                    case TheoremType.EqualLineSegments:
-                        kernel.Bind<ITypedTheoremFinder>().To<EqualLineSegmentsTheoremFinder>();
+                    // Two circles tangency
+                    case TheoremType.TangentCircles:
+                        binding.WithConstructorArgument(settings.TangentCirclesTheoremFinderSettings);
                         break;
-
-                    case TheoremType.EqualAngles:
-                        kernel.Bind<ITypedTheoremFinder>().To<EqualAnglesTheoremFinder>();
-                        break;
-
-                    case TheoremType.Incidence:
-                        kernel.Bind<ITypedTheoremFinder>().To<IncidenceTheoremFinder>();
-                        break;
-
-                    default:
-                        throw new TheoremFinderException($"Unhandled value of {nameof(TheoremType)}: {type}");
                 }
-            });
+            }
+
+            #endregion
 
             // Return the kernel for chaining
             return kernel;

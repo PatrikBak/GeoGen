@@ -1,5 +1,4 @@
-﻿using GeoGen.Algorithm;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GeoGen.ConsoleLauncher
 {

@@ -5,7 +5,7 @@ namespace GeoGen.Constructor
     /// <summary>
     /// Represents a service that is able to find the right <see cref="IObjectConstructor"/> for a given <see cref="Construction"/>.
     /// </summary>
-    public interface IConstructorsResolver
+    public interface IConstructorResolver
     {
         /// <summary>
         /// Find the corresponding object constructor for a given construction.

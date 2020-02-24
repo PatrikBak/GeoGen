@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -17,9 +16,8 @@ namespace GeoGen.Infrastructure
         /// </summary>
         /// <typeparam name="TSettings">The type of settings to be loaded.</typeparam>
         /// <param name="settingsFilePath">The path to the settings file.</param>
-        /// <param name="defaultSettings">The default settings, used as an example for how the JSON should look like.</param>
         /// <returns>The loaded settings.</returns>
-        public static async Task<TSettings> LoadFromFileAsync<TSettings>(string settingsFilePath, TSettings defaultSettings)
+        public static async Task<TSettings> LoadFromFileAsync<TSettings>(string settingsFilePath)
         {
             // Prepare the settings content
             string settingsJson;
@@ -39,7 +37,7 @@ namespace GeoGen.Infrastructure
             }
 
             // Delegate the call to the other method
-            return LoadFromString(settingsJson, defaultSettings);
+            return LoadFromString<TSettings>(settingsJson);
         }
 
         /// <summary>
@@ -47,9 +45,8 @@ namespace GeoGen.Infrastructure
         /// </summary>
         /// <typeparam name="TSettings">The type of settings to be loaded.</typeparam>
         /// <param name="settingsJson">The JSON string with the settings to be loaded.</param>
-        /// <param name="defaultSettings">The default settings, used as an example for how the JSON should look like.</param>
         /// <returns>The loaded settings.</returns>
-        public static TSettings LoadFromString<TSettings>(string settingsJson, TSettings defaultSettings)
+        public static TSettings LoadFromString<TSettings>(string settingsJson)
         {
             try
             {
@@ -69,12 +66,8 @@ namespace GeoGen.Infrastructure
             // Catch any problem
             catch (Exception e)
             {
-                // Serialize the default settings
-                var defaultSettingsJson = JsonConvert.SerializeObject(defaultSettings, Formatting.Indented, new BaseLoggerSettingsConverter(), new StringEnumConverter());
-
-                // Throw a problem with the most informative message
-                throw new SettingsException($"Couldn't parse the settings, the message: {e.Message}\n\n" +
-                                            $"For inspiration, these are the default settings: \n\n{defaultSettingsJson}\n\n");
+                // Throw the problem further 
+                throw new SettingsException("Couldn't parse the settings", e);
             }
         }
     }

@@ -89,6 +89,14 @@ namespace GeoGen.Drawer
             LineSegmentMacros = lineSegmentMacros ?? throw new ArgumentNullException(nameof(lineSegmentMacros));
             CircleMacros = circleMacros ?? throw new ArgumentNullException(nameof(circleMacros));
             TextMacro = textMacro ?? throw new ArgumentNullException(nameof(textMacro));
+
+            // Ensure the shift length is positive
+            if (shiftLength <= 0)
+                throw new ArgumentOutOfRangeException(nameof(shiftLength), "The shift length must be positive.");
+
+            // Ensure the bounding box offset is positive
+            if (boundingBoxOffset <= 0)
+                throw new ArgumentOutOfRangeException(nameof(boundingBoxOffset), "The bounding box offset must be positive.");
         }
 
         #endregion

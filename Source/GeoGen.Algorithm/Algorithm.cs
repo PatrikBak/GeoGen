@@ -10,16 +10,16 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The default implementation of <see cref="IAlgorithmFacade"/>.
+    /// The default implementation of <see cref="IAlgorithm"/>.
     /// </summary>
-    public class AlgorithmFacade : IAlgorithmFacade
+    public class Algorithm : IAlgorithm
     {
         #region Private fields
 
         /// <summary>
         /// The settings for the algorithm.
         /// </summary>
-        private readonly AlgorithmFacadeSettings _settings;
+        private readonly AlgorithmSettings _settings;
 
         #endregion
 
@@ -50,14 +50,14 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmFacade"/> class.
+        /// Initializes a new instance of the <see cref="Algorithm"/> class.
         /// </summary>
         /// <param name="settings">The settings for the algorithm.</param>
         /// <param name="generator">The generator of configurations.</param>
         /// <param name="constructor">The constructor that perform the actual geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
-        public AlgorithmFacade(AlgorithmFacadeSettings settings,
+        public Algorithm(AlgorithmSettings settings,
                                IGenerator generator,
                                IGeometryConstructor constructor,
                                ITheoremFinder finder,
@@ -72,7 +72,7 @@ namespace GeoGen.Algorithm
 
         #endregion
 
-        #region IAlgorithmFacade implementation
+        #region IAlgorithm implementation
 
         /// <summary>
         /// Executes the algorithm for a given algorithm input.

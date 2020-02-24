@@ -6,7 +6,7 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents an output of the <see cref="IAlgorithmFacade"/>.
+    /// Represents an output of the <see cref="IAlgorithm"/>.
     /// </summary>
     public class AlgorithmOutput
     {

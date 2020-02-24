@@ -23,7 +23,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings for the folder with inputs.
         /// </summary>
-        private readonly InputFolderSettings _settings;
+        private readonly AlgorithmInputProviderSettings _settings;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="AlgorithmInputProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings for the folder with inputs.</param>
-        public AlgorithmInputProvider(InputFolderSettings settings)
+        public AlgorithmInputProvider(AlgorithmInputProviderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }

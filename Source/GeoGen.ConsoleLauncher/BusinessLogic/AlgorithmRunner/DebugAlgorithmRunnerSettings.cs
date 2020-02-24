@@ -96,7 +96,7 @@ namespace GeoGen.ConsoleLauncher
                                             string inferenceRuleUsageFile)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
-            OutputFolderWithProofs = outputFolderWithProofs ?? throw new ArgumentNullException(nameof(outputFolderWithProofs));
+            OutputFolderWithProofs = outputFolderWithProofs;
             WriteOutputWithProofs = writeOutputWithProofs;
             OutputJsonFolder = outputJsonFolder ?? throw new ArgumentNullException(nameof(outputJsonFolder));
             OutputFilePrefix = outputFilePrefix ?? throw new ArgumentNullException(nameof(outputFilePrefix));
@@ -106,6 +106,14 @@ namespace GeoGen.ConsoleLauncher
             BestTheoremReadableFilePath = bestTheoremReadableFilePath ?? throw new ArgumentNullException(nameof(bestTheoremReadableFilePath));
             BestTheoremJsonFilePath = bestTheoremJsonFilePath ?? throw new ArgumentNullException(nameof(bestTheoremJsonFilePath));
             InferenceRuleUsageFile = inferenceRuleUsageFile ?? throw new ArgumentNullException(nameof(inferenceRuleUsageFile));
+
+            // Ensure the frequency is positive
+            if (logProgress && generationProgresLoggingFrequency <= 0)
+                throw new ArgumentOutOfRangeException(nameof(generationProgresLoggingFrequency), "The generation logging frequency must be at least 1");
+
+            // Ensure that output folder with proofs is set if we are supposed to using it
+            if (writeOutputWithProofs && outputFolderWithProofs == null)
+                throw new ArgumentException("The output folder with proofs must be set as we are going to use it.");
         }
 
         #endregion

@@ -1,7 +1,6 @@
-﻿using GeoGen.TheoremRanker;
-using System;
+﻿using System;
 
-namespace GeoGen.ConsoleLauncher
+namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// The settings related to the theorem ranker module.
@@ -11,12 +10,12 @@ namespace GeoGen.ConsoleLauncher
         #region Public properties
 
         /// <summary>
-        /// The settings for <see cref="TheoremRanker.TheoremRanker"/>.
+        /// The settings for <see cref="TheoremRanker"/>.
         /// </summary>
         public TheoremRankerSettings TheoremRankerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="TypeRanker"/>.
+        /// The settings for <see cref="TypeRanker"/>. It can be null if this aspect is not ranked.
         /// </summary>
         public TypeRankerSettings TypeRankerSettings { get; }
 
@@ -28,11 +27,15 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="TheoremRankingSettings"/> class.
         /// </summary>
         /// <param name="theoremRankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/>.</param>
-        /// <param name="typeRankerSettings">The settings for <see cref="TypeRanker"/>.</param>
+        /// <param name="typeRankerSettings">The settings for <see cref="TypeRanker"/>. It can be null if this aspect is not ranked.</param>
         public TheoremRankingSettings(TheoremRankerSettings theoremRankerSettings, TypeRankerSettings typeRankerSettings)
         {
             TheoremRankerSettings = theoremRankerSettings ?? throw new ArgumentNullException(nameof(theoremRankerSettings));
-            TypeRankerSettings = typeRankerSettings ?? throw new ArgumentNullException(nameof(typeRankerSettings));
+            TypeRankerSettings = typeRankerSettings;
+
+            // Ensure that type ranker settings are set if this type is ranked
+            if (theoremRankerSettings.RankingCoefficients.ContainsKey(RankedAspect.Type) && typeRankerSettings == null)
+                throw new ArgumentException("The type ranker must have its settings set as this aspect is ranked.");
         }
 
         #endregion

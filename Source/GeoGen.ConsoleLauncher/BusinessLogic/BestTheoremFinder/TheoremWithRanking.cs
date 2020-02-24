@@ -2,7 +2,7 @@
 using GeoGen.TheoremRanker;
 using System;
 
-namespace GeoGen.Algorithm
+namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// Represents a wrapper of a <see cref="Core.Theorem"/> together with its <see cref="TheoremRanking"/>.

@@ -1,4 +1,6 @@
-﻿namespace GeoGen.GenerationLauncher
+﻿using System;
+
+namespace GeoGen.GenerationLauncher
 {
     /// <summary>
     /// The settings for <see cref="GenerationAlgorithmRunner"/>.
@@ -31,6 +33,10 @@
         {
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
+
+            // Ensure the frequency is positive
+            if (logProgress && generationProgresLoggingFrequency <= 0)
+                throw new ArgumentOutOfRangeException(nameof(generationProgresLoggingFrequency), "The generation logging frequency must be at least 1");
         }
 
         #endregion

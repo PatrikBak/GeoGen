@@ -3,7 +3,7 @@ using GeoGen.Utilities;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GeoGen.Algorithm
+namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// The default implementation of <see cref="IBestTheoremFinder"/> can track a specified number of theorems.

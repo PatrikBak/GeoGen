@@ -1,5 +1,5 @@
-﻿using GeoGen.Utilities;
-using System;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GeoGen.TheoremSimplifier
 {
@@ -11,9 +11,9 @@ namespace GeoGen.TheoremSimplifier
         #region Public properties
 
         /// <summary>
-        /// The set of simplification rules used by the algorithm.
+        /// The simplification rules used by the algorithm.
         /// </summary>
-        public IReadOnlyHashSet<SimplificationRule> Rules { get; }
+        public IReadOnlyCollection<SimplificationRule> Rules { get; }
 
         #endregion
 
@@ -22,8 +22,8 @@ namespace GeoGen.TheoremSimplifier
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremSimplifierData"/> class.
         /// </summary>
-        /// <param name="rules">The set of simplification rules used by the algorithm.</param>
-        public TheoremSimplifierData(IReadOnlyHashSet<SimplificationRule> rules)
+        /// <param name="rules">The simplification rules used by the algorithm..</param>
+        public TheoremSimplifierData(IReadOnlyCollection<SimplificationRule> rules)
         {
             Rules = rules ?? throw new ArgumentNullException(nameof(rules));
         }

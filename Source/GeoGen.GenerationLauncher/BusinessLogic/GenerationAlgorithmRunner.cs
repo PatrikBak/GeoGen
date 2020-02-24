@@ -16,7 +16,7 @@ namespace GeoGen.GenerationLauncher
         /// <summary>
         /// The algorithm that is run.
         /// </summary>
-        private readonly IAlgorithmFacade _algorithm;
+        private readonly IAlgorithm _algorithm;
 
         #endregion
 
@@ -36,7 +36,7 @@ namespace GeoGen.GenerationLauncher
         /// </summary>
         /// <param name="settings">The settings for the runner.</param>
         /// <param name="algorithm">The algorithm that is run.</param>
-        public GenerationAlgorithmRunner(GenerationAlgorithmRunnerSettings settings, IAlgorithmFacade algorithm)
+        public GenerationAlgorithmRunner(GenerationAlgorithmRunnerSettings settings, IAlgorithm algorithm)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));

@@ -36,26 +36,32 @@ namespace GeoGen.TheoremProverLauncher
                 // That constructors configurations
                 .AddConstructor()
                 // That can find theorems
-                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
-                                  new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true),
-                                  // Look for theorems of any type
-                                  Enum.GetValues(typeof(TheoremType)).Cast<TheoremType>()
-                                    // Except the following ones
-                                    .Except(new[]
-                                    {
-                                        TheoremType.ConcurrentObjects,
-                                        TheoremType.EqualAngles,
-                                        TheoremType.EqualObjects
-                                    })
-                                    // Enumerate
-                                    .ToReadOnlyHashSet())
+                .AddTheoremFinder(new TheoremFindingSettings
+                                  (
+                                      // Look for theorems of any type
+                                      soughtTheoremTypes: Enum.GetValues(typeof(TheoremType)).Cast<TheoremType>()
+                                          // Except the following ones
+                                          .Except(new[]
+                                          {
+                                              TheoremType.ConcurrentObjects,
+                                              TheoremType.EqualAngles,
+                                              TheoremType.EqualObjects
+                                          })
+                                          // Enumerate
+                                          .ToArray(),
+
+                                      // Exclude in-picture tangencies
+                                      new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: true),
+                                      new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true)
+                                  ))
                 // That can prove theorems
                 .AddTheoremProver(new InferenceRuleManagerData
                 (
                     // In order to find rules use the rule provider that uses the folder specified in the arguments
-                    rules: await new InferenceRuleProvider(new InferenceRuleFolderSettings(ruleFolderPath: arguments[0], fileExtension: arguments[1])).GetInferenceRulesAsync()
+                    rules: await new InferenceRuleProvider(new InferenceRuleProviderSettings(ruleFolderPath: arguments[0], fileExtension: arguments[1])).GetInferenceRulesAsync()
                 ))
-                .AddGenerator(ConfigurationFilterType.Fast);
+                // That can generate
+                .AddGenerator(new GenerationSettings(ConfigurationFilterType.Fast));
 
             #endregion
 

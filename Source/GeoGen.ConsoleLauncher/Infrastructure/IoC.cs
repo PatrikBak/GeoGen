@@ -44,11 +44,12 @@ namespace GeoGen.ConsoleLauncher
             #region Local dependencies
 
             // Add local dependencies
-            Kernel.Bind<IBatchRunner>().To<BatchRunner>().WithConstructorArgument(settings.InputFolderSettings);
+            Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IAlgorithmRunner>().To<DebugAlgorithmRunner>().WithConstructorArgument(settings.DebugAlgorithmRunnerSettings);
-            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
-            Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleFolderSettings);
+            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.AlgorithmInputProviderSettings);
+            Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
+            Kernel.Bind<IBestTheoremFinder>().To<BestTheoremFinder>().WithConstructorArgument(settings.BestTheoremFinderSettings);
             Kernel.Bind<IRankedTheoremWriter>().To<RankedTheoremWriter>();
             Kernel.Bind<ITheoremWithRankingJsonLazyWriterFactory>().ToFactory();
             Kernel.Bind<ITheoremWithRankingJsonLazyWriter>().To<TheoremWithRankingJsonLazyWriter>();
@@ -64,26 +65,23 @@ namespace GeoGen.ConsoleLauncher
             #region Algorithm
 
             // Add generator
-            Kernel.AddGenerator(settings.AlgorithmSettings.GenerationSettings.ConfigurationFilterType)
-                // With constructor
+            Kernel.AddGenerator(settings.GenerationSettings)
+                // And constructor
                 .AddConstructor()
-                // With theorem finder and its settings
-                .AddTheoremFinder(settings.AlgorithmSettings.TheoremFindingSettings.TangentCirclesTheoremFinderSettings,
-                                  settings.AlgorithmSettings.TheoremFindingSettings.LineTangentToCircleTheoremFinderSettings,
-                                  settings.AlgorithmSettings.TheoremFindingSettings.SoughtTheoremTypes.ToReadOnlyHashSet())
-                // With theorem ranker and its settings
-                .AddTheoremRanker(settings.AlgorithmSettings.TheoremRankingSettings.TheoremRankerSettings,
-                                  settings.AlgorithmSettings.TheoremRankingSettings.TypeRankerSettings)
-                // With theorem prover and its data
+                // And theorem finder
+                .AddTheoremFinder(settings.TheoremFindingSettings)
+                // And theorem ranker
+                .AddTheoremRanker(settings.TheoremRankingSettings)
+                // And theorem prover and its data
                 .AddTheoremProver(managerData)
-                // With theorem simplifier and its data
+                // And theorem simplifier and its data
                 .AddTheoremSimplifier(new TheoremSimplifierData
                 (
                     // Simplification rules are loaded at the beginning
                     rules: (await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
-                // And finally the algorithm with its settings
-                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings, settings.AlgorithmSettings.BestTheoremFinderSettings);
+                // And finally the algorithm
+                .AddAlgorithm(settings.AlgorithmSettings);
 
             #endregion
 

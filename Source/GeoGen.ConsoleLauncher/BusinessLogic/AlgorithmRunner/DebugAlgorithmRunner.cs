@@ -24,7 +24,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The algorithm that is run.
         /// </summary>
-        private readonly IAlgorithmFacade _algorithm;
+        private readonly IAlgorithm _algorithm;
 
         /// <summary>
         /// The prover of theorems.
@@ -87,7 +87,7 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="writerFactory">The factory for creating lazy writers of best theorems.</param>
         /// <param name="tracker">The tracker of the used inference rules in theorem proofs.</param>
         public DebugAlgorithmRunner(DebugAlgorithmRunnerSettings settings,
-                                    IAlgorithmFacade algorithm,
+                                    IAlgorithm algorithm,
                                     ITheoremProver prover,
                                     ITheoremRanker ranker,
                                     ITheoremSimplifier simplifier,

@@ -10,7 +10,7 @@ namespace GeoGen.Algorithm
     /// extended using <see cref="AlgorithmInput.Constructions"/> by <see cref="AlgorithmInput.NumberOfIterations"/> objects
     /// to get new configurations, which are tested for theorems, tried to be proven, ranked (<see cref="AlgorithmOutput"/>). 
     /// </summary>
-    public interface IAlgorithmFacade
+    public interface IAlgorithm
     {
         /// <summary>
         /// Executes the algorithm for a given algorithm input.

@@ -42,9 +42,9 @@ namespace GeoGen.Drawer
         /// <param name="drawingRuleProviderSettings">The settings for the provider of drawing rules.</param>
         /// <param name="reorderObjects">Indicates whether we should reorder objects to get a better picture, i.e. A upwards.</param>
         public Settings(LoggingSettings loggingSettings,
-                              MetapostDrawerSettings metapostDrawerSettings,
-                              DrawingRuleProviderSettings drawingRuleProviderSettings,
-                              bool reorderObjects)
+                        MetapostDrawerSettings metapostDrawerSettings,
+                        DrawingRuleProviderSettings drawingRuleProviderSettings,
+                        bool reorderObjects)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             MetapostDrawerSettings = metapostDrawerSettings ?? throw new ArgumentNullException(nameof(metapostDrawerSettings));

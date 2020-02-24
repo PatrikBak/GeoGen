@@ -1,5 +1,4 @@
-﻿using GeoGen.Algorithm;
-using GeoGen.Core;
+﻿using GeoGen.Core;
 using GeoGen.TheoremRanker;
 using System;
 

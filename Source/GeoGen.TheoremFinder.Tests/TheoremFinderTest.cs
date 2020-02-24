@@ -34,20 +34,18 @@ namespace GeoGen.TheoremFinder.Tests
                 // With constructor
                 .AddConstructor()
                 // Look for only some types
-                .AddTheoremFinder(new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
-                                  // We don't want line and circle tangencies
-                                  lineTangentToCirclesFinderSettings: null,
-                                  // The wanted types:
-                                  types: new[]
+                .AddTheoremFinder(new TheoremFindingSettings(soughtTheoremTypes: new[]
                                   {
                                       ParallelLines,
                                       PerpendicularLines,
                                       EqualLineSegments,
                                       TangentCircles,
                                       Incidence
-                                  }
-                                  // They're required as a set
-                                  .ToReadOnlyHashSet());
+                                  },
+                                  // No exclusion of inside-picture tangencies
+                                  tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
+                                  // We don't want line and circle tangencies
+                                  lineTangentToCircleTheoremFinderSettings: null));
 
             // Create the finder
             var finder = kernel.Get<ITheoremFinder>();

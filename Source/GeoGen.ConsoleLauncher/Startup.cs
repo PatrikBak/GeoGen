@@ -21,9 +21,9 @@ namespace GeoGen.ConsoleLauncher
             try
             {
                 // Load the settings either directly from arguments
-                var settings = arguments.Length > 0 ? SettingsLoader.LoadFromString<Settings>(arguments[0], new DefaultSettings())
+                var settings = arguments.Length > 0 ? SettingsLoader.LoadFromString<Settings>(arguments[0])
                     // Or from the default file settings.json
-                    : await SettingsLoader.LoadFromFileAsync<Settings>("settings.json", new DefaultSettings());
+                    : await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);

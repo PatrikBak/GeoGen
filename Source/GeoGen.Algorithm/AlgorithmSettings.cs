@@ -4,9 +4,9 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents the settings for <see cref="AlgorithmFacade"/>.
+    /// Represents the settings for <see cref="Algorithm"/>.
     /// </summary>
-    public class AlgorithmFacadeSettings
+    public class AlgorithmSettings
     {
         #region Public properties
 
@@ -26,18 +26,17 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmFacadeSettings"/> class.
+        /// Initializes a new instance of the <see cref="AlgorithmSettings"/> class.
         /// </summary>
         /// <param name="numberOfPictures">The number of pictures to which a configuration is drawn.</param>
-        public AlgorithmFacadeSettings(int numberOfPictures, bool excludeAsymmetricConfigurations)
+        public AlgorithmSettings(int numberOfPictures, bool excludeAsymmetricConfigurations)
         {
-            // Check validity
-            if (numberOfPictures <= 0)
-                throw new ArgumentOutOfRangeException(nameof(numberOfPictures), "The number of pictures must be at least 1");
-
-            // Set the values
             NumberOfPictures = numberOfPictures;
             ExcludeAsymmetricConfigurations = excludeAsymmetricConfigurations;
+
+            // Ensure there are some pictures
+            if (numberOfPictures <= 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfPictures), "The number of pictures must be at least 1");
         }
 
         #endregion

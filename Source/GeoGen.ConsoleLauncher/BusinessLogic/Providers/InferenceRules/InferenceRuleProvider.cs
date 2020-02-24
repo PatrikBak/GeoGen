@@ -14,7 +14,7 @@ namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
     /// The default implementation of <see cref="IInferenceRuleProvider"/> that looks for <see cref="LoadedInferenceRule"/>s
-    /// in a folder specified via <see cref="InferenceRuleFolderSettings"/>.
+    /// in a folder specified via <see cref="InferenceRuleProviderSettings"/>.
     /// </summary>
     public class InferenceRuleProvider : IInferenceRuleProvider
     {
@@ -23,7 +23,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings of the inference rule folder.
         /// </summary>
-        private readonly InferenceRuleFolderSettings _settings;
+        private readonly InferenceRuleProviderSettings _settings;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="InferenceRuleProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings of the inference rule folder.</param>
-        public InferenceRuleProvider(InferenceRuleFolderSettings settings)
+        public InferenceRuleProvider(InferenceRuleProviderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
