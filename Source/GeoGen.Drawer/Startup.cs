@@ -87,7 +87,7 @@ namespace GeoGen.Drawer
                             throw new DrawerException("No theorems to draw in the file.");
 
                         // Log their count
-                        Console.WriteLine($"Number of theorems in the file: {content.Length}.\n");
+                        Console.WriteLine($"Number of theorems in the file: {content.Length}.");
                     }
                     catch (Exception e)
                     {
@@ -103,6 +103,9 @@ namespace GeoGen.Drawer
                         // Move on
                         continue;
                     }
+
+                    // Empty line
+                    Console.WriteLine();
 
                     #endregion
                 }
@@ -205,9 +208,6 @@ namespace GeoGen.Drawer
 
                     // Empty line
                     Console.WriteLine();
-
-                    // Move on 
-                    continue;
                 }
 
                 #endregion

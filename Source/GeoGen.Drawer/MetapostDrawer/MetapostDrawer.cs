@@ -1,6 +1,7 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -65,7 +66,7 @@ namespace GeoGen.Drawer
         /// <returns>The task representing the result.</returns>
         public async Task DrawAsync(IEnumerable<(Configuration configuration, Theorem theorem)> configurationWithTheorems)
         {
-            // Create a figure from configuration-theorem pair
+            // Create figures from configuration-theorem pair
             var figures = configurationWithTheorems.Select(CreateFigure).ToArray();
 
             #region Writing code file
@@ -146,30 +147,43 @@ namespace GeoGen.Drawer
             if (constructionData.Duplicates != default)
                 throw new ConstructionException("The configuration cannot be constructed, because it contains duplicate objects");
 
-            // Construct the figures
-            return pictures.Select(picture =>
-            {
-                try
+            // Construct the ranked figures by going through the pictures
+            var rankedFigures = pictures.Select(picture =>
                 {
-                    // Try to construct the figure
-                    var figure = ConstructFigure(configuration, theorem, picture);
+                    try
+                    {
+                        // Try to construct the figure
+                        var figure = ConstructFigure(configuration, theorem, picture);
 
-                    // Rank it
-                    var rank = figure.CalculateVisualBadness();
+                        // Rank it
+                        var rank = figure.CalculateVisualBadness();
 
-                    // Return the tuple
-                    return (figure, rank);
-                }
-                catch (AnalyticException e)
-                {
-                    // Make aware if there is a weird problem
-                    throw new ConstructionException("Cannot construct a figure because analytic geometry failed.", e);
-                }
-            })
-            // Find the one with the smallest ranking, i.e. the most beautiful one
-            .MinItem(item => item.rank)
-            // Unwrap it
-            .figure;
+                        // Return the tuple
+                        return (figure, rank);
+                    }
+                    catch (Exception e)
+                    {
+                        // Make aware if there is a weird problem
+                        Log.LoggingManager.LogWarning($"A problem with a picture. The message: {e.Message}\n");
+
+                        // Log the exception as a debug message
+                        Log.LoggingManager.LogDebug(e.ToString());
+
+                        // Return the default value indicating something didn't work
+                        return default;
+                    }
+                })
+                // Take those where it worked out
+                .Where(pair => pair != default)
+                // Enumerate
+                .ToArray();
+
+            // If there are no figures, make aware
+            if (rankedFigures.IsEmpty())
+                throw new ConstructionException("No successfully drawn figure of the configuration.");
+
+            // Otherwise find the figure with the smallest ranking, i.e. the most beautiful one
+            return rankedFigures.MinItem(item => item.rank).figure;
         }
 
         /// <summary>
@@ -320,7 +334,7 @@ namespace GeoGen.Drawer
 
                             break;
 
-                        // If something else...
+                        // Unhandled cases
                         default:
                             throw new DrawerException($"Unhandled type of {nameof(DrawingCommandType)}: {command.Type}");
                     }
@@ -575,7 +589,7 @@ namespace GeoGen.Drawer
                     break;
                 }
 
-                // If something else...
+                // Unhandled cases
                 default:
                     throw new DrawerException($"Unhandled type of {nameof(TheoremType)}: {theorem.Type.GetType()}");
             }
@@ -681,7 +695,7 @@ namespace GeoGen.Drawer
 
                     break;
 
-                // If something else...
+                // Unhandled cases
                 default:
                     throw new DrawerException($"Unhandled value of {nameof(TheoremType)}: {theorem.Type}.");
             }
