@@ -245,7 +245,7 @@ namespace GeoGen.Algorithm
                 numberOfIterations: input.NumberOfIterations,
                 constructions: input.Constructions,
                 initialConfiguration: input.InitialConfiguration,
-                maximalObjectCounts: input.MaximalObjectCounts,
+                maximalNumbersOfObjectsToAdd: input.MaximalNumbersOfObjectsToAdd,
 
                 // As a filter pass our verification that draws the configuration geometrically
                 configurationFilter: VerifyConfigurationCorrectness

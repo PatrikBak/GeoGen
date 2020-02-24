@@ -28,10 +28,9 @@ namespace GeoGen.Generator
         public int NumberOfIterations { get; }
 
         /// <summary>
-        /// The dictionary mapping object types to the maximal number of objects of given
-        /// type that should be present in the generated configurations.
+        /// The dictionary representing at most how many objects of each type should be added to the initial configuration.
         /// </summary>
-        public IReadOnlyDictionary<ConfigurationObjectType, int> MaximalObjectCounts { get; }
+        public IReadOnlyDictionary<ConfigurationObjectType, int> MaximalNumbersOfObjectsToAdd { get; }
 
         /// <summary>
         /// Gets or sets the function that is applied on a valid <see cref="GeneratedConfiguration"/>.
@@ -49,18 +48,18 @@ namespace GeoGen.Generator
         /// <param name="initialConfiguration">The initial configuration from which the generation process starts. </param>
         /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
         /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
-        /// <param name="maximalObjectCounts">The dictionary mapping object types to the maximal number of objects of given type that should be present in the generated configurations.</param>
+        /// <param name="maximalNumbersOfObjectsToAdd">The dictionary representing at most how many objects of each type should be added to the initial configuration.</param>
         /// <param name="configurationFilter">The function for filtrating generated configurations.</param>
         public GeneratorInput(Configuration initialConfiguration,
                               IReadOnlyHashSet<Construction> constructions,
                               int numberOfIterations,
-                              IReadOnlyDictionary<ConfigurationObjectType, int> maximalObjectCounts,
+                              IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
                               Func<GeneratedConfiguration, bool> configurationFilter)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));
             NumberOfIterations = numberOfIterations;
-            MaximalObjectCounts = maximalObjectCounts ?? throw new ArgumentNullException(nameof(maximalObjectCounts));
+            MaximalNumbersOfObjectsToAdd = maximalNumbersOfObjectsToAdd ?? throw new ArgumentNullException(nameof(maximalNumbersOfObjectsToAdd));
             ConfigurationFilter = configurationFilter ?? throw new ArgumentNullException(nameof(configurationFilter));
         }
 

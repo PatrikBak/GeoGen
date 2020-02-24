@@ -193,7 +193,7 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToAllWriters($"\nIterations: {input.NumberOfIterations}");
 
             // Write maximal numbers of objects of particular types
-            WriteLineToAllWriters($"{input.MaximalObjectCounts.Select(pair => $"MaximalNumberOf{pair.Key}s: {pair.Value}").ToJoinedString("\n")}\n");
+            WriteLineToAllWriters($"{input.MaximalNumbersOfObjectsToAdd.Select(pair => $"MaximalNumberOf{pair.Key}s: {pair.Value}").ToJoinedString("\n")}\n");
 
             #endregion
 

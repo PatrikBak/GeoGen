@@ -135,7 +135,7 @@ namespace GeoGen.ConsoleLauncher
                         constructions: algorithmInput.Constructions,
                         initialConfiguration: algorithmInput.InitialConfiguration,
                         numberOfIterations: algorithmInput.NumberOfIterations,
-                        maximalObjectCounts: algorithmInput.MaximalObjectCounts
+                        maximalNumbersOfObjectsToAdd: algorithmInput.MaximalNumbersOfObjectsToAdd
                     ));
                 }
                 catch (ParsingException e)
@@ -238,19 +238,18 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            #region Parsing maximal object counts
+            #region Parsing maximal number of objects to be added
 
             // Find the configuration object types
             var objectTypes = Enum.GetValues(typeof(ConfigurationObjectType)).Cast<ConfigurationObjectType>().ToList();
 
-            // Each type needs to have a line now
-            // Make sure we have enough lines
+            // Each type needs to have a line. Make sure we have enough lines
             if (objectTypes.Count != lines.Count - 1 - iterationLineIndex)
                 throw new ParsingException($"There should be exactly {objectTypes.Count} lines after the iterations, " +
                     $"each specifying the maximal number of objects of the given type of this configuration.");
 
             // Look for them
-            var maximalObjectCounts = objectTypes.ToDictionary(objectType => objectType, objectType =>
+            var maximalNumbersOfObjectsToAdd = objectTypes.ToDictionary(objectType => objectType, objectType =>
             {
                 // Go through the remaining lines...
                 var maximalNumberMatch = lines.ItemsBetween(iterationLineIndex, lines.Count)
@@ -268,20 +267,16 @@ namespace GeoGen.ConsoleLauncher
                 {
                     // Try to parse 
                     maximalNumber = int.Parse(maximalNumberMatch.Groups[1].Value.Trim());
-
-                    // Make sure it's a correct value
-                    if (numberOfIterations < 0)
-                        throw new ParsingException($"The maximal number of {objectType}s cannot be negative, the found value is {maximalNumber}.");
-
-                    // Make sure it's at least the number of objects of this type of the configuration
-                    if (maximalNumber < configuration.ObjectMap.GetObjectsForKeys(objectType).Count())
-                        throw new ParsingException($"The maximal number of {objectType}s must be at least the number of objects of this type of the initial configuration.");
                 }
-                catch (Exception e) when (e is FormatException || e is OverflowException)
+                catch (Exception)
                 {
                     // Make sure the user is aware
                     throw new ParsingException($"Cannot parse the maximal number of {objectTypes}s: '{maximalNumberMatch.Groups[1].Value.Trim()}'");
                 }
+
+                // Make sure it's a correct value
+                if (maximalNumber < 0)
+                    throw new ParsingException($"The maximal number of {objectType}s cannot be negative, the found value is {maximalNumber}.");
 
                 // Now we have it parse and we can finally return it
                 return maximalNumber;
@@ -295,7 +290,7 @@ namespace GeoGen.ConsoleLauncher
                 initialConfiguration: configuration,
                 constructions: constructions,
                 numberOfIterations: numberOfIterations,
-                maximalObjectCounts: maximalObjectCounts
+                maximalNumbersOfObjectsToAdd: maximalNumbersOfObjectsToAdd
             );
         }
 

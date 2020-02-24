@@ -47,7 +47,7 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
-                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                maximalNumbersOfObjectsToAdd: new Dictionary<ConfigurationObjectType, int>
                 {
                     { Point, int.MaxValue }
                 },
@@ -79,7 +79,7 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
-                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                maximalNumbersOfObjectsToAdd: new Dictionary<ConfigurationObjectType, int>
                 {
                     { Point, int.MaxValue }
                 },
@@ -112,9 +112,9 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
                 numberOfIterations: iterations,
-                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                maximalNumbersOfObjectsToAdd: new Dictionary<ConfigurationObjectType, int>
                 {
-                    { Point, 6 }
+                    { Point, 3 }
                 },
                 configurationFilter: _ => true
             );
@@ -141,9 +141,9 @@ namespace GeoGen.Generator.Tests
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint, LineFromPoints, Circumcircle }.ToReadOnlyHashSet(),
                 numberOfIterations: 42,
-                maximalObjectCounts: new Dictionary<ConfigurationObjectType, int>
+                maximalNumbersOfObjectsToAdd: new Dictionary<ConfigurationObjectType, int>
                 {
-                    { Point, 4 },
+                    { Point, 1 },
                     { Line, 1 },
                     { Circle, 0 },
                 },

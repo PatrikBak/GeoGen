@@ -33,16 +33,16 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="initialConfiguration">The initial configuration from which the generation process starts.</param>
         /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
         /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
-        /// <param name="maximalObjectCounts">The dictionary mapping object types to the maximal number of objects of given type that should be present in the generated configurations.</param>
+        /// <param name="maximalNumbersOfObjectsToAdd">The dictionary representing at most how many objects of each type should be added to the initial configuration.</param>
         /// <param name="filePath">The path from which the input was loaded.</param>
         /// <param name="id">The id of the loaded input.</param>
         public LoadedAlgorithmInput(Configuration initialConfiguration,
                                     IReadOnlyHashSet<Construction> constructions,
                                     int numberOfIterations,
-                                    IReadOnlyDictionary<ConfigurationObjectType, int> maximalObjectCounts,
+                                    IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
                                     string filePath,
                                     string id)
-            : base(initialConfiguration, constructions, numberOfIterations, maximalObjectCounts)
+            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             Id = id ?? throw new ArgumentNullException(nameof(id));
