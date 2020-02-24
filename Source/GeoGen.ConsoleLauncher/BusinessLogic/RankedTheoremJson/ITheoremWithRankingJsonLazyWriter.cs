@@ -6,7 +6,7 @@ namespace GeoGen.ConsoleLauncher
     /// <summary>
     /// Represents a writer of <see cref="TheoremWithRanking"/> objects that writes them lazily.
     /// </summary>
-    public interface ITheoremsWithRankingJsonLazyWriter
+    public interface ITheoremWithRankingJsonLazyWriter
     {
         /// <summary>
         /// Begins lazy writing.

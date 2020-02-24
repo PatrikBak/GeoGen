@@ -2,14 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a wrapper of <see cref="LooseConfigurationObject"/>s together with their <see cref="LooseObjectsLayout"/>.
+    /// Represents a wrapper of <see cref="LooseConfigurationObject"/>s together with their <see cref="LooseObjectLayout"/>.
     /// </summary>
-    public class LooseObjectsHolder
+    public class LooseObjectHolder
     {
         #region Public properties
 
@@ -26,19 +26,19 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the layout in which these objects are arranged.
         /// </summary>
-        public LooseObjectsLayout Layout { get; }
+        public LooseObjectLayout Layout { get; }
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LooseObjectsHolder"/> 
+        /// Initializes a new instance of the <see cref="LooseObjectHolder"/> 
         /// instance wrapping the actual loose objects and possible their layout.
         /// </summary>
         /// <param name="looseObjects">The actual loose configurations objects.</param>
         /// <param name="layout">The layout of these loose objects.</param>
-        public LooseObjectsHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectsLayout layout)
+        public LooseObjectHolder(IEnumerable<LooseConfigurationObject> looseObjects, LooseObjectLayout layout)
         {
             LooseObjects = looseObjects?.ToList() ?? throw new ArgumentNullException(nameof(looseObjects));
             ObjectMap = new ConfigurationObjectMap(looseObjects);
@@ -80,7 +80,7 @@ namespace GeoGen.Core
 
                 // Case where any permutation of the second two objects work
                 case RightTriangle:
-                case ExplicitLineAndTwoPoints:
+                case LineAndTwoPoints:
 
                     // Take all permutations and zip them with the objects
                     return new[]
@@ -102,15 +102,15 @@ namespace GeoGen.Core
                         }
                     };
 
-                // Case where there is only identity
-                case ExplicitLineAndPoint:
+                // Case where there is only an identity
+                case LineAndPoint:
 
                     // Return just an identity dictionary
                     return LooseObjects.ToDictionary(_ => _, _ => _).ToEnumerable();
 
                 // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled value of {nameof(LooseObjectsLayout)}: {Layout}");
+                    throw new GeoGenException($"Unhandled value of {nameof(LooseObjectLayout)}: {Layout}");
             }
         }
 
@@ -135,8 +135,8 @@ namespace GeoGen.Core
             return this == otherObject
                 // Or the object is not null
                 || otherObject != null
-                // And is a loose objects holder
-                && otherObject is LooseObjectsHolder holder
+                // And is a loose object holder
+                && otherObject is LooseObjectHolder holder
                 // And the layouts are equal
                 && holder.Layout.Equals(Layout)
                 // And the loose objects are equal

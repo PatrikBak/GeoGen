@@ -22,7 +22,7 @@ namespace GeoGen.Drawer
         /// <summary>
         /// The relative or absolute path to the MetaPost library that is loaded at the end of the created file.
         /// </summary>
-        public string MetapostMacrosLibraryPath { get; }
+        public string MetapostMacroLibraryPath { get; }
 
         /// <summary>
         /// The prefix for the macros handling conversion of constructed object definitions to human-readable text.
@@ -62,7 +62,7 @@ namespace GeoGen.Drawer
         /// </summary>
         /// <param name="drawingData">The data with MetaPost-related commands.</param>
         /// <param name="metapostCodeFilePath">The path to the file that will be created and then compiled.</param>
-        /// <param name="metapostMacrosLibraryPath">The relative or absolute path to the MetaPost library that is loaded at the end of the created file.</param>
+        /// <param name="metapostMacroLibraryPath">The relative or absolute path to the MetaPost library that is loaded at the end of the created file.</param>
         /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text.</param>
         /// <param name="compilationCommand">The command used to compile the created MetaPost file.</param>
         /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null.</param>
@@ -70,7 +70,7 @@ namespace GeoGen.Drawer
         /// <param name="numberOfPictures">The number of pictures that are drawn for a single configuration in order to find the best looking one.</param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,
                                       string metapostCodeFilePath,
-                                      string metapostMacrosLibraryPath,
+                                      string metapostMacroLibraryPath,
                                       string constructionTextMacroPrefix,
                                       (string program, string arguments) compilationCommand,
                                       string postcompilationCommand,
@@ -79,7 +79,7 @@ namespace GeoGen.Drawer
         {
             DrawingData = drawingData ?? throw new ArgumentNullException(nameof(drawingData));
             MetapostCodeFilePath = metapostCodeFilePath ?? throw new ArgumentNullException(nameof(metapostCodeFilePath));
-            MetapostMacrosLibraryPath = metapostMacrosLibraryPath ?? throw new ArgumentNullException(nameof(metapostMacrosLibraryPath));
+            MetapostMacroLibraryPath = metapostMacroLibraryPath ?? throw new ArgumentNullException(nameof(metapostMacroLibraryPath));
             ConstructionTextMacroPrefix = constructionTextMacroPrefix ?? throw new ArgumentNullException(nameof(drawingData));
             CompilationCommand = compilationCommand;
             PostcompilationCommand = postcompilationCommand;

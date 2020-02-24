@@ -14,9 +14,5 @@
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Tracing\" />
-  </ItemGroup>
-  
+ 
 </Project>

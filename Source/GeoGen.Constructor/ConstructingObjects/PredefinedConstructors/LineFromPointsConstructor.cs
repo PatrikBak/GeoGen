@@ -4,7 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.LineFromPoints"/>>.
+    /// The <see cref="IObjectConstructor"/> for <see cref="PredefinedConstructionType.LineFromPoints"/>>.
     /// </summary>
     public class LineFromPointsConstructor : PredefinedConstructorBase
     {

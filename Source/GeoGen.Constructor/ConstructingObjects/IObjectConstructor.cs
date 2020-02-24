@@ -7,7 +7,7 @@ namespace GeoGen.Constructor
     /// <summary>
     /// Represents a general constructor of <see cref="ConstructedConfigurationObject"/>s.
     /// </summary>
-    public interface IObjectsConstructor
+    public interface IObjectConstructor
     {
         /// <summary>
         /// Creates a function that can perform the actual geometric construction of a given

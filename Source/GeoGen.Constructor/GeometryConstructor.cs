@@ -302,16 +302,18 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="layout">The layout of loose objects.</param>
         /// <returns>The constructed analytic objects.</returns>
-        private IAnalyticObject[] Construct(LooseObjectsLayout layout)
+        private IAnalyticObject[] Construct(LooseObjectLayout layout)
         {
             switch (layout)
             {
-                // With two points all options are equivalent
-                case LooseObjectsLayout.LineSegment:
+                // In line segment case everything is fixed
+                case LooseObjectLayout.LineSegment:
+
+                    // Return the points in an array
                     return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };
 
-                // With three points we'll create an acute scalene triangle
-                case LooseObjectsLayout.Triangle:
+                // With three points we'll create a random acute scalene triangle
+                case LooseObjectLayout.Triangle:
                 {
                     // Create the points
                     var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
@@ -320,8 +322,8 @@ namespace GeoGen.Constructor
                     return new IAnalyticObject[] { point1, point2, point3 };
                 }
 
-                // In quadrilateral case we will a convex one
-                case LooseObjectsLayout.Quadrilateral:
+                // In quadrilateral case we will create a random convex random one
+                case LooseObjectLayout.Quadrilateral:
                 {
                     // Create the points
                     var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
@@ -330,8 +332,8 @@ namespace GeoGen.Constructor
                     return new IAnalyticObject[] { point1, point2, point3, point4 };
                 }
 
-                // In cyclic quadrilateral case we will a convex one
-                case LooseObjectsLayout.CyclicQuadrilateral:
+                // In cyclic quadrilateral case we will create a random convex one
+                case LooseObjectLayout.CyclicQuadrilateral:
                 {
                     // Create the points
                     var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomCyclicConvexQuadrilateral();
@@ -340,28 +342,28 @@ namespace GeoGen.Constructor
                     return new IAnalyticObject[] { point1, point2, point3, point4 };
                 }
 
-                // In this case the line is fixed and the point is arbitrary
-                case LooseObjectsLayout.ExplicitLineAndPoint:
+                // In line and point case the line is fixed and the point is arbitrary
+                case LooseObjectLayout.LineAndPoint:
                 {
-                    // Create the points
-                    var (point, line) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
+                    // Create the objects
+                    var (line, point) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
 
                     // Return them in an array 
-                    return new IAnalyticObject[] { point, line };
+                    return new IAnalyticObject[] { line, point };
                 }
 
-                // In this case the line is fixed and points are arbitrary
-                case LooseObjectsLayout.ExplicitLineAndTwoPoints:
+                // In line and two points case the line is fixed and the points are arbitrary
+                case LooseObjectLayout.LineAndTwoPoints:
                 {
-                    // Create the points
+                    // Create the objects
                     var (line, point1, point2) = AnalyticHelpers.ConstructLineAndTwoRandomPointsNotLyingOnIt();
 
                     // Return them in an array 
                     return new IAnalyticObject[] { line, point1, point2 };
                 }
 
-                // In this case we have three points
-                case LooseObjectsLayout.RightTriangle:
+                // In right triangle case the right angle will be at the first point
+                case LooseObjectLayout.RightTriangle:
                 {
                     // Create the points
                     var (point1, point2, point3) = AnalyticHelpers.ConstructRandomRightTriangle();
@@ -372,7 +374,7 @@ namespace GeoGen.Constructor
 
                 // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectsLayout)}: {layout}.");
+                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectLayout)}: {layout}.");
             }
         }
 

@@ -4,14 +4,14 @@ using System.Collections.Generic;
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// The default <see cref="DrawerSettings"/>
+    /// The default <see cref="Settings"/>
     /// </summary>
-    public class DefaultDrawerSettings : DrawerSettings
+    public class DefaultSettings : Settings
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DefaultDrawerSettings"/> class
+        /// Initializes a new instance of the <see cref="DefaultSettings"/> class
         /// </summary>
-        public DefaultDrawerSettings() : base
+        public DefaultSettings() : base
         (
             loggingSettings: new LoggingSettings
             (
@@ -64,14 +64,14 @@ namespace GeoGen.Drawer
                     textMacro: "TexTextOnTheRight"
                 ),
                 metapostCodeFilePath: "figures.mp",
-                metapostMacrosLibraryPath: "macros.mp",
+                metapostMacroLibraryPath: "macros.mp",
                 constructionTextMacroPrefix: "_Text",
                 compilationCommand: (program: "mpost", arguments: "-interaction=nonstopmode -s prologues=3"),
                 postcompilationCommand: "post-compile.bat",
                 logCommandOutput: true,
                 numberOfPictures: 20
             ),
-            drawingRulesProviderSettings: new DrawingRulesProviderSettings(filePath: "..\\..\\..\\drawing_rules.txt"),
+            drawingRuleProviderSettings: new DrawingRuleProviderSettings(filePath: "..\\..\\..\\drawing_rules.txt"),
             reorderObjects: true
         )
         { }

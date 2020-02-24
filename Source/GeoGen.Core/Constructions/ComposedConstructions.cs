@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.Core
@@ -25,7 +25,7 @@ namespace GeoGen.Core
                 var intersection = new ConstructedConfigurationObject(IntersectionOfLines, l, lineAB);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ExplicitLineAndTwoPoints, intersection);
+                var configuration = Configuration.DeriveFromObjects(LineAndTwoPoints, intersection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>
@@ -169,7 +169,7 @@ namespace GeoGen.Core
                 var reflection = new ConstructedConfigurationObject(PointReflection, A, projectionA);
 
                 // Create the actual configuration
-                var configuration = Configuration.DeriveFromObjects(ExplicitLineAndPoint, l, A, reflection);
+                var configuration = Configuration.DeriveFromObjects(LineAndPoint, l, A, reflection);
 
                 // Create the parameters
                 var parameters = new List<ConstructionParameter>

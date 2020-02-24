@@ -6,7 +6,7 @@ namespace GeoGen.Drawer
     /// <summary>
     /// Represents a service that gets <see cref="DrawingRule"/>s.
     /// </summary>
-    public interface IDrawingRulesProvider
+    public interface IDrawingRuleProvider
     {
         /// <summary>
         /// Gets drawing rules.

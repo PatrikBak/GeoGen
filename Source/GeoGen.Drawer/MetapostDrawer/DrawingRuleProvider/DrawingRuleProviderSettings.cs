@@ -3,9 +3,9 @@
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// The settings for <see cref="DrawingRulesProvider"/>
+    /// The settings for <see cref="DrawingRuleProvider"/>
     /// </summary>
-    public class DrawingRulesProviderSettings
+    public class DrawingRuleProviderSettings
     {
         #region Public properties
 
@@ -19,10 +19,10 @@ namespace GeoGen.Drawer
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawingRulesProviderSettings"/> class.
+        /// Initializes a new instance of the <see cref="DrawingRuleProviderSettings"/> class.
         /// </summary>
         /// <param name="filePath">The path to the file with drawing rules.</param>
-        public DrawingRulesProviderSettings(string filePath)
+        public DrawingRuleProviderSettings(string filePath)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         }

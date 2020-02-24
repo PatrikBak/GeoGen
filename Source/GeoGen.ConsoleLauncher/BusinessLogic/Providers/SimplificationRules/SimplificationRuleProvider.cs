@@ -13,26 +13,26 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="ISimplificationRulesProvider"/> that gets the rules from a file.
+    /// The default implementation of <see cref="ISimplificationRuleProvider"/> that gets the rules from a file.
     /// </summary>
-    public class SimplificationRulesProvider : ISimplificationRulesProvider
+    public class SimplificationRuleProvider : ISimplificationRuleProvider
     {
         #region Private fields
 
         /// <summary>
         /// The settings for the provider.
         /// </summary>
-        private readonly SimplificationRulesProviderSettings _settings;
+        private readonly SimplificationRuleProviderSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimplificationRulesProvider"/> class.
+        /// Initializes a new instance of the <see cref="SimplificationRuleProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings for the provider.</param>
-        public SimplificationRulesProvider(SimplificationRulesProviderSettings settings)
+        public SimplificationRuleProvider(SimplificationRuleProviderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }

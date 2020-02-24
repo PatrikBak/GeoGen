@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructions;
 
 namespace GeoGen.Constructor.Tests

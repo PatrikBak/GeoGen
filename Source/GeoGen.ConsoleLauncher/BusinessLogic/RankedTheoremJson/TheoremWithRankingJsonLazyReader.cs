@@ -7,9 +7,9 @@ using System.IO;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="ITheoremsWithRankingJsonLazyReader"/>.
+    /// The default implementation of <see cref="ITheoremWithRankingJsonLazyReader"/>.
     /// </summary>
-    public class TheoremsWithRankingJsonLazyReader : ITheoremsWithRankingJsonLazyReader
+    public class TheoremWithRankingJsonLazyReader : ITheoremWithRankingJsonLazyReader
     {
         /// <summary>
         /// Lazily reads a given file where <see cref="TheoremWithRanking"/> objects have been written.

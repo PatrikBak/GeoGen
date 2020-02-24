@@ -2,7 +2,7 @@
 using GeoGen.Core;
 using NUnit.Framework;
 using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructions;
 using static GeoGen.Core.TheoremType;
 

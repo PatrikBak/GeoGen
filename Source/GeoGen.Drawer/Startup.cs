@@ -24,7 +24,7 @@ namespace GeoGen.Drawer
             try
             {
                 // Load the settings
-                var settings = await SettingsLoader.LoadFromFileAsync<DrawerSettings>("settings.json", new DefaultDrawerSettings());
+                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json", new DefaultSettings());
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);
@@ -81,7 +81,7 @@ namespace GeoGen.Drawer
                     try
                     {
                         // Read the content
-                        content = IoC.Kernel.Get<ITheoremsWithRankingJsonLazyReader>().Read(path).ToArray();
+                        content = IoC.Kernel.Get<ITheoremWithRankingJsonLazyReader>().Read(path).ToArray();
 
                         // Make sure there is any theorem
                         if (content.Length == 0)
@@ -228,7 +228,7 @@ namespace GeoGen.Drawer
             var (configuration, theorem) = pair;
 
             // Make sure we have a triangle
-            if (configuration.LooseObjectsHolder.Layout != LooseObjectsLayout.Triangle)
+            if (configuration.LooseObjectsHolder.Layout != LooseObjectLayout.Triangle)
                 throw new DrawerException("Unsupported layout, currently only triangle is supported :/");
 
             // Find the mapping that makes this symmetric
@@ -279,7 +279,7 @@ namespace GeoGen.Drawer
             var otherPoints = symmetricMapping.Keys.Where(point => point != fixedPoint);
 
             // Get the final order
-            var newLooseObjects = new LooseObjectsHolder(fixedPoint.ToEnumerable().Concat(otherPoints), LooseObjectsLayout.Triangle);
+            var newLooseObjects = new LooseObjectHolder(fixedPoint.ToEnumerable().Concat(otherPoints), LooseObjectLayout.Triangle);
 
             // Return the final result
             return new Configuration(newLooseObjects, configuration.ConstructedObjects);

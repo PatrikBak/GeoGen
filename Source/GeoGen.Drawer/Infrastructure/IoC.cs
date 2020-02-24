@@ -27,7 +27,7 @@ namespace GeoGen.Drawer
         /// Initializes the <see cref="Kernel"/> and all the dependencies.
         /// </summary>
         /// <param name="settings">The settings of the application.</param>
-        public static async Task InitializeAsync(DrawerSettings settings)
+        public static async Task InitializeAsync(Settings settings)
         {
             // Initialize the container
             Kernel = Infrastructure.IoC.CreateKernel();
@@ -38,19 +38,19 @@ namespace GeoGen.Drawer
             // And the constructor module
             Kernel.AddConstructor();
 
-            // Bind the rules provider
-            Kernel.Bind<IDrawingRulesProvider>().To<DrawingRulesProvider>().WithConstructorArgument(settings.DrawingRulesProviderSettings);
+            // Bind the rule provider
+            Kernel.Bind<IDrawingRuleProvider>().To<DrawingRuleProvider>().WithConstructorArgument(settings.DrawingRuleProviderSettings);
 
             // Bind the reader
-            Kernel.Bind<ITheoremsWithRankingJsonLazyReader>().To<TheoremsWithRankingJsonLazyReader>();
+            Kernel.Bind<ITheoremWithRankingJsonLazyReader>().To<TheoremWithRankingJsonLazyReader>();
 
             // Bind the drawer with its settings
             Kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
                 // And its data
                 .WithConstructorArgument(new MetapostDrawerData
                 (
-                    // Loaded via the drawing rules provider
-                    (await Kernel.Get<IDrawingRulesProvider>().GetDrawingRulesAsync()).ToDictionary(rule => rule.ObjectToDraw.Construction, rule => rule)
+                    // Loaded via the drawing rule provider
+                    (await Kernel.Get<IDrawingRuleProvider>().GetDrawingRulesAsync()).ToDictionary(rule => rule.ObjectToDraw.Construction, rule => rule)
                 ));
         }
 

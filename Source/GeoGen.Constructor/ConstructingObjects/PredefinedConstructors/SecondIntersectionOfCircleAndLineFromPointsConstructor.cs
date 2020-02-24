@@ -5,7 +5,7 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints"/>>.
+    /// The <see cref="IObjectConstructor"/> for <see cref="PredefinedConstructionType.SecondIntersectionOfCircleAndLineFromPoints"/>>.
     /// </summary>
     public class SecondIntersectionOfCircleAndLineFromPointsConstructor : PredefinedConstructorBase
     {

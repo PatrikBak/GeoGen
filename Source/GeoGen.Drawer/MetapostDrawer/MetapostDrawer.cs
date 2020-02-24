@@ -194,7 +194,7 @@ namespace GeoGen.Drawer
             switch (configuration.LooseObjectsHolder.Layout)
             {
                 // Triangle case
-                case LooseObjectsLayout.Triangle:
+                case LooseObjectLayout.Triangle:
 
                     // In this case we have three points
                     var points = looseObjects.Cast<Point>().ToArray();
@@ -209,7 +209,7 @@ namespace GeoGen.Drawer
 
                 // Unhandled cases
                 default:
-                    throw new DrawerException($"Unhandled value of {nameof(LooseObjectsLayout)}: {configuration.LooseObjectsHolder.Layout}");
+                    throw new DrawerException($"Unhandled value of {nameof(LooseObjectLayout)}: {configuration.LooseObjectsHolder.Layout}");
             }
 
             #endregion
@@ -722,7 +722,7 @@ namespace GeoGen.Drawer
             var code = new StringBuilder();
 
             // Append the preamble
-            code.Append($"input \"{_settings.MetapostMacrosLibraryPath}\"\n\n");
+            code.Append($"input \"{_settings.MetapostMacroLibraryPath}\"\n\n");
 
             // Append all the figures
             figures.ForEach((figure, index) =>

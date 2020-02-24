@@ -6,10 +6,10 @@ using System.Linq;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// A base class for <see cref="IObjectsConstructor"/>s that simplify implementors 
+    /// A base class for <see cref="IObjectConstructor"/>s that simplify implementors 
     /// so they can deal directly with analytic objects.
     /// </summary>
-    public abstract class ObjectsConstructorBase : IObjectsConstructor
+    public abstract class ObjectConstructorBase : IObjectConstructor
     {
         #region Private fields
 
@@ -23,10 +23,10 @@ namespace GeoGen.Constructor
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ObjectsConstructorBase"/> class.
+        /// Initializes a new instance of the <see cref="ObjectConstructorBase"/> class.
         /// </summary>
         /// <param name="tracer">The tracer for unexpected analytic exceptions.</param>
-        protected ObjectsConstructorBase(IConstructorFailureTracer tracer)
+        protected ObjectConstructorBase(IConstructorFailureTracer tracer)
         {
             _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
         }

@@ -3,9 +3,9 @@
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The settings for <see cref="SimplificationRulesProvider"/>
+    /// The settings for <see cref="SimplificationRuleProvider"/>
     /// </summary>
-    public class SimplificationRulesProviderSettings
+    public class SimplificationRuleProviderSettings
     {
         #region Public properties
 
@@ -19,10 +19,10 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SimplificationRulesProviderSettings"/> class.
+        /// Initializes a new instance of the <see cref="SimplificationRuleProviderSettings"/> class.
         /// </summary>
         /// <param name="filePath">The path to the file with simplification rules.</param>
-        public SimplificationRulesProviderSettings(string filePath)
+        public SimplificationRuleProviderSettings(string filePath)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains all settings used in tracers writing information per batch.
     /// </summary>
-    public class TracersSettings
+    public class TracingSettings
     {
         #region Public properties
 
@@ -32,13 +32,13 @@
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TracersSettings"/> class.
+        /// Initializes a new instance of the <see cref="TracingSettings"/> class.
         /// </summary>
         /// <param name="traceConstructorFailures">Indicates whether tracing of constructor failures is on.</param>
         /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>.</param>
         /// <param name="traceGeometryFailures">Indicates whether tracing of geometry failures is on.</param>
         /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>.</param>
-        public TracersSettings(bool traceConstructorFailures,
+        public TracingSettings(bool traceConstructorFailures,
                                ConstructorFailureTracerSettings constructorFailureTracerSettings,
                                bool traceGeometryFailures,
                                GeometryFailureTracerSettings geometryFailureTracerSettings)

@@ -8,9 +8,9 @@ using System.Linq;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="IRankedTheoremsWriter"/>.
+    /// The default implementation of <see cref="IRankedTheoremWriter"/>.
     /// </summary>
-    public class RankedTheoremsWriter : IRankedTheoremsWriter
+    public class RankedTheoremWriter : IRankedTheoremWriter
     {
         /// <summary>
         /// Writes given ranked theorems to a file.

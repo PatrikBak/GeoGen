@@ -48,10 +48,10 @@ namespace GeoGen.ConsoleLauncher
             Kernel.Bind<IAlgorithmRunner>().To<DebugAlgorithmRunner>().WithConstructorArgument(settings.DebugAlgorithmRunnerSettings);
             Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.InputFolderSettings);
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleFolderSettings);
-            Kernel.Bind<ISimplificationRulesProvider>().To<SimplificationRulesProvider>().WithConstructorArgument(settings.SimplificationRulesProviderSettings);
-            Kernel.Bind<IRankedTheoremsWriter>().To<RankedTheoremsWriter>();
-            Kernel.Bind<ITheoremsWithRankingJsonLazyWriterFactory>().ToFactory();
-            Kernel.Bind<ITheoremsWithRankingJsonLazyWriter>().To<TheoremsWithRankingJsonLazyWriter>();
+            Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
+            Kernel.Bind<IRankedTheoremWriter>().To<RankedTheoremWriter>();
+            Kernel.Bind<ITheoremWithRankingJsonLazyWriterFactory>().ToFactory();
+            Kernel.Bind<ITheoremWithRankingJsonLazyWriter>().To<TheoremWithRankingJsonLazyWriter>();
 
             #endregion           
 
@@ -80,10 +80,10 @@ namespace GeoGen.ConsoleLauncher
                 .AddTheoremSimplifier(new TheoremSimplifierData
                 (
                     // Simplification rules are loaded at the beginning
-                    rules: (await Kernel.Get<ISimplificationRulesProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
+                    rules: (await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
                 // And finally the algorithm with its settings
-                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings, settings.AlgorithmSettings.BestTheoremsFinderSettings);
+                .AddAlgorithm(settings.AlgorithmSettings.AlgorithmFacadeSettings, settings.AlgorithmSettings.BestTheoremFinderSettings);
 
             #endregion
 
@@ -92,16 +92,16 @@ namespace GeoGen.ConsoleLauncher
             #region ConstructorFailureTracer
 
             // Rebind Constructor Failure Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.ConstructorFailureTracerSettings != null)
-                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracersSettings.ConstructorFailureTracerSettings);
+            if (settings.TracingSettings.ConstructorFailureTracerSettings != null)
+                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracingSettings.ConstructorFailureTracerSettings);
 
             #endregion
 
             #region GeometryFailureTracer
 
             // Rebind Geometry Failure Tracer only if we're supposed be tracing
-            if (settings.TracersSettings.GeometryFailureTracerSettings != null)
-                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracersSettings.GeometryFailureTracerSettings);
+            if (settings.TracingSettings.GeometryFailureTracerSettings != null)
+                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracingSettings.GeometryFailureTracerSettings);
 
             #endregion
 

@@ -53,12 +53,12 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The path to the human-readable file where the best theorems should be written to.
         /// </summary>
-        public string BestTheoremsReadableFilePath { get; }
+        public string BestTheoremReadableFilePath { get; }
 
         /// <summary>
         /// The path to the JSON file where the best theorems should be written to.
         /// </summary>
-        public string BestTheoremsJsonFilePath { get; }
+        public string BestTheoremJsonFilePath { get; }
 
         /// <summary>
         /// The file with the usage of the inference rules used for analyzing the prover.
@@ -80,8 +80,8 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="fileExtension">The extensions of all types of output files, except for JSON files, which has .json extension.</param>
         /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log progress.</param>
-        /// <param name="bestTheoremsReadableFilePath">The path to the human-readable file where the best theorems should be written to.</param>
-        /// <param name="bestTheoremsJsonFilePath">The path to the JSON file where the best theorems should be written to.</param>
+        /// <param name="bestTheoremReadableFilePath">The path to the human-readable file where the best theorems should be written to.</param>
+        /// <param name="bestTheoremJsonFilePath">The path to the JSON file where the best theorems should be written to.</param>
         /// <param name="inferenceRuleUsageFile">The file with the usage of the inference rules used for analyzing the prover.</param>
         public DebugAlgorithmRunnerSettings(string outputFolder,
                                             string outputFolderWithProofs,
@@ -91,8 +91,8 @@ namespace GeoGen.ConsoleLauncher
                                             string fileExtension,
                                             int generationProgresLoggingFrequency,
                                             bool logProgress,
-                                            string bestTheoremsReadableFilePath,
-                                            string bestTheoremsJsonFilePath,
+                                            string bestTheoremReadableFilePath,
+                                            string bestTheoremJsonFilePath,
                                             string inferenceRuleUsageFile)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
@@ -103,8 +103,8 @@ namespace GeoGen.ConsoleLauncher
             FileExtension = fileExtension ?? throw new ArgumentNullException(nameof(fileExtension));
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
-            BestTheoremsReadableFilePath = bestTheoremsReadableFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsReadableFilePath));
-            BestTheoremsJsonFilePath = bestTheoremsJsonFilePath ?? throw new ArgumentNullException(nameof(bestTheoremsJsonFilePath));
+            BestTheoremReadableFilePath = bestTheoremReadableFilePath ?? throw new ArgumentNullException(nameof(bestTheoremReadableFilePath));
+            BestTheoremJsonFilePath = bestTheoremJsonFilePath ?? throw new ArgumentNullException(nameof(bestTheoremJsonFilePath));
             InferenceRuleUsageFile = inferenceRuleUsageFile ?? throw new ArgumentNullException(nameof(inferenceRuleUsageFile));
         }
 

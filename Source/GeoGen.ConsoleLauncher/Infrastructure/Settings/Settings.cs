@@ -26,9 +26,9 @@ namespace GeoGen.ConsoleLauncher
         public InferenceRuleFolderSettings InferenceRuleFolderSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="SimplificationRulesProvider"/>.
+        /// The settings for <see cref="SimplificationRuleProvider"/>.
         /// </summary>
-        public SimplificationRulesProviderSettings SimplificationRulesProviderSettings { get; }
+        public SimplificationRuleProviderSettings SimplificationRuleProviderSettings { get; }
 
         /// <summary>
         /// The settings for <see cref="DebugAlgorithmRunner"/>.
@@ -43,7 +43,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings for all tracers used per batch.
         /// </summary>
-        public TracersSettings TracersSettings { get; }
+        public TracingSettings TracingSettings { get; }
 
         #endregion
 
@@ -55,25 +55,25 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="loggingSettings">The settings for the logging system.</param>
         /// <param name="inputFolderSettings">The settings for <see cref="AlgorithmInputProvider"/>.</param>
         /// <param name="inferenceRuleFolderSettings">The settings for <see cref="InferenceRuleProvider"/>.</param>
-        /// <param name="simplificationRulesProviderSettings">The settings for <see cref="SimplificationRulesProvider"/>.</param>
+        /// <param name="simplificationRuleProviderSettings">The settings for <see cref="SimplificationRuleProvider"/>.</param>
         /// <param name="debugAlgorithmRunnerSettings">The settings for <see cref="DebugAlgorithmRunner"/>.</param>
         /// <param name="algorithmSettings">The settings related to the algorithm part of the application.</param>
-        /// <param name="tracersSettings">The settings for all tracers used per batch.</param>
+        /// <param name="tracingSettings">The settings for all tracers used per batch.</param>
         public Settings(LoggingSettings loggingSettings,
                         InputFolderSettings inputFolderSettings,
                         InferenceRuleFolderSettings inferenceRuleFolderSettings,
-                        SimplificationRulesProviderSettings simplificationRulesProviderSettings,
+                        SimplificationRuleProviderSettings simplificationRuleProviderSettings,
                         DebugAlgorithmRunnerSettings debugAlgorithmRunnerSettings,
                         AlgorithmSettings algorithmSettings,
-                        TracersSettings tracersSettings)
+                        TracingSettings tracingSettings)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             InputFolderSettings = inputFolderSettings ?? throw new ArgumentNullException(nameof(inputFolderSettings));
             InferenceRuleFolderSettings = inferenceRuleFolderSettings ?? throw new ArgumentNullException(nameof(inferenceRuleFolderSettings));
-            SimplificationRulesProviderSettings = simplificationRulesProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRulesProviderSettings));
+            SimplificationRuleProviderSettings = simplificationRuleProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRuleProviderSettings));
             DebugAlgorithmRunnerSettings = debugAlgorithmRunnerSettings ?? throw new ArgumentNullException(nameof(debugAlgorithmRunnerSettings));
             AlgorithmSettings = algorithmSettings ?? throw new ArgumentNullException(nameof(algorithmSettings));
-            TracersSettings = tracersSettings ?? throw new ArgumentNullException(nameof(tracersSettings));
+            TracingSettings = tracingSettings ?? throw new ArgumentNullException(nameof(tracingSettings));
         }
 
         #endregion

@@ -7,7 +7,7 @@ namespace GeoGen.ConsoleLauncher
     /// <summary>
     /// Represents a service that gets <see cref="SimplificationRule"/>s.
     /// </summary>
-    public interface ISimplificationRulesProvider
+    public interface ISimplificationRuleProvider
     {
         /// <summary>
         /// Gets simplification rules.

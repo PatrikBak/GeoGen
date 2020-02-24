@@ -12,13 +12,13 @@ namespace GeoGen.Algorithm
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="facadeSettings">The settings for the algorithm facade.</param>
-        /// <param name="finderSettings">The settings for the best theorems finder.</param>
+        /// <param name="finderSettings">The settings for the best theorem finder.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddAlgorithm(this IKernel kernel, AlgorithmFacadeSettings facadeSettings, BestTheoremsFinderSettings finderSettings)
+        public static IKernel AddAlgorithm(this IKernel kernel, AlgorithmFacadeSettings facadeSettings, BestTheoremFinderSettings finderSettings)
         {
             // Stateless services
             kernel.Bind<IAlgorithmFacade>().To<AlgorithmFacade>().WithConstructorArgument(facadeSettings);
-            kernel.Bind<IBestTheoremsFinder>().To<BestTheoremsFinder>().WithConstructorArgument(finderSettings);
+            kernel.Bind<IBestTheoremFinder>().To<BestTheoremFinder>().WithConstructorArgument(finderSettings);
 
             // Tracer
             kernel.Bind<IGeometryFailureTracer>().To<EmptyGeometryFailureTracer>();

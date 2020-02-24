@@ -12,12 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Rules\ObjectSpecificTheorems\Midpoint\**" />
-    <EmbeddedResource Remove="Rules\ObjectSpecificTheorems\Midpoint\**" />
-    <None Remove="Rules\ObjectSpecificTheorems\Midpoint\**" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj" />
   </ItemGroup>
 

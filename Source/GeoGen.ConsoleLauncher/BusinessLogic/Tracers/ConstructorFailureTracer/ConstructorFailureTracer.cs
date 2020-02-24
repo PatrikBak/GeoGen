@@ -36,7 +36,7 @@ namespace GeoGen.ConsoleLauncher
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             // Delete the file first
-            File.Delete(settings.FailuresFilePath);
+            File.Delete(settings.FailureFilePath);
         }
 
         #endregion
@@ -56,7 +56,7 @@ namespace GeoGen.ConsoleLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Construction: {infoString} See {_settings.FailuresFilePath} for more detail.");
+                LoggingManager.LogWarning($"Construction: {infoString} See {_settings.FailureFilePath} for more detail.");
 
             // Add the input
             infoString += $"\n\nInput:\n\n{analyticObjects.Select(o => $"{o.GetType().Name}: {o}").ToJoinedString("\n").Indent(2)}";
@@ -65,7 +65,7 @@ namespace GeoGen.ConsoleLauncher
             infoString += $"\n\nException message: {message}\n";
 
             // Open the stream writer for the file
-            using var streamWriter = new StreamWriter(_settings.FailuresFilePath, append: true);
+            using var streamWriter = new StreamWriter(_settings.FailureFilePath, append: true);
 
             // Write indented message to the file
             streamWriter.WriteLine($"- {infoString.Indent(2).TrimStart()}");

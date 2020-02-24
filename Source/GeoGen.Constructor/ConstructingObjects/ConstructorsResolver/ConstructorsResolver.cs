@@ -54,11 +54,11 @@ namespace GeoGen.Constructor
         #region IConstructorsResolver implementation
 
         /// <summary>
-        /// Find the corresponding objects constructor for a given construction.
+        /// Find the corresponding object constructor for a given construction.
         /// </summary>
         /// <param name="construction">The construction for which we want a constructor.</param>
         /// <returns>A constructor that performs the given construction.</returns>
-        public IObjectsConstructor Resolve(Construction construction)
+        public IObjectConstructor Resolve(Construction construction)
         {
             // Switch based on the type of construction
             switch (construction)

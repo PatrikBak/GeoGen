@@ -10,7 +10,7 @@ namespace GeoGen.Constructor
     /// The default implementation of <see cref="IComposedConstructor"/> that 
     /// receives a <see cref="ComposedConstruction"/> as a constructor parameter. 
     /// </summary>
-    public class ComposedConstructor : ObjectsConstructorBase, IComposedConstructor
+    public class ComposedConstructor : ObjectConstructorBase, IComposedConstructor
     {
         #region Dependencies
 
@@ -63,11 +63,11 @@ namespace GeoGen.Constructor
             switch (_construction.Configuration.LooseObjectsHolder.Layout)
             {
                 // Two points should be always fine
-                case LooseObjectsLayout.LineSegment:
+                case LooseObjectLayout.LineSegment:
                     break;
 
                 // Make sure the points are not collinear
-                case LooseObjectsLayout.Triangle:
+                case LooseObjectLayout.Triangle:
 
                     // If yes, the construction shouldn't be possible
                     if (AnalyticHelpers.AreCollinear((Point)input[0], (Point)input[1], (Point)input[2]))
@@ -76,7 +76,7 @@ namespace GeoGen.Constructor
                     break;
 
                 // Make sure no three points are collinear
-                case LooseObjectsLayout.Quadrilateral:
+                case LooseObjectLayout.Quadrilateral:
 
                     // Get the points
                     var point1 = (Point)input[0];
@@ -94,8 +94,8 @@ namespace GeoGen.Constructor
 
                     break;
 
-                // Make sure the point doesn't line on the line are not collinear
-                case LooseObjectsLayout.ExplicitLineAndPoint:
+                // Make sure the point doesn't lie on the line
+                case LooseObjectLayout.LineAndPoint:
 
                     // If yes, the construction shouldn't be possible
                     if (((Line)input[0]).Contains((Point)input[1]))
@@ -104,7 +104,7 @@ namespace GeoGen.Constructor
                     break;
 
                 // Make sure neither of the points lies on the line
-                case LooseObjectsLayout.ExplicitLineAndTwoPoints:
+                case LooseObjectLayout.LineAndTwoPoints:
 
                     // Get the line 
                     var line = (Line)input[0];
@@ -118,7 +118,7 @@ namespace GeoGen.Constructor
 
                 // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectsLayout)}: {_construction.Configuration.LooseObjectsHolder.Layout}");
+                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectLayout)}: {_construction.Configuration.LooseObjectsHolder.Layout}");
             }
 
             #endregion

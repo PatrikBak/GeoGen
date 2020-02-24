@@ -6,7 +6,7 @@ namespace GeoGen.AnalyticGeometry
     /// <summary>
     /// A static helper class for math operations.
     /// </summary>
-    public static class MathematicalHelpers
+    public static class MathHelpers
     {
         /// <summary>
         /// Solves a given quadratic equation of the form ax^2 + bx + c = 0. This 

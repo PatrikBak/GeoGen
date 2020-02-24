@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Extension methods for <see cref="LooseObjectsLayout"/>.
+    /// Extension methods for <see cref="LooseObjectLayout"/>.
     /// </summary>
-    public static class LooseObjectsLayoutExtensions
+    public static class LooseObjectLayoutExtensions
     {
         /// <summary>
         /// Gets the types of objects required by this layout.
         /// </summary>
         /// <param name="layout">The layout.</param>
         /// <returns>The list of object types.</returns>
-        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectsLayout layout) =>
+        public static IReadOnlyList<ConfigurationObjectType> ObjectTypes(this LooseObjectLayout layout) =>
 
             // Switch based on the layout
             layout switch
@@ -35,10 +35,10 @@ namespace GeoGen.Core
                 CyclicQuadrilateral => new[] { Point, Point, Point, Point },
 
                 // 1 line, 1 point
-                ExplicitLineAndPoint => new[] { Line, Point },
+                LineAndPoint => new[] { Line, Point },
 
                 // 1 line, 2 points
-                ExplicitLineAndTwoPoints => new[] { Line, Point, Point },
+                LineAndTwoPoints => new[] { Line, Point, Point },
 
                 // Unhandled cases
                 _ => throw new GeoGenException($"The layout '{layout}' doesn't have the object types defined."),

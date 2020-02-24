@@ -7,16 +7,16 @@ using System.Linq;
 namespace GeoGen.Core.Tests
 {
     /// <summary>
-    /// The test class for <see cref="LooseObjectsLayoutExtensions"/>.
+    /// The test class for <see cref="LooseObjectLayoutExtensions"/>.
     /// </summary>
     [TestFixture]
-    public class LooseObjectsLayoutExtensionsTest
+    public class LooseObjectLayoutExtensionsTest
     {
         [Test]
         public void Test_That_All_Layouts_Have_Defined_Types()
         {
             // Take all layouts
-            Enum.GetValues(typeof(LooseObjectsLayout)).Cast<LooseObjectsLayout>()
+            Enum.GetValues(typeof(LooseObjectLayout)).Cast<LooseObjectLayout>()
                 // For each...
                 .ForEach(layout =>
                 {

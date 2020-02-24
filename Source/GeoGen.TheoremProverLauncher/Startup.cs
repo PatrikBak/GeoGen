@@ -13,7 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Core.LooseObjectsLayout;
+using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructions;
 
 namespace GeoGen.TheoremProverLauncher

@@ -4,7 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.InternalAngleBisector"/>>.
+    /// The <see cref="IObjectConstructor"/> for <see cref="PredefinedConstructionType.InternalAngleBisector"/>>.
     /// </summary>
     public class InternalAngleBisectorConstructor : PredefinedConstructorBase
     {

@@ -5,7 +5,7 @@ namespace GeoGen.Constructor
 {
     /// <summary>
     /// Represents a tracer of unexpected <see cref="AnalyticException"/> caused
-    /// by <see cref="IObjectsConstructor"/>s.
+    /// by <see cref="IObjectConstructor"/>s.
     /// </summary>
     public interface IConstructorFailureTracer
     {

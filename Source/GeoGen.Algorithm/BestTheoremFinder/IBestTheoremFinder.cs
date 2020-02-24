@@ -7,7 +7,7 @@ namespace GeoGen.Algorithm
     /// perform the final merging algorithm of all interesting theorems to make sure the final output
     /// doesn't contain duplicates.
     /// </summary>
-    public interface IBestTheoremsFinder
+    public interface IBestTheoremFinder
     {
         /// <summary>
         /// The best theorems that currently have been found.

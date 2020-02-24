@@ -45,7 +45,7 @@ namespace GeoGen.Core
             // Prepare the result
             var result = new StringBuilder();
 
-            // Compose the loose objects string
+            // Compose the loose objects into a string
             var looseObjects = configuration.LooseObjects.Select(looseObject => _objectNames[looseObject]).ToJoinedString();
 
             // Add the first line with loose objects and its layout

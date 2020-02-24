@@ -1,9 +1,9 @@
 ﻿namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The settings for <see cref="BestTheoremsFinder"/>.
+    /// The settings for <see cref="BestTheoremFinder"/>.
     /// </summary>
-    public class BestTheoremsFinderSettings
+    public class BestTheoremFinderSettings
     {
         #region Public properties
 
@@ -17,10 +17,10 @@
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BestTheoremsFinderSettings"/> class.
+        /// Initializes a new instance of the <see cref="BestTheoremFinderSettings"/> class.
         /// </summary>
         /// <param name="numberOfTheorems">The maximal number of theorems that will be tracked.</param>
-        public BestTheoremsFinderSettings(int numberOfTheorems)
+        public BestTheoremFinderSettings(int numberOfTheorems)
         {
             NumberOfTheorems = numberOfTheorems;
         }

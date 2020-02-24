@@ -6,10 +6,10 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The default implementation of <see cref="IBestTheoremsFinder"/> can track a specified number of theorems.
+    /// The default implementation of <see cref="IBestTheoremFinder"/> can track a specified number of theorems.
     /// The current implementation doesn't do any check whether we have duplicated (potentially from multiple sources).
     /// </summary>
-    public class BestTheoremsFinder : IBestTheoremsFinder
+    public class BestTheoremFinder : IBestTheoremFinder
     {
         #region Private fields
 
@@ -32,10 +32,10 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BestTheoremsFinder"/> class.
+        /// Initializes a new instance of the <see cref="BestTheoremFinder"/> class.
         /// </summary>
         /// <param name="settings">The settings for the finder.</param>
-        public BestTheoremsFinder(BestTheoremsFinderSettings settings)
+        public BestTheoremFinder(BestTheoremFinderSettings settings)
         {
             // Initialize the ladder with the requested capacity
             _ladder = new RankingLadder<TheoremWithRanking, TheoremRanking>(capacity: settings.NumberOfTheorems);

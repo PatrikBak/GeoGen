@@ -6,7 +6,7 @@ namespace GeoGen.ConsoleLauncher
     /// <summary>
     /// Represents a reader of <see cref="TheoremWithRanking"/> objects that reads them lazily.
     /// </summary>
-    public interface ITheoremsWithRankingJsonLazyReader
+    public interface ITheoremWithRankingJsonLazyReader
     {
         /// <summary>
         /// Lazily reads a given file where <see cref="TheoremWithRanking"/> objects have been written.

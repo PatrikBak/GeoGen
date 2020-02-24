@@ -44,17 +44,17 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The finder of best theorems.
         /// </summary>
-        private readonly IBestTheoremsFinder _finder;
+        private readonly IBestTheoremFinder _finder;
 
         /// <summary>
         /// The writer used to write best theorems to a file.
         /// </summary>
-        private readonly IRankedTheoremsWriter _writer;
+        private readonly IRankedTheoremWriter _writer;
 
         /// <summary>
         /// The factory for creating lazy writers of best theorems.
         /// </summary>
-        private readonly ITheoremsWithRankingJsonLazyWriterFactory _writerFactory;
+        private readonly ITheoremWithRankingJsonLazyWriterFactory _writerFactory;
 
         /// <summary>
         /// The tracker of the used inference rules in theorem proofs.
@@ -91,9 +91,9 @@ namespace GeoGen.ConsoleLauncher
                                     ITheoremProver prover,
                                     ITheoremRanker ranker,
                                     ITheoremSimplifier simplifier,
-                                    IBestTheoremsFinder finder,
-                                    IRankedTheoremsWriter writer,
-                                    ITheoremsWithRankingJsonLazyWriterFactory writerFactory,
+                                    IBestTheoremFinder finder,
+                                    IRankedTheoremWriter writer,
+                                    ITheoremWithRankingJsonLazyWriterFactory writerFactory,
                                     IInferenceRuleUsageTracker tracker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -129,7 +129,7 @@ namespace GeoGen.ConsoleLauncher
             var outputJsonWriter = _writerFactory.Create(Path.Combine(_settings.OutputJsonFolder, jsonOutputFileName));
 
             // Prepare the writer of best theorems
-            var bestTheoremsJsonWriter = _writerFactory.Create(_settings.BestTheoremsJsonFilePath);
+            var bestTheoremsJsonWriter = _writerFactory.Create(_settings.BestTheoremJsonFilePath);
 
             // Prepare the name of the other human-readable output files
             var fileName = $"{_settings.OutputFilePrefix}{input.Id}.{_settings.FileExtension}";
@@ -334,7 +334,7 @@ namespace GeoGen.ConsoleLauncher
                     var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurationsCount} of the output file {fileName}"));
 
                     // Write them
-                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremsReadableFilePath);
+                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremReadableFilePath);
 
                     // Write their JSON version too
                     bestTheoremsJsonWriter.WriteEagerly(_finder.BestTheorems);

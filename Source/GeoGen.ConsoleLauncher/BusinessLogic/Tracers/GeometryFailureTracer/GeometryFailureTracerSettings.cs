@@ -12,7 +12,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The path to the file where the info about failures is written to.
         /// </summary>
-        public string FailuresFilePath { get; }
+        public string FailureFilePath { get; }
 
         /// <summary>
         /// Indicates whether we should log the failures using the log system.
@@ -26,11 +26,11 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="GeometryFailureTracerSettings"/> class.
         /// </summary>
-        /// <param name="failuresFilePath">The path to the file where the info about failures is written to.</param>
+        /// <param name="failureFilePath">The path to the file where the info about failures is written to.</param>
         /// <param name="logFailures">Indicates whether we should log the failures using the log system.</param>
-        public GeometryFailureTracerSettings(string failuresFilePath, bool logFailures)
+        public GeometryFailureTracerSettings(string failureFilePath, bool logFailures)
         {
-            FailuresFilePath = failuresFilePath ?? throw new ArgumentNullException(nameof(failuresFilePath));
+            FailureFilePath = failureFilePath ?? throw new ArgumentNullException(nameof(failureFilePath));
             LogFailures = logFailures;
         }
 

@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a way in which the loose objects of a configuration are arranged.
     /// </summary>
-    public enum LooseObjectsLayout
+    public enum LooseObjectLayout
     {
         /// <summary>
         /// Represents 2 points.
@@ -36,11 +36,11 @@
         /// <summary>
         /// Represents a line and a point that doesn't lie on it.
         /// </summary>
-        ExplicitLineAndPoint,
+        LineAndPoint,
 
         /// <summary>
         /// Represents a line and two distinct points that don't lie on it.
         /// </summary>
-        ExplicitLineAndTwoPoints
+        LineAndTwoPoints
     }
 }

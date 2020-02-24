@@ -45,7 +45,7 @@ namespace GeoGen.ConsoleLauncher
                     numberOfPictures: 5,
                     excludeAsymmetricConfigurations: false
                 ),
-                bestTheoremsFinderSettings: new BestTheoremsFinderSettings
+                bestTheoremFinderSettings: new BestTheoremFinderSettings
                 (
                     numberOfTheorems: 42
                 ),
@@ -110,7 +110,7 @@ namespace GeoGen.ConsoleLauncher
                 ruleFolderPath: "..\\..\\..\\Data\\InferenceRules",
                 fileExtension: "txt"
             ),
-            simplificationRulesProviderSettings: new SimplificationRulesProviderSettings
+            simplificationRuleProviderSettings: new SimplificationRuleProviderSettings
             (
                 filePath: "..\\..\\..\\Data\\simplifications.txt"
             ),
@@ -124,22 +124,22 @@ namespace GeoGen.ConsoleLauncher
                 fileExtension: "txt",
                 generationProgresLoggingFrequency: 15,
                 logProgress: true,
-                bestTheoremsReadableFilePath: "..\\..\\..\\Data\\best_theorems.txt",
-                bestTheoremsJsonFilePath: "..\\..\\..\\Data\\best_theorems.json",
+                bestTheoremReadableFilePath: "..\\..\\..\\Data\\best_theorems.txt",
+                bestTheoremJsonFilePath: "..\\..\\..\\Data\\best_theorems.json",
                 inferenceRuleUsageFile: "..\\..\\..\\Data\\rule_usages.json"
             ),
-            tracersSettings: new TracersSettings
+            tracingSettings: new TracingSettings
             (
                 traceConstructorFailures: true,
                 constructorFailureTracerSettings: new ConstructorFailureTracerSettings
                 (
-                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+                    failureFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
                     logFailures: true
                 ),
                 traceGeometryFailures: true,
                 geometryFailureTracerSettings: new GeometryFailureTracerSettings
                 (
-                    failuresFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
+                    failureFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
                     logFailures: true
                 )
             )

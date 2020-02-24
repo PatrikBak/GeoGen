@@ -251,7 +251,7 @@ namespace GeoGen.AnalyticGeometry
             var coefficient3 = (c / a + m).Squared() + n.Squared() - r.Squared();
 
             // Let the helper method solve the quadratic equation for y.
-            return MathematicalHelpers.SolveQuadraticEquation(coefficient1, coefficient2, coefficient3)
+            return MathHelpers.SolveQuadraticEquation(coefficient1, coefficient2, coefficient3)
                 // Each root represents a solution
                 .Select(y =>
                 {

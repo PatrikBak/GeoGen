@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.Infrastructure
 {
     /// <summary>
-    /// The base class for settings of <see cref="ILogger"/>.
+    /// The base class for settings of implementations of <see cref="ILogger"/>.
     /// </summary>
     public abstract class BaseLoggerSettings
     {

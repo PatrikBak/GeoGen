@@ -62,7 +62,7 @@ namespace GeoGen.ConsoleLauncher
             var layoutString = looseObjectsMatch.Groups[1].Value.Trim();
 
             // Try to parse the layout
-            if (!Enum.TryParse(layoutString, out LooseObjectsLayout layout))
+            if (!Enum.TryParse(layoutString, out LooseObjectLayout layout))
                 throw new ParsingException($"Cannot parse the loose objects layout '{layoutString}'");
 
             // Get the objects string
@@ -102,7 +102,7 @@ namespace GeoGen.ConsoleLauncher
             .ToList();
 
             // Create the holder of loose objects
-            var holder = new LooseObjectsHolder(looseObjects, layout);
+            var holder = new LooseObjectHolder(looseObjects, layout);
 
             #endregion
 

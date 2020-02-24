@@ -4,7 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.CircleWithCenterThroughPoint"/>>.
+    /// The <see cref="IObjectConstructor"/> for <see cref="PredefinedConstructionType.CircleWithCenterThroughPoint"/>>.
     /// </summary>
     public class CircleWithCenterThroughPointConstructor : PredefinedConstructorBase
     {

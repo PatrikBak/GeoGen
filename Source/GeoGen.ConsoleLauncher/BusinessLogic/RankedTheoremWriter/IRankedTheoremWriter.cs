@@ -6,7 +6,7 @@ namespace GeoGen.ConsoleLauncher
     /// <summary>
     /// Represents a writer of <see cref="TheoremWithRanking"/> to a file.
     /// </summary>
-    public interface IRankedTheoremsWriter
+    public interface IRankedTheoremWriter
     {
         /// <summary>
         /// Writes given ranked theorems to a file.

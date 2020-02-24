@@ -14,26 +14,26 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// The default implementation of <see cref="IDrawingRulesProvider"/> that gets the rules from a file.
+    /// The default implementation of <see cref="IDrawingRuleProvider"/> that gets the rules from a file.
     /// </summary>
-    public class DrawingRulesProvider : IDrawingRulesProvider
+    public class DrawingRuleProvider : IDrawingRuleProvider
     {
         #region Private fields
 
         /// <summary>
         /// The settings for the provider.
         /// </summary>
-        private readonly DrawingRulesProviderSettings _settings;
+        private readonly DrawingRuleProviderSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawingRulesProviderSettings"/> class.
+        /// Initializes a new instance of the <see cref="DrawingRuleProviderSettings"/> class.
         /// </summary>
         /// <param name="settings">The settings for the provider.</param>
-        public DrawingRulesProvider(DrawingRulesProviderSettings settings)
+        public DrawingRuleProvider(DrawingRuleProviderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }

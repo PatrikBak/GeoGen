@@ -7,10 +7,10 @@ using System.IO;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// An implementation of <see cref="ITheoremsWithRankingJsonLazyWriter"/> that writes a long JSON array
+    /// An implementation of <see cref="ITheoremWithRankingJsonLazyWriter"/> that writes a long JSON array
     /// of intermediate <see cref="TheoremWithRankingIntermediate"/> objects.
     /// </summary>
-    public class TheoremsWithRankingJsonLazyWriter : ITheoremsWithRankingJsonLazyWriter
+    public class TheoremWithRankingJsonLazyWriter : ITheoremWithRankingJsonLazyWriter
     {
         #region Private fields
 
@@ -43,10 +43,10 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TheoremsWithRankingJsonLazyWriter"/> class.
+        /// Initializes a new instance of the <see cref="TheoremWithRankingJsonLazyWriter"/> class.
         /// </summary>
         /// <param name="filePath">The path to the file to write to.</param>
-        public TheoremsWithRankingJsonLazyWriter(string filePath)
+        public TheoremWithRankingJsonLazyWriter(string filePath)
         {
             _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         }

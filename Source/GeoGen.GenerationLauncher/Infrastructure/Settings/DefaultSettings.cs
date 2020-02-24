@@ -60,12 +60,12 @@ namespace GeoGen.GenerationLauncher
             ),
             constructorFailureTracerSettings: new ConstructorFailureTracerSettings
             (
-                failuresFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+                failureFilePath: "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
                 logFailures: true
             ),
             geometryFailureTracerSettings: new GeometryFailureTracerSettings
             (
-                failuresFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
+                failureFilePath: "..\\..\\..\\Data\\Tracing\\geometry_failures.txt",
                 logFailures: true
             )
         )

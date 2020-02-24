@@ -4,7 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Constructor
 {
     /// <summary>
-    /// The <see cref="IObjectsConstructor"/> for <see cref="PredefinedConstructionType.Midpoint"/>>.
+    /// The <see cref="IObjectConstructor"/> for <see cref="PredefinedConstructionType.Midpoint"/>>.
     /// </summary>
     public class MidpointConstructor : PredefinedConstructorBase
     {

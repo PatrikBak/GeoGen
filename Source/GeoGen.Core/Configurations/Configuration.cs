@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a configuration of geometric objects. It consists of a <see cref="Core.LooseObjectsHolder"/>
+    /// Represents a configuration of geometric objects. It consists of a <see cref="Core.LooseObjectHolder"/>
     /// and a list of <see cref="ConstructedConfigurationObject"/>. The loose objects are the first objects to be 
     /// drawn (for example: in a triangle the loose objects are its 3 vertices. The constructed objects should to 
     /// be ordered so that it's possible to construct them in this order. The configuration should contain mutually
@@ -19,7 +19,7 @@ namespace GeoGen.Core
         /// <summary>
         /// Gets the holder of the loose objects of this configurations.
         /// </summary>
-        public LooseObjectsHolder LooseObjectsHolder { get; }
+        public LooseObjectHolder LooseObjectsHolder { get; }
 
         /// <summary>
         /// Gets the loose object of the configuration.
@@ -60,7 +60,7 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="looseObjectsHolder">The holder of the loose objects of this configurations.</param>
         /// <param name="constructedObjects">The list of constructed configuration objects ordered in a way that we can construct them in this order.</param>
-        public Configuration(LooseObjectsHolder looseObjectsHolder, IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
+        public Configuration(LooseObjectHolder looseObjectsHolder, IReadOnlyList<ConstructedConfigurationObject> constructedObjects)
         {
             LooseObjectsHolder = looseObjectsHolder;
             ConstructedObjects = constructedObjects ?? throw new ArgumentNullException(nameof(constructedObjects));
@@ -78,8 +78,8 @@ namespace GeoGen.Core
         /// </summary>
         /// <param name="layout">The layout of the loose objects./>.</param>
         /// <param name="objects">The objects of the configuration.</param>
-        private Configuration(LooseObjectsLayout layout, params ConfigurationObject[] objects)
-            : this(new LooseObjectsHolder(objects.OfType<LooseConfigurationObject>().ToList(), layout), objects.OfType<ConstructedConfigurationObject>().ToList())
+        private Configuration(LooseObjectLayout layout, params ConfigurationObject[] objects)
+            : this(new LooseObjectHolder(objects.OfType<LooseConfigurationObject>().ToList(), layout), objects.OfType<ConstructedConfigurationObject>().ToList())
         {
         }
 
@@ -148,7 +148,7 @@ namespace GeoGen.Core
         /// <param name="layout">The layout for the automatically detected loose objects.</param>
         /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
-        public static Configuration DeriveFromObjects(LooseObjectsLayout layout, params ConfigurationObject[] objects)
+        public static Configuration DeriveFromObjects(LooseObjectLayout layout, params ConfigurationObject[] objects)
             // We use our helper method to find all the objects that define the passed ones
             => new Configuration(layout, objects.GetDefiningObjects().ToArray());
 

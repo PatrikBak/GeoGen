@@ -35,7 +35,7 @@ namespace GeoGen.ConsoleLauncher
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
 
             // Delete the file first
-            File.Delete(settings.FailuresFilePath);
+            File.Delete(settings.FailureFilePath);
         }
 
         #endregion
@@ -56,7 +56,7 @@ namespace GeoGen.ConsoleLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailuresFilePath} for more detail.");
+                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailureFilePath} for more detail.");
 
             // Prepare the formatter for the configuration
             var formatter = new OutputFormatter(newConfiguration.AllObjects);
@@ -68,7 +68,7 @@ namespace GeoGen.ConsoleLauncher
             infoString += $"\n\nThe details of the exception: {exception.Format(formatter)}\n";
 
             // Open the stream writer for the file
-            using var streamWriter = new StreamWriter(_settings.FailuresFilePath, append: true);
+            using var streamWriter = new StreamWriter(_settings.FailureFilePath, append: true);
 
             // Write indented message to the file
             streamWriter.WriteLine($"- {infoString.Indent(3).TrimStart()}");
@@ -88,7 +88,7 @@ namespace GeoGen.ConsoleLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailuresFilePath} for more detail.");
+                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailureFilePath} for more detail.");
 
             // Prepare the formatter for the configuration
             var formatter = new OutputFormatter(newConfigurationPictures.Configuration.AllObjects);
@@ -100,7 +100,7 @@ namespace GeoGen.ConsoleLauncher
             infoString += $"\n\nThe details of the exception: {exception.Format(formatter)}\n";
 
             // Open the stream writer for the file
-            using var streamWriter = new StreamWriter(_settings.FailuresFilePath, append: true);
+            using var streamWriter = new StreamWriter(_settings.FailureFilePath, append: true);
 
             // Write indented message to the file
             streamWriter.WriteLine($"- {infoString.Indent(3).TrimStart()}");

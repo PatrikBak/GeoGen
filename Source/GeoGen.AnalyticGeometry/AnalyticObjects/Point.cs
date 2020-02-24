@@ -46,7 +46,7 @@ namespace GeoGen.AnalyticGeometry
         public Point Rotate(Point center, double angleInDegrees)
         {
             // First we convert the angle to radians
-            var angleInRadians = MathematicalHelpers.ToRadians(angleInDegrees);
+            var angleInRadians = MathHelpers.ToRadians(angleInDegrees);
 
             // Precalculate sin and cos of the angle
             var cosT = Cos(angleInRadians);

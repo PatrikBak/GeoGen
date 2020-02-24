@@ -256,8 +256,8 @@ namespace GeoGen.AnalyticGeometry
             // Therefore we may happily generate point C
 
             // First calculate tangents
-            var tanAlpha = Math.Tan(MathematicalHelpers.ToRadians(alpha));
-            var tan180MinusBeta = Math.Tan(MathematicalHelpers.ToRadians(180 - beta));
+            var tanAlpha = Math.Tan(MathHelpers.ToRadians(alpha));
+            var tan180MinusBeta = Math.Tan(MathHelpers.ToRadians(180 - beta));
 
             // Then calculate the coordinates
             var x = tan180MinusBeta / (tan180MinusBeta - tanAlpha);
@@ -310,7 +310,7 @@ namespace GeoGen.AnalyticGeometry
             var CBD = RandomnessHelper.NextDouble(0.3, 0.7) * CBA;
 
             // Now we need to construct D. We can use rotation to get the line BD
-            var lineBD = new Line(B, C.Rotate(B, MathematicalHelpers.ToDegrees(CBD)));
+            var lineBD = new Line(B, C.Rotate(B, MathHelpers.ToDegrees(CBD)));
 
             // We intersect this line with the circumcenter ABC
             var D = new Circle(A, B, C).IntersectWith(lineBD)
@@ -376,7 +376,7 @@ namespace GeoGen.AnalyticGeometry
             // Let's make angle ABC between 8 and 37, so that it's not 
             // close to 45, nor close to 0, and the other angle is not 
             // close to 45 either, nor 90
-            var beta = MathematicalHelpers.ToRadians(RandomnessHelper.NextDouble(8, 37));
+            var beta = MathHelpers.ToRadians(RandomnessHelper.NextDouble(8, 37));
 
             // Point C can then be then easily calculated
             var C = new Point(0, Math.Tan(beta));

@@ -6,7 +6,7 @@ namespace GeoGen.Drawer
     /// <summary>
     /// The settings for the drawer module.
     /// </summary>
-    public class DrawerSettings
+    public class Settings
     {
         #region Public properties
 
@@ -23,7 +23,7 @@ namespace GeoGen.Drawer
         /// <summary>
         /// The settings for the provider of drawing rules.
         /// </summary>
-        public DrawingRulesProviderSettings DrawingRulesProviderSettings { get; }
+        public DrawingRuleProviderSettings DrawingRuleProviderSettings { get; }
 
         /// <summary>
         /// Indicates whether we should reorder objects to get a better picture, i.e. A upwards.
@@ -35,20 +35,20 @@ namespace GeoGen.Drawer
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawerSettings"/> class.
+        /// Initializes a new instance of the <see cref="Settings"/> class.
         /// </summary>
         /// <param name="metapostDrawerSettings">The settings for the MetaPost drawer.</param>
         /// <param name="loggingSettings">The settings for the logging system.</param>
-        /// <param name="drawingRulesProviderSettings">The settings for the provider of drawing rules.</param>
+        /// <param name="drawingRuleProviderSettings">The settings for the provider of drawing rules.</param>
         /// <param name="reorderObjects">Indicates whether we should reorder objects to get a better picture, i.e. A upwards.</param>
-        public DrawerSettings(LoggingSettings loggingSettings,
+        public Settings(LoggingSettings loggingSettings,
                               MetapostDrawerSettings metapostDrawerSettings,
-                              DrawingRulesProviderSettings drawingRulesProviderSettings,
+                              DrawingRuleProviderSettings drawingRuleProviderSettings,
                               bool reorderObjects)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             MetapostDrawerSettings = metapostDrawerSettings ?? throw new ArgumentNullException(nameof(metapostDrawerSettings));
-            DrawingRulesProviderSettings = drawingRulesProviderSettings ?? throw new ArgumentNullException(nameof(drawingRulesProviderSettings));
+            DrawingRuleProviderSettings = drawingRuleProviderSettings ?? throw new ArgumentNullException(nameof(drawingRuleProviderSettings));
             ReorderObjects = reorderObjects;
         }
 
