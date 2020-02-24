@@ -1,5 +1,6 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.ConsoleLauncher;
+using GeoGen.Core;
 using GeoGen.Infrastructure;
 using System;
 
@@ -56,12 +57,39 @@ namespace GeoGen.GenerationLauncher
             var generatedConfigurations = 0;
 
             // Run the algorithm loop
-            foreach (var _ in _algorithm.Run(input).generationOutputs)
+            foreach (var output in _algorithm.Run(input).generationOutputs)
             {
-                // Update the count
-                generatedConfigurations++;
+                // Switch based on how we calculate the count
+                switch (_settings.CountingMode)
+                {
+                    // If we're counting in only the last iteration
+                    case CountingMode.LastIteration:
 
-                // If we're logging and if we log, do it
+                        // Check if this is the last iteration
+                        if (output.Configuration.IterationIndex == input.NumberOfIterations)
+                            // Count it in
+                            generatedConfigurations++;
+
+                        // Otherwise we may move on
+                        else
+                            continue;
+
+                        break;
+
+                    // If we're counting in everything
+                    case CountingMode.All:
+
+                        // Do it
+                        generatedConfigurations++;
+
+                        break;
+
+                    // Unhandled cases
+                    default:
+                        throw new GeoGenException($"Unhandled value of {nameof(CountingMode)}: {_settings.CountingMode}");
+                }
+
+                // If we're logging and if we should log, do it
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
                     Log.LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}");
             }

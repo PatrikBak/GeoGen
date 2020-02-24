@@ -20,6 +20,11 @@ namespace GeoGen.GenerationLauncher
         /// </summary>
         public bool LogProgress { get; }
 
+        /// <summary>
+        /// The way in which configurations are counted in while generating.
+        /// </summary>
+        public CountingMode CountingMode { get; }
+
         #endregion
 
         #region Constructor
@@ -29,10 +34,12 @@ namespace GeoGen.GenerationLauncher
         /// </summary>
         /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log the progress.</param>
-        public GenerationAlgorithmRunnerSettings(int generationProgresLoggingFrequency, bool logProgress)
+        /// <param name="countingMode">The way in which configurations are counted in while generating.</param>
+        public GenerationAlgorithmRunnerSettings(int generationProgresLoggingFrequency, bool logProgress, CountingMode countingMode)
         {
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;
+            CountingMode = countingMode;
 
             // Ensure the frequency is positive
             if (logProgress && generationProgresLoggingFrequency <= 0)
