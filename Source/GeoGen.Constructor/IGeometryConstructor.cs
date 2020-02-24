@@ -16,8 +16,9 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
         /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
+        /// <param name="drawingStyle">The way in which the <see cref="LooseObjectHolder"/> of the configuration should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures);
+        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures, LooseObjectDrawingStyle drawingStyle);
 
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.

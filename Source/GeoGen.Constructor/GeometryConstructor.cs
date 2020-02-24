@@ -42,8 +42,9 @@ namespace GeoGen.Constructor
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
         /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
+        /// <param name="drawingStyle">The way in which the <see cref="LooseObjectHolder"/> of the configuration should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        public (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures)
+        public (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures, LooseObjectDrawingStyle drawingStyle)
         {
             // Create pictures for the configuration
             var pictures = new PicturesOfConfiguration(configuration, numberOfPictures);
@@ -52,7 +53,7 @@ namespace GeoGen.Constructor
             foreach (var picture in pictures)
             {
                 // Construct the loose object for the picture
-                var constructedLooseObjects = Construct(configuration.LooseObjectsHolder.Layout);
+                var constructedLooseObjects = Construct(configuration.LooseObjectsHolder.Layout, drawingStyle);
 
                 // Add them one by one
                 configuration.LooseObjects.Zip(constructedLooseObjects).ForEach(pair =>
@@ -301,80 +302,115 @@ namespace GeoGen.Constructor
         /// Constructs analytic objects having a given layout.
         /// </summary>
         /// <param name="layout">The layout of loose objects.</param>
+        /// <param name="drawingStyle">The way in which these loose objects should be drawn</param>
         /// <returns>The constructed analytic objects.</returns>
-        private IAnalyticObject[] Construct(LooseObjectLayout layout)
+        private IAnalyticObject[] Construct(LooseObjectLayout layout, LooseObjectDrawingStyle drawingStyle)
         {
-            switch (layout)
+            // Switch based on the drawing style
+            switch (drawingStyle)
             {
-                // In line segment case everything is fixed
-                case LooseObjectLayout.LineSegment:
+                // Generation friend style
+                case LooseObjectDrawingStyle.GenerationFriendly:
 
-                    // Return the points in an array
-                    return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };
+                    // Switch based on the layout
+                    switch (layout)
+                    {
+                        // In line segment case everything is fixed
+                        case LooseObjectLayout.LineSegment:
 
-                // With three points we'll create a random acute scalene triangle
-                case LooseObjectLayout.Triangle:
-                {
-                    // Create the points
-                    var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
+                            // Return the points in an array
+                            return new IAnalyticObject[] { new Point(0, 0), new Point(1, 0) };
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { point1, point2, point3 };
-                }
+                        // With three points we'll create a random acute scalene triangle
+                        case LooseObjectLayout.Triangle:
+                        {
+                            // Create the points
+                            var (point1, point2, point3) = AnalyticHelpers.ConstructRandomScaleneAcuteTriangle();
 
-                // In quadrilateral case we will create a random convex random one
-                case LooseObjectLayout.Quadrilateral:
-                {
-                    // Create the points
-                    var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3 };
+                        }
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { point1, point2, point3, point4 };
-                }
+                        // In quadrilateral case we will create a random convex random one
+                        case LooseObjectLayout.Quadrilateral:
+                        {
+                            // Create the points
+                            var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
 
-                // In cyclic quadrilateral case we will create a random convex one
-                case LooseObjectLayout.CyclicQuadrilateral:
-                {
-                    // Create the points
-                    var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomCyclicConvexQuadrilateral();
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3, point4 };
+                        }
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { point1, point2, point3, point4 };
-                }
+                        // In cyclic quadrilateral case we will create a random convex one
+                        case LooseObjectLayout.CyclicQuadrilateral:
+                        {
+                            // Create the points
+                            var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomCyclicConvexQuadrilateral();
 
-                // In line and point case the line is fixed and the point is arbitrary
-                case LooseObjectLayout.LineAndPoint:
-                {
-                    // Create the objects
-                    var (line, point) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3, point4 };
+                        }
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { line, point };
-                }
+                        // In line and point case the line is fixed and the point is arbitrary
+                        case LooseObjectLayout.LineAndPoint:
+                        {
+                            // Create the objects
+                            var (line, point) = AnalyticHelpers.ConstructLineAndRandomPointNotLyingOnIt();
 
-                // In line and two points case the line is fixed and the points are arbitrary
-                case LooseObjectLayout.LineAndTwoPoints:
-                {
-                    // Create the objects
-                    var (line, point1, point2) = AnalyticHelpers.ConstructLineAndTwoRandomPointsNotLyingOnIt();
+                            // Return them in an array 
+                            return new IAnalyticObject[] { line, point };
+                        }
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { line, point1, point2 };
-                }
+                        // In line and two points case the line is fixed and the points are arbitrary
+                        case LooseObjectLayout.LineAndTwoPoints:
+                        {
+                            // Create the objects
+                            var (line, point1, point2) = AnalyticHelpers.ConstructLineAndTwoRandomPointsNotLyingOnIt();
 
-                // In right triangle case the right angle will be at the first point
-                case LooseObjectLayout.RightTriangle:
-                {
-                    // Create the points
-                    var (point1, point2, point3) = AnalyticHelpers.ConstructRandomRightTriangle();
+                            // Return them in an array 
+                            return new IAnalyticObject[] { line, point1, point2 };
+                        }
 
-                    // Return them in an array 
-                    return new IAnalyticObject[] { point1, point2, point3 };
-                }
+                        // In right triangle case the right angle will be at the first point
+                        case LooseObjectLayout.RightTriangle:
+                        {
+                            // Create the points
+                            var (point1, point2, point3) = AnalyticHelpers.ConstructRandomRightTriangle();
+
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3 };
+                        }
+
+                        // Unhandled cases
+                        default:
+                            throw new ConstructorException($"Unhandled value of {nameof(LooseObjectLayout)}: {layout}.");
+                    }
+
+
+                // Standard style
+                case LooseObjectDrawingStyle.Standard:
+
+                    // Switch based on the layout
+                    switch (layout)
+                    {
+                        // With three points we'll create a random triangle
+                        case LooseObjectLayout.Triangle:
+                        {
+                            // Create the points
+                            var (point1, point2, point3) = AnalyticHelpers.ConstructRandomTriangle();
+
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3 };
+                        }
+
+                        // Unhandled cases
+                        default:
+                            throw new ConstructorException($"Unhandled value of {nameof(LooseObjectLayout)}: {layout}.");
+                    }
 
                 // Unhandled cases
                 default:
-                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectLayout)}: {layout}.");
+                    throw new ConstructorException($"Unhandled value of {nameof(LooseObjectDrawingStyle)}: {drawingStyle}");
             }
         }
 

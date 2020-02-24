@@ -98,8 +98,8 @@ namespace GeoGen.Algorithm
 
             // Safely execute
             var (initialPictures, initialData) = GeneralUtilities.TryExecute(
-                // Constructing the configuration
-                () => _constructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures),
+                // Constructing the configuration suitable for generation
+                () => _constructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures, LooseObjectDrawingStyle.GenerationFriendly),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new InitializationException("Drawing the initial configuration failed.", e));
 

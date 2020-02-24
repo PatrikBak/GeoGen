@@ -120,7 +120,7 @@ namespace GeoGen.TheoremSimplifierTests
             var constructor = kernel.Get<IGeometryConstructor>();
 
             // Draw the examined configuration
-            var pictures = constructor.Construct(configuration, numberOfPictures: 5).pictures;
+            var pictures = constructor.Construct(configuration, numberOfPictures: 5, LooseObjectDrawingStyle.GenerationFriendly).pictures;
 
             // Draw the contextual picture
             var contextualPicture = new ContextualPicture(pictures);

@@ -83,7 +83,7 @@ namespace GeoGen.TheoremProverLauncher
                 #region Finding theorems
 
                 // Prepare 3 pictures in which the configuration is drawn
-                var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 3).pictures;
+                var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 3, LooseObjectDrawingStyle.GenerationFriendly).pictures;
 
                 // Prepare a contextual picture
                 var contextualPicture = new ContextualPicture(pictures);

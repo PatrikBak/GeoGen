@@ -332,7 +332,7 @@ namespace GeoGen.TheoremProver
             // Safely execute
             var (pictures, data) = GeneralUtilities.TryExecute(
                 // Construction of the new configuration
-                () => _constructor.Construct(helperConfiguration, NumberOfPicturesForFindingTrivialTheorems),
+                () => _constructor.Construct(helperConfiguration, NumberOfPicturesForFindingTrivialTheorems, LooseObjectDrawingStyle.GenerationFriendly),
                 // While making sure any exception is caught and re-thrown
                 (InconsistentPicturesException e) => ThrowIncorrectConstructionException("The defining configuration couldn't be drawn.", e));
 
