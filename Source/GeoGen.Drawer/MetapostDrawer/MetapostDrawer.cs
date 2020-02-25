@@ -183,7 +183,14 @@ namespace GeoGen.Drawer
                 throw new ConstructionException("No successfully drawn figure of the configuration.");
 
             // Otherwise find the figure with the smallest ranking, i.e. the most beautiful one
-            return rankedFigures.MinItem(item => item.rank).figure;
+            var (figure, rank) = rankedFigures.MinItem(item => item.rank);
+
+            // If the rank is maximal, i.e. ultimately bad figure, make aware
+            if (rank == double.MaxValue)
+                Log.LoggingManager.LogWarning("The figure couldn't be drawn nicely.\n");
+
+            // Return the figure anyway
+            return figure;
         }
 
         /// <summary>
@@ -605,10 +612,10 @@ namespace GeoGen.Drawer
             configuration.AllObjects.ForEach((configurationObject, index) =>
             {
                 // Get the analytic version
-                var analyticPoint = picture.Get(configurationObject);
+                var analyticObject = picture.Get(configurationObject);
 
                 // Add the label with the TeX dollars
-                figure.AddLabel(analyticPoint, $"${formatter.GetObjectName(configurationObject)}$");
+                figure.AddLabel(analyticObject, $"${formatter.GetObjectName(configurationObject)}$");
             });
 
             // Prepare the call for the macro that will define the loose objects layout
@@ -644,7 +651,7 @@ namespace GeoGen.Drawer
                     // Converting those
                     .Select(formatter.GetObjectName)
                     // Gluing them together 
-                    // NOT: This does not for look good for angles, but those are not supported at the time)
+                    // NOTE: This does not for look good for angles, but those are not supported at the time
                     .ToJoinedString("");
 
             // Prepare the value holding the converted and sorted theorem objects
@@ -675,8 +682,8 @@ namespace GeoGen.Drawer
                 case TheoremType.LineTangentToCircle:
 
                     // Get the line and the circle
-                    var lineName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<LineTheoremObject>().First().ConfigurationObject);
-                    var circleName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<CircleTheoremObject>().First().ConfigurationObject);
+                    var lineName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<LineTheoremObject>().First());
+                    var circleName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<CircleTheoremObject>().First());
 
                     // Compose the final string 
                     theoremObjectsString = $"\"{lineName}\", \"{circleName}\"";

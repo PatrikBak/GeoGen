@@ -283,7 +283,7 @@ namespace GeoGen.AnalyticGeometry
             var B = new Point(1, 0);
 
             // We will want to have each angle at least 'd' degrees (so it's not too flat)
-            const double d = 25;
+            const double d = 15;
 
             // Clearly <A must be at most 180 - 2d, since it is equal to 180 - <B - <C
             var alpha = RandomnessHelper.NextDouble(d, 180 - 2 * d);

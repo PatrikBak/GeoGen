@@ -22,7 +22,7 @@ vardef TexTextOnTheRight(expr text) =
 enddef;
 
 def Triangle_Text(expr A,B,C) = 
-	"Let~$" & A & B & C & "$ be an acute triangle. "
+	"Let~$" & A & B & C & "$ be a triangle. "
 enddef;
 
 def Midpoint_Text(expr M,A,B) = 
@@ -147,6 +147,10 @@ enddef;
 
 def TangentCircles_Text(expr k,l) =
 	"Show that circles~$" & k & "$ and $" & l & "$ are tangent to each other. "
+enddef;
+
+def LineTangentToCircle_Text(expr k,l) =
+	"Show that line~$" & k & "$ and circle $" & l & "$ are tangent to each other. "
 enddef;
 
 def ConcyclicPoints_Text(expr A,B,C,D) =

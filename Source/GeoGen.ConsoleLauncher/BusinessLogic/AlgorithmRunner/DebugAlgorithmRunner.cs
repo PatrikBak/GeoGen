@@ -15,7 +15,7 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="DebugAlgorithmRunner"/>.
+    /// The implementation of <see cref="IAlgorithmRunner"/> used for debugging various algorithms.
     /// </summary>
     public class DebugAlgorithmRunner : IAlgorithmRunner
     {

@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using static GeoGen.AnalyticGeometry.AnalyticHelpers;
+using static System.Math;
 
 namespace GeoGen.Drawer
 {
@@ -103,7 +105,7 @@ namespace GeoGen.Drawer
         public void AddLine(Line line, Point[] points, ObjectDrawingStyle style, bool shifted)
         {
             // Make sure the points lie on the line
-            if (points.Any(point => !AnalyticHelpers.LiesOn(line, point)))
+            if (points.Any(point => !LiesOn(line, point)))
                 throw new DrawerException("There is a line that should have contained the passed point, but it did not.");
 
             // Handle the points
@@ -242,7 +244,7 @@ namespace GeoGen.Drawer
                     var shift = drawingData.ShiftLength;
 
                     // Shift
-                    var C = AnalyticHelpers.ShiftSegment(A, B, shift);
+                    var C = ShiftSegment(A, B, shift);
 
                     // Our extended segment is AC and inherits the style
                     currentSegments.Add((A, C, style));
@@ -323,11 +325,11 @@ namespace GeoGen.Drawer
 
                     // If the left is shifted, do the shift
                     if (isLeftShifted)
-                        left = AnalyticHelpers.ShiftSegment(right, left, drawingData.ShiftLength);
+                        left = ShiftSegment(right, left, drawingData.ShiftLength);
 
                     // If the right is shifted, do the shift
                     if (isRightShifted)
-                        right = AnalyticHelpers.ShiftSegment(left, right, drawingData.ShiftLength);
+                        right = ShiftSegment(left, right, drawingData.ShiftLength);
 
                     // Add the segment
                     segmentsToDraw.Add((left, right, _lineStyles[line]));
@@ -656,31 +658,48 @@ namespace GeoGen.Drawer
         /// <summary>
         /// Calculates a heuristic numeric evaluation of the badness of the figure. The higher the ranking, the worse the figure.
         /// </summary>
-        /// <returns>The badness ranking.</returns>
+        /// <returns>The badness ranking from the interval [0, MaxValue].</returns>
         public double CalculateVisualBadness()
         {
-            // TODO: There definitely will be a better approach to calculate Badness
+            // Prepare the value of total badness that will be accumulated
+            var totalBadness = 0d;
 
-            // Rank each point
-            return _pointStyles.Keys.Select(point =>
+            // Go through the pairs of points in the figure
+            foreach (var (point1, point2) in _pointStyles.Keys.ToArray().UnorderedPairs())
             {
-                // For each point
-                var distances = _pointStyles.Keys
-                    // That is different from this one
-                    .Where(_point => _point != point)
-                    // We calculate the distance to it
-                    .Select(_point => point.DistanceTo(_point))
-                    // Enumerate
-                    .ToArray();
+                // Calculate the distance between the current pair
+                var distance = point1.DistanceTo(point2);
 
-                // We want to calculate the standard deviation of these distances, so we need the average
-                var averageDistance = distances.Average();
+                try
+                {
+                    // Based on the distance decide which badness function should be used
+                    var localBadness = distance < 1
+                        // For distances smaller than 1 a good function is -log(x), because its limit
+                        // when x-->0 is +infinity and it increases very fast. This corresponds to 
+                        // the fact that we don't want to have points that are too close to each other
+                        ? -Log(distance)
+                        // For distances at least 1 we will use (x-1)^2. This function punishes higher
+                        // distances very well and not so well smaller ones <=2. 
+                        : checked((distance - 1).Squared());
 
-                // And now we can do the math
-                return distances.Select(distance => (distance - averageDistance).Squared().Squared()).Sum();
-            })
-            // Find the worst point
-            .Max();
+                    // If the number couldn't be calculated (perhaps because it's too close to zero for log(x)),
+                    // then we have an extremely bad figure, which can be represented by the highest badness.
+                    if (double.IsNaN(localBadness))
+                        return double.MaxValue;
+
+                    // Otherwise we count in the local badness to the total one
+                    totalBadness = checked(localBadness + totalBadness);
+                }
+                catch (OverflowException)
+                {
+                    // If there is any overflow, then since we're working with positive numbers it means
+                    // that we have an extremely bad figure, which can be represented by the highest badness.
+                    return double.MaxValue;
+                }
+            }
+
+            // Return the calculated badness
+            return totalBadness;
         }
 
         #endregion
