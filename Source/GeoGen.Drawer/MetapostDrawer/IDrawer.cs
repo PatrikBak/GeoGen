@@ -1,20 +1,18 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.ConsoleLauncher;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GeoGen.Drawer
 {
     /// <summary>
-    /// Represents a drawer of configurations and theorems.
+    /// Represents a drawer of <see cref="TheoremWithRanking"/>s. 
     /// </summary>
     public interface IDrawer
     {
         /// <summary>
-        /// Draws given configurations with its theorems.
+        /// Draws given <see cref="TheoremWithRanking"/>s.
         /// </summary>
-        /// <param name="configurationWithTheorems">The configurations with theorems to be drawn.</param>
-        /// <param name="startingId">The id of the first figure. Others will be identified consecutively.</param>
         /// <returns>The task representing the result.</returns>
-        Task DrawAsync(IEnumerable<(Configuration configuration, Theorem theorem)> configurationWithTheorems, int startingId);
+        Task DrawAsync(IEnumerable<TheoremWithRanking> rankedTheorems, int startingId);
     }
 }

@@ -193,10 +193,19 @@ namespace GeoGen.Drawer
                 {
                     // Get the needed configurations and theorems for drawing
                     var drawerInput = content.ItemsBetween(start - 1, end)
-                        // Pull the configuration and theorem
-                        .Select(theoremWithRanking => (theoremWithRanking.Configuration, theoremWithRanking.Theorem))
                         // Make them symmetric if we are supposed to
-                        .Select(pair => reorderObjects ? (MakeSymmetric(pair), pair.Theorem) : pair);
+                        .Select(theoremWithRanking =>
+                        {
+                            // If not, we're done
+                            if (!reorderObjects)
+                                return theoremWithRanking;
+
+                            // If yes, make the configuration symmetric
+                            var configuration = MakeSymmetric((theoremWithRanking.Configuration, theoremWithRanking.Theorem));
+
+                            // And return the altered theorem with ranking object
+                            return new TheoremWithRanking(theoremWithRanking.Theorem, theoremWithRanking.Ranking, configuration, theoremWithRanking.IsSimplified);
+                        });
 
                     // Perform the drawing for the desired input
                     await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput, startingId: start);

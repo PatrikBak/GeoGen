@@ -10,6 +10,34 @@ enddef;
 
 %%%%%%%%%%% TEXT CONVERSION MACROS %%%%%%%%%%%
 
+vardef Table(text t) =
+
+	save s; string s; s := "\tabskip=0pt\halign to \hsize{"
+	& "\tabskip0pt plus1fil\hfil#\hfil&"
+	& "\tabskip0pt plus1fil\hfil#\hfil&"
+	& "\tabskip0pt plus1fil\hfil#\hfil&"
+	& "\tabskip0pt\hfil#\hfil\cr "
+	& "Type&Value&Coefficient&Message\cr "
+	& "\noalign{\vskip2pt\hrule\vskip3pt}";
+	
+	counter = 0;
+	
+	for i = t:
+		counter:=counter+1;	
+		s := s & i;
+		if (counter mod 4) <> 0:
+			s := s & "&";
+		else:
+			s := s & "\cr ";
+		fi
+	endfor
+	
+	show s;
+	
+	s & "}"
+	
+enddef;
+
 vardef TexTextOnTheRight(expr text) = 
 		
 	save p; picture p; p:=TEX("\parskip=10pt\parindent=0pt\hsize=" &

@@ -32,6 +32,19 @@ namespace GeoGen.Drawer
         public string ConstructionTextMacroPrefix { get; }
 
         /// <summary>
+        /// The name of the macro that accepts strings representing ranking. This macro takes arbitrarily
+        /// many string parameters whose total count is a multiple of 4. These quadruples are supposed to represent
+        /// the type of the ranked aspect, the value of the ranking, the coefficient of the ranked aspect,
+        /// and the message explaining how the value was calculated, if it is needed.
+        /// </summary>
+        public string RankingTableMacro { get; }
+
+        /// <summary>
+        /// Indicates whether we should draw figures with the ranking of the theorem.
+        /// </summary>
+        public bool IncludeRanking { get; }
+
+        /// <summary>
         /// The command used to compile the created MetaPost file. The path to the created file will be appended 
         /// to the end of the arguments.
         /// </summary>
@@ -64,6 +77,8 @@ namespace GeoGen.Drawer
         /// <param name="metapostCodeFilePath">The path to the file that will be created and then compiled.</param>
         /// <param name="metapostMacroLibraryPath">The relative or absolute path to the MetaPost library that is loaded at the end of the created file.</param>
         /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text. (see <see cref="ConstructionTextMacroPrefix"/>.)</param>
+        /// <param name="rankingTableMacro">The name of the macro that accepts strings representing ranking. (see <see cref="RankingTableMacro"/>).</param>
+        /// <param name="includeRanking">Indicates whether we should draw figures with the ranking of the theorem.</param>
         /// <param name="compilationCommand">The command used to compile the created MetaPost file.</param>
         /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null. (see <see cref="PostcompilationCommand"/>.)</param>
         /// <param name="logCommandOutput">Indicates whether we should log the output provided by the compilation and post-compilation command.</param>
@@ -72,6 +87,8 @@ namespace GeoGen.Drawer
                                       string metapostCodeFilePath,
                                       string metapostMacroLibraryPath,
                                       string constructionTextMacroPrefix,
+                                      string rankingTableMacro,
+                                      bool includeRanking,
                                       (string program, string arguments) compilationCommand,
                                       string postcompilationCommand,
                                       bool logCommandOutput,
@@ -81,6 +98,8 @@ namespace GeoGen.Drawer
             MetapostCodeFilePath = metapostCodeFilePath ?? throw new ArgumentNullException(nameof(metapostCodeFilePath));
             MetapostMacroLibraryPath = metapostMacroLibraryPath ?? throw new ArgumentNullException(nameof(metapostMacroLibraryPath));
             ConstructionTextMacroPrefix = constructionTextMacroPrefix ?? throw new ArgumentNullException(nameof(drawingData));
+            RankingTableMacro = rankingTableMacro ?? throw new ArgumentNullException(nameof(rankingTableMacro));
+            IncludeRanking = includeRanking;
             CompilationCommand = compilationCommand;
             PostcompilationCommand = postcompilationCommand;
             LogCommandOutput = logCommandOutput;

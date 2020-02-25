@@ -1,10 +1,12 @@
 ﻿using GeoGen.AnalyticGeometry;
+using GeoGen.ConsoleLauncher;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -60,15 +62,13 @@ namespace GeoGen.Drawer
         #region IMetapostDrawer implementation
 
         /// <summary>
-        /// Draws given configurations with its theorems.
+        /// Draws given <see cref="TheoremWithRanking"/>s.
         /// </summary>
-        /// <param name="configurationWithTheorems">The configurations with theorems to be drawn.</param>
-        /// <param name="startingId">The id of the first figure. Others will be identified consecutively.</param>
         /// <returns>The task representing the result.</returns>
-        public async Task DrawAsync(IEnumerable<(Configuration configuration, Theorem theorem)> configurationWithTheorems, int startingId)
+        public async Task DrawAsync(IEnumerable<TheoremWithRanking> rankedTheorems, int startingId)
         {
             // Create figures from configuration-theorem pair
-            var figures = configurationWithTheorems.Select(CreateFigure).ToArray();
+            var figures = rankedTheorems.Select(CreateFigure).ToArray();
 
             #region Writing code file
 
@@ -124,19 +124,16 @@ namespace GeoGen.Drawer
         }
 
         /// <summary>
-        /// Constructs a figure for the given configuration and theorem.
+        /// Constructs a figure for a given ranked theorem.
         /// </summary>
-        /// <param name="configurtionTheoremPair">The pair of configuration and theorem to be drawn.</param>
+        /// <param name="theoremWithRanking">The theorem with ranking for which we're drawing a figure.</param>
         /// <returns>The MetaPost figure.</returns>
-        private MetapostFigure CreateFigure((Configuration configuration, Theorem theorem) configurtionTheoremPair)
+        private MetapostFigure CreateFigure(TheoremWithRanking theoremWithRanking)
         {
-            // Deconstruct
-            var (configuration, theorem) = configurtionTheoremPair;
-
             // Safely execute
             var (pictures, constructionData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
-                () => _constructor.Construct(configuration, _settings.NumberOfPictures, LooseObjectDrawingStyle.Standard),
+                () => _constructor.Construct(theoremWithRanking.Configuration, _settings.NumberOfPictures, LooseObjectDrawingStyle.Standard),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new ConstructionException("Drawing of the initial configuration failed.", e));
 
@@ -154,7 +151,7 @@ namespace GeoGen.Drawer
                     try
                     {
                         // Try to construct the figure
-                        var figure = ConstructFigure(configuration, theorem, picture);
+                        var figure = ConstructFigure(theoremWithRanking, picture);
 
                         // Rank it
                         var rank = figure.CalculateVisualBadness();
@@ -195,15 +192,18 @@ namespace GeoGen.Drawer
         }
 
         /// <summary>
-        /// Performs the construction of a MetaPost figure holding the passed configuration and theorem
+        /// Performs the construction of a MetaPost figure holding the passed theorem and its configuration
         /// with respect to the passed picture containing needed analytic objects.
         /// </summary>
-        /// <param name="configuration">The configuration to be constructed.</param>
-        /// <param name="theorem">The theorem to be constructed.</param>
+        /// <param name="theoremWithRanking">The theorem with ranking for which we're drawing a figure.</param>
         /// <param name="picture">The picture with analytic representations of the objects.</param>
         /// <returns>The constructed MetaPost figure.</returns>
-        private MetapostFigure ConstructFigure(Configuration configuration, Theorem theorem, Picture picture)
+        private MetapostFigure ConstructFigure(TheoremWithRanking theoremWithRanking, Picture picture)
         {
+            // Get the configuration and theorem for comfort
+            var configuration = theoremWithRanking.Configuration;
+            var theorem = theoremWithRanking.Theorem;
+
             // Create an empty figure
             var figure = new MetapostFigure();
 
@@ -604,10 +604,10 @@ namespace GeoGen.Drawer
 
             #endregion
 
-            #region Labeling and statement
-
             // Prepare the output formatter that does all the naming
             var formatter = new OutputFormatter(configuration.AllObjects, includeSubscriptsBeforeNumbers: true);
+
+            #region Labeling
 
             // Go through all the objects and add a label for each            
             configuration.AllObjects.ForEach((configurationObject, index) =>
@@ -619,8 +619,12 @@ namespace GeoGen.Drawer
                 figure.AddLabel(analyticObject, $"${formatter.GetObjectName(configurationObject)}$");
             });
 
+            #endregion
+
+            #region Statement
+
             // Prepare the call for the macro that will define the loose objects layout
-            var looseObjectsMacro = $"{configuration.LooseObjectsHolder.Layout}{_settings.ConstructionTextMacroPrefix}" +
+            var looseObjectMacro = $"{configuration.LooseObjectsHolder.Layout}{_settings.ConstructionTextMacroPrefix}" +
                 // Get individual loose objects
                 $"({configuration.LooseObjects.Select(looseObject => $"\"{formatter.GetObjectName(looseObject)}\"").ToJoinedString()})";
 
@@ -656,7 +660,7 @@ namespace GeoGen.Drawer
                     .ToJoinedString("");
 
             // Prepare the value holding the converted and sorted theorem objects
-            string theoremObjectsString;
+            string theoremObjectString;
 
             // Convert theorem objects based on the type of theorem
             switch (theorem.Type)
@@ -671,7 +675,7 @@ namespace GeoGen.Drawer
                 case TheoremType.EqualLineSegments:
 
                     // Simply convert individual objects 
-                    theoremObjectsString = theorem.InvolvedObjects.Select(theoremObject => $"\"{ConvertTheoremObject(theoremObject)}\"")
+                    theoremObjectString = theorem.InvolvedObjects.Select(theoremObject => $"\"{ConvertTheoremObject(theoremObject)}\"")
                         // Sort
                         .Ordered()
                         // Join
@@ -682,24 +686,24 @@ namespace GeoGen.Drawer
                 // Here we want the line to be first
                 case TheoremType.LineTangentToCircle:
 
-                    // Get the line and the circle
+                    // Convert the line and the circle
                     var lineName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<LineTheoremObject>().First());
                     var circleName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<CircleTheoremObject>().First());
 
                     // Compose the final string 
-                    theoremObjectsString = $"\"{lineName}\", \"{circleName}\"";
+                    theoremObjectString = $"\"{lineName}\", \"{circleName}\"";
 
                     break;
 
                 // Here we want the point to be first
                 case TheoremType.Incidence:
 
-                    // Get the point and the other object
-                    var pointName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<PointTheoremObject>().First().ConfigurationObject);
-                    var lineOrCircleName = formatter.GetObjectName(theorem.InvolvedObjects.OfType<TheoremObjectWithPoints>().First().ConfigurationObject);
+                    // Convert the point and the other object
+                    var pointName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<PointTheoremObject>().First());
+                    var lineOrCircleName = ConvertTheoremObject(theorem.InvolvedObjects.OfType<TheoremObjectWithPoints>().First());
 
                     // Compose the final string 
-                    theoremObjectsString = $"\"{pointName}\", \"{lineOrCircleName}\"";
+                    theoremObjectString = $"\"{pointName}\", \"{lineOrCircleName}\"";
 
                     break;
 
@@ -710,24 +714,63 @@ namespace GeoGen.Drawer
 
             // The final theorem macro consists of the theorem type with the prefix, which makes
             // the macro name, and already composed arguments for this macro 
-            var theoremMacro = $"{theorem.Type}{_settings.ConstructionTextMacroPrefix}({theoremObjectsString})";
+            var theoremMacro = $"{theorem.Type}{_settings.ConstructionTextMacroPrefix}({theoremObjectString})";
 
-            // Now we are ready to prepare the final text. We take the definition of the layout
-            var finalText = looseObjectsMacro.ToEnumerable()
+            #endregion
+
+            // Now we are ready to prepare the final lines of text. We take the definition of the layout
+            var finalLines = looseObjectMacro.ToEnumerable()
                 // Append the constructed objects
                 .Concat(constructedObjectMacros)
-                // Append a new line written as a TeX command
-                .Concat("\"{\\par}\"")
+                // Append a new line 
+                .Concat("\"\\par \"")
                 // Append the theorem macro
-                .Concat(theoremMacro)
-                // And we join these things by '&', which is the concatenation operator in MetaPost
-                // For better readability we add some spaces and new lines
-                .ToJoinedString($"\n& ");
+                .Concat(theoremMacro);
+
+            #region Ranking            
+
+            // If we are supposed to include ranking, do it
+            if (_settings.IncludeRanking)
+            {
+                // Prepare the ranking table by calling the macro for the ranking table
+                var rank = $"{_settings.RankingTableMacro}(" +
+                    // Now we will append individual rankings
+                    theoremWithRanking.Ranking.Ranking
+                        // Sorted by the contribution, which is ranking * coefficient
+                        .OrderBy(pair => pair.Value.Ranking * pair.Value.Coefficient)
+                        // Now we can convert each to a single string with these 4 values. Add the type first
+                        .Select(pair => $"\"{pair.Key}\"," +
+                            // Append the ranking
+                            $"\"{pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
+                            // Append the coefficient
+                            $"\"{pair.Value.Coefficient.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
+                            // Append the message
+                            $"\"{pair.Value.Message}\"")
+                        // They are joined together by commas, the macro will take care of splitting these quadruples
+                        .ToJoinedString(",")
+                    // Append the end of the call
+                    + ")";
+
+                // Take the already constructed lines
+                finalLines = finalLines
+                    // Append a new line with some additional space 
+                    .Concat("\"\\par\\noindent\\medskip \"")
+                    // Append the table with rankings
+                    .Concat(rank)
+                    // Append a new line with some additional space 
+                    .Concat("\"\\par\\medskip \"")
+                    // Append the total ranking
+                    .Concat($"\"Total ranking: {theoremWithRanking.Ranking.TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)}\"");
+            }
+
+            #endregion
+
+            // Construct the final text by joining the lines with '&', which is the concatenation operator in MetaPost
+            // For better readability we add some spaces and new lines
+            var finalText = finalLines.ToJoinedString($"\n& ");
 
             // Finally we can add the text to the picture
             figure.AddText(finalText);
-
-            #endregion
 
             // Return it
             return figure;
