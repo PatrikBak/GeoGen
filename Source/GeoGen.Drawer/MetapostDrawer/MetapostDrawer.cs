@@ -63,8 +63,9 @@ namespace GeoGen.Drawer
         /// Draws given configurations with its theorems.
         /// </summary>
         /// <param name="configurationWithTheorems">The configurations with theorems to be drawn.</param>
+        /// <param name="startingId">The id of the first figure. Others will be identified consecutively.</param>
         /// <returns>The task representing the result.</returns>
-        public async Task DrawAsync(IEnumerable<(Configuration configuration, Theorem theorem)> configurationWithTheorems)
+        public async Task DrawAsync(IEnumerable<(Configuration configuration, Theorem theorem)> configurationWithTheorems, int startingId)
         {
             // Create figures from configuration-theorem pair
             var figures = configurationWithTheorems.Select(CreateFigure).ToArray();
@@ -72,7 +73,7 @@ namespace GeoGen.Drawer
             #region Writing code file
 
             // Get the code for them 
-            var code = CreateCode(figures);
+            var code = CreateCode(figures, startingId);
 
             try
             {
@@ -111,8 +112,8 @@ namespace GeoGen.Drawer
                 // Construct the command with parameters
                 command = $"{_settings.PostcompilationCommand} {figures.Length}";
 
-                // Run it with the argument equal to the number of generated files
-                (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.PostcompilationCommand, arguments: $"{figures.Length}");
+                // Run it with two arguments, the starting picture id and the number of pictures
+                (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.PostcompilationCommand, arguments: $"{startingId} {figures.Length}");
 
                 // If the error code is not OK, i.e. not zero, make aware
                 if (exitCode != 0)
@@ -736,8 +737,9 @@ namespace GeoGen.Drawer
         /// The method that generates the actual MetaPost code to be complied. 
         /// </summary>
         /// <param name="figures">The figures to be drawn.</param>
+        /// <param name="startingId">The id of the first figure. Others will be identified consecutively.</param>
         /// <returns>A compilable MetaPost code of the figures.</returns>
-        private string CreateCode(IEnumerable<MetapostFigure> figures)
+        private string CreateCode(IEnumerable<MetapostFigure> figures, int startingId)
         {
             // Let's use StringBuilder for 'efficiency'
             var code = new StringBuilder();
@@ -749,7 +751,7 @@ namespace GeoGen.Drawer
             figures.ForEach((figure, index) =>
             {
                 // Append the preamble
-                code.Append($"beginfig({index + 1});\n\n");
+                code.Append($"beginfig({startingId + index});\n\n");
 
                 // Append the actual code of the picture using the provided drawing data
                 code.Append(figure.ToCode(_settings.DrawingData));

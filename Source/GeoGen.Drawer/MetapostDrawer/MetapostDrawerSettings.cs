@@ -38,8 +38,8 @@ namespace GeoGen.Drawer
         public (string program, string arguments) CompilationCommand { get; }
 
         /// <summary>
-        /// The command that will be called after the compilation, if it's not null. It will get the number of 
-        /// the generated pictures as an argument.
+        /// The command that will be called after the compilation, if it's not null. It will be called with two
+        /// arguments: The id of the starting picture and the number of generated pictures.
         /// </summary>
         public string PostcompilationCommand { get; }
 
@@ -63,9 +63,9 @@ namespace GeoGen.Drawer
         /// <param name="drawingData">The data with MetaPost-related commands.</param>
         /// <param name="metapostCodeFilePath">The path to the file that will be created and then compiled.</param>
         /// <param name="metapostMacroLibraryPath">The relative or absolute path to the MetaPost library that is loaded at the end of the created file.</param>
-        /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text.</param>
+        /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text. (see <see cref="ConstructionTextMacroPrefix"/>.)</param>
         /// <param name="compilationCommand">The command used to compile the created MetaPost file.</param>
-        /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null.</param>
+        /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null. (see <see cref="PostcompilationCommand"/>.)</param>
         /// <param name="logCommandOutput">Indicates whether we should log the output provided by the compilation and post-compilation command.</param>
         /// <param name="numberOfPictures">The number of pictures that are drawn for a single configuration in order to find the best looking one.</param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,

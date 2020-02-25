@@ -199,7 +199,7 @@ namespace GeoGen.Drawer
                         .Select(pair => reorderObjects ? (MakeSymmetric(pair), pair.Theorem) : pair);
 
                     // Perform the drawing for the desired input
-                    await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput);
+                    await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput, startingId: start);
                 }
                 catch (Exception e)
                 {
