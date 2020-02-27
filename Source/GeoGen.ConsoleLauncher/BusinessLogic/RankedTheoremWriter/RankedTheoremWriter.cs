@@ -1,6 +1,7 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -45,16 +46,19 @@ namespace GeoGen.ConsoleLauncher
                 // Write the theorem
                 streamWriter.WriteLine($"\n{formatter.FormatTheorem(rankedTheorem.Theorem)}" +
                     // With the ranking
-                    $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToString("G5")} " +
+                    $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)} " +
                     // And with the fact whether it has been simplified
                     $"{(rankedTheorem.IsSimplified ? "(simplified)" : "")}\n");
 
                 // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
-                rankedTheorem.Ranking.Ranking.OrderBy(pair => (-pair.Value.Coefficient * pair.Value.Ranking, pair.Key.ToString()))
-                    // Add each on an individual line with info about the coefficient
-                    .ForEach(pair => streamWriter.WriteLine($"{pair.Key,-25}coefficient = {pair.Value.Coefficient.ToString("G5"),-10}" +
-                        // The ranking, the total contribution of this aspect, and the message
-                        $"contribution = {(pair.Value.Coefficient * pair.Value.Ranking).ToString("G5"),-10}ranking = {pair.Value.Ranking.ToString("G5"),-10}{pair.Value.Message}"));
+                rankedTheorem.Ranking.Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))
+                        // Add each on an individual line with info about the weight
+                        .ForEach(pair => streamWriter.WriteLine($"  {pair.Key,-25}weight = {pair.Value.Weight.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                            // The ranking
+                            $"ranking = {pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                            // And the total contribution
+                            $"contribution = {pair.Value.Contribution.ToString("0.##", CultureInfo.InvariantCulture),-10}"));
+
 
                 // Make a new line
                 streamWriter.WriteLine();

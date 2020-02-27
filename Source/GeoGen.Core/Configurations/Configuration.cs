@@ -125,8 +125,8 @@ namespace GeoGen.Core
         /// <param name="objects">The objects whose construction defines the configuration.</param>
         /// <returns>The configuration derived from the objects.</returns>
         public static Configuration DeriveFromObjects(LooseObjectLayout layout, params ConfigurationObject[] objects)
-            // We use our helper method to find all the objects that define the passed ones
-            => new Configuration(layout, objects.GetDefiningObjects().ToArray());
+                // We use our helper method to find all the objects that define the passed ones
+                => new Configuration(layout, objects.GetDefiningObjects().ToArray());
 
         #endregion
 

@@ -4,15 +4,13 @@ using GeoGen.Utilities;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The base class for <see cref="IAspectTheoremRanker"/>.
+    /// The base class for <see cref="IAspectTheoremRanker"/>s.
     /// </summary>
     public abstract class AspectTheoremRankerBase : IAspectTheoremRanker
     {
         #region IAspectTheoremRanker properties
 
-        /// <summary>
-        /// The aspect of theorems that this ranker ranks.
-        /// </summary>
+        /// <inheritdoc/>
         public RankedAspect RankedAspect { get; }
 
         #endregion
@@ -47,14 +45,8 @@ namespace GeoGen.TheoremRanker
 
         #region IAspectTheoremRanker methods
 
-        /// <summary>
-        /// Ranks a given theorem, potentially using all given provided context.
-        /// </summary>
-        /// <param name="theorem">The theorem to be ranked.</param>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
-        /// <param name="allTheorems">The map of all theorems of the configuration.</param>
-        /// <returns>A number representing the ranking of the theorem together with the explanation of how it was calculated.</returns>
-        public abstract (double ranking, string message) Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems);
+        /// <inheritdoc/>
+        public abstract double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems);
 
         #endregion
     }

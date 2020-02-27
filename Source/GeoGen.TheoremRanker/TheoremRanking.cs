@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// Represents a ranking of <see cref="Theorem"/> awarded by <see cref="ITheoremRanker"/>.
+    /// Represents a ranking of a <see cref="Theorem"/> awarded by a <see cref="ITheoremRanker"/>.
     /// </summary>
     public class TheoremRanking : IComparable<TheoremRanking>
     {
@@ -15,10 +15,10 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// The dictionary mapping ranked aspects to the particular rankings.
         /// </summary>
-        public IReadOnlyDictionary<RankedAspect, RankingData> Ranking { get; }
+        public IReadOnlyDictionary<RankedAspect, RankingData> Rankings { get; }
 
         /// <summary>
-        /// The total ranking calculated as the linear combination of the individual entries of <see cref="Ranking"/>.
+        /// The total ranking calculated as a sum of particular <see cref="RankingData.Contribution"/>s.
         /// </summary>
         public double TotalRanking { get; }
 
@@ -29,13 +29,13 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremRanking"/> class.
         /// </summary>
-        /// <param name="ranking">The dictionary mapping ranked aspects to the particular rankings..</param>
-        public TheoremRanking(IReadOnlyDictionary<RankedAspect, RankingData> ranking)
+        /// <param name="rankings">The dictionary mapping ranked aspects to the particular rankings.</param>
+        public TheoremRanking(IReadOnlyDictionary<RankedAspect, RankingData> rankings)
         {
-            Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
+            Rankings = rankings ?? throw new ArgumentNullException(nameof(rankings));
 
-            // Calculate the total ranking
-            TotalRanking = Ranking.Values.Select(data => data.Coefficient * data.Ranking).Sum();
+            // Calculate the total ranking by summing the contributions
+            TotalRanking = Rankings.Values.Select(data => data.Contribution).Sum();
         }
 
         #endregion
@@ -43,9 +43,9 @@ namespace GeoGen.TheoremRanker
         #region IComparable implementation
 
         /// <summary>
-        /// Compares the <see cref="TotalRanking"/>s of this and given ranking object.
+        /// Compares the <see cref="TotalRanking"/>s of this and a given ranking object.
         /// </summary>
-        /// <param name="otherRanking">The other ranking object..</param>
+        /// <param name="otherRanking">The other ranking object.</param>
         /// <returns>-1, if this ranking is smaller; 0, if they are the same; 1 if this ranking is larger.</returns>
         public int CompareTo(TheoremRanking otherRanking) => TotalRanking.CompareTo(otherRanking.TotalRanking);
 

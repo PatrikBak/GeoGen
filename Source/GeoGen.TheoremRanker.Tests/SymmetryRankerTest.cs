@@ -34,7 +34,7 @@ namespace GeoGen.TheoremRanker.Tests
             });
 
             // Rank
-            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null).ranking;
+            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null);
 
             // Assert
             rank.Should().Be(0);
@@ -61,10 +61,10 @@ namespace GeoGen.TheoremRanker.Tests
             });
 
             // Rank
-            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null).ranking;
+            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null);
 
             // Assert
-            rank.Should().Be(0.2);
+            rank.Should().Be(0.5);
         }
 
         [Test]
@@ -90,7 +90,7 @@ namespace GeoGen.TheoremRanker.Tests
             });
 
             // Rank
-            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null).ranking;
+            var rank = new SymmetryRanker().Rank(theorem, configuration, allTheorems: null);
 
             // Assert
             rank.Should().Be(1);

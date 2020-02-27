@@ -8,6 +8,7 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using static GeoGen.Infrastructure.Log;
@@ -262,48 +263,53 @@ namespace GeoGen.ConsoleLauncher
                     .ToArray();
 
                 // Call the prover
-                var provedTheorems = _prover.ProveTheoremsAndConstructProofs(output.OldTheorems, output.NewTheorems, output.ContextualPicture);
+                var provedTheorems =
+                    _prover.ProveTheoremsAndConstructProofs(output.OldTheorems, output.NewTheorems, output.ContextualPicture);
+                //new Dictionary<Theorem, TheoremProof>();
 
                 // Get the unproven theorems by taking all the new theorems
-                var unprovenTheorems = output.NewTheorems.AllObjects
+                var interestingTheorems = output.NewTheorems.AllObjects
                     // Excluding those that are proven
-                    .Where(theorem => !provedTheorems.ContainsKey(theorem))
+                    .Where(theorem => !provedTheorems.ContainsKey(theorem)
+                    && !theoremsDefinableSimpler.Contains(theorem))
                     // Enumerate
                     .ToArray();
 
                 // Count in interesting theorems
-                interestingTheoremsCount += unprovenTheorems.Length;
+                interestingTheoremsCount += interestingTheorems.Length;
 
                 // If this is a configuration with an interesting, count it in
-                if (unprovenTheorems.Any())
+                if (interestingTheorems.Any())
                     configurationsWithInterestingTheoremCount++;
 
                 // Prepare the map of all theorems
                 var allTheoremsMap = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
 
                 // Rank the interesting theorems
-                var theoremRankings = unprovenTheorems
+                var theoremRankings = interestingTheorems
                     // Enumerate rankings to a dictionary
                     .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, output.Configuration, allTheoremsMap));
 
                 // Simplify the interesting theorems
-                var simplifiedTheorems = unprovenTheorems
-                    // Attempt to simplify each
-                    .Select(theorem => (theorem, simplification: _simplifier.Simplify(output.Configuration, theorem, allTheoremsMap)))
-                    // Take those where it worked out
-                    .Where(pair => pair.simplification != null)
-                    // Enumerate to a dictionary
-                    .ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
+                var simplifiedTheorems =
+                    //interestingTheorems
+                    //// Attempt to simplify each
+                    //.Select(theorem => (theorem, simplification: _simplifier.Simplify(output.Configuration, theorem, allTheoremsMap)))
+                    //// Take those where it worked out
+                    //.Where(pair => pair.simplification != null)
+                    //// Enumerate to a dictionary
+                    //.ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
+                    new Dictionary<Theorem, (Configuration newConfiguration, Theorem newTheorem)>();
 
                 // Sort the interesting theorems 
-                unprovenTheorems = unprovenTheorems
+                interestingTheorems = interestingTheorems
                      // By rankings ASC (that's why -)
                      .OrderBy(theorem => -theoremRankings[theorem].TotalRanking)
                      // Enumerate
                      .ToArray();
 
                 // Wrap rankings into objects that will be serialized to JSON
-                var theoremsWithRanking = unprovenTheorems
+                var theoremsWithRanking = interestingTheorems
                     // Attempt to simplify each and construct the ranking
                     .Select(theorem =>
                     {
@@ -351,7 +357,7 @@ namespace GeoGen.ConsoleLauncher
                 void WriteLine(string line = "")
                 {
                     // If there is any interesting theorem
-                    if (unprovenTheorems.Any())
+                    if (interestingTheorems.Any())
                     {
                         // Write to all writes, which will take care of potentially not requested ones
                         WriteLineToAllWriters(line);
@@ -380,10 +386,10 @@ namespace GeoGen.ConsoleLauncher
                 // Prepare the global index of the first interesting theorem (starting from 1)
                 // The idea is to have these indices in our output files so we can then use them
                 // in Drawer to quickly identify them.
-                var firstInterestingTheoremIndex = interestingTheoremsCount - unprovenTheorems.Length + 1;
+                var firstInterestingTheoremIndex = interestingTheoremsCount - interestingTheorems.Length + 1;
 
                 // If there is any interesting theorem
-                if (unprovenTheorems.Any())
+                if (interestingTheorems.Any())
                 {
                     // Then write them to the standard output writer
                     outputWriter.WriteLine(TheoremsToString(formatter,
@@ -392,7 +398,7 @@ namespace GeoGen.ConsoleLauncher
                         // In this case we don't want to write proofs
                         writeUninterestingTheorems: false,
                         // Pass other interesting data
-                        theoremsDefinableSimpler, unprovenTheorems, theoremRankings, simplifiedTheorems,
+                        theoremsDefinableSimpler, interestingTheorems, theoremRankings, simplifiedTheorems,
                         // Include the global index of the first interesting theorem
                         firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
                 }
@@ -405,7 +411,7 @@ namespace GeoGen.ConsoleLauncher
                         // In this case we do want to write proofs
                         writeUninterestingTheorems: true,
                         // Pass other interesting data
-                        theoremsDefinableSimpler, unprovenTheorems, theoremRankings, simplifiedTheorems,
+                        theoremsDefinableSimpler, interestingTheorems, theoremRankings, simplifiedTheorems,
                         // Include the global index of the first interesting theorem
                         firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
 
@@ -581,14 +587,17 @@ namespace GeoGen.ConsoleLauncher
 
                     #region Writing ranking
 
-                    result += $" - total ranking {rankings[theorem].TotalRanking}\n\n";
+                    // Write the total ranking
+                    result += $" - total ranking {rankings[theorem].TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)}\n\n";
 
                     // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
-                    rankings[theorem].Ranking.OrderBy(pair => (-pair.Value.Coefficient * pair.Value.Ranking, pair.Key.ToString()))
-                        // Add each on an individual line with info about the coefficient
-                        .ForEach(pair => result += $"  {pair.Key,-25}coefficient = {pair.Value.Coefficient.ToString("G5"),-10}" +
-                            // The ranking and the total contribution of this aspect
-                            $"contribution = {(pair.Value.Coefficient * pair.Value.Ranking).ToString("G5"),-10}ranking = {pair.Value.Ranking.ToString("G5"),-10}{pair.Value.Message}\n");
+                    rankings[theorem].Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))
+                        // Add each on an individual line with info about the weight
+                        .ForEach(pair => result += $"  {pair.Key,-25}weight = {pair.Value.Weight.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                            // The ranking
+                            $"ranking = {pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                            // And the total contribution
+                            $"contribution = {pair.Value.Contribution.ToString("0.##", CultureInfo.InvariantCulture),-10}\n");
 
                     #endregion
 

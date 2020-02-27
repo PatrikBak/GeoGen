@@ -4,44 +4,63 @@ namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// Represents a thing that can be ranked on theorems. The higher the rank the more interesting a theorem is.
-    /// In order to be able to combine rankings better, it is supposed to that all ranking should be within 
-    /// the interval [0,1]. (This can currently be violated via <see cref="TypeRankerSettings.TypeRankings"/>.)
     /// </summary>
     public enum RankedAspect
     {
         /// <summary>
-        /// The coefficient of theorem or configuration symmetry. This coefficient is calculated like this. 
-        /// Assume there are 'n' possible reordering of loose objects of the configuration (for example, for triangle,
-        /// there are 3!-1 = 5 of them). Now assume that 'm' is the number of such reordering which after applying to the 
-        /// pair (configuration, theorem) yield the same result. Then the level of symmetry is m/n. 
-        /// 
+        /// The coefficient of theorem and configuration symmetry. The coefficient is calculated as follows:
+        /// <para>
+        /// If any valid reordering of loose objects make the same configuration, then we have full symmetry and
+        /// the ranking is 1. Otherwise if there is at least 1 such a reordering, then we have partial symmetry and
+        /// the ranking is 0.5. Otherwise we have no symmetry and the ranking is 0.
+        /// </para>
+        /// <para>
         /// For example: 
-        /// 
-        /// 1. Triangle ABC with D = PointReflection(A, B) and theorem AB = BD has m = 0, n = 5, the level of symmetry is 0.
-        /// 2. Triangle ABC with D = Midpoint(A, B) and theorem DA = DB has m = 1, n = 5, the level of symmetry is 1/5 = 20%
-        /// 3. Triangle ABC with midpoints of sides and concurrent medians has m = 5, n = 5, the level of symmetry is 100%.
-        /// 
+        /// </para>
+        /// <list type="number">
+        /// <item>Triangle ABC with D = PointReflection(A, B) and theorem AB = BD has no symmetry, i.e. the ranking is 0.</item>
+        /// <item>Triangle ABC with D = Midpoint(A, B) and theorem DA = DB has partial symmetry, i.e. the ranking is 0.5.</item>
+        /// <item>Triangle ABC with midpoints of sides and concurrent medians has full symmetry, i.e. the ranking is 1.</item>
+        /// </list>
         /// </summary>
         Symmetry,
 
         /// <summary>
-        /// The coefficient taking into account <see cref="TheoremType"/>. This is done solely based on 
-        /// <see cref="TypeRankerSettings.TypeRankings"/>.
+        /// The degree to which a theorem can be stated in a simpler configuration. The coefficient is calculated as follows:
+        /// <para>
+        /// First we assign a 'level' to each object as follows:
+        /// <list type="bullet">
+        /// <item>If an object is a <see cref="LooseConfigurationObject"/>, then its level is 0.</item>
+        /// <item>If an object is a <see cref="ConstructedConfigurationObject"/>, then its level is equal to the maximal
+        /// level of its inner objects plus 1.</item>
+        /// </list>
+        /// The idea clearly is to depict how far a constructed object is from loose objects. This can then be used in a way
+        /// that we take the theorem's inner <see cref="ConfigurationObject"/>s and average their levels.
+        /// <para>
+        /// Furthermore, the level calculated like this is always in the interval [1, NumberOfConstructedObjects]. To make 
+        /// it suitable to compare configurations with different numbers of constructed objects we will normalize this rank
+        /// by dividing it by the number of constructed objects.
+        /// </para>
+        /// </para>
         /// </summary>
-        Type,
+        Simplification,
 
         /// <summary>
-        /// The ratio of theorems of the configuration. The idea behind this metrics is  that if we have more theorems in
+        /// The total number of theorems of the configuration. The idea behind this metrics is that if we have more theorems in
         /// a configuration, then it usually suggests the problem is not that difficult, because we can make lots of conclusions. 
-        /// It is calculated as 1 / (1 + Number of theorems in configuration / Number of objects).
+        /// This ranking might suggests a lot when there are very few theorems, but other than that it is not very reliable.
         /// </summary>
-        TheoremsPerObject,
+        Theorems,
 
         /// <summary>
-        /// The ratio of the number of <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this metrics
-        /// is that in configurations with more concyclic points it is usually easier to prove things, because of the powerful 
-        /// properties of cyclic quadrilaterals. It is calculated as  1 / (1 + Number of concyclic points theorems / Number of objects)
+        /// The coefficient taking into account <see cref="TheoremType"/>. The value is taken from <see cref="TypeRankerSettings.TypeRankings"/>.
         /// </summary>
-        CirclesPerObject
+        TheoremType,
+
+        /// <summary>
+        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="TypeRankerSettings.TypeRankings"/>
+        /// and the final ranking is the sum of these rankings over the configuration's constructed objects.
+        /// </summary>
+        Constructions
     }
 }

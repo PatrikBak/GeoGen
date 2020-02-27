@@ -1,30 +1,28 @@
-﻿using System;
-
-namespace GeoGen.TheoremRanker
+﻿namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// Represents a ranking data combining <see cref="Ranking"/> and <see cref="Message"/> 
-    /// provided by a <see cref="IAspectTheoremRanker"/>, with a custom <see cref="Coefficient"/>.
+    /// Represents a ranking data a holding <see cref="Ranking"/> calculated by a <see cref="IAspectTheoremRanker"/>
+    /// and a <see cref="Weight"/> of this ranking in the total ranking.
     /// </summary>
     public class RankingData
     {
         #region Public properties
 
         /// <summary>
-        /// The actual ranking calculated by a ranker.
+        /// The ranking value calculated by a ranker.
         /// </summary>
         public double Ranking { get; }
 
         /// <summary>
-        /// The coefficient that is associated with this ranking. The total contribution of this ranking
-        /// is then the product of this coefficient and <see cref="Ranking"/>.
+        /// The weight that is associated with this ranking. 
         /// </summary>
-        public double Coefficient { get; }
+        public double Weight { get; }
 
         /// <summary>
-        /// The message provided by the ranker explaining the value of <see cref="Ranking"/>.
+        /// The contribution of the ranking to the total ranking, calculates as a product of 
+        /// <see cref="Ranking"/>  and <see cref="Weight"/>. 
         /// </summary>
-        public string Message { get; }
+        public double Contribution { get; }
 
         #endregion
 
@@ -33,15 +31,15 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// Initializes a new instance of the <see cref="RankingData"/> class.
         /// </summary>
-        /// <param name="ranking">The actual ranking calculated by a ranker.</param>
-        /// <param name="coefficient">The coefficient that is associated with this ranking. The total 
-        /// contribution of this ranking is then the product of this coefficient and <see cref="Ranking"/>.</param>
-        /// <param name="message">The message provided by the ranker explaining the value of <see cref="Ranking"/>.</param>
-        public RankingData(double ranking, double coefficient, string message)
+        /// <param name="ranking">The ranking value calculated by a ranker.</param>
+        /// <param name="weight">The weight that is associated with this ranking. </param>
+        public RankingData(double ranking, double weight)
         {
             Ranking = ranking;
-            Coefficient = coefficient;
-            Message = message ?? throw new ArgumentNullException(nameof(message));
+            Weight = weight;
+
+            // Calculate the contribution
+            Contribution = ranking * weight;
         }
 
         #endregion

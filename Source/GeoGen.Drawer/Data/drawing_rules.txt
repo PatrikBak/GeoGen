@@ -113,9 +113,32 @@ P = CenterOfCircle(c)
   - draw Point(P)
   
 P = Circumcenter(A,B,C)
+  - let c = Circumcircle(A,B,C)
   - draw Point(P)
+  - draw Circle(c) auxiliary  
  
 P = Orthocenter(A,B,C)
+  - let a = PerpendicularProjectionOnLineFromPoints(A, B, C)
+  - let b = PerpendicularProjectionOnLineFromPoints(B, A, C)
+  - let c = PerpendicularProjectionOnLineFromPoints(C, A, B)
+  - draw Point(a) auxiliary
+  - draw Point(b) auxiliary
+  - draw Point(c) auxiliary
+  - draw Segment(P,a) auxiliary
+  - draw Segment(P,b) auxiliary
+  - draw Segment(P,c) auxiliary
+  - draw Segment(P,A) auxiliary
+  - draw Segment(P,B) auxiliary
+  - draw Segment(P,C) auxiliary
+  - draw Segment(A,B) auxiliary
+  - draw Segment(B,C) auxiliary
+  - draw Segment(C,A) auxiliary
+  - draw Segment(A,b) auxiliary
+  - draw Segment(A,c) auxiliary
+  - draw Segment(B,a) auxiliary
+  - draw Segment(B,c) auxiliary
+  - draw Segment(C,a) auxiliary
+  - draw Segment(C,b) auxiliary
   - draw Point(P) 
  
 P = Incenter(A,B,C)
@@ -157,6 +180,8 @@ P = IntersectionOfLineAndLineFromPoints(l, A, B)
   - draw Point(P)
  
 P = ParallelogramPoint(A, B, C)
+  - draw Segment(A,B)
+  - draw Segment(A,C)
   - draw Segment(B,P)
   - draw Segment(C,P)
   - draw Point(P)

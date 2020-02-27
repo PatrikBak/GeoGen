@@ -5,8 +5,8 @@ using System.Linq;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The default implementation of <see cref="ITheoremRanker"/> that simply merges
-    /// the results of provided <see cref="IAspectTheoremRanker"/>s.
+    /// The default implementation of <see cref="ITheoremRanker"/> that simply merges the results of provided
+    /// <see cref="IAspectTheoremRanker"/>s.
     /// </summary>
     public class TheoremRanker : ITheoremRanker
     {
@@ -41,19 +41,13 @@ namespace GeoGen.TheoremRanker
 
         #region ITheoremRanker implementation
 
-        /// <summary>
-        /// Ranks a given theorem, potentially using all given provided context.
-        /// </summary>
-        /// <param name="theorem">The theorem to be ranked.</param>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
-        /// <param name="allTheorems">The map of all theorems of the configuration.</param>
-        /// <returns>The theorem ranking of the theorem containing ranking and coefficient for particular aspects of ranking.</returns>
+        /// <inheritdoc/>
         public TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
             // Prepare the ranking dictionary by applying every ranker
-            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, rankerOutput: ranker.Rank(theorem, configuration, allTheorems)))
+            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, ranking: ranker.Rank(theorem, configuration, allTheorems)))
                 // And wrapping the result to a dictionary together with the coefficient from the settings
-                .ToDictionary(pair => pair.RankedAspect, pair => new RankingData(pair.rankerOutput.ranking, _settings.RankingCoefficients[pair.RankedAspect], pair.rankerOutput.message));
+                .ToDictionary(pair => pair.RankedAspect, pair => new RankingData(pair.ranking, _settings.RankingCoefficients[pair.RankedAspect]));
 
             // Wrap the final ranking in a ranking object
             return new TheoremRanking(ranking);

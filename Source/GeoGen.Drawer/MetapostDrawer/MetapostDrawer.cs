@@ -564,7 +564,7 @@ namespace GeoGen.Drawer
                 case TheoremType.Incidence:
                 {
                     // Get the point and the other object
-                    var point = theorem.InvolvedObjects.OfType<CircleTheoremObject>().First();
+                    var point = theorem.InvolvedObjects.OfType<PointTheoremObject>().First();
                     var lineOrCircle = theorem.InvolvedObjects.OfType<TheoremObjectWithPoints>().First();
 
                     // Mark the point
@@ -735,17 +735,17 @@ namespace GeoGen.Drawer
                 // Prepare the ranking table by calling the macro for the ranking table
                 var rank = $"{_settings.RankingTableMacro}(" +
                     // Now we will append individual rankings
-                    theoremWithRanking.Ranking.Ranking
-                        // Sorted by the contribution, which is ranking * coefficient
-                        .OrderBy(pair => pair.Value.Ranking * pair.Value.Coefficient)
+                    theoremWithRanking.Ranking.Rankings
+                        // Sorted by the contribution
+                        .OrderBy(pair => -pair.Value.Contribution)
                         // Now we can convert each to a single string with these 4 values. Add the type first
                         .Select(pair => $"\"{pair.Key}\"," +
                             // Append the ranking
                             $"\"{pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
-                            // Append the coefficient
-                            $"\"{pair.Value.Coefficient.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
-                            // Append the message
-                            $"\"{pair.Value.Message}\"")
+                            // Append the weight
+                            $"\"{pair.Value.Weight.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
+                            // Append the contribution
+                            $"\"{pair.Value.Contribution.ToString("0.##", CultureInfo.InvariantCulture)}\"")
                         // They are joined together by commas, the macro will take care of splitting these quadruples
                         .ToJoinedString(",")
                     // Append the end of the call

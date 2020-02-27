@@ -17,10 +17,10 @@ vardef Table(text t) =
 	& "\tabskip0pt plus1fil\hfil#\hfil&"
 	& "\tabskip0pt plus1fil\hfil#\hfil&"
 	& "\tabskip0pt\hfil#\hfil\cr "
-	& "Type&Value&Coefficient&Message\cr "
+	& "Type&Ranking&Weight&Contribution\cr "
 	& "\noalign{\vskip2pt\hrule\vskip3pt}";
 	
-	counter = 0;
+	counter := 0;
 	
 	for i = t:
 		counter:=counter+1;	
@@ -31,9 +31,7 @@ vardef Table(text t) =
 			s := s & "\cr ";
 		fi
 	endfor
-	
-	show s;
-	
+		
 	s & "}"
 	
 enddef;
@@ -61,16 +59,20 @@ def PointReflection_Text(expr P,A,B) =
 	"Let~$" & P & "$ be the reflection of~$" & A & "$ in~$" & B & "$. "
 enddef;
 
+def ParallelLine_Text(expr l,P,k) = 
+	"Let~$" & l & "$ be the line through~$" & P & "$ parallel to~$" & k & "$. "		
+enddef;
+
+def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
+enddef;
+
 def PerpendicularLineAtPointOfLine_Text(expr l,A,B) = 
 	"Let~$" & l & "$ be the line through~$" & A & "$ such that~$" & l & " \perp " & A & B & "$. "		
 enddef;
 
-def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
-	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
-enddef;
-
-def ParallelLineToLineFromPoints_Text(expr l,A,B,C) = 
-	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
+def PerpendicularLineToLineFromPoints_Text(expr l,A,B,C) = 
+	"Let~$" & l & "$ be the line through $" & A & "$ perpendicular to $" & B & C & "$. "
 enddef;
 
 def PerpendicularBisector_Text(expr l,A,B) = 
@@ -133,10 +135,6 @@ def Median_Text(expr l,A,B,C) =
 	"Let~$" & l & "$ be the~$" & A & "$-median of~$" & A & B & C & "$. "
 enddef;
 
-def ParallelLine_Text(expr l,P,k) = 
-	"Let~$" & l & "$ be the line through~$" & P & "$ parallel to~$" & k & "$. "		
-enddef;
-
 def IntersectionOfLines_Text(expr P,k,l) = 
 	"Let~$" & P & "$ be the intersection point of~$" & k & "$ and $" & l & "$. "		
 enddef;
@@ -163,6 +161,10 @@ enddef;
 
 def Excenter_Text(expr P,A,B,C) = 
 	"Let~$" & P & "$ be the~$" & A & "$-excenter of~$" & A & B & C & "$. "		
+enddef;
+
+def CircleWithDiameter_Text(expr c,A,B) = 
+	"Let~$" & c & "$ be the circle with a~diameter~$" & A & B & "$. "		
 enddef;
 
 def EqualLineSegments_Text(expr k,l) =
@@ -195,6 +197,10 @@ enddef;
 
 def PerpendicularLines_Text(expr k,l) =
 	"Show that $" & k & " \perp " & l & "$. "
+enddef;
+
+def Incidence_Text(expr P,k) =
+	"Show that $" & P & "$ lies on $" & k & "$. "
 enddef;
 
 %%%%%%%%%%% HELPER MACROS %%%%%%%%%%%

@@ -8,14 +8,8 @@ namespace GeoGen.TheoremRanker
     /// </summary>
     public class SymmetryRanker : AspectTheoremRankerBase
     {
-        /// <summary>
-        /// Ranks a given theorem, potentially using all given provided context.
-        /// </summary>
-        /// <param name="theorem">The theorem to be ranked.</param>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
-        /// <param name="allTheorems">The map of all theorems of the configuration.</param>
-        /// <returns>A number representing the ranking of the theorem together with the explanation of how it was calculated.</returns>
-        public override (double ranking, string message) Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
+        /// <inheritdoc/>
+        public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
             // Find all possible mappings of loose objects
             var looseObjectsRemappings = configuration.LooseObjectsHolder.GetSymmetryMappings()
@@ -24,18 +18,20 @@ namespace GeoGen.TheoremRanker
                 // Enumerate
                 .ToArray();
 
-            // Prepare the variable indicating the number of mappings for which the configuration
-            // and theorem are the same as the provided one
+            // Prepare the variable indicating the number of mappings for which the
+            // configuration and theorem stay the same
             var symmetryMappings = 0;
 
             // Go through the mappings
-            foreach (var looseObjectsMapping in looseObjectsRemappings)
+            foreach (var looseObjectMapping in looseObjectsRemappings)
             {
                 // Reconstruct constructed objects
-                var constructedObjectsMapping = configuration.ConstructedObjects.ToDictionary(o => (ConfigurationObject)o, o => o.Remap(looseObjectsMapping));
+                var constructedObjectMapping = configuration.ConstructedObjects
+                    // Each is remapped with respect to the loose object mapping
+                    .ToDictionary(constructedObject => (ConfigurationObject)constructedObject, constructedObject => constructedObject.Remap(looseObjectMapping));
 
                 // Wrap them in a new configuration
-                var newConfiguration = new Configuration(configuration.LooseObjectsHolder, constructedObjectsMapping.Values.Cast<ConstructedConfigurationObject>().ToList());
+                var newConfiguration = new Configuration(configuration.LooseObjectsHolder, constructedObjectMapping.Values.Cast<ConstructedConfigurationObject>().ToList());
 
                 // If the configurations are distinct, then this is not a symmetry mapping
                 if (!configuration.Equals(newConfiguration))
@@ -43,9 +39,9 @@ namespace GeoGen.TheoremRanker
 
                 // Otherwise we have to remap the theorem
                 // For that reason we merge the mapping of loose objects
-                var finalMapping = looseObjectsMapping.Select(pair => ((ConfigurationObject)pair.Key, (ConfigurationObject)pair.Value))
+                var finalMapping = looseObjectMapping.Select(pair => ((ConfigurationObject)pair.Key, (ConfigurationObject)pair.Value))
                     // With the mapping of constructed objects
-                    .Concat(constructedObjectsMapping.Select(pair => (pair.Key, pair.Value)))
+                    .Concat(constructedObjectMapping.Select(pair => (pair.Key, pair.Value)))
                     // As a dictionary
                     .ToDictionary(pair => pair.Item1, pair => pair.Item2);
 
@@ -57,18 +53,18 @@ namespace GeoGen.TheoremRanker
                     symmetryMappings++;
             }
 
-            // Return the final result (described in the documentation of RankedAspect.Symmetry) with the constructed message
-            return ((double)symmetryMappings / looseObjectsRemappings.Length, symmetryMappings switch
+            // Return the final result (described in the documentation)
+            return symmetryMappings switch
             {
                 // No symmetry case
-                _ when symmetryMappings == 0 => "no symmetry",
+                _ when symmetryMappings == 0 => 0,
 
                 // Full symmetry case
-                _ when symmetryMappings == looseObjectsRemappings.Length => "full symmetry",
+                _ when symmetryMappings == looseObjectsRemappings.Length => 1,
 
                 // Any other case means some sort of partial symmetry
-                _ => "partial symmetry",
-            });
+                _ => 0.5
+            };
         }
     }
 }
