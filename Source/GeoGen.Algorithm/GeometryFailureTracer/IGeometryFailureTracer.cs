@@ -4,8 +4,7 @@ using GeoGen.Core;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents a tracer of geometry failures usually caused by an <see cref="InconsistentPicturesException"/>
-    /// during a run of <see cref="Algorithm"/>.
+    /// Represents a tracer of geometry failures usually caused by an <see cref="InconsistentPicturesException"/> while running <see cref="ProblemGenerator"/>.
     /// </summary>
     public interface IGeometryFailureTracer
     {

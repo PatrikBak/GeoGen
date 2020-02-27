@@ -1,9 +1,9 @@
 ﻿using GeoGen.Algorithm;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
+using GeoGen.ProblemAnalyzer;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
-using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -16,31 +16,31 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The implementation of <see cref="IAlgorithmRunner"/> used for debugging various algorithms.
+    /// Represents a runner of <see cref="IProblemGenerator"/> that subsequently uses <see cref="IGeneratedProblemAnalyzer"/>.
+    /// <para>
+    /// The runner provides lots of useful debugging output configurable via <see cref="ProblemGenerationRunnerSettings"/>. It can write
+    /// output with or without proofs into human-readable or JSON format (that can be processed via Drawer). Human-readable files
+    /// contain information about simplification and ranking results.
+    /// </para>
+    /// <para>
+    /// It uses <see cref="IBestTheoremFinder"/> to find globally best theorems across multiple runs and provides an option to write
+    /// this information into a human-readable or JSON file.
+    /// </para>
+    /// <para>It also provides <see cref="IInferenceRuleUsageTracker"/> in case we need to analyze how the theorem prover works.</para>
     /// </summary>
-    public class DebugAlgorithmRunner : IAlgorithmRunner
+    public class ProblemGenerationRunner : IProblemGenerationRunner
     {
         #region Dependencies
 
         /// <summary>
-        /// The algorithm that is run.
+        /// The generator of problems.
         /// </summary>
-        private readonly IAlgorithm _algorithm;
+        private readonly IProblemGenerator _generator;
 
         /// <summary>
-        /// The prover of theorems.
+        /// The analyzer of problem generator outputs.
         /// </summary>
-        private readonly ITheoremProver _prover;
-
-        /// <summary>
-        /// The ranker of theorems.
-        /// </summary>
-        private readonly ITheoremRanker _ranker;
-
-        /// <summary>
-        /// The simplifier of theorems.
-        /// </summary>
-        private readonly ITheoremSimplifier _simplifier;
+        private readonly IGeneratedProblemAnalyzer _analyzer;
 
         /// <summary>
         /// The finder of best theorems.
@@ -53,7 +53,7 @@ namespace GeoGen.ConsoleLauncher
         private readonly IRankedTheoremWriter _writer;
 
         /// <summary>
-        /// The factory for creating lazy writers of best theorems.
+        /// The factory for creating a lazy writer of a JSON output.
         /// </summary>
         private readonly ITheoremWithRankingJsonLazyWriterFactory _writerFactory;
 
@@ -69,39 +69,33 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// The settings for this runner.
         /// </summary>
-        private readonly DebugAlgorithmRunnerSettings _settings;
+        private readonly ProblemGenerationRunnerSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DebugAlgorithmRunner"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGenerationRunner"/> class.
         /// </summary>
         /// <param name="settings">The settings for this runner.</param>
-        /// <param name="algorithm">The algorithm that is run.</param>
-        /// <param name="prover">The prover of theorems.</param>
-        /// <param name="ranker">The ranker of theorems.</param>
-        /// <param name="simplifier">The simplifier of theorems.</param>
+        /// <param name="generator">The generator of problems.</param>
+        /// <param name="analyzer">The analyzer of problem generator outputs.</param>
         /// <param name="finder">The finder of best theorems.</param>
         /// <param name="writer">The writer used to write best theorems to a file.</param>
-        /// <param name="writerFactory">The factory for creating lazy writers of best theorems.</param>
+        /// <param name="writerFactory">The factory for creating a lazy writer of a JSON output.</param>
         /// <param name="tracker">The tracker of the used inference rules in theorem proofs.</param>
-        public DebugAlgorithmRunner(DebugAlgorithmRunnerSettings settings,
-                                    IAlgorithm algorithm,
-                                    ITheoremProver prover,
-                                    ITheoremRanker ranker,
-                                    ITheoremSimplifier simplifier,
-                                    IBestTheoremFinder finder,
-                                    IRankedTheoremWriter writer,
-                                    ITheoremWithRankingJsonLazyWriterFactory writerFactory,
-                                    IInferenceRuleUsageTracker tracker)
+        public ProblemGenerationRunner(ProblemGenerationRunnerSettings settings,
+                                       IProblemGenerator generator,
+                                       IGeneratedProblemAnalyzer analyzer,
+                                       IBestTheoremFinder finder,
+                                       IRankedTheoremWriter writer,
+                                       ITheoremWithRankingJsonLazyWriterFactory writerFactory,
+                                       IInferenceRuleUsageTracker tracker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
-            _prover = prover ?? throw new ArgumentNullException(nameof(prover));
-            _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
-            _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator));
+            _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
             _finder = finder ?? throw new ArgumentNullException(nameof(finder));
             _writer = writer ?? throw new ArgumentNullException(nameof(writer));
             _writerFactory = writerFactory ?? throw new ArgumentNullException(nameof(writerFactory));
@@ -110,16 +104,13 @@ namespace GeoGen.ConsoleLauncher
 
         #endregion
 
-        #region IAlgorithmRunner implementation
+        #region IProblemGenerationRunner implementation
 
-        /// <summary>
-        /// Runs the algorithm on a given output.
-        /// </summary>
-        /// <param name="input">The input for the algorithm.</param>
-        public void Run(LoadedAlgorithmInput input)
+        /// <inheritdoc/>
+        public void Run(LoadedProblemGeneratorInput input)
         {
-            // Call the algorithm
-            var (initialTheorems, outputs) = _algorithm.Run(input);
+            // Call the generation algorithm
+            var (initialTheorems, outputs) = _generator.Generate(input);
 
             #region Prepare writers
 
@@ -202,18 +193,18 @@ namespace GeoGen.ConsoleLauncher
             WriteLineToAllWriters($"Results:");
 
             // Log that we've started
-            LoggingManager.LogInfo("Algorithm has started.");
+            LoggingManager.LogInfo("Generation has started.");
 
             #region Tracking variables
 
             // Prepare the number of generated configurations
-            var generatedConfigurationsCount = 0;
+            var numberOfGeneratedConfigurations = 0;
 
             // Prepare the total number of interesting theorems, i.e. unproven and unsimplifiable ones
-            var interestingTheoremsCount = 0;
+            var numberOfInterestingTheorems = 0;
 
             // Prepare the total number of configurations with an interesting theorem
-            var configurationsWithInterestingTheoremCount = 0;
+            var numberOfConfigurationsWithInterestingTheorem = 0;
 
             #endregion
 
@@ -227,137 +218,83 @@ namespace GeoGen.ConsoleLauncher
 
             #endregion
 
-            // Begin writing of a JSON output file
+            // Begin writing of the JSON output file
             outputJsonWriter.BeginWriting();
 
-            // Run the algorithm
-            foreach (var output in outputs)
+            #region Generation loop
+
+            // Run the generation
+            foreach (var generatorOutput in outputs)
             {
                 // Mark the configuration
-                generatedConfigurationsCount++;
+                numberOfGeneratedConfigurations++;
+
+                #region Logging
 
                 // Find out if we should log progress and if yes, do it
-                if (_settings.LogProgress && generatedConfigurationsCount % _settings.GenerationProgresLoggingFrequency == 0)
+                if (_settings.LogProgress && numberOfGeneratedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
                     // How many configurations did we generate?
-                    LoggingManager.LogInfo($"Generated configurations: {generatedConfigurationsCount}, " +
+                    LoggingManager.LogInfo($"Generated configurations: {numberOfGeneratedConfigurations}, " +
                         // How long did it take?
                         $"after {stopwatch.ElapsedMilliseconds} ms, " +
                         // With the info about the frequency
                         $"{_settings.GenerationProgresLoggingFrequency} in " +
                         // Average time
-                        $"{(double)stopwatch.ElapsedMilliseconds / generatedConfigurationsCount * _settings.GenerationProgresLoggingFrequency:F2} ms on average, " +
+                        $"{(double)stopwatch.ElapsedMilliseconds / numberOfGeneratedConfigurations * _settings.GenerationProgresLoggingFrequency:F2} ms on average, " +
                         // How many interesting configurations and theorems
-                        $"with {configurationsWithInterestingTheoremCount} interesting configurations ({interestingTheoremsCount} theorems in total).");
+                        $"with {numberOfConfigurationsWithInterestingTheorem} interesting configurations ({numberOfInterestingTheorems} theorems in total).");
+
+                #endregion
 
                 // Skip configurations without theorems
-                if (output.NewTheorems.AllObjects.Count == 0)
+                if (generatorOutput.NewTheorems.AllObjects.Count == 0)
                     continue;
 
-                #region Finding interesting theorems
-
-                // Find the theorems definable simpler by taking the new theorems
-                var theoremsDefinableSimpler = output.NewTheorems.AllObjects
-                    // That have an unnecessary object
-                    .Where(theorem => theorem.GetUnnecessaryObjects(output.Configuration).Any())
-                    // Enumerate
-                    .ToArray();
-
-                // Call the prover
-                var provedTheorems =
-                    _prover.ProveTheoremsAndConstructProofs(output.OldTheorems, output.NewTheorems, output.ContextualPicture);
-                //new Dictionary<Theorem, TheoremProof>();
-
-                // Get the unproven theorems by taking all the new theorems
-                var interestingTheorems = output.NewTheorems.AllObjects
-                    // Excluding those that are proven
-                    .Where(theorem => !provedTheorems.ContainsKey(theorem)
-                    && !theoremsDefinableSimpler.Contains(theorem))
-                    // Enumerate
-                    .ToArray();
+                // Call the analyzer 
+                var analyzerOutput = _analyzer.AnalyzeWithProofConstruction(generatorOutput);
 
                 // Count in interesting theorems
-                interestingTheoremsCount += interestingTheorems.Length;
+                numberOfInterestingTheorems += analyzerOutput.InterestingTheorems.Count;
 
-                // If this is a configuration with an interesting, count it in
-                if (interestingTheorems.Any())
-                    configurationsWithInterestingTheoremCount++;
+                // If this is a configuration with an interesting theorem, count it in
+                if (analyzerOutput.InterestingTheorems.Any())
+                    numberOfConfigurationsWithInterestingTheorem++;
 
-                // Prepare the map of all theorems
-                var allTheoremsMap = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
+                #region JSON output
 
-                // Rank the interesting theorems
-                var theoremRankings = interestingTheorems
-                    // Enumerate rankings to a dictionary
-                    .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, output.Configuration, allTheoremsMap));
-
-                // Simplify the interesting theorems
-                var simplifiedTheorems =
-                    //interestingTheorems
-                    //// Attempt to simplify each
-                    //.Select(theorem => (theorem, simplification: _simplifier.Simplify(output.Configuration, theorem, allTheoremsMap)))
-                    //// Take those where it worked out
-                    //.Where(pair => pair.simplification != null)
-                    //// Enumerate to a dictionary
-                    //.ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
-                    new Dictionary<Theorem, (Configuration newConfiguration, Theorem newTheorem)>();
-
-                // Sort the interesting theorems 
-                interestingTheorems = interestingTheorems
-                     // By rankings ASC (that's why -)
-                     .OrderBy(theorem => -theoremRankings[theorem].TotalRanking)
-                     // Enumerate
-                     .ToArray();
-
-                // Wrap rankings into objects that will be serialized to JSON
-                var theoremsWithRanking = interestingTheorems
-                    // Attempt to simplify each and construct the ranking
-                    .Select(theorem =>
-                    {
-                        // Get the configuration based on whether the simplification was successful
-                        var finalConfiguration = simplifiedTheorems.GetValueOrDefault(theorem).newConfiguration ?? output.Configuration;
-
-                        // Get the configuration based on whether the simplification was successful
-                        var finalTheorem = simplifiedTheorems.GetValueOrDefault(theorem).newTheorem ?? theorem;
-
-                        // Get the ranking 
-                        // NOTE: This might not be the best way, because the ranking might not have the newest info
-                        //       Probably the only solution is to construct simplified things again and rank them...
-                        var ranking = theoremRankings[theorem];
-
-                        // Construct the theorem with ranking
-                        return new TheoremWithRanking(finalTheorem, ranking, finalConfiguration, isSimplified: simplifiedTheorems.ContainsKey(theorem));
-                    })
-                    // Enumerate
-                    .ToArray();
-
-                // Let the finder judge them
-                _finder.AddTheorems(theoremsWithRanking, out var bestTheoremsChanged);
-
-                // If there are some change in the global ladder
-                if (bestTheoremsChanged)
+                // Wrap interesting theorems into objects that will be serialized to JSON
+                var theoremsWithRanking = analyzerOutput.InterestingTheorems.Select(theorem =>
                 {
-                    // Prepare an enumerable that identifies each so they could be found back in the output file
-                    var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {generatedConfigurationsCount} of the output file {fileName}"));
+                    // Get the configuration based on whether the simplification was successful
+                    var finalConfiguration = analyzerOutput.SimplifiedTheorems.GetValueOrDefault(theorem).newConfiguration ?? generatorOutput.Configuration;
 
-                    // Write them
-                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremReadableFilePath);
+                    // Get the configuration based on whether the simplification was successful
+                    var finalTheorem = analyzerOutput.SimplifiedTheorems.GetValueOrDefault(theorem).newTheorem ?? theorem;
 
-                    // Write their JSON version too
-                    bestTheoremsJsonWriter.WriteEagerly(_finder.BestTheorems);
-                }
+                    // Get the ranking 
+                    var ranking = analyzerOutput.TheoremRankings[theorem];
+
+                    // Construct the theorem with ranking
+                    return new TheoremWithRanking(finalTheorem, ranking, finalConfiguration);
+                })
+                // Enumerate
+                .ToArray();
+
+                // Write JSON output
+                outputJsonWriter.Write(theoremsWithRanking);
 
                 #endregion
 
                 #region Human-readable output
 
                 // Prepare a formatter for the generated configuration
-                var formatter = new OutputFormatter(output.Configuration.AllObjects);
+                var formatter = new OutputFormatter(generatorOutput.Configuration.AllObjects);
 
                 // Local function to write line based on the number of interesting theorems
                 void WriteLine(string line = "")
                 {
                     // If there is any interesting theorem
-                    if (interestingTheorems.Any())
+                    if (analyzerOutput.InterestingTheorems.Any())
                     {
                         // Write to all writes, which will take care of potentially not requested ones
                         WriteLineToAllWriters(line);
@@ -372,7 +309,7 @@ namespace GeoGen.ConsoleLauncher
                 }
 
                 // Prepare the header
-                var header = $"Configuration {generatedConfigurationsCount}";
+                var header = $"Configuration {numberOfGeneratedConfigurations}";
 
                 // Write the configuration
                 WriteLine();
@@ -380,16 +317,16 @@ namespace GeoGen.ConsoleLauncher
                 WriteLine(header);
                 WriteLine(new string('-', header.Length));
                 WriteLine();
-                WriteLine(formatter.FormatConfiguration(output.Configuration));
+                WriteLine(formatter.FormatConfiguration(generatorOutput.Configuration));
                 WriteLine();
 
                 // Prepare the global index of the first interesting theorem (starting from 1)
                 // The idea is to have these indices in our output files so we can then use them
                 // in Drawer to quickly identify them.
-                var firstInterestingTheoremIndex = interestingTheoremsCount - interestingTheorems.Length + 1;
+                var firstInterestingTheoremIndex = numberOfInterestingTheorems - analyzerOutput.InterestingTheorems.Count + 1;
 
                 // If there is any interesting theorem
-                if (interestingTheorems.Any())
+                if (analyzerOutput.InterestingTheorems.Any())
                 {
                     // Then write them to the standard output writer
                     outputWriter.WriteLine(TheoremsToString(formatter,
@@ -398,7 +335,7 @@ namespace GeoGen.ConsoleLauncher
                         // In this case we don't want to write proofs
                         writeUninterestingTheorems: false,
                         // Pass other interesting data
-                        theoremsDefinableSimpler, interestingTheorems, theoremRankings, simplifiedTheorems,
+                        analyzerOutput.InterestingTheorems, analyzerOutput.TheoremRankings, analyzerOutput.SimplifiedTheorems,
                         // Include the global index of the first interesting theorem
                         firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
                 }
@@ -407,11 +344,11 @@ namespace GeoGen.ConsoleLauncher
                 // to the writer of theorems with attempts and proofs, if it's provided
                 outputWithProofsWriter?.WriteLine(TheoremsToString(formatter,
                         // Set the proofs
-                        theoremProofs: provedTheorems,
+                        theoremProofs: analyzerOutput.TheoremProofs,
                         // In this case we do want to write proofs
                         writeUninterestingTheorems: true,
                         // Pass other interesting data
-                        theoremsDefinableSimpler, interestingTheorems, theoremRankings, simplifiedTheorems,
+                        analyzerOutput.InterestingTheorems, analyzerOutput.TheoremRankings, analyzerOutput.SimplifiedTheorems,
                         // Include the global index of the first interesting theorem
                         firstInterestingTheoremGlobalIndex: firstInterestingTheoremIndex));
 
@@ -421,13 +358,30 @@ namespace GeoGen.ConsoleLauncher
 
                 #endregion
 
-                // Write JSON output
-                outputJsonWriter.Write(theoremsWithRanking);
+                #region Best theorem finder 
+
+                // Let the finder judge them
+                _finder.AddTheorems(theoremsWithRanking, out var bestTheoremsChanged);
+
+                // If there are some change in the global ladder
+                if (bestTheoremsChanged)
+                {
+                    // Prepare an enumerable that identifies each so they could be found back in the output file
+                    var identifiedTheorems = _finder.BestTheorems.Select(theorem => (theorem, $"configuration {numberOfGeneratedConfigurations} of the output file {fileName}"));
+
+                    // Write them
+                    _writer.WriteTheorems(identifiedTheorems, _settings.BestTheoremReadableFilePath);
+
+                    // Write their JSON version too
+                    bestTheoremsJsonWriter.WriteEagerly(_finder.BestTheorems);
+                }
+
+                #endregion
 
                 #region Inference rule usage statistics
 
                 // Track the proofs
-                _tracker.MarkProofs(provedTheorems.Values);
+                _tracker.MarkProofs(analyzerOutput.TheoremProofs.Values);
 
                 // Prepare the string representing the current state by taking the usages
                 var usagesString = _tracker.UsedRulesCounts
@@ -457,17 +411,19 @@ namespace GeoGen.ConsoleLauncher
                 #endregion
             }
 
+            #endregion
+
             // Write end
             WriteLineToAllWriters("\n------------------------------------------------");
-            WriteLineToAllWriters($"Generated configurations: {generatedConfigurationsCount}");
-            WriteLineToAllWriters($"Configurations with an interesting theorem: {configurationsWithInterestingTheoremCount}");
-            WriteLineToAllWriters($"Interesting theorems: {interestingTheoremsCount}");
+            WriteLineToAllWriters($"Generated configurations: {numberOfGeneratedConfigurations}");
+            WriteLineToAllWriters($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
+            WriteLineToAllWriters($"Interesting theorems: {numberOfInterestingTheorems}");
             WriteLineToAllWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
-            LoggingManager.LogInfo($"Generated configurations: {generatedConfigurationsCount}");
-            LoggingManager.LogInfo($"Configurations with an interesting theorem: {configurationsWithInterestingTheoremCount}");
-            LoggingManager.LogInfo($"Interesting theorems: {interestingTheoremsCount}");
+            LoggingManager.LogInfo($"Generated configurations: {numberOfGeneratedConfigurations}");
+            LoggingManager.LogInfo($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
+            LoggingManager.LogInfo($"Interesting theorems: {numberOfInterestingTheorems}");
             LoggingManager.LogInfo($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Close the JSON output writer
@@ -500,7 +456,6 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="formatter">The formatter of the configuration where the theorems hold.</param>
         /// <param name="theoremProofs">The dictionary mapping theorems to their proofs.</param>
         /// <param name="writeUninterestingTheorems">Indicates whether we should write uninteresting theorems, i.e. proved or definable simpler ones.</param>
-        /// <param name="theoremsDefinableSimpler">The list of theorems that can be defined simpler.</param>
         /// <param name="interestingTheorems">The list of interesting theorems, i.e. unproven and undefinable simpler.</param>
         /// <param name="rankings">The dictionary mapping theorems to their ranking.</param>
         /// <param name="simplifiedTheorems">The dictionary mapping theorems to their simplified versions.</param>
@@ -509,10 +464,9 @@ namespace GeoGen.ConsoleLauncher
         private string TheoremsToString(OutputFormatter formatter,
                                         IReadOnlyDictionary<Theorem, TheoremProof> theoremProofs,
                                         bool writeUninterestingTheorems,
-                                        IReadOnlyList<Theorem> theoremsDefinableSimpler,
                                         IReadOnlyList<Theorem> interestingTheorems,
                                         IReadOnlyDictionary<Theorem, TheoremRanking> rankings,
-                                        IReadOnlyDictionary<Theorem, (Configuration, Theorem)> simplifiedTheorems,
+                                        IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
                                         int firstInterestingTheoremGlobalIndex)
         {
             // Prepare the result
@@ -539,31 +493,6 @@ namespace GeoGen.ConsoleLauncher
                     .ToJoinedString("\n")
                     // Ensure no white spaces at the end
                     .TrimEnd();
-            }
-
-            #endregion
-
-            #region Definable simpler
-
-            // If we should write uninteresting theorems and there are any definable simpler...
-            if (writeUninterestingTheorems && theoremsDefinableSimpler.Any())
-            {
-                // Add the header
-                result = $"{result.TrimEnd()}\n\nTheorems definable simpler:\n\n";
-
-                // Append theorems definable simpler by taking them
-                result += theoremsDefinableSimpler
-                    // Sorting by their statement
-                    .OrderBy(formatter.FormatTheorem)
-                    // Write it with a local index
-                    .Select(theorem => $"{localTheoremIndex++}. {formatter.FormatTheorem(theorem)}")
-                    // Make each on a separate line
-                    .ToJoinedString("\n")
-                    // Ensure no white spaces at the end
-                    .TrimEnd();
-
-                // Append a new line
-                result += "\n";
             }
 
             #endregion
@@ -610,7 +539,7 @@ namespace GeoGen.ConsoleLauncher
                         result += "\n Can be simplified:\n\n";
 
                         // Get the new configuration and new statement
-                        var (newConfiguration, newTheorem) = simplifiedTheorems[theorem];
+                        var (newTheorem, newConfiguration) = simplifiedTheorems[theorem];
 
                         // Prepare the formatter for the new configuration
                         var newFormatter = new OutputFormatter(newConfiguration.AllObjects);

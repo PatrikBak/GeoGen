@@ -29,7 +29,7 @@ namespace GeoGen.ConsoleLauncher
                 await IoC.InitializeAsync(settings);
 
                 // Run the algorithm
-                await IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunAlgorithmsAsync();
+                await IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunProblemGenerationAsync();
 
                 // Log that we're done
                 LoggingManager.LogInfo("The application has finished.\n");

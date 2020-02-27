@@ -13,40 +13,36 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="IAlgorithmInputProvider"/> loading 
-    /// data from the file system.
+    /// The default implementation of <see cref="IProblemGeneratorInputProvider"/> loading data from the file system.
     /// </summary>
-    public class AlgorithmInputProvider : IAlgorithmInputProvider
+    public class ProblemGeneratorInputProvider : IProblemGeneratorInputProvider
     {
         #region Private fields
 
         /// <summary>
         /// The settings for the folder with inputs.
         /// </summary>
-        private readonly AlgorithmInputProviderSettings _settings;
+        private readonly ProblemGeneratorInputProviderSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmInputProvider"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGeneratorInputProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings for the folder with inputs.</param>
-        public AlgorithmInputProvider(AlgorithmInputProviderSettings settings)
+        public ProblemGeneratorInputProvider(ProblemGeneratorInputProviderSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }
 
         #endregion
 
-        #region IAlgorithmInputProvider implementation
+        #region IProblemGeneratorInputProvider implementation
 
-        /// <summary>
-        /// Gets algorithm inputs.
-        /// </summary>
-        /// <returns>The algorithm inputs.</returns>
-        public async Task<IReadOnlyList<LoadedAlgorithmInput>> GetAlgorithmInputsAsync()
+        /// <inheritdoc/>
+        public async Task<IReadOnlyList<LoadedProblemGeneratorInput>> GetProblemGeneratorInputsAsync()
         {
             // Log that we're starting
             LoggingManager.LogInfo($"Starting to search for input files in {_settings.InputFolderPath}");
@@ -66,10 +62,10 @@ namespace GeoGen.ConsoleLauncher
             if (inputFiles.Count == 0)
             {
                 // Log it
-                LoggingManager.LogWarning("No file found on which we could run the algorithm.");
+                LoggingManager.LogWarning("No file found on which we could run problem generation.");
 
                 // Finish the method
-                return new List<LoadedAlgorithmInput>();
+                return new List<LoadedProblemGeneratorInput>();
             }
 
             // Inform about the found ones
@@ -78,7 +74,7 @@ namespace GeoGen.ConsoleLauncher
                 $"{inputFiles.Select((file, index) => $"   {index + 1}. {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
-            var result = new List<LoadedAlgorithmInput>();
+            var result = new List<LoadedProblemGeneratorInput>();
 
             // Go through all the input files
             foreach (var (inputFilePath, id) in inputFiles)
@@ -125,17 +121,17 @@ namespace GeoGen.ConsoleLauncher
                 try
                 {
                     // Try to parse it
-                    var algorithmInput = ParseInput(lines);
+                    var generatorInput = ParseInput(lines);
 
                     // Add the loaded input to the result list
-                    result.Add(new LoadedAlgorithmInput
+                    result.Add(new LoadedProblemGeneratorInput
                     (
                         filePath: inputFilePath,
                         id: id,
-                        constructions: algorithmInput.Constructions,
-                        initialConfiguration: algorithmInput.InitialConfiguration,
-                        numberOfIterations: algorithmInput.NumberOfIterations,
-                        maximalNumbersOfObjectsToAdd: algorithmInput.MaximalNumbersOfObjectsToAdd
+                        constructions: generatorInput.Constructions,
+                        initialConfiguration: generatorInput.InitialConfiguration,
+                        numberOfIterations: generatorInput.NumberOfIterations,
+                        maximalNumbersOfObjectsToAdd: generatorInput.MaximalNumbersOfObjectsToAdd
                     ));
                 }
                 catch (ParsingException e)
@@ -155,11 +151,11 @@ namespace GeoGen.ConsoleLauncher
         }
 
         /// <summary>
-        /// Parses given lines to an algorithm input.
+        /// Parses given lines to a problem generator input.
         /// </summary>
         /// <param name="lines">The trimmed non-empty lines without comments to be parsed.</param>
-        /// <returns>The parsed algorithm input.</returns>
-        private static AlgorithmInput ParseInput(IReadOnlyList<string> lines)
+        /// <returns>The parsed problem generator input.</returns>
+        private static ProblemGeneratorInput ParseInput(IReadOnlyList<string> lines)
         {
             #region Finding construction and configuration sections
 
@@ -285,7 +281,7 @@ namespace GeoGen.ConsoleLauncher
             #endregion
 
             // Return the final input
-            return new AlgorithmInput
+            return new ProblemGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: constructions,

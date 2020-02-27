@@ -20,9 +20,9 @@ namespace GeoGen.ConsoleLauncher
         public LoggingSettings LoggingSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="AlgorithmInputProvider"/>.
+        /// The settings for <see cref="ProblemGeneratorInputProvider"/>.
         /// </summary>
-        public AlgorithmInputProviderSettings AlgorithmInputProviderSettings { get; }
+        public ProblemGeneratorInputProviderSettings ProblemGeneratorInputProviderSettings { get; }
 
         /// <summary>
         /// The settings for <see cref="InferenceRuleProvider"/>.
@@ -35,14 +35,14 @@ namespace GeoGen.ConsoleLauncher
         public SimplificationRuleProviderSettings SimplificationRuleProviderSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="DebugAlgorithmRunner"/>.
+        /// The settings for <see cref="ProblemGenerationRunner"/>.
         /// </summary>
-        public DebugAlgorithmRunnerSettings DebugAlgorithmRunnerSettings { get; }
+        public ProblemGenerationRunnerSettings ProblemGenerationRunnerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="Algorithm.Algorithm"/>.
+        /// The settings for <see cref="ProblemGenerator"/>.
         /// </summary>
-        public AlgorithmSettings AlgorithmSettings { get; }
+        public ProblemGeneratorSettings ProblemGeneratorSettings { get; }
 
         /// <summary>
         /// The settings for <see cref="BestTheoremFinder"/>.
@@ -77,22 +77,22 @@ namespace GeoGen.ConsoleLauncher
         /// Initializes a new instance of the <see cref="Settings"/> class.
         /// </summary>
         /// <param name="loggingSettings">The settings for the logging system.</param>
-        /// <param name="algorithmInputProviderSettings">The settings for <see cref="AlgorithmInputProvider"/>.</param>
+        /// <param name="problemGeneratorInputProviderSettings">The settings for <see cref="ProblemGeneratorInputProvider"/>.</param>
         /// <param name="inferenceRuleProviderSettings">The settings for <see cref="InferenceRuleProvider"/>.</param>
         /// <param name="simplificationRuleProviderSettings">The settings for <see cref="SimplificationRuleProvider"/>.</param>
-        /// <param name="debugAlgorithmRunnerSettings">The settings for <see cref="DebugAlgorithmRunner"/>.</param>
-        /// <param name="algorithmSettings">The settings for <see cref="Algorithm.Algorithm"/>.</param>
+        /// <param name="problemGenerationRunnerSettings">The settings for <see cref="ProblemGenerationRunner"/>.</param>
+        /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator"/>.</param>
         /// <param name="bestTheoremFinderSettings">The settings for <see cref="BestTheoremFinder"/>.</param>
         /// <param name="theoremFindingSettings">The settings for the theorem finder module.</param>
         /// <param name="theoremRankingSettings">The settings for the theorem ranker module.</param>
         /// <param name="generationSettings">The settings for the generator module.</param>
         /// <param name="tracingSettings">The settings for all tracers.</param>
         public Settings(LoggingSettings loggingSettings,
-                        AlgorithmInputProviderSettings algorithmInputProviderSettings,
+                        ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
                         InferenceRuleProviderSettings inferenceRuleProviderSettings,
                         SimplificationRuleProviderSettings simplificationRuleProviderSettings,
-                        DebugAlgorithmRunnerSettings debugAlgorithmRunnerSettings,
-                        AlgorithmSettings algorithmSettings,
+                        ProblemGenerationRunnerSettings problemGenerationRunnerSettings,
+                        ProblemGeneratorSettings problemGeneratorSettings,
                         BestTheoremFinderSettings bestTheoremFinderSettings,
                         TheoremFindingSettings theoremFindingSettings,
                         TheoremRankingSettings theoremRankingSettings,
@@ -100,11 +100,11 @@ namespace GeoGen.ConsoleLauncher
                         TracingSettings tracingSettings)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
-            AlgorithmInputProviderSettings = algorithmInputProviderSettings ?? throw new ArgumentNullException(nameof(algorithmInputProviderSettings));
+            ProblemGeneratorInputProviderSettings = problemGeneratorInputProviderSettings ?? throw new ArgumentNullException(nameof(problemGeneratorInputProviderSettings));
             InferenceRuleProviderSettings = inferenceRuleProviderSettings ?? throw new ArgumentNullException(nameof(inferenceRuleProviderSettings));
             SimplificationRuleProviderSettings = simplificationRuleProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRuleProviderSettings));
-            DebugAlgorithmRunnerSettings = debugAlgorithmRunnerSettings ?? throw new ArgumentNullException(nameof(debugAlgorithmRunnerSettings));
-            AlgorithmSettings = algorithmSettings ?? throw new ArgumentNullException(nameof(algorithmSettings));
+            ProblemGenerationRunnerSettings = problemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(problemGenerationRunnerSettings));
+            ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
             BestTheoremFinderSettings = bestTheoremFinderSettings ?? throw new ArgumentNullException(nameof(bestTheoremFinderSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
             TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));

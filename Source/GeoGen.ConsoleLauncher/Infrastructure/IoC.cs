@@ -2,6 +2,7 @@
 using GeoGen.Constructor;
 using GeoGen.Generator;
 using GeoGen.Infrastructure;
+using GeoGen.ProblemAnalyzer;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
@@ -45,8 +46,8 @@ namespace GeoGen.ConsoleLauncher
 
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
-            Kernel.Bind<IAlgorithmRunner>().To<DebugAlgorithmRunner>().WithConstructorArgument(settings.DebugAlgorithmRunnerSettings);
-            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.AlgorithmInputProviderSettings);
+            Kernel.Bind<IProblemGenerationRunner>().To<ProblemGenerationRunner>().WithConstructorArgument(settings.ProblemGenerationRunnerSettings);
+            Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
             Kernel.Bind<IBestTheoremFinder>().To<BestTheoremFinder>().WithConstructorArgument(settings.BestTheoremFinderSettings);
@@ -81,7 +82,9 @@ namespace GeoGen.ConsoleLauncher
                     rules: (await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
                 // And finally the algorithm
-                .AddAlgorithm(settings.AlgorithmSettings);
+                .AddAlgorithm(settings.ProblemGeneratorSettings)
+                // And analyzer
+                .AddAnalyzer();
 
             #endregion
 

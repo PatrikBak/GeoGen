@@ -4,9 +4,9 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents the settings for <see cref="Algorithm"/>.
+    /// Represents the settings for <see cref="ProblemGenerator"/>.
     /// </summary>
-    public class AlgorithmSettings
+    public class ProblemGeneratorSettings
     {
         #region Public properties
 
@@ -16,8 +16,7 @@ namespace GeoGen.Algorithm
         public int NumberOfPictures { get; }
 
         /// <summary>
-        /// Indicates if we should automatically exclude configurations that are not symmetric
-        /// (according to <see cref="Configuration.IsSymmetric"/>.
+        /// Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.
         /// </summary>
         public bool ExcludeAsymmetricConfigurations { get; }
 
@@ -26,10 +25,11 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmSettings"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGeneratorSettings"/> class.
         /// </summary>
         /// <param name="numberOfPictures">The number of pictures to which a configuration is drawn.</param>
-        public AlgorithmSettings(int numberOfPictures, bool excludeAsymmetricConfigurations)
+        /// <param name="excludeAsymmetricConfigurations">Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.</param>
+        public ProblemGeneratorSettings(int numberOfPictures, bool excludeAsymmetricConfigurations)
         {
             NumberOfPictures = numberOfPictures;
             ExcludeAsymmetricConfigurations = excludeAsymmetricConfigurations;

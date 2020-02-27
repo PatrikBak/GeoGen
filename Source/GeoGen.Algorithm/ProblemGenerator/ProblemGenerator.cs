@@ -10,16 +10,25 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The default implementation of <see cref="IAlgorithm"/>.
+    /// The default implementation of <see cref="IProblemGenerator"/> that uses <see cref="IGenerator"/>
+    /// to generate configurations, <see cref="IGeometryConstructor"/> to construct them analytically,
+    /// and <see cref="ITheoremFinder"/> to find their theorems.
+    /// <para>
+    /// It is able to trace configurations where geometric construction failed via <see cref="IGeometryConstructor"/>.
+    /// </para>
+    /// <para>
+    /// It is also able to perform efficient exclusion of asymmetric configurations, which can be specified
+    /// via <see cref="ProblemGeneratorSettings"/>.
+    /// </para>
     /// </summary>
-    public class Algorithm : IAlgorithm
+    public class ProblemGenerator : IProblemGenerator
     {
         #region Private fields
 
         /// <summary>
-        /// The settings for the algorithm.
+        /// The settings for the problem generator.
         /// </summary>
-        private readonly AlgorithmSettings _settings;
+        private readonly ProblemGeneratorSettings _settings;
 
         #endregion
 
@@ -31,7 +40,7 @@ namespace GeoGen.Algorithm
         private readonly IGenerator _generator;
 
         /// <summary>
-        /// The constructor that perform the actual geometric construction of configurations.
+        /// The constructor that perform geometric construction of configurations.
         /// </summary>
         private readonly IGeometryConstructor _constructor;
 
@@ -50,18 +59,18 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Algorithm"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGenerator"/> class.
         /// </summary>
-        /// <param name="settings">The settings for the algorithm.</param>
+        /// <param name="settings">The settings for the problem generator.</param>
         /// <param name="generator">The generator of configurations.</param>
-        /// <param name="constructor">The constructor that perform the actual geometric construction of configurations.</param>
+        /// <param name="constructor">The constructor that perform geometric construction of configurations.</param>
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
-        public Algorithm(AlgorithmSettings settings,
-                               IGenerator generator,
-                               IGeometryConstructor constructor,
-                               ITheoremFinder finder,
-                               IGeometryFailureTracer tracer)
+        public ProblemGenerator(ProblemGeneratorSettings settings,
+                                IGenerator generator,
+                                IGeometryConstructor constructor,
+                                ITheoremFinder finder,
+                                IGeometryFailureTracer tracer)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
@@ -72,14 +81,10 @@ namespace GeoGen.Algorithm
 
         #endregion
 
-        #region IAlgorithm implementation
+        #region IProblemGenerator implementation
 
-        /// <summary>
-        /// Executes the algorithm for a given algorithm input.
-        /// </summary>
-        /// <param name="input">The input for the algorithm.</param>
-        /// <returns>The theorems in the initial configuration and a lazy enumerable of all the generated output.</returns>
-        public (TheoremMap initialTheorems, IEnumerable<AlgorithmOutput> generationOutputs) Run(AlgorithmInput input)
+        /// <inheritdoc/>
+        public (TheoremMap initialTheorems, IEnumerable<ProblemGeneratorOutput> generationOutputs) Generate(ProblemGeneratorInput input)
         {
             #region Preparing variables
 
@@ -266,8 +271,6 @@ namespace GeoGen.Algorithm
 
                 #endregion
 
-                // FEAUTURE: Should we verify here whether the configuration has a normal picture? E.g. no close points.
-
                 // If we got here, everything's fine
                 return true;
             }
@@ -317,7 +320,7 @@ namespace GeoGen.Algorithm
                            return null;
 
                        // Return the final output
-                       return new AlgorithmOutput
+                       return new ProblemGeneratorOutput
                        (
                            configuration: configuration,
                            contextualPicture: contextualPicture,

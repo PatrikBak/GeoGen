@@ -8,21 +8,22 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The default implementation of <see cref="IBatchRunner"/>.
+    /// The default implementation of <see cref="IBatchRunner"/> that uses <see cref="IProblemGeneratorInputProvider"/>
+    /// to find inputs and <see cref="IProblemGenerationRunner"/> to run the problem generation algorithm on them.
     /// </summary>
     public class BatchRunner : IBatchRunner
     {
         #region Dependencies
 
         /// <summary>
-        /// The provider of inputs for the algorithm.
+        /// The provider of inputs for the problem generator.
         /// </summary>
-        private readonly IAlgorithmInputProvider _inputProvider;
+        private readonly IProblemGeneratorInputProvider _inputProvider;
 
         /// <summary>
-        /// The processor of the algorithm output.
+        /// The processor of the loaded problem generator input.
         /// </summary>
-        private readonly IAlgorithmRunner _runner;
+        private readonly IProblemGenerationRunner _runner;
 
         #endregion
 
@@ -31,9 +32,9 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="BatchRunner"/> class.
         /// </summary>
-        /// <param name="inputProvider">The provider of inputs for the algorithm.</param>
-        /// <param name="runner">The runner of the algorithm for particular input.</param>
-        public BatchRunner(IAlgorithmInputProvider inputProvider, IAlgorithmRunner runner)
+        /// <param name="inputProvider">The provider of inputs for the problem generator.</param>
+        /// <param name="runner">The processor of the loaded problem generator input.</param>
+        public BatchRunner(IProblemGeneratorInputProvider inputProvider, IProblemGenerationRunner runner)
         {
             _inputProvider = inputProvider ?? throw new ArgumentNullException(nameof(inputProvider));
             _runner = runner ?? throw new ArgumentNullException(nameof(runner));
@@ -43,14 +44,11 @@ namespace GeoGen.ConsoleLauncher
 
         #region IBatchRunner implementation
 
-        /// <summary>
-        /// Scans the folder with input files and runs the algorithm on them.
-        /// </summary>
-        /// <returns>The task representing the action.</returns>
-        public async Task FindAllInputFilesAndRunAlgorithmsAsync()
+        /// <inheritdoc/>
+        public async Task FindAllInputFilesAndRunProblemGenerationAsync()
         {
             // Load all inputs
-            var inputs = await _inputProvider.GetAlgorithmInputsAsync();
+            var inputs = await _inputProvider.GetProblemGeneratorInputsAsync();
 
             // Prepare the stopwatch
             var stopwatch = new Stopwatch();

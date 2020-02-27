@@ -28,11 +28,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public string ConfigurationString { get; }
 
-        /// <summary>
-        /// Indicates whether the theorem has been a result of theorem simplification.
-        /// </summary>
-        public bool IsSimplified { get; }
-
         #endregion
 
         #region Constructor
@@ -43,13 +38,11 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="theoremString">The string of the actual theorem that was ranked.</param>
         /// <param name="ranking">The ranking of the <see cref="TheoremString"/> with respect to the configuration where it was discovered.</param>
         /// <param name="configurationString">The string of the configuration where the <see cref="TheoremString"/> holds.</param>
-        /// <param name="isSimplified">Indicates whether the theorem has been a result of theorem simplification.</param>
-        public TheoremWithRankingIntermediate(string theoremString, TheoremRanking ranking, string configurationString, bool isSimplified)
+        public TheoremWithRankingIntermediate(string theoremString, TheoremRanking ranking, string configurationString)
         {
             TheoremString = theoremString ?? throw new ArgumentNullException(nameof(theoremString));
             Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
             ConfigurationString = configurationString ?? throw new ArgumentNullException(nameof(configurationString));
-            IsSimplified = isSimplified;
         }
 
         #endregion
@@ -77,7 +70,7 @@ namespace GeoGen.ConsoleLauncher
                 .Replace("{", "").Replace("}", "");
 
             // Return the final object
-            return new TheoremWithRankingIntermediate(theoremString, theoremWithRanking.Ranking, configurationString, theoremWithRanking.IsSimplified);
+            return new TheoremWithRankingIntermediate(theoremString, theoremWithRanking.Ranking, configurationString);
         }
 
         /// <summary>
@@ -94,7 +87,7 @@ namespace GeoGen.ConsoleLauncher
             var theorem = Parser.ParseTheorem(theoremWithRankingIntermediate.TheoremString, objectNames, autocreateUnnamedObjects: false);
 
             // Return the final object
-            return new TheoremWithRanking(theorem, theoremWithRankingIntermediate.Ranking, configuration, theoremWithRankingIntermediate.IsSimplified);
+            return new TheoremWithRanking(theorem, theoremWithRankingIntermediate.Ranking, configuration);
         }
 
         #endregion

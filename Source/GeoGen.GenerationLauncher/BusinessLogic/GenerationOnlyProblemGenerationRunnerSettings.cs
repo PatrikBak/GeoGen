@@ -3,9 +3,9 @@
 namespace GeoGen.GenerationLauncher
 {
     /// <summary>
-    /// The settings for <see cref="GenerationAlgorithmRunner"/>.
+    /// The settings for <see cref="GenerationOnlyProblemGenerationRunner"/>.
     /// </summary>
-    public class GenerationAlgorithmRunnerSettings
+    public class GenerationOnlyProblemGenerationRunnerSettings
     {
         #region Public properties
 
@@ -30,12 +30,12 @@ namespace GeoGen.GenerationLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenerationAlgorithmRunnerSettings"/> class.
+        /// Initializes a new instance of the <see cref="GenerationOnlyProblemGenerationRunnerSettings"/> class.
         /// </summary>
         /// <param name="generationProgresLoggingFrequency">Indicates how often we log the number of generated configurations. If this number is 'n', then after every n-th configuration there will be a message.</param>
         /// <param name="logProgress">Indicates whether we should log the progress.</param>
         /// <param name="countingMode">The way in which configurations are counted in while generating.</param>
-        public GenerationAlgorithmRunnerSettings(int generationProgresLoggingFrequency, bool logProgress, CountingMode countingMode)
+        public GenerationOnlyProblemGenerationRunnerSettings(int generationProgresLoggingFrequency, bool logProgress, CountingMode countingMode)
         {
             GenerationProgresLoggingFrequency = generationProgresLoggingFrequency;
             LogProgress = logProgress;

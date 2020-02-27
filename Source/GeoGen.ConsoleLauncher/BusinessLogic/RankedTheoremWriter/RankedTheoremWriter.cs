@@ -46,9 +46,7 @@ namespace GeoGen.ConsoleLauncher
                 // Write the theorem
                 streamWriter.WriteLine($"\n{formatter.FormatTheorem(rankedTheorem.Theorem)}" +
                     // With the ranking
-                    $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)} " +
-                    // And with the fact whether it has been simplified
-                    $"{(rankedTheorem.IsSimplified ? "(simplified)" : "")}\n");
+                    $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)}\n");
 
                 // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
                 rankedTheorem.Ranking.Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))

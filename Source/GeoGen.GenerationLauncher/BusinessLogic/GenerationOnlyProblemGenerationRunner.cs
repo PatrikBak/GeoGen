@@ -7,17 +7,17 @@ using System;
 namespace GeoGen.GenerationLauncher
 {
     /// <summary>
-    /// Represents an <see cref="IAlgorithmRunner"/> that performs the algorithms and does nothing
+    /// Represents an <see cref="IProblemGenerationRunner"/> that performs the generation algorithm and does nothing
     /// but count the number of generated configurations and messages this count.
     /// </summary>
-    public class GenerationAlgorithmRunner : IAlgorithmRunner
+    public class GenerationOnlyProblemGenerationRunner : IProblemGenerationRunner
     {
         #region Dependencies
 
         /// <summary>
-        /// The algorithm that is run.
+        /// The generator of problems.
         /// </summary>
-        private readonly IAlgorithm _algorithm;
+        private readonly IProblemGenerator _generator;
 
         #endregion
 
@@ -26,38 +26,35 @@ namespace GeoGen.GenerationLauncher
         /// <summary>
         /// The settings for the runner.
         /// </summary>
-        private readonly GenerationAlgorithmRunnerSettings _settings;
+        private readonly GenerationOnlyProblemGenerationRunnerSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GenerationAlgorithmRunner"> class.
+        /// Initializes a new instance of the <see cref="GenerationOnlyProblemGenerationRunner"> class.
         /// </summary>
         /// <param name="settings">The settings for the runner.</param>
-        /// <param name="algorithm">The algorithm that is run.</param>
-        public GenerationAlgorithmRunner(GenerationAlgorithmRunnerSettings settings, IAlgorithm algorithm)
+        /// <param name="generator">The generator of problems.</param>
+        public GenerationOnlyProblemGenerationRunner(GenerationOnlyProblemGenerationRunnerSettings settings, IProblemGenerator generator)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-            _algorithm = algorithm ?? throw new ArgumentNullException(nameof(algorithm));
+            _generator = generator ?? throw new ArgumentNullException(nameof(generator));
         }
 
         #endregion
 
-        #region IAlgorithmRunner implementation
+        #region IProblemGenerationRunner implementation
 
-        /// <summary>
-        /// Runs the algorithm on a given output.
-        /// </summary>
-        /// <param name="input">The input for the algorithm.</param>
-        public void Run(LoadedAlgorithmInput input)
+        /// <inheritdoc/>
+        public void Run(LoadedProblemGeneratorInput input)
         {
             // Prepare the variable holding the number of generated configurations
             var generatedConfigurations = 0;
 
-            // Run the algorithm loop
-            foreach (var output in _algorithm.Run(input).generationOutputs)
+            // Run the generation loop
+            foreach (var output in _generator.Generate(input).generationOutputs)
             {
                 // Switch based on how we calculate the count
                 switch (_settings.CountingMode)

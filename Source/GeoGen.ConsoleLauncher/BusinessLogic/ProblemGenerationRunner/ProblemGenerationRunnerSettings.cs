@@ -3,9 +3,9 @@
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The settings for <see cref="DebugAlgorithmRunner"/>
+    /// The settings for <see cref="ProblemGenerationRunner"/>
     /// </summary>
-    public class DebugAlgorithmRunnerSettings
+    public class ProblemGenerationRunnerSettings
     {
         #region Public properties
 
@@ -70,7 +70,7 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DebugAlgorithmRunnerSettings"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGenerationRunnerSettings"/> class.
         /// </summary>
         /// <param name="outputFolder">The folder where the where the human-readable output of the algorithm should be written.</param>
         /// <param name="outputFolderWithProofs">The folder where the where the human-readable output of the algorithm with theorem proofs should be written.</param>
@@ -83,17 +83,17 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="bestTheoremReadableFilePath">The path to the human-readable file where the best theorems should be written to.</param>
         /// <param name="bestTheoremJsonFilePath">The path to the JSON file where the best theorems should be written to.</param>
         /// <param name="inferenceRuleUsageFile">The file with the usage of the inference rules used for analyzing the prover.</param>
-        public DebugAlgorithmRunnerSettings(string outputFolder,
-                                            string outputFolderWithProofs,
-                                            bool writeOutputWithProofs,
-                                            string outputJsonFolder,
-                                            string outputFilePrefix,
-                                            string fileExtension,
-                                            int generationProgresLoggingFrequency,
-                                            bool logProgress,
-                                            string bestTheoremReadableFilePath,
-                                            string bestTheoremJsonFilePath,
-                                            string inferenceRuleUsageFile)
+        public ProblemGenerationRunnerSettings(string outputFolder,
+                                               string outputFolderWithProofs,
+                                               bool writeOutputWithProofs,
+                                               string outputJsonFolder,
+                                               string outputFilePrefix,
+                                               string fileExtension,
+                                               int generationProgresLoggingFrequency,
+                                               bool logProgress,
+                                               string bestTheoremReadableFilePath,
+                                               string bestTheoremJsonFilePath,
+                                               string inferenceRuleUsageFile)
         {
             OutputFolder = outputFolder ?? throw new ArgumentNullException(nameof(outputFolder));
             OutputFolderWithProofs = outputFolderWithProofs;

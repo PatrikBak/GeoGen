@@ -12,7 +12,7 @@ namespace GeoGen.ConsoleLauncher
         /// <summary>
         /// Gets simplification rules.
         /// </summary>
-        /// <returns>The simplification rules.</returns>
+        /// <returns>The loaded simplification rules.</returns>
         Task<IReadOnlyList<SimplificationRule>> GetSimplificationRulesAsync();
     }
 }

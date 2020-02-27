@@ -6,9 +6,9 @@ using System;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// Represents an output of the <see cref="IAlgorithm"/>.
+    /// Represents an output of the <see cref="IProblemGenerator"/>.
     /// </summary>
-    public class AlgorithmOutput
+    public class ProblemGeneratorOutput
     {
         #region Public properties
 
@@ -37,13 +37,13 @@ namespace GeoGen.Algorithm
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmOutput"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGeneratorOutput"/> class.
         /// </summary>
         /// <param name="configuration">The generated configuration.</param>
         /// <param name="contextualPicture">The contextual picture where the configuration is drawn.</param>
         /// <param name="oldTheorems">The found theorems for the configurations that don't use the last object of the configuration.</param>
         /// <param name="newTheorems">The found theorems for the configurations that use the last object of the configuration.</param>
-        public AlgorithmOutput(GeneratedConfiguration configuration, ContextualPicture contextualPicture, TheoremMap oldTheorems, TheoremMap newTheorems)
+        public ProblemGeneratorOutput(GeneratedConfiguration configuration, ContextualPicture contextualPicture, TheoremMap oldTheorems, TheoremMap newTheorems)
         {
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             ContextualPicture = contextualPicture ?? throw new ArgumentNullException(nameof(contextualPicture));

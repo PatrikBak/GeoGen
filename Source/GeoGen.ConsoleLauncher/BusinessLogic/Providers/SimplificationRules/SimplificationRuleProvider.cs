@@ -41,10 +41,7 @@ namespace GeoGen.ConsoleLauncher
 
         #region ISimplificationRuleProvider implementation
 
-        /// <summary>
-        /// Gets simplification rules.
-        /// </summary>
-        /// <returns>The simplification rules.</returns>
+        /// <inheritdoc/>
         public async Task<IReadOnlyList<SimplificationRule>> GetSimplificationRulesAsync()
         {
             #region Loading the file

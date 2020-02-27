@@ -3,9 +3,9 @@
 namespace GeoGen.ConsoleLauncher
 {
     /// <summary>
-    /// The settings for <see cref="AlgorithmInputProvider"/> containing information about the folder with algorithm inputs.
+    /// The settings for <see cref="ProblemGeneratorInputProvider"/> containing information about the folder with inputs.
     /// </summary>
-    public class AlgorithmInputProviderSettings
+    public class ProblemGeneratorInputProviderSettings
     {
         #region Public properties
 
@@ -29,12 +29,12 @@ namespace GeoGen.ConsoleLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AlgorithmInputProviderSettings"/> class.
+        /// Initializes a new instance of the <see cref="ProblemGeneratorInputProviderSettings"/> class.
         /// </summary>
         /// <param name="inputFolderPath">The path to the folder containing input files.</param>
         /// <param name="inputFilePrefix">The prefix of inputs files.</param>
         /// <param name="fileExtension">The file extension of input files.</param>
-        public AlgorithmInputProviderSettings(string inputFolderPath, string inputFilePrefix, string fileExtension)
+        public ProblemGeneratorInputProviderSettings(string inputFolderPath, string inputFilePrefix, string fileExtension)
         {
             InputFolderPath = inputFolderPath ?? throw new ArgumentNullException(nameof(inputFolderPath));
             InputFilePrefix = inputFilePrefix ?? throw new ArgumentNullException(nameof(inputFilePrefix));

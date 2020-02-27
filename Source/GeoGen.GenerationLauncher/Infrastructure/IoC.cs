@@ -41,8 +41,8 @@ namespace GeoGen.GenerationLauncher
 
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
-            Kernel.Bind<IAlgorithmRunner>().To<GenerationAlgorithmRunner>().WithConstructorArgument(settings.GenerationAlgorithmRunnerSettings);
-            Kernel.Bind<IAlgorithmInputProvider>().To<AlgorithmInputProvider>().WithConstructorArgument(settings.AlgorithmInputProviderSettings);
+            Kernel.Bind<IProblemGenerationRunner>().To<GenerationOnlyProblemGenerationRunner>().WithConstructorArgument(settings.GenerationOnlyProblemGenerationRunnerSettings);
+            Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
 
             #endregion           
 
@@ -53,7 +53,7 @@ namespace GeoGen.GenerationLauncher
                 // Add constructor
                 .AddConstructor()
                 // Add algorithm
-                .AddAlgorithm(settings.AlgorithmSettings);
+                .AddAlgorithm(settings.ProblemGeneratorSettings);
 
             // Add an empty theorem finder
             Kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();

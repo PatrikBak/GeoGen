@@ -1,7 +1,7 @@
 ﻿namespace GeoGen.GenerationLauncher
 {
     /// <summary>
-    /// Represents which configurations are counted in while running <see cref="GenerationAlgorithmRunner"/>.
+    /// Represents which configurations are counted in while running <see cref="GenerationOnlyProblemGenerationRunner"/>.
     /// </summary>
     public enum CountingMode
     {

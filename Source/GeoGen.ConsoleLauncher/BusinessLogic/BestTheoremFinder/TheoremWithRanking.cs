@@ -26,11 +26,6 @@ namespace GeoGen.ConsoleLauncher
         /// </summary>
         public Configuration Configuration { get; }
 
-        /// <summary>
-        /// Indicates whether the theorem has been a result of theorem simplification.
-        /// </summary>
-        public bool IsSimplified { get; }
-
         #endregion
 
         #region Constructor
@@ -41,13 +36,11 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="theorem">The actual theorem that was ranked.</param>
         /// <param name="ranking">The ranking of the <see cref="Theorem"/> with respect to the configuration where it was discovered.</param>
         /// <param name="configuration">The configuration where the <see cref="Theorem"/> holds.</param>
-        /// <param name="isSimplified">Indicates whether the theorem has been a result of theorem simplification.</param>
-        public TheoremWithRanking(Theorem theorem, TheoremRanking ranking, Configuration configuration, bool isSimplified)
+        public TheoremWithRanking(Theorem theorem, TheoremRanking ranking, Configuration configuration)
         {
             Theorem = theorem ?? throw new ArgumentNullException(nameof(theorem));
             Ranking = ranking ?? throw new ArgumentNullException(nameof(ranking));
             Configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            IsSimplified = isSimplified;
         }
 
         #endregion

@@ -204,7 +204,7 @@ namespace GeoGen.Drawer
                             var configuration = MakeSymmetric((theoremWithRanking.Configuration, theoremWithRanking.Theorem));
 
                             // And return the altered theorem with ranking object
-                            return new TheoremWithRanking(theoremWithRanking.Theorem, theoremWithRanking.Ranking, configuration, theoremWithRanking.IsSimplified);
+                            return new TheoremWithRanking(theoremWithRanking.Theorem, theoremWithRanking.Ranking, configuration);
                         });
 
                     // Perform the drawing for the desired input

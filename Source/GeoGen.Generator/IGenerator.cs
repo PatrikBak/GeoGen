@@ -3,7 +3,7 @@
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents a service that performs the generator algorithm.
+    /// Represents a service that performs the generation algorithm.
     /// </summary>
     public interface IGenerator
     {

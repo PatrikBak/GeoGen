@@ -19,19 +19,19 @@ namespace GeoGen.GenerationLauncher
         public LoggingSettings LoggingSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="AlgorithmInputProvider"/>.
+        /// The settings for <see cref="ProblemGeneratorInputProvider"/>.
         /// </summary>
-        public AlgorithmInputProviderSettings AlgorithmInputProviderSettings { get; }
+        public ProblemGeneratorInputProviderSettings ProblemGeneratorInputProviderSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="GenerationAlgorithmRunner"/>.
+        /// The settings for <see cref="GenerationOnlyProblemGenerationRunner"/>.
         /// </summary>
-        public GenerationAlgorithmRunnerSettings GenerationAlgorithmRunnerSettings { get; }
+        public GenerationOnlyProblemGenerationRunnerSettings GenerationOnlyProblemGenerationRunnerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="Algorithm.Algorithm"/>.
+        /// The settings for <see cref="ProblemGenerator"/>.
         /// </summary>
-        public AlgorithmSettings AlgorithmSettings { get; }
+        public ProblemGeneratorSettings ProblemGeneratorSettings { get; }
 
         /// <summary>
         /// The settings related to the generator module.
@@ -51,22 +51,22 @@ namespace GeoGen.GenerationLauncher
         /// Initializes a new instance of the <see cref="Settings"/> class.
         /// </summary>
         /// <param name="loggingSettings">The settings for the logging system.</param>
-        /// <param name="algorithmInputProviderSettings">The settings for <see cref="AlgorithmInputProvider"/>.</param>
-        /// <param name="generationAlgorithmRunnerSettings">The settings for <see cref="GenerationAlgorithmRunner"/>.</param>
-        /// <param name="algorithmSettings">The settings for <see cref="Algorithm.Algorithm"/>.</param>
+        /// <param name="problemGeneratorInputProviderSettings">The settings for <see cref="ProblemGeneratorInputProvider"/>.</param>
+        /// <param name="generationOnlyProblemGenerationRunnerSettings">The settings for <see cref="GenerationOnlyProblemGenerationRunner"/>.</param>
+        /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator"/>.</param>
         /// <param name="generationSettings">The settings related to the generator module.</param>
         /// <param name="tracingSettings">The settings for all tracers.</param>
         public Settings(LoggingSettings loggingSettings,
-                        AlgorithmInputProviderSettings algorithmInputProviderSettings,
-                        GenerationAlgorithmRunnerSettings generationAlgorithmRunnerSettings,
-                        AlgorithmSettings algorithmSettings,
+                        ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
+                        GenerationOnlyProblemGenerationRunnerSettings generationOnlyProblemGenerationRunnerSettings,
+                        ProblemGeneratorSettings problemGeneratorSettings,
                         GenerationSettings generationSettings,
                         TracingSettings tracingSettings)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
-            AlgorithmInputProviderSettings = algorithmInputProviderSettings ?? throw new ArgumentNullException(nameof(algorithmInputProviderSettings));
-            GenerationAlgorithmRunnerSettings = generationAlgorithmRunnerSettings ?? throw new ArgumentNullException(nameof(generationAlgorithmRunnerSettings));
-            AlgorithmSettings = algorithmSettings ?? throw new ArgumentNullException(nameof(algorithmSettings));
+            ProblemGeneratorInputProviderSettings = problemGeneratorInputProviderSettings ?? throw new ArgumentNullException(nameof(problemGeneratorInputProviderSettings));
+            GenerationOnlyProblemGenerationRunnerSettings = generationOnlyProblemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(generationOnlyProblemGenerationRunnerSettings));
+            ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
             GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));
             TracingSettings = tracingSettings ?? throw new ArgumentNullException(nameof(tracingSettings));
         }
