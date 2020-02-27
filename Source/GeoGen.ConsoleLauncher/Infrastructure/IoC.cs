@@ -65,8 +65,8 @@ namespace GeoGen.ConsoleLauncher
 
             #region Algorithm
 
-            // Add generator
-            Kernel.AddGenerator(settings.GenerationSettings)
+            // Add configuration generator
+            Kernel.AddConfigurationGenerator(settings.GenerationSettings)
                 // And constructor
                 .AddConstructor()
                 // And theorem finder
@@ -81,8 +81,8 @@ namespace GeoGen.ConsoleLauncher
                     // Simplification rules are loaded at the beginning
                     rules: (await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
                 ))
-                // And finally the algorithm
-                .AddAlgorithm(settings.ProblemGeneratorSettings)
+                // And problem generator
+                .AddProblemGenerator(settings.ProblemGeneratorSettings)
                 // And analyzer
                 .AddAnalyzer();
 

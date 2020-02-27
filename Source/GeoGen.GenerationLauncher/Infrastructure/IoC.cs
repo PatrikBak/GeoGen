@@ -46,14 +46,14 @@ namespace GeoGen.GenerationLauncher
 
             #endregion           
 
-            #region Algorithm
+            #region Problem generator
 
-            // Add generator
-            Kernel.AddGenerator(settings.GenerationSettings)
+            // Add configuration generator
+            Kernel.AddConfigurationGenerator(settings.GenerationSettings)
                 // Add constructor
                 .AddConstructor()
-                // Add algorithm
-                .AddAlgorithm(settings.ProblemGeneratorSettings);
+                // Add problem generator
+                .AddProblemGenerator(settings.ProblemGeneratorSettings);
 
             // Add an empty theorem finder
             Kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();

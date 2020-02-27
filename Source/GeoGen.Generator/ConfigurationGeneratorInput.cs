@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// Represents an input for the <see cref="IGenerator"/>.
+    /// Represents an input for the <see cref="IConfigurationGenerator"/>.
     /// </summary>
-    public class GeneratorInput
+    public class ConfigurationGeneratorInput
     {
         #region Public properties
 
@@ -43,18 +43,18 @@ namespace GeoGen.Generator
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeneratorInput"/> class.
+        /// Initializes a new instance of the <see cref="ConfigurationGeneratorInput"/> class.
         /// </summary>
         /// <param name="initialConfiguration">The initial configuration from which the generation process starts. </param>
         /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
         /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
         /// <param name="maximalNumbersOfObjectsToAdd">The dictionary representing at most how many objects of each type should be added to the initial configuration.</param>
         /// <param name="configurationFilter">The function for filtrating generated configurations.</param>
-        public GeneratorInput(Configuration initialConfiguration,
-                              IReadOnlyHashSet<Construction> constructions,
-                              int numberOfIterations,
-                              IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
-                              Func<GeneratedConfiguration, bool> configurationFilter)
+        public ConfigurationGeneratorInput(Configuration initialConfiguration,
+                                           IReadOnlyHashSet<Construction> constructions,
+                                           int numberOfIterations,
+                                           IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
+                                           Func<GeneratedConfiguration, bool> configurationFilter)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));

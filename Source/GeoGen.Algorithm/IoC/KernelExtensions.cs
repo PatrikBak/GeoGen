@@ -8,12 +8,12 @@ namespace GeoGen.Algorithm
     public static class KernelExtensions
     {
         /// <summary>
-        /// Bindings for the dependencies from the Algorithm module.
+        /// Bindings for the dependencies from the ProblemGenerator module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <param name="settings">The settings for <see cref="ProblemGenerator"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddAlgorithm(this IKernel kernel, ProblemGeneratorSettings settings)
+        public static IKernel AddProblemGenerator(this IKernel kernel, ProblemGeneratorSettings settings)
         {
             // Stateless services
             kernel.Bind<IProblemGenerator>().To<ProblemGenerator>().WithConstructorArgument(settings);

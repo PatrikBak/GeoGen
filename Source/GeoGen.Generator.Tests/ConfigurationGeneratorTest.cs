@@ -13,10 +13,10 @@ using static GeoGen.Core.PredefinedConstructions;
 namespace GeoGen.Generator.Tests
 {
     /// <summary>
-    /// The test class for <see cref="Generator.Generator"/>
+    /// The test class for <see cref="ConfigurationGenerator.ConfigurationGenerator"/>
     /// </summary>
     [TestFixture]
-    public class GeneratorTest
+    public class ConfigurationGeneratorTest
     {
         #region GetGenerator method 
 
@@ -24,7 +24,7 @@ namespace GeoGen.Generator.Tests
         /// Gets an instance of the generator.
         /// </summary>
         /// <param name="filterType">The type of configuration filter to be used</param>
-        private static IGenerator GetGenerator(ConfigurationFilterType filterType) => IoC.CreateKernel().AddGenerator(new GenerationSettings(filterType)).Get<IGenerator>();
+        private static IConfigurationGenerator GetGenerator(ConfigurationFilterType filterType) => IoC.CreateKernel().AddConfigurationGenerator(new GenerationSettings(filterType)).Get<IConfigurationGenerator>();
 
         #endregion
 
@@ -42,7 +42,7 @@ namespace GeoGen.Generator.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
 
             // Prepare the input with just the midpoint construction
-            var input = new GeneratorInput
+            var input = new ConfigurationGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
@@ -74,7 +74,7 @@ namespace GeoGen.Generator.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, P, Q, R);
 
             // Prepare the input with just the midpoint construction
-            var input = new GeneratorInput
+            var input = new ConfigurationGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
@@ -107,7 +107,7 @@ namespace GeoGen.Generator.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
 
             // Prepare the input with just the midpoint construction
-            var input = new GeneratorInput
+            var input = new ConfigurationGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint }.ToReadOnlyHashSet(),
@@ -136,7 +136,7 @@ namespace GeoGen.Generator.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
 
             // Prepare the input with just the midpoint construction
-            var input = new GeneratorInput
+            var input = new ConfigurationGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: new HashSet<Construction> { Midpoint, LineFromPoints, Circumcircle }.ToReadOnlyHashSet(),

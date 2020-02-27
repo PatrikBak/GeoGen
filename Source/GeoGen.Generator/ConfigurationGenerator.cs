@@ -7,13 +7,13 @@ using System.Linq;
 namespace GeoGen.Generator
 {
     /// <summary>
-    /// The default implementation of <see cref="IGenerator"/>. It generates configurations by layers.
+    /// The default implementation of <see cref="IConfigurationGenerator"/>. It generates configurations by layers.
     /// Initially the first layer consists of the initial configuration from the input.
     /// Then in every iteration we extend all the configurations from the current layer with new 
     /// <see cref="ConstructedConfigurationObject"/>, and the <see cref="Construction"/>s/ from the input. 
     /// It guaranties generation of mutually non-symmetric configurations.
     /// </summary>
-    public class Generator : IGenerator
+    public class ConfigurationGenerator : IConfigurationGenerator
     {
         #region Dependencies
 
@@ -27,10 +27,10 @@ namespace GeoGen.Generator
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Generator"/> class.
+        /// Initializes a new instance of the <see cref="ConfigurationGenerator"/> class.
         /// </summary>
         /// <param name="factory">The factory for creating <see cref="IConfigurationFilter"/> for the whole generation process.</param>
-        public Generator(IConfigurationFilterFactory factory)
+        public ConfigurationGenerator(IConfigurationFilterFactory factory)
         {
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
         }
@@ -44,7 +44,7 @@ namespace GeoGen.Generator
         /// </summary>
         /// <param name="input">The input for the generator.</param>
         /// <returns>The generated configurations.</returns>
-        public IEnumerable<GeneratedConfiguration> Generate(GeneratorInput input)
+        public IEnumerable<GeneratedConfiguration> Generate(ConfigurationGeneratorInput input)
         {
             // Let the factory create the filter to be used
             var configurationFilter = _factory.Create(input);
@@ -105,7 +105,7 @@ namespace GeoGen.Generator
         /// <param name="input">The input for the generator.</param>
         /// <param name="filter">The filter of generated configurations that should ensure that we generate distinct configurations.</param>
         /// <returns>The enumerator of generated configurations.</returns>
-        private IEnumerator<GeneratedConfiguration> ExtendConfiguration(GeneratedConfiguration currentConfiguration, GeneratorInput input, IConfigurationFilter filter)
+        private IEnumerator<GeneratedConfiguration> ExtendConfiguration(GeneratedConfiguration currentConfiguration, ConfigurationGeneratorInput input, IConfigurationFilter filter)
         {
             // For a given configuration we create all possible objects using the constructions from the input
             return input.Constructions.SelectMany(construction =>

@@ -33,7 +33,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="FastConfigurationFilter"/> class.
         /// </summary>
         /// <param name="generatorInput">The input for the generator.</param>
-        public FastConfigurationFilter(GeneratorInput generatorInput) : base(generatorInput)
+        public FastConfigurationFilter(ConfigurationGeneratorInput generatorInput) : base(generatorInput)
         {
         }
 

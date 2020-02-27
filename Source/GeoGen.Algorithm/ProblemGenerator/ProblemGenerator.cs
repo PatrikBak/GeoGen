@@ -10,7 +10,7 @@ using System.Linq;
 namespace GeoGen.Algorithm
 {
     /// <summary>
-    /// The default implementation of <see cref="IProblemGenerator"/> that uses <see cref="IGenerator"/>
+    /// The default implementation of <see cref="IProblemGenerator"/> that uses <see cref="IConfigurationGenerator"/>
     /// to generate configurations, <see cref="IGeometryConstructor"/> to construct them analytically,
     /// and <see cref="ITheoremFinder"/> to find their theorems.
     /// <para>
@@ -37,7 +37,7 @@ namespace GeoGen.Algorithm
         /// <summary>
         /// The generator of configurations.
         /// </summary>
-        private readonly IGenerator _generator;
+        private readonly IConfigurationGenerator _generator;
 
         /// <summary>
         /// The constructor that perform geometric construction of configurations.
@@ -67,7 +67,7 @@ namespace GeoGen.Algorithm
         /// <param name="finder">The finder of theorems in generated configurations.</param>
         /// <param name="tracer">The tracer of potential geometry failures.</param>
         public ProblemGenerator(ProblemGeneratorSettings settings,
-                                IGenerator generator,
+                                IConfigurationGenerator generator,
                                 IGeometryConstructor constructor,
                                 ITheoremFinder finder,
                                 IGeometryFailureTracer tracer)
@@ -280,7 +280,7 @@ namespace GeoGen.Algorithm
             #region Returning result
 
             // Prepare the generator input
-            var generatorInput = new GeneratorInput
+            var generatorInput = new ConfigurationGeneratorInput
             (
                 // Pass the data from the algorithm input
                 numberOfIterations: input.NumberOfIterations,

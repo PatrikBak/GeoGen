@@ -37,7 +37,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="MemoryEfficientConfigurationFilter"/> class.
         /// </summary>
         /// <param name="generatorInput">The input for the generator.</param>
-        public MemoryEfficientConfigurationFilter(GeneratorInput generatorInput) : base(generatorInput)
+        public MemoryEfficientConfigurationFilter(ConfigurationGeneratorInput generatorInput) : base(generatorInput)
         {
             // Set the initial objects
             _initialObjects = generatorInput.InitialConfiguration.ConstructedObjects;
@@ -150,7 +150,7 @@ namespace GeoGen.Generator
 
                 // Unhandled cases
                 default:
-                    throw new GeneratorException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}");
+                    throw new ConfigurationGeneratorException($"Unhandled type of {nameof(ConfigurationObject)}: {configurationObject.GetType()}");
             }
         }
 
@@ -169,7 +169,7 @@ namespace GeoGen.Generator
             SetConstructionArgument setArgument => $"{{{setArgument.PassedArguments.Select(argument => ArgumentToString(argument, cache)).Ordered().ToJoinedString(";")}}}",
 
             // Something else...
-            _ => throw new GeneratorException($"Unhandled type of {nameof(ConstructionArgument)}: {argument.GetType()}")
+            _ => throw new ConfigurationGeneratorException($"Unhandled type of {nameof(ConstructionArgument)}: {argument.GetType()}")
         };
 
         #endregion

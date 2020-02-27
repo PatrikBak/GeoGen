@@ -14,7 +14,7 @@ namespace GeoGen.Generator
         /// <summary>
         /// The input for the generator.
         /// </summary>
-        protected readonly GeneratorInput GeneratorInput;
+        protected readonly ConfigurationGeneratorInput GeneratorInput;
 
         #endregion
 
@@ -33,7 +33,7 @@ namespace GeoGen.Generator
         /// Initializes a new instance of the <see cref="ConfigurationFilterBase"/> class.
         /// </summary>
         /// <param name="generatorInput">The input for the generator.</param>
-        protected ConfigurationFilterBase(GeneratorInput generatorInput)
+        protected ConfigurationFilterBase(ConfigurationGeneratorInput generatorInput)
         {
             GeneratorInput = generatorInput ?? throw new ArgumentNullException(nameof(generatorInput));
 

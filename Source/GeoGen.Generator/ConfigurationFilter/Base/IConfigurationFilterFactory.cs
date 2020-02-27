@@ -11,6 +11,6 @@
         /// </summary>
         /// <param name="generatorInput">The input for the generator.</param>
         /// <returns>The configuration filter.</returns>
-        IConfigurationFilter Create(GeneratorInput generatorInput);
+        IConfigurationFilter Create(ConfigurationGeneratorInput generatorInput);
     }
 }

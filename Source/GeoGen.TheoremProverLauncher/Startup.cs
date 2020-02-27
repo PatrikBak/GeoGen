@@ -59,9 +59,7 @@ namespace GeoGen.TheoremProverLauncher
                 (
                     // In order to find rules use the rule provider that uses the folder specified in the arguments
                     rules: await new InferenceRuleProvider(new InferenceRuleProviderSettings(ruleFolderPath: arguments[0], fileExtension: arguments[1])).GetInferenceRulesAsync()
-                ))
-                // That can generate
-                .AddGenerator(new GenerationSettings(ConfigurationFilterType.Fast));
+                ));
 
             #endregion
 
