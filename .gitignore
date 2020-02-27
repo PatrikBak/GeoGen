@@ -253,5 +253,5 @@ paket-files/
 
 **/launchSettings.json
 
-Source/GeoGen.ConsoleLauncher/Data/
-Source/GeoGen.GenerationLauncher/Data/
+Source/Launchers/GeoGen.MainLauncher/Data/
+Source/Launchers/GeoGen.ConfigurationGenerationLauncher/Data/
