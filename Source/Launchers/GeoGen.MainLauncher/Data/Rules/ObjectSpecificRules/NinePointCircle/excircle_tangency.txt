@@ -1,7 +1,0 @@
-﻿Objects:
-
-Theorems:
-
-Implications:
-
- () => TangentCircles: Excircle(A, B, C), NinePointCircle(A, B, C)

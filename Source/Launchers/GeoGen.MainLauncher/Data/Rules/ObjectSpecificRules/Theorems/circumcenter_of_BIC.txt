@@ -1,9 +1,0 @@
-﻿Objects:
-
-I = Incenter(A, B, C)
-
-Theorems:
-
-Implications:
-
- () => EqualObjects: Circumcenter(B, I, C), MidpointOfOppositeArc(A, B, C)

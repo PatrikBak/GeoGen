@@ -1,9 +1,0 @@
-﻿Objects:
- 
- H = Orthocenter(A, B, C)
-
-Theorems:
-
-Implications:
-
- () => Incidence: Midpoint(A, H), NinePointCircle(A, B, C)

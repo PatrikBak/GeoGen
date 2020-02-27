@@ -1,9 +1,0 @@
-﻿Objects:
-
- l = PerpendicularBisector(A, B)
-
-Theorems:
-
-Implications:
-
- () => EqualObjects: B, ReflectionInLine(l, A)

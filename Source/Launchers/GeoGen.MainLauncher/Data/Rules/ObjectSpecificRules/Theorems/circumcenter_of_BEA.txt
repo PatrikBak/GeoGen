@@ -1,9 +1,0 @@
-﻿Objects:
-
- E = Excenter(A, B, C)
-
-Theorems:
-
-Implications:
-
- () => EqualObjects: Circumcenter(B, E, A), MidpointOfArc(C, A, B)
