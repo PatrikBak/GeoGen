@@ -1,0 +1,7 @@
+﻿Objects:
+
+Theorems:
+
+Implications:
+
+ () => TangentCircles: Incircle(A, B, C), NinePointCircle(A, B, C)

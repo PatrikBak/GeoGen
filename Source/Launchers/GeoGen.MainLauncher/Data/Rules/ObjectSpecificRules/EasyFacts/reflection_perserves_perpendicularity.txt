@@ -1,0 +1,11 @@
+﻿Objects:
+
+ D = ReflectionInLineFromPoints(A, B, C)
+
+Theorems:
+
+ t1 = PerpendicularLines: [A, B], [A, C]
+
+Implications:
+
+ (t1) => PerpendicularLines: [D, B], [D, C]

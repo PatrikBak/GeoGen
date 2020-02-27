@@ -1,0 +1,12 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = ParallelLines: [A, B], k
+  t2 = ParallelLines: [A, C], k
+  t3 = CollinearPoints: A, B, C
+
+Implications:
+
+ ({t1, t2}) => t3
+ (t1, t3) => t2

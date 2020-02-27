@@ -1,0 +1,12 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = EqualLineSegments: O, A, O, B
+  t2 = EqualLineSegments: O, A, O, C
+  t3 = EqualLineSegments: O, A, O, D
+  t4 = ConcyclicPoints: A, B, C, D
+
+Implications:
+
+ ({t1, t2, t3}) => t4

@@ -1,0 +1,13 @@
+﻿Objects:
+
+ C = IsoscelesTrapezoidPoint(D, A, B)
+
+Theorems:
+
+ t1 = EqualLineSegments: M, A, M, B
+ t2 = EqualLineSegments: N, A, N, B
+ t3 = ConcurrentLines: [M, N], [A, D], [B, C]
+
+Implications:
+
+ ({t1, t2}) => t3

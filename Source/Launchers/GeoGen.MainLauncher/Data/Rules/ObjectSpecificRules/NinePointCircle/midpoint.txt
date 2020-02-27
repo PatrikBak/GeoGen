@@ -1,0 +1,7 @@
+﻿Objects:
+
+Theorems:
+
+Implications:
+
+ () => Incidence: Midpoint(B, C), NinePointCircle(A, B, C)

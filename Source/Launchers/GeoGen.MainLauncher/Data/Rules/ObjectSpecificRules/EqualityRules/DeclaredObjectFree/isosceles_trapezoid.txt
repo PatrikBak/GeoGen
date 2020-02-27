@@ -1,0 +1,13 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = ConcyclicPoints: A, B, C, D
+ t2 = EqualLineSegments: A, D, B, C
+ t3 = ParallelLines: [A, B], [C, D]
+
+Implications:
+
+ (t1, t2) => EqualObjects: C, IsoscelesTrapezoidPoint(D, A, B)
+ (t2, t3) => EqualObjects: C, IsoscelesTrapezoidPoint(D, A, B)
+ (t1, t3) => EqualObjects: C, IsoscelesTrapezoidPoint(D, A, B)

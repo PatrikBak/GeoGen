@@ -1,0 +1,20 @@
+﻿Constructions:
+
+ IntersectionOfLinesFromPoints
+ Midpoint
+ ParallelogramPoint
+ PointReflection
+ ReflectionInLineFromPoints
+ Incenter
+
+Initial configuration:
+
+ Triangle: A, B, C
+ l = TangentLine(A, B, C)
+ D = PerpendicularProjection(B, l)
+ E = PerpendicularProjection(C, l)
+
+Iterations: 2
+MaximalPoints: 7
+MaximalLines: 2
+MaximalCircles: 0

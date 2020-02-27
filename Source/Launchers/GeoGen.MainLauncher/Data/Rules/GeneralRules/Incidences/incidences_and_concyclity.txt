@@ -1,0 +1,14 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = Incidence: Point(A), Circle(c)
+ t2 = Incidence: Point(B), Circle(c)
+ t3 = Incidence: Point(C), Circle(c)
+ t4 = Incidence: Point(D), Circle(c)
+ t5 = ConcyclicPoints: A, B, C, D
+
+Implications:
+
+ ({t1, t2, t3, t4}) => t5
+ ({t1, t2, t3}, t5) => t4

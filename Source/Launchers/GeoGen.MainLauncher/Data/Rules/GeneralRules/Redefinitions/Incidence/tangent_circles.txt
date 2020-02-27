@@ -1,0 +1,15 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = TangentCircles: c, d
+  t2 = Incidence: Point(A), c
+  t3 = Incidence: Point(B), c
+  t4 = Incidence: Point(C), c
+  t5 = TangentCircles: (A, B, C), d
+
+Implications:
+
+ (t1, {t2, t3, t4}) => t5
+ (t5, {t2, t3, t4}) => t1
+ (t1, {t2, t3}, t5) => t4

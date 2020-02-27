@@ -1,0 +1,14 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = PerpendicularLines: k, l
+  t2 = Incidence: Point(A), k
+  t3 = Incidence: Point(B), k
+  t4 = PerpendicularLines: [A, B], l
+
+Implications:
+
+ (t1, {t2, t3}) => t4
+ (t4, {t2, t3}) => t1
+ (t1, t2, t4) => t3

@@ -1,0 +1,12 @@
+﻿Objects:
+
+ l = PerpendicularBisector(P, Q)
+
+Theorems:
+
+  t1 = Incidence: Point(M), l
+  t2 = EqualLineSegments: M, P, M, Q
+
+Implications:
+
+ (t1, t2) => EqualObjects: Q, ReflectionInLine(l, P)

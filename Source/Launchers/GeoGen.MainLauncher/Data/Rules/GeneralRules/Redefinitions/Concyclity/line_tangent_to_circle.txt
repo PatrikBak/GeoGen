@@ -1,0 +1,11 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = LineTangentToCircle: Line(l), (A, B, C)
+  t2 = LineTangentToCircle: Line(l), (A, B, D)
+  t3 = ConcyclicPoints: A, B, C, D
+
+Implications:
+
+ (t1, t3) => t2

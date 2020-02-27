@@ -1,0 +1,56 @@
+﻿Constructions:
+
+ # Circles
+ 
+   CircleWithDiameter
+   Excircle
+   Incircle
+ 
+ # Lines
+ 
+   ParallelLine
+   ParallelLineToLineFromPoints
+   PerpendicularBisector
+   PerpendicularLineAtPointOfLine
+   TangentLine
+   
+ # Points
+ 
+   # Standard constructions
+ 
+     PerpendicularProjection
+     PerpendicularProjectionOnLineFromPoints              
+     IntersectionOfLineAndLineFromPoints
+     IntersectionOfLines
+     IntersectionOfLinesFromPoints	  
+     Midpoint
+    
+   # Reflections
+   
+     PointReflection
+     ReflectionInLine
+     ReflectionInLineFromPoints
+     ParallelogramPoint
+ 
+ # Triangle constructions
+ 
+     MidpointOfArc
+     MidpointOfOppositeArc
+     OppositePointOnCircumcircle
+ 
+   # Triangle centers
+ 
+     Circumcenter
+     Incenter
+     Excenter
+     Orthocenter
+
+Initial configuration:
+
+  Triangle: A, B, C
+  O = Circumcenter(A, B, C)
+
+Iterations: 3
+MaximalPoints: 5
+MaximalLines: 4
+MaximalCircles: 0

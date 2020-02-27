@@ -1,0 +1,10 @@
+﻿Objects:
+
+ C = IsoscelesTrapezoidPoint(D, A, B)
+ l = PerpendicularBisector(A, B)
+
+Theorems:
+
+Implications:
+
+ () => ConcurrentLines: l, [A, D], [B, C]

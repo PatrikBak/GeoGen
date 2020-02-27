@@ -1,0 +1,51 @@
+﻿Constructions:
+
+ # I don't think these make sense to be used
+ # CenterOfCircle                                   not many ways to actually make a circle
+ # CircleWithCenterThroughPoint                     only tangency are interesting and the center is explicit
+ # SecondIntersectionOfCircleAndLineFromPoints      too angle-angled  
+ # SecondIntersectionOfTwoCircumcircles             too angle-angled 
+ # Centroid                                         too length-related 
+ # IsoscelesTrapezoidPoint                          too angle-angled
+  
+   CircleWithDiameter
+   Excenter
+   Excircle
+   ExternalAngleBisector
+   Incenter
+   Incircle
+   InternalAngleBisector
+   IntersectionOfLineAndLineFromPoints
+   IntersectionOfLines
+   IntersectionOfLinesFromPoints
+   LineThroughCircumcenter
+   Median
+   Midline
+   Midpoint
+   MidpointOfArc
+   MidpointOfOppositeArc
+   NinePointCircle
+   OppositePointOnCircumcircle
+   Orthocenter
+   ParallelLine
+   ParallelLineToLineFromPoints
+   ParallelogramPoint
+   PerpendicularBisector
+   PerpendicularLine
+   PerpendicularLineAtPointOfLine
+   PerpendicularLineToLineFromPoints
+   PerpendicularProjection
+   PerpendicularProjectionOnLineFromPoints
+   PointReflection
+   ReflectionInLine
+   ReflectionInLineFromPoints
+   TangentLine
+
+Initial configuration:
+
+  Triangle: A, B, C
+
+Iterations: 2
+MaximalPoints: 60
+MaximalLines: 10
+MaximalCircles: 10

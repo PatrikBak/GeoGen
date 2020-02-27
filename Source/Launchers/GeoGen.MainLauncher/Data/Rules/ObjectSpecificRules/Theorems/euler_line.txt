@@ -1,0 +1,11 @@
+﻿Objects:
+
+ G = Centroid(A, B, C)
+ O = Circumcenter(A, B, C)
+ H = Orthocenter(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => CollinearPoints: G, O, H

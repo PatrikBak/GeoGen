@@ -1,0 +1,9 @@
+﻿Objects:
+
+ C = IsoscelesTrapezoidPoint(D, A, B)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: ReflectionInLineFromPoints(C, A, B), ParallelogramPoint(D, A, B)

@@ -1,0 +1,19 @@
+﻿Constructions:
+
+ IntersectionOfLinesFromPoints
+ Midpoint
+ ParallelogramPoint
+ PointReflection
+ ReflectionInLineFromPoints
+ Incenter
+
+Initial configuration:
+
+ Triangle: A, B, C
+ D = Orthocenter(A, B, C)
+ E = Circumcenter(B, D, C)
+
+Iterations: 2
+MaximalPoints: 7
+MaximalLines: 0
+MaximalCircles: 0

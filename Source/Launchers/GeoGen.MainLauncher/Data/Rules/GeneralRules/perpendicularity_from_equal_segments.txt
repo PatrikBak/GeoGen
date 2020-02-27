@@ -1,0 +1,12 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = EqualLineSegments: M, B, M, C
+  t2 = EqualLineSegments: N, B, N, C
+  t3 = PerpendicularLines: [M, N], [B, C]
+
+Implications:
+
+ ({t1, t2}) => t3
+ (t1, t3) => t2

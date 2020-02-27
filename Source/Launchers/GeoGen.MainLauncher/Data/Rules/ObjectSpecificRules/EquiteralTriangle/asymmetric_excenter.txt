@@ -1,0 +1,11 @@
+﻿Objects:
+
+ P = Excenter(B, A, C)
+
+Theorems:
+
+ t1 = EqualLineSegments: A, B, A, C
+
+Implications:
+
+ (t1) => EqualLineSegments: A, P, A, B

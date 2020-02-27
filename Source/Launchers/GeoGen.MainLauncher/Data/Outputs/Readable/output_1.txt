@@ -1,0 +1,1454 @@
+Constructions:
+
+ - IntersectionOfLinesFromPoints({{P, P}, {P, P}})
+ - Midpoint({P, P})
+ - ParallelogramPoint(P, {P, P})
+ - PointReflection(P, P)
+ - ReflectionInLineFromPoints(P, {P, P})
+ - Incenter({P, P, P})
+
+Initial configuration:
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+
+Theorems:
+
+  1. CollinearPoints: A, D, E
+  2. Incidence: A, l
+  3. Incidence: D, l
+  4. Incidence: E, l
+  5. ParallelLines: [B, D], [C, E]
+  6. PerpendicularLines: [A, D], [B, D]
+  7. PerpendicularLines: [A, D], [C, E]
+  8. PerpendicularLines: [A, E], [B, D]
+  9. PerpendicularLines: [A, E], [C, E]
+ 10. PerpendicularLines: [B, D], [D, E]
+ 11. PerpendicularLines: [B, D], l
+ 12. PerpendicularLines: [C, E], [D, E]
+ 13. PerpendicularLines: [C, E], l
+
+Iterations: 2
+MaximalNumberOfPoints: 7
+MaximalNumberOfLines: 1
+MaximalNumberOfCircles: 0
+
+Results:
+
+---------------
+Configuration 1
+---------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{A, B}, {C, D}})
+G = IntersectionOfLinesFromPoints({{A, C}, {B, E}})
+
+Interesting theorems:
+
+1. [1] ConcurrentLines: [B, C], [F, G], l - total ranking 505.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  OtherTheorems            weight = -1        ranking = 5         contribution = -5
+
+2. [2] ConcurrentLines: [B, C], [D, E], [F, G] - total ranking 505.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 5         contribution = -5
+
+3. [3] ConcurrentLines: [A, D], [B, C], [F, G] - total ranking 5.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 5         contribution = -5
+
+4. [4] ConcurrentLines: [A, E], [B, C], [F, G] - total ranking 5.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 5         contribution = -5
+
+---------------
+Configuration 2
+---------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{A, B}, {C, E}})
+G = IntersectionOfLinesFromPoints({{A, C}, {B, D}})
+
+Interesting theorems:
+
+1. [5] ConcurrentLines: [B, C], [F, G], l - total ranking 484.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+2. [6] ConcurrentLines: [B, C], [D, E], [F, G] - total ranking 484.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+3. [7] ConcyclicPoints: B, C, F, G - total ranking 475.5
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+4. [8] EqualLineSegments: B, F, C, G - total ranking 474.5
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+5. [9] EqualLineSegments: B, C, F, G - total ranking 474.5
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+6. [10] ConcurrentLines: [A, D], [B, C], [F, G] - total ranking -15.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+7. [11] ConcurrentLines: [A, E], [B, C], [F, G] - total ranking -15.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 25        contribution = -25
+
+---------------
+Configuration 4
+---------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, C}, {D, E}})
+G = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+
+Interesting theorems:
+
+1. [12] PerpendicularLines: [A, F], [A, G] - total ranking 490.2
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+2. [13] PerpendicularLines: [A, G], [D, F] - total ranking -9.8
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+3. [14] PerpendicularLines: [A, G], [E, F] - total ranking -9.8
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+----------------
+Configuration 13
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+
+Interesting theorems:
+
+1. [15] PerpendicularLines: [A, F], l - total ranking 493.42
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+2. [16] PerpendicularLines: [A, F], [D, E] - total ranking 493.31
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.44      contribution = -0.44     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+3. [17] ParallelLines: [A, F], [B, D] - total ranking -6.56
+
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.31      contribution = -0.31     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+4. [18] ParallelLines: [A, F], [C, E] - total ranking -6.56
+
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.31      contribution = -0.31     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+5. [19] PerpendicularLines: [A, D], [A, F] - total ranking -6.67
+
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.42      contribution = -0.42     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+6. [20] PerpendicularLines: [A, E], [A, F] - total ranking -6.67
+
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.42      contribution = -0.42     
+  OtherTheorems            weight = -1        ranking = 7         contribution = -7
+
+----------------
+Configuration 14
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+G = IntersectionOfLinesFromPoints({{A, F}, {B, C}})
+
+Interesting theorems:
+
+1. [21] EqualLineSegments: A, F, F, G - total ranking 486.33
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.47      contribution = -0.47     
+  OtherTheorems            weight = -1        ranking = 14        contribution = -14
+
+----------------
+Configuration 15
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+G = Midpoint({A, F})
+
+Interesting theorems:
+
+1. [22] ConcurrentLines: [A, B], [C, D], [E, G] - total ranking -8.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+2. [23] ConcurrentLines: [A, C], [B, E], [D, G] - total ranking -8.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+3. [24] ConcurrentLines: [A, B], [C, F], [E, G] - total ranking -8.5
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+4. [25] ConcurrentLines: [A, C], [B, F], [D, G] - total ranking -8.5
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+5. [26] ConcurrentLines: [A, B], [D, F], [E, G] - total ranking -8.57
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.37      contribution = -0.37     
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+6. [27] ConcurrentLines: [A, C], [D, G], [E, F] - total ranking -8.57
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.37      contribution = -0.37     
+  OtherTheorems            weight = -1        ranking = 19        contribution = -19
+
+----------------
+Configuration 21
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+G = PointReflection(A, F)
+
+Interesting theorems:
+
+1. [28] CollinearPoints: B, C, G - total ranking 486.53
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 14        contribution = -14
+
+----------------
+Configuration 22
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+G = PointReflection(F, A)
+
+Interesting theorems:
+
+1. [29] ConcurrentLines: [A, B], [C, E], [D, G] - total ranking -6.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+2. [30] ConcurrentLines: [A, C], [B, D], [E, G] - total ranking -6.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+----------------
+Configuration 25
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = IntersectionOfLinesFromPoints({{B, E}, {C, D}})
+G = ReflectionInLineFromPoints(F, {D, E})
+
+Interesting theorems:
+
+1. [31] ConcurrentLines: [A, B], [C, E], [D, G] - total ranking -6.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+2. [32] ConcurrentLines: [A, C], [B, D], [E, G] - total ranking -6.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+----------------
+Configuration 29
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Midpoint({A, B})
+G = Midpoint({A, C})
+
+Interesting theorems:
+
+1. [33] ConcurrentLines: [B, C], [D, F], [E, G] - total ranking 499.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.2       contribution = -0.2      
+  OtherTheorems            weight = -1        ranking = 11        contribution = -11
+
+2. [34] ConcurrentLines: [B, E], [C, D], [F, G] - total ranking 499.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.2       contribution = -0.2      
+  OtherTheorems            weight = -1        ranking = 11        contribution = -11
+
+----------------
+Configuration 31
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Midpoint({B, C})
+
+Interesting theorems:
+
+1. [35] EqualLineSegments: D, F, E, F - total ranking 496.33
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.42      contribution = -0.42     
+  OtherTheorems            weight = -1        ranking = 4         contribution = -4
+
+----------------
+Configuration 42
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Midpoint({B, D})
+G = Midpoint({C, E})
+
+Interesting theorems:
+
+1. [36] ConcurrentLines: [B, C], [F, G], l - total ranking 489.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  OtherTheorems            weight = -1        ranking = 21        contribution = -21
+
+2. [37] ConcurrentLines: [B, C], [D, E], [F, G] - total ranking 489.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 21        contribution = -21
+
+3. [38] ConcurrentLines: [B, E], [C, D], [F, G] - total ranking 489.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 21        contribution = -21
+
+4. [39] ConcurrentLines: [A, D], [B, C], [F, G] - total ranking -10.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 21        contribution = -21
+
+5. [40] ConcurrentLines: [A, E], [B, C], [F, G] - total ranking -10.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 21        contribution = -21
+
+----------------
+Configuration 48
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Midpoint({D, E})
+G = ParallelogramPoint(F, {B, C})
+
+Interesting theorems:
+
+1. [41] PerpendicularLines: [A, F], [F, G] - total ranking 487.33
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.47      contribution = -0.47     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+2. [42] PerpendicularLines: [F, G], l - total ranking 487.07
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.53      contribution = -0.53     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+3. [43] EqualLineSegments: D, G, E, G - total ranking 486.87
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.4       contribution = 0.4       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.53      contribution = -0.53     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+4. [44] PerpendicularLines: [D, E], [F, G] - total ranking 486.85
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.4       contribution = 0.4       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.55      contribution = -0.55     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+5. [45] ParallelLines: [B, D], [F, G] - total ranking -12.65
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.45      contribution = -0.45     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+6. [46] ParallelLines: [C, E], [F, G] - total ranking -12.65
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.45      contribution = -0.45     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+7. [47] PerpendicularLines: [A, D], [F, G] - total ranking -12.65
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.45      contribution = -0.45     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+8. [48] PerpendicularLines: [A, E], [F, G] - total ranking -12.65
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.45      contribution = -0.45     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+9. [49] PerpendicularLines: [D, F], [F, G] - total ranking -13.2
+
+  Width                    weight = 1         ranking = 0.4       contribution = 0.4       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.6       contribution = -0.6      
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+10. [50] PerpendicularLines: [E, F], [F, G] - total ranking -13.2
+
+  Width                    weight = 1         ranking = 0.4       contribution = 0.4       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.6       contribution = -0.6      
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+----------------
+Configuration 49
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Midpoint({D, E})
+G = PointReflection(A, F)
+
+Interesting theorems:
+
+1. [51] EqualLineSegments: A, E, D, G - total ranking -16.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+2. [52] EqualLineSegments: A, D, E, G - total ranking -16.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+----------------
+Configuration 56
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, C})
+G = IntersectionOfLinesFromPoints({{A, F}, {B, C}})
+
+Interesting theorems:
+
+1. [53] EqualLineSegments: D, G, E, G - total ranking 492.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 8         contribution = -8
+
+----------------
+Configuration 57
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, C})
+G = Midpoint({A, F})
+
+Interesting theorems:
+
+1. [54] EqualLineSegments: D, G, E, G - total ranking 492.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 8         contribution = -8
+
+----------------
+Configuration 58
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, C})
+G = ParallelogramPoint(F, {D, E})
+
+Interesting theorems:
+
+1. [55] ConcurrentLines: [A, G], [B, E], [C, D] - total ranking 500.37
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.23      contribution = -0.23     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+2. [56] PerpendicularLines: [A, G], l - total ranking 490.33
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+3. [57] PerpendicularLines: [A, G], [D, E] - total ranking 490.25
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.35      contribution = -0.35     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+4. [58] ParallelLines: [A, G], [B, D] - total ranking -9.65
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.25      contribution = -0.25     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+5. [59] ParallelLines: [A, G], [C, E] - total ranking -9.65
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.25      contribution = -0.25     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+6. [60] PerpendicularLines: [A, D], [A, G] - total ranking -9.73
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+7. [61] PerpendicularLines: [A, E], [A, G] - total ranking -9.73
+
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 10        contribution = -10
+
+----------------
+Configuration 65
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, C})
+G = Incenter({B, C, F})
+
+Interesting theorems:
+
+1. [62] PerpendicularLines: [D, E], [F, G] - total ranking 495.45
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.35      contribution = -0.35     
+  OtherTheorems            weight = -1        ranking = 5         contribution = -5
+
+----------------
+Configuration 67
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, D})
+G = ParallelogramPoint(A, {C, E})
+
+Interesting theorems:
+
+1. [63] ConcurrentLines: [B, G], [C, F], l - total ranking 497.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+2. [64] ConcurrentLines: [B, G], [C, F], [D, E] - total ranking 497.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+3. [65] ConcurrentLines: [A, D], [B, G], [C, F] - total ranking -2.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+4. [66] ConcurrentLines: [A, E], [B, G], [C, F] - total ranking -2.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 13        contribution = -13
+
+----------------
+Configuration 68
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(A, {B, E})
+G = ParallelogramPoint(A, {C, D})
+
+Interesting theorems:
+
+1. [67] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 492.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+2. [68] PerpendicularLines: [F, G], l - total ranking 482.33
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.47      contribution = -0.47     
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+3. [69] PerpendicularLines: [D, E], [F, G] - total ranking 482.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+4. [70] ParallelLines: [B, D], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+5. [71] ParallelLines: [C, E], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+6. [72] PerpendicularLines: [C, G], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+7. [73] PerpendicularLines: [A, D], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+8. [74] PerpendicularLines: [A, E], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+9. [75] PerpendicularLines: [B, F], [F, G] - total ranking -17.6
+
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.4       contribution = -0.4      
+  OtherTheorems            weight = -1        ranking = 18        contribution = -18
+
+----------------
+Configuration 69
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(B, {A, C})
+G = ParallelogramPoint(C, {A, B})
+
+Interesting theorems:
+
+1. [76] ConcurrentLines: [B, C], [D, F], [E, G] - total ranking 502.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.2       contribution = -0.2      
+  OtherTheorems            weight = -1        ranking = 8         contribution = -8
+
+2. [77] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 502.4
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.6       contribution = 0.6       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.2       contribution = -0.2      
+  OtherTheorems            weight = -1        ranking = 8         contribution = -8
+
+----------------
+Configuration 71
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(B, {A, E})
+G = ParallelogramPoint(C, {A, D})
+
+Interesting theorems:
+
+1. [78] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 506.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 4         contribution = -4
+
+----------------
+Configuration 72
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(B, {C, D})
+G = ParallelogramPoint(C, {B, E})
+
+Interesting theorems:
+
+1. [79] ConcurrentLines: [A, F], [C, D], [E, G] - total ranking -11.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+2. [80] ConcurrentLines: [A, G], [B, E], [D, F] - total ranking -11.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+----------------
+Configuration 75
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(D, {B, C})
+G = ParallelogramPoint(E, {B, C})
+
+Interesting theorems:
+
+1. [81] ConcurrentLines: [A, G], [B, E], [D, F] - total ranking -25.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 35        contribution = -35
+
+----------------
+Configuration 76
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ParallelogramPoint(D, {A, B})
+G = ParallelogramPoint(E, {A, C})
+
+Interesting theorems:
+
+1. [82] ConcurrentLines: [B, C], [D, F], [E, G] - total ranking 471.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 2         contribution = -2        
+  OtherTheorems            weight = -1        ranking = 37        contribution = -37
+
+2. [83] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 471.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 2         contribution = -2        
+  OtherTheorems            weight = -1        ranking = 37        contribution = -37
+
+----------------
+Configuration 85
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = PointReflection(B, E)
+G = PointReflection(C, D)
+
+Interesting theorems:
+
+1. [84] EqualLineSegments: B, G, C, F - total ranking 497.5
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3      
+  OtherTheorems            weight = -1        ranking = 3         contribution = -3
+
+----------------
+Configuration 86
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = PointReflection(D, B)
+G = PointReflection(E, C)
+
+Interesting theorems:
+
+1. [85] ConcurrentLines: [B, C], [F, G], l - total ranking 488.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+2. [86] ConcurrentLines: [B, C], [D, E], [F, G] - total ranking 488.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+3. [87] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 488.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+4. [88] ConcurrentLines: [A, D], [B, C], [F, G] - total ranking -11.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+5. [89] ConcurrentLines: [A, E], [B, C], [F, G] - total ranking -11.47
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+6. [90] ConcurrentLines: [A, G], [C, D], [E, F] - total ranking -11.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+7. [91] ConcurrentLines: [A, F], [B, E], [D, G] - total ranking -11.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 22        contribution = -22
+
+----------------
+Configuration 88
+----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = PointReflection(D, A)
+G = PointReflection(E, A)
+
+Interesting theorems:
+
+1. [92] EqualLineSegments: D, G, E, F - total ranking 483.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5      
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+2. [93] EqualLineSegments: D, E, F, G - total ranking 483.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5      
+  OtherTheorems            weight = -1        ranking = 17        contribution = -17
+
+-----------------
+Configuration 102
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ReflectionInLineFromPoints(A, {B, E})
+G = ReflectionInLineFromPoints(A, {C, D})
+
+Interesting theorems:
+
+1. [94] ConcurrentLines: [B, C], [F, G], l - total ranking 504.52
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.28      contribution = -0.28     
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+2. [95] ConcurrentLines: [B, C], [D, E], [F, G] - total ranking 504.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+3. [96] ConcurrentLines: [A, D], [B, C], [F, G] - total ranking 4.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+4. [97] ConcurrentLines: [A, E], [B, C], [F, G] - total ranking 4.53
+
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Symmetry                 weight = 1000      ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.27      contribution = -0.27     
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+-----------------
+Configuration 109
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ReflectionInLineFromPoints(D, {B, C})
+G = ReflectionInLineFromPoints(E, {B, C})
+
+Interesting theorems:
+
+1. [98] TangentCircles: (B, D, F), (C, E, G) - total ranking 504.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 20        contribution = 20        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 1         contribution = -1        
+  OtherTheorems            weight = -1        ranking = 15        contribution = -15
+
+-----------------
+Configuration 110
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ReflectionInLineFromPoints(D, {A, B})
+G = ReflectionInLineFromPoints(E, {A, C})
+
+Interesting theorems:
+
+1. [99] ConcurrentLines: [B, C], [D, G], [E, F] - total ranking 502.47
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Simplification           weight = -1        ranking = 0.33      contribution = -0.33     
+  Circles                  weight = -1        ranking = 2         contribution = -2        
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+2. [100] EqualLineSegments: D, G, E, F - total ranking 492.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5      
+  Circles                  weight = -1        ranking = 2         contribution = -2        
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+-----------------
+Configuration 112
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = ReflectionInLineFromPoints(D, {A, C})
+G = ReflectionInLineFromPoints(E, {A, B})
+
+Interesting theorems:
+
+1. [101] EqualLineSegments: D, G, E, F - total ranking 497.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5      
+  OtherTheorems            weight = -1        ranking = 3         contribution = -3
+
+-----------------
+Configuration 114
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Incenter({A, B, C})
+
+Interesting theorems:
+
+1. [102] ConcurrentLines: [A, F], [B, E], [C, D] - total ranking 504.54
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  TheoremType              weight = 1         ranking = 10        contribution = 10        
+  Width                    weight = 1         ranking = 0.75      contribution = 0.75      
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  Simplification           weight = -1        ranking = 0.21      contribution = -0.21     
+  OtherTheorems            weight = -1        ranking = 6         contribution = -6
+
+-----------------
+Configuration 125
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Incenter({A, B, D})
+G = Incenter({A, C, E})
+
+Interesting theorems:
+
+1. [103] PerpendicularLines: [D, F], [E, G] - total ranking 500.3
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  OtherTheorems            weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5
+
+-----------------
+Configuration 127
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Incenter({B, C, D})
+G = Incenter({B, C, E})
+
+Interesting theorems:
+
+1. [104] PerpendicularLines: [B, F], [C, G] - total ranking 500.5
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.8       contribution = 0.8       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  OtherTheorems            weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.3       contribution = -0.3
+
+-----------------
+Configuration 128
+-----------------
+
+Triangle: A, B, C
+l = ExternalAngleBisector(A, {B, C})
+D = PerpendicularProjection(B, l)
+E = PerpendicularProjection(C, l)
+F = Incenter({B, D, E})
+G = Incenter({C, D, E})
+
+Interesting theorems:
+
+1. [105] PerpendicularLines: [D, F], [E, G] - total ranking 499.9
+
+  Symmetry                 weight = 1000      ranking = 0.5       contribution = 500       
+  Width                    weight = 1         ranking = 0.4       contribution = 0.4       
+  Circles                  weight = -1        ranking = 0         contribution = -0        
+  OtherTheorems            weight = -1        ranking = 0         contribution = -0        
+  TheoremType              weight = 1         ranking = 0         contribution = 0         
+  Simplification           weight = -1        ranking = 0.5       contribution = -0.5
+
+------------------------------------------------
+Generated configurations: 128
+Configurations with an interesting theorem: 36
+Interesting theorems: 105
+Run-time: 21492 ms

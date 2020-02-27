@@ -1,0 +1,47 @@
+﻿Constructions:
+
+  CenterOfCircle
+  CircleWithCenterThroughPoint
+  CircleWithDiameter
+  Circumcenter
+  Excenter
+  Excircle
+  ExternalAngleBisector
+  Incenter
+  Incircle
+  InternalAngleBisector
+  IntersectionOfLineAndLineFromPoints
+  IntersectionOfLines
+  IntersectionOfLinesFromPoints
+  LineThroughCircumcenter
+  Median
+  Midline
+  Midpoint
+  MidpointOfArc
+  MidpointOfOppositeArc
+  OppositePointOnCircumcircle
+  Orthocenter
+  ParallelLine
+  ParallelLineToLineFromPoints
+  ParallelogramPoint
+  PerpendicularBisector
+  PerpendicularLine
+  PerpendicularLineAtPointOfLine
+  PerpendicularLineToLineFromPoints
+  PerpendicularProjection
+  PerpendicularProjectionOnLineFromPoints
+  PointReflection
+  ReflectionInLine
+  ReflectionInLineFromPoints
+  #SecondIntersectionOfCircleAndLineFromPoints
+  #SecondIntersectionOfTwoCircumcircles
+  TangentLine
+
+Initial configuration:
+
+  Triangle: A, B, C  
+  
+Iterations: 2
+MaximalPoints: 5
+MaximalLines: 2
+MaximalCircles: 2

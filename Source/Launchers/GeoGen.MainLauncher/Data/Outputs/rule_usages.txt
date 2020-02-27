@@ -1,0 +1,166 @@
+[161] --> GeneralRules\Redefinitions\Collinearity\parallelity.txt (2) 
+[80] --> GeneralRules\Redefinitions\Collinearity\line_tangent_to_circle.txt (1) 
+[78] --> ObjectSpecificRules\EasyFacts\midpoints_homothety.txt (1) 
+[76] --> GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2) 
+[69] --> GeneralRules\perpendicularity_and_parallelity.txt (2) 
+[30] --> GeneralRules\Transitivity\equal_line_segments_2.txt (2) 
+[24] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\parallelogram_point.txt (1) 
+[24] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\parallelogram_point.txt (2) 
+[22] --> GeneralRules\perpendicularity_and_parallelity.txt (1) 
+[21] --> ObjectSpecificRules\RightTriangle\thales_1.txt (2) 
+[20] --> GeneralRules\Redefinitions\Incidence\perpendicularity.txt (1) 
+[18] --> GeneralRules\perpendicularity_from_equal_segments.txt (2) 
+[16] --> GeneralRules\Transitivity\parallel_lines.txt (1) 
+[14] --> GeneralRules\homothety_six_points.txt (1) 
+[12] --> ObjectSpecificRules\basic_incidences.txt (2) [adjusted by declaring all objects]
+[12] --> ObjectSpecificRules\RightTriangle\thales_1.txt (1) 
+[12] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\circumcenter.txt (1) 
+[11] --> ObjectSpecificRules\EasyFacts\angle_bisectors_are_perpendicular.txt (1) 
+[10] --> ObjectSpecificRules\basic_incidences.txt (1) [adjusted by declaring all objects]
+[9] --> GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (1) 
+[8] --> ObjectSpecificRules\basic_incidences.txt (4) [adjusted by declaring all objects]
+[8] --> ObjectSpecificRules\basic_incidences.txt (9) [adjusted by declaring all objects]
+[6] --> ObjectSpecificRules\NinePointCircle\midpoint.txt (1) [adjusted by declaring all objects]
+[5] --> ObjectSpecificRules\basic_incidences.txt (3) [adjusted by declaring all objects]
+[5] --> GeneralRules\Incidences\incidences_and_collinearity.txt (1) 
+[4] --> ObjectSpecificRules\basic_incidences.txt (8) [adjusted by declaring all objects]
+[4] --> ObjectSpecificRules\Theorems\circumcenter_of_BEC.txt (1) [adjusted by declaring Circumcenter]
+[4] --> GeneralRules\Redefinitions\Incidence\concurrent_lines.txt (2) 
+[3] --> GeneralRules\Transitivity\equal_line_segments_2.txt (1) 
+[3] --> GeneralRules\Redefinitions\Collinearity\parallelity.txt (1) 
+[2] --> ObjectSpecificRules\basic_incidences.txt (10) [adjusted by declaring all objects]
+[2] --> GeneralRules\Incidences\incidences_and_line_equality.txt (1) 
+[2] --> ObjectSpecificRules\Theorems\circumcenter_of_BEC.txt (1) [adjusted by declaring MidpointOfOppositeArc]
+[2] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint.txt (1) 
+[2] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (2) 
+[1] --> ObjectSpecificRules\basic_incidences.txt (5) [adjusted by declaring all objects]
+[1] --> GeneralRules\Transitivity\collinear_points.txt (1) 
+[1] --> ObjectSpecificRules\EasyFacts\tangent_line.txt (1) 
+[1] --> ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+[0] --> GeneralRules\concyclic_points_via_center.txt (1) 
+[0] --> GeneralRules\homothety_six_points.txt (2) 
+[0] --> GeneralRules\perpendicularity_from_equal_segments.txt (1) 
+[0] --> GeneralRules\radical_axis_theorem.txt (1) 
+[0] --> GeneralRules\radical_axis_theorem.txt (2) 
+[0] --> GeneralRules\summing_line_segment_lengths.txt (1) 
+[0] --> ObjectSpecificRules\basic_incidences.txt (6) [adjusted by declaring all objects]
+[0] --> ObjectSpecificRules\basic_incidences.txt (7) [adjusted by declaring all objects]
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_1.txt (1) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_1.txt (2) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_2.txt (1) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_2.txt (2) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_2.txt (3) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_3.txt (1) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_3.txt (2) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_3.txt (3) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_4.txt (1) 
+[0] --> GeneralRules\ConcurrentLines\concurrent_lines_4.txt (2) 
+[0] --> GeneralRules\Incidences\incidences_and_circle_equality.txt (1) 
+[0] --> GeneralRules\Incidences\incidences_and_collinearity.txt (2) 
+[0] --> GeneralRules\Incidences\incidences_and_concyclity.txt (1) 
+[0] --> GeneralRules\Incidences\incidences_and_concyclity.txt (2) 
+[0] --> GeneralRules\PointEquality\collinearities.txt (1) 
+[0] --> GeneralRules\PointEquality\incidences.txt (1) 
+[0] --> GeneralRules\PointEquality\incidence_and_collinearity.txt (1) 
+[0] --> GeneralRules\Transitivity\concurrent_lines.txt (1) 
+[0] --> GeneralRules\Transitivity\concyclic_points.txt (1) 
+[0] --> GeneralRules\Transitivity\equal_line_segments_1.txt (1) 
+[0] --> GeneralRules\Transitivity\equal_line_segments_3.txt (1) 
+[0] --> GeneralRules\Transitivity\equal_line_segments_3.txt (2) 
+[0] --> ObjectSpecificRules\EasyFacts\perpendicular_bisector_and_equal_segments.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflections_in_parallel_lines_1.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflections_in_parallel_lines_2.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflections_in_parallel_lines_3.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_external_angle_bisector.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_external_angle_bisector_2.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_internal_angle_bisector_1.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_internal_angle_bisector_2.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_line.txt (1) [adjusted by declaring Midpoint]
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_line_from_points.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_median.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_midline_1.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_midline_2.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_in_midline_3.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_perserves_perpendicularity.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_perserves_segment_length_1.txt (1) 
+[0] --> ObjectSpecificRules\EasyFacts\reflection_perserves_segment_length_2.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\asymmetric_excenter.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\centroid.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\excenter.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\external_angle_bisector.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\incenter.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\internal_angle_bisector.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\line_through_circumcenter.txt (1) 
+[0] --> ObjectSpecificRules\EquiteralTriangle\midpoint_of_opposite_arc.txt (1) [adjusted by declaring MidpointOfOppositeArc]
+[0] --> ObjectSpecificRules\EquiteralTriangle\midpoint_of_opposite_arc.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+[0] --> ObjectSpecificRules\EquiteralTriangle\tangent_line.txt (1) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_concurrency_1.txt (1) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_concurrency_2.txt (1) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_distance_to_bases.txt (1) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_intersection.txt (1) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_intersection.txt (2) 
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_intersection_and_parallelogram.txt (1) [adjusted by declaring ReflectionInLineFromPoints]
+[0] --> ObjectSpecificRules\IsoscelesTrapezoid\isosceles_trapezoid_intersection_and_parallelogram.txt (1) [adjusted by declaring ParallelogramPoint]
+[0] --> ObjectSpecificRules\NinePointCircle\AH_midpoint.txt (1) [adjusted by declaring all objects]
+[0] --> ObjectSpecificRules\NinePointCircle\excircle_tangency.txt (1) [adjusted by declaring all objects]
+[0] --> ObjectSpecificRules\NinePointCircle\incircle_tangency.txt (1) [adjusted by declaring all objects]
+[0] --> ObjectSpecificRules\NinePointCircle\isosceles_triangle.txt (1) 
+[0] --> ObjectSpecificRules\NinePointCircle\perpendicular_projection.txt (1) [adjusted by declaring all objects]
+[0] --> ObjectSpecificRules\NinePointCircle\right_triangle.txt (1) 
+[0] --> ObjectSpecificRules\RightTriangle\circle_with_diameter.txt (1) 
+[0] --> ObjectSpecificRules\RightTriangle\rectangle.txt (1) 
+[0] --> ObjectSpecificRules\RightTriangle\thales_2.txt (1) 
+[0] --> ObjectSpecificRules\RightTriangle\thales_2.txt (2) 
+[0] --> ObjectSpecificRules\Theorems\circumcenter_of_BEA.txt (1) [adjusted by declaring Circumcenter]
+[0] --> ObjectSpecificRules\Theorems\circumcenter_of_BEA.txt (1) [adjusted by declaring MidpointOfArc]
+[0] --> ObjectSpecificRules\Theorems\circumcenter_of_BIC.txt (1) [adjusted by declaring Circumcenter]
+[0] --> ObjectSpecificRules\Theorems\circumcenter_of_BIC.txt (1) [adjusted by declaring MidpointOfOppositeArc]
+[0] --> ObjectSpecificRules\Theorems\euler_line.txt (1) 
+[0] --> ObjectSpecificRules\Theorems\reflection_of_H.txt (1) 
+[0] --> GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1) 
+[0] --> GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2) 
+[0] --> GeneralRules\Redefinitions\Concyclity\line_tangent_to_circle.txt (1) 
+[0] --> GeneralRules\Redefinitions\Concyclity\tangent_circles.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\concurrent_lines.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\concurrent_lines.txt (3) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_1.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_1.txt (2) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_1.txt (3) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_2.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_2.txt (2) 
+[0] --> GeneralRules\Redefinitions\Incidence\line_tangent_to_circle_2.txt (3) 
+[0] --> GeneralRules\Redefinitions\Incidence\parallelity.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\parallelity.txt (2) 
+[0] --> GeneralRules\Redefinitions\Incidence\parallelity.txt (3) 
+[0] --> GeneralRules\Redefinitions\Incidence\perpendicularity.txt (2) 
+[0] --> GeneralRules\Redefinitions\Incidence\perpendicularity.txt (3) 
+[0] --> GeneralRules\Redefinitions\Incidence\tangent_circles.txt (1) 
+[0] --> GeneralRules\Redefinitions\Incidence\tangent_circles.txt (2) 
+[0] --> GeneralRules\Redefinitions\Incidence\tangent_circles.txt (3) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\centroid.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\excenter_1.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\excenter_2.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\incenter.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring PointReflection]
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\parallelogram_point.txt (1) [adjusted by declaring PointReflection]
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\parallelogram_point.txt (1) [adjusted by declaring ParallelogramPoint]
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\perpendicular_bisector_and_reflection.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\reflection_in_line.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Constructions\reflection_in_line_from_points.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\isosceles_trapezoid.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\isosceles_trapezoid.txt (2) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\isosceles_trapezoid.txt (3) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint_of_arc.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint_of_opposite_arc.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint_via_parallelogram.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\orthocenter.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\perpendicular_bisector_1.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\perpendicular_bisector_2.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\DeclaredObjectFree\point_reflection.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\external_angle_bisector.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\internal_angle_bisector.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\line_through_circumcenter.txt (1) 
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\reflection_in_line.txt (1) [adjusted by declaring ReflectionInLine]
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\reflection_in_line.txt (1) [adjusted by declaring ReflectionInLineFromPoints]
+[0] --> ObjectSpecificRules\EqualityRules\Redefinition\tangent_line.txt (1) 

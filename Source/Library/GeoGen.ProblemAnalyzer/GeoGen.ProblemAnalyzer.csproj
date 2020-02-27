@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Ninject" Version="3.3.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
+    <ProjectReference Include="..\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />
+  </ItemGroup>
+
+</Project>

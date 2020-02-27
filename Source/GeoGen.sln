@@ -3,57 +3,65 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29201.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities", "GeoGen.Utilities\GeoGen.Utilities.csproj", "{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities", "Library\GeoGen.Utilities\GeoGen.Utilities.csproj", "{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator", "GeoGen.Generator\GeoGen.Generator.csproj", "{1B7D635C-67D1-4594-AE47-56CF3F04F906}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConfigurationGenerator", "Library\GeoGen.ConfigurationGenerator\GeoGen.ConfigurationGenerator.csproj", "{1B7D635C-67D1-4594-AE47-56CF3F04F906}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremFinder", "GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremFinder", "Library\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj", "{A08376F7-7675-4F6E-80D7-444EB2AA0085}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry", "GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry", "Library\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj", "{5EC5CCA8-B332-45E4-AD78-422208315BD1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core", "Library\GeoGen.Core\GeoGen.Core.csproj", "{EE76DEC9-A1E0-417A-9F59-C28844154D3F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremFinder.Tests", "GeoGen.TheoremFinder.Tests\GeoGen.TheoremFinder.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremFinder.Tests", "Tests\UnitTests\GeoGen.TheoremFinder.Tests\GeoGen.TheoremFinder.Tests.csproj", "{984DAF5E-56BA-46D1-A321-FF4659AF8C33}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core.Tests", "GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Core.Tests", "Tests\UnitTests\GeoGen.Core.Tests\GeoGen.Core.Tests.csproj", "{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Generator.Tests", "GeoGen.Generator.Tests\GeoGen.Generator.Tests.csproj", "{FFA143EC-4172-4A3D-B36A-CE663AC18F28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConfigurationGenerator.Tests", "Tests\UnitTests\GeoGen.ConfigurationGenerator.Tests\GeoGen.ConfigurationGenerator.Tests.csproj", "{FFA143EC-4172-4A3D-B36A-CE663AC18F28}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Utilities.Tests", "Tests\UnitTests\GeoGen.Utilities.Tests\GeoGen.Utilities.Tests.csproj", "{F757D89D-D564-4E7A-9679-8DF1B8D71BDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.AnalyticGeometry.Tests", "Tests\UnitTests\GeoGen.AnalyticGeometry.Tests\GeoGen.AnalyticGeometry.Tests.csproj", "{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor", "GeoGen.Constructor\GeoGen.Constructor.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor", "Library\GeoGen.Constructor\GeoGen.Constructor.csproj", "{9D2DB312-1EBC-479C-B2EB-97DBECA44433}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor.Tests", "GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Constructor.Tests", "Tests\UnitTests\GeoGen.Constructor.Tests\GeoGen.Constructor.Tests.csproj", "{636043F8-22D7-456F-90CA-1DAC90D52B2D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver", "GeoGen.TheoremProver\GeoGen.TheoremProver.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver", "Library\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj", "{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.Tests", "GeoGen.TheoremProver.Tests\GeoGen.TheoremProver.Tests.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.Tests", "Tests\UnitTests\GeoGen.TheoremProver.Tests\GeoGen.TheoremProver.Tests.csproj", "{A5DC3C4E-C825-4878-8D5B-164C95AF9F57}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConsoleLauncher", "GeoGen.ConsoleLauncher\GeoGen.ConsoleLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.MainLauncher", "Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj", "{5E230759-F78E-4BFF-BDC8-664DDC30F57E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm", "GeoGen.Algorithm\GeoGen.Algorithm.csproj", "{887FB427-45A2-4471-8635-7F7630F14A47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ProblemGenerator", "Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj", "{887FB427-45A2-4471-8635-7F7630F14A47}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Algorithm.Tests", "GeoGen.Algorithm.Tests\GeoGen.Algorithm.Tests.csproj", "{0693E390-7513-4148-9255-648A69A09303}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker", "Library\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj", "{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker", "GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj", "{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker.Tests", "Tests\UnitTests\GeoGen.TheoremRanker.Tests\GeoGen.TheoremRanker.Tests.csproj", "{4D00204F-A00F-4DD0-A82C-052B99B4F37B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker.Tests", "GeoGen.TheoremRanker.Tests\GeoGen.TheoremRanker.Tests.csproj", "{4D00204F-A00F-4DD0-A82C-052B99B4F37B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifier", "Library\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj", "{146CCB0F-0822-442C-9BE9-AD3564C37F1B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifier", "GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj", "{146CCB0F-0822-442C-9BE9-AD3564C37F1B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifier.Tests", "Tests\UnitTests\GeoGen.TheoremSimplifier.Tests\GeoGen.TheoremSimplifier.Tests.csproj", "{873143D8-BF71-478C-A933-A883799F2826}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifierTests", "GeoGen.TheoremSimplifierTests\GeoGen.TheoremSimplifierTests.csproj", "{873143D8-BF71-478C-A933-A883799F2826}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.DrawingLauncher", "Launchers\GeoGen.DrawingLauncher\GeoGen.DrawingLauncher.csproj", "{7A853A9F-E8CC-4E9E-B712-0403E695E0E0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Drawer", "GeoGen.Drawer\GeoGen.Drawer.csproj", "{7A853A9F-E8CC-4E9E-B712-0403E695E0E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Infrastructure", "Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj", "{A07B9861-3C4C-41C1-9B44-44BE53262B51}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.Infrastructure", "GeoGen.Infrastructure\GeoGen.Infrastructure.csproj", "{A07B9861-3C4C-41C1-9B44-44BE53262B51}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.IntegrationTest", "Tests\IntegrationTests\GeoGen.TheoremProver.IntegrationTest\GeoGen.TheoremProver.IntegrationTest.csproj", "{2260E6B2-1381-4F86-A74E-8B239B46316A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.GenerationLauncher", "GeoGen.GenerationLauncher\GeoGen.GenerationLauncher.csproj", "{BCFCDED3-4701-4C31-A92F-6CA364548CA8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ProblemAnalyzer", "Library\GeoGen.ProblemAnalyzer\GeoGen.ProblemAnalyzer.csproj", "{03A17F30-888C-404C-9165-5B54C81D865B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProverLauncher", "GeoGen.TheoremProverLauncher\GeoGen.TheoremProverLauncher.csproj", "{2260E6B2-1381-4F86-A74E-8B239B46316A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{CE1D378D-A427-4F57-B3B1-D10518B6BDA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.ProblemAnalyzer", "GeoGen.ProblemAnalyzer\GeoGen.ProblemAnalyzer.csproj", "{03A17F30-888C-404C-9165-5B54C81D865B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Launchers", "Launchers", "{10DF537E-FE98-4C14-AD23-FDE918AA57D8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{FECB51DA-84A1-439F-B3A1-F58C185E9105}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{64A1CBC5-BC1F-49B0-A0D3-8565482B318F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ConfigurationGenerationLauncher", "Launchers\GeoGen.ConfigurationGenerationLauncher\GeoGen.ConfigurationGenerationLauncher.csproj", "{62EA0C36-C5A3-47A0-9102-95FDBFF29F94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,10 +133,6 @@ Global
 		{887FB427-45A2-4471-8635-7F7630F14A47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{887FB427-45A2-4471-8635-7F7630F14A47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{887FB427-45A2-4471-8635-7F7630F14A47}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0693E390-7513-4148-9255-648A69A09303}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0693E390-7513-4148-9255-648A69A09303}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0693E390-7513-4148-9255-648A69A09303}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0693E390-7513-4148-9255-648A69A09303}.Release|Any CPU.Build.0 = Release|Any CPU
 		{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AE1397D-7775-45BF-8DF4-00E6B733B3D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -153,10 +157,6 @@ Global
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A07B9861-3C4C-41C1-9B44-44BE53262B51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BCFCDED3-4701-4C31-A92F-6CA364548CA8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2260E6B2-1381-4F86-A74E-8B239B46316A}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -165,9 +165,42 @@ Global
 		{03A17F30-888C-404C-9165-5B54C81D865B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03A17F30-888C-404C-9165-5B54C81D865B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03A17F30-888C-404C-9165-5B54C81D865B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62EA0C36-C5A3-47A0-9102-95FDBFF29F94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62EA0C36-C5A3-47A0-9102-95FDBFF29F94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62EA0C36-C5A3-47A0-9102-95FDBFF29F94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62EA0C36-C5A3-47A0-9102-95FDBFF29F94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{94256D0F-3DF4-4FEE-9BD7-DC1748CC390D} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{1B7D635C-67D1-4594-AE47-56CF3F04F906} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{A08376F7-7675-4F6E-80D7-444EB2AA0085} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{5EC5CCA8-B332-45E4-AD78-422208315BD1} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{EE76DEC9-A1E0-417A-9F59-C28844154D3F} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{984DAF5E-56BA-46D1-A321-FF4659AF8C33} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{E7F8569B-8DDE-4CD6-A1B7-2CA18A1D5BA9} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{FFA143EC-4172-4A3D-B36A-CE663AC18F28} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{F757D89D-D564-4E7A-9679-8DF1B8D71BDF} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{77AB1941-AAE3-4D3F-B8DC-A65B7ADAFFA6} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{9D2DB312-1EBC-479C-B2EB-97DBECA44433} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{636043F8-22D7-456F-90CA-1DAC90D52B2D} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{1ADBC4CB-7D98-4058-987B-C44DE48EAD9F} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{A5DC3C4E-C825-4878-8D5B-164C95AF9F57} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{5E230759-F78E-4BFF-BDC8-664DDC30F57E} = {10DF537E-FE98-4C14-AD23-FDE918AA57D8}
+		{887FB427-45A2-4471-8635-7F7630F14A47} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{9AE1397D-7775-45BF-8DF4-00E6B733B3D3} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{4D00204F-A00F-4DD0-A82C-052B99B4F37B} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{146CCB0F-0822-442C-9BE9-AD3564C37F1B} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{873143D8-BF71-478C-A933-A883799F2826} = {61FB58AE-914A-4CC6-B48D-FA0BB911E8A3}
+		{7A853A9F-E8CC-4E9E-B712-0403E695E0E0} = {10DF537E-FE98-4C14-AD23-FDE918AA57D8}
+		{A07B9861-3C4C-41C1-9B44-44BE53262B51} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{2260E6B2-1381-4F86-A74E-8B239B46316A} = {FECB51DA-84A1-439F-B3A1-F58C185E9105}
+		{03A17F30-888C-404C-9165-5B54C81D865B} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{61FB58AE-914A-4CC6-B48D-FA0BB911E8A3} = {64A1CBC5-BC1F-49B0-A0D3-8565482B318F}
+		{FECB51DA-84A1-439F-B3A1-F58C185E9105} = {64A1CBC5-BC1F-49B0-A0D3-8565482B318F}
+		{62EA0C36-C5A3-47A0-9102-95FDBFF29F94} = {10DF537E-FE98-4C14-AD23-FDE918AA57D8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFEA8C8A-2C24-4F63-A2DE-C1A28F920DF1}

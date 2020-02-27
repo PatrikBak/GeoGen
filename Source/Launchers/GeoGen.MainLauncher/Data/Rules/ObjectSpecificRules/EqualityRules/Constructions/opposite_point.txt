@@ -1,0 +1,9 @@
+﻿Objects:
+
+ O = Circumcenter(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: PointReflection(A, O), OppositePointOnCircumcircle(A, B, C)

@@ -1,0 +1,10 @@
+﻿Objects:
+
+D = Midpoint(A, B)
+E = Midpoint(A, C)
+
+Theorems:
+
+Implications:
+
+ () => ParallelLines: [D, E], [B, C]

@@ -1,0 +1,11 @@
+﻿Objects:
+
+ l = ExternalAngleBisector(A, B, C)
+
+Theorems:
+
+ t1 = CollinearPoints: B, C, D
+
+Implications:
+
+ (t1) => EqualObjects: l, ExternalAngleBisector(A, B, D)

@@ -1,0 +1,9 @@
+﻿Objects:
+
+ P = ReflectionInLine(l, A)
+
+Theorems:
+
+Implications:
+
+ () => Incidence: Midpoint(A, P), l
