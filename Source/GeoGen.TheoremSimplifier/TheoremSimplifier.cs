@@ -7,11 +7,12 @@ using System.Linq;
 namespace GeoGen.TheoremSimplifier
 {
     /// <summary>
-    /// The default implementation of <see cref="ITheoremSimplifier"/>. 
+    /// The default implementation of <see cref="ITheoremSimplifier"/> that gets the needed <see cref="SimplificationRule"/>s
+    /// in a <see cref="TheoremSimplifierData"/> object.
     /// </summary>
     public class TheoremSimplifier : ITheoremSimplifier
     {
-        #region Private properties
+        #region Private fields
 
         /// <summary>
         /// The data for the simplifier.
@@ -35,14 +36,8 @@ namespace GeoGen.TheoremSimplifier
 
         #region ITheoremSimplifier implementation
 
-        /// <summary>
-        /// Tries to simplify a given theorem together with the configuration where it holds true.
-        /// </summary>
-        /// <param name="configuration">The configuration where the theorem holds.</param>
-        /// <param name="theorem">The theorem to be simplified.</param>
-        /// <param name="allTheorems">The map of all theorems holding in the configuration.</param>
-        /// <returns>Either the tuple of simplified configuration and theorem; or null, if the algorithm couldn't do it.</returns>
-        public (Configuration newConfiguration, Theorem newTheorem)? Simplify(Configuration configuration, Theorem theorem, TheoremMap allTheorems)
+        /// <inheritdoc/>
+        public (Theorem newTheorem, Configuration newConfiguration)? Simplify(Theorem theorem, Configuration configuration)
         {
             // Prepare the dictionary of replaced theorem objects
             var replacedTheoremObjects = new Dictionary<TheoremObject, TheoremObject>();
@@ -62,14 +57,14 @@ namespace GeoGen.TheoremSimplifier
                     // Otherwise switch based on object type
                     switch (theoremObject)
                     {
-                        // Point simplification doesn't really make sense, we move to another object
+                        // Point simplification is not handled, let's move on
                         case PointTheoremObject _:
                             continue;
 
                         // With objects with points (lines / circles) we can try to map those points
                         case TheoremObjectWithPoints objectWithPoints:
 
-                            // If this object doesn't have point, we can't do much
+                            // If this object doesn't have a point, we can't do much
                             if (!objectWithPoints.DefinedByPoints)
                                 continue;
 
@@ -87,13 +82,8 @@ namespace GeoGen.TheoremSimplifier
                             {
                                 #region Trying various mappings
 
-                                // Let the helper function find all correct mappings 
-                                var potentialMappings = Map(orderedTemplatePoints, originalPoints)
-                                    // Including the assumptions
-                                    .SelectMany(mapping => IncludeAssumptions(mapping, simplifcationRule.Assumptions, configuration, allTheorems));
-
                                 // Enumerate them
-                                foreach (var mapping in potentialMappings)
+                                foreach (var mapping in Map(orderedTemplatePoints, originalPoints))
                                 {
                                     #region Mapping the simplified object
 
@@ -204,8 +194,8 @@ namespace GeoGen.TheoremSimplifier
                 // Now we can enumerate
                 .ToArray());
 
-            // Finally we can return the result!
-            return (newConfiguration, newTheorem);
+            // Finally we can return the result
+            return (newTheorem, newConfiguration);
 
             #endregion
         }
@@ -218,9 +208,8 @@ namespace GeoGen.TheoremSimplifier
         /// <returns>The enumerable of correct mappings.</returns>
         private IEnumerable<Dictionary<ConfigurationObject, ConfigurationObject>> Map(IReadOnlyList<ConfigurationObject> templatePoints,
                                                                                       IReadOnlyList<ConfigurationObject> originalPoints)
-        {
             // First we zip the objects 
-            return templatePoints.Zip(originalPoints)
+            => templatePoints.Zip(originalPoints)
                 // Now we need to use aggregation. Each tuple generates multiple possible mappings
                 .Aggregate
                 (
@@ -281,9 +270,9 @@ namespace GeoGen.TheoremSimplifier
                                     // Is attempted to be used
                                     .Select(permutation =>
                                     {
-                                        // For a given permutation we want to either return null, or new mapping
+                                        // For a given permutation we want to either return null, or a new mapping
                                         // Prepare the dictionary with the new mapping by copying the current one
-                                        var newMapping = currentMapping.ToDictionary(pair => pair.Key, pair => pair.Value);
+                                        var newMapping = new Dictionary<ConfigurationObject, ConfigurationObject>(currentMapping);
 
                                         // Now go through the zipped objects 
                                         foreach (var (innerTemplate, innerOriginal) in permutation.Zip(constructedOriginal.PassedArguments.FlattenedList))
@@ -331,68 +320,6 @@ namespace GeoGen.TheoremSimplifier
                         }
                     })
                 );
-        }
-
-        /// <summary>
-        /// Finds all ways to extend a given mapping so that given assumptions are met.
-        /// </summary>
-        /// <param name="mapping">The mapping that we so far have and want to extend.</param>
-        /// <param name="assumptions">The assumptions to be met with mappings.</param>
-        /// <param name="configurations">The configuration according to which the assumptions should hold.</param>
-        /// <param name="allTheorems">The map of all theorems in the configuration.</param>
-        /// <returns>The enumerable of correct mapping for which the assumptions are true.</returns>
-        private IEnumerable<Dictionary<ConfigurationObject, ConfigurationObject>> IncludeAssumptions(Dictionary<ConfigurationObject, ConfigurationObject> mapping,
-                                                                                                     IEnumerable<Theorem> assumptions,
-                                                                                                     Configuration configurations,
-                                                                                                     TheoremMap allTheorems)
-        {
-            // We need to use aggregation with the initial mapping
-            return assumptions.Aggregate(mapping.ToEnumerable(),
-                // And the function that is merging more possible mappings
-                (currentMappings, assumption) => currentMappings.SelectMany(currentMapping =>
-                {
-                    // Now we have a given mapping and we need to find options for it
-                    // First find the points that are left to be mapped by taking the inner objects of the assumption
-                    var objectsToBeMapped = assumption.GetInnerConfigurationObjects()
-                        // And excluding those that already are mapped
-                        .Except(currentMapping.Keys)
-                        // Enumerate them
-                        .ToArray();
-
-                    // All these objects should be points, since this implementation does not work any other types of objects
-                    // We find objects that could be mapped to these objects by taking all points
-                    var potentialImages = configurations.ObjectMap[ConfigurationObjectType.Point]
-                        // And excluding those that are already mapped
-                        .Except(currentMapping.Values)
-                        // Enumerate them
-                        .ToArray();
-
-                    // We take every possible variation of the potential images with the needed length
-                    return potentialImages.Variations(objectsToBeMapped.Length)
-                        // Try to convert each to either a correct mapping meeting the assumption, or null
-                        .Select(variation =>
-                        {
-                            // This variation represents the mapping, therefore we can copy the current one
-                            var newMapping = currentMapping.ToDictionary(pair => pair.Key, pair => pair.Value);
-
-                            // Add the mapped pair to the new mapping
-                            objectsToBeMapped.Zip(variation).ForEach(pair => newMapping.Add(pair.First, pair.Second));
-
-                            // We need to find out if this new mapping yields a true assumption
-                            // Therefore we're going to use it to remap the template one
-                            var remappedAssumption = assumption.Remap(newMapping);
-
-                            // If it's not true, this variation is incorrect
-                            if (!allTheorems.ContainsTheorem(remappedAssumption))
-                                return null;
-
-                            // Otherwise we have a mapping that is so far correct
-                            return newMapping;
-                        })
-                        // Exclude incorrect mapping
-                        .Where(mapping => mapping != null);
-                }));
-        }
 
         #endregion
     }

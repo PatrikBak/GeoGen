@@ -1,14 +1,9 @@
 ﻿using FluentAssertions;
-using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
-using GeoGen.TheoremFinder;
 using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
-using Ninject;
 using NUnit.Framework;
 using System.Collections.Generic;
-using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
@@ -28,10 +23,10 @@ namespace GeoGen.TheoremSimplifierTests
         /// <summary>
         /// Performs the simplification algorithm.
         /// </summary>
-        /// <param name="configuration">The configuration where the theorem to be simplified holds.</param>
         /// <param name="theorem">The theorem to be simplified.</param>
+        /// <param name="configuration">The configuration where the theorem to be simplified holds.</param>
         /// <returns>The result of the simplification.</returns>
-        private static (Configuration newConfiguration, Theorem newTheorem)? Simplify(Configuration configuration, Theorem theorem)
+        private static (Theorem newTheorem, Configuration newConfiguration)? Simplify(Theorem theorem, Configuration configuration)
         {
             #region Prepare simplification rules
 
@@ -39,7 +34,6 @@ namespace GeoGen.TheoremSimplifierTests
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var D = new LooseConfigurationObject(Point);
 
             // Prepare the data
             var data = new TheoremSimplifierData(new ReadOnlyHashSet<SimplificationRule>(new HashSet<SimplificationRule>
@@ -48,16 +42,14 @@ namespace GeoGen.TheoremSimplifierTests
                 new SimplificationRule
                 (
                     simplifableObject: new LineTheoremObject(A, new ConstructedConfigurationObject(Midpoint, B, C)),
-                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(Median, A, B, C)),
-                    assumptions: Enumerable.Empty<Theorem>().ToReadOnlyHashSet()
+                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(Median, A, B, C))
                 ),
 
                 // Internal angle bisector simplification with incenter
                 new SimplificationRule
                 (
                     simplifableObject: new LineTheoremObject(A, new ConstructedConfigurationObject(Incenter, A, B, C)),
-                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(InternalAngleBisector, A, B, C)),
-                    assumptions: Enumerable.Empty<Theorem>().ToReadOnlyHashSet()
+                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(InternalAngleBisector, A, B, C))
                 ),
 
                 // Nine-point circle simplification
@@ -69,69 +61,14 @@ namespace GeoGen.TheoremSimplifierTests
                         new ConstructedConfigurationObject(Midpoint, B, C),
                         new ConstructedConfigurationObject(Midpoint, C, A)
                     ),
-                    simplifiedObject: new CircleTheoremObject(new ConstructedConfigurationObject(NinePointCircle, A, B, C)),
-                    assumptions: Enumerable.Empty<Theorem>().ToReadOnlyHashSet()
-                ),
-
-                // Perpendicular bisector
-                new SimplificationRule
-                (
-                    simplifableObject: new LineTheoremObject(A, B),
-                    simplifiedObject: new LineTheoremObject(new ConstructedConfigurationObject(PerpendicularBisector, C, D)),
-                    assumptions: new[]
-                    {
-                        new Theorem(EqualLineSegments, new[]
-                        {
-                            new LineSegmentTheoremObject(A, C),
-                            new LineSegmentTheoremObject(A, D)
-                        }),
-                        new Theorem(EqualLineSegments, new[]
-                        {
-                            new LineSegmentTheoremObject(B, C),
-                            new LineSegmentTheoremObject(B, D)
-                        })
-                    }
-                    .ToReadOnlyHashSet()
+                    simplifiedObject: new CircleTheoremObject(new ConstructedConfigurationObject(NinePointCircle, A, B, C))
                 )
             }));
 
             #endregion
 
-            #region Run algorithm
-
-            // Initialize IoC
-            var kernel = IoC.CreateKernel()
-                // Add the theorem finder with no restrictions
-                .AddTheoremFinder(new TheoremFindingSettings
-                                  (
-                                     // Look for any type except for EqualObjects
-                                     soughtTheoremTypes: typeof(TheoremType).GetEnumValues().Cast<TheoremType>().Except(new[] { EqualObjects }).ToArray(),
-
-                                     // Don't exclude tangencies
-                                     new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
-                                     new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: false)
-                                  ))
-                // Add constructor
-                .AddConstructor()
-                // Add theorem simplifier with the data
-                .AddTheoremSimplifier(data);
-
-            // Create the constructor
-            var constructor = kernel.Get<IGeometryConstructor>();
-
-            // Draw the examined configuration
-            var pictures = constructor.Construct(configuration, numberOfPictures: 5, LooseObjectDrawingStyle.GenerationFriendly).pictures;
-
-            // Draw the contextual picture
-            var contextualPicture = new ContextualPicture(pictures);
-
-            // Find the theorems
-            var allTheorems = kernel.Get<ITheoremFinder>().FindAllTheorems(contextualPicture);
-
             // Run the algorithm
-            return kernel.Get<ITheoremSimplifier>().Simplify(configuration, theorem, allTheorems);
-
-            #endregion
+            return new TheoremSimplifier.TheoremSimplifier(data).Simplify(theorem, configuration);
         }
 
         #endregion
@@ -159,7 +96,7 @@ namespace GeoGen.TheoremSimplifierTests
             });
 
             // Let it be simplified
-            var result = Simplify(configuration, theorem);
+            var result = Simplify(theorem, configuration);
 
             // Assert there is some result
             result.Should().NotBeNull();
@@ -205,7 +142,7 @@ namespace GeoGen.TheoremSimplifierTests
             });
 
             // Let it be simplified
-            var result = Simplify(configuration, theorem);
+            var result = Simplify(theorem, configuration);
 
             // Assert there is some result
             result.Should().NotBeNull();
@@ -253,7 +190,7 @@ namespace GeoGen.TheoremSimplifierTests
             });
 
             // Let it be simplified
-            var result = Simplify(configuration, theorem);
+            var result = Simplify(theorem, configuration);
 
             // Assert there is some result
             result.Should().NotBeNull();
@@ -300,7 +237,7 @@ namespace GeoGen.TheoremSimplifierTests
             });
 
             // Let it be simplified
-            var result = Simplify(configuration, theorem);
+            var result = Simplify(theorem, configuration);
 
             // Assert there is some result
             result.Should().NotBeNull();
@@ -319,53 +256,6 @@ namespace GeoGen.TheoremSimplifierTests
                 new LineTheoremObject(Amedian),
                 new LineTheoremObject(Bmedian),
                 new LineTheoremObject(Cmedian)
-            });
-
-            // Assert
-            result.Value.newConfiguration.Should().Be(newConfiguration);
-            result.Value.newTheorem.Should().Be(newTheorem);
-        }
-
-        [Test]
-        public void Test_Replacing_Perpendicular_Bisector()
-        {
-            // Create the objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
-            var M = new ConstructedConfigurationObject(MidpointOfOppositeArc, A, B, C);
-            var Abisector = new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
-
-            // Create the configuration
-            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C, O, M, Abisector);
-
-            // Create the theorem
-            var theorem = new Theorem(ConcurrentObjects, new TheoremObject[]
-            {
-                new LineTheoremObject(Abisector),
-                new CircleTheoremObject(A, B, C),
-                new LineTheoremObject(O, M)
-            });
-
-            // Let it be simplified
-            var result = Simplify(configuration, theorem);
-
-            // Assert there is some result
-            result.Should().NotBeNull();
-
-            // Create the new objects
-            var BCbisector = new ConstructedConfigurationObject(PerpendicularBisector, B, C);
-
-            // Create the new configuration
-            var newConfiguration = Configuration.DeriveFromObjects(Triangle, A, B, C, Abisector, BCbisector);
-
-            // Create the new theorem
-            var newTheorem = new Theorem(ConcurrentObjects, new TheoremObject[]
-            {
-                new LineTheoremObject(Abisector),
-                new CircleTheoremObject(A, B, C),
-                new LineTheoremObject(BCbisector)
             });
 
             // Assert
@@ -400,7 +290,7 @@ namespace GeoGen.TheoremSimplifierTests
             // Let it be simplified. Theoretically speaking, CD is the angle bisector and it could be applied,
             // but neither C nor D could be removed from the configuration, i.e. we would have all the objects 
             // + angle bisector after applying the rule. We don't want that
-            var result = Simplify(configuration, theorem);
+            var result = Simplify(theorem, configuration);
 
             // Assert it couldn't be done
             result.Should().BeNull();

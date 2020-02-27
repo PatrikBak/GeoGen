@@ -61,7 +61,7 @@ namespace GeoGen.Drawer
             catch (Exception e)
             {
                 // If it cannot be done, make aware
-                throw new GeoGenException($"Couldn't load the drawing rules file '{_settings.FilePath}'", e);
+                throw new GeoGenException($"Couldn't load the drawing rule file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -81,7 +81,7 @@ namespace GeoGen.Drawer
             if (lines.IsEmpty())
             {
                 // Warn
-                LoggingManager.LogWarning($"Empty drawing rules file {_settings.FilePath}");
+                LoggingManager.LogWarning($"Empty drawing rule file {_settings.FilePath}");
 
                 // We're done
                 return new List<DrawingRule>();
@@ -108,7 +108,7 @@ namespace GeoGen.Drawer
                 LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                 // Throw further
-                throw new GeoGenException($"Couldn't parse the drawing rules file {_settings.FilePath}.", e);
+                throw new GeoGenException($"Couldn't parse the drawing rule file {_settings.FilePath}.", e);
             }
 
             #endregion

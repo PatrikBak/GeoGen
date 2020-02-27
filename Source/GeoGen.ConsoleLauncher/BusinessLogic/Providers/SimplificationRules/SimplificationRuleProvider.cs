@@ -39,7 +39,7 @@ namespace GeoGen.ConsoleLauncher
 
         #endregion
 
-        #region ISimplificationRulesProvider implementation
+        #region ISimplificationRuleProvider implementation
 
         /// <summary>
         /// Gets simplification rules.
@@ -60,7 +60,7 @@ namespace GeoGen.ConsoleLauncher
             catch (Exception e)
             {
                 // If it cannot be done, make aware
-                throw new GeoGenException($"Couldn't load the simplification rules file '{_settings.FilePath}'", e);
+                throw new GeoGenException($"Couldn't load the simplification rule file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -80,7 +80,7 @@ namespace GeoGen.ConsoleLauncher
             if (lines.IsEmpty())
             {
                 // Warn
-                LoggingManager.LogWarning($"Empty simplification rules file {_settings.FilePath}");
+                LoggingManager.LogWarning($"Empty simplification rule file {_settings.FilePath}");
 
                 // We're done
                 return new List<SimplificationRule>();
@@ -103,7 +103,7 @@ namespace GeoGen.ConsoleLauncher
                 LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                 // Throw further
-                throw new GeoGenException($"Couldn't parse the simplification rules file {_settings.FilePath}.", e);
+                throw new GeoGenException($"Couldn't parse the simplification rule file {_settings.FilePath}.", e);
             }
 
             #endregion
@@ -115,107 +115,67 @@ namespace GeoGen.ConsoleLauncher
         /// <param name="lines">The trimmed non-empty lines without comments to be parsed.</param>
         /// <returns>The parsed simplification rules.</returns>
         private static IReadOnlyList<SimplificationRule> ParseRules(IReadOnlyList<string> lines)
-        {
-            // Each line is either the beginning of a rule, or an assumption
-            // Assumption lines start with '-'. Make sure the first line isn't an assumption line
-            if (lines[0].StartsWith('-'))
-                throw new ParsingException($"The first line cannot start with '-', since this character starts lines with assumptions.");
+            // There should be a rule on each line
+            => lines.Select(ruleLine =>
+            {
+                // Match the format of the rules. They should in the form "TheoremObject --> TheoremObject:
+                var ruleMatch = Regex.Match(ruleLine, "^(.*) --> (.*)$");
 
-            // We need to find lines that are not assumption lines, i.e. those that begin rules
-            // First index lines
-            return lines.Select((line, index) => (line, index))
-                // The rules not starting with '-' are what we want 
-                .Where(pair => !pair.line.StartsWith('-'))
-                // Now these are lines that we want
-                .Select(pair =>
+                // If there is no match, make aware 
+                if (!ruleMatch.Success)
+                    throw new ParsingException($"Error while parsing {ruleLine}. It should be in the form TheoremObject --> TheoremObject.");
+
+                // Otherwise prepare the dictionary with object names
+                var namesToObjects = new Dictionary<string, ConfigurationObject>();
+
+                #region Parsing simplifiable object
+
+                // Get the simplifiable object string
+                var simplifableObjectString = ruleMatch.Groups[1].Value.Trim();
+
+                // Prepare a variable for the parsed object
+                var simplifiableObject = default(TheoremObject);
+
+                try
                 {
-                    // Deconstruct
-                    var (ruleLine, index) = pair;
+                    // Try to parse it, while automatically creating loose points for unknown objects
+                    simplifiableObject = Parser.ParseTheoremObject(simplifableObjectString, namesToObjects, autocreateUnnamedObjects: true);
+                }
+                catch (ParsingException e)
+                {
+                    // If there is a problem, make aware
+                    throw new ParsingException($"Error while parsing {simplifableObjectString}. {e.Message}");
+                }
 
-                    #region Parsing rule
+                #endregion
 
-                    // Now the actual parsing is about to happen
-                    // Match the format of the rules. They should in the form "TheoremObject --> TheoremObject:
-                    var ruleMatch = Regex.Match(ruleLine, "^(.*) --> (.*)$");
+                #region Parsing simplified object
 
-                    // If there is no match, make aware 
-                    if (!ruleMatch.Success)
-                        throw new ParsingException($"Error while parsing {ruleLine}. It should be in the form TheoremObject --> TheoremObject.");
+                // Get the simplified object string
+                var simplifiedObjectString = ruleMatch.Groups[2].Value.Trim();
 
-                    // Otherwise prepare the dictionary with object names
-                    var namesToObjects = new Dictionary<string, ConfigurationObject>();
+                // Prepare a variable for the parsed object
+                var simplifiedObject = default(TheoremObject);
 
-                    #region Parsing simplifiable object
+                try
+                {
+                    // Try to parse it while automatically creating loose points for unknown objects
+                    simplifiedObject = Parser.ParseTheoremObject(simplifiedObjectString, namesToObjects, autocreateUnnamedObjects: true);
+                }
+                catch (ParsingException e)
+                {
+                    // If there is a problem, make aware
+                    throw new ParsingException($"Error while parsing {simplifiedObjectString}. {e.Message}");
+                }
 
-                    // Get the simplifiable object string
-                    var simplifableObjectString = ruleMatch.Groups[1].Value;
+                #endregion
 
-                    // Prepare a variable for it
-                    var simplifiableObject = default(TheoremObject);
+                // Return the final rule
+                return new SimplificationRule(simplifiableObject, simplifiedObject);
 
-                    try
-                    {
-                        // Try to parse it, while automatically creating loose points for unknown objects
-                        simplifiableObject = Parser.ParseTheoremObject(simplifableObjectString, namesToObjects, autocreateUnnamedObjects: true);
-                    }
-                    catch (ParsingException e)
-                    {
-                        // If there is a problem, make aware
-                        throw new ParsingException($"Error while parsing {simplifableObjectString}. {e.Message}");
-                    }
-
-                    #endregion
-
-                    #region Parsing simplified object
-
-                    // Get the simplified object string
-                    var simplifiedObjectString = ruleMatch.Groups[2].Value;
-
-                    // Prepare a variable for it
-                    var simplifiedObject = default(TheoremObject);
-
-                    try
-                    {
-                        // Try to parse it while automatically creating loose points for unknown objects
-                        simplifiedObject = Parser.ParseTheoremObject(simplifiedObjectString, namesToObjects, autocreateUnnamedObjects: true);
-                    }
-                    catch (ParsingException e)
-                    {
-                        // If there is a problem, make aware
-                        throw new ParsingException($"Error while parsing {simplifiedObjectString}. {e.Message}");
-                    }
-
-                    #endregion
-
-                    #endregion
-
-                    #region Parsing assumptions
-
-                    // Find assumption lines by going from the next line
-                    var assumptions = lines.ItemsBetween(index + 1, lines.Count)
-                        // But only until we hit a line that is not an assumption
-                        .TakeWhile(potentialAssumption => potentialAssumption.StartsWith('-'))
-                        // Parse each
-                        .Select(assumptionLine =>
-                        {
-                            // We now know it starts with -, get rid of it
-                            assumptionLine = assumptionLine.Substring(1);
-
-                            // Parse it, assuming it's object will be automatically created
-                            return Parser.ParseTheorem(assumptionLine, namesToObjects, autocreateUnnamedObjects: true);
-                        })
-                        // Enumerate
-                        .ToReadOnlyHashSet();
-
-                    #endregion
-
-                    // Return the final rule
-                    return new SimplificationRule(simplifiableObject, simplifiedObject, assumptions);
-
-                })
-                // Enumerate
-                .ToList();
-        }
+            })
+            // Enumerate
+            .ToList();
 
         #endregion
     }
