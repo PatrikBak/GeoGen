@@ -88,11 +88,43 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Determines if the configuration is symmetric, i.e. its loose objects can be reordered to
+        /// Determines if the configuration is symmetric, i.e. its loose objects can be renamed to
         /// obtain the same configuration.
         /// </summary>
         /// <returns>true, if the configuration is symmetric; false otherwise.</returns>
-        public bool IsSymmetric() => GetObjectsThatWouldMakeThisConfigurationSymmetric().Any(objects => objects.IsEmpty());
+        public bool IsSymmetric() => GetSymmetryMappings().Any();
+
+        /// <summary>
+        /// Find all possible mappings that would keep this configuration symmetric if all objects
+        /// were remapping according to them. If the configuration is not symmetric, then there will
+        /// not be any result.
+        /// </summary>
+        /// <returns>The numerable of all possible mappings keeping the symmetry.</returns>
+        public IEnumerable<IReadOnlyDictionary<ConfigurationObject, ConfigurationObject>> GetSymmetryMappings()
+            // Take all possible mappings of loose objects
+            => LooseObjectsHolder.GetSymmetryMappings()
+                // Exclude the identity
+                .Where(mappedLooseObjects => mappedLooseObjects.Any(pair => pair.Key != pair.Value))
+                // Remap the constructed objects as well
+                .Select(mappedLooseObjects => (mappedLooseObjects, mappedConstructedObjects: ConstructedObjects
+                    // Prepare a mapping dictionary for them
+                    .ToDictionary(constructedObject => (ConfigurationObject)constructedObject,
+                        // Each object is remapped with respect to the loose object mapping
+                        constructedObject => constructedObject.Remap(mappedLooseObjects))))
+                // Take only those mappings where the set of remapped constructed objects is the same as current ones
+                .Where(pair => pair.mappedConstructedObjects.Values.OrderlessEquals(ConstructedObjectsSet))
+                // These are correct symmetry mappings. Now we just complete them with the loose objects for comfort
+                .Select(pair =>
+                {
+                    // Deconstruct
+                    var (mappedLooseObjects, mappedConstructedObjects) = pair;
+
+                    // Add the loose objects to the mapping
+                    mappedLooseObjects.ForEach(pair => mappedConstructedObjects.Add(pair.Key, pair.Value));
+
+                    // Return the final mapping
+                    return mappedConstructedObjects;
+                });
 
         /// <summary>
         /// Determines the objects that would make this configuration symmetric if they were added to it.

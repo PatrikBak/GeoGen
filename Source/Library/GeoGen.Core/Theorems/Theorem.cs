@@ -148,6 +148,20 @@ namespace GeoGen.Core
             return new Theorem(Type, remappedObjects);
         }
 
+        /// <summary>
+        /// Infers new theorems from symmetry of a given configuration where these theorems hold.
+        /// </summary>
+        /// <param name="configuration">The configuration where the theorem holds.</param>
+        /// <returns>The enumerable of theorems that are distinct from this one and inferable from symmetry.</returns>
+        public IEnumerable<Theorem> InferTheoremsFromSymmetry(Configuration configuration)
+            // Take all mappings that keep the configuration the same
+            => configuration.GetSymmetryMappings()
+                // Remap the theorem in them
+                .Select(mapping => Remap(mapping))
+                // Take distinct results with the exclusion of this theorem
+                .Except(this.ToEnumerable());
+
+
         #endregion
 
         #region Public static methods

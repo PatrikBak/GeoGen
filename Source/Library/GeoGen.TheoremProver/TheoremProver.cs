@@ -177,8 +177,11 @@ namespace GeoGen.TheoremProver
         /// </returns>
         private object ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture, bool shouldWeConstructProofs)
         {
+            // Pull the configuration for comfort
+            var configuration = picture.Pictures.Configuration;
+
             // Find the trivial theorems
-            var trivialTheorems = _producer.InferTrivialTheoremsFromObject(picture.Pictures.Configuration.LastConstructedObject);
+            var trivialTheorems = _producer.InferTrivialTheoremsFromObject(configuration.LastConstructedObject);
 
             #region Proof builder initialization
 
@@ -202,7 +205,7 @@ namespace GeoGen.TheoremProver
             foreach (var theoremToProve in newTheorems.AllObjects.Except(trivialTheorems))
             {
                 // Find the redundant objects
-                var redundantObjects = theoremToProve.GetUnnecessaryObjects(picture.Pictures.Configuration);
+                var redundantObjects = theoremToProve.GetUnnecessaryObjects(configuration);
 
                 // If there are none, then it cannot be defined simpler
                 if (redundantObjects.IsEmpty())
@@ -217,6 +220,28 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
+            #region Theorems inferable from symmetry
+
+            // Prepare the set of theorems inferred from symmetry
+            var theoremsInferredFromSymmetry = new List<Theorem>();
+
+            // Go throw the theorems that are already inferred, i.e. old, trivial and definable simpler ones
+            foreach (var provedTheorem in oldTheorems.AllObjects.Concat(trivialTheorems).Concat(theoremsDefinableSimpler))
+            {
+                // Try to infer new theorems using this one
+                foreach (var inferredTheorem in provedTheorem.InferTheoremsFromSymmetry(configuration))
+                {
+                    //Console.WriteLine(f.FormatTheorem(inferredTheorem));
+                    // Add it to the list
+                    theoremsInferredFromSymmetry.Add(inferredTheorem);
+
+                    // Make sure the proof builds knows it
+                    proofBuilder?.AddImplication(InferableFromSymmetry, inferredTheorem, assumptions: new[] { provedTheorem });
+                }
+            }
+
+            #endregion
+
             #region Normalization helper initialization
 
             // Initially we are going to assume that the proved theorems are the old ones
@@ -224,7 +249,11 @@ namespace GeoGen.TheoremProver
                 // And trivial ones
                 .Concat(trivialTheorems)
                 // And ones with redundant objects
-                .Concat(theoremsDefinableSimpler);
+                .Concat(theoremsDefinableSimpler)
+                // And ones inferred from symmetry
+                .Concat(theoremsInferredFromSymmetry)
+                // Distinct ones
+                .Distinct();
 
             // The theorems to prove will be the new ones except for the proved ones
             var theoremsToProve = newTheorems.AllObjects.Except(provedTheorems);
@@ -243,7 +272,7 @@ namespace GeoGen.TheoremProver
             var scheduler = new Scheduler(_manager);
 
             // Do the initial scheduling
-            scheduler.PerformInitialScheduling(theoremsToProve, picture.Pictures.Configuration);
+            scheduler.PerformInitialScheduling(theoremsToProve, configuration);
 
             #endregion
 
@@ -347,7 +376,7 @@ namespace GeoGen.TheoremProver
 
                     // If the theorem turns out not to be geometrically valid, trace it
                     if (!isValid)
-                        _tracer.MarkInvalidInferrence(picture.Pictures.Configuration, theorem, data.InferenceRule, negativeAssumptions, possitiveAssumptions);
+                        _tracer.MarkInvalidInferrence(configuration, theorem, data.InferenceRule, negativeAssumptions, possitiveAssumptions);
                 }
 
                 #endregion
@@ -412,6 +441,26 @@ namespace GeoGen.TheoremProver
 
             // Let the scheduler know
             scheduler.ScheduleAfterProving(normalizedTheorem);
+
+            #region Inference from symmetry
+
+            // If the theorem use an object that is not part of the original configuration,
+            // then we will not do any symmetry inference. If it could prove a new theorem,
+            // then this new theorem would be inferable conventionally
+            if (!normalizedTheorem.GetInnerConfigurationObjects().All(helper.Configuration.AllObjects.Contains))
+                return;
+
+            // Otherwise try to infer new theorems using this one
+            foreach (var inferredTheorem in normalizedTheorem.InferTheoremsFromSymmetry(helper.Configuration))
+            {
+                // If it can be done, make sure the proof builder knows it
+                proofData?.ProofBuilder.AddImplication(InferableFromSymmetry, inferredTheorem, assumptions: new[] { normalizedTheorem });
+
+                // Call this method to handle this new inferred theorem, without caring if it is valid (it should be logically)
+                HandleNonequality(inferredTheorem, helper, scheduler, proofData, isValid: out var _);
+            }
+
+            #endregion
         }
 
         /// <summary>

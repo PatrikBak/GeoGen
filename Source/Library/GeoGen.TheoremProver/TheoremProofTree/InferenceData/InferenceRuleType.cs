@@ -25,6 +25,13 @@ namespace GeoGen.TheoremProver
         DefinableSimpler,
 
         /// <summary>
+        /// The theorem can be inferable from the symmetry of the configuration where it holds. For example,
+        /// if we have Triangle ABC with midpoints P, Q, R of its sides BC, CA, AB, then knowing BC || QR
+        /// means we can infer CA || RP and AB || PQ just from the symmetry.
+        /// </summary>
+        InferableFromSymmetry,
+
+        /// <summary>
         /// The theorem that can be inferred directly from the construction of an object.
         /// </summary>
         TrivialTheorem,

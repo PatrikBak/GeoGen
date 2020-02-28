@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
+using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructionType;
@@ -89,6 +90,76 @@ namespace GeoGen.Core.Tests
                 new LineTheoremObject(mAB, mAC)
             })
             .GetUnnecessaryObjects(configuration).Should().BeEquivalentTo(new[] { mBC });
+        }
+
+        [Test]
+        public void Test_InferTheoremsFromSymmetry_FullSymmetry()
+        {
+            // Draw configuration with medians
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(Midpoint, B, C);
+            var F = new ConstructedConfigurationObject(Midpoint, A, C);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F);
+
+            // Create the theorem
+            var theorem = new Theorem(ParallelLines, new[]
+            {
+                new LineTheoremObject(A, C),
+                new LineTheoremObject(D, E)
+            });
+
+            // We can infer two other theorems from symmetry
+            theorem.InferTheoremsFromSymmetry(configuration).Should().BeEquivalentTo(new[]
+            {
+                new Theorem(ParallelLines, new[]
+                {
+                    new LineTheoremObject(A, B),
+                    new LineTheoremObject(E, F)
+                }),
+
+                new Theorem(ParallelLines, new[]
+                {
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(D, F)
+                }),
+            });
+        }
+
+        [Test]
+        public void Test_InferTheoremsFromSymmetry_PartialSymmetry()
+        {
+            // Draw configuration with medians
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var mAC = new ConstructedConfigurationObject(Midpoint, A, C);
+            var mAB = new ConstructedConfigurationObject(Midpoint, A, B);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, mAC, mAB, D);
+
+            // Create the theorem
+            var theorem = new Theorem(ParallelLines, new[]
+            {
+                new LineTheoremObject(B, D),
+                new LineTheoremObject(mAB, mAC)
+            });
+
+            // We can infer one other isomorphic theorem
+            theorem.InferTheoremsFromSymmetry(configuration).Should().BeEquivalentTo(new[]
+            {
+                new Theorem(ParallelLines, new[]
+                {
+                    new LineTheoremObject(C, D),
+                    new LineTheoremObject(mAB, mAC)
+                })
+            });
         }
     }
 }

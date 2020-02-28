@@ -112,7 +112,7 @@ namespace GeoGen.TheoremProver
                 // With the available objects equal to those 
                 .IntroduceObjects(_helper.AllObjects
                     // That are in the original configuration (otherwise it would be explosive)
-                    .Where(_helper.IsItOriginalConfiguration)
+                    .Where(_helper.IsInOriginalConfiguration)
                     // Enumerated
                     .ToArray())
                 // The introducer offers us some options

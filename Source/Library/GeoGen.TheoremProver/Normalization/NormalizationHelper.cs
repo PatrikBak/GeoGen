@@ -104,6 +104,11 @@ namespace GeoGen.TheoremProver
         #region Public properties
 
         /// <summary>
+        /// The configuration where all the theorems we're proving hold.
+        /// </summary>
+        public Configuration Configuration => _pictures.Configuration;
+
+        /// <summary>
         /// The read-only set of all proved theorems.
         /// </summary>
         public IReadOnlyHashSet<Theorem> ProvedTheorems => new ReadOnlyHashSet<Theorem>(_provedTheorems);
@@ -210,11 +215,11 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="constructedObject">The constructed object to be checked.</param>
         /// <returns>true, if this object is equal to an object of the original configuration; false otherwise.</returns>
-        public bool IsItOriginalConfiguration(ConstructedConfigurationObject constructedObject)
+        public bool IsInOriginalConfiguration(ConstructedConfigurationObject constructedObject)
             // This is true if the object has a normal version
             => _objectToItsNormalVersion.ContainsKey(constructedObject)
                 // And its normal version is in the original configuration
-                && _pictures.Configuration.AllObjects.Contains(_objectToItsNormalVersion[constructedObject]);
+                && Configuration.AllObjects.Contains(_objectToItsNormalVersion[constructedObject]);
 
         /// <summary>
         /// Finds out if a given theorem contains an incorrect object, i.e. a constructed object that has an argument
@@ -429,7 +434,7 @@ namespace GeoGen.TheoremProver
             // Take the equality groups 
             var prenormalVersions = equalityHelper.EqualityGroups
                 // From each try to take the object of the original configuration as the pre-normal version 
-                .Select(group => group.FirstOrDefault(_pictures.Configuration.AllObjects.Contains)
+                .Select(group => group.FirstOrDefault(Configuration.AllObjects.Contains)
                     // If it's not there, then pick some old normal version (there should be at least one)
                     // Theoretically speaking, it shouldn't matter what we're going to pick, but it's better
                     // to pick an old normal version because we will not change lots of objects like this.
@@ -467,7 +472,7 @@ namespace GeoGen.TheoremProver
                     // If this pre-normal version is an object of the original configuration, then we want to be
                     // at the beginning, these objects have arguments only from the original configuration and therefore
                     // no further normalization is needed in such cases
-                    _ when _pictures.Configuration.AllObjects.Contains(prenormalVersion) => -1,
+                    _ when Configuration.AllObjects.Contains(prenormalVersion) => -1,
 
                     // If we have a constructed pre-normal version, then we need to have a look at the arguments
                     ConstructedConfigurationObject constructedPrenormalVersion => constructedPrenormalVersion.PassedArguments.FlattenedList
@@ -484,7 +489,7 @@ namespace GeoGen.TheoremProver
                 .Select(prenormalVersion => (prenormalVersion switch
                 {
                     // The objects from the original configuration don't need re-normalization and will keep there normal version
-                    _ when _pictures.Configuration.AllObjects.Contains(prenormalVersion) => (prenormalVersion, normalVersion: prenormalVersion),
+                    _ when Configuration.AllObjects.Contains(prenormalVersion) => (prenormalVersion, normalVersion: prenormalVersion),
 
                     // If we have a constructed pre-normal version
                     ConstructedConfigurationObject constructedPrenormalVersion => (prenormalVersion,
@@ -805,7 +810,7 @@ namespace GeoGen.TheoremProver
             var normalVersion = _introducedObjectsNormalVersions[introducedObject];
 
             // If this is an object of the original configuration, don't remove it
-            if (_pictures.Configuration.AllObjects.Contains(normalVersion))
+            if (Configuration.AllObjects.Contains(normalVersion))
             {
                 // No removed objects
                 allRemovedObjects = Array.Empty<ConstructedConfigurationObject>();
@@ -828,7 +833,7 @@ namespace GeoGen.TheoremProver
                 // Go through the normal versions 
                 _orderedNormalVersions
                     // Take those that are not in the original configuration
-                    .Where(normalVersion => !_pictures.Configuration.AllObjects.Contains(normalVersion)
+                    .Where(normalVersion => !Configuration.AllObjects.Contains(normalVersion)
                         // And those that are not removed already
                         && !normalVersionsToBeRemoved.Contains(normalVersion)
                         // And those that are constructed
@@ -1011,7 +1016,7 @@ namespace GeoGen.TheoremProver
                 // That are constructed
                 .OfType<ConstructedConfigurationObject>()
                 // Check if they are among the original objects
-                .All(_pictures.Configuration.ConstructedObjectsSet.Contains);
+                .All(Configuration.ConstructedObjectsSet.Contains);
 
             // If it uses only objects that are part of the original configuration,
             if (doesTheoremUseOnlyOriginalObjects)

@@ -101,6 +101,9 @@ namespace GeoGen.TheoremProver
                 // Case when the transitivity rule has been applied
                 EqualityTransitivity => "true because of the transitivity of equality",
 
+                // Case when we're using symmetry
+                InferableFromSymmetry => "true because of the symmetry of the configuration",
+
                 // Case when the theorem can be stated without all objects
                 DefinableSimpler => $"can be stated without " +
                     // State the redundant objects with their names
