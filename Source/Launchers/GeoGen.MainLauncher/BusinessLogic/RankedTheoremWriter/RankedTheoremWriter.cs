@@ -16,7 +16,7 @@ namespace GeoGen.MainLauncher
         /// </summary>
         /// <param name="theorems">The enumerable of ranked theorems with their ids to be written to the file.</param>
         /// <param name="theoremFilePath">The path to the file where the theorems should be written. </param>
-        public void WriteTheorems(IEnumerable<(TheoremWithRanking rankedTheorem, string id)> theorems, string theoremFilePath)
+        public void WriteTheorems(IEnumerable<(RankedTheorem rankedTheorem, string id)> theorems, string theoremFilePath)
         {
             // Open the stream writer for the file
             using var streamWriter = new StreamWriter(theoremFilePath);

@@ -61,10 +61,10 @@ namespace GeoGen.DrawingLauncher
         #region IMetapostDrawer implementation
 
         /// <summary>
-        /// Draws given <see cref="TheoremWithRanking"/>s.
+        /// Draws given <see cref="RankedTheorem"/>s.
         /// </summary>
         /// <returns>The task representing the result.</returns>
-        public async Task DrawAsync(IEnumerable<TheoremWithRanking> rankedTheorems, int startingId)
+        public async Task DrawAsync(IEnumerable<RankedTheorem> rankedTheorems, int startingId)
         {
             // Create figures from configuration-theorem pair
             var figures = rankedTheorems.Select(CreateFigure).ToArray();
@@ -125,14 +125,14 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// Constructs a figure for a given ranked theorem.
         /// </summary>
-        /// <param name="theoremWithRanking">The theorem with ranking for which we're drawing a figure.</param>
+        /// <param name="rankedTheorem">The ranked theorem for which we're drawing a figure.</param>
         /// <returns>The MetaPost figure.</returns>
-        private MetapostFigure CreateFigure(TheoremWithRanking theoremWithRanking)
+        private MetapostFigure CreateFigure(RankedTheorem rankedTheorem)
         {
             // Safely execute
             var (pictures, constructionData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
-                () => _constructor.Construct(theoremWithRanking.Configuration, _settings.NumberOfPictures, LooseObjectDrawingStyle.Standard),
+                () => _constructor.Construct(rankedTheorem.Configuration, _settings.NumberOfPictures, LooseObjectDrawingStyle.Standard),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new ConstructionException("Drawing of the initial configuration failed.", e));
 
@@ -150,7 +150,7 @@ namespace GeoGen.DrawingLauncher
                     try
                     {
                         // Try to construct the figure
-                        var figure = ConstructFigure(theoremWithRanking, picture);
+                        var figure = ConstructFigure(rankedTheorem, picture);
 
                         // Rank it
                         var rank = figure.CalculateVisualBadness();
@@ -194,14 +194,14 @@ namespace GeoGen.DrawingLauncher
         /// Performs the construction of a MetaPost figure holding the passed theorem and its configuration
         /// with respect to the passed picture containing needed analytic objects.
         /// </summary>
-        /// <param name="theoremWithRanking">The theorem with ranking for which we're drawing a figure.</param>
+        /// <param name="rankedTheorem">The ranked theorem for which we're drawing a figure.</param>
         /// <param name="picture">The picture with analytic representations of the objects.</param>
         /// <returns>The constructed MetaPost figure.</returns>
-        private MetapostFigure ConstructFigure(TheoremWithRanking theoremWithRanking, Picture picture)
+        private MetapostFigure ConstructFigure(RankedTheorem rankedTheorem, Picture picture)
         {
             // Get the configuration and theorem for comfort
-            var configuration = theoremWithRanking.Configuration;
-            var theorem = theoremWithRanking.Theorem;
+            var configuration = rankedTheorem.Configuration;
+            var theorem = rankedTheorem.Theorem;
 
             // Create an empty figure
             var figure = new MetapostFigure();
@@ -734,7 +734,7 @@ namespace GeoGen.DrawingLauncher
                 // Prepare the ranking table by calling the macro for the ranking table
                 var rank = $"{_settings.RankingTableMacro}(" +
                     // Now we will append individual rankings
-                    theoremWithRanking.Ranking.Rankings
+                    rankedTheorem.Ranking.Rankings
                         // Sorted by the contribution
                         .OrderBy(pair => -pair.Value.Contribution)
                         // Now we can convert each to a single string with these 4 values. Add the type first
@@ -759,7 +759,7 @@ namespace GeoGen.DrawingLauncher
                     // Append a new line with some additional space 
                     .Concat("\"\\par\\medskip \"")
                     // Append the total ranking
-                    .Concat($"\"Total ranking: ${theoremWithRanking.Ranking.TotalRanking.ToStringWithDecimalDot()}$\"");
+                    .Concat($"\"Total ranking: ${rankedTheorem.Ranking.TotalRanking.ToStringWithDecimalDot()}$\"");
             }
 
             #endregion

@@ -54,7 +54,7 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// The factory for creating a lazy writer of a JSON output.
         /// </summary>
-        private readonly ITheoremWithRankingJsonLazyWriterFactory _writerFactory;
+        private readonly IRankedTheoremJsonLazyWriterFactory _writerFactory;
 
         /// <summary>
         /// The tracker of the used inference rules in theorem proofs.
@@ -89,7 +89,7 @@ namespace GeoGen.MainLauncher
                                        IGeneratedProblemAnalyzer analyzer,
                                        IBestTheoremFinder finder,
                                        IRankedTheoremWriter writer,
-                                       ITheoremWithRankingJsonLazyWriterFactory writerFactory,
+                                       IRankedTheoremJsonLazyWriterFactory writerFactory,
                                        IInferenceRuleUsageTracker tracker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -262,7 +262,7 @@ namespace GeoGen.MainLauncher
                 #region JSON output
 
                 // Wrap interesting theorems into objects that will be serialized to JSON
-                var theoremsWithRanking = analyzerOutput.InterestingTheorems.Select(theorem =>
+                var rankedTheorems = analyzerOutput.InterestingTheorems.Select(theorem =>
                 {
                     // Get the configuration based on whether the simplification was successful
                     var finalConfiguration = analyzerOutput.SimplifiedTheorems.GetValueOrDefault(theorem).newConfiguration ?? generatorOutput.Configuration;
@@ -273,14 +273,14 @@ namespace GeoGen.MainLauncher
                     // Get the ranking 
                     var ranking = analyzerOutput.TheoremRankings[theorem];
 
-                    // Construct the theorem with ranking
-                    return new TheoremWithRanking(finalTheorem, ranking, finalConfiguration);
+                    // Construct the ranked theorem
+                    return new RankedTheorem(finalTheorem, ranking, finalConfiguration);
                 })
                 // Enumerate
                 .ToArray();
 
                 // Write JSON output
-                outputJsonWriter.Write(theoremsWithRanking);
+                outputJsonWriter.Write(rankedTheorems);
 
                 #endregion
 
@@ -360,7 +360,7 @@ namespace GeoGen.MainLauncher
                 #region Best theorem finder 
 
                 // Let the finder judge them
-                _finder.AddTheorems(theoremsWithRanking, out var bestTheoremsChanged);
+                _finder.AddTheorems(rankedTheorems, out var bestTheoremsChanged);
 
                 // If there are some change in the global ladder
                 if (bestTheoremsChanged)

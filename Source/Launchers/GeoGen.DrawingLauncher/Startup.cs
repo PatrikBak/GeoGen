@@ -53,7 +53,7 @@ namespace GeoGen.DrawingLauncher
             Console.WriteLine();
 
             // Prepare the read content of the current file
-            TheoremWithRanking[] content = null;
+            RankedTheorem[] content = null;
 
             // Loop until break
             while (true)
@@ -80,7 +80,7 @@ namespace GeoGen.DrawingLauncher
                     try
                     {
                         // Read the content
-                        content = IoC.Kernel.Get<ITheoremWithRankingJsonLazyReader>().Read(path).ToArray();
+                        content = IoC.Kernel.Get<IRankedTheoremJsonLazyReader>().Read(path).ToArray();
 
                         // Make sure there is any theorem
                         if (content.Length == 0)
@@ -194,17 +194,17 @@ namespace GeoGen.DrawingLauncher
                     // Get the needed configurations and theorems for drawing
                     var drawerInput = content.ItemsBetween(start - 1, end)
                         // Make them symmetric if we are supposed to
-                        .Select(theoremWithRanking =>
+                        .Select(rankedTheorem =>
                         {
                             // If not, we're done
                             if (!reorderObjects)
-                                return theoremWithRanking;
+                                return rankedTheorem;
 
                             // If yes, make the configuration symmetric
-                            var configuration = MakeSymmetric((theoremWithRanking.Configuration, theoremWithRanking.Theorem));
+                            var configuration = MakeSymmetric((rankedTheorem.Configuration, rankedTheorem.Theorem));
 
-                            // And return the altered theorem with ranking object
-                            return new TheoremWithRanking(theoremWithRanking.Theorem, theoremWithRanking.Ranking, configuration);
+                            // And return the altered ranked theorem object
+                            return new RankedTheorem(rankedTheorem.Theorem, rankedTheorem.Ranking, configuration);
                         });
 
                     // Perform the drawing for the desired input

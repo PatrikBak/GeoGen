@@ -16,16 +16,16 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// The ladder of best theorems.
         /// </summary>
-        private readonly RankingLadder<TheoremWithRanking, TheoremRanking> _ladder;
+        private readonly RankingLadder<RankedTheorem, TheoremRanking> _ladder;
 
         #endregion
 
-        #region IBestTheoremTracker properties
+        #region IBestTheoremFinder properties
 
         /// <summary>
         /// The best theorems that currently have been found.
         /// </summary>
-        public IEnumerable<TheoremWithRanking> BestTheorems => _ladder.Select(pair => pair.item);
+        public IEnumerable<RankedTheorem> BestTheorems => _ladder.Select(pair => pair.item);
 
         #endregion
 
@@ -38,19 +38,19 @@ namespace GeoGen.MainLauncher
         public BestTheoremFinder(BestTheoremFinderSettings settings)
         {
             // Initialize the ladder with the requested capacity
-            _ladder = new RankingLadder<TheoremWithRanking, TheoremRanking>(capacity: settings.NumberOfTheorems);
+            _ladder = new RankingLadder<RankedTheorem, TheoremRanking>(capacity: settings.NumberOfTheorems);
         }
 
         #endregion
 
-        #region IBestTheoremsTracker methods
+        #region IBestTheoremFinder methods
 
         /// <summary>
         /// Gives given theorems for the finder to judge them.
         /// </summary>
         /// <param name="theorems">The theorems to be examined.</param>
         /// <param name="bestTheoremsChanged">Indicates whether <see cref="BestTheorems"/> has changed after adding all theorems.</param>
-        public void AddTheorems(IEnumerable<TheoremWithRanking> theorems, out bool bestTheoremsChanged)
+        public void AddTheorems(IEnumerable<RankedTheorem> theorems, out bool bestTheoremsChanged)
         {
             // Set the that the best theorems hasn't initially changed
             bestTheoremsChanged = false;

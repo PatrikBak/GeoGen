@@ -6,10 +6,10 @@ using System.IO;
 namespace GeoGen.MainLauncher
 {
     /// <summary>
-    /// An implementation of <see cref="ITheoremWithRankingJsonLazyWriter"/> that writes a long JSON array
-    /// of intermediate <see cref="TheoremWithRankingIntermediate"/> objects.
+    /// An implementation of <see cref="IRankedTheoremJsonLazyWriter"/> that writes a long JSON array
+    /// of intermediate <see cref="RankedTheoremIntermediate"/> objects.
     /// </summary>
-    public class TheoremWithRankingJsonLazyWriter : ITheoremWithRankingJsonLazyWriter
+    public class RankedTheoremJsonLazyWriter : IRankedTheoremJsonLazyWriter
     {
         #region Private fields
 
@@ -42,17 +42,17 @@ namespace GeoGen.MainLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TheoremWithRankingJsonLazyWriter"/> class.
+        /// Initializes a new instance of the <see cref="RankedTheoremJsonLazyWriter"/> class.
         /// </summary>
         /// <param name="filePath">The path to the file to write to.</param>
-        public TheoremWithRankingJsonLazyWriter(string filePath)
+        public RankedTheoremJsonLazyWriter(string filePath)
         {
             _filePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
         }
 
         #endregion
 
-        #region ITheoremsWithRankingLazyWriter implementation
+        #region IRankedTheoremJsonLazyWriter implementation
 
         /// <summary>
         /// Begins lazy writing.
@@ -71,17 +71,17 @@ namespace GeoGen.MainLauncher
         }
 
         /// <summary>
-        /// Writes a given theorem with ranking.
+        /// Writes a given ranked theorem.
         /// </summary>
-        /// <param name="theoremsWithRanking">The theorems ranking to be written.</param>
-        public void Write(IEnumerable<TheoremWithRanking> theoremsWithRanking)
+        /// <param name="rankedTheorems">The ranked theorems to be written.</param>
+        public void Write(IEnumerable<RankedTheorem> rankedTheorems)
         {
             // Check if we have begun
             if (!HasWritingBegun)
                 throw new InvalidOperationException("Writing hasn't begun yet.");
 
             // Go through the theorems 
-            foreach (var theoremWithRanking in theoremsWithRanking)
+            foreach (var rankedTheorem in rankedTheorems)
             {
                 // If we haven written anything, write a colon to separate entries
                 if (_firstEntryWritten)
@@ -91,7 +91,7 @@ namespace GeoGen.MainLauncher
                     _firstEntryWritten = true;
 
                 // Serialize the theorem
-                var theoremString = JsonConvert.SerializeObject(TheoremWithRankingIntermediate.Convert(theoremWithRanking));
+                var theoremString = JsonConvert.SerializeObject(RankedTheoremIntermediate.Convert(rankedTheorem));
 
                 // Write it
                 _writingStream.Write(theoremString);

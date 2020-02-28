@@ -42,7 +42,7 @@ namespace GeoGen.DrawingLauncher
             Kernel.Bind<IDrawingRuleProvider>().To<DrawingRuleProvider>().WithConstructorArgument(settings.DrawingRuleProviderSettings);
 
             // Bind the reader
-            Kernel.Bind<ITheoremWithRankingJsonLazyReader>().To<TheoremWithRankingJsonLazyReader>();
+            Kernel.Bind<IRankedTheoremJsonLazyReader>().To<RankedTheoremJsonLazyReader>();
 
             // Bind the drawer with its settings
             Kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)

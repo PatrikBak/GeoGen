@@ -3,9 +3,9 @@
 namespace GeoGen.MainLauncher
 {
     /// <summary>
-    /// Represents a writer of <see cref="TheoremWithRanking"/> objects that writes them lazily.
+    /// Represents a writer of <see cref="RankedTheorem"/> objects that writes them lazily.
     /// </summary>
-    public interface ITheoremWithRankingJsonLazyWriter
+    public interface IRankedTheoremJsonLazyWriter
     {
         /// <summary>
         /// Begins lazy writing.
@@ -13,10 +13,10 @@ namespace GeoGen.MainLauncher
         void BeginWriting();
 
         /// <summary>
-        /// Writes a given theorem with ranking.
+        /// Writes a given ranked theorem.
         /// </summary>
-        /// <param name="theoremsWithRanking">The theorems ranking to be written.</param>
-        void Write(IEnumerable<TheoremWithRanking> theoremsWithRanking);
+        /// <param name="rankedTheorems">The ranked theorems to be written.</param>
+        void Write(IEnumerable<RankedTheorem> rankedTheorems);
 
         /// <summary>
         /// Finishes lazy writing.
