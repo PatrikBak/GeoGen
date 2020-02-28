@@ -1,6 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.Utilities;
-using System.Linq;
 
 namespace GeoGen.TheoremRanker
 {
@@ -11,13 +9,7 @@ namespace GeoGen.TheoremRanker
     {
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
-            // Take the theorems
-            => allTheorems.AllObjects
-                // That use the last object of the configuration
-                .Where(theorem => theorem.GetInnerConfigurationObjects().Contains(configuration.LastConstructedObject))
-                // Except for this one
-                .Except(theorem.ToEnumerable())
-                // We want their count
-                .Count();
+            // Simply return the number of theorems
+            => allTheorems.AllObjects.Count;
     }
 }

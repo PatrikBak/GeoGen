@@ -41,6 +41,10 @@ namespace GeoGen.TheoremRanker
         /// it suitable to compare configurations with different numbers of constructed objects we will normalize this rank
         /// by dividing it by the number of constructed objects.
         /// </para>
+        /// <para>
+        /// Finally, the ranking will be equal to 1 - this coefficient so that the higher the ranking we have the better the 
+        /// theorem.
+        /// </para>
         /// </para>
         /// </summary>
         Simplification,
@@ -48,9 +52,15 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// The total number of theorems of the configuration. The idea behind this metrics is that if we have more theorems in
         /// a configuration, then it usually suggests the problem is not that difficult, because we can make lots of conclusions. 
-        /// This ranking might suggests a lot when there are very few theorems, but other than that it is not very reliable.
+        /// This ranking might suggests a lot when there are very few theorems.
         /// </summary>
         Theorems,
+
+        /// <summary>
+        /// The number of <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this metrics is that in configurations 
+        /// with more concyclic points it is usually easier to prove things, because of their powerful properties.
+        /// </summary>
+        Circles,
 
         /// <summary>
         /// The coefficient taking into account <see cref="TheoremType"/>. The value is taken from <see cref="TypeRankerSettings.TypeRankings"/>.

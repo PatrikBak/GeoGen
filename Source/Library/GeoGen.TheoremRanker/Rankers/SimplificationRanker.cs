@@ -34,13 +34,16 @@ namespace GeoGen.TheoremRanker
                 .ForEach(pair => levels.Add(pair.constructedObject, pair.level));
 
             // Now we can rank the theorem by taking its inner objects
-            return theorem.GetInnerConfigurationObjects()
+            var rank = theorem.GetInnerConfigurationObjects()
                 // Taking their levels
                 .Select(innerObject => levels[innerObject])
                 // Averaging them
                 .Average()
                 // And normalizing
                 / configuration.ConstructedObjects.Count;
+
+            // The final result is 1 - rank to keep to make it that the higher the ranking the better the theorem
+            return 1 - rank;
         }
     }
 }
