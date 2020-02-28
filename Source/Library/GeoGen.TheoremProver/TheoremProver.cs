@@ -186,20 +186,48 @@ namespace GeoGen.TheoremProver
             var proofBuilder = shouldWeConstructProofs ? new TheoremProofBuilder() : null;
 
             // Mark trivial theorems to the proof builder in case we are supposed to construct proofs
-            trivialTheorems.ForEach(theorem => proofBuilder?.AddImplication(TrivialTheorem, theorem, Array.Empty<Theorem>()));
+            trivialTheorems.ForEach(theorem => proofBuilder?.AddImplication(TrivialTheorem, theorem, assumptions: Array.Empty<Theorem>()));
 
             // Mark old theorems in case we are supposed to construct proofs
-            oldTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(TrueInPreviousConfiguration, theorem, Array.Empty<Theorem>()));
+            oldTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(TrueInPreviousConfiguration, theorem, assumptions: Array.Empty<Theorem>()));
+
+            #endregion
+
+            #region Theorems definable simpler
+
+            // Prepare the list of theorems definable simpler
+            var theoremsDefinableSimpler = new List<Theorem>();
+
+            // Go through the unproven theorems, i.e. new theorems except for trivial ones
+            foreach (var theoremToProve in newTheorems.AllObjects.Except(trivialTheorems))
+            {
+                // Find the redundant objects
+                var redundantObjects = theoremToProve.GetUnnecessaryObjects(picture.Pictures.Configuration);
+
+                // If there are none, then it cannot be defined simpler
+                if (redundantObjects.IsEmpty())
+                    continue;
+
+                // Otherwise add it to the list
+                theoremsDefinableSimpler.Add(theoremToProve);
+
+                // And make sure the proof builder knows it
+                proofBuilder?.AddImplication(new DefinableSimplerInferenceData(redundantObjects), theoremToProve, assumptions: Array.Empty<Theorem>());
+            }
 
             #endregion
 
             #region Normalization helper initialization
 
-            // Initially we are going to assume that the proved theorems are the old ones and the trivial theorems
-            var provedTheorems = oldTheorems.AllObjects.Concat(trivialTheorems);
+            // Initially we are going to assume that the proved theorems are the old ones
+            var provedTheorems = oldTheorems.AllObjects
+                // And trivial ones
+                .Concat(trivialTheorems)
+                // And ones with redundant objects
+                .Concat(theoremsDefinableSimpler);
 
-            // The theorems to prove will be the new ones except for the trivial ones
-            var theoremsToProve = newTheorems.AllObjects.Except(trivialTheorems);
+            // The theorems to prove will be the new ones except for the proved ones
+            var theoremsToProve = newTheorems.AllObjects.Except(provedTheorems);
 
             // Prepare the cloned pictures that will be used to numerically verify new theorems
             var clonedPictures = picture.Pictures.Clone();

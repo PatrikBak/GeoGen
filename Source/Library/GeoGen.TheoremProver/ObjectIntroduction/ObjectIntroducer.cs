@@ -58,6 +58,7 @@ namespace GeoGen.TheoremProver
                     var C = availableObject.PassedArguments.FlattenedList[2];
                     var I = availableObject;
 
+                    yield return new ConstructedConfigurationObject(Incircle, A, B, C).ToEnumerable();
                     yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C).ToEnumerable();
                     yield return new ConstructedConfigurationObject(InternalAngleBisector, B, A, C).ToEnumerable();
                     yield return new ConstructedConfigurationObject(InternalAngleBisector, C, A, B).ToEnumerable();
@@ -125,9 +126,12 @@ namespace GeoGen.TheoremProver
 
                 else if (availableObject.Construction.Name.Equals(nameof(Median)))
                 {
+                    var A = availableObject.PassedArguments.FlattenedList[0];
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
+                    yield return new ConstructedConfigurationObject(ParallelogramPoint, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Centroid, A, B, C).ToEnumerable();
                     yield return new ConstructedConfigurationObject(Midpoint, B, C).ToEnumerable();
                 }
 

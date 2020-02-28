@@ -1007,16 +1007,16 @@ namespace GeoGen.TheoremProver
             // We will not call the verifier right away. Theorems that use only objects of the original configuration
             // should all be there to prove (if they are not proven yet, but in that case, this method shouldn't get called)
             // In order to find out whether the theorem uses only objects of the configuration take the objects
-            var doesTheoremUsesOnlyOriginalObjects = provedTheorem.GetInnerConfigurationObjects()
+            var doesTheoremUseOnlyOriginalObjects = provedTheorem.GetInnerConfigurationObjects()
                 // That are constructed
                 .OfType<ConstructedConfigurationObject>()
                 // Check if they are among the original objects
                 .All(_pictures.Configuration.ConstructedObjectsSet.Contains);
 
             // If it uses only objects that are part of the original configuration,
-            if (doesTheoremUsesOnlyOriginalObjects)
+            if (doesTheoremUseOnlyOriginalObjects)
                 // Then it is correct if and only if it is among theorems to be proved
-                _theoremsToProve.Contains(provedTheorem);
+                return _theoremsToProve.Contains(provedTheorem);
 
             // Otherwise it contains a new object and we need to verify it numerically :/
             return _verifier.IsTrueInAllPictures(_pictures, provedTheorem);

@@ -3,7 +3,7 @@
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// Represents metadata of a derivation that uses <see cref="InferenceRuleType.CustomRule"/>.
+    /// Represents metadata of an inference that uses <see cref="InferenceRuleType.CustomRule"/>.
     /// </summary>
     public class CustomInferenceData : TheoremInferenceData
     {

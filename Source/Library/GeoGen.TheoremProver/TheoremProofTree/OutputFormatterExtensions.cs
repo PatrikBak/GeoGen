@@ -27,7 +27,7 @@ namespace GeoGen.TheoremProver
             string FormatTheoremProof(TheoremProof proof, string tag)
             {
                 // Start composing the result by formatting the theorem and the proof explanation
-                var result = $"{formatter.FormatTheorem(proof.Theorem)} - {GetProofExplanation(proof)}";
+                var result = $"{formatter.FormatTheorem(proof.Theorem)} - {GetProofExplanation(proof, formatter)}";
 
                 // If there is nothing left to write, we're done
                 if (proof.ProvedAssumptions.Count == 0)
@@ -61,7 +61,7 @@ namespace GeoGen.TheoremProver
                                 // If it's untagged, recursively find the proof string for it
                                 FormatTheoremProof(assumptionProof, newTag) :
                                 // Otherwise just state it again and add the explanation and the reference to it
-                                $"{formatter.FormatTheorem(theorem)} - {GetProofExplanation(assumptionProof)} - theorem {theoremTags[theorem]}";
+                                $"{formatter.FormatTheorem(theorem)} - {GetProofExplanation(assumptionProof, formatter)} - theorem {theoremTags[theorem]}";
 
                         // The final result is the new tag (even if it's tagged already) and the reasoning
                         return $"{newTag} {reasoning}";
@@ -80,8 +80,9 @@ namespace GeoGen.TheoremProver
         /// Returns a string representation the explanation of how a theorem has been proved.
         /// </summary>
         /// <param name="proof">The theorem proof to be examined.</param>
+        /// <param name="formatter">The formatter of the configuration where the proved theorem holds.</param>
         /// <returns>The explanation string.</returns>
-        private static string GetProofExplanation(TheoremProof proof)
+        private static string GetProofExplanation(TheoremProof proof, OutputFormatter formatter)
             // Switch based on the type of the used inference rule
             => proof.Rule switch
             {
@@ -99,6 +100,11 @@ namespace GeoGen.TheoremProver
 
                 // Case when the transitivity rule has been applied
                 EqualityTransitivity => "true because of the transitivity of equality",
+
+                // Case when the theorem can be stated without all objects
+                DefinableSimpler => $"can be stated without " +
+                    // State the redundant objects with their names
+                    $"{((DefinableSimplerInferenceData)proof.Data).RedundantObjects.Select(formatter.GetObjectName).ToJoinedString()}",
 
                 // Unhandled cases
                 _ => throw new TheoremProverException($"Unhandled value of {nameof(InferenceRuleType)}: {proof.Rule}"),

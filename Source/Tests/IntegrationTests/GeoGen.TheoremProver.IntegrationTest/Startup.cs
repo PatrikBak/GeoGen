@@ -71,7 +71,9 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 Parallelogram(),
                 HiddenExcenter(),
                 HiddenMidpoint(),
-                SlowOne(),
+                LineTangentToCircle(),
+                ConcurrencyViaObjectIntroduction(),
+                SimpleLineSegments(),
             }
             // Perform each
             .ForEach(configuration =>
@@ -242,20 +244,50 @@ namespace GeoGen.TheoremProver.IntegrationTest
             return Configuration.DeriveFromObjects(Triangle, D, E);
         }
 
-        private static Configuration SlowOne()
+        private static Configuration LineTangentToCircle()
         {
             // Create objects
             var A = new LooseConfigurationObject(Point);
             var B = new LooseConfigurationObject(Point);
             var C = new LooseConfigurationObject(Point);
-            var l = new ConstructedConfigurationObject(ExternalAngleBisector, A, B, C);
-            var D = new ConstructedConfigurationObject(PerpendicularProjection, B, l);
-            var E = new ConstructedConfigurationObject(PerpendicularProjection, C, l);
-            var F = new ConstructedConfigurationObject(ReflectionInLineFromPoints, B, C, E);
-            var G = new ConstructedConfigurationObject(ReflectionInLineFromPoints, C, B, D);
+            var D = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, D, B, C);
+            var F = new ConstructedConfigurationObject(PointReflection, E, D);
+            var G = new ConstructedConfigurationObject(ReflectionInLineFromPoints, F, A, D);
 
             // Return the configuration
-            return Configuration.DeriveFromObjects(Triangle, A, B, C, l, D, E, F, G);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        private static Configuration ConcurrencyViaObjectIntroduction()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Orthocenter, A, B, C);
+            var E = new ConstructedConfigurationObject(Circumcenter, B, C, D);
+            var F = new ConstructedConfigurationObject(ParallelogramPoint, A, B, C);
+            var G = new ConstructedConfigurationObject(Incenter, B, C, E);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        private static Configuration SimpleLineSegments()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var l = new ConstructedConfigurationObject(TangentLine, A, B, C);
+            var D = new ConstructedConfigurationObject(PerpendicularProjection, B, l);
+            var E = new ConstructedConfigurationObject(PerpendicularProjection, C, l);
+            var F = new ConstructedConfigurationObject(Midpoint, B, D);
+            var G = new ConstructedConfigurationObject(Midpoint, C, E);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
         }
 
         #endregion
