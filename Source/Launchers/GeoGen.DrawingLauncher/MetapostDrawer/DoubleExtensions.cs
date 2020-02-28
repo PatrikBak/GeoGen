@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+﻿using GeoGen.Utilities;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -14,7 +14,7 @@ namespace GeoGen.DrawingLauncher
         /// <returns></returns>
         public static string ToStringReadableByMetapost(this double value) =>
             // We need to use 339 digits because that's the maximal number of digits a double can have
-            // We also need to use the invariant culture to make sure we get the decimal point
-            value.ToString($"0.{new string('#', 339)}", CultureInfo.InvariantCulture);
+            // We also need to use the invariant string to make sure we get the decimal point
+            value.ToStringWithDecimalDot(numberOfDecimalPlaces: 339);
     }
 }

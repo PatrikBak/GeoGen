@@ -6,7 +6,6 @@ using GeoGen.MainLauncher;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -741,11 +740,11 @@ namespace GeoGen.DrawingLauncher
                         // Now we can convert each to a single string with these 4 values. Add the type first
                         .Select(pair => $"\"{pair.Key}\"," +
                             // Append the ranking
-                            $"\"{pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
+                            $"\"${pair.Value.Ranking.ToStringWithDecimalDot()}$\"," +
                             // Append the weight
-                            $"\"{pair.Value.Weight.ToString("0.##", CultureInfo.InvariantCulture)}\"," +
+                            $"\"${pair.Value.Weight.ToStringWithDecimalDot()}$\"," +
                             // Append the contribution
-                            $"\"{pair.Value.Contribution.ToString("0.##", CultureInfo.InvariantCulture)}\"")
+                            $"\"${pair.Value.Contribution.ToStringWithDecimalDot()}$\"")
                         // They are joined together by commas, the macro will take care of splitting these quadruples
                         .ToJoinedString(",")
                     // Append the end of the call
@@ -760,7 +759,7 @@ namespace GeoGen.DrawingLauncher
                     // Append a new line with some additional space 
                     .Concat("\"\\par\\medskip \"")
                     // Append the total ranking
-                    .Concat($"\"Total ranking: {theoremWithRanking.Ranking.TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)}\"");
+                    .Concat($"\"Total ranking: ${theoremWithRanking.Ranking.TotalRanking.ToStringWithDecimalDot()}$\"");
             }
 
             #endregion

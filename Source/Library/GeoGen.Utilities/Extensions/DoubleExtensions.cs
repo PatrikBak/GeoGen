@@ -1,4 +1,6 @@
-﻿namespace GeoGen.Utilities
+﻿using System.Globalization;
+
+namespace GeoGen.Utilities
 {
     /// <summary>
     /// Extension methods for <see cref="double"/>.
@@ -90,5 +92,24 @@
         /// <param name="number">The number to be squared.</param>
         /// <returns>The square of the number.</returns>
         public static double Squared(this double number) => number * number;
+
+        /// <summary>
+        /// Converts the number to a string with a decimal dot.
+        /// </summary>
+        /// <param name="number">The number.</param>
+        /// <param name="numberOfDecimalPlaces">The number of decimal places that should be in the result.</param>
+        /// <returns>The string representation of the number.</returns>
+        public static string ToStringWithDecimalDot(this double number, int numberOfDecimalPlaces = 2)
+        {
+            // Prepare the result by using # to indicate a decimal place and the invariant culture info to ensure a decimal dot
+            var result = number.ToString($"0.{new string('#', numberOfDecimalPlaces)}", CultureInfo.InvariantCulture);
+
+            // Sadly, negative 0 gets converted to -0, which is ugly, so let's fix it
+            if (result == "-0")
+                return "0";
+
+            // In other cases we have the result right away
+            return result;
+        }
     }
 }

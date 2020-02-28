@@ -8,7 +8,6 @@ using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using static GeoGen.Infrastructure.Log;
@@ -517,16 +516,16 @@ namespace GeoGen.MainLauncher
                     #region Writing ranking
 
                     // Write the total ranking
-                    result += $" - total ranking {rankings[theorem].TotalRanking.ToString("0.##", CultureInfo.InvariantCulture)}\n\n";
+                    result += $" - total ranking {rankings[theorem].TotalRanking.ToStringWithDecimalDot()}\n\n";
 
                     // Add individual rankings ordered by the total contribution (ASC) and then the aspect name
                     rankings[theorem].Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))
                         // Add each on an individual line with info about the weight
-                        .ForEach(pair => result += $"  {pair.Key,-25}weight = {pair.Value.Weight.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                        .ForEach(pair => result += $"  {pair.Key,-25}weight = {pair.Value.Weight.ToStringWithDecimalDot(),-10}" +
                             // The ranking
-                            $"ranking = {pair.Value.Ranking.ToString("0.##", CultureInfo.InvariantCulture),-10}" +
+                            $"ranking = {pair.Value.Ranking.ToStringWithDecimalDot(),-10}" +
                             // And the total contribution
-                            $"contribution = {pair.Value.Contribution.ToString("0.##", CultureInfo.InvariantCulture),-10}\n");
+                            $"contribution = {pair.Value.Contribution.ToStringWithDecimalDot(),-10}\n");
 
                     #endregion
 
