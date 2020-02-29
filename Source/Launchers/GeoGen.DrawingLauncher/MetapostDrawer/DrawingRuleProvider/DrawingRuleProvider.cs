@@ -104,9 +104,6 @@ namespace GeoGen.DrawingLauncher
             }
             catch (ParsingException e)
             {
-                // Log the content
-                LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
-
                 // Throw further
                 throw new GeoGenException($"Couldn't parse the drawing rule file {_settings.FilePath}.", e);
             }

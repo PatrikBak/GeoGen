@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -67,7 +68,7 @@ namespace GeoGen.DrawingLauncher
         public async Task DrawAsync(IEnumerable<RankedTheorem> rankedTheorems, int startingId)
         {
             // Create figures from configuration-theorem pair
-            var figures = rankedTheorems.Select(CreateFigure).ToArray();
+            var figures = rankedTheorems.Select((theorem, index) => CreateFigure(theorem, index + startingId)).ToArray();
 
             #region Writing code file
 
@@ -126,8 +127,9 @@ namespace GeoGen.DrawingLauncher
         /// Constructs a figure for a given ranked theorem.
         /// </summary>
         /// <param name="rankedTheorem">The ranked theorem for which we're drawing a figure.</param>
+        /// <param name="id">The id of the figure.</param>
         /// <returns>The MetaPost figure.</returns>
-        private MetapostFigure CreateFigure(RankedTheorem rankedTheorem)
+        private MetapostFigure CreateFigure(RankedTheorem rankedTheorem, int id)
         {
             // Safely execute
             var (pictures, constructionData) = GeneralUtilities.TryExecute(
@@ -161,10 +163,10 @@ namespace GeoGen.DrawingLauncher
                     catch (Exception e)
                     {
                         // Make aware if there is a weird problem
-                        Log.LoggingManager.LogWarning($"A problem with a picture. The message: {e.Message}\n");
+                        LoggingManager.LogWarning($"A problem with picture number {id}. The message: {e.Message}\n");
 
                         // Log the exception as a debug message
-                        Log.LoggingManager.LogDebug(e.ToString());
+                        LoggingManager.LogDebug(e.ToString());
 
                         // Return the default value indicating something didn't work
                         return default;
@@ -184,7 +186,7 @@ namespace GeoGen.DrawingLauncher
 
             // If the rank is maximal, i.e. ultimately bad figure, make aware
             if (rank == double.MaxValue)
-                Log.LoggingManager.LogWarning("The figure couldn't be drawn nicely.\n");
+                LoggingManager.LogWarning($"Figure {id} couldn't be drawn nicely.\n");
 
             // Return the figure anyway
             return figure;

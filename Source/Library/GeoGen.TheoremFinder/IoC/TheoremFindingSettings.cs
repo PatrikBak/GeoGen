@@ -47,11 +47,11 @@ namespace GeoGen.TheoremFinder
 
             // Ensure that tangent circles theorem finder settings are set if this theorem type is sought
             if (soughtTheoremTypes.Contains(TheoremType.TangentCircles) && tangentCirclesTheoremFinderSettings == null)
-                throw new ArgumentException("The tangent circles theorem finder must have its settings set as this theorem type is sought.");
+                throw new TheoremFinderException("The tangent circles theorem finder must have its settings set as this theorem type is sought.");
 
             // Ensure that line tangent to circle theorem finder settings are set if this theorem type is sought
             if (soughtTheoremTypes.Contains(TheoremType.LineTangentToCircle) && lineTangentToCircleTheoremFinderSettings == null)
-                throw new ArgumentException("The line tangent to circle theorem finder must have its settings set as this theorem type is sought.");
+                throw new TheoremFinderException("The line tangent to circle theorem finder must have its settings set as this theorem type is sought.");
         }
 
         #endregion

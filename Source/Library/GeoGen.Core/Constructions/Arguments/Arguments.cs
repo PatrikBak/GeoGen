@@ -7,11 +7,8 @@ using System.Linq;
 namespace GeoGen.Core
 {
     /// <summary>
-    /// Represents a list of <see cref="ConstructionArgument"/> that is directly 
-    /// part of the definition of <see cref="ConstructedConfigurationObject"/>s. 
-    /// 
-    /// FEATURE: I think the inner objects don't have to distinct, only within sets.
-    /// 
+    /// Represents a list of <see cref="ConstructionArgument"/> that is directly part of the 
+    /// definition of <see cref="ConstructedConfigurationObject"/>s. 
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>
     {

@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -323,7 +324,7 @@ namespace GeoGen.DrawingLauncher
                         message = $"{message.Trim()}\n\nError output:\n\n{commandException.ErrorOutput}";
 
                     // Write out the exception
-                    Log.LoggingManager.LogFatal(message);
+                    LoggingManager.LogFatal(message);
 
                     break;
 
@@ -331,7 +332,7 @@ namespace GeoGen.DrawingLauncher
                 default:
 
                     // Log it
-                    Log.LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{exception}");
+                    LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{exception}");
 
                     break;
             }

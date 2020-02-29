@@ -351,7 +351,7 @@ namespace GeoGen.MainLauncher
                 ConfigurationObjectType.Circle => new CircleTheoremObject(configurationObject),
 
                 // Unhandled cases
-                _ => throw new GeoGenException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}"),
+                _ => throw new ParsingException($"Unhandled value of {nameof(ConfigurationObjectType)}: {configurationObject.ObjectType}"),
             };
 
             // If the object is named, then parse it as an explicit object

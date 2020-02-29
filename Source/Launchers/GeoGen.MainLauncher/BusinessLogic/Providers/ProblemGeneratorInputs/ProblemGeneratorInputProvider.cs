@@ -92,7 +92,7 @@ namespace GeoGen.MainLauncher
                 catch (Exception e)
                 {
                     // If it cannot be done, make aware
-                    throw new GeoGenException($"Couldn't load the input file '{inputFilePath}'", e);
+                    throw new MainLauncherException($"Couldn't load the input file '{inputFilePath}'", e);
                 }
 
                 #endregion
@@ -136,11 +136,8 @@ namespace GeoGen.MainLauncher
                 }
                 catch (ParsingException e)
                 {
-                    // Log the content
-                    LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
-
                     // Throw further
-                    throw new GeoGenException($"Couldn't parse the input file {inputFilePath}.", e);
+                    throw new MainLauncherException($"Couldn't parse the input file {inputFilePath}.", e);
                 }
 
                 #endregion

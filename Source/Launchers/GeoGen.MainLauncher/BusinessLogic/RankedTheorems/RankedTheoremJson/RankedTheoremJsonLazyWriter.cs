@@ -61,7 +61,7 @@ namespace GeoGen.MainLauncher
         {
             // Check if we haven't begun
             if (HasWritingBegun)
-                throw new InvalidOperationException("Writing has already begun.");
+                throw new MainLauncherException("Writing has already begun.");
 
             // Create the writer
             _writingStream = new StreamWriter(new FileStream(_filePath, FileMode.Create, FileAccess.Write));
@@ -78,7 +78,7 @@ namespace GeoGen.MainLauncher
         {
             // Check if we have begun
             if (!HasWritingBegun)
-                throw new InvalidOperationException("Writing hasn't begun yet.");
+                throw new MainLauncherException("Writing hasn't begun yet.");
 
             // Go through the theorems 
             foreach (var rankedTheorem in rankedTheorems)
@@ -108,7 +108,7 @@ namespace GeoGen.MainLauncher
         {
             // Check if we have begun
             if (!HasWritingBegun)
-                throw new InvalidOperationException("Writing hasn't begun yet.");
+                throw new MainLauncherException("Writing hasn't begun yet.");
 
             // Write the end of the array
             _writingStream.Write("]");

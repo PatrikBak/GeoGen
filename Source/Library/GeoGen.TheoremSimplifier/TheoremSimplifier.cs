@@ -316,7 +316,7 @@ namespace GeoGen.TheoremSimplifier
 
                             // Unhandled cases
                             default:
-                                throw new GeoGenException($"Unhandled type of {nameof(ConfigurationObject)}: {template.GetType()}");
+                                throw new TheoremSimplifierException($"Unhandled type of {nameof(ConfigurationObject)}: {template.GetType()}");
                         }
                     })
                 );

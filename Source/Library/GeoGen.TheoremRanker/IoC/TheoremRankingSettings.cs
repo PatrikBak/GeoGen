@@ -44,11 +44,11 @@ namespace GeoGen.TheoremRanker
 
             // Ensure that theorem type ranker settings are set if this aspect is ranked
             if (theoremRankerSettings.RankingCoefficients.ContainsKey(RankedAspect.TheoremType) && theoremTypeRankerSettings == null)
-                throw new ArgumentException("The theorem type ranker must have its settings set as this aspect is ranked.");
+                throw new TheoremRankerException("The theorem type ranker must have its settings set as this aspect is ranked.");
 
             // Ensure that constructions ranker settings are set if this aspect is ranked
             if (theoremRankerSettings.RankingCoefficients.ContainsKey(RankedAspect.Constructions) && constructionsRankerSettings == null)
-                throw new ArgumentException("The constructions ranker must have its settings set as this aspect is ranked.");
+                throw new TheoremRankerException("The constructions ranker must have its settings set as this aspect is ranked.");
         }
 
         #endregion

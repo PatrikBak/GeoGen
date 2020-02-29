@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.MainLauncher
+﻿namespace GeoGen.MainLauncher
 {
     /// <summary>
     /// Contains all settings used in tracers writing information per batch.
@@ -52,11 +50,11 @@ namespace GeoGen.MainLauncher
 
             // Ensure that construction failure settings are set if they are supposed to be traced
             if (TraceConstructorFailures && constructorFailureTracerSettings == null)
-                throw new ArgumentException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
+                throw new MainLauncherException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
 
             // Ensure that geometry failure settings are set if they are supposed to be traced
             if (TraceGeometryFailures && geometryFailureTracerSettings == null)
-                throw new ArgumentException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
+                throw new MainLauncherException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
         }
 
         #endregion

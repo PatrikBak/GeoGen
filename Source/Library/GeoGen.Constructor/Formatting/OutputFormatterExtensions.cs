@@ -53,7 +53,7 @@ namespace GeoGen.Constructor
                         CircleObject _ => $"{result}({pointsString})",
 
                         // Otherwise we have an unhandled type
-                        _ => throw new GeoGenException($"Unhandled type of {nameof(DefinableByPoints)}: {objectWithPoints.GetType()}")
+                        _ => throw new ConstructorException($"Unhandled type of {nameof(DefinableByPoints)}: {objectWithPoints.GetType()}")
                     };
 
                 // If we have a point, we do nothing else
@@ -62,7 +62,7 @@ namespace GeoGen.Constructor
 
                 // Unhandled cases
                 default:
-                    throw new GeoGenException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
+                    throw new ConstructorException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
             }
         }
     }

@@ -60,7 +60,7 @@ namespace GeoGen.Constructor
                 InconsistentPicturesException e => e.Message,
 
                 // Unhandled cases
-                _ => throw new GeoGenException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}")
+                _ => throw new ConstructorException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}")
             };
         }
 
@@ -97,7 +97,7 @@ namespace GeoGen.Constructor
 
                     // Unhandled cases
                     default:
-                        throw new GeoGenException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
+                        throw new ConstructorException($"Unhandled type of {nameof(GeometricObject)}: {geometricObject.GetType()}");
                 }
             }
 
@@ -131,7 +131,7 @@ namespace GeoGen.Constructor
                 InconsistentPicturesException _ => Enumerable.Empty<ConfigurationObject>(),
 
                 // Unhandled cases
-                _ => throw new GeoGenException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}"),
+                _ => throw new ConstructorException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}"),
             };
         }
     }

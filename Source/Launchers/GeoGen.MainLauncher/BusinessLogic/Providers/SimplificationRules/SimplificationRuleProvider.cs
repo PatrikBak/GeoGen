@@ -57,7 +57,7 @@ namespace GeoGen.MainLauncher
             catch (Exception e)
             {
                 // If it cannot be done, make aware
-                throw new GeoGenException($"Couldn't load the simplification rule file '{_settings.FilePath}'", e);
+                throw new MainLauncherException($"Couldn't load the simplification rule file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -100,7 +100,7 @@ namespace GeoGen.MainLauncher
                 LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
 
                 // Throw further
-                throw new GeoGenException($"Couldn't parse the simplification rule file {_settings.FilePath}.", e);
+                throw new MainLauncherException($"Couldn't parse the simplification rule file {_settings.FilePath}.", e);
             }
 
             #endregion

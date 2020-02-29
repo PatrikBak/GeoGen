@@ -69,11 +69,8 @@ namespace GeoGen.MainLauncher
                 }
                 catch (Exception e)
                 {
-                    // Log which file failed
-                    LoggingManager.LogError($"Couldn't perform the algorithm on input file {index + 1} with path {input.FilePath}: {e.Message}");
-
-                    // Throw it further
-                    throw;
+                    // Log which file failed and the exception
+                    LoggingManager.LogError($"Couldn't perform the algorithm on input file {index + 1} with path {input.FilePath}: {e}");
                 }
             });
 

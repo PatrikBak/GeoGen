@@ -184,27 +184,27 @@ namespace GeoGen.MainLauncher
 
             // Ensure that the output folder without proofs is set if we are supposed to use it
             if (writeReadableOutputWithoutProofs && readableOutputWithoutProofsFolder == null)
-                throw new ArgumentException("The output folder without proofs must be set as we are going to use it.");
+                throw new MainLauncherException("The output folder without proofs must be set as we are going to use it.");
 
             // Ensure that the output folder with proofs is set if we are supposed to use it
             if (writeReadableOutputWithProofs && readableOutputWithProofsFolder == null)
-                throw new ArgumentException("The output folder with proofs must be set as we are going to use it.");
+                throw new MainLauncherException("The output folder with proofs must be set as we are going to use it.");
 
             // Ensure that the JSON output folder with proofs is set if we are supposed to use it
             if (writeJsonOutput && jsonOutputFolder == null)
-                throw new ArgumentException("The JSON output folder must be set as we are going to use it.");
+                throw new MainLauncherException("The JSON output folder must be set as we are going to use it.");
 
             // Ensure that the readable best theorem file path is set if we are supposed to use it
             if (writeReadableBestTheoremFile && readableBestTheoremFilePath == null)
-                throw new ArgumentException("The readable best theorem file path must be set as we are going to use it.");
+                throw new MainLauncherException("The readable best theorem file path must be set as we are going to use it.");
 
             // Ensure that the JSON best theorem file path is set if we are supposed to use it
             if (writeJsonBestTheoremFile && jsonBestTheoremFilePath == null)
-                throw new ArgumentException("The JSON best theorem file path must be set as we are going to use it.");
+                throw new MainLauncherException("The JSON best theorem file path must be set as we are going to use it.");
 
             // Ensure that the inference rule usage file path is set if we are supposed to use it
             if (writeInferenceRuleUsages && inferenceRuleUsageFilePath == null)
-                throw new ArgumentException("The inference rule file path must be set as we are going to use it.");
+                throw new MainLauncherException("The inference rule file path must be set as we are going to use it.");
 
             // Ensure the progress logging frequency is positive 
             if (logProgress && progressLoggingFrequency <= 0)
@@ -212,11 +212,11 @@ namespace GeoGen.MainLauncher
 
             // Ensure the file extension is set if we are supposed to use it
             if (writeReadableOutputWithoutProofs || writeReadableOutputWithProofs || fileExtension == null)
-                throw new ArgumentException("The file extension must be set as we are going to write as least one type of file with it.");
+                throw new MainLauncherException("The file extension must be set as we are going to write as least one type of file with it.");
 
             // Ensure the output file prefix is set if we are supposed to use it
             if (writeReadableOutputWithoutProofs || writeReadableOutputWithProofs || writeJsonOutput || outputFilePrefix == null)
-                throw new ArgumentException("The output file prefix must be set as we are going to write as least one type of file with it.");
+                throw new MainLauncherException("The output file prefix must be set as we are going to write as least one type of file with it.");
         }
 
         #endregion

@@ -3,14 +3,6 @@
     /// <summary>
     /// Represents a type of <see cref="Theorem"/> that are examined.
     /// </summary>
-    ///
-    /// FEATURE: New possible theorem types (see bellow):
-    /// 
-    ///   - Point to Line equal distance
-    ///   - Interesting angles (15, 30, 45, 60, 75...)
-    ///   - Similar triangles
-    ///   - Areas / ratios
-    ///   
     public enum TheoremType
     {
         /// <summary>
