@@ -1,6 +1,7 @@
 ﻿using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
 using GeoGen.ProblemGenerator;
+using GeoGen.Utilities;
 using System;
 using static GeoGen.Infrastructure.Log;
 
@@ -86,9 +87,12 @@ namespace GeoGen.ConfigurationGenerationLauncher
                         throw new ConfigurationGenerationLauncherException($"Unhandled value of {nameof(CountingMode)}: {_settings.CountingMode}");
                 }
 
-                // If we're logging and if we should log, do it
+                // If we're logging and if we should log
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
-                    LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}");
+                    // Log the number of generated configurations
+                    LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
+                        // As well as currently used memory
+                        $"used memory: {((double)GC.GetTotalMemory(forceFullCollection: false) / 1000000).ToStringWithDecimalDot()} MB");
             }
 
             // Log the final number
