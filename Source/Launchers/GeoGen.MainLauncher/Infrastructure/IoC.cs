@@ -51,7 +51,6 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
             Kernel.Bind<IBestTheoremFinder>().To<BestTheoremFinder>().WithConstructorArgument(settings.BestTheoremFinderSettings);
-            Kernel.Bind<IRankedTheoremWriter>().To<RankedTheoremWriter>();
             Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
 

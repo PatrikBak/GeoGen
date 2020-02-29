@@ -10,9 +10,9 @@ namespace GeoGen.MainLauncher
     public interface IInferenceRuleUsageTracker
     {
         /// <summary>
-        /// The dictionary containing the counts of the used rules. It includes even rules that have not been used.
+        /// The dictionary containing the counts of the used rules.
         /// </summary>
-        public IReadOnlyDictionary<InferenceRule, int> UsedRulesCounts { get; }
+        public IReadOnlyDictionary<InferenceRule, int> RuleUsages { get; }
 
         /// <summary>
         /// Finds and tracks the inner used rules of given proofs.

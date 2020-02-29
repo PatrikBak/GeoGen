@@ -16,8 +16,9 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="formatter">The output formatter.</param>
         /// <param name="proof">The theorem proof to be formatted.</param>
+        /// <param name="tag">The starting tag of the theorem string. It is empty by default.</param>
         /// <returns>The string representing the theorem proof.</returns>
-        public static string FormatTheoremProof(this OutputFormatter formatter, TheoremProof proof)
+        public static string FormatTheoremProof(this OutputFormatter formatter, TheoremProof proof, string tag = "")
         {
             // Prepare a dictionary of theorem tags that are used to avoid repetition in the proof tree
             var theoremTags = new Dictionary<Theorem, string>();
@@ -72,8 +73,8 @@ namespace GeoGen.TheoremProver
                 return $"{result}{assumptionsString.ToJoinedString("\n").TrimEnd()}\n";
             }
 
-            // Call the local recursive function with no previous tag
-            return FormatTheoremProof(proof, tag: "");
+            // Call the local recursive function with the passed tag
+            return FormatTheoremProof(proof, tag);
         }
 
         /// <summary>

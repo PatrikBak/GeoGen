@@ -25,9 +25,9 @@ namespace GeoGen.MainLauncher
         #region IInferenceRuleUsageTracker properties
 
         /// <summary>
-        /// The dictionary containing the counts of the used rules. It includes even rules that have not been used.
+        /// The dictionary containing the counts of the used rules.
         /// </summary>
-        public IReadOnlyDictionary<InferenceRule, int> UsedRulesCounts => _inferenceRuleUsages;
+        public IReadOnlyDictionary<InferenceRule, int> RuleUsages => _inferenceRuleUsages;
 
         #endregion
 
