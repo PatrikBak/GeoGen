@@ -40,12 +40,9 @@ namespace GeoGen.DrawingLauncher
 
         #endregion
 
-        #region IDrawingRulesProvider implementation
+        #region IDrawingRuleProvider implementation
 
-        /// <summary>
-        /// Gets drawing rules.
-        /// </summary>
-        /// <returns>The drawing rules.</returns>
+        /// <inheritdoc/>
         public async Task<IReadOnlyList<DrawingRule>> GetDrawingRulesAsync()
         {
             #region Loading the file

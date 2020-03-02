@@ -49,37 +49,25 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => Name.GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a construction
                 && otherObject is Construction construction
                 // And the names match
                 && construction.Name.Equals(Name);
-        }
 
         #endregion
 
         #region To String
 
-        /// <summary>
-        /// Converts the construction to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the construction.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{Name}({Signature})";
 
         #endregion

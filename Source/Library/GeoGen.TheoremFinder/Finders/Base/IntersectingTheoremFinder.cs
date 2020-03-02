@@ -32,12 +32,7 @@ namespace GeoGen.TheoremFinder
 
         #region Protected overridden methods
 
-        /// <summary>
-        /// Finds out if given geometric objects represent a true theorem.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <param name="objects">The geometric objects that represent the theorem.</param>
-        /// <returns>true, if the theorem holds true; false otherwise.</returns>
+        /// <inheritdoc/>
         protected override bool RepresentsTrueTheorem(ContextualPicture contextualPicture, GeometricObject[] objects)
         {
             // Prepare the variable that indicates whether the objects

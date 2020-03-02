@@ -79,13 +79,6 @@ namespace GeoGen.Constructor
         /// <returns>true, if it contains all the points; false otherwise.</returns>
         public bool ContainsAll(IEnumerable<PointObject> points) => _points.IsSupersetOf(points);
 
-        /// <summary>
-        /// Finds out if this object contains the passed point.
-        /// </summary>
-        /// <param name="points">The point to be checked.</param>
-        /// <returns>true, if it contains the point; false otherwise.</returns>
-        public bool Contains(PointObject point) => _points.Contains(point);
-
         #endregion
     }
 }

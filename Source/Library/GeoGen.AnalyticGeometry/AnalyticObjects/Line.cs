@@ -153,10 +153,8 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point">The given point.</param>
         /// <returns>true, if the point lies on the line; false otherwise.</returns>
         public bool Contains(Point point)
-        {
             // We check if the point's coordinates meet the equation of the line
-            return (A * point.X + B * point.Y + C).Rounded() == 0;
-        }
+            => (A * point.X + B * point.Y + C).Rounded() == 0;
 
         /// <summary>
         /// Finds out if a given line is parallel to this one.
@@ -164,11 +162,9 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="otherLine">The other line.</param>
         /// <returns>true, if the lines are parallel; false otherwise.</returns>
         public bool IsParallelTo(Line otherLine)
-        {
             // We check if their normal vectors are the same 
             // (they are normalized, so they uniformly define the direction)
-            return A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded();
-        }
+            => A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded();
 
         /// <summary>
         /// Finds out if a given line is perpendicular to this one.
@@ -176,10 +172,8 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="otherLine">The line to be checked.</param>
         /// <returns>true, if the lines are perpendicular; false otherwise.</returns>
         public bool IsPerpendicularTo(Line otherLine)
-        {
             // We check if their normal vectors (A,B), (otherA, otherB) are perpendicular using the scalar product
-            return (A * otherLine.A + B * otherLine.B).Rounded() == 0;
-        }
+            => (A * otherLine.A + B * otherLine.B).Rounded() == 0;
 
         #endregion
 
@@ -205,47 +199,28 @@ namespace GeoGen.AnalyticGeometry
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (A.Rounded(), B.Rounded(), C.Rounded()).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Do the null and then the type check and then call the other Equals method
-            return otherObject != null && otherObject is Line line && Equals(line);
-        }
+            => otherObject != null && otherObject is Line line && Equals(line);
 
         #endregion
 
         #region IEquatable implementation
 
-        /// <summary>
-        /// Finds out if the passed line is equal to this one.
-        /// </summary>
-        /// <param name="otherLine">The other line.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public bool Equals(Line otherLine)
-        {
             // We can simply compare the equations of our lines because they are normalized
-            return A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded() && C.Rounded() == otherLine.C.Rounded();
-        }
+            => A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded() && C.Rounded() == otherLine.C.Rounded();
 
         #endregion
 
         #region To String
 
-        /// <summary>
-        /// Converts a given line to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the line.</returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             // I know this is crazy to read, but the result is pretty

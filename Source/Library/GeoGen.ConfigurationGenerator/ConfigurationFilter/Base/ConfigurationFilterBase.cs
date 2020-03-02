@@ -20,9 +20,7 @@ namespace GeoGen.ConfigurationGenerator
 
         #region IConfigurationFilter properties
 
-        /// <summary>
-        /// The type of the filter.
-        /// </summary>
+        /// <inheritdoc/>
         public ConfigurationFilterType Type { get; }
 
         #endregion
@@ -50,21 +48,14 @@ namespace GeoGen.ConfigurationGenerator
         /// </summary>
         /// <returns>The inferred type.</returns>
         private ConfigurationFilterType FindTypeFromClassName()
-        {
             // Call the utility helper that does the job
-            return EnumUtilities.ParseEnumValueFromClassName<ConfigurationFilterType>(GetType(), classNamePrefix: "ConfigurationFilter");
-        }
+            => EnumUtilities.ParseEnumValueFromClassName<ConfigurationFilterType>(GetType(), classNamePrefix: "ConfigurationFilter");
 
         #endregion
 
         #region IConfigurationFilter methods
 
-        /// <summary>
-        /// Finds out if the configuration should be excluded by the algorithm, because it is 
-        /// not the representant of the equivalence class of equal configurations.
-        /// </summary>
-        /// <param name="configuration">The configuration that should be tested for exclusion.</param>
-        /// <returns>true, if the configuration should be excluded; false otherwise.</returns>
+        /// <inheritdoc/>
         public abstract bool ShouldBeExcluded(Configuration configuration);
 
         #endregion

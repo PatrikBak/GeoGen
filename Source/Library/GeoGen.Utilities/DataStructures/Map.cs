@@ -148,16 +148,10 @@ namespace GeoGen.Utilities
 
         #region IEnumerable implementation
 
-        /// <summary>
-        /// Gets a generic enumerator.
-        /// </summary>
-        /// <returns>A generic enumerator.</returns>
+        /// <inheritdoc/>
         public IEnumerator<(T1, T2)> GetEnumerator() => _leftToRight.Select(pair => (pair.Key, pair.Value)).GetEnumerator();
 
-        /// <summary>
-        /// Gets a non-generic enumerator.
-        /// </summary>
-        /// <returns>A non-generic enumerator.</returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

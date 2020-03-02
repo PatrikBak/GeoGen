@@ -33,18 +33,12 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region IObjectsConstructor implementation
+        #region IObjectConstructor implementation
 
-        /// <summary>
-        /// Creates a function that can perform the actual geometric construction of a given
-        /// constructed configuration object, finding the needed objects in a given picture.
-        /// </summary>
-        /// <param name="constructedObjects">The object to be constructed.</param>
-        /// <returns>The function that can perform the actual construction using the context from a given picture.</returns>
+        /// <inheritdoc/>
         public Func<Picture, IAnalyticObject> Construct(ConstructedConfigurationObject configurationObject)
-        {
             // Return the function that takes a picture as an input and returns the result of a construction
-            return picture =>
+            => picture =>
             {
                 // Get the analytic versions of the objects passed in the arguments       
                 var analyticObjects = configurationObject.PassedArguments.FlattenedList.Select(picture.Get).ToArray();
@@ -64,7 +58,6 @@ namespace GeoGen.Constructor
                     return null;
                 }
             };
-        }
 
         #endregion
 

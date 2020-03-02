@@ -13,39 +13,23 @@ namespace GeoGen.TheoremFinder
     {
         #region TheoremFinderBase implementation
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration.</returns>      
+        /// <inheritdoc/>
         public override IEnumerable<Theorem> FindAllTheorems(ContextualPicture contextualPicture)
-        {
             // Take all options
-            return GetAllOptions(contextualPicture)
+            => GetAllOptions(contextualPicture)
                 // That represent a true theorem
                 .Where(objects => RepresentsTrueTheorem(contextualPicture, objects))
                 // Cast each to theorems
                 .SelectMany(ToTheorems);
-        }
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture and in their statement use the
-        /// last object of the configuration, while there is no geometrically distinct
-        /// way to state them without this last object.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration that need the last object.</returns>
+        /// <inheritdoc/>
         public override IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture)
-        {
             // Take new options
-            return GetNewOptions(contextualPicture)
+            => GetNewOptions(contextualPicture)
                 // That represent a true theorem
                 .Where(objects => RepresentsTrueTheorem(contextualPicture, objects))
                 // Cast each to theorems
                 .SelectMany(ToTheorems);
-        }
 
         #endregion
 

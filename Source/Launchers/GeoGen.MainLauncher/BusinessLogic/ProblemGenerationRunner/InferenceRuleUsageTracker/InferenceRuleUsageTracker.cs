@@ -24,9 +24,7 @@ namespace GeoGen.MainLauncher
 
         #region IInferenceRuleUsageTracker properties
 
-        /// <summary>
-        /// The dictionary containing the counts of the used rules.
-        /// </summary>
+        /// <inheritdoc/>
         public IReadOnlyDictionary<InferenceRule, int> RuleUsages => _inferenceRuleUsages;
 
         #endregion
@@ -47,10 +45,7 @@ namespace GeoGen.MainLauncher
 
         #region IInferenceRuleUsageTracker methods
 
-        /// <summary>
-        /// Finds and tracks the inner used rules of given proofs.
-        /// </summary>
-        /// <param name="proofs">The proofs.</param>
+        /// <inheritdoc/>
         public void MarkProofs(IEnumerable<TheoremProof> proofs)
         {
             // Prepare a set of theorems whose proof has been processed

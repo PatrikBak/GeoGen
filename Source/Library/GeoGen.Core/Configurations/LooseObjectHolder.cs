@@ -118,21 +118,13 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (Layout, LooseObjects.GetHashCodeOfList()).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a loose object holder
@@ -141,7 +133,6 @@ namespace GeoGen.Core
                 && holder.Layout.Equals(Layout)
                 // And the loose objects are equal
                 && holder.LooseObjects.SequenceEqual(LooseObjects);
-        }
 
         #endregion
 
@@ -149,10 +140,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the loose objects holder to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{Layout}({LooseObjects.Select(looseObject => looseObject.Id).ToJoinedString()})";
 
 #endif

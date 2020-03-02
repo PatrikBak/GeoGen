@@ -36,10 +36,8 @@ namespace GeoGen.TheoremRanker
         /// </summary>
         /// <returns>The inferred ranked aspect.</returns>
         private RankedAspect FindRankedAspectFromClassName()
-        {
             // Call the utility helper that does the job
-            return EnumUtilities.ParseEnumValueFromClassName<RankedAspect>(GetType(), classNamePrefix: "Ranker");
-        }
+            => EnumUtilities.ParseEnumValueFromClassName<RankedAspect>(GetType(), classNamePrefix: "Ranker");
 
         #endregion
 

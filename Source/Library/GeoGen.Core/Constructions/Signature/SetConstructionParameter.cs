@@ -43,10 +43,7 @@ namespace GeoGen.Core
 
         #region To String
 
-        /// <summary>
-        /// Converts the set construction parameter to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{{{Enumerable.Repeat(TypeOfParameters.ToString(), NumberOfParameters).ToJoinedString()}}}";
 
         #endregion

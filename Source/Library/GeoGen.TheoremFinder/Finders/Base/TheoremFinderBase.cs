@@ -13,9 +13,7 @@ namespace GeoGen.TheoremFinder
     {
         #region ITypedTheoremFinder properties
 
-        /// <summary>
-        /// The type of theorems that this theorem finder finds.
-        /// </summary>
+        /// <inheritdoc/>
         public TheoremType Type { get; }
 
         #endregion
@@ -41,10 +39,8 @@ namespace GeoGen.TheoremFinder
         /// </summary>
         /// <returns>The inferred type.</returns>
         private TheoremType FindTypeFromClassName()
-        {
             // Call the utility helper that does the job
-            return EnumUtilities.ParseEnumValueFromClassName<TheoremType>(GetType(), classNamePrefix: "TheoremFinder");
-        }
+            => EnumUtilities.ParseEnumValueFromClassName<TheoremType>(GetType(), classNamePrefix: "TheoremFinder");
 
         #endregion
 
@@ -138,22 +134,10 @@ namespace GeoGen.TheoremFinder
 
         #region ITypedTheoremFinder implementation
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration.</returns>
+        /// <inheritdoc/>
         public abstract IEnumerable<Theorem> FindAllTheorems(ContextualPicture contextualPicture);
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture and in their statement use the
-        /// last object of the configuration, while there is no geometrically distinct
-        /// way to state them without this last object.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration that need the last object.</returns>
+        /// <inheritdoc/>
         public abstract IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture);
 
         #endregion

@@ -73,10 +73,7 @@ namespace GeoGen.Constructor
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the point object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{ConfigurationObject.Id}";
 
 #endif

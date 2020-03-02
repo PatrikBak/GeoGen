@@ -42,13 +42,7 @@ namespace GeoGen.MainLauncher
 
         #region IGeometryFailureTracer implementation
 
-        /// <summary>
-        /// Traces that given pictures couldn't be cloned and extended with the new object
-        /// already drawn in pictures representing some configuration.
-        /// </summary>
-        /// <param name="previousPictures">The pictures that were correct and failed to add the new object.</param>
-        /// <param name="newConfiguration">The new configuration that was attempted to be drawn.</param>
-        /// <param name="exception">The inner inconsistency exception that caused the issue.</param>
+        /// <inheritdoc/>
         public void InconstructiblePicturesByCloning(PicturesOfConfiguration previousPictures, Configuration newConfiguration, InconsistentPicturesException exception)
         {
             // Prepare the initial information string

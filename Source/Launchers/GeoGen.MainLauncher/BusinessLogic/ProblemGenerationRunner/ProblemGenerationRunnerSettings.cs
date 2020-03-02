@@ -211,11 +211,11 @@ namespace GeoGen.MainLauncher
                 throw new ArgumentOutOfRangeException(nameof(progressLoggingFrequency), "The progress logging frequency must be at least 1");
 
             // Ensure the file extension is set if we are supposed to use it
-            if (writeReadableOutputWithoutProofs || writeReadableOutputWithProofs || fileExtension == null)
+            if ((writeReadableOutputWithoutProofs || writeReadableOutputWithProofs) && fileExtension == null)
                 throw new MainLauncherException("The file extension must be set as we are going to write as least one type of file with it.");
 
             // Ensure the output file prefix is set if we are supposed to use it
-            if (writeReadableOutputWithoutProofs || writeReadableOutputWithProofs || writeJsonOutput || outputFilePrefix == null)
+            if ((writeReadableOutputWithoutProofs || writeReadableOutputWithProofs || writeJsonOutput) && outputFilePrefix == null)
                 throw new MainLauncherException("The output file prefix must be set as we are going to write as least one type of file with it.");
         }
 

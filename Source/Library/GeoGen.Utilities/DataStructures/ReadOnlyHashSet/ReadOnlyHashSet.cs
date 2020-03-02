@@ -51,65 +51,43 @@ namespace GeoGen.Utilities
 
         #region IReadOnlyHashSet implementation
 
-        /// <summary>
-        /// Finds out if a given item is present in the set.
-        /// </summary>
-        /// <param name="item">The item.</param>
-        /// <returns>true, if the set contains the item; false otherwise.</returns>
+        /// <inheritdoc/>
         public bool Contains(T item) => _set.Contains(item);
 
         #endregion
 
         #region IEnumerable implementation
 
-        /// <summary>
-        /// Gets the generic enumerator.
-        /// </summary>
-        /// <returns>The enumerator.</returns>
+        /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator() => _set.GetEnumerator();
 
-        /// <summary>
-        /// Gets the non-generic enumerator.
-        /// </summary>
-        /// <returns>The non-generic enumerator.</returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
 
         #region IReadOnly collection implementation
 
-        /// <summary>
-        /// Gets the number of items in the set.
-        /// </summary>
+        /// <inheritdoc/>
         public int Count => _set.Count;
 
         #endregion
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => SetComparer.GetHashCode(_set);
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
-
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return otherObject == this
+            => otherObject == this
                 // Or the object is not null
                 || otherObject != null
                 // And is a read-only hash set
                 && otherObject is ReadOnlyHashSet<T> otherSet
                 // And the comparer says they're equal
                 && SetComparer.Equals(_set, otherSet._set);
-        }
 
         #endregion
     }

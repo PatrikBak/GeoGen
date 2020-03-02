@@ -119,18 +119,12 @@ namespace GeoGen.Utilities
 
         #region IEnumerable implementation
 
-        /// <summary>
-        /// Gets a generic enumerator.
-        /// </summary>
-        /// <returns>A generic enumerator.</returns>
+        /// <inheritdoc/>
         public IEnumerator<(TItem item, TRank rank)> GetEnumerator() =>
             // The items are sorted in the descending order, i.e. we want to reverse them in the end
             _content.SelectMany(pair => pair.Value.Select(rank => (rank, pair.Key))).Reverse().GetEnumerator();
 
-        /// <summary>
-        /// Gets a non-generic enumerator.
-        /// </summary>
-        /// <returns>A non-generic enumerator.</returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

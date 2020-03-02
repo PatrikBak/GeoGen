@@ -13,29 +13,18 @@ namespace GeoGen.TheoremFinder
     /// </summary>
     public class EqualAnglesTheoremFinder : TrueInAllPicturesTheoremFinder
     {
-        /// <summary>
-        /// Gets all options for a theorem represented as an array of geometric points.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetAllOptions(ContextualPicture contextualPicture)
-        {
             // Get all lines
-            return contextualPicture.AllLines.ToList()
+            => contextualPicture.AllLines.ToList()
                 // And all its pairs
                 .UnorderedPairs().ToList()
                 // And all pairs of these pairs
                 .UnorderedPairs()
                 // Each represents 4 lines
                 .Select(lines => new[] { lines.Item1.Item1, lines.Item1.Item2, lines.Item2.Item1, lines.Item2.Item2 });
-        }
 
-        /// <summary>
-        /// Gets all options for a new theorem represented as an array of geometric points.
-        /// Such theorems cannot be stated without the last object of the configuration. 
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetNewOptions(ContextualPicture contextualPicture)
         {
             // Find new lines
@@ -73,11 +62,7 @@ namespace GeoGen.TheoremFinder
                     yield return new[] { line1, line2, line3, line4 };
         }
 
-        /// <summary>
-        /// Finds out if the theorem given in analytic objects holds true.
-        /// </summary>
-        /// <param name="objects">The analytic objects.</param>
-        /// <returns>true, if the theorem holds true; false otherwise.</returns>
+        /// <inheritdoc/>
         protected override bool IsTrue(IAnalyticObject[] objects)
         {
             // Find their angles

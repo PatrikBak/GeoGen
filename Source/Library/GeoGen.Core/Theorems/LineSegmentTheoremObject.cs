@@ -33,15 +33,7 @@ namespace GeoGen.Core
 
         #region Remap implementation
 
-        /// <summary>
-        /// Recreates the theorem object by applying a given mapping of the inner configuration objects.
-        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem object must be
-        /// present in the mapping. If the mapping cannot be done (for example because 2 points
-        /// making a line are mapped to the same point), then null is returned.
-        /// </summary>
-        /// <param name="mapping">The dictionary representing the mapping.</param>
-        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
-        /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
+        /// <inheritdoc/>
         public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Remap the objects

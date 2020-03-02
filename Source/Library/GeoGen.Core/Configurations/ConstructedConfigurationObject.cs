@@ -64,11 +64,7 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Recreates the object using a given mapping of loose objects.
-        /// </summary>
-        /// <param name="mapping">The mapping of the loose objects.</param>
-        /// <returns>The remapped object.</returns>
+        /// <inheritdoc/>
         public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
         {
             // We reuse the construction and remap arguments
@@ -107,21 +103,13 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (Construction, PassedArguments).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equal
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a constructed object
@@ -130,7 +118,6 @@ namespace GeoGen.Core
                 && constructedObject.Construction.Equals(Construction)
                 // And their arguments are equal
                 && constructedObject.PassedArguments.Equals(PassedArguments);
-        }
 
         #endregion
 
@@ -138,10 +125,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the constructed configuration object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the object.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{Id}={Construction.Name}({PassedArguments})";
 
 #endif

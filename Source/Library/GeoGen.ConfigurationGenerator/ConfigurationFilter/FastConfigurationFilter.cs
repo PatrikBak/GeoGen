@@ -41,12 +41,7 @@ namespace GeoGen.ConfigurationGenerator
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Finds out if the configuration should be excluded by the algorithm, because it is 
-        /// not the representant of the equivalence class of equal configurations.
-        /// </summary>
-        /// <param name="configuration">The configuration that should be tested for exclusion.</param>
-        /// <returns>true, if the configuration should be excluded; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool ShouldBeExcluded(Configuration configuration)
         {
             // Helper function that makes sure the passed objects have ids in the ids dictionary, 

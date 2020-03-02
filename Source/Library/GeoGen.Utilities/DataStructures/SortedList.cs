@@ -22,16 +22,10 @@ namespace GeoGen.Utilities
 
         #region IReadOnlyList implementation
 
-        /// <summary>
-        /// Gets the items at a specific index.
-        /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>The item at the index.</returns>
+        /// <inheritdoc/>
         public T this[int index] => _items.Keys[index];
 
-        /// <summary>
-        /// Gets the number of items of the list.
-        /// </summary>
+        /// <inheritdoc/>
         public int Count => _items.Count;
 
         #endregion
@@ -70,16 +64,10 @@ namespace GeoGen.Utilities
 
         #region IEnumerable implementation
 
-        /// <summary>
-        /// Gets a generic enumerator.
-        /// </summary>
-        /// <returns>A generic enumerator.</returns>
+        /// <inheritdoc/>
         public IEnumerator<T> GetEnumerator() => _items.Keys.GetEnumerator();
 
-        /// <summary>
-        /// Gets a non-generic enumerator.
-        /// </summary>
-        /// <returns>A non-generic enumerator.</returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion

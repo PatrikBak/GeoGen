@@ -21,23 +21,12 @@ namespace GeoGen.Infrastructure
 
         #region JsonConverter implementation
 
-        /// <summary>
-        /// Determines whether this instance can convert the specified object type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>true if this instance can convert the specified object type; otherwise, false.</returns>
+        /// <inheritdoc/>
         public override bool CanConvert(Type objectType)
             // We can convert only derived types of the BaseLoggerSettings
             => typeof(BaseLoggerSettings).IsAssignableFrom(objectType);
 
-        /// <summary>
-        /// Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The reader to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>The read object value.</returns>
+        /// <inheritdoc/>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             // Get the JSON object representing the current settings
@@ -62,12 +51,7 @@ namespace GeoGen.Infrastructure
             };
         }
 
-        /// <summary>
-        /// Writes the JSON representation of the object.
-        /// </summary>
-        /// <param name="writer">The writer to write to.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The calling serializer.</param>
+        /// <inheritdoc/>
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             // Find the name of the logger

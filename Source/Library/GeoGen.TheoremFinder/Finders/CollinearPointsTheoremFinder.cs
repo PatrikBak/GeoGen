@@ -11,16 +11,10 @@ namespace GeoGen.TheoremFinder
     /// </summary>
     public class CollinearPointsTheoremFinder : TheoremFinderBase
     {
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration.</returns>       
+        /// <inheritdoc/>     
         public override IEnumerable<Theorem> FindAllTheorems(ContextualPicture contextualPicture)
-        {
             // Take all lines 
-            return contextualPicture.AllLines
+            => contextualPicture.AllLines
                 // That have at least three points
                 .Where(line => line.Points.Count >= 3)
                 // For each take all triples of its points
@@ -29,16 +23,8 @@ namespace GeoGen.TheoremFinder
                 .Select(points => points.Select(point => point.ConfigurationObject).ToArray())
                 // Each of these triples makes a theorem
                 .Select(points => new Theorem(Type, points));
-        }
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture and in their statement use the
-        /// last object of the configuration, while there is no geometrically distinct
-        /// way to state them without this last object.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration that need the last object.</returns>   
+        /// <inheritdoc/>  
         public override IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture)
         {
             // Take the new point

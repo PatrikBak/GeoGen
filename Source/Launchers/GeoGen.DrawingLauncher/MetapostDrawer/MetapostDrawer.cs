@@ -59,12 +59,9 @@ namespace GeoGen.DrawingLauncher
 
         #endregion
 
-        #region IMetapostDrawer implementation
+        #region IDrawer implementation
 
-        /// <summary>
-        /// Draws given <see cref="RankedTheorem"/>s.
-        /// </summary>
-        /// <returns>The task representing the result.</returns>
+        /// <inheritdoc/>
         public async Task DrawAsync(IEnumerable<RankedTheorem> rankedTheorems, int startingId)
         {
             // Create figures from configuration-theorem pair

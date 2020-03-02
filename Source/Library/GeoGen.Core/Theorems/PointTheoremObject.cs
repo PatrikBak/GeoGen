@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.Utilities;
+using System.Collections.Generic;
 
 namespace GeoGen.Core
 {
@@ -9,9 +10,7 @@ namespace GeoGen.Core
     {
         #region Public abstract properties implementation
 
-        /// <summary>
-        /// The type of configuration object this theorem objects represents.
-        /// </summary>
+        /// <inheritdoc/>
         public override ConfigurationObjectType Type => ConfigurationObjectType.Point;
 
         #endregion
@@ -34,15 +33,7 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Recreates the theorem object by applying a given mapping of the inner configuration objects.
-        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem object must be
-        /// present in the mapping. If the mapping cannot be done (for example because 2 points
-        /// making a line are mapped to the same point), then null is returned.
-        /// </summary>
-        /// <param name="mapping">The dictionary representing the mapping.</param>
-        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
-        /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
+        /// <inheritdoc/>
         public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Reuse the static helper from the base class    
@@ -55,39 +46,26 @@ namespace GeoGen.Core
             // Otherwise construct the object
             return new PointTheoremObject(mappedPoint);
         }
-
-        /// <summary>
-        /// Gets the configuration objects that internally define this theorem object.
-        /// </summary>
-        /// <returns>The enumerable of the internal configuration objects.</returns>
-        public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects() => new[] { ConfigurationObject };
+        /// <inheritdoc/>
+        public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects() => ConfigurationObject.ToEnumerable();
 
         #endregion
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => ConfigurationObject.GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a point object
                 && otherObject is PointTheoremObject point
                 // And their objects are equal
                 && point.ConfigurationObject.Equals(ConfigurationObject);
-        }
 
         #endregion
 
@@ -95,10 +73,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the theorem point object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => ConfigurationObject.Id.ToString();
 
 #endif

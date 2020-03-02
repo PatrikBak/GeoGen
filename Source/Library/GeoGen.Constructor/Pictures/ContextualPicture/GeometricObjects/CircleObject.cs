@@ -14,9 +14,7 @@ namespace GeoGen.Constructor
     {
         #region DefineableByPoints properties
 
-        /// <summary>
-        /// Gets the minimal number of distinct points that are needed to define this type of object.
-        /// </summary>
+        /// <inheritdoc/>
         public override int NumberOfNeededPoints => 3;
 
         #endregion
@@ -57,10 +55,7 @@ namespace GeoGen.Constructor
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the circle object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             // If there is a specific configuration object, we include it 

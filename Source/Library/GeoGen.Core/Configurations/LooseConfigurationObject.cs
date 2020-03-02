@@ -24,16 +24,10 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Recreates the object using a given mapping of loose objects.
-        /// </summary>
-        /// <param name="mapping">The mapping of the loose objects.</param>
-        /// <returns>The remapped object.</returns>
+        /// <inheritdoc/>
         public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
-        {
-            // Simply access the object from the mapping (there's no need to recreate it)
-            return mapping.GetValueOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
-        }
+            // Simply access the object from the mapping
+            => mapping.GetValueOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
 
         #endregion
 
@@ -41,10 +35,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the loose configuration object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the object.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{ObjectType}({Id})";
 
 #endif

@@ -10,11 +10,7 @@ namespace GeoGen.MainLauncher
     /// </summary>
     public class RankedTheoremJsonLazyReader : IRankedTheoremJsonLazyReader
     {
-        /// <summary>
-        /// Lazily reads a given file where <see cref="RankedTheorem"/> objects have been written.
-        /// </summary>
-        /// <param name="filePath">The path to the file with ranked theorems.</param>
-        /// <returns>An enumerable of read ranked theorems.</returns>
+        /// <inheritdoc/>
         public IEnumerable<RankedTheorem> Read(string filePath)
         {
             // Prepare the reader of the file

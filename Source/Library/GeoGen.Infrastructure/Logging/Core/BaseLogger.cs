@@ -80,15 +80,7 @@ namespace GeoGen.Infrastructure
 
         #region ILogger abstract implementation
 
-        /// <summary>
-        /// Handles the logged message being passed in.
-        /// </summary>
-        /// <param name="message">The message to log</param>
-        /// <param name="level">The level of the message being logged</param>
-        /// <param name="time">The time when the logging happened.</param>
-        /// <param name="origin">The method/function this message was logged in</param>
-        /// <param name="filePath">The code filename that this message was logged from</param>
-        /// <param name="lineNumber">The line of code in the filename this message was logged from</param>
+        /// <inheritdoc/>
         public abstract void Log(string message, LogLevel level, DateTimeOffset time, string origin, string filePath, int lineNumber);
 
         #endregion

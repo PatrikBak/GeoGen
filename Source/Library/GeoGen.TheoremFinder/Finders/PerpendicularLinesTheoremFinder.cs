@@ -12,23 +12,12 @@ namespace GeoGen.TheoremFinder
     /// </summary>
     public class PerpendicularLinesTheoremFinder : TrueInAllPicturesTheoremFinder
     {
-        /// <summary>
-        /// Gets all options for a theorem represented as an array of geometric points.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetAllOptions(ContextualPicture contextualPicture)
-        {
             // Get all pairs of lines
-            return contextualPicture.AllLines.Subsets(2);
-        }
+            => contextualPicture.AllLines.Subsets(2);
 
-        /// <summary>
-        /// Gets all options for a new theorem represented as an array of geometric points.
-        /// Such theorems cannot be stated without the last object of the configuration. 
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetNewOptions(ContextualPicture contextualPicture)
         {
             // Find new lines
@@ -47,15 +36,9 @@ namespace GeoGen.TheoremFinder
                     yield return new[] { newLine, oldLine };
         }
 
-        /// <summary>
-        /// Finds out if the theorem given in analytic objects holds true.
-        /// </summary>
-        /// <param name="objects">The analytic objects.</param>
-        /// <returns>true, if the theorem holds true; false otherwise.</returns>
+        /// <inheritdoc/>
         protected override bool IsTrue(IAnalyticObject[] objects)
-        {
             // Return if they are perpendicular to each other
-            return ((Line)objects[0]).IsPerpendicularTo((Line)objects[1]);
-        }
+            => ((Line)objects[0]).IsPerpendicularTo((Line)objects[1]);
     }
 }

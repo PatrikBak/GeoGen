@@ -54,9 +54,7 @@ namespace GeoGen.MainLauncher
 
         #region IRankedTheoremJsonLazyWriter implementation
 
-        /// <summary>
-        /// Begins lazy writing.
-        /// </summary>
+        /// <inheritdoc/>
         public void BeginWriting()
         {
             // Check if we haven't begun
@@ -70,10 +68,7 @@ namespace GeoGen.MainLauncher
             _writingStream.Write("[");
         }
 
-        /// <summary>
-        /// Writes a given ranked theorem.
-        /// </summary>
-        /// <param name="rankedTheorems">The ranked theorems to be written.</param>
+        /// <inheritdoc/>
         public void Write(IEnumerable<RankedTheorem> rankedTheorems)
         {
             // Check if we have begun
@@ -101,9 +96,7 @@ namespace GeoGen.MainLauncher
             _writingStream.Flush();
         }
 
-        /// <summary>
-        /// Finishes lazy writing.
-        /// </summary>
+        /// <inheritdoc/>
         public void EndWriting()
         {
             // Check if we have begun

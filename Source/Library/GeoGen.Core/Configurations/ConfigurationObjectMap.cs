@@ -23,11 +23,7 @@ namespace GeoGen.Core
 
         #region GetKey implementation
 
-        /// <summary>
-        /// Gets the key for a given value.
-        /// </summary>
-        /// <param name="value">The value</param>
-        /// <returns>The key.</returns>
+        /// <inheritdoc/>
         protected override ConfigurationObjectType GetKey(ConfigurationObject value) => value.ObjectType;
 
         #endregion

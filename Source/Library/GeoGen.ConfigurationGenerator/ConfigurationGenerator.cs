@@ -37,13 +37,9 @@ namespace GeoGen.ConfigurationGenerator
 
         #endregion
 
-        #region IGeneration implementation
+        #region IConfigurationGenerator implementation
 
-        /// <summary>
-        /// Performs the generation algorithm on a given input. 
-        /// </summary>
-        /// <param name="input">The input for the generator.</param>
-        /// <returns>The generated configurations.</returns>
+        /// <inheritdoc/>
         public IEnumerable<GeneratedConfiguration> Generate(ConfigurationGeneratorInput input)
         {
             // Let the factory create the filter to be used

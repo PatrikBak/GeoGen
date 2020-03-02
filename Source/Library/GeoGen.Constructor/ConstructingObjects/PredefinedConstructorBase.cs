@@ -11,9 +11,7 @@ namespace GeoGen.Constructor
     {
         #region IPredefinedConstructor properties
 
-        /// <summary>
-        /// Gets the type of the predefined construction that this constructor performs.
-        /// </summary>
+        /// <inheritdoc/>
         public PredefinedConstructionType Type { get; }
 
         #endregion

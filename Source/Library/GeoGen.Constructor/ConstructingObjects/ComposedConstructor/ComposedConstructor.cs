@@ -47,14 +47,9 @@ namespace GeoGen.Constructor
 
         #endregion
 
-        #region ObjectsConstructorBase implementation
+        #region ObjectConstructorBase implementation
 
-        /// <summary>
-        /// Performs the actual construction of an analytic object based on the analytic objects given as an input.
-        /// The order of the objects of the input is based on the <see cref="Arguments.FlattenedList"/>.
-        /// </summary>
-        /// <param name="input">The analytic objects to be used as an input.</param>
-        /// <returns>The constructed analytic object, if the construction was successful; or null otherwise.</returns>
+        /// <inheritdoc/>
         protected override IAnalyticObject Construct(IAnalyticObject[] input)
         {
             #region Verify layout

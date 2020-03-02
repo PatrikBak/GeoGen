@@ -164,21 +164,13 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (LooseObjectsHolder, ConstructedObjectsSet).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a configuration
@@ -187,7 +179,6 @@ namespace GeoGen.Core
                 && configuration.ConstructedObjectsSet.Equals(ConstructedObjectsSet)
                 // And the loose objects are equal
                 && LooseObjectsHolder.Equals(configuration.LooseObjectsHolder);
-        }
 
         #endregion
 
@@ -195,10 +186,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the configuration to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{LooseObjectsHolder}{(ConstructedObjects.Any() ? $", {ConstructedObjects.ToJoinedString()}" : "")}";
 
 #endif

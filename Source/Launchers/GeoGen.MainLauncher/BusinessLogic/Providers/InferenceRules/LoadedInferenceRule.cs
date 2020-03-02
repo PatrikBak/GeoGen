@@ -71,10 +71,7 @@ namespace GeoGen.MainLauncher
 
         #region To String
 
-        /// <summary>
-        /// Converts a given loaded inference rule to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the loaded inference rule.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{RelativeFileName} ({Number}) {(!AdjustmentMessage.IsEmpty() ? $"[{AdjustmentMessage}]" : "")}";
 
         #endregion

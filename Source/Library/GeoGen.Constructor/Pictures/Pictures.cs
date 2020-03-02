@@ -64,16 +64,10 @@ namespace GeoGen.Constructor
 
         #region IEnumerable implementation
 
-        /// <summary>
-        /// Gets a generic enumerator.
-        /// </summary>
-        /// <returns>A generic enumerator.</returns>
+        /// <inheritdoc/>
         public IEnumerator<Picture> GetEnumerator() => _pictures.GetEnumerator();
 
-        /// <summary>
-        /// Gets a non-generic enumerator.
-        /// </summary>
-        /// <returns>A non-generic enumerator.</returns>
+        /// <inheritdoc/>
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion        

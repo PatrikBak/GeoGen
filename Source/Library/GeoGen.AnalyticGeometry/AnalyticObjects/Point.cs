@@ -160,43 +160,26 @@ namespace GeoGen.AnalyticGeometry
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (X.Rounded(), Y.Rounded()).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Do the null and then the type check and then call the other Equals method
-            return otherObject != null && otherObject is Point point && Equals(point);
-        }
+            => otherObject != null && otherObject is Point point && Equals(point);
 
         #endregion
 
         #region IEquatable implementation
 
-        /// <summary>
-        /// Finds out if the passed point is equal to this one.
-        /// </summary>
-        /// <param name="otherPoint">The other point.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public bool Equals(Point otherPoint) => X.Rounded() == otherPoint.X.Rounded() && Y.Rounded() == otherPoint.Y.Rounded();
 
         #endregion
 
         #region To String
 
-        /// <summary>
-        /// Converts a given point to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the point.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"({X.ToString(CultureInfo.InvariantCulture)}, {Y.ToString(CultureInfo.InvariantCulture)})";
 
         #endregion

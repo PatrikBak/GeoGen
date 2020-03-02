@@ -12,16 +12,10 @@ namespace GeoGen.TheoremFinder
     /// </summary>
     public class IncidenceTheoremFinder : TheoremFinderBase
     {
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration.</returns>       
+        /// <inheritdoc/>   
         public override IEnumerable<Theorem> FindAllTheorems(ContextualPicture contextualPicture)
-        {
             // Take all objects
-            return contextualPicture.Pictures.Configuration.AllObjects
+            => contextualPicture.Pictures.Configuration.AllObjects
                 // That are explicit lines / circles
                 .Where(configurationObject => configurationObject.ObjectType == Line || configurationObject.ObjectType == Circle)
                 // For each found the corresponding geometric object
@@ -32,16 +26,8 @@ namespace GeoGen.TheoremFinder
                 .SelectMany(geometricObject => geometricObject.Points
                     // Every one of them makes an incidence
                     .Select(point => new Theorem(Type, geometricObject.ConfigurationObject, point.ConfigurationObject)));
-        }
 
-        /// <summary>
-        /// Finds all theorems of the sought type that hold true in the configuration 
-        /// represented by a given contextual picture and in their statement use the
-        /// last object of the configuration, while there is no geometrically distinct
-        /// way to state them without this last object.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems of the sought type in the configuration that need the last object.</returns>   
+        /// <inheritdoc/> 
         public override IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture)
         {
             // Get the last object of the configuration

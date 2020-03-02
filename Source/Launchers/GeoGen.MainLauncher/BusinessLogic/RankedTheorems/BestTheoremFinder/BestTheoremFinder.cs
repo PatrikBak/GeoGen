@@ -22,9 +22,7 @@ namespace GeoGen.MainLauncher
 
         #region IBestTheoremFinder properties
 
-        /// <summary>
-        /// The best theorems that currently have been found.
-        /// </summary>
+        /// <inheritdoc/>
         public IEnumerable<RankedTheorem> BestTheorems => _ladder.Select(pair => pair.item);
 
         #endregion
@@ -45,11 +43,7 @@ namespace GeoGen.MainLauncher
 
         #region IBestTheoremFinder methods
 
-        /// <summary>
-        /// Gives given theorems for the finder to judge them.
-        /// </summary>
-        /// <param name="theorems">The theorems to be examined.</param>
-        /// <param name="bestTheoremsChanged">Indicates whether <see cref="BestTheorems"/> has changed after adding all theorems.</param>
+        /// <inheritdoc/>
         public void AddTheorems(IEnumerable<RankedTheorem> theorems, out bool bestTheoremsChanged)
         {
             // Set the that the best theorems hasn't initially changed

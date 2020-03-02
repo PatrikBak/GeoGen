@@ -22,7 +22,7 @@
         /// Initializes a new instance of the <see cref="InconsistentPicturesException"/> class
         /// with a custom message about what happened.
         /// </summary>
-        /// <param name="message">The message about what happened.</param>
+        /// <inheritdoc/>
         public InconsistentPicturesException(string message)
                 : base(message)
         {

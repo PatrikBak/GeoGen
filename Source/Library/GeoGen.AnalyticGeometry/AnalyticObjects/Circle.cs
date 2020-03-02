@@ -85,11 +85,7 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The radius of the circle.</param>
-        public Circle(Point center, double radius)
-        {
-            Center = center;
-            Radius = radius;
-        }
+        public Circle(Point center, double radius) => (Center, Radius) = (center, radius);
 
         #endregion
 
@@ -101,10 +97,8 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="point">The given point.</param>
         /// <returns>true, if the point lies on the circle; false otherwise.</returns>
         public bool Contains(Point point)
-        {
             // We simply check whether the coordinates of the point meet the equation of this circle
-            return ((point.X - Center.X).Squared() + (point.Y - Center.Y).Squared() - Radius.Squared()).Rounded() == 0;
-        }
+            => ((point.X - Center.X).Squared() + (point.Y - Center.Y).Squared() - Radius.Squared()).Rounded() == 0;
 
         /// <summary>
         /// Finds out if a given circle is tangent to this circle.
@@ -134,12 +128,10 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="line">The line.</param>
         /// <returns>true, if they are tangent to each other; false otherwise.</returns>
         public bool IsTangentTo(Line line)
-        {
             // The distance between a point P[x,y] and the line ax+by+c = 0 is equal to 
             // |ax + by + c| / sqrt(a^2 + b^2). We know that (a,b) is normalized, so it's 
             // |ax + by + c|. We can test tangency by checking if this is equal to the radius.
-            return Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
-        }
+            => Abs(line.A * Center.X + line.B * Center.Y + line.C).Rounded() == Radius.Rounded();
 
         /// <summary>
         /// Finds all the intersections of this circle with a given other circle.
@@ -289,47 +281,28 @@ namespace GeoGen.AnalyticGeometry
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => (Radius.Rounded(), Center).GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Do the null and then the type check and then call the other Equals method
-            return otherObject != null && otherObject is Circle circle && Equals(circle);
-        }
+            => otherObject != null && otherObject is Circle circle && Equals(circle);
 
         #endregion
 
         #region IEquatable implementation
 
-        /// <summary>
-        /// Finds out if the passed circle is equal to this one.
-        /// </summary>
-        /// <param name="otherCircle">The other circle.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public bool Equals(Circle otherCircle)
-        {
             // Check if the centers and radii are equal
-            return Center == otherCircle.Center && Radius.Rounded() == otherCircle.Radius.Rounded();
-        }
+            => Center == otherCircle.Center && Radius.Rounded() == otherCircle.Radius.Rounded();
 
         #endregion
 
         #region To String
 
-        /// <summary>
-        /// Converts a given circle to a string. 
-        /// NOTE: This method is used only for debugging purposes.
-        /// </summary>
-        /// <returns>A human-readable string representation of the circle.</returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             // Prepare the result

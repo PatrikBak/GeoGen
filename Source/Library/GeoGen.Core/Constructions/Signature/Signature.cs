@@ -222,10 +222,7 @@ namespace GeoGen.Core
 
         #region To String
 
-        /// <summary>
-        /// Converts the signature to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the signature.</returns>
+        /// <inheritdoc/>
         public override string ToString() => Parameters.ToJoinedString(", ");
 
         #endregion

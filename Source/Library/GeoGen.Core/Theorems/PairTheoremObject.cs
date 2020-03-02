@@ -50,15 +50,10 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Gets the configuration objects that internally define this theorem object.
-        /// </summary>
-        /// <returns>The enumerable of the internal configuration objects.</returns>
+        /// <inheritdoc/>
         public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects()
-        {
             // Return the merged inner objects
-            return Object1.GetInnerConfigurationObjects().Concat(Object2.GetInnerConfigurationObjects());
-        }
+            => Object1.GetInnerConfigurationObjects().Concat(Object2.GetInnerConfigurationObjects());
 
         #endregion
 
@@ -85,28 +80,19 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => ObjectsSet.GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equal
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And it is a pair object
                 && otherObject is PairTheoremObject pairObject
                 // And their object sets are equal
                 && ObjectsSet.Equals(pairObject.ObjectsSet);
-        }
 
         #endregion
 
@@ -114,10 +100,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the pair theorem object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => new[] { Object1, Object2 }.Select(theoremObject => theoremObject.ToString()).Ordered().ToJoinedString();
 
 #endif

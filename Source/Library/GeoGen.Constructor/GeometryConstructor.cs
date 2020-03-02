@@ -36,14 +36,7 @@ namespace GeoGen.Constructor
 
         #region IGeometryConstructor implementation
 
-        /// <summary>
-        /// Constructs a given <see cref="Configuration"/> to a given number of pictures.
-        /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out consistently.
-        /// </summary>
-        /// <param name="configuration">The configuration to be constructed.</param>
-        /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
-        /// <param name="drawingStyle">The way in which the <see cref="LooseObjectHolder"/> of the configuration should be drawn.</param>
-        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        /// <inheritdoc/>
         public (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures, LooseObjectDrawingStyle drawingStyle)
         {
             // Create pictures for the configuration
@@ -85,15 +78,7 @@ namespace GeoGen.Constructor
             return (pictures, new ConstructionData(default, default));
         }
 
-        /// <summary>
-        /// Constructs a given <see cref="Configuration"/> using an already constructed old one.
-        /// It is assumed that the new configuration differs only by the last object from the already 
-        /// constructed one. Thus only the last object is constructed. Throws an
-        /// <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
-        /// </summary>
-        /// <param name="oldConfigurationPictures">The pictures where the old configuration is drawn.</param>
-        /// <param name="newConfiguration">The new configuration that should be drawn.</param>
-        /// <returns>The tuple consisting of the pictures and the construction data.</returns>
+        /// <inheritdoc/>
         public (PicturesOfConfiguration pictures, ConstructionData data) ConstructByCloning(PicturesOfConfiguration oldConfigurationPictures, Configuration newConfiguration)
         {
             // Clone the pictures
@@ -103,15 +88,7 @@ namespace GeoGen.Constructor
             return (pictures, Construct(pictures, newConfiguration.LastConstructedObject, addToPictures: true));
         }
 
-        /// <summary>
-        /// Constructs a given <see cref="ConstructedConfigurationObject"/>. It is assumed that the constructed 
-        /// object can be construed in each of the passed pictures using its objects or its remembered duplicates.
-        /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out.
-        /// </summary>
-        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
-        /// <param name="constructedObject">The object that is about to be constructed.</param>
-        /// <param name="addToPictures">Indicates if we should add the object to the pictures.</param>
-        /// <returns>The construction data.</returns>
+        /// <inheritdoc/>
         public ConstructionData Construct(Pictures pictures, ConstructedConfigurationObject constructedObject, bool addToPictures)
         {
             // Local function that restores all the pictures if there was an inconsistency
@@ -211,16 +188,7 @@ namespace GeoGen.Constructor
             );
         }
 
-        /// <summary>
-        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the pictures.
-        /// It is assumed that the constructed object can be construed in the passed pictures. The fact whether
-        /// the object is or is not already present in individual pictures is ignored. If the object is 
-        /// inconstructible, null is returned. Throws an <see cref="InconsistentPicturesException"/> if the 
-        /// construction couldn't be carried out.
-        /// </summary>
-        /// <param name="pictures">The pictures that should contain the input for the construction.</param>
-        /// <param name="constructedObject">The object that is about to be constructed.</param>
-        /// <returns>The dictionary mapping pictures to constructed objects, or null; if the object is inconstructible.</returns>
+        /// <inheritdoc/>
         public IReadOnlyDictionary<Picture, IAnalyticObject> Construct(Pictures pictures, ConstructedConfigurationObject constructedObject)
         {
             // Prepare the result
@@ -257,16 +225,7 @@ namespace GeoGen.Constructor
             return canBeConstructed ? result : null;
         }
 
-        /// <summary>
-        /// Constructs a given <see cref="ConstructedConfigurationObject"/> without adding it to the picture.
-        /// It is assumed that the constructed object can be constructed in the passed picture. The fact whether
-        /// the object is or is not already present in individual pictures is ignored. If the object is 
-        /// inconstructible, null is returned. 
-        /// </summary>
-        /// <param name="picture">The picture that should contain the input for the construction.</param>
-        /// <param name="constructedObject">The object that is about to be constructed.</param>
-        /// <param name="addToPicture">Indicates if we should add the object to the picture.</param>
-        /// <returns>The constructed object or null; if the object is inconstructible.</returns>
+        /// <inheritdoc/>
         public IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject, bool addToPicture)
         {
             // Let the resolver find the constructor and let it create the constructor function

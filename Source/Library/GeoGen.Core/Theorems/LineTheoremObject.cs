@@ -11,14 +11,10 @@ namespace GeoGen.Core
     {
         #region Public abstract properties implementation
 
-        /// <summary>
-        /// Gets the number of points that might define this type of object.
-        /// </summary>
+        /// <inheritdoc/>
         public override int NumberOfDefiningPoints => 2;
 
-        /// <summary>
-        /// The type of configuration object this theorem objects represents.
-        /// </summary>
+        /// <inheritdoc/>
         public override ConfigurationObjectType Type => ConfigurationObjectType.Line;
 
         #endregion
@@ -50,15 +46,7 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Recreates the theorem object by applying a given mapping of the inner configuration objects.
-        /// Every <see cref="ConfigurationObject"/> internally contained in this theorem object must be
-        /// present in the mapping. If the mapping cannot be done (for example because 2 points
-        /// making a line are mapped to the same point), then null is returned.
-        /// </summary>
-        /// <param name="mapping">The dictionary representing the mapping.</param>
-        /// <param name="flattenObjectsFromPoints">Indicates whether explicit objects LineFromPoints or Circumcircle should be made implicit.</param>
-        /// <returns>The remapped theorem object, or null, if the mapping cannot be done.</returns>
+        /// <inheritdoc/>
         public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Remap object and points
@@ -100,10 +88,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the line theorem object to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString()
         {
             // If the object is defined by a specific configuration object, we return its id

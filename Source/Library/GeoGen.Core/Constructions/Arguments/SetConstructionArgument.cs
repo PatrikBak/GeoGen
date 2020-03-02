@@ -37,11 +37,7 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Recreates the argument using a given mapping of loose objects.
-        /// </summary>
-        /// <param name="mapping">The mapping of the loose objects.</param>
-        /// <returns>The remapped argument.</returns>
+        /// <inheritdoc/>
         public override ConstructionArgument Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
             // Remap individual arguments using their remap method 
             => new SetConstructionArgument(PassedArguments.Select(argument => argument.Remap(mapping)).ToHashSet());
@@ -50,28 +46,19 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode() => PassedArguments.GetHashCode();
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And is a set argument
                 && otherObject is SetConstructionArgument setArgument
                 // And the corresponding sets are equal
                 && setArgument.PassedArguments.Equals(PassedArguments);
-        }
 
         #endregion
 
@@ -79,10 +66,7 @@ namespace GeoGen.Core
 
 #if DEBUG
 
-        /// <summary>
-        /// Converts the set construction argument to a string. 
-        /// </summary>
-        /// <returns>A human-readable string representation of the configuration.</returns>
+        /// <inheritdoc/>
         public override string ToString() => $"{{{PassedArguments.Select(argument => argument.ToString()).Ordered().ToJoinedString()}}}";
 
 #endif

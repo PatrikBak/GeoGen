@@ -17,9 +17,8 @@ namespace GeoGen.Constructor
         /// <param name="formatter">The formatter of objects to be used in formatting.</param>
         /// <returns>The formatted string.</returns>
         public static string Format(this InconsistentPicturesException exception, OutputFormatter formatter)
-        {
             // Switch based on the exception type
-            return exception switch
+            => exception switch
             {
                 // In collinearity case we have some points
                 InconsistentCollinearityException e => $"The collinearities among points " +
@@ -62,7 +61,6 @@ namespace GeoGen.Constructor
                 // Unhandled cases
                 _ => throw new ConstructorException($"Unhandled type of {nameof(InconsistentPicturesException)}: {exception.GetType()}")
             };
-        }
 
         /// <summary>
         /// Returns the inner objects about which the exception holds data based on its type.

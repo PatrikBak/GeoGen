@@ -36,24 +36,12 @@ namespace GeoGen.TheoremFinder
 
         #region ITheoremFinder implementation
 
-        /// <summary>
-        /// Finds all theorems that hold true in the configuration represented by a given contextual picture.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <returns>The enumerable of true theorems in the configuration.</returns>
+        /// <inheritdoc/>
         public TheoremMap FindAllTheorems(ContextualPicture contextualPicture)
-        {
             // Simply reuse all the finders and wrap the theorems in a map (which will enumerate it)
-            return new TheoremMap(_finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
-        }
+            => new TheoremMap(_finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
 
-        /// <summary>
-        /// Finds all theorems that hold true in the configuration represented by a given contextual picture
-        /// and in their statement use the last object of the configuration.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
-        /// <param name="oldTheorems">The theorems that hold true in the configuration without the last object.</param>
-        /// <returns>The enumerable of true theorems in the configuration that use the last object.</returns>
+        /// <inheritdoc/>
         public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems)
         {
             // Reuse all the finders to find the theorems that are geometrically new in the configuration

@@ -85,10 +85,7 @@ namespace GeoGen.Core
 
         #region Public abstract methods implementation
 
-        /// <summary>
-        /// Gets the configuration objects that internally define this theorem object.
-        /// </summary>
-        /// <returns>The enumerable of the internal configuration objects.</returns>
+        /// <inheritdoc/>
         public override IEnumerable<ConfigurationObject> GetInnerConfigurationObjects()
         {
             // If this is defined by an object, return it
@@ -146,10 +143,7 @@ namespace GeoGen.Core
 
         #region HashCode and Equals
 
-        /// <summary>
-        /// Gets the hash code of this object.
-        /// </summary>
-        /// <returns>The hash code.</returns>
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             // If the object has an explicit object, return its hash 
@@ -160,15 +154,10 @@ namespace GeoGen.Core
             return Points.GetHashCode();
         }
 
-        /// <summary>
-        /// Finds out if a passed object is equal to this one.
-        /// </summary>
-        /// <param name="otherObject">The passed object.</param>
-        /// <returns>true, if they are equal; false otherwise.</returns>
+        /// <inheritdoc/>
         public override bool Equals(object otherObject)
-        {
             // Either the references are equals
-            return this == otherObject
+            => this == otherObject
                 // Or the object is not null
                 || otherObject != null
                 // And it is an object with points
@@ -181,7 +170,6 @@ namespace GeoGen.Core
                 || (DefinedByPoints && objectWithPoints.DefinedByPoints
                     // And their points are equal
                     && Points.Equals(objectWithPoints.Points)));
-        }
 
         #endregion
     }

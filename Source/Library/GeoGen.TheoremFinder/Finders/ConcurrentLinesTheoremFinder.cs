@@ -13,21 +13,14 @@ namespace GeoGen.TheoremFinder
     {
         #region Protected overridden properties
 
-        /// <summary>
-        /// Indicates whether we want intersected objects to have at least one 
-        /// intersection that lies outside of the picture.
-        /// </summary>
+        /// <inheritdoc/>
         protected override bool ExpectAnyExternalIntersection => true;
 
         #endregion
 
         #region Protected overridden methods
 
-        /// <summary>
-        /// Gets all options for a theorem represented as an array of geometric points.
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetAllOptions(ContextualPicture contextualPicture)
         {
             // Get lines as a list
@@ -63,12 +56,7 @@ namespace GeoGen.TheoremFinder
             }
         }
 
-        /// <summary>
-        /// Gets all options for a new theorem represented as an array of geometric points.
-        /// Such theorems cannot be stated without the last object of the configuration. 
-        /// </summary>
-        /// <param name="contextualPicture">The contextual picture that stores the geometric points.</param>
-        /// <returns>An enumerable of all the options.</returns>
+        /// <inheritdoc/>
         protected override IEnumerable<GeometricObject[]> GetNewOptions(ContextualPicture contextualPicture)
         {
             // Find new lines
@@ -133,11 +121,7 @@ namespace GeoGen.TheoremFinder
             #endregion
         }
 
-        /// <summary>
-        /// Returns if a given number intersections is allowed for this type of theorem.
-        /// </summary>
-        /// <param name="numberOfIntersections">The number of intersections to be questioned.</param>
-        /// <returns>true, if this number is allowed; false otherwise.</returns>
+        /// <inheritdoc/>
         protected override bool IsNumberOfIntersectionsAllowed(int numberOfIntersections) => numberOfIntersections == 1;
 
         #endregion
