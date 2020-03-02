@@ -71,6 +71,12 @@ namespace GeoGen.TheoremRanker
         /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="TypeRankerSettings.TypeRankings"/>
         /// and the final ranking is the sum of these rankings over the configuration's constructed objects.
         /// </summary>
-        Constructions
+        Constructions,
+
+        /// <summary>
+        /// The coefficient taking into account used <see cref="Construction"/>s in a way that if a construction is used 'n' times,
+        /// then its repetition coefficient is calculated as (n-1)^4. The idea is to punish constructions used more than 2 times.
+        /// </summary>
+        Repetition
     }
 }

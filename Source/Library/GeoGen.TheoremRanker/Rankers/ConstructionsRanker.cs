@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.TheoremRanker
@@ -37,8 +38,8 @@ namespace GeoGen.TheoremRanker
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
             // For every constructed object
             => configuration.ConstructedObjects
-                // Find its ranking in the dictionary from the settings
-                .Select(constructedObject => _settings.ConstructionRankings[constructedObject.Construction])
+                // Find its ranking in the dictionary from the settings or use the default value of 0
+                .Select(constructedObject => _settings.ConstructionRankings.GetValueOrDefault(constructedObject.Construction.Name, 0d))
                 // Sum them
                 .Sum();
 

@@ -1,5 +1,6 @@
 ﻿using GeoGen.Core;
 using System;
+using System.Collections.Generic;
 
 namespace GeoGen.TheoremRanker
 {
@@ -34,8 +35,8 @@ namespace GeoGen.TheoremRanker
 
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
-            // Get the ranking from the ranking dictionary from the settings
-            => _settings.TypeRankings[theorem.Type];
+             // Get the ranking from the ranking dictionary from the settings, or use the default value of 0
+             => _settings.TypeRankings.GetValueOrDefault(theorem.Type, 0d);
 
         #endregion
     }

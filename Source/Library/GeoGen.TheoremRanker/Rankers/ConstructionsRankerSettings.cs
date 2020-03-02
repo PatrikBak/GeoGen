@@ -12,9 +12,9 @@ namespace GeoGen.TheoremRanker
         #region Public properties
 
         /// <summary>
-        /// The dictionary mapping constructions to rankings.
+        /// The dictionary mapping construction names to rankings.
         /// </summary>
-        public IReadOnlyDictionary<Construction, double> ConstructionRankings { get; }
+        public IReadOnlyDictionary<string, double> ConstructionRankings { get; }
 
         #endregion
 
@@ -23,8 +23,8 @@ namespace GeoGen.TheoremRanker
         /// <summary>
         /// Initializes a new instance of the <see cref="ConstructionsRankerSettings"/>.
         /// </summary>
-        /// <param name="constructionRankings">The dictionary mapping constructions to rankings.</param>
-        public ConstructionsRankerSettings(IReadOnlyDictionary<Construction, double> constructionRankings)
+        /// <param name="constructionRankings">The dictionary mapping construction names to rankings.</param>
+        public ConstructionsRankerSettings(IReadOnlyDictionary<string, double> constructionRankings)
         {
             ConstructionRankings = constructionRankings ?? throw new ArgumentNullException(nameof(constructionRankings));
         }
