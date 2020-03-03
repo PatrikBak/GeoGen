@@ -192,7 +192,6 @@ namespace GeoGen.Core
                 case PerpendicularLines:
                 case LineTangentToCircle:
                 case TangentCircles:
-                case ConcurrentObjects:
                 case EqualObjects:
                 case Incidence:
 

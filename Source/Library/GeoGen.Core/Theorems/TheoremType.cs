@@ -16,12 +16,7 @@
         ConcyclicPoints,
 
         /// <summary>
-        /// Three objects are concurrent, each of them is either a line or circle
-        /// </summary>
-        ConcurrentObjects,
-
-        /// <summary>
-        /// Three lines are concurrent. NOTE: This is a subset of ConcurrentObjects.
+        /// Three lines are concurrent in a point that is in not in the picture
         /// </summary>
         ConcurrentLines,
 

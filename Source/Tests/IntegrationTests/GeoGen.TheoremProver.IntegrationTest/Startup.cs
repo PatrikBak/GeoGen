@@ -41,7 +41,6 @@ namespace GeoGen.TheoremProver.IntegrationTest
                                           // Except the following ones
                                           .Except(new[]
                                           {
-                                              TheoremType.ConcurrentObjects,
                                               TheoremType.EqualAngles,
                                               TheoremType.EqualObjects
                                           })

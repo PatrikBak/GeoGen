@@ -29,7 +29,7 @@ namespace GeoGen.Core.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, mBC, mAC, mAB);
 
             // This can't be stated in a smaller configuration
-            new Theorem(ConcurrentObjects, new TheoremObject[]
+            new Theorem(ConcurrentLines, new[]
             {
                 new LineTheoremObject(A, mBC),
                 new LineTheoremObject(B, mAC),
