@@ -251,16 +251,16 @@ namespace GeoGen.Core
                             throw new GeoGenException($"Unhandled type of {nameof(BaseTheoremObject)}: {baseObject.GetType()}");
                     }
 
-                // For a pair object...
-                case PairTheoremObject pairObject:
+                // For a line segment
+                case LineSegmentTheoremObject lineSegment:
 
                     // We convert individual objects
-                    var object1 = FormatTheoremObject(pairObject.Object1);
-                    var object2 = FormatTheoremObject(pairObject.Object2);
+                    var point1 = FormatTheoremObject(lineSegment.Point1);
+                    var point2 = FormatTheoremObject(lineSegment.Point2);
 
                     // Get the smaller and the larger
-                    var smaller = object1.CompareTo(object2) < 0 ? object1 : object2;
-                    var larger = smaller == object1 ? object2 : object1;
+                    var smaller = point1.CompareTo(point2) < 0 ? point1 : point2;
+                    var larger = smaller == point1 ? point2 : point1;
 
                     // Compose the final string
                     return $"{smaller}, {larger}";

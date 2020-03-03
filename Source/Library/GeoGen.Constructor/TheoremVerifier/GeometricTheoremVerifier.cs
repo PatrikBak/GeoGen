@@ -80,7 +80,7 @@ namespace GeoGen.Constructor
             #region Construct theorem objects
 
             // Get the inner base theorem objects, i.e. Line / Circle / Point
-            // Then we will reconstruct the other i.e., LineSegment / Angle later...
+            // Then we will reconstruct the other i.e., LineSegment later...
             var baseTheoremObjects = theorem.InvolvedObjects
                 // Each theorem object can bring more of them
                 .SelectMany(theoremObject => theoremObject switch
@@ -89,10 +89,7 @@ namespace GeoGen.Constructor
                     BaseTheoremObject _ => theoremObject.ToEnumerable(),
 
                     // If we have a line segment, then its inner objects are points
-                    LineSegmentTheoremObject lineSegment => lineSegment.ObjectsSet,
-
-                    // If we have an angle, then its inner objects are lines
-                    AngleTheoremObject angle => angle.ObjectsSet,
+                    LineSegmentTheoremObject lineSegment => lineSegment.PointSet,
 
                     // Unhandled cases
                     _ => throw new ConstructorException($"Unhandled type of {nameof(TheoremObject)}: {theoremObject.GetType()}")
@@ -375,10 +372,10 @@ namespace GeoGen.Constructor
                         .ToArray();
 
                     // Find the particular points
-                    var segment1Point1 = (Point)analyticObjectProvider(segments[0].Object1);
-                    var segment1Point2 = (Point)analyticObjectProvider(segments[0].Object2);
-                    var segment2Point1 = (Point)analyticObjectProvider(segments[1].Object1);
-                    var segment2Point2 = (Point)analyticObjectProvider(segments[1].Object2);
+                    var segment1Point1 = (Point)analyticObjectProvider(segments[0].Point1);
+                    var segment1Point2 = (Point)analyticObjectProvider(segments[0].Point2);
+                    var segment2Point1 = (Point)analyticObjectProvider(segments[1].Point1);
+                    var segment2Point2 = (Point)analyticObjectProvider(segments[1].Point2);
 
                     // Find the lengths of the segments
                     var length1 = segment1Point1.DistanceTo(segment1Point2).Rounded();

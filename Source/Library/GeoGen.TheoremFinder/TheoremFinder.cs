@@ -99,21 +99,6 @@ namespace GeoGen.TheoremFinder
                     // i.e. we return the 'no change of definition' option
                     return new[] { oldTheoremObject };
 
-                // If we have an angle
-                case AngleTheoremObject angle:
-
-                    // Recursively get the re-definitions of both the objects
-                    return new[]
-                    {
-                        FindDefinitionChangeOptions(angle.Object1, contextualPicture),
-                        FindDefinitionChangeOptions(angle.Object2, contextualPicture),
-                    }
-                    // Combine them into a single one in every possible way
-                    // This will include the option of not changing the definition
-                    .Combine()
-                    // Each combination makes a possible answer
-                    .Select(lines => new AngleTheoremObject((LineTheoremObject)lines[0], (LineTheoremObject)lines[1]));
-
                 // If we have an object with points...
                 case TheoremObjectWithPoints objectWithPoints:
 

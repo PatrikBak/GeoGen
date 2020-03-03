@@ -610,7 +610,7 @@ namespace GeoGen.MainLauncher
         /// </summary>
         /// <param name="ranking">The ranking to be converted.</param>
         /// <returns>The string representing the ranking table.</returns>
-        private string TheoremRankingToString(TheoremRanking ranking)
+        private static string TheoremRankingToString(TheoremRanking ranking)
             // Take the individual rankings ordered by the total contribution (ASC) and then the aspect name
             => ranking.Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))
                 // Add each on an individual line with info about the weight

@@ -526,18 +526,18 @@ namespace GeoGen.TheoremProver
                             // Include the mapped theorem object pair
                             .Select(mapping => mapping.WithMappedPair(mappedPair));
 
-                // If we have a pair theorem object
-                case PairTheoremObject templatePair:
+                // If we have a line segment
+                case LineSegmentTheoremObject templateSegment:
 
                     // Cast the other object ((that we already know has the same type)
-                    var realPairObject = (PairTheoremObject)realObject;
+                    var realLineSegment = (LineSegmentTheoremObject)realObject;
 
-                    // Its paired objects can be in any order
-                    return templatePair.ObjectsSet.Permutations()
+                    // Its paired points can be in any order
+                    return templateSegment.PointSet.Permutations()
                         // For each such an order
-                        .SelectMany(innerTemplateObjects =>
-                            // Zip the objects to mapped pairs
-                            innerTemplateObjects.Zip(realPairObject.ObjectsSet)
+                        .SelectMany(innerTemplatePoints =>
+                            // Zip the points to mapped pairs
+                            innerTemplatePoints.Zip(realLineSegment.PointSet)
                                 // Aggregate the mappings to include both these pairs
                                 .Aggregate
                                 (

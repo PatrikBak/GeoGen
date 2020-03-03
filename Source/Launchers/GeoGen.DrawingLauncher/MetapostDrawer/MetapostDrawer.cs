@@ -546,7 +546,7 @@ namespace GeoGen.DrawingLauncher
                     // Take the line segments
                     var points = theorem.InvolvedObjects.Cast<LineSegmentTheoremObject>()
                         // And for each
-                        .Select(segment => segment.ObjectsSet.Cast<PointTheoremObject>()
+                        .Select(segment => segment.PointSet.Cast<PointTheoremObject>()
                             // Get the points
                             .Select(point => (Point)picture.Get(point.ConfigurationObject)).ToArray())
                         // Enumerate
@@ -654,7 +654,6 @@ namespace GeoGen.DrawingLauncher
                     // Converting those
                     .Select(formatter.GetObjectName)
                     // Gluing them together 
-                    // NOTE: This does not for look good for angles, but those are not supported at the time
                     .ToJoinedString("");
 
             // Prepare the value holding the converted and sorted theorem objects
