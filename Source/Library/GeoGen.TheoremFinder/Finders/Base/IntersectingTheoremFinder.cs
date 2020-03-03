@@ -5,7 +5,8 @@ using System.Linq;
 namespace GeoGen.TheoremFinder
 {
     /// <summary>
-    /// A <see cref="ITypedTheoremFinder"/> that finds theorems that are intersecting objects.
+    /// A <see cref="ITypedTheoremFinder"/> that finds theorems that states that some objects
+    /// have exactly one intersection point.
     /// </summary>
     public abstract class IntersectingTheoremFinder : AbstractTheoremFinder
     {
@@ -19,25 +20,14 @@ namespace GeoGen.TheoremFinder
 
         #endregion
 
-        #region Protected abstract methods
-
-        /// <summary>
-        /// Returns if a given number intersections is allowed for this type of theorem.
-        /// </summary>
-        /// <param name="numberOfIntersections">The number of intersections to be questioned.</param>
-        /// <returns>true, if this number is allowed; false otherwise.</returns>
-        protected abstract bool IsNumberOfIntersectionsAllowed(int numberOfIntersections);
-
-        #endregion
-
         #region Protected overridden methods
 
         /// <inheritdoc/>
         protected override bool RepresentsTrueTheorem(ContextualPicture contextualPicture, GeometricObject[] objects)
         {
             // Prepare the variable that indicates whether the objects
-            // have an intersection that lies outside of some picture
-            var anyExternalIntersection = false;
+            // have an intersection point that lies outside of some picture
+            var isIntersectionPointExternal = false;
 
             // We want these objects to have an intersection that 
             // is not in the picture for every single picture
@@ -49,19 +39,19 @@ namespace GeoGen.TheoremFinder
                 // Intersect them
                 var intersections = AnalyticHelpers.Intersect(analyticObjects);
 
-                // Validate the number of intersections 
-                if (!IsNumberOfIntersectionsAllowed(intersections.Length))
+                // Make sure there is exactly one intersection point
+                if (intersections.Length != 1)
                     return false;
 
-                // Mark if there is any intersection that is not in the picture
-                if (intersections.Any(point => !picture.Contains(point)))
-                    anyExternalIntersection = true;
+                // If it is not in the picture, mark it
+                if (!picture.Contains(intersections[0]))
+                    isIntersectionPointExternal = true;
             }
 
-            // If we're expecting an intersecting outside the picture,
+            // If we're expecting an intersection point  outside the picture,
             // then the theorem is fine if and only if there is any
             if (ExpectAnyExternalIntersection)
-                return anyExternalIntersection;
+                return isIntersectionPointExternal;
 
             // Otherwise it's fine
             return true;

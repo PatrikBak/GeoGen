@@ -116,9 +116,6 @@ namespace GeoGen.TheoremFinder
             }
         }
 
-        /// <inheritdoc/>
-        protected override bool IsNumberOfIntersectionsAllowed(int numberOfIntersections) => numberOfIntersections == 1;
-
         #endregion
     }
 }
