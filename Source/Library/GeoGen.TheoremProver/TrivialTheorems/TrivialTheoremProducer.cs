@@ -91,7 +91,7 @@ namespace GeoGen.TheoremProver
                     // Switch on its type
                     switch (predefinedConstruction.Type)
                     {
-                        // An angle bisector makes equal angles and an incidence
+                        // An angle bisector makes an incidence
                         case InternalAngleBisector:
                         {
                             // Create theorem objects
@@ -99,17 +99,9 @@ namespace GeoGen.TheoremProver
                             var line2 = new LineTheoremObject(objects[0], objects[2]);
                             var bisector = new LineTheoremObject(constructedObject);
 
-                            // Create the theorems
+                            // Create the theorem
                             return new[]
                             {
-                                // Equal angles
-                                new Theorem(EqualAngles, new []
-                                {
-                                    new AngleTheoremObject(line1, bisector),
-                                    new AngleTheoremObject(line2, bisector)
-                                }),
-
-                                // Incidence
                                 new Theorem(Incidence, objects[0], constructedObject)
                             };
                         }

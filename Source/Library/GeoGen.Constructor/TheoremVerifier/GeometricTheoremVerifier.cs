@@ -390,32 +390,6 @@ namespace GeoGen.Constructor
                         && length1 == length2 && length1 != 0;
                 }
 
-                // We should have two angles
-                case EqualAngles:
-                {
-                    // Get the angles by taking the theorem objects
-                    var angles = theorem.InvolvedObjects
-                        // Cast
-                        .Cast<AngleTheoremObject>()
-                        // Enumerate
-                        .ToArray();
-
-                    // Find the particular lines
-                    var angle1Line1 = (Line)analyticObjectProvider(angles[0].Object1);
-                    var angle1Line2 = (Line)analyticObjectProvider(angles[0].Object2);
-                    var angle2Line1 = (Line)analyticObjectProvider(angles[1].Object1);
-                    var angle2Line2 = (Line)analyticObjectProvider(angles[1].Object2);
-
-                    // Find the angles between the lines
-                    var angle1 = AngleBetweenLines(angle1Line1, angle1Line2).Rounded();
-                    var angle2 = AngleBetweenLines(angle2Line1, angle2Line2).Rounded();
-
-                    // They cannot be equal
-                    return !new[] { angle1Line1, angle1Line2 }.OrderlessEquals(new[] { angle2Line1, angle2Line2 })
-                        // And the sizes of the angles must match and be non-zero
-                        && angle1 == angle2 && angle1 != 0;
-                }
-
                 // We should have a point and a line or circle
                 case Incidence:
                 {

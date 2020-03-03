@@ -200,18 +200,6 @@ namespace GeoGen.Core
 
                     break;
 
-                // Case with angles
-                case EqualAngles:
-
-                    // Here the first two lines make one angle and the next one the other one
-                    finalTheoremObjects = new TheoremObject[]
-                    {
-                        new AngleTheoremObject((LineTheoremObject)flattenedObjects[0], (LineTheoremObject)flattenedObjects[1]),
-                        new AngleTheoremObject((LineTheoremObject)flattenedObjects[2], (LineTheoremObject)flattenedObjects[3])
-                    };
-
-                    break;
-
                 // Case with line segments
                 case EqualLineSegments:
 

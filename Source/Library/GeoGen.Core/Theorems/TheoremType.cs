@@ -46,11 +46,6 @@
         EqualLineSegments,
 
         /// <summary>
-        /// Two pairs of lines make the same angles
-        /// </summary>
-        EqualAngles,
-
-        /// <summary>
         /// Two objects with formally different definitions represent the same geometric object
         /// </summary>
         EqualObjects,

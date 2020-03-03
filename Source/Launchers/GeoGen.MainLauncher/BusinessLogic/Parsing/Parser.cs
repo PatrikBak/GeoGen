@@ -295,8 +295,7 @@ namespace GeoGen.MainLauncher
                         TheoremType.ConcyclicPoints => typeof(PointTheoremObject),
                         TheoremType.EqualLineSegments => typeof(PointTheoremObject),
 
-                        // Lines (EqualAngles are flattened)
-                        TheoremType.EqualAngles => typeof(LineTheoremObject),
+                        // Lines
                         TheoremType.ConcurrentLines => typeof(LineTheoremObject),
                         TheoremType.PerpendicularLines => typeof(LineTheoremObject),
                         TheoremType.ParallelLines => typeof(LineTheoremObject),

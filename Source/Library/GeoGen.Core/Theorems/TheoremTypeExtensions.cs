@@ -23,9 +23,6 @@ namespace GeoGen.Core
             // 3 lines are concurrent
             ConcurrentLines => 3,
 
-            // 2 angles are equal
-            EqualAngles => 2,
-
             // 2 line segments are equal
             EqualLineSegments => 2,
 

@@ -38,12 +38,8 @@ namespace GeoGen.TheoremProver.IntegrationTest
                                   (
                                       // Look for theorems of any type
                                       soughtTheoremTypes: Enum.GetValues(typeof(TheoremType)).Cast<TheoremType>()
-                                          // Except the following ones
-                                          .Except(new[]
-                                          {
-                                              TheoremType.EqualAngles,
-                                              TheoremType.EqualObjects
-                                          })
+                                          // Except for the EqualObjects that don't have a finder
+                                          .Except(TheoremType.EqualObjects.ToEnumerable())
                                           // Enumerate
                                           .ToArray(),
 

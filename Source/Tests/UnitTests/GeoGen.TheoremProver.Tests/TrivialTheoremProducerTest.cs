@@ -55,41 +55,6 @@ namespace GeoGen.TheoremProver.Tests
         #endregion
 
         [Test]
-        public void Test_With_Incenter()
-        {
-            // Create objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
-
-            // Find the trivial theorems
-            Producer.InferTrivialTheoremsFromObject(I)
-                // There should be only equal angles
-                .OrderlessEquals(new[]
-                {
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(B, A, A, I),
-                        new AngleTheoremObject(C, A, A, I),
-                    }),
-
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(C, B, B, I),
-                        new AngleTheoremObject(A, B, B, I),
-                    }),
-
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(A, C, C, I),
-                        new AngleTheoremObject(B, C, C, I),
-                    })
-                })
-                .Should().BeTrue();
-        }
-
-        [Test]
         public void Test_With_Midpoint_Of_Opposite_Arc()
         {
             // Create objects
@@ -98,62 +63,11 @@ namespace GeoGen.TheoremProver.Tests
             var C = new LooseConfigurationObject(Point);
             var M = new ConstructedConfigurationObject(MidpointOfOppositeArc, A, B, C);
 
-            // Prepare angles that are indeed equal to <A/2
-            var halfAlfa = new[]
-            {
-                new AngleTheoremObject(A, B, A, M),
-                new AngleTheoremObject(A, C, A, M),
-                new AngleTheoremObject(B, C, B, M),
-                new AngleTheoremObject(B, C, C, M)
-            };
-
-            // Prepare angles that are equal to the angle of the chord AM
-            var chordAM = new[]
-            {
-                new AngleTheoremObject(A, B, B, M),
-                new AngleTheoremObject(A, C, C, M),
-                new AngleTheoremObject(A, M, B, C)
-            };
-
             // Find the trivial theorems
             Producer.InferTrivialTheoremsFromObject(M)
                 // There should be these theorems
                 .OrderlessEquals(new[]
                 {
-                    // Half alpha angles
-                    new Theorem(EqualAngles, new[] {halfAlfa[0], halfAlfa[1] }),
-                    new Theorem(EqualAngles, new[] {halfAlfa[0], halfAlfa[2] }),
-                    new Theorem(EqualAngles, new[] {halfAlfa[0], halfAlfa[3] }),
-                    new Theorem(EqualAngles, new[] {halfAlfa[1], halfAlfa[2] }),
-                    new Theorem(EqualAngles, new[] {halfAlfa[1], halfAlfa[3] }),
-                    new Theorem(EqualAngles, new[] {halfAlfa[2], halfAlfa[3] }),
-
-                    // Chord AM angles
-                    new Theorem(EqualAngles, new[] {chordAM[0], chordAM[1] }),
-                    new Theorem(EqualAngles, new[] {chordAM[0], chordAM[2] }),
-                    new Theorem(EqualAngles, new[] {chordAM[1], chordAM[2] }),
-
-                    // Alpha angles
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(A, B, A, C),
-                        new AngleTheoremObject(M, B, M, C)
-                    }),
-
-                    // Beta angles
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(A, B, B, C),
-                        new AngleTheoremObject(A, M, M, C)
-                    }),
-
-                    // Gamma angles
-                    new Theorem(EqualAngles, new[]
-                    {
-                        new AngleTheoremObject(A, C, B, C),
-                        new AngleTheoremObject(A, M, M, B)
-                    }),
-
                     // Equal line segments
                     new Theorem(EqualLineSegments, new[]
                     {
