@@ -91,21 +91,13 @@ namespace GeoGen.MainLauncher
 
             #region Tracers
 
-            #region ConstructorFailureTracer
-
             // Rebind Constructor Failure Tracer only if we're supposed be tracing
-            if (settings.TracingSettings.ConstructorFailureTracerSettings != null)
-                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.TracingSettings.ConstructorFailureTracerSettings);
-
-            #endregion
-
-            #region GeometryFailureTracer
+            if (settings.TraceConstructorFailures)
+                Kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.ConstructorFailureTracerSettings);
 
             // Rebind Geometry Failure Tracer only if we're supposed be tracing
-            if (settings.TracingSettings.GeometryFailureTracerSettings != null)
-                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.TracingSettings.GeometryFailureTracerSettings);
-
-            #endregion
+            if (settings.TraceGeometryFailures)
+                Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.GeometryFailureTracerSettings);
 
             #endregion
         }

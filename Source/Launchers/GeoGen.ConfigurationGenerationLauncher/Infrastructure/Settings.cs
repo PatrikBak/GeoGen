@@ -39,9 +39,24 @@ namespace GeoGen.ConfigurationGenerationLauncher
         public GenerationSettings GenerationSettings { get; }
 
         /// <summary>
-        /// The settings for all tracers.
+        /// Indicates whether tracing of constructor failures is on.
         /// </summary>
-        public TracingSettings TracingSettings { get; }
+        public bool TraceConstructorFailures { get; }
+
+        /// <summary>
+        /// The settings for <see cref="ConstructorFailureTracer"/>. This value can be null if we don't want to trace them.
+        /// </summary>
+        public ConstructorFailureTracerSettings ConstructorFailureTracerSettings { get; }
+
+        /// <summary>
+        /// Indicates whether tracing of geometry failures is on.
+        /// </summary>
+        public bool TraceGeometryFailures { get; }
+
+        /// <summary>
+        /// The settings for <see cref="GeometryFailureTracer"/>. This value can be null if we don't want to trace them.
+        /// </summary>
+        public GeometryFailureTracerSettings GeometryFailureTracerSettings { get; }
 
         #endregion
 
@@ -55,20 +70,37 @@ namespace GeoGen.ConfigurationGenerationLauncher
         /// <param name="generationOnlyProblemGenerationRunnerSettings">The settings for <see cref="GenerationOnlyProblemGenerationRunner"/>.</param>
         /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator.ProblemGenerator"/>.</param>
         /// <param name="generationSettings">The settings related to the generator module.</param>
-        /// <param name="tracingSettings">The settings for all tracers.</param>
+        /// <param name="traceConstructorFailures">Indicates whether tracing of constructor failures is on.</param>
+        /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>. This value can be null if we don't want to trace them.</param>
+        /// <param name="traceGeometryFailures">Indicates whether tracing of geometry failures is on.</param>
+        /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>. This value can be null if we don't want to trace them.</param>
         public Settings(LoggingSettings loggingSettings,
                         ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
                         GenerationOnlyProblemGenerationRunnerSettings generationOnlyProblemGenerationRunnerSettings,
                         ProblemGeneratorSettings problemGeneratorSettings,
                         GenerationSettings generationSettings,
-                        TracingSettings tracingSettings)
+                        bool traceConstructorFailures,
+                        ConstructorFailureTracerSettings constructorFailureTracerSettings,
+                        bool traceGeometryFailures,
+                        GeometryFailureTracerSettings geometryFailureTracerSettings)
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             ProblemGeneratorInputProviderSettings = problemGeneratorInputProviderSettings ?? throw new ArgumentNullException(nameof(problemGeneratorInputProviderSettings));
             GenerationOnlyProblemGenerationRunnerSettings = generationOnlyProblemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(generationOnlyProblemGenerationRunnerSettings));
             ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
             GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));
-            TracingSettings = tracingSettings ?? throw new ArgumentNullException(nameof(tracingSettings));
+            TraceConstructorFailures = traceConstructorFailures;
+            ConstructorFailureTracerSettings = constructorFailureTracerSettings;
+            TraceGeometryFailures = traceGeometryFailures;
+            GeometryFailureTracerSettings = geometryFailureTracerSettings;
+
+            // Ensure that construction failure settings are set if they are supposed to be traced
+            if (TraceConstructorFailures && constructorFailureTracerSettings == null)
+                throw new MainLauncherException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
+
+            // Ensure that geometry failure settings are set if they are supposed to be traced
+            if (TraceGeometryFailures && geometryFailureTracerSettings == null)
+                throw new MainLauncherException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
         }
 
         #endregion
