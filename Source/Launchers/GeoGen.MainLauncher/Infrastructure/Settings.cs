@@ -85,6 +85,16 @@ namespace GeoGen.MainLauncher
         /// </summary>
         public GeometryFailureTracerSettings GeometryFailureTracerSettings { get; }
 
+        /// <summary>
+        /// Indicates whether tracing of invalid inferences is on.
+        /// </summary>
+        public bool TraceInvalidInferences { get; }
+
+        /// <summary>
+        /// The settings for <see cref="InvalidInferenceTracer"/>. This value can be null if we don't want to trace them.
+        /// </summary>
+        public InvalidInferenceTracerSettings InvalidInferenceTracerSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -106,6 +116,8 @@ namespace GeoGen.MainLauncher
         /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>. This value can be null if we don't want to trace them.</param>
         /// <param name="traceGeometryFailures">Indicates whether tracing of geometry failures is on.</param>
         /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>. This value can be null if we don't want to trace them.</param>
+        /// <param name="traceInvalidInferences">Indicates whether tracing of invalid inferences is on.</param>
+        /// <param name="invalidInferenceTracerSettings">The settings for <see cref="InvalidInferenceTracer"/>. This value can be null if we don't want to trace them.</param>
         public Settings(LoggingSettings loggingSettings,
                         ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
                         InferenceRuleProviderSettings inferenceRuleProviderSettings,
@@ -119,7 +131,10 @@ namespace GeoGen.MainLauncher
                         bool traceConstructorFailures,
                         ConstructorFailureTracerSettings constructorFailureTracerSettings,
                         bool traceGeometryFailures,
-                        GeometryFailureTracerSettings geometryFailureTracerSettings)
+                        GeometryFailureTracerSettings geometryFailureTracerSettings,
+                        bool traceInvalidInferences,
+                        InvalidInferenceTracerSettings invalidInferenceTracerSettings)
+
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             ProblemGeneratorInputProviderSettings = problemGeneratorInputProviderSettings ?? throw new ArgumentNullException(nameof(problemGeneratorInputProviderSettings));
@@ -135,14 +150,20 @@ namespace GeoGen.MainLauncher
             ConstructorFailureTracerSettings = constructorFailureTracerSettings;
             TraceGeometryFailures = traceGeometryFailures;
             GeometryFailureTracerSettings = geometryFailureTracerSettings;
+            TraceInvalidInferences = traceInvalidInferences;
+            InvalidInferenceTracerSettings = invalidInferenceTracerSettings;
 
-            // Ensure that construction failure settings are set if they are supposed to be traced
+            // Ensure that construction failure tracer settings are set if they are supposed to be traced
             if (TraceConstructorFailures && constructorFailureTracerSettings == null)
                 throw new MainLauncherException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
 
-            // Ensure that geometry failure settings are set if they are supposed to be traced
+            // Ensure that geometry failure tracer settings are set if they are supposed to be traced
             if (TraceGeometryFailures && geometryFailureTracerSettings == null)
                 throw new MainLauncherException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
+
+            // Ensure that invalid inference tracer settings are set if they are supposed to be traced
+            if (TraceInvalidInferences && invalidInferenceTracerSettings == null)
+                throw new MainLauncherException("The invalid inference tracer settings must be set as we are supposed to be tracing them.");
         }
 
         #endregion

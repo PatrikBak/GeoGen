@@ -94,13 +94,13 @@ namespace GeoGen.ConfigurationGenerationLauncher
             TraceGeometryFailures = traceGeometryFailures;
             GeometryFailureTracerSettings = geometryFailureTracerSettings;
 
-            // Ensure that construction failure settings are set if they are supposed to be traced
+            // Ensure that construction failure tracer settings are set if they are supposed to be traced
             if (TraceConstructorFailures && constructorFailureTracerSettings == null)
-                throw new MainLauncherException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
+                throw new ConfigurationGenerationLauncherException("The construction failure tracer settings must be set as we are supposed to be tracing them.");
 
-            // Ensure that geometry failure settings are set if they are supposed to be traced
+            // Ensure that geometry failure tracer settings are set if they are supposed to be traced
             if (TraceGeometryFailures && geometryFailureTracerSettings == null)
-                throw new MainLauncherException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
+                throw new ConfigurationGenerationLauncherException("The geometry failure tracer settings must be set as we are supposed to be tracing them.");
         }
 
         #endregion

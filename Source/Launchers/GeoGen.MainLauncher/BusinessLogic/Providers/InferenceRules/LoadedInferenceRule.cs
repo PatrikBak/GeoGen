@@ -72,7 +72,7 @@ namespace GeoGen.MainLauncher
         #region To String
 
         /// <inheritdoc/>
-        public override string ToString() => $"{RelativeFileName} ({Number}) {(!AdjustmentMessage.IsEmpty() ? $"[{AdjustmentMessage}]" : "")}";
+        public override string ToString() => $"{RelativeFileName} ({Number}){(!AdjustmentMessage.IsEmpty() ? $" [{AdjustmentMessage}]" : "")}";
 
         #endregion
     }

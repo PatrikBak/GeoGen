@@ -99,6 +99,10 @@ namespace GeoGen.MainLauncher
             if (settings.TraceGeometryFailures)
                 Kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.GeometryFailureTracerSettings);
 
+            // Rebind Invalid Inference Tracer only if we're supposed be tracing
+            if (settings.TraceInvalidInferences)
+                Kernel.Rebind<IInvalidInferenceTracer>().To<InvalidInferenceTracer>().WithConstructorArgument(settings.InvalidInferenceTracerSettings);
+
             #endregion
         }
 
