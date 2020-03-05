@@ -34,7 +34,7 @@ namespace GeoGen.TheoremFinder
             foreach (var picture in contextualPicture.Pictures)
             {
                 // For a given picture we take the objects
-                var analyticObjects = objects.Select(o => contextualPicture.GetAnalyticObject(o, picture)).ToArray();
+                var analyticObjects = objects.Select(_object => contextualPicture.GetAnalyticObject(_object, picture)).ToArray();
 
                 // Intersect them
                 var intersections = AnalyticHelpers.Intersect(analyticObjects);

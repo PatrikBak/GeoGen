@@ -313,9 +313,9 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var bisector = PerpendicularBisector(pair.points.Item1, pair.points.Item2);
 
                 // Get its rounded coefficients
-                new[] { bisector.A, bisector.B, bisector.C }.Select(d => d.Rounded())
+                new[] { bisector.A, bisector.B, bisector.C }.Select(coefficient => coefficient.Rounded())
                     // Assert they are equal to the precalculated ones
-                    .SequenceEqual(pair.coefficients.Select(d => d.Rounded())).Should().BeTrue();
+                    .SequenceEqual(pair.coefficients.Select(coefficient => coefficient.Rounded())).Should().BeTrue();
             });
         }
 

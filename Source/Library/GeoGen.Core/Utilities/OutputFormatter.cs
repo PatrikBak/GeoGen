@@ -297,8 +297,8 @@ namespace GeoGen.Core
             var namedLines = 0;
 
             // Helper values of the total numbers of points and lines
-            var numberOfLines = objects.Count(o => o.ObjectType == ConfigurationObjectType.Line);
-            var numberOfCircles = objects.Count(o => o.ObjectType == ConfigurationObjectType.Circle);
+            var numberOfLines = objects.Count(_object => _object.ObjectType == ConfigurationObjectType.Line);
+            var numberOfCircles = objects.Count(_object => _object.ObjectType == ConfigurationObjectType.Circle);
 
             // Go through all the objects
             foreach (var configurationObject in objects)

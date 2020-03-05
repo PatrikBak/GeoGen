@@ -16,7 +16,7 @@ namespace GeoGen.Utilities
         /// <returns>The indented string.</returns>
         public static string Indent(this string @string, int numberOfSpaces)
             // Split the string, append spaces at the beginning, join again
-            => @string.Split('\n').Select(s => $"{new string(' ', numberOfSpaces)}{s}").ToJoinedString("\n");
+            => @string.Split('\n').Select(line => $"{new string(' ', numberOfSpaces)}{line}").ToJoinedString("\n");
 
         /// <summary>
         /// Replaces every comma that is not between unbalanced braces of type () or [] with a semicolon. For example:

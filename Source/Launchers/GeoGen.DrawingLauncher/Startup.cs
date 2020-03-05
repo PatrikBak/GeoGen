@@ -249,7 +249,9 @@ namespace GeoGen.DrawingLauncher
                     return false;
 
                 // Reconstruct constructed objects
-                var constructedObjectsMapping = configuration.ConstructedObjects.ToDictionary(o => (ConfigurationObject)o, o => o.Remap(mapping));
+                var constructedObjectsMapping = configuration.ConstructedObjects.ToDictionary(constructedObject => (ConfigurationObject)constructedObject,
+                    // Each is remapped using the mapping
+                    constructedObject => constructedObject.Remap(mapping));
 
                 // Wrap them in a new configuration
                 var newConfiguration = new Configuration(configuration.LooseObjectsHolder, constructedObjectsMapping.Values.Cast<ConstructedConfigurationObject>().ToList());

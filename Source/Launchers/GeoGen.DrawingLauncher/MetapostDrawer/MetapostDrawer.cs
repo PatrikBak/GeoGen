@@ -641,7 +641,7 @@ namespace GeoGen.DrawingLauncher
                     // Now we need to split them again 
                     .Split(',')
                     // And trim and append double quotes
-                    .Select(s => $"\"{s.Trim()}\"")
+                    .Select(objectName => $"\"{objectName.Trim()}\"")
                     // And join again
                     .ToJoinedString()
                 // And finally append the end of the call

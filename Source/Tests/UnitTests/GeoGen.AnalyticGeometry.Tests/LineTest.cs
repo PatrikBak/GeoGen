@@ -36,9 +36,9 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var line = new Line(point1, point2);
 
                 // Get its rounded coefficients
-                new[] { line.A, line.B, line.C }.Select(d => d.Rounded())
+                new[] { line.A, line.B, line.C }.Select(coefficient => coefficient.Rounded())
                     // Assert they are equal to the precalculated ones
-                    .SequenceEqual(pair.coefficients.Select(d => d.Rounded())).Should().BeTrue();
+                    .SequenceEqual(pair.coefficients.Select(coefficient => coefficient.Rounded())).Should().BeTrue();
             });
         }
 
@@ -185,9 +185,9 @@ namespace GeoGen.AnalyticGeometry.Tests
                 var line = tuple.line.PerpendicularLineThroughPoint(tuple.point);
 
                 // Get its rounded coefficients
-                new[] { line.A, line.B, line.C }.Select(d => d.Rounded())
+                new[] { line.A, line.B, line.C }.Select(coefficient => coefficient.Rounded())
                     // Assert they are equal to the precalculated ones
-                    .SequenceEqual(tuple.result.Select(d => d.Rounded())).Should().BeTrue();
+                    .SequenceEqual(tuple.result.Select(coefficient => coefficient.Rounded())).Should().BeTrue();
 
                 // Assert they are perpendicular
                 line.IsPerpendicularTo(tuple.line).Should().BeTrue();

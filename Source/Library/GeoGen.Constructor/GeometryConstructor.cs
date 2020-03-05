@@ -161,7 +161,7 @@ namespace GeoGen.Constructor
                     Restore();
 
                     // Get the not-null equal objects
-                    var equalObjects = new[] { duplicate, equalObject }.Where(o => o != null).ToArray();
+                    var equalObjects = new[] { duplicate, equalObject }.Where(_equalObject => _equalObject != null).ToArray();
 
                     // Throw an exception
                     throw new InconsistentEqualityException(constructedObject, equalObjects);

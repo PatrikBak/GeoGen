@@ -48,7 +48,7 @@ namespace GeoGen.Core
             ObjectTypes = DetermineObjectTypes();
 
             // Derive the dictionary mapping types to their count from the objects types list
-            ObjectTypesToNeededCount = ObjectTypes.GroupBy(t => t).ToDictionary(group => group.Key, group => group.Count());
+            ObjectTypesToNeededCount = ObjectTypes.GroupBy(type => type).ToDictionary(group => group.Key, group => group.Count());
         }
 
         #endregion

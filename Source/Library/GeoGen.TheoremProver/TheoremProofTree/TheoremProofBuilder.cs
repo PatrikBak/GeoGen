@@ -156,7 +156,7 @@ namespace GeoGen.TheoremProver
                                 // Zip it with the arguments of the second object
                                 .Select(permutation => permutation.Zip(innerObject2.PassedArguments.FlattenedList))
                                 // Take the first such an order that represents a provable equality
-                                .FirstOrDefault(x => x.All(pair => _equalityHelper.AreEqual(pair.First, pair.Second)));
+                                .FirstOrDefault(pairs => pairs.All(pair => _equalityHelper.AreEqual(pair.First, pair.Second)));
 
                             // Return it with the given objects
                             return (innerObject1, innerObject2, equalArguments);

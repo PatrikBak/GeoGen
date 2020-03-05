@@ -390,7 +390,7 @@ namespace GeoGen.Constructor
                 if (picture != Pictures.First() && foundObject != equalObject)
                 {
                     // Get the not-null geometric objects that have been evaluated equal to our object
-                    var equalObjects = new[] { foundObject, equalObject }.Where(o => o != null).ToArray();
+                    var equalObjects = new[] { foundObject, equalObject }.Where(_equalObject => _equalObject != null).ToArray();
 
                     // Throw an exception
                     throw new InconsistentEqualityException(configurationObject, equalObjects);
