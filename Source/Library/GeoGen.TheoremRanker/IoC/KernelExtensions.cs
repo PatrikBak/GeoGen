@@ -16,7 +16,7 @@ namespace GeoGen.TheoremRanker
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankingSettings settings)
         {
-            // Bind ranker
+            // Bind the ranker
             kernel.Bind<ITheoremRanker>().To<TheoremRanker>().WithConstructorArgument(settings.TheoremRankerSettings);
 
             #region Bind theorem rankers for individual ranked aspects

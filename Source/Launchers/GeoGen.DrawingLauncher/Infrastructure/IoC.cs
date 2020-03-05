@@ -2,7 +2,6 @@
 using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
 using Ninject;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace GeoGen.DrawingLauncher
@@ -46,12 +45,8 @@ namespace GeoGen.DrawingLauncher
 
             // Bind the drawer with its settings
             Kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
-                // And its data
-                .WithConstructorArgument(new MetapostDrawerData
-                (
-                    // Loaded via the drawing rule provider
-                    (await Kernel.Get<IDrawingRuleProvider>().GetDrawingRulesAsync()).ToDictionary(rule => rule.ObjectToDraw.Construction, rule => rule)
-                ));
+                // And its loaded rules
+                .WithConstructorArgument(new MetapostDrawerData(await Kernel.Get<IDrawingRuleProvider>().GetDrawingRulesAsync()));
         }
 
         #endregion

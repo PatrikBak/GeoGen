@@ -15,10 +15,10 @@ namespace GeoGen.ProblemGenerator
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddProblemGenerator(this IKernel kernel, ProblemGeneratorSettings settings)
         {
-            // Stateless services
+            // Bind the generator
             kernel.Bind<IProblemGenerator>().To<ProblemGenerator>().WithConstructorArgument(settings);
 
-            // Tracer
+            // Bind the tracer
             kernel.Bind<IGeometryFailureTracer>().To<EmptyGeometryFailureTracer>();
 
             // Return the kernel for chaining

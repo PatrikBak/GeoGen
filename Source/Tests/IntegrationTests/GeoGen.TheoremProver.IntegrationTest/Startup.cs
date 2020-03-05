@@ -24,10 +24,22 @@ namespace GeoGen.TheoremProver.IntegrationTest
         /// <summary>
         /// The entry method of the application.
         /// </summary>
-        /// <param name="arguments">The two arguments: path to the inference rule folder; the extension of the inference rule files.</param>
+        /// <param name="arguments">The three arguments:
+        /// <list type="number">
+        /// <item>Path to the inference rule folder.</item>
+        /// <item>The extension of the inference rule files.</item>
+        /// <item>Path to the object introduction rule file.</item>
+        /// </list> 
+        /// </param>
         private static async Task Main(string[] arguments)
         {
             #region Kernel preparation
+
+            // Prepare the settings for the inference rule provider
+            var inferenceRuleProviderSettings = new InferenceRuleProviderSettings(ruleFolderPath: arguments[0], fileExtension: arguments[1]);
+
+            // Prepare the settings for the object introduction rule provider
+            var objectIntroductionRuleProviderSettings = new ObjectIntroductionRuleProviderSettings(filePath: arguments[2]);
 
             // Prepare the kernel
             var kernel = Infrastructure.IoC.CreateKernel()
@@ -48,10 +60,13 @@ namespace GeoGen.TheoremProver.IntegrationTest
                                       new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true)
                                   ))
                 // That can prove theorems
-                .AddTheoremProver(new InferenceRuleManagerData
+                .AddTheoremProver(new TheoremProvingSettings
                 (
-                    // In order to find rules use the rule provider that uses the folder specified in the arguments
-                    rules: await new InferenceRuleProvider(new InferenceRuleProviderSettings(ruleFolderPath: arguments[0], fileExtension: arguments[1])).GetInferenceRulesAsync()
+                    // Use the provider to find the inference rules
+                    new InferenceRuleManagerData(await new InferenceRuleProvider(inferenceRuleProviderSettings).GetInferenceRulesAsync()),
+
+                    // Use the provider to find the object introduction rules
+                    new ObjectIntroducerData(await new ObjectIntroductionRuleProvider(objectIntroductionRuleProviderSettings).GetObjectIntroductionRulesAsync())
                 ));
 
             #endregion
@@ -117,7 +132,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                             .ToJoinedString("\n");
 
                 // Write the configuration and theorems
-                Console.WriteLine($"Configuration:\n\n{formatter.FormatConfiguration(configuration).Indent(2)}\n");
+                Console.WriteLine($"\nConfiguration:\n\n{formatter.FormatConfiguration(configuration).Indent(2)}\n");
                 Console.WriteLine($"OldTheorems:\n\n{TheoremString(oldTheorems.AllObjects).Indent(2)}\n");
                 Console.WriteLine($"NewTheorems:\n\n{TheoremString(newTheorems.AllObjects).Indent(2)}\n");
 
@@ -161,7 +176,6 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 // Report time
                 Console.WriteLine($"Total time: {totalTime.ElapsedMilliseconds}");
                 Console.WriteLine("----------------------------------------------");
-                Console.WriteLine();
 
                 #endregion
             });

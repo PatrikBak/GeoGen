@@ -11,7 +11,7 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// Gets drawing rules.
         /// </summary>
-        /// <returns>The drawing rules.</returns>
+        /// <returns>The loaded drawing rules.</returns>
         Task<IReadOnlyList<DrawingRule>> GetDrawingRulesAsync();
     }
 }

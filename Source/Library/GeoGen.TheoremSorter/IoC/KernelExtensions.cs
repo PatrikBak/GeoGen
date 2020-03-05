@@ -18,7 +18,7 @@ namespace GeoGen.TheoremSorter
             // Bind the sorter
             kernel.Bind<ITheoremSorter>().To<TheoremSorter>().WithConstructorArgument(settings);
 
-            // Tracer
+            // Bind the tracer
             kernel.Bind<ISortingGeometryFailureTracer>().To<EmptySortingGeometryFailureTracer>();
 
             // Return the kernel for chaining

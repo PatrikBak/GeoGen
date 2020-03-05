@@ -8,7 +8,6 @@ using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSimplifier;
 using GeoGen.TheoremSorter;
-using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
 using System.Threading.Tasks;
@@ -51,40 +50,44 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
-            Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
+            Kernel.Bind<IObjectIntroductionRuleProvider>().To<ObjectIntroductionRuleProvider>().WithConstructorArgument(settings.ObjectIntroductionRuleProviderSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
+            Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
 
-            #endregion           
+            #endregion
 
             // Load the inference rules
             var managerData = new InferenceRuleManagerData(await Kernel.Get<IInferenceRuleProvider>().GetInferenceRulesAsync());
 
-            // Use them to find the tracker
+            // Use them to bind the tracker
             Kernel.Bind<IInferenceRuleUsageTracker>().To<InferenceRuleUsageTracker>().WithConstructorArgument(managerData);
 
             #region Algorithm
 
-            // Add configuration generator
+            // Add the configuration generator with its settings
             Kernel.AddConfigurationGenerator(settings.GenerationSettings)
-                // And constructor
+                // And the constructor
                 .AddConstructor()
-                // And theorem finder
+                // And the theorem finder
                 .AddTheoremFinder(settings.TheoremFindingSettings)
-                // And theorem ranker
+                // And the theorem ranker
                 .AddTheoremRanker(settings.TheoremRankingSettings)
-                // And theorem prover and its data
-                .AddTheoremProver(managerData)
-                // And theorem simplifier and its data
-                .AddTheoremSimplifier(new TheoremSimplifierData
+                // And the theorem prover and with its settings
+                .AddTheoremProver(new TheoremProvingSettings
                 (
-                    // Simplification rules are loaded at the beginning
-                    rules: (await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()).ToReadOnlyHashSet()
+                    // Set the loaded manager data
+                    inferenceRuleManagerData: managerData,
+
+                    // Load the object introduction data as well
+                    objectIntroducerData: new ObjectIntroducerData(await Kernel.Get<IObjectIntroductionRuleProvider>().GetObjectIntroductionRulesAsync())
                 ))
-                // And problem generator
+                // And the theorem simplifier with the loaded simplification rules
+                .AddTheoremSimplifier(new TheoremSimplifierData(await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()))
+                // And the problem generator and with its settings
                 .AddProblemGenerator(settings.ProblemGeneratorSettings)
-                // And analyzer
+                // And the analyzer
                 .AddAnalyzer()
-                // And sorter
+                // And the sorter with its settings
                 .AddTheoremSorter(settings.TheoremSorterSettings);
 
             #endregion
@@ -106,7 +109,6 @@ namespace GeoGen.MainLauncher
             // Rebind Sorting Geometry Failure Tracer only if we're supposed be tracing
             if (settings.TraceSortingGeometryFailures)
                 Kernel.Rebind<ISortingGeometryFailureTracer>().To<SortingGeometryFailureTracer>().WithConstructorArgument(settings.SortingGeometryFailureTracerSettings);
-
 
             #endregion
         }

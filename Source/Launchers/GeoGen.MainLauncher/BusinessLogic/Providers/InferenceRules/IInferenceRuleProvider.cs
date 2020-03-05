@@ -11,7 +11,7 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// Gets inference rules.
         /// </summary>
-        /// <returns>The list of loaded inference rules.</returns>
+        /// <returns>The loaded inference rules.</returns>
         Task<IReadOnlyList<LoadedInferenceRule>> GetInferenceRulesAsync();
     }
 }

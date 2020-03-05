@@ -1,6 +1,7 @@
 ﻿using GeoGen.Core;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -23,10 +24,10 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="MetapostDrawerData"/>.
         /// </summary>
-        /// <param name="drawingRules">The dictionary mapping construction to the rules explaining what should be drawn while performing them.</param>
-        public MetapostDrawerData(IReadOnlyDictionary<Construction, DrawingRule> drawingRules)
+        /// <param name="drawingRules">The available drawing rules.</param>
+        public MetapostDrawerData(IEnumerable<DrawingRule> drawingRules)
         {
-            DrawingRules = drawingRules ?? throw new ArgumentNullException(nameof(drawingRules));
+            DrawingRules = drawingRules?.ToDictionary(rule => rule.ObjectToDraw.Construction) ?? throw new ArgumentNullException(nameof(drawingRules));
         }
 
         #endregion

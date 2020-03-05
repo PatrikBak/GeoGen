@@ -16,7 +16,7 @@ namespace GeoGen.Infrastructure
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddLogging(this IKernel kernel, LoggingSettings settings)
         {
-            // Bind logging manager
+            // Bind the logging manager
             kernel.Bind<ILoggingManager>().To<CustomLoggingManager>();
 
             // Bind loggers according to the settings

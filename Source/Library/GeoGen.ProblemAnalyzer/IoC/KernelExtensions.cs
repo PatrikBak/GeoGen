@@ -14,7 +14,7 @@ namespace GeoGen.ProblemAnalyzer
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddAnalyzer(this IKernel kernel)
         {
-            // Stateless services
+            // Bind the analyzer
             kernel.Bind<IGeneratedProblemAnalyzer>().To<GeneratedProblemAnalyzer>();
 
             // Return the kernel for chaining

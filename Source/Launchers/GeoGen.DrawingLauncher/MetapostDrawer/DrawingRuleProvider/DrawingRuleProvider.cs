@@ -30,7 +30,7 @@ namespace GeoGen.DrawingLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DrawingRuleProviderSettings"/> class.
+        /// Initializes a new instance of the <see cref="DrawingRuleProvider"/> class.
         /// </summary>
         /// <param name="settings">The settings for the provider.</param>
         public DrawingRuleProvider(DrawingRuleProviderSettings settings)
@@ -58,7 +58,7 @@ namespace GeoGen.DrawingLauncher
             catch (Exception e)
             {
                 // If it cannot be done, make aware
-                throw new GeoGenException($"Couldn't load the drawing rule file '{_settings.FilePath}'", e);
+                throw new DrawingLauncherException($"Couldn't load the drawing rule file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -91,7 +91,7 @@ namespace GeoGen.DrawingLauncher
 
                 // Make sure their constructions are distinct
                 if (rules.Select(rule => rule.ObjectToDraw.Construction).ToArray().AnyDuplicates())
-                    throw new GeoGenException("The loaded drawing rules contains duplicate rules for the same construction.");
+                    throw new ParsingException("The loaded drawing rules contains duplicate rules for the same construction.");
 
                 // Log their count
                 LoggingManager.LogInfo($"Loaded {rules.Count} drawing rule(s).");
@@ -102,7 +102,7 @@ namespace GeoGen.DrawingLauncher
             catch (ParsingException e)
             {
                 // Throw further
-                throw new GeoGenException($"Couldn't parse the drawing rule file {_settings.FilePath}.", e);
+                throw new DrawingLauncherException($"Couldn't parse the drawing rule file {_settings.FilePath}.", e);
             }
 
             #endregion
@@ -134,7 +134,7 @@ namespace GeoGen.DrawingLauncher
                     // Prepare the dictionary with object names
                     var namesToObjects = new Dictionary<string, ConfigurationObject>();
 
-                    // Object the object to be drawn for parsing
+                    // Prepare the object to be drawn for parsing
                     var objectToDraw = default(ConstructedConfigurationObject);
 
                     try

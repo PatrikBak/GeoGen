@@ -48,11 +48,11 @@ namespace GeoGen.ConfigurationGenerationLauncher
 
             #region Problem generator
 
-            // Add configuration generator
+            // Add the configuration generator with its settings
             Kernel.AddConfigurationGenerator(settings.GenerationSettings)
-                // Add constructor
+                // Add the constructor
                 .AddConstructor()
-                // Add problem generator
+                // Add the problem generator with its settings
                 .AddProblemGenerator(settings.ProblemGeneratorSettings);
 
             // Add an empty theorem finder

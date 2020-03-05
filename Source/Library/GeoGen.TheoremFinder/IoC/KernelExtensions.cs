@@ -18,7 +18,7 @@ namespace GeoGen.TheoremFinder
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremFinder(this IKernel kernel, TheoremFindingSettings settings)
         {
-            // Bind theorem finder
+            // Bind the theorem finder
             kernel.Bind<ITheoremFinder>().To<TheoremFinder>();
 
             #region Bind theorem finders for individual types

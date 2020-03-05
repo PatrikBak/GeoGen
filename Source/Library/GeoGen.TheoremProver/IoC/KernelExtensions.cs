@@ -11,18 +11,18 @@ namespace GeoGen.TheoremProver
         /// Bindings for the dependencies from the TheoremProver module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="data">The data for the <see cref="InferenceRuleManager"/>.</param>
+        /// <param name="settings">The settings for the module.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremProver(this IKernel kernel, InferenceRuleManagerData data)
+        public static IKernel AddTheoremProver(this IKernel kernel, TheoremProvingSettings settings)
         {
-            // Bind services
+            // Bind the services
             kernel.Bind<ITheoremProver>().To<TheoremProver>();
-            kernel.Bind<IInferenceRuleManager>().To<InferenceRuleManager>().WithConstructorArgument(data);
+            kernel.Bind<IInferenceRuleManager>().To<InferenceRuleManager>().WithConstructorArgument(settings.InferenceRuleManagerData);
+            kernel.Bind<IObjectIntroducer>().To<ObjectIntroducer>().WithConstructorArgument(settings.ObjectIntroducerData);
             kernel.Bind<IInferenceRuleApplier>().To<InferenceRuleApplier>();
             kernel.Bind<ITrivialTheoremProducer>().To<TrivialTheoremProducer>();
-            kernel.Bind<IObjectIntroducer>().To<ObjectIntroducer>();
 
-            // Bind tracer
+            // Bind the tracer
             kernel.Bind<IInvalidInferenceTracer>().To<EmptyInvalidInferenceTracer>();
 
             // Return the kernel for chaining

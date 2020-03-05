@@ -15,12 +15,14 @@ namespace GeoGen.Constructor
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddConstructor(this IKernel kernel)
         {
-            // Stateless services
+            // Bind the services
             kernel.Bind<IGeometryConstructor>().To<GeometryConstructor>();
             kernel.Bind<IConstructorResolver>().To<ConstructorResolver>();
             kernel.Bind<IGeometricTheoremVerifier>().To<GeometricTheoremVerifier>();
+            kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
+            kernel.Bind<IComposedConstructorFactory>().ToFactory();
 
-            // Stateless predefined constructors
+            // Bind the predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<CircleWithCenterThroughPointConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<CircumcircleConstructor>();
@@ -35,14 +37,8 @@ namespace GeoGen.Constructor
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfCircleAndLineFromPointsConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<SecondIntersectionOfTwoCircumcirclesConstructor>();
 
-            // Tracers
+            // Bind the tracer
             kernel.Bind<IConstructorFailureTracer>().To<EmptyConstructorFailureTracer>();
-
-            // Factories
-            kernel.Bind<IComposedConstructorFactory>().ToFactory();
-
-            // Factory outputs
-            kernel.Bind<IComposedConstructor>().To<ComposedConstructor>();
 
             // Return the kernel for chaining
             return kernel;

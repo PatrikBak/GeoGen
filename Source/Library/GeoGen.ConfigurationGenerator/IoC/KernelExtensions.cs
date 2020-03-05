@@ -17,10 +17,8 @@ namespace GeoGen.ConfigurationGenerator
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddConfigurationGenerator(this IKernel kernel, GenerationSettings settings)
         {
-            // Stateless service
+            // Bind the services
             kernel.Bind<IConfigurationGenerator>().To<ConfigurationGenerator>();
-
-            // Factory
             kernel.Bind<IConfigurationFilterFactory>().ToFactory();
 
             #region Bind configuration filter
