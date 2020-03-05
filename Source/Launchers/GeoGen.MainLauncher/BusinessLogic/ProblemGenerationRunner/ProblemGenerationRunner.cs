@@ -303,12 +303,24 @@ namespace GeoGen.MainLauncher
                     // Otherwise all of them
                     : analyzerOutput.InterestingTheorems;
 
-                // Let the sorter judge the theorems to be marked
-                _sorter.AddTheorems(theoremsToBeJudged, out var bestTheoremsChanged);
+                try
+                {
+                    // Let the sorter judge the theorems to be marked
+                    _sorter.AddTheorems(theoremsToBeJudged, out var bestTheoremsChanged);
 
-                // If we should write best theorems continuously and there are some changes, do it
-                if (_settings.WriteBestTheoremsContinuously && bestTheoremsChanged)
-                    RewriteBestTheorems();
+                    // If we should write best theorems continuously and there are some changes, do it
+                    if (_settings.WriteBestTheoremsContinuously && bestTheoremsChanged)
+                        RewriteBestTheorems();
+                }
+                catch (Exception e)
+                {
+                    // If there is any sort of problem, we should make aware of it. 
+                    LoggingManager.LogError($"There has been an exception while sorting theorems of the configuration:\n\n" +
+                        // Write the problematic configuration
+                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects)}\n" +
+                        // And also the exception
+                        $"Exception: {e}");
+                }
 
                 #endregion
 
