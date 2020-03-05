@@ -32,6 +32,11 @@ namespace GeoGen.TheoremSorter
         /// </summary>
         private readonly IGeometryConstructor _constructor;
 
+        /// <summary>
+        /// The sorter of geometry failures for object and theorem construction.
+        /// </summary>
+        private readonly ISortingGeometryFailureTracer _tracer;
+
         #endregion
 
         #region Private fields
@@ -72,9 +77,11 @@ namespace GeoGen.TheoremSorter
         /// </summary>
         /// <param name="settings">The settings for the sorter.</param>
         /// <param name="constructor">The constructor used to geometrically compare theorems.</param>
-        public TheoremSorter(TheoremSorterSettings settings, IGeometryConstructor constructor)
+        /// <param name="tracer">The tracer of geometry failure.</param>
+        public TheoremSorter(TheoremSorterSettings settings, IGeometryConstructor constructor, ISortingGeometryFailureTracer tracer)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
 
             // Initialize the ladder with the requested capacity
             _ladder = new RankingLadder<RankedTheorem, TheoremRanking>(capacity: settings.NumberOfTheorems);
@@ -250,7 +257,10 @@ namespace GeoGen.TheoremSorter
         /// </summary>
         /// <param name="picture">The picture to be used for construction of inner theorem objects.</param>
         /// <param name="rankedTheorem">The ranked theorem to be examined.</param>
-        /// <returns>The pair of ranked theorem and analytic theorem. If there is no distinct ranked theorem, then the theorem will be the passed one.</returns>
+        /// <returns>
+        /// The pair of ranked theorem and analytic theorem. If there is no distinct ranked theorem, then the theorem will
+        /// be the passed one. If the examination fails, then the default value of the returning type will be returned.
+        /// </returns>
         private (RankedTheorem, AnalyticTheorem) FindGeometricallyEqualTheorem(Picture picture, RankedTheorem rankedTheorem)
         {
             // Prepare the set of temporary objects
@@ -303,11 +313,17 @@ namespace GeoGen.TheoremSorter
                 temporaryObjects.Add(remappedConstructedObjects);
 
                 // Ensure the remapped objects are constructed
-                EnsureObjectsAreConstructed(picture, remappedConstructedObjects, out var success);
+                EnsureObjectsAreConstructed(picture, remappedConstructedObjects, out var inconstructibleObject);
 
-                // If they can't be, which is very weird, then return the default value
-                if (!success)
+                // If they can't be, then it is really weird
+                if (inconstructibleObject != null)
+                {
+                    // Trace it
+                    _tracer.TraceInconstructibleObject(rankedTheorem);
+
+                    // And return the default value indicating a failure
                     return default;
+                }
 
                 // Now we can finally remap the theorem
                 var remappedTheorem = rankedTheorem.Theorem.Remap(objectMapping);
@@ -324,9 +340,12 @@ namespace GeoGen.TheoremSorter
                     // Add it to the set of all analytic theorems
                     analyticTheorems.Add(remappedAnalyticTheorem);
                 }
-                catch (AnalyticException)
+                catch (AnalyticException e)
                 {
-                    // If something weird happens, which really shouldn't, then screw it
+                    // If something weird happens, which really shouldn't, then trace it
+                    _tracer.TraceInconstructibleTheorem(rankedTheorem, e);
+
+                    // And return the default value indicating a failure
                     return default;
                 }
             }
@@ -350,12 +369,12 @@ namespace GeoGen.TheoremSorter
         /// in a constructible order.
         /// </summary>
         /// <param name="picture">The picture where the objects should be constructed.</param>
-        /// <param name="constructedObjects">The objects that needs to be reconstructed in the picture.</param>
-        /// <param name="success">true, if all the objects have been successfully constructed; false otherwise.</param>
-        private void EnsureObjectsAreConstructed(Picture picture, IEnumerable<ConstructedConfigurationObject> constructedObjects, out bool success)
+        /// <param name="objects">The objects that needs to be reconstructed in the picture.</param>
+        /// <param name="inconstructibleObject">The first object that couldn't be constructed. If all have been constructed, then null.</param>
+        private void EnsureObjectsAreConstructed(Picture picture, IEnumerable<ConstructedConfigurationObject> objects, out ConstructedConfigurationObject inconstructibleObject)
         {
             // Go through the objects 
-            foreach (var constructedObject in constructedObjects)
+            foreach (var constructedObject in objects)
             {
                 // If the current one is constructed, we can move on
                 if (picture.Contains(constructedObject))
@@ -367,8 +386,8 @@ namespace GeoGen.TheoremSorter
                 // If the construction couldn't be carried out
                 if (result == null)
                 {
-                    // Set it
-                    success = false;
+                    // Set the inconstructible object
+                    inconstructibleObject = constructedObject;
 
                     // We can't continue because other objects might be dependent on this one
                     return;
@@ -376,7 +395,7 @@ namespace GeoGen.TheoremSorter
             }
 
             // If we got here, everything went fine
-            success = true;
+            inconstructibleObject = null;
         }
 
         #endregion

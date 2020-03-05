@@ -54,7 +54,7 @@ namespace GeoGen.MainLauncher
                 LoggingManager.LogWarning($"Construction: {infoString} See {_settings.FailureFilePath} for more detail.");
 
             // Add the input
-            infoString += $"\n\nInput:\n\n{analyticObjects.Select(o => $"{o.GetType().Name}: {o}").ToJoinedString("\n").Indent(2)}";
+            infoString += $"\n\nInput:\n\n{analyticObjects.Select(analyticObject => $"{analyticObject.GetType().Name}: {analyticObject}").ToJoinedString("\n").Indent(2)}";
 
             // Add the exception
             infoString += $"\n\nException message: {message}\n";

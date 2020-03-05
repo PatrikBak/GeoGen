@@ -95,6 +95,16 @@ namespace GeoGen.MainLauncher
         /// </summary>
         public InvalidInferenceTracerSettings InvalidInferenceTracerSettings { get; }
 
+        /// <summary>
+        /// Indicates whether tracing of sorting geometry failures is on.
+        /// </summary>
+        public bool TraceSortingGeometryFailures { get; }
+
+        /// <summary>
+        /// The settings for <see cref="SortingGeometryFailureTracer"/>. This value can be null if we don't want to trace them.
+        /// </summary>
+        public SortingGeometryFailureTracerSettings SortingGeometryFailureTracerSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -118,6 +128,8 @@ namespace GeoGen.MainLauncher
         /// <param name="geometryFailureTracerSettings">The settings for <see cref="GeometryFailureTracer"/>. This value can be null if we don't want to trace them.</param>
         /// <param name="traceInvalidInferences">Indicates whether tracing of invalid inferences is on.</param>
         /// <param name="invalidInferenceTracerSettings">The settings for <see cref="InvalidInferenceTracer"/>. This value can be null if we don't want to trace them.</param>
+        /// <param name="traceSortingGeometryFailures">Indicates whether tracing of sorting geometry failures is on.</param>
+        /// <param name="sortingGeometryFailureTracerSettings">The settings for <see cref="SortingGeometryFailureTracer"/>. This value can be null if we don't want to trace them.</param>
         public Settings(LoggingSettings loggingSettings,
                         ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
                         InferenceRuleProviderSettings inferenceRuleProviderSettings,
@@ -133,7 +145,9 @@ namespace GeoGen.MainLauncher
                         bool traceGeometryFailures,
                         GeometryFailureTracerSettings geometryFailureTracerSettings,
                         bool traceInvalidInferences,
-                        InvalidInferenceTracerSettings invalidInferenceTracerSettings)
+                        InvalidInferenceTracerSettings invalidInferenceTracerSettings,
+                        bool traceSortingGeometryFailures,
+                        SortingGeometryFailureTracerSettings sortingGeometryFailureTracerSettings)
 
         {
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
@@ -152,6 +166,8 @@ namespace GeoGen.MainLauncher
             GeometryFailureTracerSettings = geometryFailureTracerSettings;
             TraceInvalidInferences = traceInvalidInferences;
             InvalidInferenceTracerSettings = invalidInferenceTracerSettings;
+            TraceSortingGeometryFailures = traceSortingGeometryFailures;
+            SortingGeometryFailureTracerSettings = sortingGeometryFailureTracerSettings;
 
             // Ensure that construction failure tracer settings are set if they are supposed to be traced
             if (TraceConstructorFailures && constructorFailureTracerSettings == null)
@@ -164,6 +180,10 @@ namespace GeoGen.MainLauncher
             // Ensure that invalid inference tracer settings are set if they are supposed to be traced
             if (TraceInvalidInferences && invalidInferenceTracerSettings == null)
                 throw new MainLauncherException("The invalid inference tracer settings must be set as we are supposed to be tracing them.");
+
+            // Ensure that sorting geometry failure tracer settings are set if they are supposed to be traced
+            if (TraceSortingGeometryFailures && sortingGeometryFailureTracerSettings == null)
+                throw new MainLauncherException("The sorting geometry failure tracer settings must be set as we are supposed to be tracing them.");
         }
 
         #endregion

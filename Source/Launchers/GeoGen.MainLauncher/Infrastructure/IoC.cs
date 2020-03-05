@@ -103,6 +103,11 @@ namespace GeoGen.MainLauncher
             if (settings.TraceInvalidInferences)
                 Kernel.Rebind<IInvalidInferenceTracer>().To<InvalidInferenceTracer>().WithConstructorArgument(settings.InvalidInferenceTracerSettings);
 
+            // Rebind Sorting Geometry Failure Tracer only if we're supposed be tracing
+            if (settings.TraceSortingGeometryFailures)
+                Kernel.Rebind<ISortingGeometryFailureTracer>().To<SortingGeometryFailureTracer>().WithConstructorArgument(settings.SortingGeometryFailureTracerSettings);
+
+
             #endregion
         }
 

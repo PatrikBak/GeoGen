@@ -15,8 +15,11 @@ namespace GeoGen.TheoremSorter
         /// <returns>The kernel for chaining.</returns>
         public static IKernel AddTheoremSorter(this IKernel kernel, TheoremSorterSettings settings)
         {
-            // Bind the simplifier
+            // Bind the sorter
             kernel.Bind<ITheoremSorter>().To<TheoremSorter>().WithConstructorArgument(settings);
+
+            // Tracer
+            kernel.Bind<ISortingGeometryFailureTracer>().To<EmptySortingGeometryFailureTracer>();
 
             // Return the kernel for chaining
             return kernel;
