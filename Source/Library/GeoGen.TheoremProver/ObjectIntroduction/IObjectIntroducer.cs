@@ -14,6 +14,6 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="availableObjects">The objects in relation to which the new objects should be introduced.</param>
         /// <returns>The enumerable of options for new objects to be introduced.</returns>
-        IEnumerable<IEnumerable<ConstructedConfigurationObject>> IntroduceObjects(IReadOnlyList<ConstructedConfigurationObject> availableObjects);
+        IEnumerable<ConstructedConfigurationObject> IntroduceObjects(IReadOnlyList<ConstructedConfigurationObject> availableObjects);
     }
 }

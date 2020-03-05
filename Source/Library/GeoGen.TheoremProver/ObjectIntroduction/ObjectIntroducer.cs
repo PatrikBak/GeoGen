@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.Utilities;
 using System.Collections.Generic;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.PredefinedConstructions;
@@ -15,7 +14,7 @@ namespace GeoGen.TheoremProver
     public class ObjectIntroducer : IObjectIntroducer
     {
         /// <inheritdoc/>
-        public IEnumerable<IEnumerable<ConstructedConfigurationObject>> IntroduceObjects(IReadOnlyList<ConstructedConfigurationObject> availableObjects)
+        public IEnumerable<ConstructedConfigurationObject> IntroduceObjects(IReadOnlyList<ConstructedConfigurationObject> availableObjects)
         {
             foreach (var availableObject in availableObjects)
             {
@@ -23,14 +22,14 @@ namespace GeoGen.TheoremProver
                 {
                     var A = availableObject.PassedArguments.FlattenedList[1];
 
-                    yield return new ConstructedConfigurationObject(Midpoint, availableObject, A).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Midpoint, availableObject, A);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(ReflectionInLineFromPoints)))
                 {
                     var A = availableObject.PassedArguments.FlattenedList[0];
 
-                    yield return new ConstructedConfigurationObject(Midpoint, availableObject, A).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Midpoint, availableObject, A);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(PerpendicularBisector)))
@@ -38,7 +37,7 @@ namespace GeoGen.TheoremProver
                     var A = availableObject.PassedArguments.FlattenedList[0];
                     var B = availableObject.PassedArguments.FlattenedList[1];
 
-                    yield return new ConstructedConfigurationObject(Midpoint, A, B).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Midpoint, A, B);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(ParallelogramPoint)))
@@ -47,8 +46,8 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(Midpoint, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Median, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Midpoint, B, C);
+                    yield return new ConstructedConfigurationObject(Median, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Incenter)))
@@ -58,13 +57,13 @@ namespace GeoGen.TheoremProver
                     var C = availableObject.PassedArguments.FlattenedList[2];
                     var I = availableObject;
 
-                    yield return new ConstructedConfigurationObject(Incircle, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(InternalAngleBisector, B, A, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(InternalAngleBisector, C, A, B).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, B, I, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, C, I, A).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, A, I, B).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Incircle, A, B, C);
+                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
+                    yield return new ConstructedConfigurationObject(InternalAngleBisector, B, A, C);
+                    yield return new ConstructedConfigurationObject(InternalAngleBisector, C, A, B);
+                    yield return new ConstructedConfigurationObject(Circumcenter, B, I, C);
+                    yield return new ConstructedConfigurationObject(Circumcenter, C, I, A);
+                    yield return new ConstructedConfigurationObject(Circumcenter, A, I, B);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Centroid)))
@@ -73,9 +72,9 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(Median, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Median, B, A, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Median, C, A, B).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Median, A, B, C);
+                    yield return new ConstructedConfigurationObject(Median, B, A, C);
+                    yield return new ConstructedConfigurationObject(Median, C, A, B);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Incircle)))
@@ -84,7 +83,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(NinePointCircle, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(NinePointCircle, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Excenter)))
@@ -94,12 +93,12 @@ namespace GeoGen.TheoremProver
                     var C = availableObject.PassedArguments.FlattenedList[2];
                     var E = availableObject;
 
-                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, B, A, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, C, A, B).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, B, E, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, C, E, A).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Circumcenter, A, E, B).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, B, A, C);
+                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, C, A, B);
+                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
+                    yield return new ConstructedConfigurationObject(Circumcenter, B, E, C);
+                    yield return new ConstructedConfigurationObject(Circumcenter, C, E, A);
+                    yield return new ConstructedConfigurationObject(Circumcenter, A, E, B);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Excircle)))
@@ -108,7 +107,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(NinePointCircle, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(NinePointCircle, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Midline)))
@@ -117,11 +116,8 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new[]
-                    {
-                        new ConstructedConfigurationObject(Midpoint, A, B),
-                        new ConstructedConfigurationObject(Midpoint, A, C)
-                    };
+                    yield return new ConstructedConfigurationObject(Midpoint, A, B);
+                    yield return new ConstructedConfigurationObject(Midpoint, A, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(Median)))
@@ -130,9 +126,9 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(ParallelogramPoint, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Centroid, A, B, C).ToEnumerable();
-                    yield return new ConstructedConfigurationObject(Midpoint, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(ParallelogramPoint, A, B, C);
+                    yield return new ConstructedConfigurationObject(Centroid, A, B, C);
+                    yield return new ConstructedConfigurationObject(Midpoint, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(TangentLine)))
@@ -141,7 +137,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(LineThroughCircumcenter)))
@@ -150,7 +146,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(OppositePointOnCircumcircle)))
@@ -159,7 +155,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(Circumcenter, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(MidpointOfArc)))
@@ -168,7 +164,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(ExternalAngleBisector, A, B, C);
                 }
 
                 else if (availableObject.Construction.Name.Equals(nameof(MidpointOfOppositeArc)))
@@ -177,7 +173,7 @@ namespace GeoGen.TheoremProver
                     var B = availableObject.PassedArguments.FlattenedList[1];
                     var C = availableObject.PassedArguments.FlattenedList[2];
 
-                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C).ToEnumerable();
+                    yield return new ConstructedConfigurationObject(InternalAngleBisector, A, B, C);
                 }
             }
         }

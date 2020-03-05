@@ -46,14 +46,14 @@ namespace GeoGen.TheoremProver
         #region Private fields
 
         /// <summary>
-        /// The objects that have been introduced via the last call of the <see cref="IntroduceObjects"/> method.
+        /// The object that has been introduced via the last call of the <see cref="IntroduceObjects"/> method.
         /// </summary>
-        private readonly HashSet<ConstructedConfigurationObject> _lastIntroducedObjects = new HashSet<ConstructedConfigurationObject>();
+        private ConstructedConfigurationObject _lastIntroducedObject;
 
         /// <summary>
         /// All the objects that have been introduced via the last call of the <see cref="IntroduceObjects"/> method.
         /// </summary>
-        private readonly HashSet<ConstructedConfigurationObject> allIntroducedObjects = new HashSet<ConstructedConfigurationObject>();
+        private readonly HashSet<ConstructedConfigurationObject> _allIntroducedObjects = new HashSet<ConstructedConfigurationObject>();
 
         #endregion
 
@@ -75,87 +75,77 @@ namespace GeoGen.TheoremProver
         #region Public methods
 
         /// <summary>
-        /// Introduces new objects and handles all the needed communicated with the normalization helper.
+        /// Introduces a new object and handles all the needed communicated with the normalization helper.
         /// </summary>
         /// <returns>
-        /// The tuple of objects that got removed and the objects that got introduced. The object array will never 
+        /// The tuple of objects that got removed and the object that got introduced. The object list will never 
         /// be null, but might be empty. Also, the number of removed objects might be bigger than the number of 
         /// previously introduced ones, because the normalization helper might have found equal ones in the meantime.
+        /// If there has been no introduces, then the new object will be null.
         /// </returns>
-        public (ConstructedConfigurationObject[] removedObjects, ConstructedConfigurationObject[] newObjects) IntroduceObjects()
+        public (IReadOnlyList<ConstructedConfigurationObject> removedObjects, ConstructedConfigurationObject newObject) IntroduceObject()
         {
             #region Handle object removal
 
             // Prepare the removed objects
-            var removedObjects = new HashSet<ConstructedConfigurationObject>();
+            var removedObjects = new List<ConstructedConfigurationObject>();
 
-            // Take the objects that have been introduced the last time
-            _lastIntroducedObjects
-                // That are points (for the reason see the documentation of the class)
-                .Where(introducedObject => introducedObject.ObjectType == ConfigurationObjectType.Point)
-                // Handle each
-                .ForEach(objectToRemove =>
-                {
-                    // Let the normalization helper remove it, while returning everything what's been removed
-                    _helper.RemoveIntroducedObject(objectToRemove, out var removedObjectsLocal);
+            // If the last introduced object was a point
+            if (_lastIntroducedObject != null && _lastIntroducedObject.ObjectType == ConfigurationObjectType.Point)
+            {
+                // Let the normalization helper remove it, while returning everything what's been removed
+                _helper.RemoveIntroducedObject(_lastIntroducedObject, out var removedObjectsLocal);
 
-                    // Mark the removed objects
-                    removedObjects.Add(removedObjectsLocal);
-                });
+                // Mark the removed objects
+                removedObjects.Add(removedObjectsLocal);
+            }
 
             #endregion
 
             #region Handle object introduction
 
-            // Find the objects to introduce by calling the introducer
-            var newObjects = _introducer
+            // Find the object to introduce by calling the introducer
+            var newObject = _introducer
                 // With the available objects equal to those 
                 .IntroduceObjects(_helper.AllObjects
                     // That are in the original configuration (otherwise it would be explosive)
                     .Where(_helper.IsInOriginalConfiguration)
                     // Enumerated
                     .ToArray())
-                // The introducer offers us some options
-                .Select(objects => objects
-                    // That we need to normalize by copying the construction
-                    .Select(newObject => new ConstructedConfigurationObject(newObject.Construction,
+                // The introducer offers us some options that we need to normalize by copying the construction
+                .Select(newObject => new ConstructedConfigurationObject(newObject.Construction,
                         // And normalizing each of the argument objects
-                        newObject.PassedArguments.FlattenedList.Select(_helper.GetNormalVersionOfObjectOrNull).ToArray())))
-                // When we have options normalize, we need to filter those objects from that
-                .Select(objects => objects
-                    // That have been introduced already
-                    .Where(newObject => !allIntroducedObjects.Contains(newObject)
+                        newObject.PassedArguments.FlattenedList.Select(_helper.GetNormalVersionOfObjectOrNull).ToArray()))
+                // When we have options normalize, we need to filter those objects that have been introduced already
+                .Where(newObject => !_allIntroducedObjects.Contains(newObject)
                         // And aren't already known to the helper
                         && !_helper.AllObjects.Contains(newObject)
                         // And haven't been ever known to the helper
                         && !_helper.AllRemovedObjects.Contains(newObject))
                     // Enumerate
-                    .ToArray())
+                    .ToArray()
                 // Sort them so that we first introduce non-points (lines and circles)
-                // Therefore a good way to sort these objects is the number of points
-                .OrderBy(objects => objects.Count(newObject => newObject.ObjectType == ConfigurationObjectType.Point))
-                // Take the first option that left some objects to be introduced
-                .FirstOrDefault(newObjects => newObjects.Any())
-                    // Otherwise take an empty array of new objects
-                    ?? Array.Empty<ConstructedConfigurationObject>();
+                .OrderBy(newObject => newObject.ObjectType == ConfigurationObjectType.Point ? 1 : 0)
+                // Take the first option
+                .FirstOrDefault();
 
-            // Handle the objects to be introduced
-            newObjects.ForEach(newObject =>
+            // If there is something to be introduced
+            if (newObject != null)
             {
                 // Let the normalization helper know
                 _helper.IntroduceNewObject(newObject);
 
                 // Add the object to the set of all objects ever introduced
-                allIntroducedObjects.Add(newObject);
-            });
+                _allIntroducedObjects.Add(newObject);
+            }
 
-            // Set the objects that we've introduced
-            _lastIntroducedObjects.SetItems(newObjects);
+            // Set the last introduced object
+            _lastIntroducedObject = newObject;
 
             #endregion
 
             // Return the removed objects together with the new ones
-            return (removedObjects.ToArray(), newObjects);
+            return (removedObjects, newObject);
         }
 
         #endregion

@@ -291,16 +291,20 @@ namespace GeoGen.TheoremProver
                 if (data == null)
                 {
                     // Call the introduction helper
-                    var (removedObjects, introducedObjects) = objectIntroductionHelper.IntroduceObjects();
+                    var (removedObjects, introducedObject) = objectIntroductionHelper.IntroduceObject();
 
                     // Invalidate removed objects
                     removedObjects.ForEach(scheduler.InvalidateObject);
 
-                    // Call the appropriate method to handle introduced objects
-                    introducedObjects.ForEach(introducedObject => HandleNewObject(introducedObject, normalizationHelper, scheduler, proofBuilder));
+                    // If there is something to be introduced
+                    if (introducedObject != null)
+                    {
+                        // Call the appropriate method to handle introduced objects
+                        HandleNewObject(introducedObject, normalizationHelper, scheduler, proofBuilder);
 
-                    // Ask the scheduler for the next inference data to be used
-                    data = scheduler.NextScheduledData();
+                        // Ask the scheduler for the next inference data to be used
+                        data = scheduler.NextScheduledData();
+                    }
                 }
 
                 // If all theorems are proven or there is no data even after object introduction, we're done
