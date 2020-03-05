@@ -3,6 +3,7 @@ using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremSorter;
 using System;
 
 namespace GeoGen.MainLauncher
@@ -45,9 +46,9 @@ namespace GeoGen.MainLauncher
         public ProblemGeneratorSettings ProblemGeneratorSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="BestTheoremFinder"/>.
+        /// The settings for <see cref="TheoremSorter.TheoremSorter"/>.
         /// </summary>
-        public BestTheoremFinderSettings BestTheoremFinderSettings { get; }
+        public TheoremSorterSettings TheoremSorterSettings { get; }
 
         /// <summary>
         /// The settings for the theorem finder module.
@@ -82,7 +83,7 @@ namespace GeoGen.MainLauncher
         /// <param name="simplificationRuleProviderSettings">The settings for <see cref="SimplificationRuleProvider"/>.</param>
         /// <param name="problemGenerationRunnerSettings">The settings for <see cref="ProblemGenerationRunner"/>.</param>
         /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator.ProblemGenerator"/>.</param>
-        /// <param name="bestTheoremFinderSettings">The settings for <see cref="BestTheoremFinder"/>.</param>
+        /// <param name="theoremSorterSettings">The settings for <see cref="TheoremSorter.TheoremSorter"/>.</param>
         /// <param name="theoremFindingSettings">The settings for the theorem finder module.</param>
         /// <param name="theoremRankingSettings">The settings for the theorem ranker module.</param>
         /// <param name="generationSettings">The settings for the generator module.</param>
@@ -93,7 +94,7 @@ namespace GeoGen.MainLauncher
                         SimplificationRuleProviderSettings simplificationRuleProviderSettings,
                         ProblemGenerationRunnerSettings problemGenerationRunnerSettings,
                         ProblemGeneratorSettings problemGeneratorSettings,
-                        BestTheoremFinderSettings bestTheoremFinderSettings,
+                        TheoremSorterSettings theoremSorterSettings,
                         TheoremFindingSettings theoremFindingSettings,
                         TheoremRankingSettings theoremRankingSettings,
                         GenerationSettings generationSettings,
@@ -105,7 +106,7 @@ namespace GeoGen.MainLauncher
             SimplificationRuleProviderSettings = simplificationRuleProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRuleProviderSettings));
             ProblemGenerationRunnerSettings = problemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(problemGenerationRunnerSettings));
             ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
-            BestTheoremFinderSettings = bestTheoremFinderSettings ?? throw new ArgumentNullException(nameof(bestTheoremFinderSettings));
+            TheoremSorterSettings = theoremSorterSettings ?? throw new ArgumentNullException(nameof(theoremSorterSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
             TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
             GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));

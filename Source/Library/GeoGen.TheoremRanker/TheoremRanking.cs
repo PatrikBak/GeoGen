@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// Represents a ranking of a <see cref="Theorem"/> awarded by a <see cref="ITheoremRanker"/>.
+    /// The higher the ranking the better the theorem.
     /// </summary>
     public class TheoremRanking : IComparable<TheoremRanking>
     {

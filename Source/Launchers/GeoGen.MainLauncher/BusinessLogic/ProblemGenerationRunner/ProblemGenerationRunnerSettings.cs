@@ -1,4 +1,5 @@
 ﻿using GeoGen.ProblemAnalyzer;
+using GeoGen.TheoremSorter;
 using System;
 
 namespace GeoGen.MainLauncher
@@ -111,10 +112,10 @@ namespace GeoGen.MainLauncher
         public bool AnalyzeOnlyLastIteration { get; }
 
         /// <summary>
-        /// Indicates whether <see cref="IBestTheoremFinder"/> should track at most one interesting theorem per
+        /// Indicates whether <see cref="ITheoremSorter"/> should track at most one interesting theorem per
         /// configuration, the one with the highest ranking. Otherwise it tracks all of them.
         /// </summary>
-        public bool TakeAtMostInterestingTheoremPerConfiguration { get; }
+        public bool TakeAtMostOneInterestingTheoremPerConfiguration { get; }
 
         #endregion
 
@@ -141,7 +142,7 @@ namespace GeoGen.MainLauncher
         /// <param name="progressLoggingFrequency"><see cref="ProgressLoggingFrequency"/></param>
         /// <param name="logProgress"><see cref="LogProgress"/></param>
         /// <param name="analyzeOnlyLastIteration"><see cref="AnalyzeOnlyLastIteration"/></param>
-        /// <param name="takeAtMostInterestingTheoremPerConfiguration"><see cref="TakeAtMostInterestingTheoremPerConfiguration"/></param>
+        /// <param name="takeAtMostOneInterestingTheoremPerConfiguration"><see cref="TakeAtMostOneInterestingTheoremPerConfiguration"/></param>
         public ProblemGenerationRunnerSettings(string readableOutputWithoutProofsFolder,
                                                bool writeReadableOutputWithoutProofs,
                                                string readableOutputWithProofsFolder,
@@ -160,7 +161,7 @@ namespace GeoGen.MainLauncher
                                                int progressLoggingFrequency,
                                                bool logProgress,
                                                bool analyzeOnlyLastIteration,
-                                               bool takeAtMostInterestingTheoremPerConfiguration)
+                                               bool takeAtMostOneInterestingTheoremPerConfiguration)
         {
             ReadableOutputWithoutProofsFolder = readableOutputWithoutProofsFolder;
             WriteReadableOutputWithoutProofs = writeReadableOutputWithoutProofs;
@@ -180,7 +181,7 @@ namespace GeoGen.MainLauncher
             ProgressLoggingFrequency = progressLoggingFrequency;
             LogProgress = logProgress;
             AnalyzeOnlyLastIteration = analyzeOnlyLastIteration;
-            TakeAtMostInterestingTheoremPerConfiguration = takeAtMostInterestingTheoremPerConfiguration;
+            TakeAtMostOneInterestingTheoremPerConfiguration = takeAtMostOneInterestingTheoremPerConfiguration;
 
             // Ensure that the output folder without proofs is set if we are supposed to use it
             if (writeReadableOutputWithoutProofs && readableOutputWithoutProofsFolder == null)

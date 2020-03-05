@@ -1,8 +1,7 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremRanker;
 using System;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// Represents a wrapper of a <see cref="Core.Theorem"/> together with the <see cref="Core.Configuration"/>

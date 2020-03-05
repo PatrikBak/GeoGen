@@ -64,8 +64,8 @@ namespace GeoGen.Utilities
         /// </summary>
         /// <param name="item">The item to be added.</param>
         /// <param name="rank">The rank of the item to add.</param>
-        /// <param name="contentChanged">Indicates whether the content of the ladder has been changed.</param>
-        public void Add(TItem item, TRank rank, out bool contentChanged)
+        /// <param name="removedItem">The item that got removed because the capacity has been reached.</param>
+        public void Add(TItem item, TRank rank, out TItem removedItem)
         {
             // If there is still room for the item, add it
             if (NumberOfItems < Capacity)
@@ -76,8 +76,8 @@ namespace GeoGen.Utilities
                 // Count it in
                 NumberOfItems++;
 
-                // Set the content changed value
-                contentChanged = true;
+                // No removed item
+                removedItem = default;
 
                 // We're done
                 return;
@@ -90,8 +90,8 @@ namespace GeoGen.Utilities
             // If this item doesn't have a higher rank, then we do nothing
             if (rank.CompareTo(smallestRank) <= 0)
             {
-                // Set the content changed value
-                contentChanged = false;
+                // No removed item
+                removedItem = default;
 
                 // We're done
                 return;
@@ -104,16 +104,43 @@ namespace GeoGen.Utilities
             // Get the list of all of such values
             var smallestRankedItems = _content.First().Value;
 
-            // Remove the first
-            smallestRankedItems.RemoveAt(0);
+            // Set the removed item
+            removedItem = smallestRankedItems[0];
 
-            // If this was the only one, remove the rank
+            // Remove it
+            smallestRankedItems.Remove(removedItem);
+
+            // If this was the only one, remove the rank entirely
             if (smallestRankedItems.IsEmpty())
                 _content.Remove(smallestRank);
-
-            // Set the content changed value
-            contentChanged = true;
         }
+
+        /// <summary>
+        /// Removes a given item with a given rank from the ladder.
+        /// </summary>
+        /// <param name="item">The item to be removed.</param>
+        /// <param name="rank">The rank of the item.</param>
+        public void Remove(TItem item, TRank rank)
+        {
+            // Find the right list by the rank
+            var itemsWithThisRank = _content[rank];
+
+            // Remove the item from it
+            itemsWithThisRank.Remove(item);
+
+            // If the list is empty, remove the rank entirely
+            if (itemsWithThisRank.IsEmpty())
+                _content.Remove(rank);
+        }
+
+        /// <summary>
+        /// Finds out if placing of an item with a passed rank would change the ladder.
+        /// </summary>
+        /// <param name="rank">The rank to be checked.</param>
+        /// <returns>true, if an item with the passed rank would be acceptable; false otherwise.</returns>
+        public bool IsTherePlaceFor(TRank rank)
+            // Either the capacity isn't full yet or it has a higher rank than the smallest one
+            => NumberOfItems < Capacity || _content.First().Key.CompareTo(rank) < 0;
 
         #endregion
 

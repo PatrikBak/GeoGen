@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using GeoGen.TheoremRanker;
+using System.Collections.Generic;
 
 namespace GeoGen.MainLauncher
 {

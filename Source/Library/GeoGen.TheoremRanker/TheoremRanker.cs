@@ -42,15 +42,18 @@ namespace GeoGen.TheoremRanker
         #region ITheoremRanker implementation
 
         /// <inheritdoc/>
-        public TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
+        public RankedTheorem Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
             // Prepare the ranking dictionary by applying every ranker
-            var ranking = _rankers.Select(ranker => (ranker.RankedAspect, ranking: ranker.Rank(theorem, configuration, allTheorems)))
+            var rankings = _rankers.Select(ranker => (ranker.RankedAspect, ranking: ranker.Rank(theorem, configuration, allTheorems)))
                 // And wrapping the result to a dictionary together with the coefficient from the settings
                 .ToDictionary(pair => pair.RankedAspect, pair => new RankingData(pair.ranking, _settings.RankingCoefficients[pair.RankedAspect]));
 
             // Wrap the final ranking in a ranking object
-            return new TheoremRanking(ranking);
+            var ranking = new TheoremRanking(rankings);
+
+            // Now we can return the ranked theorem
+            return new RankedTheorem(theorem, ranking, configuration);
         }
 
         #endregion

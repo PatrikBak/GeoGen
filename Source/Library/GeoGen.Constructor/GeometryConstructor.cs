@@ -2,7 +2,6 @@
 using GeoGen.Core;
 using GeoGen.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace GeoGen.Constructor
@@ -189,43 +188,6 @@ namespace GeoGen.Constructor
         }
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<Picture, IAnalyticObject> Construct(Pictures pictures, ConstructedConfigurationObject constructedObject)
-        {
-            // Prepare the result
-            var result = new Dictionary<Picture, IAnalyticObject>();
-
-            // Initialize a variable indicating if the construction is possible
-            bool canBeConstructed = default;
-
-            // Let the resolver find the constructor and let it create the constructor function
-            var constructorFunction = _resolver.Resolve(constructedObject.Construction).Construct(constructedObject);
-
-            // Construct it in every picture
-            foreach (var picture in pictures)
-            {
-                // Perform the construction
-                var analyticObject = constructorFunction(picture);
-
-                // Find out if it's been constructed
-                var objectConstructed = analyticObject != null;
-
-                // We need to first check if some other picture didn't mark constructibility in the opposite way
-                // If yes, we have an inconsistency
-                if (picture != pictures.First() && canBeConstructed != objectConstructed)
-                    throw new InconsistentConstructibilityException(constructedObject);
-
-                // Mark the construction result
-                canBeConstructed = objectConstructed;
-
-                // If the object can be constructed, add it to the result
-                result.Add(picture, analyticObject);
-            }
-
-            // If the object can be constructed, return the result, otherwise null
-            return canBeConstructed ? result : null;
-        }
-
-        /// <inheritdoc/>
         public IAnalyticObject Construct(Picture picture, ConstructedConfigurationObject constructedObject, bool addToPicture)
         {
             // Let the resolver find the constructor and let it create the constructor function
@@ -246,7 +208,8 @@ namespace GeoGen.Constructor
                 picture.TryAdd(constructedObject, analyticObject, out var equalObject);
 
                 // If there was an equal object, then we just mark the duplicate
-                picture.MarkDuplicate(equalObject, constructedObject);
+                if (equalObject != null)
+                    picture.MarkDuplicate(equalObject, constructedObject);
             }
 
             // Return the object

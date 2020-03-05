@@ -1,6 +1,7 @@
 ﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
+using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using Ninject;
 using System;

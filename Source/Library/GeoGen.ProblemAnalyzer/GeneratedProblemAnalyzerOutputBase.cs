@@ -18,14 +18,9 @@ namespace GeoGen.ProblemAnalyzer
         public IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> SimplifiedTheorems { get; }
 
         /// <summary>
-        /// The rankings of interesting theorems.
-        /// </summary>
-        public IReadOnlyDictionary<Theorem, TheoremRanking> TheoremRankings { get; }
-
-        /// <summary>
         /// The interesting theorems sorted ascending by their total ranking. 
         /// </summary>
-        public IReadOnlyList<Theorem> InterestingTheorems { get; }
+        public IReadOnlyList<RankedTheorem> InterestingTheorems { get; }
 
         #endregion
 
@@ -35,14 +30,11 @@ namespace GeoGen.ProblemAnalyzer
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputBase"/> class.
         /// </summary>
         /// <param name="simplifiedTheorems">The results of theorem simplification.</param>
-        /// <param name="theoremRankings">The rankings of interesting theorems.</param>
         /// <param name="interestingTheorems">The interesting theorems sorted ascending by their total ranking. </param>
         protected GeneratedProblemAnalyzerOutputBase(IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
-                                                     IReadOnlyDictionary<Theorem, TheoremRanking> theoremRankings,
-                                                     IReadOnlyList<Theorem> interestingTheorems)
+                                                     IReadOnlyList<RankedTheorem> interestingTheorems)
         {
             SimplifiedTheorems = simplifiedTheorems ?? throw new ArgumentNullException(nameof(simplifiedTheorems));
-            TheoremRankings = theoremRankings ?? throw new ArgumentNullException(nameof(theoremRankings));
             InterestingTheorems = interestingTheorems ?? throw new ArgumentNullException(nameof(interestingTheorems));
         }
 

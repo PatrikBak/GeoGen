@@ -157,12 +157,12 @@ namespace GeoGen.TheoremProver
         /// <inheritdoc/>
         public IReadOnlyHashSet<Theorem> ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
             // Delegate the call to the general method and cast the result
-            => (IReadOnlyHashSet<Theorem>)ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: false);
+            => ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: false);
 
         /// <inheritdoc/>
         public IReadOnlyDictionary<Theorem, TheoremProof> ProveTheoremsAndConstructProofs(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
             // Delegate the call to the general method and cast the result
-            => (IReadOnlyDictionary<Theorem, TheoremProof>)ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: true);
+            => ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: true);
 
         /// <summary>
         /// Proves given theorems that are true in the configuration drawn in a given picture.
@@ -175,7 +175,7 @@ namespace GeoGen.TheoremProver
         /// Either the output as for <see cref="ProveTheoremsAndConstructProofs(TheoremMap, TheoremMap, ContextualPicture)"/>,
         /// if we are constructing proof, or the output as for <see cref="ProveTheorems(TheoremMap, TheoremMap, ContextualPicture)"/> otherwise.
         /// </returns>
-        private object ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture, bool shouldWeConstructProofs)
+        private dynamic ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture, bool shouldWeConstructProofs)
         {
             // Pull the configuration for comfort
             var configuration = picture.Pictures.Configuration;

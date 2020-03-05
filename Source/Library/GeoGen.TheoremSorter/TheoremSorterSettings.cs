@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremSorter
 {
     /// <summary>
-    /// The settings for <see cref="BestTheoremFinder"/>.
+    /// The settings for <see cref="TheoremSorter"/>.
     /// </summary>
-    public class BestTheoremFinderSettings
+    public class TheoremSorterSettings
     {
         #region Public properties
 
@@ -19,10 +19,10 @@ namespace GeoGen.MainLauncher
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BestTheoremFinderSettings"/> class.
+        /// Initializes a new instance of the <see cref="TheoremSorterSettings"/> class.
         /// </summary>
         /// <param name="numberOfTheorems">The maximal number of theorems that will be tracked.</param>
-        public BestTheoremFinderSettings(int numberOfTheorems)
+        public TheoremSorterSettings(int numberOfTheorems)
         {
             NumberOfTheorems = numberOfTheorems;
 

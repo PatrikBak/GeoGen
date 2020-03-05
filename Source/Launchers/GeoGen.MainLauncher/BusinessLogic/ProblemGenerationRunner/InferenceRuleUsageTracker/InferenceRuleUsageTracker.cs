@@ -59,7 +59,6 @@ namespace GeoGen.MainLauncher
                     return;
 
                 // If the proof is done via an inference rule, mark it
-                // Since we initially have all the rules available, it should not crash
                 if (proof.Data is CustomInferenceData customData)
                     _inferenceRuleUsages[customData.Rule]++;
 

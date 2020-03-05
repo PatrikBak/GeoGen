@@ -14,7 +14,7 @@ namespace GeoGen.TheoremRanker
         /// <param name="theorem">The theorem to be ranked.</param>
         /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <param name="allTheorems">The map of all theorems of the configuration.</param>
-        /// <returns>The theorem ranking of the theorem. The higher the ranking, the better the theorem.</returns>
-        TheoremRanking Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems);
+        /// <returns>The ranked theorem.</returns>
+        RankedTheorem Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems);
     }
 }

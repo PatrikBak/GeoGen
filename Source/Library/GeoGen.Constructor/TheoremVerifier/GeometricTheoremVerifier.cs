@@ -100,17 +100,17 @@ namespace GeoGen.Constructor
                 .Distinct();
 
             // Construct these base theorem objects one by one
-            foreach (var theoremObject in baseTheoremObjects)
+            foreach (var baseTheoremObject in baseTheoremObjects)
             {
                 // Try to construct the given one
-                var constructionResult = ConstructTheoremObject(pictures, theoremObject);
+                var constructionResult = ConstructBaseTheoremObject(pictures, baseTheoremObject);
 
                 // If it failed, then the whole theorem is said to be not true
                 if (constructionResult == null)
                     return false;
 
                 // Otherwise add it to the dictionary
-                theoremObjects.Add(theoremObject, constructionResult);
+                theoremObjects.Add(baseTheoremObject, constructionResult);
             }
 
             #endregion
@@ -143,64 +143,29 @@ namespace GeoGen.Constructor
         /// Constructs a given base theorem object.
         /// </summary>
         /// <param name="pictures">The pictures in which the theorem object should be constructed.</param>
-        /// <param name="theoremObject">The theorem object that should be constructed.</param>
+        /// <param name="baseTheoremObject">The base theorem object that should be constructed.</param>
         /// <returns>The dictionary mapping each picture to the analytic representation of the object, or null, if the construction cannot be done.</returns>
-        private Dictionary<Picture, IAnalyticObject> ConstructTheoremObject(Pictures pictures, BaseTheoremObject theoremObject)
+        private Dictionary<Picture, IAnalyticObject> ConstructBaseTheoremObject(Pictures pictures, BaseTheoremObject baseTheoremObject)
         {
-            // If the base object is defined explicitly
-            if (theoremObject.ConfigurationObject != null)
-                // Then we know it's inner configuration object is already constructed and we find it in the pictures
-                return pictures.ToDictionary(picture => picture, picture => picture.Get(theoremObject.ConfigurationObject));
+            // Prepare the result
+            var result = new Dictionary<Picture, IAnalyticObject>();
 
-            // Otherwise switch based on type
-            switch (theoremObject)
+            // Go through the pictures
+            foreach (var picture in pictures)
             {
-                // If we have an object with points, i.e. line / circle...
-                case TheoremObjectWithPoints objectWithPoints:
+                // Perform the construction for the current one
+                var analyticObject = picture.Construct(baseTheoremObject);
 
-                    // Prepare the result
-                    var result = new Dictionary<Picture, IAnalyticObject>();
+                // If it couldn't be carried out, then return null
+                if (analyticObject == null)
+                    return null;
 
-                    // Construct the points in every picture
-                    foreach (var picture in pictures)
-                    {
-                        // Take the points
-                        var points = objectWithPoints.Points
-                            // Find their analytic versions
-                            .Select(picture.Get)
-                            // Cast
-                            .Cast<Point>()
-                            // Make sure they are distinct
-                            .Distinct()
-                            // Enumerate
-                            .ToArray();
-
-                        // If the number of found points doesn't match the number of defining ones,
-                        // then the construction couldn't be carried out
-                        if (points.Length != objectWithPoints.NumberOfDefiningPoints)
-                            return null;
-
-                        // If the counts are fine, we can construct the object
-                        result.Add(picture, objectWithPoints switch
-                        {
-                            // Line requires 2 points
-                            LineTheoremObject _ => new Line(points[0], points[1]),
-
-                            // Circle requires 3 points
-                            CircleTheoremObject _ => new Circle(points[0], points[1], points[2]),
-
-                            // Unhandled cases
-                            _ => throw new ConstructorException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
-                        });
-                    }
-
-                    // Return the result
-                    return result;
-
-                // Unhandled cases
-                default:
-                    throw new ConstructorException($"Unhandled type of {nameof(TheoremObject)}: {theoremObject.GetType()}");
+                // Otherwise add the object to the result
+                result.Add(picture, analyticObject);
             }
+
+            // Return the result
+            return result;
         }
 
         /// <summary>

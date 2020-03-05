@@ -25,7 +25,7 @@ namespace GeoGen.Core
         /// <summary>
         /// The points of the segment as a set.
         /// </summary>
-        public IReadOnlyHashSet<TheoremObject> PointSet { get; }
+        public IReadOnlyHashSet<PointTheoremObject> PointSet { get; }
 
         #endregion
 
@@ -43,7 +43,7 @@ namespace GeoGen.Core
             Point2 = point2 ?? throw new ArgumentNullException(nameof(point2));
 
             // Create the point set
-            PointSet = new HashSet<TheoremObject> { Point1, Point2 }.AsReadOnly();
+            PointSet = new HashSet<PointTheoremObject> { Point1, Point2 }.AsReadOnly();
         }
 
         /// <summary>

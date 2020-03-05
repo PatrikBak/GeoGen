@@ -26,15 +26,13 @@ namespace GeoGen.ProblemAnalyzer
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputWithProofs"/> class.
         /// </summary>
         /// <param name="simplifiedTheorems">The results of theorem simplification.</param>
-        /// <param name="theoremRankings">The rankings of interesting theorems.</param>
         /// <param name="interestingTheorems">The interesting theorems sorted ascending by their total ranking.</param>
         /// <param name="theoremProofs">The dictionary mapping proved theorems to their proofs.</param>
         public GeneratedProblemAnalyzerOutputWithProofs(IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
-                                                        IReadOnlyDictionary<Theorem, TheoremRanking> theoremRankings,
-                                                        IReadOnlyList<Theorem> interestingTheorems,
+                                                        IReadOnlyList<RankedTheorem> interestingTheorems,
                                                         IReadOnlyDictionary<Theorem, TheoremProof> theoremProofs)
 
-            : base(simplifiedTheorems, theoremRankings, interestingTheorems)
+            : base(simplifiedTheorems, interestingTheorems)
         {
             TheoremProofs = theoremProofs ?? throw new ArgumentNullException(nameof(theoremProofs));
         }

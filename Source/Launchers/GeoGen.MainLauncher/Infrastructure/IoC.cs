@@ -7,6 +7,7 @@ using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSimplifier;
+using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -50,7 +51,6 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
-            Kernel.Bind<IBestTheoremFinder>().To<BestTheoremFinder>().WithConstructorArgument(settings.BestTheoremFinderSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
 
@@ -83,7 +83,9 @@ namespace GeoGen.MainLauncher
                 // And problem generator
                 .AddProblemGenerator(settings.ProblemGeneratorSettings)
                 // And analyzer
-                .AddAnalyzer();
+                .AddAnalyzer()
+                // And sorter
+                .AddTheoremSorter(settings.TheoremSorterSettings);
 
             #endregion
 

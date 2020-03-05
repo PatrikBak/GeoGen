@@ -4,6 +4,7 @@ using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace GeoGen.MainLauncher
     /// contain information about simplification and ranking results.
     /// </para>
     /// <para>
-    /// It uses <see cref="IBestTheoremFinder"/> to find globally best theorems across multiple runs and provides an option to write
+    /// It uses <see cref="ITheoremSorter"/> to find globally best theorems across multiple runs and provides an option to write
     /// this information into a human-readable or JSON file.
     /// </para>
     /// <para>It also provides <see cref="IInferenceRuleUsageTracker"/> in case we need to analyze how the theorem prover works.</para>
@@ -42,9 +43,9 @@ namespace GeoGen.MainLauncher
         private readonly IGeneratedProblemAnalyzer _analyzer;
 
         /// <summary>
-        /// The finder of best theorems.
+        /// The sorter used to find globally best theorems.
         /// </summary>
-        private readonly IBestTheoremFinder _finder;
+        private readonly ITheoremSorter _sorter;
 
         /// <summary>
         /// The factory for creating lazy writers of a JSON output.
@@ -75,20 +76,20 @@ namespace GeoGen.MainLauncher
         /// <param name="settings">The settings for this runner.</param>
         /// <param name="generator">The generator of problems.</param>
         /// <param name="analyzer">The analyzer of problem generator outputs.</param>
-        /// <param name="finder">The finder of best theorems.</param>
+        /// <param name="sorter">The sorter used to find globally best theorems.</param>
         /// <param name="factory">The factory for creating lazy writers of a JSON output.</param>
         /// <param name="tracker">The tracker of the used inference rules in theorem proofs.</param>
         public ProblemGenerationRunner(ProblemGenerationRunnerSettings settings,
                                        IProblemGenerator generator,
                                        IGeneratedProblemAnalyzer analyzer,
-                                       IBestTheoremFinder finder,
+                                       ITheoremSorter sorter,
                                        IRankedTheoremJsonLazyWriterFactory factory,
                                        IInferenceRuleUsageTracker tracker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-            _finder = finder ?? throw new ArgumentNullException(nameof(finder));
+            _sorter = sorter ?? throw new ArgumentNullException(nameof(sorter));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
         }
@@ -290,27 +291,20 @@ namespace GeoGen.MainLauncher
                 if (analyzerOutput.InterestingTheorems.Any())
                     numberOfConfigurationsWithInterestingTheorem++;
 
-                // Wrap interesting theorems into objects that are tracked by the best theorem finder
-                var rankedTheorems = analyzerOutput.InterestingTheorems
-                    // Construct the ranked theorem
-                    .Select(theorem => new RankedTheorem(theorem, analyzerOutput.TheoremRankings[theorem], generatorOutput.Configuration))
-                    // Enumerate
-                    .ToArray();
-
                 // Write JSON output
-                jsonOutputWriter?.Write(rankedTheorems);
+                jsonOutputWriter?.Write(analyzerOutput.InterestingTheorems);
 
-                #region Marking ranked theorems to the finder
+                #region Finding ranked theorems to be judged
 
                 // If we should take just one theorem per configuration
-                var theoremsToBeMarked = _settings.TakeAtMostInterestingTheoremPerConfiguration
+                var theoremsToBeJudged = _settings.TakeAtMostOneInterestingTheoremPerConfiguration
                     // Then take the first (which has the best ranking)
-                    ? rankedTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
+                    ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
                     // Otherwise all of them
-                    : rankedTheorems;
+                    : analyzerOutput.InterestingTheorems;
 
-                // Let the finder judge the theorem or theorems
-                _finder.AddTheorems(theoremsToBeMarked, out var bestTheoremsChanged);
+                // Let the sorter judge the theorems to be marked
+                _sorter.AddTheorems(theoremsToBeJudged, out var bestTheoremsChanged);
 
                 // If we should write best theorems continuously and there are some changes, do it
                 if (_settings.WriteBestTheoremsContinuously && bestTheoremsChanged)
@@ -421,14 +415,14 @@ namespace GeoGen.MainLauncher
                 using var readableBestTheoremWriter = new StreamWriter(new FileStream(_settings.ReadableBestTheoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
                 // Rewrite the file
-                readableBestTheoremWriter.Write(RankedTheoremsToString(_finder.BestTheorems));
+                readableBestTheoremWriter.Write(RankedTheoremsToString(_sorter.BestTheorems));
             }
 
             // If we should write JSON output
             if (_settings.WriteJsonBestTheoremFile)
             {
                 // Rewrite the JSON output
-                _factory.Create(_settings.JsonBestTheoremFilePath).WriteEagerly(_finder.BestTheorems);
+                _factory.Create(_settings.JsonBestTheoremFilePath).WriteEagerly(_sorter.BestTheorems);
             }
         }
 
@@ -455,7 +449,7 @@ namespace GeoGen.MainLauncher
         /// </summary>
         /// <param name="rankedTheorems">The ranked theorems to be converted.</param>
         /// <returns>The string representing the ranked theorems.</returns>
-        private string RankedTheoremsToString(IEnumerable<RankedTheorem> rankedTheorems)
+        private static string RankedTheoremsToString(IEnumerable<RankedTheorem> rankedTheorems)
             // Go through the theorems
             => rankedTheorems.Select((rankedTheorem, index) =>
             {
@@ -582,16 +576,16 @@ namespace GeoGen.MainLauncher
             // Append interesting theorems by taking them
             result += analyzerOutput.InterestingTheorems
                 // Converting each
-                .Select((theorem, index) =>
+                .Select((rankedTheorem, index) =>
                 {
                     // Prepare the local result with the local index (while increasing it)
-                    var result = $" {localTheoremIndex++}. {formatter.FormatTheorem(theorem)}";
+                    var result = $" {localTheoremIndex++}. {formatter.FormatTheorem(rankedTheorem.Theorem)}";
 
                     // Write the total ranking
-                    result += $" - total ranking {analyzerOutput.TheoremRankings[theorem].TotalRanking.ToStringWithDecimalDot()}\n\n";
+                    result += $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToStringWithDecimalDot()}\n\n";
 
                     // Write the ranking table
-                    result += TheoremRankingToString(analyzerOutput.TheoremRankings[theorem]);
+                    result += TheoremRankingToString(rankedTheorem.Ranking);
 
                     // Return the final result
                     return result;

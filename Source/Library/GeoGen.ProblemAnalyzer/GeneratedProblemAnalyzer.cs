@@ -63,12 +63,12 @@ namespace GeoGen.ProblemAnalyzer
         /// <inheritdoc/>
         public GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput)
             // Delegate the call to the general method
-            => (GeneratedProblemAnalyzerOutputWithoutProofs)Analyze(generatorOutput, constructProofs: false);
+            => Analyze(generatorOutput, constructProofs: false);
 
         /// <inheritdoc/>
         public GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput)
             // Delegate the call to the general method
-            => (GeneratedProblemAnalyzerOutputWithProofs)Analyze(generatorOutput, constructProofs: true);
+            => Analyze(generatorOutput, constructProofs: true);
 
         /// <summary>
         /// Performs the analysis of a given generator output.
@@ -76,7 +76,7 @@ namespace GeoGen.ProblemAnalyzer
         /// <param name="output">The generator output to be analyzed.</param>
         /// <param name="constructProofs">Indicates whether we should construct proofs or not, which might affect the result.</param>
         /// <returns>The result depending on whether we're constructing proofs or not.</returns>
-        private GeneratedProblemAnalyzerOutputBase Analyze(ProblemGeneratorOutput output, bool constructProofs)
+        private dynamic Analyze(ProblemGeneratorOutput output, bool constructProofs)
         {
             // Call the prover
             var proverOutput = constructProofs
@@ -119,23 +119,20 @@ namespace GeoGen.ProblemAnalyzer
             var allTheorems = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
 
             // Rank the interesting theorems
-            var theoremRankings = interestingTheorems
-                // Enumerate rankings to a dictionary
-                .ToDictionary(theorem => theorem, theorem => _ranker.Rank(theorem, output.Configuration, allTheorems));
-
-            // Sort the interesting theorems by the ranking
-            interestingTheorems = interestingTheorems
+            var rankedInterestingTheorems = interestingTheorems
+                // Rank given one
+                .Select(theorem => _ranker.Rank(theorem, output.Configuration, allTheorems))
                  // By rankings ASC (that's why -)
-                 .OrderBy(theorem => -theoremRankings[theorem].TotalRanking)
+                 .OrderBy(rankedTheorem => -rankedTheorem.Ranking.TotalRanking)
                  // Enumerate
                  .ToArray();
 
             // Now we can finally return the result
             return constructProofs
                 // If we're constructing proofs, then we have a proof dictionary
-                ? new GeneratedProblemAnalyzerOutputWithProofs(simplifiedTheorems, theoremRankings, interestingTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
+                ? new GeneratedProblemAnalyzerOutputWithProofs(simplifiedTheorems, rankedInterestingTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
                 // If we're not constructing proofs, then we have just a proved theorem collection
-                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(simplifiedTheorems, theoremRankings, interestingTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
+                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(simplifiedTheorems, rankedInterestingTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
         }
 
         #endregion
