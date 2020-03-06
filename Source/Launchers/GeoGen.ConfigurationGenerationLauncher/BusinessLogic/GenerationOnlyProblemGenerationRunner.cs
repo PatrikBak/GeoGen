@@ -92,7 +92,7 @@ namespace GeoGen.ConfigurationGenerationLauncher
                     // Log the number of generated configurations
                     LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
                         // As well as currently used memory
-                        $"used memory: {((double)GC.GetTotalMemory(forceFullCollection: false) / 1000000).ToStringWithDecimalDot()} MB");
+                        $"used memory: {((double)GC.GetTotalMemory(forceFullCollection: true) / 1000000).ToStringWithDecimalDot()} MB");
             }
 
             // Log the final number
