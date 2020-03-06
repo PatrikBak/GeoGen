@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
+using GeoGen.Core;
 using System.Linq;
 
 namespace GeoGen.TheoremFinder
@@ -17,6 +18,67 @@ namespace GeoGen.TheoremFinder
         /// intersection that lies outside of the picture.
         /// </summary>
         protected abstract bool ExpectAnyExternalIntersection { get; }
+
+        #endregion
+
+        #region Public overridden methods
+
+        /// <inheritdoc/>
+        public override bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem)
+        {
+            // If we don't care whether the intersection point is outside or inside of the picture,
+            // then there is no reason to say a theorem is invalid
+            if (!ExpectAnyExternalIntersection)
+                return true;
+
+            // Otherwise it might have happened that the new point is the one where the old theorem
+            // stated an intersection theorem. We need to check this. Let's take the new point
+            var newPoint = contextualPicture.NewPoints.FirstOrDefault();
+
+            // If the last object hasn't been a point, then nothing as explained could have happened
+            if (newPoint == null)
+                return true;
+
+            // Otherwise we need to check whether the old theorem doesn't state that some objects
+            // have an intersection point equal to the new point
+            return oldTheorem.InvolvedObjects
+                // We know the objects are with points
+                .Cast<TheoremObjectWithPoints>()
+                // For each we will find the corresponding geometric object definable by points
+                .Select(objectWithPoints =>
+                {
+                    // If the object is defined explicitly, then we simply ask the picture to do the job
+                    if (objectWithPoints.DefinedByExplicitObject)
+                        return ((DefinableByPoints)contextualPicture.GetGeometricObject(objectWithPoints.ConfigurationObject));
+
+                    // Otherwise we need to find the inner points
+                    var innerPoints = objectWithPoints.Points
+                        // As geometric objects
+                        .Select(contextualPicture.GetGeometricObject)
+                        // They are points
+                        .Cast<PointObject>()
+                        // Enumerate
+                        .ToArray();
+
+                    // Base on the type of object we will take all lines / circles passing through the first point
+                    return (objectWithPoints switch
+                    {
+                        // If we have a line, take lines
+                        LineTheoremObject _ => innerPoints[0].Lines.Cast<DefinableByPoints>(),
+
+                        // If we have a circle, take circles
+                        CircleTheoremObject _ => innerPoints[0].Circles,
+
+                        // Unhandled cases
+                        _ => throw new TheoremFinderException($"Unhandled type of {nameof(TheoremObjectWithPoints)}: {objectWithPoints.GetType()}")
+                    })
+                    // Take the first line or circle that contains all the points
+                    .First(lineOrCircle => lineOrCircle.ContainsAll(innerPoints));
+                })
+                // The theorem is valid if and only if the new point is not the intersection
+                // point of all of its inner object, i.e. there is an object that does not contain it
+                .Any(lineOrCircle => !lineOrCircle.Points.Contains(newPoint));
+        }
 
         #endregion
 
@@ -48,7 +110,7 @@ namespace GeoGen.TheoremFinder
                     isIntersectionPointExternal = true;
             }
 
-            // If we're expecting an intersection point  outside the picture,
+            // If we're expecting an intersection point outside the picture,
             // then the theorem is fine if and only if there is any
             if (ExpectAnyExternalIntersection)
                 return isIntersectionPointExternal;

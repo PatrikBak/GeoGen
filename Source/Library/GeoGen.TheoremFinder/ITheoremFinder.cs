@@ -22,7 +22,9 @@ namespace GeoGen.TheoremFinder
         /// </summary>
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <param name="oldTheorems">The theorems that hold true in the configuration without the last object.</param>
+        /// <param name="invalidOldTheorems">The old theorems that have been found invalid. This happens when
+        /// for example concurrent lines in the previous picture have now their intersection in the picture.</param>
         /// <returns>The enumerable of true theorems in the configuration that use the last object.</returns>
-        TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems);
+        TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems, out Theorem[] invalidOldTheorems);
     }
 }

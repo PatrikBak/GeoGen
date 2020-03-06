@@ -140,6 +140,9 @@ namespace GeoGen.TheoremFinder
         /// <inheritdoc/>
         public abstract IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture);
 
+        /// <inheritdoc/>
+        public abstract bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem);
+
         #endregion
     }
 }

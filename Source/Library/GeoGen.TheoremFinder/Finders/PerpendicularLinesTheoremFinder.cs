@@ -40,5 +40,10 @@ namespace GeoGen.TheoremFinder
         protected override bool IsTrue(IAnalyticObject[] objects)
             // Return if they are perpendicular to each other
             => ((Line)objects[0]).IsPerpendicularTo((Line)objects[1]);
+
+        /// <inheritdoc/>
+        public override bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem)
+            // No restrictions
+            => true;
     }
 }

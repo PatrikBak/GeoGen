@@ -45,5 +45,10 @@ namespace GeoGen.TheoremFinder
                 // Each of these quadruples makes a theorem
                 .Select(points => new Theorem(Type, points));
         }
+
+        /// <inheritdoc/>
+        public override bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem)
+            // No restrictions
+            => true;
     }
 }

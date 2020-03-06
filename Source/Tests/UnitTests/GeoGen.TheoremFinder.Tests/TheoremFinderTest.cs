@@ -23,11 +23,14 @@ namespace GeoGen.TheoremFinder.Tests
         #region Running algorithm
 
         /// <summary>
-        /// Runs the algorithm on the configuration to find new and all theorems. 
+        /// Runs the algorithm on the configuration to find old theorems (i.e. those who are true in the configuration
+        /// with the last object removed), the new theorems (i.e. those that use the last object), the invalidated old
+        /// theorems (see <see cref="ITheoremFinder.FindNewTheorems(ContextualPicture, TheoremMap, out Theorem[])"/>,
+        /// and all theorems find via <see cref="ITheoremFinder.FindAllTheorems(ContextualPicture)"/>.
         /// </summary>
         /// <param name="configuration">The configuration where we're looking for theorems.</param>
-        /// <returns>The old, new and all theorems.</returns>
-        private static (TheoremMap oldTheorems, TheoremMap newTheorems, TheoremMap allTheorems) FindTheorems(Configuration configuration)
+        /// <returns>The old, new, invalidated all, and all theorems.</returns>
+        private static (TheoremMap oldTheorems, TheoremMap newTheorems, Theorem[] invalidOldTheorems, TheoremMap allTheorems) FindTheorems(Configuration configuration)
         {
             // Prepare the kernel
             var kernel = IoC.CreateKernel()
@@ -40,12 +43,14 @@ namespace GeoGen.TheoremFinder.Tests
                                       PerpendicularLines,
                                       EqualLineSegments,
                                       TangentCircles,
-                                      Incidence
+                                      LineTangentToCircle,
+                                      Incidence,
+                                      ConcurrentLines
                                   },
                                   // No exclusion of inside-picture tangencies
                                   tangentCirclesTheoremFinderSettings: new TangentCirclesTheoremFinderSettings(excludeTangencyInsidePicture: false),
-                                  // We don't want line and circle tangencies
-                                  lineTangentToCircleTheoremFinderSettings: null));
+                                  // Exclusion of inside-picture tangencies
+                                  lineTangentToCircleTheoremFinderSettings: new LineTangentToCircleTheoremFinderSettings(excludeTangencyInsidePicture: true)));
 
             // Create the finder
             var finder = kernel.Get<ITheoremFinder>();
@@ -71,11 +76,11 @@ namespace GeoGen.TheoremFinder.Tests
             var contextualPicture = new ContextualPicture(pictures);
 
             // Run both algorithms
-            var newTheorems = finder.FindNewTheorems(contextualPicture, oldTheorems);
+            var newTheorems = finder.FindNewTheorems(contextualPicture, oldTheorems, out var invalidOldTheorems);
             var allTheorems = finder.FindAllTheorems(contextualPicture);
 
-            // Return them for further assertions
-            return (oldTheorems, newTheorems, allTheorems);
+            // Return everything
+            return (oldTheorems, newTheorems, invalidOldTheorems, allTheorems);
         }
 
         #endregion
@@ -94,10 +99,10 @@ namespace GeoGen.TheoremFinder.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, H, D);
 
             // Run
-            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert that new + old = all
-            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
 
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
@@ -223,10 +228,10 @@ namespace GeoGen.TheoremFinder.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F, l);
 
             // Run
-            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert that new + old = all
-            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
 
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
@@ -254,6 +259,12 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(B, E),
+                    new LineTheoremObject(C, D),
+                    new LineTheoremObject(A, F)
+                }),
                 new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(l),
@@ -328,14 +339,20 @@ namespace GeoGen.TheoremFinder.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, D, E, P, l, F);
 
             // Run
-            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert that new + old = all
-            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
 
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
             {
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(B, E),
+                    new LineTheoremObject(C, D),
+                    new LineTheoremObject(A, F)
+                }),
                 new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
@@ -387,6 +404,12 @@ namespace GeoGen.TheoremFinder.Tests
             // Assert all theorems
             allTheorems.AllObjects.OrderlessEquals(new[]
             {
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(B, E),
+                    new LineTheoremObject(C, D),
+                    new LineTheoremObject(A, F)
+                }),
                 new Theorem(ParallelLines, new[]
                 {
                     new LineTheoremObject(F, D),
@@ -492,10 +515,10 @@ namespace GeoGen.TheoremFinder.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, D, O, P, c);
 
             // Run
-            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert that new + old = all
-            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
 
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
@@ -669,10 +692,10 @@ namespace GeoGen.TheoremFinder.Tests
             var configuration = Configuration.DeriveFromObjects(Triangle, D, O, c, P);
 
             // Run
-            var (oldTheorems, newTheorems, allTheorems) = FindTheorems(configuration);
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
 
-            // Assert that new + old = all
-            newTheorems.AllObjects.Concat(oldTheorems.AllObjects).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
 
             // Assert new theorems
             newTheorems.AllObjects.OrderlessEquals(new[]
@@ -885,6 +908,137 @@ namespace GeoGen.TheoremFinder.Tests
                 })
             })
             .Should().BeTrue();
+        }
+
+        [Test]
+        public void Test_That_Old_Theorem_Invalidation_Happens_With_Concurrent_Lines()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, B, C);
+            var E = new ConstructedConfigurationObject(Midpoint, C, A);
+            var F = new ConstructedConfigurationObject(Midpoint, A, B);
+            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, D, E, F, G);
+
+            // Run
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
+
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+
+            // Create the invalidated theorem
+            var invalidatedTheorem = new Theorem(ConcurrentLines, new[]
+            {
+                new LineTheoremObject(A, D),
+                new LineTheoremObject(B, E),
+                new LineTheoremObject(C, F)
+            });
+
+            // Assert it is the only one
+            invalidOldTheorems.OrderlessEquals(new[] { invalidatedTheorem });
+
+            // Assert it is indeed old
+            oldTheorems.AllObjects.Should().Contain(invalidatedTheorem);
+        }
+
+        [Test]
+        public void Test_That_Old_Theorem_Invalidation_Happens_With_Line_Tangent_To_Circle()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var c = new ConstructedConfigurationObject(Incircle, A, B, C);
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, c, I, D);
+
+            // Run
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
+
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+
+            // Create the invalidated theorem
+            var invalidatedTheorem = new Theorem(LineTangentToCircle, new TheoremObject[]
+            {
+                new LineTheoremObject(B, C),
+                new CircleTheoremObject(c)
+            });
+
+            // Assert it is the only one
+            invalidOldTheorems.OrderlessEquals(new[] { invalidatedTheorem });
+
+            // Assert it is indeed old
+            oldTheorems.AllObjects.Should().Contain(invalidatedTheorem);
+        }
+
+        [Test]
+        public void Test_That_Old_Theorem_Invalidation_Does_Not_Happen_With_Tangent_Circles()
+        {
+            // Create the objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var l = new ConstructedConfigurationObject(TangentLine, A, B, C);
+            var D = new ConstructedConfigurationObject(PerpendicularProjection, B, l);
+            var E = new ConstructedConfigurationObject(PerpendicularProjection, C, l);
+            var F = new ConstructedConfigurationObject(ReflectionInLineFromPoints, D, B, C);
+            var G = new ConstructedConfigurationObject(ReflectionInLineFromPoints, E, B, C);
+            var P = new ConstructedConfigurationObject(IntersectionOfLineAndLineFromPoints, l, B, C);
+
+            // Create the configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, F, G, P);
+
+            // Run
+            var (oldTheorems, newTheorems, invalidOldTheorems, allTheorems) = FindTheorems(configuration);
+
+            // Assert that old + new - invalidated = all
+            oldTheorems.AllObjects.Concat(newTheorems.AllObjects).Except(invalidOldTheorems).OrderlessEquals(allTheorems.AllObjects).Should().BeTrue();
+
+            // Assert only concurrencies have been invalidated
+            invalidOldTheorems.OrderlessEquals(new[]
+            {
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(F, G),
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(l)
+                }),
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(F, G),
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(D, E)
+                }),
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(F, G),
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(A, D)
+                }),
+                new Theorem(ConcurrentLines, new[]
+                {
+                    new LineTheoremObject(F, G),
+                    new LineTheoremObject(B, C),
+                    new LineTheoremObject(A, E)
+                })
+            })
+            .Should().BeTrue();
+
+            // Assert there is an old tangency
+            oldTheorems.AllObjects.Should().Contain(new Theorem(TangentCircles, new[]
+            {
+                new CircleTheoremObject(B, D, F),
+                new CircleTheoremObject(C, E, G)
+            }));
         }
     }
 }

@@ -66,5 +66,10 @@ namespace GeoGen.TheoremFinder
                     throw new TheoremFinderException($"Unhandled value of {nameof(ConfigurationObjectType)}: {lastConfigurationObject.ObjectType}");
             }
         }
+
+        /// <inheritdoc/>
+        public override bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem)
+            // No restrictions
+            => true;
     }
 }

@@ -31,5 +31,13 @@ namespace GeoGen.TheoremFinder
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <returns>The enumerable of true theorems of the sought type in the configuration that need the last object.</returns>
         IEnumerable<Theorem> FindNewTheorems(ContextualPicture contextualPicture);
+
+        /// <summary>
+        /// Finds out if a given old theorem is still valid.
+        /// </summary>
+        /// <param name="contextualPicture">The contextual picture where the old theorem was found.</param>
+        /// <param name="oldTheorem">The old theorem to be validated.</param>
+        /// <returns>true if the old theorem is still valid; false otherwise.</returns>
+        bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem);
     }
 }

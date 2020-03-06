@@ -14,6 +14,13 @@ namespace GeoGen.ConfigurationGenerationLauncher
         public TheoremMap FindAllTheorems(ContextualPicture contextualPicture) => new TheoremMap(Array.Empty<Theorem>());
 
         /// <inheritdoc/>
-        public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems) => new TheoremMap(Array.Empty<Theorem>());
+        public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems, out Theorem[] invalidOldTheorems)
+        {
+            // Set no invalid theorems
+            invalidOldTheorems = Array.Empty<Theorem>();
+
+            // Return an empty theorem map
+            return new TheoremMap(Array.Empty<Theorem>());
+        }
     }
 }

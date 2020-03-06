@@ -67,5 +67,10 @@ namespace GeoGen.TheoremFinder
         protected override bool IsTrue(IAnalyticObject[] objects)
             // Return if the lengths of the represented line segment are the same
             => ((Point)objects[0]).DistanceTo((Point)objects[1]).Rounded() == ((Point)objects[2]).DistanceTo((Point)objects[3]).Rounded();
+
+        /// <inheritdoc/>
+        public override bool ValidateOldTheorem(ContextualPicture contextualPicture, Theorem oldTheorem)
+            // No restrictions
+            => true;
     }
 }

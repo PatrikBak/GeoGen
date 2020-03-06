@@ -304,10 +304,12 @@ namespace GeoGen.ProblemGenerator
                        var oldTheorems = theoremMapCache.Peek();
 
                        // Find new theorems
-                       var newTheorems = _finder.FindNewTheorems(contextualPicture, oldTheorems);
+                       var newTheorems = _finder.FindNewTheorems(contextualPicture, oldTheorems, out var invalidOldTheorems);
 
-                       // Find all theorems by merging the old and new ones
-                       var allTheorems = new TheoremMap(oldTheorems.AllObjects.Concat(newTheorems.AllObjects));
+                       // Reset the old theorems by excluding the already invalid ones
+
+                       // Find all theorems by merging the old ones, excluding the invalid ones, adding the new ones
+                       var allTheorems = new TheoremMap(oldTheorems.AllObjects.Except(invalidOldTheorems).Concat(newTheorems.AllObjects));
 
                        // Cache the theorems for this configuration
                        theoremMapCache.Push(allTheorems);

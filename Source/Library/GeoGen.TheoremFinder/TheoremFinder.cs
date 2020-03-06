@@ -42,30 +42,48 @@ namespace GeoGen.TheoremFinder
             => new TheoremMap(_finders.SelectMany(finder => finder.FindAllTheorems(contextualPicture)));
 
         /// <inheritdoc/>
-        public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems)
+        public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems, out Theorem[] invalidOldTheorems)
         {
+            // Find invalid theorems first by taking the old theorems
+            invalidOldTheorems = oldTheorems
+                // For each [type, theorems] pair 
+                .SelectMany(pair =>
+                {
+                    // Find the right theorem finder
+                    var finder = _finders.First(finder => finder.Type == pair.Key);
+
+                    // And for every theorem answer the question whether it is no longer valid
+                    return pair.Value.Where(oldTheorem => !finder.ValidateOldTheorem(contextualPicture, oldTheorem));
+                })
+                // Enumerate
+                .ToArray();
+
             // Reuse all the finders to find the theorems that are geometrically new in the configuration
             var uniqueNewTheorems = _finders.SelectMany(finder => finder.FindNewTheorems(contextualPicture));
 
             // We still need to find the new theorems that are not new, due to geometric properties
             // such as collinearity or concyclity, but can now be stated using the new object
-            // For that we are going to take every old theorem and return possibly new versions of it
-            var redefinedNewTheorems = oldTheorems.AllObjects.SelectMany(theorem =>
-                // If we have an incidence, we don't want to do anything 
-                // (it's not needed to state that A lies on line AB)
-                theorem.Type == TheoremType.Incidence ? Enumerable.Empty<Theorem>() :
-                // Otherwise for each theorem we take its objects
-                theorem.InvolvedObjects
-                    // Find the possible definition changes for each
-                    // (this includes the option of not changing the definition at all)
-                    .Select(theoremObject => FindDefinitionChangeOptions(theoremObject, contextualPicture))
-                    // Combine these definitions in every possible way
-                    .Combine()
-                    // For every option create a new theorem
-                    .Select(objects => new Theorem(theorem.Type, objects)))
-                // We might have gotten even old theorems (when all the definition option changes were 
-                // 'no change'. Also we might have gotten duplicates. This call will solve both problems
-                .Except(oldTheorems.AllObjects);
+            // For that we are going to take every old theorem 
+            var redefinedNewTheorems = oldTheorems.AllObjects
+                // That is valid
+                .Except(invalidOldTheorems)
+                // And return possibly new versions of it
+                .SelectMany(theorem =>
+                    // If we have an incidence, we don't want to do anything 
+                    // (it's not needed to state that A lies on line AB)
+                    theorem.Type == TheoremType.Incidence ? Enumerable.Empty<Theorem>() :
+                    // Otherwise for each theorem we take its objects
+                    theorem.InvolvedObjects
+                        // Find the possible definition changes for each
+                        // (this includes the option of not changing the definition at all)
+                        .Select(theoremObject => FindDefinitionChangeOptions(theoremObject, contextualPicture))
+                        // Combine these definitions in every possible way
+                        .Combine()
+                        // For every option create a new theorem
+                        .Select(objects => new Theorem(theorem.Type, objects)))
+                    // We might have gotten even old theorems (when all the definition option changes were 
+                    // 'no change'. Also we might have gotten duplicates. This call will solve both problems
+                    .Except(oldTheorems.AllObjects);
 
             // Concatenate these two types of theorems and wrap the result in a map (which will enumerate it)
             return new TheoremMap(uniqueNewTheorems.Concat(redefinedNewTheorems));
