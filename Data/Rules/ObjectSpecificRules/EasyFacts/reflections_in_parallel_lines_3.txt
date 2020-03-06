@@ -1,0 +1,13 @@
+﻿Objects:
+
+ B = ReflectionInLine(l, A)
+ D = ReflectionInLineFromPoints(C, A, X)
+
+Theorems:
+
+ t1 = Incidence: C, l
+ t2 = ParallelLines: [A, X], l
+
+Implications:
+
+ (t1, t2) => EqualLineSegments: A, B, C, D

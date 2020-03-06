@@ -1,0 +1,10 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = EqualLineSegments: M, B, M, C
+  t2 = ConcyclicPoints: A, B, C, M
+
+Implications:
+
+ (t1, t2) => EqualObjects: M, MidpointOfArc(A, B, C)

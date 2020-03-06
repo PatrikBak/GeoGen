@@ -1,0 +1,13 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = CollinearPoints: A, B, C
+ t2 = CollinearPoints: A, D, E
+ t3 = CollinearPoints: A, F, G
+ t4 = ConcurrentLines: [B, C], [D, E], [F, G]
+
+Implications:
+
+ ({t1, t2, t3}) => t4
+ ({t1, t2}, t4) => t3

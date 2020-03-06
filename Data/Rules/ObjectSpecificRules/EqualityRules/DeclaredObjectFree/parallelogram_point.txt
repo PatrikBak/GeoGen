@@ -1,0 +1,12 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = ParallelLines: [A, B], [C, D]
+  t2 = ParallelLines: [B, C], [A, D]
+  t3 = EqualLineSegments: A, B, C, D
+
+Implications:
+
+ ({t1, t2}) => EqualObjects: D, ParallelogramPoint(B, A, C) 
+ (t1, t3) => EqualObjects: D, ParallelogramPoint(B, A, C) 

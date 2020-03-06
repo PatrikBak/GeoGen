@@ -1,0 +1,9 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = EqualLineSegments: A, B, A, C
+
+Implications:
+
+ (t1) => EqualObjects: MidpointOfOppositeArc(A, B, C), OppositePointOnCircumcircle(A, B, C)

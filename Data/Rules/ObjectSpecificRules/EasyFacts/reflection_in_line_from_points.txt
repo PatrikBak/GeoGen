@@ -1,0 +1,10 @@
+﻿Objects:
+
+ P = ReflectionInLineFromPoints(A, B, C)
+ M = Midpoint(A, P)
+
+Theorems:
+
+Implications:
+
+ () => CollinearPoints: M, B, C

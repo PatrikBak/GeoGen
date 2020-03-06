@@ -1,0 +1,9 @@
+﻿Objects:
+
+ I = Incenter(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => Incidence: PerpendicularProjectionOnLineFromPoints(I, B, C), Incircle(A, B, C)

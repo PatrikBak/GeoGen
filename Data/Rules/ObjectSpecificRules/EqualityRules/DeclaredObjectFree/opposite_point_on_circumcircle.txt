@@ -1,0 +1,12 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = ConcyclicPoints: A, B, C, D
+  t2 = PerpendicularLines: [D, B], [A, B]
+  t3 = PerpendicularLines: [D, C], [A, C]
+
+Implications:
+
+ (t1, t2) => EqualObjects: D, OppositePointOnCircumcircle(A, B, C)
+ ({t2, t3}) => EqualObjects: D, OppositePointOnCircumcircle(A, B, C)

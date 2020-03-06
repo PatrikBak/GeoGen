@@ -1,0 +1,26 @@
+﻿# Median
+[A, Midpoint(B, C)] --> Median(A, B, C)
+[A, ParallelogramPoint(A, B, C)] --> Median(A, B, C)
+
+# Midline
+[Midpoint(A, B), Midpoint(A, C)] --> Midline(A, B, C)
+
+# Internal angle bisector
+[A, Incenter(A, B, C)] --> InternalAngleBisector(A, B, C)
+[A, Excenter(A, B, C)] --> InternalAngleBisector(A, B, C)
+[A, MidpointOfOppositeArc(A, B, C)] --> InternalAngleBisector(A, B, C)
+
+# External angle bisector
+[A, Excenter(B, A, C)] --> ExternalAngleBisector(A, B, C)
+[A, MidpointOfArc(A, B, C)] --> ExternalAngleBisector(A, B, C)
+
+# Perpendicular line
+[A, PerpendicularProjectionOnLineFromPoints(A, B, C)] --> PerpendicularLineToLineFromPoints(A, B, C)
+[A, Orthocenter(A, B, C)] --> PerpendicularLineToLineFromPoints(A, B, C)
+[A, ReflectionInLineFromPoints(A, B, C)] --> PerpendicularLineToLineFromPoints(A, B, C)
+
+# Parallel line
+[A, ParallelogramPoint(C, A, B)] --> ParallelLineToLineFromPoints(A, B, C)
+
+# Line through circumcenter
+[A, Circumcenter(A, B, C)] --> LineThroughCircumcenter(A, B, C)

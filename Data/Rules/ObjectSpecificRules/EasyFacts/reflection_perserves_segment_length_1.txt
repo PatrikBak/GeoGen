@@ -1,0 +1,10 @@
+﻿Objects:
+
+ P = ReflectionInLineFromPoints(X, B, C)
+ Q = ReflectionInLineFromPoints(Y, B, C)
+
+Theorems:
+
+Implications:
+
+ () => EqualLineSegments: X, Y, P, Q

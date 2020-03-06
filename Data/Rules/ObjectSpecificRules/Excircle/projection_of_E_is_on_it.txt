@@ -1,0 +1,10 @@
+﻿Objects:
+
+ E = Excenter(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => Incidence: PerpendicularProjectionOnLineFromPoints(E, B, C), Excircle(A, B, C)
+ () => Incidence: PerpendicularProjectionOnLineFromPoints(E, A, B), Excircle(A, B, C)

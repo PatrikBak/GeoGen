@@ -1,0 +1,13 @@
+﻿Objects:
+
+ P = CenterOfCircle(c)
+ B = ReflectionInLineFromPoints(X, Y, A)
+
+Theorems:
+
+ t1 = Incidence: A, c
+ t2 = CollinearPoints: P, X, Y
+
+Implications:
+
+ (t1, t2) => Incidence: B, c

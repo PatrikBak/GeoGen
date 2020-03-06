@@ -1,0 +1,12 @@
+﻿Objects:
+
+ P = CenterOfCircle(c)
+ B = PointReflection(A, P)
+
+Theorems:
+
+ t1 = Incidence: A, c
+
+Implications:
+
+ (t1) => Incidence: B, c

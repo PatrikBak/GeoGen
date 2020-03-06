@@ -1,0 +1,10 @@
+﻿Objects:
+
+ l = Midline(A, B, C)
+ D = ReflectionInLine(l, B)
+
+Theorems:
+
+Implications:
+
+ () => ParallelLines: [A, D], [B, C]

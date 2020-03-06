@@ -1,0 +1,7 @@
+﻿Objects:
+
+Theorems:
+
+Implications:
+
+ () => Incidence: PerpendicularProjectionOnLineFromPoints(A, B, C), NinePointCircle(A, B, C)

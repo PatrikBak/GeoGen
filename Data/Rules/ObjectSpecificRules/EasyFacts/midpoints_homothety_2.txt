@@ -1,0 +1,14 @@
+﻿Objects:
+
+P = Midpoint(A, D)
+Q = Midpoint(B, C)
+
+Theorems:
+
+ t1 = ParallelLines: [A, B], [C, D]
+ t2 = ParallelLines: [A, B], [P, Q]
+
+Implications:
+
+ (t1) => t2
+ (t2) => t1

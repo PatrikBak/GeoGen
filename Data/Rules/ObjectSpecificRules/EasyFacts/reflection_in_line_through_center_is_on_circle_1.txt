@@ -1,0 +1,13 @@
+﻿Objects:
+
+ P = CenterOfCircle(c)
+ B = ReflectionInLine(l, A)
+
+Theorems:
+
+ t1 = Incidence: A, c
+ t2 = Incidence: P, l
+
+Implications:
+
+ (t1, t2) => Incidence: B, c

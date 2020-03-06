@@ -1,0 +1,14 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = Incidence: Point(A), Line(k)
+ t2 = Incidence: Point(A), Line(l)
+ t3 = CollinearPoints: A, B, C
+ t4 = ConcurrentLines: k, l, [B, C]
+
+Implications:
+
+ ({t1, t2}, t3) => t4
+ ({t1, t2}, t4) => t3
+ (t1, t3, t4) => t2

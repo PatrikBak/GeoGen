@@ -1,0 +1,9 @@
+﻿Objects:
+
+ M = Midpoint(B, C)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: PointReflection(A, M), ParallelogramPoint(A, B, C)
