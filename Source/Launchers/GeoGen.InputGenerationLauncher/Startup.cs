@@ -201,10 +201,10 @@ namespace GeoGen.InputGenerationLauncher
                 .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
                     // We will want 3 iterations
                     numberOfIterations: 3,
-                    // And 3 points at most
+                    // And 2 points at most
                     new Dictionary<ConfigurationObjectType, int>
                     {
-                        { Point, 3 },
+                        { Point, 2 },
                         { Line, 0 },
                         { Circle,0 }
                     }));
