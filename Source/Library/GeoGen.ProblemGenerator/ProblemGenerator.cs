@@ -314,11 +314,17 @@ namespace GeoGen.ProblemGenerator
                        // Cache the theorems for this configuration
                        theoremMapCache.Push(allTheorems);
 
-                       // If we should exclude asymmetric configurations and this one is like that,
-                       // then we don't need to try to return it as a correct one
-                       // We can't do this before finding theorems, because this asymmetric configuration
-                       // might still be extensible to get a symmetric one and we would need its theorems
-                       if (_settings.ExcludeAsymmetricConfigurations && !configuration.IsSymmetric())
+                       // Find out if we should exclude this configuration based on symmetry which is 
+                       // true if we are supposed to do so
+                       var excludeBecauseOfSymmetry = _settings.ExcludeAsymmetricConfigurations
+                            // And this configuration is not on the last iteration. If it were, it would have
+                            // been excluded already during the verification process
+                            && configuration.IterationIndex != input.NumberOfIterations
+                            // And this configuration is not symmetry
+                            && !configuration.IsSymmetric();
+
+                       // If we should do the exclusion, do so
+                       if (excludeBecauseOfSymmetry)
                            return null;
 
                        // Return the final output
