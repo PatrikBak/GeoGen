@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+
+    <!-- This somehow makes NInject work properly -->
+    <!-- https://github.com/ninject/Ninject.Extensions.Factory/issues/39#issuecomment-460535961 -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Library\GeoGen.Core\GeoGen.Core.csproj" />
+    <ProjectReference Include="..\GeoGen.ConfigurationGenerationLauncher\GeoGen.ConfigurationGenerationLauncher.csproj" />
+    <ProjectReference Include="..\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="constructions.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="input_template.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

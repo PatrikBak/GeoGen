@@ -1,0 +1,12 @@
+﻿Constructions:
+ 
+{Constructions}
+
+Initial configuration:
+
+{InitialConfiguration}
+
+Iterations: {Iterations}
+MaximalPoints: {MaximalPoints}
+MaximalLines: {MaximalLines}
+MaximalCircles: {MaximalCircles}
