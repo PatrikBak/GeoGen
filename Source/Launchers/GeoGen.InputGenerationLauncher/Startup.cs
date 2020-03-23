@@ -138,7 +138,9 @@ namespace GeoGen.InputGenerationLauncher
                         // Replace maximal lines
                         .Replace("{MaximalLines}", input.MaximalNumbersOfObjectsToAdd[Line].ToString())
                         // Replace maximal circles
-                        .Replace("{MaximalCircles}", input.MaximalNumbersOfObjectsToAdd[Circle].ToString());
+                        .Replace("{MaximalCircles}", input.MaximalNumbersOfObjectsToAdd[Circle].ToString())
+                        // Replace the symmetry generation flag
+                        .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
 
                     // Prepare the path to the input file that will be created
                     var filePath = Path.Combine(inputFolder, $"input_{counter}.txt");
@@ -183,11 +185,11 @@ namespace GeoGen.InputGenerationLauncher
                 { Circle, 0 }
             };
 
-            // Prepare the generator input
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 1, maximalNumbersOfObjectsObjectsToAdd);
+            // Prepare the generator input that doesn't exclude asymmetric configurations
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 1, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
 
-            // Prepare the generator settings for the generator that doesn't exclude asymmetric configurations
-            var settings = new ProblemGeneratorSettings(numberOfPictures: 5, excludeAsymmetricConfigurations: false);
+            // Prepare the generator settings
+            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
 
             // Prepare the generation enumerable by taking the generator 
             var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
@@ -207,7 +209,9 @@ namespace GeoGen.InputGenerationLauncher
                         { Point, 2 },
                         { Line, 0 },
                         { Circle,0 }
-                    }));
+                    },
+                    // We will want only symmetric results
+                    excludeAsymmetricConfigurations: true));
 
             // Return the final result
             return (nameof(Experiment_Example), generatorInputs);

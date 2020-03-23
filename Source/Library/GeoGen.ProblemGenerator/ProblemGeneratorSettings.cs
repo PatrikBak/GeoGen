@@ -1,5 +1,4 @@
-﻿using GeoGen.Core;
-using System;
+﻿using System;
 
 namespace GeoGen.ProblemGenerator
 {
@@ -15,11 +14,6 @@ namespace GeoGen.ProblemGenerator
         /// </summary>
         public int NumberOfPictures { get; }
 
-        /// <summary>
-        /// Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.
-        /// </summary>
-        public bool ExcludeAsymmetricConfigurations { get; }
-
         #endregion
 
         #region Constructor
@@ -27,12 +21,10 @@ namespace GeoGen.ProblemGenerator
         /// <summary>
         /// Initializes a new instance of the <see cref="ProblemGeneratorSettings"/> class.
         /// </summary>
-        /// <param name="numberOfPictures">The number of pictures to which a configuration is drawn.</param>
-        /// <param name="excludeAsymmetricConfigurations">Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.</param>
-        public ProblemGeneratorSettings(int numberOfPictures, bool excludeAsymmetricConfigurations)
+        /// <param name="numberOfPictures"><inheritdoc cref="NumberOfPictures" path="/summary"/></param>
+        public ProblemGeneratorSettings(int numberOfPictures)
         {
             NumberOfPictures = numberOfPictures;
-            ExcludeAsymmetricConfigurations = excludeAsymmetricConfigurations;
 
             // Ensure there are some pictures
             if (numberOfPictures <= 0)

@@ -10,3 +10,4 @@ Iterations: {Iterations}
 MaximalPoints: {MaximalPoints}
 MaximalLines: {MaximalLines}
 MaximalCircles: {MaximalCircles}
+GenerateOnlySymmetricConfigurations: {GenerateOnlySymmetricConfigurations}

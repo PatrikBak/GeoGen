@@ -131,7 +131,8 @@ namespace GeoGen.MainLauncher
                         constructions: generatorInput.Constructions,
                         initialConfiguration: generatorInput.InitialConfiguration,
                         numberOfIterations: generatorInput.NumberOfIterations,
-                        maximalNumbersOfObjectsToAdd: generatorInput.MaximalNumbersOfObjectsToAdd
+                        maximalNumbersOfObjectsToAdd: generatorInput.MaximalNumbersOfObjectsToAdd,
+                        excludeAsymmetricConfigurations: generatorInput.ExcludeAsymmetricConfigurations
                     ));
                 }
                 catch (ParsingException e)
@@ -237,15 +238,15 @@ namespace GeoGen.MainLauncher
             var objectTypes = Enum.GetValues(typeof(ConfigurationObjectType)).Cast<ConfigurationObjectType>().ToList();
 
             // Each type needs to have a line. Make sure we have enough lines
-            if (objectTypes.Count != lines.Count - 1 - iterationLineIndex)
-                throw new ParsingException($"There should be exactly {objectTypes.Count} lines after the iterations, " +
-                    $"each specifying the maximal number of objects of the given type of this configuration.");
+            if (iterationLineIndex + objectTypes.Count >= lines.Count)
+                throw new ParsingException($"There should be {objectTypes.Count} lines after the iterations, " +
+                    $"each specifying the maximal number of objects of the given type to be added to the initial configuration.");
 
             // Look for them
             var maximalNumbersOfObjectsToAdd = objectTypes.ToDictionary(objectType => objectType, objectType =>
             {
-                // Go through the remaining lines...
-                var maximalNumberMatch = lines.ItemsBetween(iterationLineIndex, lines.Count)
+                // Go through the lines where the maximal counts should be
+                var maximalNumberMatch = lines.ItemsBetween(iterationLineIndex + 1, iterationLineIndex + 1 + objectTypes.Count)
                     // The line should be for example 'MaximalPoints: 4'
                     .Select(line => Regex.Match(line, $"^Maximal{objectType}s:(.+)$"))
                     // Take the first match, if there is any
@@ -277,13 +278,40 @@ namespace GeoGen.MainLauncher
 
             #endregion
 
+            #region Parsing symmetry generation flag
+
+            // Prepare the index of the line. After iterations there is a line for each object
+            // and the following line should be the line with the flag
+            var symmetryGenerationFlagLineIndex = iterationLineIndex + objectTypes.Count + 1;
+
+            // Ensure this is the last line
+            if (symmetryGenerationFlagLineIndex != lines.Count - 1)
+                throw new ParsingException("The last line of the input file should indicate whether we want to generate only symmetric configurations.");
+
+            // Parse it
+            var symmetryFlagMatch = Regex.Match(lines[symmetryGenerationFlagLineIndex], "^GenerateOnlySymmetricConfigurations:(.*)$");
+
+            // Ensure there is a match
+            if (!symmetryFlagMatch.Success)
+                throw new ParsingException("The last line of the input file should be of form GenerateOnlySymmetricConfigurations: {flag}, where {flag} is either true or false.");
+
+            // Get the flag string
+            var symmetryFlagString = symmetryFlagMatch.Groups[1].Value.Trim();
+
+            // Try to parse the value
+            if (!bool.TryParse(symmetryFlagString, out var excludeAsymmetricConfigurations))
+                throw new ParsingException($"Cannot parse the symmetry generation flag: {symmetryFlagString}");
+
+            #endregion
+
             // Return the final input
             return new ProblemGeneratorInput
             (
                 initialConfiguration: configuration,
                 constructions: constructions,
                 numberOfIterations: numberOfIterations,
-                maximalNumbersOfObjectsToAdd: maximalNumbersOfObjectsToAdd
+                maximalNumbersOfObjectsToAdd: maximalNumbersOfObjectsToAdd,
+                excludeAsymmetricConfigurations: excludeAsymmetricConfigurations
             );
         }
 

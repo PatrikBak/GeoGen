@@ -14,12 +14,12 @@ namespace GeoGen.MainLauncher
         #region Public properties
 
         /// <summary>
-        /// The path from which the input was loaded.
+        /// The path from which the input file was loaded.
         /// </summary>
         public string FilePath { get; }
 
         /// <summary>
-        /// The id of the loaded input.
+        /// The id of the loaded input file, i.e. the string after the input file prefix.
         /// </summary>
         public string Id { get; }
 
@@ -30,19 +30,17 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="LoadedProblemGeneratorInput"/> class.
         /// </summary>
-        /// <param name="initialConfiguration">The initial configuration from which the generation process starts.</param>
-        /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
-        /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
-        /// <param name="maximalNumbersOfObjectsToAdd">The dictionary representing at most how many objects of each type should be added to the initial configuration.</param>
-        /// <param name="filePath">The path from which the input was loaded.</param>
-        /// <param name="id">The id of the loaded input.</param>
+        /// <inheritdoc cref="ProblemGeneratorInput(Configuration, IReadOnlyHashSet{Construction}, int, IReadOnlyDictionary{ConfigurationObjectType, int}, bool)"/>
+        /// <param name="filePath"><inheritdoc cref="FilePath" path="/summary"/></param>
+        /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
         public LoadedProblemGeneratorInput(Configuration initialConfiguration,
                                            IReadOnlyHashSet<Construction> constructions,
                                            int numberOfIterations,
                                            IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
+                                           bool excludeAsymmetricConfigurations,
                                            string filePath,
                                            string id)
-            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd)
+            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd, excludeAsymmetricConfigurations)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             Id = id ?? throw new ArgumentNullException(nameof(id));

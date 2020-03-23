@@ -32,6 +32,11 @@ namespace GeoGen.ProblemGenerator
         /// </summary>
         public IReadOnlyDictionary<ConfigurationObjectType, int> MaximalNumbersOfObjectsToAdd { get; }
 
+        /// <summary>
+        /// Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.
+        /// </summary>
+        public bool ExcludeAsymmetricConfigurations { get; }
+
         #endregion
 
         #region Constructor
@@ -39,19 +44,22 @@ namespace GeoGen.ProblemGenerator
         /// <summary>
         /// Initializes a new instance of the <see cref="ProblemGeneratorInput"/> class.
         /// </summary>
-        /// <param name="initialConfiguration">The initial configuration from which the generation process starts.</param>
-        /// <param name="constructions">The constructions that are used to create new objects for configurations.</param>
-        /// <param name="numberOfIterations">The number of iterations that are to be performed by the generator.</param>
-        /// <param name="maximalNumbersOfObjectsToAdd">The dictionary representing at most how many objects of each type should be added to the initial configuration.</param>
+        /// <param name="initialConfiguration"><inheritdoc cref="InitialConfiguration" path="/summary"/></param>
+        /// <param name="constructions"><inheritdoc cref="Constructions" path="/summary"/></param>
+        /// <param name="numberOfIterations"><inheritdoc cref="NumberOfIterations" path="/summary"/></param>
+        /// <param name="maximalNumbersOfObjectsToAdd"><inheritdoc cref="MaximalNumbersOfObjectsToAdd" path="/summary"/></param>
+        /// <param name="excludeAsymmetricConfigurations"><inheritdoc cref="ExcludeAsymmetricConfigurations" path="/summary"/></param>
         public ProblemGeneratorInput(Configuration initialConfiguration,
                                      IReadOnlyHashSet<Construction> constructions,
                                      int numberOfIterations,
-                                     IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd)
+                                     IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
+                                     bool excludeAsymmetricConfigurations)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));
             NumberOfIterations = numberOfIterations;
             MaximalNumbersOfObjectsToAdd = maximalNumbersOfObjectsToAdd ?? throw new ArgumentNullException(nameof(maximalNumbersOfObjectsToAdd));
+            ExcludeAsymmetricConfigurations = excludeAsymmetricConfigurations;
         }
 
         #endregion
