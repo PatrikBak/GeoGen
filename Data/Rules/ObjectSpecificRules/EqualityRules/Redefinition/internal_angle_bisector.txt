@@ -4,8 +4,8 @@
 
 Theorems:
 
- t1 = CollinearPoints: B, C, D
+ t1 = CollinearPoints: A, B, D
 
 Implications:
 
- (t1) => EqualObjects: l, InternalAngleBisector(A, B, D)
+ (t1) => EqualObjects: l, InternalAngleBisector(A, C, D)

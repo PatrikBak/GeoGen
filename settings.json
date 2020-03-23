@@ -28,16 +28,15 @@
     "FilePath": "Data/object_introductions.txt"
   },
   "ProblemGenerationRunnerSettings": {
-    "WriteJsonBestTheoremFile": true,
-	"JsonBestTheoremFilePath": "Data/Output/best_theorems.json",
+    "WriteJsonBestTheorems": true,
+    "JsonBestTheoremFolder": "Data/Output",
     "TakeAtMostOneInterestingTheoremPerConfiguration": true
   },
-  "ProblemGeneratorSettings": {
-    "NumberOfPictures": 3,
-    "ExcludeAsymmetricConfigurations": true
+  "TheoremSorterTypeResolverSettings": {
+    "MaximalTrackedTheoremsPerType": 100
   },
-  "TheoremSorterSettings": {
-    "NumberOfTheorems": 500
+  "ProblemGeneratorSettings": {
+    "NumberOfPictures": 3
   },
   "TheoremFindingSettings": {
     "TangentCirclesTheoremFinderSettings": {
@@ -61,21 +60,12 @@
   "TheoremRankingSettings": {
     "TheoremRankerSettings": {
       "RankingCoefficients": {
-        "Symmetry": 1000,
+        "Symmetry": 300,
         "Simplification": 150,
         "Circles": -5,
         "Repetition": -1,
         "Theorems": -1,
-        "TheoremType": 1,
         "Constructions": 1
-      }
-    },
-    "TheoremTypeRankerSettings": {
-      "TypeRankings": {
-        "TangentCircles": 100,
-        "LineTangentToCircle": 100,
-        "ConcurrentLines": 20,
-        "Incidence": -5
       }
     },
     "ConstructionsRankerSettings": {
@@ -89,9 +79,5 @@
   },
   "GenerationSettings": {
     "ConfigurationFilterType": "MemoryEfficient"
-  },
-  "TraceSortingGeometryFailures": true,
-  "SortingGeometryFailureTracerSettings": {
-    "FailureFilePath": "Data/Output/sorting_geometry_failures.txt"
   }
 }
