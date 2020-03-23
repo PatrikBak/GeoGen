@@ -4,7 +4,6 @@ using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
-using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -23,8 +22,8 @@ namespace GeoGen.MainLauncher
     /// contain information about simplification and ranking results.
     /// </para>
     /// <para>
-    /// It uses <see cref="ITheoremSorter"/> to find globally best theorems across multiple runs and provides an option to write
-    /// this information into a human-readable or JSON file.
+    /// It uses <see cref="ITheoremSorterTypeResolver"/> to find globally best theorems across multiple runs for each type. These
+    /// theorems are optionally written to human-readable files or JSON files.
     /// </para>
     /// <para>It also provides <see cref="IInferenceRuleUsageTracker"/> in case we need to analyze how the theorem prover works.</para>
     /// </summary>
@@ -43,9 +42,9 @@ namespace GeoGen.MainLauncher
         private readonly IGeneratedProblemAnalyzer _analyzer;
 
         /// <summary>
-        /// The sorter used to find globally best theorems.
+        /// The resolver of sorters for each theorem type that are used to find globally best theorems.
         /// </summary>
-        private readonly ITheoremSorter _sorter;
+        private readonly ITheoremSorterTypeResolver _resolver;
 
         /// <summary>
         /// The factory for creating lazy writers of a JSON output.
@@ -73,23 +72,23 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="ProblemGenerationRunner"/> class.
         /// </summary>
-        /// <param name="settings">The settings for this runner.</param>
-        /// <param name="generator">The generator of problems.</param>
-        /// <param name="analyzer">The analyzer of problem generator outputs.</param>
-        /// <param name="sorter">The sorter used to find globally best theorems.</param>
-        /// <param name="factory">The factory for creating lazy writers of a JSON output.</param>
-        /// <param name="tracker">The tracker of the used inference rules in theorem proofs.</param>
+        /// <param name="settings"><inheritdoc cref="_settings" path="/summary"/></param>
+        /// <param name="generator"><inheritdoc cref="_generator" path="/summary"/></param>
+        /// <param name="analyzer"><inheritdoc cref="_analyzer" path="/summary"/>.</param>
+        /// <param name="resolver"><inheritdoc cref="_resolver" path="/summary"/></param>
+        /// <param name="factory"><inheritdoc cref="_factory" path="/summary"/></param>
+        /// <param name="tracker"><inheritdoc cref="_tracker" path="/summary"/></param>
         public ProblemGenerationRunner(ProblemGenerationRunnerSettings settings,
                                        IProblemGenerator generator,
                                        IGeneratedProblemAnalyzer analyzer,
-                                       ITheoremSorter sorter,
+                                       ITheoremSorterTypeResolver resolver,
                                        IRankedTheoremJsonLazyWriterFactory factory,
                                        IInferenceRuleUsageTracker tracker)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _analyzer = analyzer ?? throw new ArgumentNullException(nameof(analyzer));
-            _sorter = sorter ?? throw new ArgumentNullException(nameof(sorter));
+            _resolver = resolver ?? throw new ArgumentNullException(nameof(resolver));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
             _tracker = tracker ?? throw new ArgumentNullException(nameof(tracker));
         }
@@ -274,7 +273,7 @@ namespace GeoGen.MainLauncher
                     // If there is any sort of problem, we should make aware of it. 
                     LoggingManager.LogError($"There has been an exception while analyzing the configuration:\n\n" +
                         // Write the problematic configuration
-                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects)}\n" +
+                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
                         // And also the exception
                         $"Exception: {e}");
 
@@ -297,16 +296,29 @@ namespace GeoGen.MainLauncher
                 #region Finding ranked theorems to be judged
 
                 // If we should take just one theorem per configuration
-                var theoremsToBeJudged = _settings.TakeAtMostOneInterestingTheoremPerConfiguration
+                var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
                     // Then take the first (which has the best ranking)
                     ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
                     // Otherwise all of them
-                    : analyzerOutput.InterestingTheorems;
+                    : analyzerOutput.InterestingTheorems)
+                    // Group by type
+                    .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type);
 
                 try
                 {
-                    // Let the sorter judge the theorems to be marked
-                    _sorter.AddTheorems(theoremsToBeJudged, out var bestTheoremsChanged);
+                    // Prepare the variable indicating any changes in best theorems
+                    var bestTheoremsChanged = false;
+
+                    // Mark all theorems
+                    theoremsToBeJudged.ForEach(group =>
+                    {
+                        // Let the sorter judge the theorems
+                        _resolver.GetSorterForType(group.Key).AddTheorems(group, out var localBestTheoremChanged);
+
+                        // If there is any local change, mark it
+                        if (localBestTheoremChanged)
+                            bestTheoremsChanged = true;
+                    });
 
                     // If we should write best theorems continuously and there are some changes, do it
                     if (_settings.WriteBestTheoremsContinuously && bestTheoremsChanged)
@@ -317,7 +329,7 @@ namespace GeoGen.MainLauncher
                     // If there is any sort of problem, we should make aware of it. 
                     LoggingManager.LogError($"There has been an exception while sorting theorems of the configuration:\n\n" +
                         // Write the problematic configuration
-                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects)}\n" +
+                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
                         // And also the exception
                         $"Exception: {e}");
                 }
@@ -415,26 +427,40 @@ namespace GeoGen.MainLauncher
         }
 
         /// <summary>
-        /// Rewrites the best theorem files, i.e. the readable file or the JSON file, based on whether we are told to do
-        /// it via settings.
+        /// Rewrites the best theorem files, i.e. the readable files for each type or the JSON files for each type,
+        /// based on whether we are told to do it via settings.
         /// </summary>
         private void RewriteBestTheorems()
         {
             // If we should write readable output...
-            if (_settings.WriteReadableBestTheoremFile)
+            if (_settings.WriteReadableBestTheorems)
             {
-                // Prepare the writer
-                using var readableBestTheoremWriter = new StreamWriter(new FileStream(_settings.ReadableBestTheoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+                // For every type
+                foreach (var (type, sorter) in _resolver.AllSorters)
+                {
+                    // Prepare the path by combining the folder and the theorem type
+                    var theoremFilePath = $"{Path.Combine(_settings.ReadableBestTheoremFolder, type.ToString())}.{_settings.FileExtension}";
 
-                // Rewrite the file
-                readableBestTheoremWriter.Write(RankedTheoremsToString(_sorter.BestTheorems));
+                    // Prepare the writer
+                    using var readableBestTheoremWriter = new StreamWriter(new FileStream(theoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
+
+                    // Rewrite the file
+                    readableBestTheoremWriter.Write(RankedTheoremsToString(sorter.BestTheorems));
+                }
             }
 
             // If we should write JSON output
-            if (_settings.WriteJsonBestTheoremFile)
+            if (_settings.WriteJsonBestTheorems)
             {
-                // Rewrite the JSON output
-                _factory.Create(_settings.JsonBestTheoremFilePath).WriteEagerly(_sorter.BestTheorems);
+                // For every type
+                foreach (var (type, sorter) in _resolver.AllSorters)
+                {
+                    // Prepare the path by combining the folder and the theorem type
+                    var theoremFilePath = $"{Path.Combine(_settings.JsonBestTheoremFolder, type.ToString())}.json";
+
+                    // Rewrite the JSON output
+                    _factory.Create(theoremFilePath).WriteEagerly(sorter.BestTheorems);
+                }
             }
         }
 

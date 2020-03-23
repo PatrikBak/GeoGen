@@ -3,7 +3,6 @@ using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremRanker;
-using GeoGen.TheoremSorter;
 using System;
 
 namespace GeoGen.MainLauncher
@@ -46,14 +45,14 @@ namespace GeoGen.MainLauncher
         public ProblemGenerationRunnerSettings ProblemGenerationRunnerSettings { get; }
 
         /// <summary>
+        /// The settings for <see cref="TheoremSorterTypeResolver"/>.
+        /// </summary>
+        public TheoremSorterTypeResolverSettings TheoremSorterTypeResolverSettings { get; }
+
+        /// <summary>
         /// The settings for <see cref="ProblemGenerator.ProblemGenerator"/>.
         /// </summary>
         public ProblemGeneratorSettings ProblemGeneratorSettings { get; }
-
-        /// <summary>
-        /// The settings for <see cref="TheoremSorter.TheoremSorter"/>.
-        /// </summary>
-        public TheoremSorterSettings TheoremSorterSettings { get; }
 
         /// <summary>
         /// The settings for the theorem finder module.
@@ -123,8 +122,8 @@ namespace GeoGen.MainLauncher
         /// <param name="simplificationRuleProviderSettings">The settings for <see cref="SimplificationRuleProvider"/>.</param>
         /// <param name="objectIntroductionRuleProviderSettings">The settings for <see cref="ObjectIntroductionRuleProvider"/>.</param>
         /// <param name="problemGenerationRunnerSettings">The settings for <see cref="ProblemGenerationRunner"/>.</param>
+        /// <param name="theoremSorterTypeResolverSettings">The settings for <see cref="TheoremSorterTypeResolver"/>.</param>
         /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator.ProblemGenerator"/>.</param>
-        /// <param name="theoremSorterSettings">The settings for <see cref="TheoremSorter.TheoremSorter"/>.</param>
         /// <param name="theoremFindingSettings">The settings for the theorem finder module.</param>
         /// <param name="theoremRankingSettings">The settings for the theorem ranker module.</param>
         /// <param name="generationSettings">The settings for the generator module.</param>
@@ -142,8 +141,8 @@ namespace GeoGen.MainLauncher
                         SimplificationRuleProviderSettings simplificationRuleProviderSettings,
                         ObjectIntroductionRuleProviderSettings objectIntroductionRuleProviderSettings,
                         ProblemGenerationRunnerSettings problemGenerationRunnerSettings,
+                        TheoremSorterTypeResolverSettings theoremSorterTypeResolverSettings,
                         ProblemGeneratorSettings problemGeneratorSettings,
-                        TheoremSorterSettings theoremSorterSettings,
                         TheoremFindingSettings theoremFindingSettings,
                         TheoremRankingSettings theoremRankingSettings,
                         GenerationSettings generationSettings,
@@ -163,8 +162,8 @@ namespace GeoGen.MainLauncher
             SimplificationRuleProviderSettings = simplificationRuleProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRuleProviderSettings));
             ObjectIntroductionRuleProviderSettings = objectIntroductionRuleProviderSettings ?? throw new ArgumentNullException(nameof(objectIntroductionRuleProviderSettings));
             ProblemGenerationRunnerSettings = problemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(problemGenerationRunnerSettings));
+            TheoremSorterTypeResolverSettings = theoremSorterTypeResolverSettings ?? throw new ArgumentNullException(nameof(theoremSorterTypeResolverSettings));
             ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
-            TheoremSorterSettings = theoremSorterSettings ?? throw new ArgumentNullException(nameof(theoremSorterSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
             TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
             GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));

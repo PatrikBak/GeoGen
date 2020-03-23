@@ -51,6 +51,7 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
             Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
             Kernel.Bind<IObjectIntroductionRuleProvider>().To<ObjectIntroductionRuleProvider>().WithConstructorArgument(settings.ObjectIntroductionRuleProviderSettings);
+            Kernel.Bind<ITheoremSorterTypeResolver>().To<TheoremSorterTypeResolver>().WithConstructorArgument(settings.TheoremSorterTypeResolverSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
             Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
 
@@ -85,10 +86,10 @@ namespace GeoGen.MainLauncher
                 .AddTheoremSimplifier(new TheoremSimplifierData(await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()))
                 // And the problem generator and with its settings
                 .AddProblemGenerator(settings.ProblemGeneratorSettings)
-                // And the analyzer
-                .AddAnalyzer()
-                // And the sorter with its settings
-                .AddTheoremSorter(settings.TheoremSorterSettings);
+                // And the problem analyzer
+                .AddProblemAnalyzer()
+                // And the sorter
+                .AddTheoremSorter();
 
             #endregion
 

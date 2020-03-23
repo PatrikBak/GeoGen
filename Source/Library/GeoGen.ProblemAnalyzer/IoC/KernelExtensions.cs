@@ -12,7 +12,7 @@ namespace GeoGen.ProblemAnalyzer
         /// </summary>
         /// <param name="kernel">The kernel.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddAnalyzer(this IKernel kernel)
+        public static IKernel AddProblemAnalyzer(this IKernel kernel)
         {
             // Bind the analyzer
             kernel.Bind<IGeneratedProblemAnalyzer>().To<GeneratedProblemAnalyzer>();

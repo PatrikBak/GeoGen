@@ -1,4 +1,5 @@
 ﻿using Ninject;
+using Ninject.Extensions.Factory;
 
 namespace GeoGen.TheoremSorter
 {
@@ -11,15 +12,17 @@ namespace GeoGen.TheoremSorter
         /// Bindings for the dependencies from the TheoremSorter module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="settings">The settings for <see cref="TheoremSorter"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremSorter(this IKernel kernel, TheoremSorterSettings settings)
+        public static IKernel AddTheoremSorter(this IKernel kernel)
         {
             // Bind the sorter
-            kernel.Bind<ITheoremSorter>().To<TheoremSorter>().WithConstructorArgument(settings);
+            kernel.Bind<ITheoremSorter>().To<TheoremSorter>();
 
             // Bind the tracer
             kernel.Bind<ISortingGeometryFailureTracer>().To<EmptySortingGeometryFailureTracer>();
+
+            // Bind the factory
+            kernel.Bind<ITheoremSorterFactory>().ToFactory();
 
             // Return the kernel for chaining
             return kernel;

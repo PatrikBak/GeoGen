@@ -75,16 +75,20 @@ namespace GeoGen.TheoremSorter
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremSorter"/> class.
         /// </summary>
-        /// <param name="settings">The settings for the sorter.</param>
         /// <param name="constructor">The constructor used to geometrically compare theorems.</param>
         /// <param name="tracer">The tracer of geometry failure.</param>
-        public TheoremSorter(TheoremSorterSettings settings, IGeometryConstructor constructor, ISortingGeometryFailureTracer tracer)
+        /// <param name="numberOfTheorems">The maximal number of theorems that will be tracked.</param>
+        public TheoremSorter(IGeometryConstructor constructor, ISortingGeometryFailureTracer tracer, int numberOfTheorems)
         {
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
             _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
 
+            // Ensure the number of theorems is positive
+            if (numberOfTheorems <= 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfTheorems), "The maximal number of theorem to be tracked must be at least 1");
+
             // Initialize the ladder with the requested capacity
-            _ladder = new RankingLadder<RankedTheorem, TheoremRanking>(capacity: settings.NumberOfTheorems);
+            _ladder = new RankingLadder<RankedTheorem, TheoremRanking>(capacity: numberOfTheorems);
         }
 
         #endregion
