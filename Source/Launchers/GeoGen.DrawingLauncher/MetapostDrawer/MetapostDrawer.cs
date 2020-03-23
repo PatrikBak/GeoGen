@@ -64,7 +64,7 @@ namespace GeoGen.DrawingLauncher
         /// <inheritdoc/>
         public async Task DrawAsync(IEnumerable<RankedTheorem> rankedTheorems, int startingId)
         {
-            // Create figures from configuration-theorem pair
+            // Create figures from ranked theorems
             var figures = rankedTheorems.Select((theorem, index) => CreateFigure(theorem, index + startingId)).ToArray();
 
             #region Writing code file
@@ -143,6 +143,9 @@ namespace GeoGen.DrawingLauncher
             if (constructionData.Duplicates != default)
                 throw new ConstructionException("The configuration cannot be constructed, because it contains duplicate objects");
 
+            // Prepare the list of drawing exceptions
+            var exceptions = new List<Exception>();
+
             // Construct the ranked figures by going through the pictures
             var rankedFigures = pictures.Select(picture =>
                 {
@@ -159,11 +162,8 @@ namespace GeoGen.DrawingLauncher
                     }
                     catch (Exception e)
                     {
-                        // Make aware if there is a weird problem
-                        LoggingManager.LogWarning($"A problem with picture number {id}. The message: {e.Message}\n");
-
-                        // Log the exception as a debug message
-                        LoggingManager.LogDebug(e.ToString());
+                        // If there is a problem, safe the exception
+                        exceptions.Add(e);
 
                         // Return the default value indicating something didn't work
                         return default;
@@ -173,6 +173,23 @@ namespace GeoGen.DrawingLauncher
                 .Where(pair => pair != default)
                 // Enumerate
                 .ToArray();
+
+            // Take the exception message and string version
+            exceptions.Select(exception => (exception.Message, asString: exception.ToString()))
+                // Group equal ones
+                .GroupBy(pair => pair)
+                // Log with the occurrence count
+                .ForEach(group =>
+                {
+                    // Get the message and string version
+                    var (message, exceptionString) = group.Key;
+
+                    // Make aware of the problem with the number of these exceptions
+                    LoggingManager.LogWarning($"{group.Count()} exception(s) while constructing picture number {id}. The message: {message}\n");
+
+                    // Log the exception as a debug message
+                    LoggingManager.LogDebug(exceptionString);
+                });
 
             // If there are no figures, make aware
             if (rankedFigures.IsEmpty())
