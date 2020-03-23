@@ -77,7 +77,10 @@ namespace GeoGen.InputGenerationLauncher
             // Go through the all types of generated input files
             new[]
             {
-                Experiment_Example()
+                TrianglePointPlusThreePoints(),
+                TrianglePointCirclePlusThreePoints(),
+                TrianglePointLinePlusThreePoints(),
+                QuadrilateralTwoPointsPlusTwoPoints()
             }
             // For each create input files within Results folder
             .ForEach(pair =>
@@ -164,10 +167,10 @@ namespace GeoGen.InputGenerationLauncher
         #region Experiments
 
         /// <summary>
-        /// An example of an experiment.
+        /// An experiment where any triangle with one point is extended by at most three points.
         /// </summary>
         /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
-        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) Experiment_Example()
+        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointPlusThreePoints()
         {
             // Create the loose objects
             var A = new LooseConfigurationObject(Point);
@@ -203,18 +206,181 @@ namespace GeoGen.InputGenerationLauncher
                 .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
                     // We will want 3 iterations
                     numberOfIterations: 3,
-                    // And 2 points at most
+                    // And 3 points at most
                     new Dictionary<ConfigurationObjectType, int>
                     {
-                        { Point, 2 },
+                        { Point, 3 },
                         { Line, 0 },
-                        { Circle,0 }
+                        { Circle, 0 }
                     },
                     // We will want only symmetric results
                     excludeAsymmetricConfigurations: true));
 
             // Return the final result
-            return (nameof(Experiment_Example), generatorInputs);
+            return (nameof(TrianglePointPlusThreePoints), generatorInputs);
+        }
+
+        /// <summary>
+        /// An experiment where any triangle with one point and one circle is extended by at most three points.
+        /// </summary>
+        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
+        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointCirclePlusThreePoints()
+        {
+            // Create the loose objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+
+            // Create the initial configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
+
+            // Create the dictionary with the counts of objects to be added
+            var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
+            {
+                { Point, 1 },
+                { Line, 0 },
+                { Circle, 1 }
+            };
+
+            // Prepare the generator input that doesn't exclude asymmetric configurations
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
+
+            // Prepare the generator settings
+            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
+
+            // Prepare the generation enumerable by taking the generator 
+            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
+                // Pass the input to it
+                .Generate(problemGeneratorInput)
+                // Unwrap the enumerable
+                .generationOutputs
+                // Take the configuration
+                .Select(output => output.Configuration)
+                // Every generated configuration makes an input file
+                .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
+                    // We will want 3 iterations
+                    numberOfIterations: 3,
+                    // And 3 points at most
+                    new Dictionary<ConfigurationObjectType, int>
+                    {
+                        { Point, 3 },
+                        { Line, 0 },
+                        { Circle, 0 }
+                    },
+                    // We will want only symmetric results
+                    excludeAsymmetricConfigurations: true));
+
+            // Return the final result
+            return (nameof(TrianglePointCirclePlusThreePoints), generatorInputs);
+        }
+
+        /// <summary>
+        /// An experiment where any triangle with one point and one line is extended by at most three points.
+        /// </summary>
+        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
+        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointLinePlusThreePoints()
+        {
+            // Create the loose objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+
+            // Create the initial configuration
+            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
+
+            // Create the dictionary with the counts of objects to be added
+            var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
+            {
+                { Point, 1 },
+                { Line, 1 },
+                { Circle, 0 }
+            };
+
+            // Prepare the generator input that doesn't exclude asymmetric configurations
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
+
+            // Prepare the generator settings
+            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
+
+            // Prepare the generation enumerable by taking the generator 
+            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
+                // Pass the input to it
+                .Generate(problemGeneratorInput)
+                // Unwrap the enumerable
+                .generationOutputs
+                // Take the configuration
+                .Select(output => output.Configuration)
+                // Every generated configuration makes an input file
+                .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
+                    // We will want 3 iterations
+                    numberOfIterations: 3,
+                    // And 3 points at most
+                    new Dictionary<ConfigurationObjectType, int>
+                    {
+                        { Point, 3 },
+                        { Line, 0 },
+                        { Circle, 0 }
+                    },
+                    // We will want only symmetric results
+                    excludeAsymmetricConfigurations: true));
+
+            // Return the final result
+            return (nameof(TrianglePointLinePlusThreePoints), generatorInputs);
+        }
+
+        /// <summary>
+        /// An experiment where any quadrilateral with two points is extended by at most twp points.
+        /// </summary>
+        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
+        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) QuadrilateralTwoPointsPlusTwoPoints()
+        {
+            // Create the loose objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new LooseConfigurationObject(Point);
+
+            // Create the initial configuration
+            var configuration = Configuration.DeriveFromObjects(Quadrilateral, A, B, C, D);
+
+            // Create the dictionary with the counts of objects to be added
+            var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
+            {
+                { Point, 2 },
+                { Line, 0 },
+                { Circle, 0 }
+            };
+
+            // Prepare the generator input that doesn't exclude asymmetric configurations
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
+
+            // Prepare the generator settings
+            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
+
+            // Prepare the generation enumerable by taking the generator 
+            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
+                // Pass the input to it
+                .Generate(problemGeneratorInput)
+                // Unwrap the enumerable
+                .generationOutputs
+                // Take the configuration
+                .Select(output => output.Configuration)
+                // Every generated configuration makes an input file
+                .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
+                    // We will want 2 iterations
+                    numberOfIterations: 2,
+                    // And 2 points at most
+                    new Dictionary<ConfigurationObjectType, int>
+                    {
+                        { Point, 2 },
+                        { Line, 0 },
+                        { Circle, 0 }
+                    },
+                    // We will want only symmetric results
+                    excludeAsymmetricConfigurations: true));
+
+            // Return the final result
+            return (nameof(QuadrilateralTwoPointsPlusTwoPoints), generatorInputs);
         }
 
         #endregion
