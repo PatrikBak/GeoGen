@@ -626,7 +626,7 @@ namespace GeoGen.DrawingLauncher
                     case Point point:
 
                         // Use the macro to do the drawing of the label
-                        code.AppendLine($"draw {drawingData.PointLabelMacro}(btex {label} etex, {ConvertPoint(point)});");
+                        code.AppendLine($"draw {drawingData.PointLabelMacro}(\"{label}\", {ConvertPoint(point)});");
 
                         break;
 

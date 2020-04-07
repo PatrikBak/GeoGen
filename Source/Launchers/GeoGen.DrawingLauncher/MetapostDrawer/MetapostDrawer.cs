@@ -88,12 +88,12 @@ namespace GeoGen.DrawingLauncher
             #region Compiling
 
             // Construct the command with parameters
-            var command = $"{_settings.CompilationCommand.program} \"{_settings.MetapostCodeFilePath}\"";
+            var command = $"{_settings.MetapostCompilationCommand} \"{_settings.MetapostCodeFilePath}\"";
 
             // Run the compilation command
-            var (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.CompilationCommand.program,
+            var (exitCode, output, errors) = await ProcessUtilities.RunCommandAsync(_settings.MetapostCompilationCommand,
                 // With the appended file path at the end
-                arguments: $"{_settings.CompilationCommand.arguments} \"{_settings.MetapostCodeFilePath}\"");
+                arguments: $"{_settings.MetapostCompilationArguments} \"{_settings.MetapostCodeFilePath}\"");
 
             // If the error code is not OK, i.e. not zero, make aware
             if (exitCode != 0)
@@ -630,8 +630,8 @@ namespace GeoGen.DrawingLauncher
                 // Get the analytic version
                 var analyticObject = picture.Get(configurationObject);
 
-                // Add the label with the TeX dollars
-                figure.AddLabel(analyticObject, $"${formatter.GetObjectName(configurationObject)}$");
+                // Add the label
+                figure.AddLabel(analyticObject, formatter.GetObjectName(configurationObject));
             });
 
             #endregion

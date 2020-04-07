@@ -16,19 +16,9 @@
     <ProjectReference Include="..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
   </ItemGroup>
-  
-  <ItemGroup>
 
-    <ContentWithTargetPath Include="Data\macros.mp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>macros.mp</TargetPath>
-    </ContentWithTargetPath>
-
-    <ContentWithTargetPath Include="Data\post-compile.bat">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>post-compile.bat</TargetPath>
-    </ContentWithTargetPath>
-
-  </ItemGroup>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
+  </Target>
 
 </Project>

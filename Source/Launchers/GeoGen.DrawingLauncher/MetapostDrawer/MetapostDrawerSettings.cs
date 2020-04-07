@@ -45,10 +45,14 @@ namespace GeoGen.DrawingLauncher
         public bool IncludeRanking { get; }
 
         /// <summary>
-        /// The command used to compile the created MetaPost file. The path to the created file will be appended 
-        /// to the end of the arguments.
+        /// The command used to compile MetaPost files.
         /// </summary>
-        public (string program, string arguments) CompilationCommand { get; }
+        public string MetapostCompilationCommand { get; }
+
+        /// <summary>
+        /// The arguments passed to the compilation command.
+        /// </summary>
+        public string MetapostCompilationArguments { get; }
 
         /// <summary>
         /// The command that will be called after the compilation, if it's not null. It will be called with two
@@ -79,8 +83,8 @@ namespace GeoGen.DrawingLauncher
         /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text. (see <see cref="ConstructionTextMacroPrefix"/>.)</param>
         /// <param name="rankingTableMacro">The name of the macro that accepts strings representing ranking. (see <see cref="RankingTableMacro"/>).</param>
         /// <param name="includeRanking">Indicates whether we should draw figures with the ranking of the theorem.</param>
-        /// <param name="compilationCommand">The command used to compile the created MetaPost file.</param>
-        /// <param name="postcompilationCommand">The command that will be called after the compilation, if it's not null. (see <see cref="PostcompilationCommand"/>.)</param>
+        /// <param name="metapostCompilationCommand">The command used to compile MetaPost files.</param>
+        /// <param name="metapostCompilationArguments">The arguments passed to the compilation command.</param>
         /// <param name="logCommandOutput">Indicates whether we should log the output provided by the compilation and post-compilation command.</param>
         /// <param name="numberOfPictures">The number of pictures that are drawn for a single configuration in order to find the best looking one.</param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,
@@ -89,8 +93,8 @@ namespace GeoGen.DrawingLauncher
                                       string constructionTextMacroPrefix,
                                       string rankingTableMacro,
                                       bool includeRanking,
-                                      (string program, string arguments) compilationCommand,
-                                      string postcompilationCommand,
+                                      string metapostCompilationCommand,
+                                      string metapostCompilationArguments,
                                       bool logCommandOutput,
                                       int numberOfPictures)
         {
@@ -100,8 +104,9 @@ namespace GeoGen.DrawingLauncher
             ConstructionTextMacroPrefix = constructionTextMacroPrefix ?? throw new ArgumentNullException(nameof(drawingData));
             RankingTableMacro = rankingTableMacro ?? throw new ArgumentNullException(nameof(rankingTableMacro));
             IncludeRanking = includeRanking;
-            CompilationCommand = compilationCommand;
-            PostcompilationCommand = postcompilationCommand;
+            MetapostCompilationCommand = metapostCompilationCommand ?? throw new ArgumentNullException(nameof(metapostCompilationCommand));
+            MetapostCompilationArguments = metapostCompilationArguments ?? throw new ArgumentNullException(nameof(metapostCompilationArguments));
+            RankingTableMacro = rankingTableMacro ?? throw new ArgumentNullException(nameof(rankingTableMacro));
             LogCommandOutput = logCommandOutput;
             NumberOfPictures = numberOfPictures;
 
