@@ -3,6 +3,7 @@ using GeoGen.MainLauncher;
 using GeoGen.ProblemGenerator;
 using GeoGen.Utilities;
 using System;
+using System.Diagnostics;
 using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConfigurationGenerationLauncher
@@ -54,6 +55,12 @@ namespace GeoGen.ConfigurationGenerationLauncher
             // Prepare the variable holding the number of generated configurations
             var generatedConfigurations = 0;
 
+            // Prepare the stopwatch
+            var stopwatch = new Stopwatch();
+
+            // Start them
+            stopwatch.Start();
+
             // Run the generation loop
             foreach (var output in _generator.Generate(input).generationOutputs)
             {
@@ -95,8 +102,11 @@ namespace GeoGen.ConfigurationGenerationLauncher
                         $"used memory: {((double)GC.GetTotalMemory(forceFullCollection: true) / 1000000).ToStringWithDecimalDot()} MB");
             }
 
-            // Log the final number
-            LoggingManager.LogInfo($"The total number of generated configurations is {generatedConfigurations}");
+            // Stop the timing
+            stopwatch.Stop();
+
+            // Log the final number and time
+            LoggingManager.LogInfo($"The total number of generated configurations is {generatedConfigurations} in {stopwatch.ElapsedMilliseconds} ms.");
         }
 
         #endregion
