@@ -77,16 +77,16 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="MetapostDrawerSettings"/> class.
         /// </summary>
-        /// <param name="drawingData">The data with MetaPost-related commands.</param>
-        /// <param name="metapostCodeFilePath">The path to the file that will be created and then compiled.</param>
-        /// <param name="metapostMacroLibraryPath">The relative or absolute path to the MetaPost library that is loaded at the end of the created file.</param>
-        /// <param name="constructionTextMacroPrefix">The prefix for the macros handling conversion of constructed object definitions to human-readable text. (see <see cref="ConstructionTextMacroPrefix"/>.)</param>
-        /// <param name="rankingTableMacro">The name of the macro that accepts strings representing ranking. (see <see cref="RankingTableMacro"/>).</param>
-        /// <param name="includeRanking">Indicates whether we should draw figures with the ranking of the theorem.</param>
-        /// <param name="metapostCompilationCommand">The command used to compile MetaPost files.</param>
-        /// <param name="metapostCompilationArguments">The arguments passed to the compilation command.</param>
-        /// <param name="logCommandOutput">Indicates whether we should log the output provided by the compilation and post-compilation command.</param>
-        /// <param name="numberOfPictures">The number of pictures that are drawn for a single configuration in order to find the best looking one.</param>
+        /// <param name="drawingData"><inheritdoc cref="DrawingData" path="/summary"/></param>
+        /// <param name="metapostCodeFilePath"><inheritdoc cref="MetapostCodeFilePath" path="/summary"/></param>
+        /// <param name="metapostMacroLibraryPath"><inheritdoc cref="MetapostMacroLibraryPath" path="/summary"/></param>
+        /// <param name="constructionTextMacroPrefix"><inheritdoc cref="ConstructionTextMacroPrefix" path="/summary"/></param>
+        /// <param name="rankingTableMacro"><inheritdoc cref="RankingTableMacro" path="/summary"/></param>
+        /// <param name="includeRanking"><inheritdoc cref="IncludeRanking" path="/summary"/></param>
+        /// <param name="metapostCompilationCommand"><inheritdoc cref="MetapostCompilationCommand" path="/summary"/></param>
+        /// <param name="metapostCompilationArguments"><inheritdoc cref="MetapostCompilationArguments" path="/summary"/></param>
+        /// <param name="logCommandOutput"><inheritdoc cref="LogCommandOutput" path="/summary"/></param>
+        /// <param name="numberOfPictures"><inheritdoc cref="NumberOfPictures" path="/summary"/></param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,
                                       string metapostCodeFilePath,
                                       string metapostMacroLibraryPath,
@@ -95,6 +95,7 @@ namespace GeoGen.DrawingLauncher
                                       bool includeRanking,
                                       string metapostCompilationCommand,
                                       string metapostCompilationArguments,
+                                      string postcompilationCommand,
                                       bool logCommandOutput,
                                       int numberOfPictures)
         {
@@ -106,6 +107,7 @@ namespace GeoGen.DrawingLauncher
             IncludeRanking = includeRanking;
             MetapostCompilationCommand = metapostCompilationCommand ?? throw new ArgumentNullException(nameof(metapostCompilationCommand));
             MetapostCompilationArguments = metapostCompilationArguments ?? throw new ArgumentNullException(nameof(metapostCompilationArguments));
+            PostcompilationCommand = postcompilationCommand;
             RankingTableMacro = rankingTableMacro ?? throw new ArgumentNullException(nameof(rankingTableMacro));
             LogCommandOutput = logCommandOutput;
             NumberOfPictures = numberOfPictures;
