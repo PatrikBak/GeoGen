@@ -121,10 +121,10 @@ namespace GeoGen.DrawingLauncher
         }
 
         /// <summary>
-        /// Constructs a figure for a given ranked theorem.
+        /// Constructs a figure for a given ranked theorem that will be compiled.
         /// </summary>
         /// <param name="rankedTheorem">The ranked theorem for which we're drawing a figure.</param>
-        /// <param name="id">The id of the figure.</param>
+        /// <param name="id">The id of the figure, used only to log potential problems.</param>
         /// <returns>The MetaPost figure.</returns>
         private MetapostFigure CreateFigure(RankedTheorem rankedTheorem, int id)
         {
@@ -152,7 +152,7 @@ namespace GeoGen.DrawingLauncher
                     try
                     {
                         // Try to construct the figure
-                        var figure = ConstructFigure(rankedTheorem, picture);
+                        var figure = CreateFigureFromAnalyticPicture(rankedTheorem, picture);
 
                         // Rank it
                         var rank = figure.CalculateVisualBadness();
@@ -213,7 +213,7 @@ namespace GeoGen.DrawingLauncher
         /// <param name="rankedTheorem">The ranked theorem for which we're drawing a figure.</param>
         /// <param name="picture">The picture with analytic representations of the objects.</param>
         /// <returns>The constructed MetaPost figure.</returns>
-        private MetapostFigure ConstructFigure(RankedTheorem rankedTheorem, Picture picture)
+        private MetapostFigure CreateFigureFromAnalyticPicture(RankedTheorem rankedTheorem, Picture picture)
         {
             // Get the configuration and theorem for comfort
             var configuration = rankedTheorem.Configuration;
@@ -230,17 +230,20 @@ namespace GeoGen.DrawingLauncher
             // Switch based on the loose objects layout
             switch (configuration.LooseObjectsHolder.Layout)
             {
-                // Triangle case
+                // Triangle and quadrilateral cases
                 case LooseObjectLayout.Triangle:
+                case LooseObjectLayout.Quadrilateral:
 
-                    // In this case we have three points
+                    // In these cases we have points
                     var points = looseObjects.Cast<Point>().ToArray();
 
                     // We want to mark each as a normal object
                     points.ForEach(point => figure.AddPoint(point, ObjectDrawingStyle.NormalObject));
 
-                    // And also draw the actual triangle
-                    points.UnorderedPairs().ForEach(pair => figure.AddSegment(pair.Item1, pair.Item2, ObjectDrawingStyle.NormalObject, shifted: false));
+                    // And draw cyclical segments
+                    Enumerable.Range(0, points.Length).Select(i => (points[i], points[(i + 1) % points.Length]))
+                        // Each is added as a normal object
+                        .ForEach(pair => figure.AddSegment(pair.Item1, pair.Item2, ObjectDrawingStyle.NormalObject, shifted: false));
 
                     break;
 

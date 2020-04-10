@@ -8,7 +8,11 @@
 %%%%%%%%%%%% LAYOUTS %%%%%%%%%%%%
 
 def Triangle_Text(expr A,B,C) = 
-	"Let~$" & A & B & C & "$ be a triangle. "
+	"Let~$" & A & B & C & "$ be a~triangle. "
+enddef;
+
+def Quadrilateral_Text(expr A,B,C,D) = 
+	"Let~$" & A & B & C & D & "$ be a~convex quadrilateral. "
 enddef;
 
 %%%%%%%%%%%% CONSTRUCTIONS %%%%%%%%%%%%

@@ -315,7 +315,7 @@ namespace GeoGen.Constructor
                     // Switch based on the layout
                     switch (layout)
                     {
-                        // With three points we'll create a random triangle
+                        // Create a random triangle
                         case LooseObjectLayout.Triangle:
                         {
                             // Create the points
@@ -323,6 +323,16 @@ namespace GeoGen.Constructor
 
                             // Return them in an array 
                             return new IAnalyticObject[] { point1, point2, point3 };
+                        }
+
+                        // Create a random quadrilateral
+                        case LooseObjectLayout.Quadrilateral:
+                        {
+                            // Create the points
+                            var (point1, point2, point3, point4) = AnalyticHelpers.ConstructRandomConvexQuadrilateral();
+
+                            // Return them in an array 
+                            return new IAnalyticObject[] { point1, point2, point3, point4 };
                         }
 
                         // Unhandled cases
