@@ -101,8 +101,8 @@ namespace GeoGen.Core
         /// </summary>
         /// <returns>The numerable of all possible mappings keeping the symmetry.</returns>
         public IEnumerable<IReadOnlyDictionary<ConfigurationObject, ConfigurationObject>> GetSymmetryMappings()
-            // Take all possible mappings of loose objects
-            => LooseObjectsHolder.GetSymmetryMappings()
+            // Take all isomorphic mappings
+            => LooseObjectsHolder.GetIsomorphicMappings()
                 // Exclude the identity
                 .Where(mappedLooseObjects => mappedLooseObjects.Any(pair => pair.Key != pair.Value))
                 // Remap the constructed objects as well
@@ -132,7 +132,7 @@ namespace GeoGen.Core
         /// <returns>An enumerable of objects with which the configuration would be symmetric.</returns>
         public IEnumerable<IReadOnlyList<ConstructedConfigurationObject>> GetObjectsThatWouldMakeThisConfigurationSymmetric()
             // Take all mappings
-            => LooseObjectsHolder.GetSymmetryMappings()
+            => LooseObjectsHolder.GetIsomorphicMappings()
                 // Excluding the identity mapping
                 .Where(mapping => mapping.Any(pair => pair.Key != pair.Value))
                 // For a given mapping take the constructed objects

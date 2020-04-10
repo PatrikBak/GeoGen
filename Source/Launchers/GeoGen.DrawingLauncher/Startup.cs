@@ -242,7 +242,7 @@ namespace GeoGen.DrawingLauncher
                 throw new DrawingLauncherException("Unsupported layout, currently only triangle is supported :/");
 
             // Find the mapping that makes this symmetric
-            var symmetricMapping = configuration.LooseObjectsHolder.GetSymmetryMappings().FirstOrDefault(mapping =>
+            var symmetricMapping = configuration.LooseObjectsHolder.GetIsomorphicMappings().FirstOrDefault(mapping =>
             {
                 // Exclude the identity
                 if (mapping.All(pair => pair.Key == pair.Value))

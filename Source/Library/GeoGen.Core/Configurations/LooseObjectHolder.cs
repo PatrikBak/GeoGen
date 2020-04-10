@@ -64,7 +64,7 @@ namespace GeoGen.Core
         /// yielding a symmetric layout.
         /// </summary>
         /// <returns>The dictionaries mapping the current loose objects to themselves.</returns>
-        public IEnumerable<IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject>> GetSymmetryMappings()
+        public IEnumerable<IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject>> GetIsomorphicMappings()
         {
             // Switch based on the layout
             switch (Layout)

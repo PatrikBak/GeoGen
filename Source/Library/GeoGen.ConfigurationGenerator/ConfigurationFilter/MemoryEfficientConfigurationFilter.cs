@@ -70,8 +70,8 @@ namespace GeoGen.ConfigurationGenerator
             // Prepare the cache dictionary of string representations of constructed objects
             var objectStringsCache = new Dictionary<ConstructedConfigurationObject, string>();
 
-            // Take all mappings to symmetry classes
-            var normalOrderOfAddedObjects = configuration.LooseObjectsHolder.GetSymmetryMappings()
+            // Take all isomorphic mappings
+            var normalOrderOfAddedObjects = configuration.LooseObjectsHolder.GetIsomorphicMappings()
                 // For a given mapping take the constructed objects
                 .Select(mapping => configuration.ConstructedObjects
                     // Reconstruct them

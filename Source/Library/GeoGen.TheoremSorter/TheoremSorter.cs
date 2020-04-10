@@ -276,8 +276,8 @@ namespace GeoGen.TheoremSorter
             // Prepare the variable that will hold the analytic theorem corresponding to the current one
             AnalyticTheorem analyticPassedTheorem = null;
 
-            // Go through the symmetric mappings of the current loose objects
-            foreach (var looseObjectMapping in _looseObjectHolders[picture].GetSymmetryMappings())
+            // Go through the isomorphic mappings of the current loose objects
+            foreach (var looseObjectMapping in _looseObjectHolders[picture].GetIsomorphicMappings())
             {
                 // Find out if this is an identity
                 var isThisIdentity = looseObjectMapping.All(pair => pair.Key == pair.Value);

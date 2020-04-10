@@ -60,8 +60,8 @@ namespace GeoGen.ConfigurationGenerator
                 return true;
 
             // We need to find out if the current configuration if the representant
-            // of its symmetry class. Therefore we take all the symmetric mappings                            
-            var minIdsSet = configuration.LooseObjectsHolder.GetSymmetryMappings()
+            // of its isomorphic class. Therefore we take all the isomorphic mappings                            
+            var minIdsSet = configuration.LooseObjectsHolder.GetIsomorphicMappings()
                     // For every make ids set from the constructed objects 
                     .Select(mapping => MakeIdsSet(configuration.ConstructedObjects
                         // that are remapped using this mapping
@@ -69,7 +69,7 @@ namespace GeoGen.ConfigurationGenerator
                     // Take the lexicographically minimal ids set
                     .MinItem(Comparer<SortedSet<int>>.Create((a1, a2) => a1.CompareToLexicographically(a2)));
 
-            // If this configuration is not the representant of its symmetry class,
+            // If this configuration is not the representant of its isomorphic class,
             // then we say it is not correct
             if (!minIdsSet.SequenceEqual(currentSet))
                 return true;

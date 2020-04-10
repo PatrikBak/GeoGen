@@ -12,7 +12,7 @@ namespace GeoGen.TheoremRanker
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
             // Find the number of possible mappings of loose objects minus the identity mapping
-            var numberOfAllMappings = configuration.LooseObjectsHolder.GetSymmetryMappings().Count() - 1;
+            var numberOfAllMappings = configuration.LooseObjectsHolder.GetIsomorphicMappings().Count() - 1;
 
             // Find the number of actual symmetry mappings 
             var numberOfSymmetryMappings = configuration.GetSymmetryMappings()
