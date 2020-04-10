@@ -13,6 +13,11 @@
         /// <summary>
         /// Represents the filter that uses lots of memory, but is faster than <see cref="MemoryEfficientConfigurationFilter"/>.
         /// </summary>
-        Fast
+        Fast,
+
+        /// <summary>
+        /// The simple filter that does not handle configuration isomorphism at all, only configuration equality.
+        /// </summary>
+        Simple
     }
 }
