@@ -88,8 +88,8 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
-        /// Determines if the configuration is symmetric, i.e. its loose objects can be renamed to
-        /// obtain the same configuration.
+        /// Determines if the configuration is symmetric, i.e. <see cref="LooseObjectHolder.GetSymmetricMappings"/>
+        /// produces a mapping that keeps this configuration the same.
         /// </summary>
         /// <returns>true, if the configuration is symmetric; false otherwise.</returns>
         public bool IsSymmetric() => GetSymmetryMappings().Any();
@@ -97,14 +97,12 @@ namespace GeoGen.Core
         /// <summary>
         /// Find all possible mappings that would keep this configuration symmetric if all objects
         /// were remapping according to them. If the configuration is not symmetric, then there will
-        /// not be any result.
+        /// not be any result. For more information see <see cref="LooseObjectHolder.GetSymmetricMappings"/>.
         /// </summary>
         /// <returns>The numerable of all possible mappings keeping the symmetry.</returns>
         public IEnumerable<IReadOnlyDictionary<ConfigurationObject, ConfigurationObject>> GetSymmetryMappings()
-            // Take all isomorphic mappings
-            => LooseObjectsHolder.GetIsomorphicMappings()
-                // Exclude the identity
-                .Where(mappedLooseObjects => mappedLooseObjects.Any(pair => pair.Key != pair.Value))
+            // Take all symmetric mappings
+            => LooseObjectsHolder.GetSymmetricMappings()
                 // Remap the constructed objects as well
                 .Select(mappedLooseObjects => (mappedLooseObjects, mappedConstructedObjects: ConstructedObjects
                     // Prepare a mapping dictionary for them
@@ -131,10 +129,8 @@ namespace GeoGen.Core
         /// </summary>
         /// <returns>An enumerable of objects with which the configuration would be symmetric.</returns>
         public IEnumerable<IReadOnlyList<ConstructedConfigurationObject>> GetObjectsThatWouldMakeThisConfigurationSymmetric()
-            // Take all mappings
-            => LooseObjectsHolder.GetIsomorphicMappings()
-                // Excluding the identity mapping
-                .Where(mapping => mapping.Any(pair => pair.Key != pair.Value))
+            // Take all symmetric mappings
+            => LooseObjectsHolder.GetSymmetricMappings()
                 // For a given mapping take the constructed objects
                 .Select(mapping => ConstructedObjects
                     // Reconstruct them

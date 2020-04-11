@@ -97,24 +97,20 @@ namespace GeoGen.Core
         /// <param name="configuration">The configuration with respect to which we're finding unnecessary objects.</param>
         /// <returns>The unnecessary objects with regards to this theorem.</returns>
         public IReadOnlyHashSet<ConfigurationObject> GetUnnecessaryObjects(Configuration configuration)
-        {
             // From the objects of the configuration
-            return configuration.AllObjects
+            => configuration.AllObjects
                 // Exclude all the inner objects of the theorem objects
                 .Except(GetInnerConfigurationObjects().GetDefiningObjects())
                 // Enumerate
                 .ToReadOnlyHashSet();
-        }
 
         /// <summary>
         /// Finds the inner configuration objects of the theorem objects.
         /// </summary>
         /// <returns>The inner configuration objects of all theorems objects</returns>
         public IReadOnlyList<ConfigurationObject> GetInnerConfigurationObjects()
-        {
             // Simply merge all the inner objects of all the theorem objects
-            return InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects()).Distinct().ToArray();
-        }
+            => InvolvedObjects.SelectMany(theoremObject => theoremObject.GetInnerConfigurationObjects()).Distinct().ToArray();
 
         /// <summary>
         /// Recreates the theorem by applying a given mapping of the inner configuration objects.
@@ -161,6 +157,17 @@ namespace GeoGen.Core
                 // Take distinct results with the exclusion of this theorem
                 .Except(this.ToEnumerable());
 
+        /// <summary>
+        /// Find all possible mappings that would keep this keep symmetric with respect to the passed
+        /// configuration. If there is no symmetry, then there will be no result.
+        /// </summary>
+        /// <param name="configuration">The configuration where the theorem holds.</param>
+        /// <returns>The numerable of all possible mappings keeping the symmetry.</returns>
+        public IEnumerable<IReadOnlyDictionary<ConfigurationObject, ConfigurationObject>> GetSymmetryMappings(Configuration configuration)
+            // Take all mappings that keep the configuration the same
+            => configuration.GetSymmetryMappings()
+                // Take keep the theorem as well
+                .Where(mapping => Remap(mapping).Equals(this));
 
         #endregion
 

@@ -58,10 +58,189 @@ namespace GeoGen.Core
         #region Public methods
 
         /// <summary>
+        /// Finds all mappings of loose objects to themselves that represent layout symmetry, which
+        /// should represent this idea: We want to be able to take two points and place them horizontally
+        /// so that the picture looks 'symmetric' along the vertical direction. 
+        /// <list type="number">
+        /// <item><see cref="LineSegment"/>: AB has one symmetry remapping AB --> BA.</item>
+        /// <item><see cref="LineAndPoint"/>: has no symmetry remapping.</item>
+        /// <item><see cref="RightTriangle"/>: ABC has one symmetry remapping BC --> CB 
+        /// (the right angle is at A and BC is placed horizontally)</item>
+        /// <item><see cref="LineAndTwoPoints"/>One remapping of the points.</item>
+        /// <item><see cref="Triangle"/>: ABC has three remapping: ABC --> ACB, ABC --> CBA, ABC --> BAC.</item>
+        /// <item><see cref="Quadrilateral"/> and <see cref="CyclicQuadrilateral"/> are the most complicated ones.
+        /// A permutation of its points works if and only if we can find two points that changed their order.
+        /// These points are then the ones to be placed horizontally. 
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <returns>The dictionaries mapping the current loose objects to themselves.</returns>
+        public IEnumerable<IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject>> GetSymmetricMappings()
+        {
+            // Switch based on the layout
+            switch (Layout)
+            {
+                // Case where we exchange the points
+                case LineSegment:
+
+                    // Do the exchange
+                    return new Dictionary<LooseConfigurationObject, LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[1] },
+                            { LooseObjects[1], LooseObjects[0] }
+                        }
+                        // We need enumerable
+                        .ToEnumerable();
+
+                // Case where we exchange any two points
+                case Triangle:
+
+                    // Return all 3 options
+                    return new[]
+                    {
+                        // 01 --> 10
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[1] },
+                            { LooseObjects[1], LooseObjects[0] },
+                            { LooseObjects[2], LooseObjects[2] }
+                        },
+
+                        // 02 --> 20
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[2] },
+                            { LooseObjects[1], LooseObjects[1] },
+                            { LooseObjects[2], LooseObjects[0] }
+                        },
+
+                        // 12 --> 21
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[2] },
+                            { LooseObjects[2], LooseObjects[1] }
+                        }
+                    };
+
+                // Cases where we have 2 fixed or exchanged points
+                case Quadrilateral:
+                case CyclicQuadrilateral:
+
+                    // Return all 9 options
+                    return new[]
+                    {
+                        // 01 --> 10 and 23 --> 23
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[1] },
+                            { LooseObjects[1], LooseObjects[0] },
+                            { LooseObjects[2], LooseObjects[2] },
+                            { LooseObjects[3], LooseObjects[3] }
+                        },
+
+                        // 01 --> 10 and 23 --> 32
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[1] },
+                            { LooseObjects[1], LooseObjects[0] },
+                            { LooseObjects[2], LooseObjects[3] },
+                            { LooseObjects[3], LooseObjects[2] }
+                        },
+
+                        // 02 --> 20 and 13 --> 13
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[2] },
+                            { LooseObjects[1], LooseObjects[1] },
+                            { LooseObjects[2], LooseObjects[0] },
+                            { LooseObjects[3], LooseObjects[3] }
+                        },
+
+                        // 02 --> 20 and 13 --> 31
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[2] },
+                            { LooseObjects[1], LooseObjects[3] },
+                            { LooseObjects[2], LooseObjects[0] },
+                            { LooseObjects[3], LooseObjects[1] }
+                        },
+                                     
+                        // 03 --> 30 and 12 --> 12
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[3] },
+                            { LooseObjects[1], LooseObjects[1] },
+                            { LooseObjects[2], LooseObjects[2] },
+                            { LooseObjects[3], LooseObjects[0] }
+                        },
+
+                        // 03 --> 30 and 12 --> 21
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[3] },
+                            { LooseObjects[1], LooseObjects[2] },
+                            { LooseObjects[2], LooseObjects[1] },
+                            { LooseObjects[3], LooseObjects[0] }
+                        },
+                                     
+                        // 12 --> 21 and 03 --> 03
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[2] },
+                            { LooseObjects[2], LooseObjects[1] },
+                            { LooseObjects[3], LooseObjects[3] }
+                        },
+                                     
+                        // 13 --> 31 and 02 --> 02
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[3] },
+                            { LooseObjects[2], LooseObjects[2] },
+                            { LooseObjects[3], LooseObjects[1] }
+                        },
+
+                        // 23 --> 32 and 01 --> 01
+                        new Dictionary<LooseConfigurationObject,LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[1] },
+                            { LooseObjects[2], LooseObjects[3] },
+                            { LooseObjects[3], LooseObjects[2] }
+                        },
+                    };
+
+                // Case where we can exchange the second two points
+                case RightTriangle:
+                case LineAndTwoPoints:
+
+                    // Change the second two points
+                    return new Dictionary<LooseConfigurationObject, LooseConfigurationObject>
+                        {
+                            { LooseObjects[0], LooseObjects[0] },
+                            { LooseObjects[1], LooseObjects[2] },
+                            { LooseObjects[2], LooseObjects[1] }
+                        }
+                        // We need enumerable
+                        .ToEnumerable();
+
+                // Case where there is no option
+                case LineAndPoint:
+                    return Enumerable.Empty<IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject>>();
+
+                // Unhandled cases
+                default:
+                    throw new GeoGenException($"Unhandled value of {nameof(LooseObjectLayout)}: {Layout}");
+            }
+        }
+
+        /// <summary>
         /// Finds all mappings of loose objects to themselves that represent geometrically equivalent
         /// layout. These mappings include the identical mapping. For example, if we have a triangle ABC,
         /// i.e. the loose objects are A, B, C, then there are 6 possible mappings ([A, B, C], [A, C, B],...)
-        /// yielding a symmetric layout.
+        /// yielding an equivalent layout.
         /// </summary>
         /// <returns>The dictionaries mapping the current loose objects to themselves.</returns>
         public IEnumerable<IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject>> GetIsomorphicMappings()
@@ -82,7 +261,7 @@ namespace GeoGen.Core
                 case RightTriangle:
                 case LineAndTwoPoints:
 
-                    // Take all permutations and zip them with the objects
+                    // Return all 2 options
                     return new[]
                     {
                         // Identity
@@ -105,7 +284,7 @@ namespace GeoGen.Core
                 // Case where there is only an identity
                 case LineAndPoint:
 
-                    // Return just an identity dictionary
+                    // Return the identity
                     return LooseObjects.ToDictionary(_ => _, _ => _).ToEnumerable();
 
                 // Unhandled cases

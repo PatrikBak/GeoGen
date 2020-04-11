@@ -11,24 +11,20 @@ namespace GeoGen.TheoremRanker
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
         {
-            // Find the number of possible mappings of loose objects minus the identity mapping
-            var numberOfAllMappings = configuration.LooseObjectsHolder.GetIsomorphicMappings().Count() - 1;
+            // Find the number of possible symmetry mappings of loose objects
+            var allSymmetryMappingsCount = configuration.LooseObjectsHolder.GetSymmetricMappings().Count();
 
-            // Find the number of actual symmetry mappings 
-            var numberOfSymmetryMappings = configuration.GetSymmetryMappings()
-                // That preserve not just the configuration, but the theorem as well
-                .Where(mapping => theorem.Equals(theorem.Remap(mapping)))
-                // We want their count
-                .Count();
+            // Find the number of actual symmetry mappings that preserve both configuration and theorem
+            var validSymmetryMappingsCount = theorem.GetSymmetryMappings(configuration).Count();
 
-            // Return the final result
-            return numberOfSymmetryMappings switch
+            // Return the final result based on how many of possible mappings are valid
+            return validSymmetryMappingsCount switch
             {
                 // No symmetry case
-                _ when numberOfSymmetryMappings == 0 => 0,
+                0 => 0,
 
                 // Full symmetry case
-                _ when numberOfSymmetryMappings == numberOfAllMappings => 1,
+                _ when validSymmetryMappingsCount == allSymmetryMappingsCount => 1,
 
                 // Any other case means some sort of partial symmetry
                 _ => 0.5

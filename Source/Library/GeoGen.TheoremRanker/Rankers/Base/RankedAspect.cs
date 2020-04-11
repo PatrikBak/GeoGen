@@ -8,9 +8,10 @@ namespace GeoGen.TheoremRanker
     public enum RankedAspect
     {
         /// <summary>
-        /// The coefficient of theorem and configuration symmetry. The coefficient is calculated as follows:
+        /// The coefficient of theorem and configuration symmetry (<see cref="LooseObjectHolder.GetSymmetricMappings"/>.
+        /// It is calculated as follows:
         /// <para>
-        /// If any valid reordering of loose objects make the same configuration, then we have full symmetry and
+        /// If any valid symmetry reordering of loose objects make the same configuration, then we have full symmetry and
         /// the ranking is 1. Otherwise if there is at least 1 such a reordering, then we have partial symmetry and
         /// the ranking is 0.5. Otherwise we have no symmetry and the ranking is 0.
         /// </para>
