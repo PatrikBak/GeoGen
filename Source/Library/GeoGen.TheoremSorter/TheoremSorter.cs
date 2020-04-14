@@ -15,9 +15,9 @@ namespace GeoGen.TheoremSorter
     /// numerically via <see cref="IGeometryConstructor"/>. If there are two geometrically equal theorems, then the
     /// following resolution algorithm is used:
     /// <list type="number">
-    /// <item>If there is a theorem with a higher ranking, then this one is picked.</item>
-    /// <item>If there is a theorem with a smaller number of numbers, then this one is picked.</item>
+    /// <item>If there is a theorem with a smaller number of objects, then this one is picked.</item>
     /// <item>If there is a theorem with a smaller number of points, then this one is picked.</item>
+    /// <item>If there is a theorem with a higher ranking, then this one is picked.</item>
     /// <item>Otherwise there is a tie which is resolved by taking the older one.</item>
     /// </list>
     /// While constructing theorems configuration isomorphism is taken into account. Therefore for example the fact that
@@ -166,22 +166,6 @@ namespace GeoGen.TheoremSorter
         /// <returns>true, if we should replace the current theorem; false otherwise.</returns>
         private bool ShouldWeReplace(RankedTheorem currentTheorem, RankedTheorem newTheorem)
         {
-            #region Ranking
-
-            // Find the rankings
-            var currentTheoremRanking = currentTheorem.Ranking.TotalRanking.Rounded();
-            var newTheoremRanking = newTheorem.Ranking.TotalRanking.Rounded();
-
-            // If the current theorem has a smaller ranking, then yes
-            if (currentTheoremRanking < newTheoremRanking)
-                return true;
-
-            // If the current theorem has a higher ranking, then no
-            if (currentTheoremRanking > newTheoremRanking)
-                return false;
-
-            #endregion
-
             #region Number of objects
 
             // Find the counts
@@ -210,6 +194,22 @@ namespace GeoGen.TheoremSorter
 
             // If the current one has fewer points, then no
             if (currentTheoremPointCount < newTheoremPointCount)
+                return false;
+
+            #endregion
+
+            #region Ranking
+
+            // Find the rankings
+            var currentTheoremRanking = currentTheorem.Ranking.TotalRanking.Rounded();
+            var newTheoremRanking = newTheorem.Ranking.TotalRanking.Rounded();
+
+            // If the current theorem has a smaller ranking, then yes
+            if (currentTheoremRanking < newTheoremRanking)
+                return true;
+
+            // If the current theorem has a higher ranking, then no
+            if (currentTheoremRanking > newTheoremRanking)
                 return false;
 
             #endregion
