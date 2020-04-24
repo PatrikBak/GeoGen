@@ -169,6 +169,15 @@ namespace GeoGen.Core
                 // Take keep the theorem as well
                 .Where(mapping => Remap(mapping).Equals(this));
 
+        /// <summary>
+        /// Finds out if a given theorem is symmetric with respect to the passed configuration.
+        /// </summary>
+        /// <param name="configuration">The configuration where the theorem holds.</param>
+        /// <returns>true, if the theorem is symmetric, false otherwise.</returns>
+        public bool IsSymmetric(Configuration configuration)
+            // Check whether there is any symmetry mapping
+            => GetSymmetryMappings(configuration).Any();
+
         #endregion
 
         #region Public static methods

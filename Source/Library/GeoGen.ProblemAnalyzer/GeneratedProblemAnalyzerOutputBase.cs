@@ -22,6 +22,13 @@ namespace GeoGen.ProblemAnalyzer
         /// </summary>
         public IReadOnlyList<RankedTheorem> InterestingTheorems { get; }
 
+        /// <summary>
+        /// The theorems that are not among <see cref="InterestingTheorems"/> because they have been ruled out
+        /// because they are asymmetric. This list will be empty if an <see cref="IGeneratedProblemAnalyzer"/> is
+        /// told not to exclude asymmetric problems.
+        /// </summary>
+        public IReadOnlyCollection<Theorem> NotInterestringAsymmetricTheorems { get; }
+
         #endregion
 
         #region Constructor
@@ -29,13 +36,16 @@ namespace GeoGen.ProblemAnalyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputBase"/> class.
         /// </summary>
-        /// <param name="simplifiedTheorems">The results of theorem simplification.</param>
-        /// <param name="interestingTheorems">The interesting theorems sorted ascending by their total ranking. </param>
+        /// <param name="simplifiedTheorems"><inheritdoc cref="SimplifiedTheorems" path="/summary"/></param>
+        /// <param name="interestingTheorems"><inheritdoc cref="InterestingTheorems" path="/summary"/></param>
+        /// <param name="notInterestringAsymmetricTheorems"><inheritdoc cref="NotInterestringAsymmetricTheorems" path="/summary"/></param>
         protected GeneratedProblemAnalyzerOutputBase(IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
-                                                     IReadOnlyList<RankedTheorem> interestingTheorems)
+                                                     IReadOnlyList<RankedTheorem> interestingTheorems,
+                                                     IReadOnlyCollection<Theorem> notInterestringAsymmetricTheorems)
         {
             SimplifiedTheorems = simplifiedTheorems ?? throw new ArgumentNullException(nameof(simplifiedTheorems));
             InterestingTheorems = interestingTheorems ?? throw new ArgumentNullException(nameof(interestingTheorems));
+            NotInterestringAsymmetricTheorems = notInterestringAsymmetricTheorems ?? throw new ArgumentNullException(nameof(notInterestringAsymmetricTheorems));
         }
 
         #endregion

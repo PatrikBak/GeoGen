@@ -19,6 +19,7 @@ namespace GeoGen.ProblemAnalyzer
     /// <item>Unproved theorems are attempted to be simplified. Those where it is possible are automatically not interesting.</item>
     /// <item>The remaining theorems are ranked and sorted by the ranking ascending. These are the final interesting theorems.</item>
     /// </list>
+    /// TODO: Documentation
     /// </summary>
     public class GeneratedProblemAnalyzer : IGeneratedProblemAnalyzer
     {
@@ -61,22 +62,23 @@ namespace GeoGen.ProblemAnalyzer
         #region IGeneratedProblemAnalyzer implementation
 
         /// <inheritdoc/>
-        public GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput)
+        public GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting)
             // Delegate the call to the general method
-            => Analyze(generatorOutput, constructProofs: false);
+            => Analyze(generatorOutput, areAsymetricProblemsInteresting, constructProofs: false);
 
         /// <inheritdoc/>
-        public GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput)
+        public GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting)
             // Delegate the call to the general method
-            => Analyze(generatorOutput, constructProofs: true);
+            => Analyze(generatorOutput, areAsymetricProblemsInteresting, constructProofs: true);
 
         /// <summary>
         /// Performs the analysis of a given generator output.
         /// </summary>
         /// <param name="output">The generator output to be analyzed.</param>
-        /// <param name="constructProofs">Indicates whether we should construct proofs or not, which might affect the result.</param>
+        /// <param name="areAsymetricProblemsInteresting">Indicates whether asymmetric problems should be deemed interesting.</param>
+        /// <param name="constructProofs">Indicates whether we should construct proofs or not, which affects the type of result.</param>
         /// <returns>The result depending on whether we're constructing proofs or not.</returns>
-        private dynamic Analyze(ProblemGeneratorOutput output, bool constructProofs)
+        private dynamic Analyze(ProblemGeneratorOutput output, bool areAsymetricProblemsInteresting, bool constructProofs)
         {
             // Call the prover
             var proverOutput = constructProofs
@@ -96,6 +98,25 @@ namespace GeoGen.ProblemAnalyzer
             var interestingTheorems = output.NewTheorems.AllObjects
                 // Excluding those that are proven
                 .Where(theorem => !provedTheorems.Contains(theorem))
+                // Enumerate
+                .ToArray();
+
+            // Find the problems that should excluded based on symmetry
+            // If we asymmetric problems are deemed interesting
+            var notInterestringAsymmetricTheorems = areAsymetricProblemsInteresting
+                // Then no excluded problems
+                ? (IReadOnlyList<Theorem>)Array.Empty<Theorem>()
+                // Otherwise we take the interesting theorems
+                : interestingTheorems
+                    // That are not symmetric
+                    .Where(theorem => !theorem.IsSymmetric(output.Configuration))
+                    // Enumerate
+                    .ToArray();
+
+            // Interesting theorems can now be reseted 
+            interestingTheorems = interestingTheorems
+                // By the exclusion of not interesting asymmetric ones
+                .Except(notInterestringAsymmetricTheorems)
                 // Enumerate
                 .ToArray();
 
@@ -130,9 +151,9 @@ namespace GeoGen.ProblemAnalyzer
             // Now we can finally return the result
             return constructProofs
                 // If we're constructing proofs, then we have a proof dictionary
-                ? new GeneratedProblemAnalyzerOutputWithProofs(simplifiedTheorems, rankedInterestingTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
+                ? new GeneratedProblemAnalyzerOutputWithProofs(simplifiedTheorems, rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
                 // If we're not constructing proofs, then we have just a proved theorem collection
-                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(simplifiedTheorems, rankedInterestingTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
+                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(simplifiedTheorems, rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
         }
 
         #endregion

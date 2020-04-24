@@ -261,12 +261,16 @@ namespace GeoGen.MainLauncher
 
                 try
                 {
+                    // The analyzer needs to know whether it should deem asymmetric problems as interesting.
+                    // This value is pulled from the input setup
+                    var areAsymetricProblemsInteresting = !input.ExcludeAsymmetricConfigurations;
+
                     // If we should look for proofs (because we should be writing them or analyze the inner inferences)
                     analyzerOutput = _settings.WriteInferenceRuleUsages || _settings.WriteReadableOutputWithProofs
                         // Then call the analysis that construct them
-                        ? (GeneratedProblemAnalyzerOutputBase)_analyzer.AnalyzeWithProofConstruction(generatorOutput)
+                        ? (GeneratedProblemAnalyzerOutputBase)_analyzer.AnalyzeWithProofConstruction(generatorOutput, areAsymetricProblemsInteresting)
                         // Otherwise we don't need them
-                        : _analyzer.AnalyzeWithoutProofConstruction(generatorOutput);
+                        : _analyzer.AnalyzeWithoutProofConstruction(generatorOutput, areAsymetricProblemsInteresting);
                 }
                 catch (Exception e)
                 {
@@ -297,10 +301,10 @@ namespace GeoGen.MainLauncher
 
                 // If we should take just one theorem per configuration
                 var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
-                    // Then take the first (which has the best ranking)
-                    ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
-                    // Otherwise all of them
-                    : analyzerOutput.InterestingTheorems)
+                        // Then take the first (which has the best ranking)
+                        ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
+                        // Otherwise all of them
+                        : analyzerOutput.InterestingTheorems)
                     // Group by type
                     .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type);
 
@@ -505,7 +509,7 @@ namespace GeoGen.MainLauncher
 
                 // Add the theorem
                 result += $"\n\n{formatter.FormatTheorem(rankedTheorem.Theorem)}" +
-                    // With the ranking
+                    // Add the total ranking
                     $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToStringWithDecimalDot()}\n\n";
 
                 // Add the ranking
@@ -597,6 +601,28 @@ namespace GeoGen.MainLauncher
                     })
                     // Make each on a separate line
                     .ToJoinedString("\n\n");
+            }
+
+            #endregion
+
+            #region Asymmetric theorems
+
+            // If there are any asymmetric theorems
+            if (analyzerOutput.NotInterestringAsymmetricTheorems.Any())
+            {
+                // Append the header
+                result = $"{result.TrimEnd()}\n\nAsymmetric theorems:\n\n";
+
+                // Append the simplified theorems by taking them
+                result += analyzerOutput.NotInterestringAsymmetricTheorems
+                    // Format them
+                    .Select(formatter.FormatTheorem)
+                    // Order by the statement
+                    .Ordered()
+                    // Prepend the local index and increase it
+                    .Select(theoremString => $" {localTheoremIndex++}. {theoremString}")
+                    // Make each on a separate line
+                    .ToJoinedString("\n");
             }
 
             #endregion

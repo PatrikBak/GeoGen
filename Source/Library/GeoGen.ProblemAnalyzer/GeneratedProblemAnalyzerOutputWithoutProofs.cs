@@ -24,14 +24,16 @@ namespace GeoGen.ProblemAnalyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputWithoutProofs"/> class.
         /// </summary>
-        /// <param name="simplifiedTheorems">The results of theorem simplification.</param>
-        /// <param name="interestingTheorems">The interesting theorems sorted ascending by their total ranking.</param>
-        /// <param name="provedTheorems">The collection of proved theorems.</param>
+        /// <param name="simplifiedTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.SimplifiedTheorems" path="/summary"/></param>
+        /// <param name="interestingTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.InterestingTheorems" path="/summary"/></param>
+        /// <param name="notInterestringAsymmetricTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.NotInterestringAsymmetricTheorems" path="/summary"/></param>
+        /// <param name="provedTheorems"><inheritdoc cref="ProvedTheorems" path="/summary"/></param>
         public GeneratedProblemAnalyzerOutputWithoutProofs(IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
                                                            IReadOnlyList<RankedTheorem> interestingTheorems,
+                                                           IReadOnlyCollection<Theorem> notInterestringAsymmetricTheorems,
                                                            IReadOnlyCollection<Theorem> provedTheorems)
 
-            : base(simplifiedTheorems, interestingTheorems)
+            : base(simplifiedTheorems, interestingTheorems, notInterestringAsymmetricTheorems)
         {
             ProvedTheorems = provedTheorems ?? throw new ArgumentNullException(nameof(provedTheorems));
         }
