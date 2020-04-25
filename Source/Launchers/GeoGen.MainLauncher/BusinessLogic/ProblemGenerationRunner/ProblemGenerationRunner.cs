@@ -17,9 +17,9 @@ namespace GeoGen.MainLauncher
     /// <summary>
     /// Represents a runner of <see cref="IProblemGenerator"/> that subsequently uses <see cref="IGeneratedProblemAnalyzer"/>.
     /// <para>
-    /// The runner provides lots of useful debugging output configurable via <see cref="ProblemGenerationRunnerSettings"/>. It can write
-    /// output with or without proofs into human-readable or JSON format (that can be processed via Drawer). Human-readable files
-    /// contain information about simplification and ranking results.
+    /// The runner provides lots of useful debugging output configurable via <see cref="ProblemGenerationRunnerSettings"/>. 
+    /// It can write output with or without proofs into human-readable or JSON format (that can be processed via Drawer).
+    /// Human-readable files contain information about asymmetric exclusion and ranking results.
     /// </para>
     /// <para>
     /// It uses <see cref="ITheoremSorterTypeResolver"/> to find globally best theorems across multiple runs for each type. These
@@ -563,48 +563,6 @@ namespace GeoGen.MainLauncher
 
             #endregion
 
-            #region Simplified theorems
-
-            // If there are any simplified theorems
-            if (analyzerOutput.SimplifiedTheorems.Any())
-            {
-                // Append the header
-                result = $"{result.TrimEnd()}\n\nSimplified theorems:\n\n";
-
-                // Append the simplified theorems by taking them
-                result += analyzerOutput.SimplifiedTheorems
-                    // Sort by their statement
-                    .OrderBy(pair => formatter.FormatTheorem(pair.Key))
-                    // Handle each pair
-                    .Select(pair =>
-                    {
-                        // Deconstruct
-                        var (oldTheorem, simplificationPair) = pair;
-
-                        // Deconstruct
-                        var (newTheorem, newConfiguration) = simplificationPair;
-
-                        // Prepare the local result with the local index (while increasing it)
-                        var result = $" {localTheoremIndex++}. {formatter.FormatTheorem(oldTheorem)} - can be simplified:\n\n";
-
-                        // Prepare the formatter for the new configuration
-                        var newFormatter = new OutputFormatter(newConfiguration.AllObjects);
-
-                        // Add the new configuration
-                        result += $"{newFormatter.FormatConfiguration(newConfiguration).Indent(3)}\n\n";
-
-                        // Add the new theorem
-                        result += $"{newFormatter.FormatTheorem(newTheorem).Indent(3)}";
-
-                        // Return it
-                        return result;
-                    })
-                    // Make each on a separate line
-                    .ToJoinedString("\n\n");
-            }
-
-            #endregion
-
             #region Asymmetric theorems
 
             // If there are any asymmetric theorems
@@ -613,7 +571,7 @@ namespace GeoGen.MainLauncher
                 // Append the header
                 result = $"{result.TrimEnd()}\n\nAsymmetric theorems:\n\n";
 
-                // Append the simplified theorems by taking them
+                // Append the asymmetric theorems by taking them
                 result += analyzerOutput.NotInterestringAsymmetricTheorems
                     // Format them
                     .Select(formatter.FormatTheorem)

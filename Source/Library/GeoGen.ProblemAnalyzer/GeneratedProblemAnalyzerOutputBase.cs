@@ -13,11 +13,6 @@ namespace GeoGen.ProblemAnalyzer
         #region Public properties
 
         /// <summary>
-        /// The results of theorem simplification.
-        /// </summary>
-        public IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> SimplifiedTheorems { get; }
-
-        /// <summary>
         /// The interesting theorems sorted ascending by their total ranking. 
         /// </summary>
         public IReadOnlyList<RankedTheorem> InterestingTheorems { get; }
@@ -36,14 +31,11 @@ namespace GeoGen.ProblemAnalyzer
         /// <summary>
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputBase"/> class.
         /// </summary>
-        /// <param name="simplifiedTheorems"><inheritdoc cref="SimplifiedTheorems" path="/summary"/></param>
         /// <param name="interestingTheorems"><inheritdoc cref="InterestingTheorems" path="/summary"/></param>
         /// <param name="notInterestringAsymmetricTheorems"><inheritdoc cref="NotInterestringAsymmetricTheorems" path="/summary"/></param>
-        protected GeneratedProblemAnalyzerOutputBase(IReadOnlyDictionary<Theorem, (Theorem newTheorem, Configuration newConfiguration)> simplifiedTheorems,
-                                                     IReadOnlyList<RankedTheorem> interestingTheorems,
+        protected GeneratedProblemAnalyzerOutputBase(IReadOnlyList<RankedTheorem> interestingTheorems,
                                                      IReadOnlyCollection<Theorem> notInterestringAsymmetricTheorems)
         {
-            SimplifiedTheorems = simplifiedTheorems ?? throw new ArgumentNullException(nameof(simplifiedTheorems));
             InterestingTheorems = interestingTheorems ?? throw new ArgumentNullException(nameof(interestingTheorems));
             NotInterestringAsymmetricTheorems = notInterestringAsymmetricTheorems ?? throw new ArgumentNullException(nameof(notInterestringAsymmetricTheorems));
         }

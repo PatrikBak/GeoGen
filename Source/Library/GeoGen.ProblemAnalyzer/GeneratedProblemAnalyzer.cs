@@ -2,7 +2,6 @@
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
-using GeoGen.TheoremSimplifier;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -11,15 +10,14 @@ using System.Linq;
 namespace GeoGen.ProblemAnalyzer
 {
     /// <summary>
-    /// The default implementation of <see cref="IGeneratedProblemAnalyzer"/> that combines the three GeoGen algorithms: 
-    /// <see cref="ITheoremProver"/>,  <see cref="ITheoremRanker"/> and <see cref="ITheoremSimplifier"/>. The algorithm is 
+    /// The default implementation of <see cref="IGeneratedProblemAnalyzer"/> that combines <see cref="ITheoremProver"/>
+    /// and <see cref="ITheoremRanker"/> to perform the following steps:
     /// the following:
     /// <list type="number">
     /// <item>Theorems are attempted to be proved. Proved ones are automatically not interesting.</item>
-    /// <item>Unproved theorems are attempted to be simplified. Those where it is possible are automatically not interesting.</item>
+    /// <item>If we are supposed to exclude asymmetric theorems, then we find them and mark not interesting.</item>
     /// <item>The remaining theorems are ranked and sorted by the ranking ascending. These are the final interesting theorems.</item>
     /// </list>
-    /// TODO: Documentation
     /// </summary>
     public class GeneratedProblemAnalyzer : IGeneratedProblemAnalyzer
     {
@@ -35,11 +33,6 @@ namespace GeoGen.ProblemAnalyzer
         /// </summary>
         private readonly ITheoremRanker _ranker;
 
-        /// <summary>
-        /// The simplifier of theorems.
-        /// </summary>
-        private readonly ITheoremSimplifier _simplifier;
-
         #endregion
 
         #region Constructor
@@ -49,12 +42,10 @@ namespace GeoGen.ProblemAnalyzer
         /// </summary>
         /// <param name="prover">The prover of theorems.</param>
         /// <param name="ranker">The ranker of theorems.</param>
-        /// <param name="simplifier">The simplifier of theorems.</param>
-        public GeneratedProblemAnalyzer(ITheoremProver prover, ITheoremRanker ranker, ITheoremSimplifier simplifier)
+        public GeneratedProblemAnalyzer(ITheoremProver prover, ITheoremRanker ranker)
         {
             _prover = prover ?? throw new ArgumentNullException(nameof(prover));
             _ranker = ranker ?? throw new ArgumentNullException(nameof(ranker));
-            _simplifier = simplifier ?? throw new ArgumentNullException(nameof(simplifier));
         }
 
         #endregion
@@ -120,22 +111,6 @@ namespace GeoGen.ProblemAnalyzer
                 // Enumerate
                 .ToArray();
 
-            // Simplify the interesting theorems
-            var simplifiedTheorems = interestingTheorems
-                // Attempt to simplify each
-                .Select(theorem => (theorem, simplification: _simplifier.Simplify(theorem, output.Configuration)))
-                // Take those where it worked out
-                .Where(pair => pair.simplification != null)
-                // Enumerate to a dictionary
-                .ToDictionary(pair => pair.theorem, pair => pair.simplification.Value);
-
-            // Interesting theorems can now be reseted
-            interestingTheorems = interestingTheorems
-                // By excluding simplifiable ones
-                .Where(theorem => !simplifiedTheorems.ContainsKey(theorem))
-                // Enumerate
-                .ToArray();
-
             // Prepare the map of all theorems
             var allTheorems = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
 
@@ -151,9 +126,9 @@ namespace GeoGen.ProblemAnalyzer
             // Now we can finally return the result
             return constructProofs
                 // If we're constructing proofs, then we have a proof dictionary
-                ? new GeneratedProblemAnalyzerOutputWithProofs(simplifiedTheorems, rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
+                ? new GeneratedProblemAnalyzerOutputWithProofs(rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
                 // If we're not constructing proofs, then we have just a proved theorem collection
-                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(simplifiedTheorems, rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
+                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
         }
 
         #endregion
