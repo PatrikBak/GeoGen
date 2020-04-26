@@ -4,6 +4,7 @@ using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -179,13 +180,16 @@ namespace GeoGen.MainLauncher
 
             #endregion
 
-            #region Write iterations and maximal object counts
+            #region Write other setup
 
             // Write iterations
             WriteLineToBothReadableWriters($"\nIterations: {input.NumberOfIterations}");
 
             // Write maximal numbers of objects of particular types
             WriteLineToBothReadableWriters($"{input.MaximalNumbersOfObjectsToAdd.Select(pair => $"MaximalNumberOf{pair.Key}s: {pair.Value}").ToJoinedString("\n")}\n");
+
+            // Write whether we're excluding symmetry
+            WriteLineToBothReadableWriters($"GenerateOnlySymmetricConfigurations: {input.ExcludeAsymmetricConfigurations}");
 
             #endregion
 
@@ -310,23 +314,27 @@ namespace GeoGen.MainLauncher
 
                 try
                 {
-                    // Prepare the variable indicating any changes in best theorems
-                    var bestTheoremsChanged = false;
+                    // Prepare the set of sorters whose content changed
+                    var updatedSorterTypes = new HashSet<TheoremType>();
 
-                    // Mark all theorems
-                    theoremsToBeJudged.ForEach(group =>
-                    {
-                        // Let the sorter judge the theorems
-                        _resolver.GetSorterForType(group.Key).AddTheorems(group, out var localBestTheoremChanged);
+                    // Mark all interesting theorems
+                    analyzerOutput.InterestingTheorems
+                        // Grouped by type
+                        .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type)
+                        // Handle each group
+                        .ForEach(group =>
+                        {
+                            // Let the sorter judge the theorems
+                            _resolver.GetSorterForType(group.Key).AddTheorems(group, out var localBestTheoremChanged);
 
-                        // If there is any local change, mark it
-                        if (localBestTheoremChanged)
-                            bestTheoremsChanged = true;
-                    });
+                            // If there is any local change, mark it
+                            if (localBestTheoremChanged)
+                                updatedSorterTypes.Add(group.Key);
+                        });
 
-                    // If we should write best theorems continuously and there are some changes, do it
-                    if (_settings.WriteBestTheoremsContinuously && bestTheoremsChanged)
-                        RewriteBestTheorems();
+                    // If we should write best theorems continuously, do it
+                    if (_settings.WriteBestTheoremsContinuously)
+                        RewriteBestTheorems(updatedSorterTypes);
                 }
                 catch (Exception e)
                 {
@@ -431,16 +439,31 @@ namespace GeoGen.MainLauncher
         }
 
         /// <summary>
-        /// Rewrites the best theorem files, i.e. the readable files for each type or the JSON files for each type,
-        /// based on whether we are told to do it via settings.
+        /// Rewrites the best theorem files, i.e. the readable files for each type or the JSON files based on settings.
         /// </summary>
-        private void RewriteBestTheorems()
+        /// <param name="typesToWrite">The theorem types to be rewritten. If the value is null (by default), then all sorters are rewritten.</param>
+        private void RewriteBestTheorems(IReadOnlyCollection<TheoremType> typesToWrite = null)
         {
-            // If we should write readable output...
-            if (_settings.WriteReadableBestTheorems)
+            // Prepare the sorters to be rewritten by analyzing the passed types
+            var sorters = typesToWrite
+                // For each find the sorter
+                ?.Select(type => (type, sorter: _resolver.GetSorterForType(type)))
+                // Or if the types are null, take all sorters
+                ?? _resolver.AllSorters;
+
+            // For every type and sorter
+            foreach (var (type, sorter) in sorters)
             {
-                // For every type
-                foreach (var (type, sorter) in _resolver.AllSorters)
+                // Prepare the theorems to by written 
+                // If we should take one per configuration
+                var bestTheorems = _settings.TakeAtMostOneInterestingTheoremPerConfiguration
+                    // Call the helper extension method
+                    ? sorter.BestTheoremsOnePerConfiguration()
+                    // Otherwise take all of them
+                    : sorter.BestTheorems;
+
+                // If we should write readable output...
+                if (_settings.WriteReadableBestTheorems)
                 {
                     // Prepare the path by combining the folder and the theorem type
                     var theoremFilePath = $"{Path.Combine(_settings.ReadableBestTheoremFolder, type.ToString())}.{_settings.FileExtension}";
@@ -449,21 +472,17 @@ namespace GeoGen.MainLauncher
                     using var readableBestTheoremWriter = new StreamWriter(new FileStream(theoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
                     // Rewrite the file
-                    readableBestTheoremWriter.Write(RankedTheoremsToString(sorter.BestTheorems));
+                    readableBestTheoremWriter.Write(RankedTheoremsToString(bestTheorems));
                 }
-            }
 
-            // If we should write JSON output
-            if (_settings.WriteJsonBestTheorems)
-            {
-                // For every type
-                foreach (var (type, sorter) in _resolver.AllSorters)
+                // If we should write JSON output
+                if (_settings.WriteJsonBestTheorems)
                 {
                     // Prepare the path by combining the folder and the theorem type
                     var theoremFilePath = $"{Path.Combine(_settings.JsonBestTheoremFolder, type.ToString())}.json";
 
                     // Rewrite the JSON output
-                    _factory.Create(theoremFilePath).WriteEagerly(sorter.BestTheorems);
+                    _factory.Create(theoremFilePath).WriteEagerly(bestTheorems);
                 }
             }
         }
