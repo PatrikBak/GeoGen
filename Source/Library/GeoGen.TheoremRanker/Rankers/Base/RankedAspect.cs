@@ -35,26 +35,27 @@ namespace GeoGen.TheoremRanker
         /// </para>
         /// </para>
         /// </summary>
-        Simplification,
+        SubproblemReducibility,
 
         /// <summary>
         /// The total number of theorems of the configuration. The idea behind this metrics is that if we have more theorems in
         /// a configuration, then it usually suggests the problem is not that difficult, because we can make lots of conclusions. 
         /// This ranking might suggests a lot when there are very few theorems.
         /// </summary>
-        Theorems,
+        NumberOfTheorems,
 
         /// <summary>
         /// The number of <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this metrics is that in configurations 
         /// with more concyclic points it is usually easier to prove things, because of their powerful properties.
         /// </summary>
-        Circles,
+        NumberOfCyclicQuadrilaterals,
 
         /// <summary>
-        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="ConstructionsRankerSettings.ConstructionRankings"/>
-        /// and the final ranking is the sum of these rankings over the configuration's constructed objects.
+        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from 
+        /// <see cref="SpecificConstructionsRankerSettings.ConstructionRankings"/> and the final ranking is 
+        /// the sum of these rankings over the configuration's constructed objects.
         /// </summary>
-        Constructions,
+        SpecificConstructions,
 
         /// <summary>
         /// The coefficient taking into account used <see cref="Construction"/>s in a way that if a construction is used 'n' times,

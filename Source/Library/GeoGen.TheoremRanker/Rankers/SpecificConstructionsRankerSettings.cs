@@ -4,9 +4,9 @@ using System.Collections.Generic;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The settings for <see cref="ConstructionsRanker"/>.
+    /// The settings for <see cref="SpecificConstructionsRanker"/>.
     /// </summary>
-    public class ConstructionsRankerSettings
+    public class SpecificConstructionsRankerSettings
     {
         #region Public properties
 
@@ -20,10 +20,10 @@ namespace GeoGen.TheoremRanker
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructionsRankerSettings"/>.
+        /// Initializes a new instance of the <see cref="SpecificConstructionsRankerSettings"/>.
         /// </summary>
         /// <param name="constructionRankings">The dictionary mapping construction names to rankings.</param>
-        public ConstructionsRankerSettings(IReadOnlyDictionary<string, double> constructionRankings)
+        public SpecificConstructionsRankerSettings(IReadOnlyDictionary<string, double> constructionRankings)
         {
             ConstructionRankings = constructionRankings ?? throw new ArgumentNullException(nameof(constructionRankings));
         }

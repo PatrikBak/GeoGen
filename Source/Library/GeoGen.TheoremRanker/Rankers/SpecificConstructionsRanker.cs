@@ -6,26 +6,26 @@ using System.Linq;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.Constructions"/>.
+    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.SpecificConstructions"/>.
     /// </summary>
-    public class ConstructionsRanker : AspectTheoremRankerBase
+    public class SpecificConstructionsRanker : AspectTheoremRankerBase
     {
         #region Private fields
 
         /// <summary>
         /// The settings for the ranker.
         /// </summary>
-        private readonly ConstructionsRankerSettings _settings;
+        private readonly SpecificConstructionsRankerSettings _settings;
 
         #endregion
 
         #region Constructor
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConstructionsRanker"/> class.
+        /// Initializes a new instance of the <see cref="SpecificConstructionsRanker"/> class.
         /// </summary>
         /// <param name="settings">The settings for the ranker.</param>
-        public ConstructionsRanker(ConstructionsRankerSettings settings)
+        public SpecificConstructionsRanker(SpecificConstructionsRankerSettings settings)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
         }

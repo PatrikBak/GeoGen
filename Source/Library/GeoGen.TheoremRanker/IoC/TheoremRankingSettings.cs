@@ -15,9 +15,9 @@ namespace GeoGen.TheoremRanker
         public TheoremRankerSettings TheoremRankerSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="ConstructionsRanker"/>. It can be null if this aspect is not ranked.
+        /// The settings for <see cref="SpecificConstructionsRanker"/>. It can be null if this aspect is not ranked.
         /// </summary>
-        public ConstructionsRankerSettings ConstructionsRankerSettings { get; }
+        public SpecificConstructionsRankerSettings SpecificConstructionsRankerSettings { get; }
 
         #endregion
 
@@ -27,15 +27,15 @@ namespace GeoGen.TheoremRanker
         /// Initializes a new instance of the <see cref="TheoremRankingSettings"/> class.
         /// </summary>
         /// <param name="theoremRankerSettings">The settings for <see cref="TheoremRanker"/>.</param>
-        /// <param name="constructionsRankerSettings">The settings for <see cref="ConstructionsRanker"/>. It can be null if this aspect is not ranked.</param>
+        /// <param name="specificConstructionsRankerSettings">The settings for <see cref="SpecificConstructionsRanker"/>. It can be null if this aspect is not ranked.</param>
         public TheoremRankingSettings(TheoremRankerSettings theoremRankerSettings,
-                                      ConstructionsRankerSettings constructionsRankerSettings)
+                                      SpecificConstructionsRankerSettings specificConstructionsRankerSettings)
         {
             TheoremRankerSettings = theoremRankerSettings ?? throw new ArgumentNullException(nameof(theoremRankerSettings));
-            ConstructionsRankerSettings = constructionsRankerSettings;
+            SpecificConstructionsRankerSettings = specificConstructionsRankerSettings;
 
             // Ensure that constructions ranker settings are set if this aspect is ranked
-            if (theoremRankerSettings.RankingCoefficients.ContainsKey(RankedAspect.Constructions) && constructionsRankerSettings == null)
+            if (theoremRankerSettings.RankingCoefficients.ContainsKey(RankedAspect.SpecificConstructions) && specificConstructionsRankerSettings == null)
                 throw new TheoremRankerException("The constructions ranker must have its settings set as this aspect is ranked.");
         }
 

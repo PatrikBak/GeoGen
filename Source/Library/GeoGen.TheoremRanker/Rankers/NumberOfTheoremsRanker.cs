@@ -3,9 +3,9 @@
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.Theorems"/>.
+    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.NumberOfTheorems"/>.
     /// </summary>
-    public class TheoremsRanker : AspectTheoremRankerBase
+    public class NumberOfTheoremsRanker : AspectTheoremRankerBase
     {
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)

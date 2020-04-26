@@ -6,9 +6,9 @@ using System.Linq;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.Simplification"/>.
+    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.SubproblemReducibility"/>.
     /// </summary>
-    public class SimplificationRanker : AspectTheoremRankerBase
+    public class SubproblemReducibilityRanker : AspectTheoremRankerBase
     {
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)

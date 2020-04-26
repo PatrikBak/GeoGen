@@ -4,9 +4,9 @@ using System.Linq;
 namespace GeoGen.TheoremRanker
 {
     /// <summary>
-    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.Circles"/>.
+    /// The <see cref="IAspectTheoremRanker"/> of <see cref="RankedAspect.NumberOfCyclicQuadrilaterals"/>.
     /// </summary>
-    public class CirclesRanker : AspectTheoremRankerBase
+    public class NumberOfCyclicQuadrilateralsRanker : AspectTheoremRankerBase
     {
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)

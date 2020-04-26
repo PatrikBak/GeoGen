@@ -40,10 +40,10 @@ namespace GeoGen.TheoremRanker
                 // In some cases there is a constructor argument
                 switch (rankedAspect)
                 {
-                    case RankedAspect.Constructions:
+                    case RankedAspect.SpecificConstructions:
 
                         // Bind with the argument from settings
-                        binding.WithConstructorArgument(settings.ConstructionsRankerSettings);
+                        binding.WithConstructorArgument(settings.SpecificConstructionsRankerSettings);
 
                         break;
                 }
