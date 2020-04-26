@@ -8,21 +8,8 @@ namespace GeoGen.TheoremRanker
     public enum RankedAspect
     {
         /// <summary>
-        /// The coefficient of theorem and configuration symmetry (<see cref="LooseObjectHolder.GetSymmetricMappings"/>.
-        /// It is calculated as follows:
-        /// <para>
-        /// If any valid symmetry reordering of loose objects make the same configuration, then we have full symmetry and
-        /// the ranking is 1. Otherwise if there is at least 1 such a reordering, then we have partial symmetry and
-        /// the ranking is 0.5. Otherwise we have no symmetry and the ranking is 0.
-        /// </para>
-        /// <para>
-        /// For example: 
-        /// </para>
-        /// <list type="number">
-        /// <item>Triangle ABC with D = PointReflection(A, B) and theorem AB = BD has no symmetry, i.e. the ranking is 0.</item>
-        /// <item>Triangle ABC with D = Midpoint(A, B) and theorem DA = DB has partial symmetry, i.e. the ranking is 0.5.</item>
-        /// <item>Triangle ABC with midpoints of sides and concurrent medians has full symmetry, i.e. the ranking is 1.</item>
-        /// </list>
+        /// The coefficient of theorem and configuration symmetry (<see cref="LooseObjectHolder.GetSymmetricMappings"/>).
+        /// It is calculated by dividing the number of valid symmetry mappings by the total number of symmetry mappings. 
         /// </summary>
         Symmetry,
 
@@ -64,12 +51,12 @@ namespace GeoGen.TheoremRanker
         Circles,
 
         /// <summary>
-        /// The coefficient taking into account <see cref="TheoremType"/>. The value is taken from <see cref="TypeRankerSettings.TypeRankings"/>.
+        /// The coefficient taking into account <see cref="TheoremType"/>. The value is taken from <see cref="TheoremTypeRankerSettings.TypeRankings"/>.
         /// </summary>
         TheoremType,
 
         /// <summary>
-        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="TypeRankerSettings.TypeRankings"/>
+        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="ConstructionsRankerSettings.ConstructionRankings"/>
         /// and the final ranking is the sum of these rankings over the configuration's constructed objects.
         /// </summary>
         Constructions,

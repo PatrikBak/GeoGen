@@ -14,21 +14,17 @@ namespace GeoGen.TheoremRanker
             // Find the number of possible symmetry mappings of loose objects
             var allSymmetryMappingsCount = configuration.LooseObjectsHolder.GetSymmetricMappings().Count();
 
-            // Find the number of actual symmetry mappings that preserve both configuration and theorem
+            // If there is no symmetry mapping for the layout, then 0 seems 
+            // like a good ranking
+            if (allSymmetryMappingsCount == 0)
+                return 0;
+
+            // Otherwise find the number of actual symmetry mappings that 
+            // preserve both configuration and theorem
             var validSymmetryMappingsCount = theorem.GetSymmetryMappings(configuration).Count();
 
-            // Return the final result based on how many of possible mappings are valid
-            return validSymmetryMappingsCount switch
-            {
-                // No symmetry case
-                0 => 0,
-
-                // Full symmetry case
-                _ when validSymmetryMappingsCount == allSymmetryMappingsCount => 1,
-
-                // Any other case means some sort of partial symmetry
-                _ => 0.5
-            };
+            // The symmetry ranking is the percentage of valid mappings
+            return (double)validSymmetryMappingsCount / allSymmetryMappingsCount;
         }
     }
 }
