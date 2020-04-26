@@ -42,14 +42,19 @@ namespace GeoGen.TheoremFinder
                 // In some cases there is a constructor argument
                 switch (theoremType)
                 {
-                    // Line and circle tangency 
                     case TheoremType.LineTangentToCircle:
+
+                        // Bind with the argument from settings
                         binding.WithConstructorArgument(settings.LineTangentToCircleTheoremFinderSettings);
+
                         break;
 
                     // Two circles tangency
                     case TheoremType.TangentCircles:
+
+                        // Bind with the argument from settings
                         binding.WithConstructorArgument(settings.TangentCirclesTheoremFinderSettings);
+
                         break;
                 }
             }

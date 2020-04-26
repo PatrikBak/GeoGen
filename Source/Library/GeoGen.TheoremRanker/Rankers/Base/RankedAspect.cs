@@ -51,11 +51,6 @@ namespace GeoGen.TheoremRanker
         Circles,
 
         /// <summary>
-        /// The coefficient taking into account <see cref="TheoremType"/>. The value is taken from <see cref="TheoremTypeRankerSettings.TypeRankings"/>.
-        /// </summary>
-        TheoremType,
-
-        /// <summary>
         /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from <see cref="ConstructionsRankerSettings.ConstructionRankings"/>
         /// and the final ranking is the sum of these rankings over the configuration's constructed objects.
         /// </summary>
