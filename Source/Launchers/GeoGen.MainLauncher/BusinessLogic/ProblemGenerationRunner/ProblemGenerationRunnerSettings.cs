@@ -1,5 +1,4 @@
-﻿using GeoGen.ProblemAnalyzer;
-using GeoGen.TheoremSorter;
+﻿using GeoGen.TheoremSorter;
 using System;
 
 namespace GeoGen.MainLauncher
@@ -107,12 +106,6 @@ namespace GeoGen.MainLauncher
         public bool LogProgress { get; }
 
         /// <summary>
-        /// Indicates whether <see cref="IGeneratedProblemAnalyzer"/> should be called only for the
-        /// configurations of the last iteration. Otherwise it is called for every generated configuration.
-        /// </summary>
-        public bool AnalyzeOnlyLastIteration { get; }
-
-        /// <summary>
         /// Indicates whether <see cref="ITheoremSorter"/> should track at most one interesting theorem per
         /// configuration, the one with the highest ranking. Otherwise it tracks all of them.
         /// </summary>
@@ -142,7 +135,6 @@ namespace GeoGen.MainLauncher
         /// <param name="writeInferenceRuleUsages"><inheritdoc cref="WriteInferenceRuleUsages" path="/summary"/></param>
         /// <param name="progressLoggingFrequency"><inheritdoc cref="ProgressLoggingFrequency" path="/summary"/></param>
         /// <param name="logProgress"><inheritdoc cref="LogProgress"/></param>
-        /// <param name="analyzeOnlyLastIteration"><inheritdoc cref="AnalyzeOnlyLastIteration"/></param>
         /// <param name="takeAtMostOneInterestingTheoremPerConfiguration"><inheritdoc cref="TakeAtMostOneInterestingTheoremPerConfiguration"/></param>
         public ProblemGenerationRunnerSettings(string readableOutputWithoutProofsFolder,
                                                bool writeReadableOutputWithoutProofs,
@@ -161,7 +153,6 @@ namespace GeoGen.MainLauncher
                                                bool writeInferenceRuleUsages,
                                                int progressLoggingFrequency,
                                                bool logProgress,
-                                               bool analyzeOnlyLastIteration,
                                                bool takeAtMostOneInterestingTheoremPerConfiguration)
         {
             ReadableOutputWithoutProofsFolder = readableOutputWithoutProofsFolder;
@@ -181,7 +172,6 @@ namespace GeoGen.MainLauncher
             WriteInferenceRuleUsages = writeInferenceRuleUsages;
             ProgressLoggingFrequency = progressLoggingFrequency;
             LogProgress = logProgress;
-            AnalyzeOnlyLastIteration = analyzeOnlyLastIteration;
             TakeAtMostOneInterestingTheoremPerConfiguration = takeAtMostOneInterestingTheoremPerConfiguration;
 
             // Ensure that the output folder without proofs is set if we are supposed to use it

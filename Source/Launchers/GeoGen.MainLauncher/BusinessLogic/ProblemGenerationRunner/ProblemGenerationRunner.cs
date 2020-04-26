@@ -254,12 +254,8 @@ namespace GeoGen.MainLauncher
                 if (generatorOutput.NewTheorems.AllObjects.Count == 0)
                     continue;
 
-                // If this is not a configuration from the last iterations and we should skip those, do it
-                if (_settings.AnalyzeOnlyLastIteration && generatorOutput.Configuration.IterationIndex != input.NumberOfIterations)
-                    continue;
-
                 // Prepare the output of the analyzer
-                GeneratedProblemAnalyzerOutputBase analyzerOutput = null;
+                GeneratedProblemAnalyzerOutputBase analyzerOutput;
 
                 #region Analyzer call
 
