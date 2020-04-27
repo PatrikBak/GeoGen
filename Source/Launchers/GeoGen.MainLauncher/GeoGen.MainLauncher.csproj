@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.ProblemAnalyzer\GeoGen.ProblemAnalyzer.csproj" />
+    <ProjectReference Include="..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />

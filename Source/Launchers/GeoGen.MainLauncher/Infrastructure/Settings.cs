@@ -2,6 +2,7 @@
 using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
+using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremRanker;
 using System;
 

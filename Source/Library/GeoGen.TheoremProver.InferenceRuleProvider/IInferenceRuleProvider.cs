@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
     /// <summary>
     /// Represents a service that gets <see cref="LoadedInferenceRule"/>s.

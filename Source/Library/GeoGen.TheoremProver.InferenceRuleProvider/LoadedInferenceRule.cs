@@ -1,10 +1,9 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
     /// <summary>
     /// Represents an <see cref="InferenceRule"/> loaded from a file system holding information

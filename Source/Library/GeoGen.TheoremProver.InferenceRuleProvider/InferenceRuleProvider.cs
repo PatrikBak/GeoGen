@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
-using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GeoGen.Infrastructure.Log;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
     /// <summary>
     /// The default implementation of <see cref="IInferenceRuleProvider"/> that looks for <see cref="LoadedInferenceRule"/>s
@@ -77,7 +76,7 @@ namespace GeoGen.MainLauncher
                 catch (Exception e)
                 {
                     // If it cannot be done, make aware
-                    throw new MainLauncherException($"Couldn't load the inference rule file '{inferenceRuleFile}'", e);
+                    throw new InferenceRuleProviderException($"Couldn't load the inference rule file '{inferenceRuleFile}'", e);
                 }
 
                 #endregion
@@ -144,7 +143,7 @@ namespace GeoGen.MainLauncher
                 catch (ParsingException e)
                 {
                     // Throw further
-                    throw new MainLauncherException($"Couldn't parse the inference rule file {inferenceRuleFile}.", e);
+                    throw new InferenceRuleProviderException($"Couldn't parse the inference rule file {inferenceRuleFile}.", e);
                 }
 
                 #endregion

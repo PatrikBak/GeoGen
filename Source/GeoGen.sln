@@ -69,6 +69,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.InputGenerationLaunc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremSimplifier.SimplificationRuleProvider", "Library\GeoGen.TheoremSimplifier.SimplificationRuleProvider\GeoGen.TheoremSimplifier.SimplificationRuleProvider.csproj", "{C946F629-B1D7-40DD-B87D-9A01E2F35D60}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.InferenceRuleProvider", "Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj", "{02040774-736C-4B90-8C09-E846FAFA6F5B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +189,10 @@ Global
 		{C946F629-B1D7-40DD-B87D-9A01E2F35D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C946F629-B1D7-40DD-B87D-9A01E2F35D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C946F629-B1D7-40DD-B87D-9A01E2F35D60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02040774-736C-4B90-8C09-E846FAFA6F5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02040774-736C-4B90-8C09-E846FAFA6F5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02040774-736C-4B90-8C09-E846FAFA6F5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02040774-736C-4B90-8C09-E846FAFA6F5B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -222,6 +228,7 @@ Global
 		{27530D04-B4F2-4E5F-980B-DB8C41BB2B1E} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
 		{8BA7A04C-03EA-4579-B7D0-2391DD8418B4} = {10DF537E-FE98-4C14-AD23-FDE918AA57D8}
 		{C946F629-B1D7-40DD-B87D-9A01E2F35D60} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
+		{02040774-736C-4B90-8C09-E846FAFA6F5B} = {CE1D378D-A427-4F57-B3B1-D10518B6BDA3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AFEA8C8A-2C24-4F63-A2DE-C1A28F920DF1}

@@ -3,6 +3,7 @@ using GeoGen.Infrastructure;
 using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
+using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
