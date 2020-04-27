@@ -3,6 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
 using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.TheoremFinder;
 using Ninject;
 using System.Threading.Tasks;
@@ -42,7 +43,6 @@ namespace GeoGen.ConfigurationGenerationLauncher
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IProblemGenerationRunner>().To<GenerationOnlyProblemGenerationRunner>().WithConstructorArgument(settings.GenerationOnlyProblemGenerationRunnerSettings);
-            Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
 
             #endregion           
 
@@ -53,7 +53,9 @@ namespace GeoGen.ConfigurationGenerationLauncher
                 // Add the constructor
                 .AddConstructor()
                 // Add the problem generator with its settings
-                .AddProblemGenerator(settings.ProblemGeneratorSettings);
+                .AddProblemGenerator(settings.ProblemGeneratorSettings)
+                // Add problem generator input provider
+                .AddProblemGeneratorInputProvider(settings.ProblemGeneratorInputProviderSettings);
 
             // Add an empty theorem finder
             Kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();

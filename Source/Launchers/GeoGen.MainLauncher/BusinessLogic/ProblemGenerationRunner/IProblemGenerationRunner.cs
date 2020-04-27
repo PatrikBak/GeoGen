@@ -1,4 +1,5 @@
 ﻿using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
 
 namespace GeoGen.MainLauncher
 {

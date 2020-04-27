@@ -1,6 +1,7 @@
 ﻿using GeoGen.ConfigurationGenerator;
 using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremProver.ObjectIntroductionRuleProvider;

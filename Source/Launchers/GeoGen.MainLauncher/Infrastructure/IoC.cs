@@ -3,6 +3,7 @@ using GeoGen.Constructor;
 using GeoGen.Infrastructure;
 using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremProver.InferenceRuleProvider;
@@ -48,7 +49,6 @@ namespace GeoGen.MainLauncher
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IProblemGenerationRunner>().To<ProblemGenerationRunner>().WithConstructorArgument(settings.ProblemGenerationRunnerSettings);
-            Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
             Kernel.Bind<ITheoremSorterTypeResolver>().To<TheoremSorterTypeResolver>().WithConstructorArgument(settings.TheoremSorterTypeResolverSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
             Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
@@ -60,7 +60,9 @@ namespace GeoGen.MainLauncher
             // Add inference rule provider
             Kernel.AddInferenceRuleProvider(settings.InferenceRuleProviderSettings)
                 // Add object introduction rule provider
-                .AddObjectIntroductionRuleProvider(settings.ObjectIntroductionRuleProviderSettings);
+                .AddObjectIntroductionRuleProvider(settings.ObjectIntroductionRuleProviderSettings)
+                // Add problem generator input provider
+                .AddProblemGeneratorInputProvider(settings.ProblemGeneratorInputProviderSettings);
 
             #endregion
 

@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
-using GeoGen.ProblemGenerator;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GeoGen.Infrastructure.Log;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.ProblemGenerator.InputProvider
 {
     /// <summary>
     /// The default implementation of <see cref="IProblemGeneratorInputProvider"/> loading data from the file system.
@@ -92,7 +91,7 @@ namespace GeoGen.MainLauncher
                 catch (Exception e)
                 {
                     // If it cannot be done, make aware
-                    throw new MainLauncherException($"Couldn't load the input file '{inputFilePath}'", e);
+                    throw new ProblemGeneratorInputProviderException($"Couldn't load the input file '{inputFilePath}'", e);
                 }
 
                 #endregion
@@ -138,7 +137,7 @@ namespace GeoGen.MainLauncher
                 catch (ParsingException e)
                 {
                     // Throw further
-                    throw new MainLauncherException($"Couldn't parse the input file {inputFilePath}.", e);
+                    throw new ProblemGeneratorInputProviderException($"Couldn't parse the input file {inputFilePath}.", e);
                 }
 
                 #endregion

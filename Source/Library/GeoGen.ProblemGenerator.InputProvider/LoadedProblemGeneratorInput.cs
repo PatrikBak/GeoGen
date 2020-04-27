@@ -1,10 +1,9 @@
 ﻿using GeoGen.Core;
-using GeoGen.ProblemGenerator;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.ProblemGenerator.InputProvider
 {
     /// <summary>
     /// Represents an <see cref="ProblemGeneratorInput"/> loaded from a file.

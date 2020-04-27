@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator.InputProvider\GeoGen.ProblemGenerator.InputProvider.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.ProblemAnalyzer\GeoGen.ProblemAnalyzer.csproj" />

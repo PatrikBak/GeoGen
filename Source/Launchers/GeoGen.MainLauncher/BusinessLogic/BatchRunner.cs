@@ -1,4 +1,5 @@
 ﻿using GeoGen.Infrastructure;
+using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.Utilities;
 using System;
 using System.Diagnostics;

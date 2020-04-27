@@ -1,6 +1,7 @@
 ﻿using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
 using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.Utilities;
 using System;
 using System.Diagnostics;
