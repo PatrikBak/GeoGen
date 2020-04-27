@@ -5,6 +5,7 @@ using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using Ninject;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -47,7 +48,6 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// The main loop of a simple UI. 
         /// </summary>
-        /// <param name="reorderObjects">Indicates whether we should reorder objects to get a better picture, i.e. A upwards.</param>
         /// <returns>The task representing the asynchronous operation.</returns>
         private static async Task UILoopAsync(bool reorderObjects)
         {
@@ -203,7 +203,7 @@ namespace GeoGen.DrawingLauncher
                                 return rankedTheorem;
 
                             // If yes, make the configuration symmetric
-                            var configuration = MakeSymmetric((rankedTheorem.Configuration, rankedTheorem.Theorem));
+                            var configuration = NormalizeOrderOfLooseObjectsBasedOnSymmetry((rankedTheorem.Configuration, rankedTheorem.Theorem));
 
                             // And return the altered ranked theorem object
                             return new RankedTheorem(rankedTheorem.Theorem, rankedTheorem.Ranking, configuration);
@@ -232,69 +232,97 @@ namespace GeoGen.DrawingLauncher
         /// </summary>
         /// <param name="pair">The configuration and the theorem that determine the symmetry.</param>
         /// <returns>The configuration with changed loose objects, or the same configuration if the change cannot be done.</returns>
-        private static Configuration MakeSymmetric((Configuration, Theorem) pair)
+        private static Configuration NormalizeOrderOfLooseObjectsBasedOnSymmetry((Configuration, Theorem) pair)
         {
             // Deconstruct
             var (configuration, theorem) = pair;
 
-            // Make sure we have a triangle
-            if (configuration.LooseObjectsHolder.Layout != LooseObjectLayout.Triangle)
-                return configuration;
+            // We will make a use of a simple function that converts an object mapping to a loose object mapping
+            static IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> ExtractLooseObjects(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping)
+                // Take pairs of loose objects
+                => mapping.Where(pair => pair.Key is LooseConfigurationObject)
+                        // Recreate the dictionary
+                        .ToDictionary(pair => (LooseConfigurationObject)pair.Key, pair => (LooseConfigurationObject)pair.Value);
 
-            // Find the mapping that makes this symmetric
-            var symmetricMapping = configuration.LooseObjectsHolder.GetIsomorphicMappings().FirstOrDefault(mapping =>
+            // Another useful function extracts a pair of exchanged objects from a mapping
+            static (LooseConfigurationObject, LooseConfigurationObject) ExtractExchangedObjects(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
+                // First make tuples
+                => mapping.Select(pair => (pair.Key, pair.Value))
+                    // Exclude identities
+                    .Where(pair => !pair.Key.Equals(pair.Value))
+                    // Now take the first needed one, or default
+                    .FirstOrDefault(pair => mapping[pair.Value].Equals(pair.Key));
+
+            // Switch based on the layout
+            switch (configuration.LooseObjectsHolder.Layout)
             {
-                // Exclude the identity
-                if (mapping.All(pair => pair.Key == pair.Value))
-                    return false;
+                // In triangle cases symmetry means to put A above
+                case LooseObjectLayout.Triangle:
+                {
+                    // Take a symmetry mapping of loose objects
+                    var symmetryMapping = theorem.GetSymmetryMappings(configuration).Select(ExtractLooseObjects).FirstOrDefault();
 
-                // Reconstruct constructed objects
-                var constructedObjectsMapping = configuration.ConstructedObjects.ToDictionary(constructedObject => (ConfigurationObject)constructedObject,
-                    // Each is remapped using the mapping
-                    constructedObject => constructedObject.Remap(mapping));
+                    // If there is no symmetry, no change
+                    if (symmetryMapping == null)
+                        return configuration;
 
-                // Wrap them in a new configuration
-                var newConfiguration = new Configuration(configuration.LooseObjectsHolder, constructedObjectsMapping.Values.Cast<ConstructedConfigurationObject>().ToList());
+                    // Otherwise there must be two exchanged points
+                    var (point1, point2) = ExtractExchangedObjects(symmetryMapping);
 
-                // If the configurations are distinct, then this is not a symmetry mapping
-                if (!configuration.Equals(newConfiguration))
-                    return false;
+                    // Find the last one as well
+                    var point3 = symmetryMapping.Keys.Except(new[] { point1, point2 }).Single();
 
-                // Otherwise we have to remap the theorem
-                // For that reason we merge the mapping of loose objects
-                var finalMapping = mapping.Select(pair => ((ConfigurationObject)pair.Key, (ConfigurationObject)pair.Value))
-                    // With the mapping of constructed objects
-                    .Concat(constructedObjectsMapping.Select(pair => (pair.Key, pair.Value)))
-                    // As a dictionary
-                    .ToDictionary(pair => pair.Item1, pair => pair.Item2);
+                    // Get the final order in which the fixed point goes first
+                    var newLooseObjects = new LooseObjectHolder(new[] { point3, point1, point2 }, LooseObjectLayout.Triangle);
 
-                // We can use this final mapping to remap the theorem
-                var newTheorem = theorem.Remap(finalMapping);
+                    // Return the final result
+                    return new Configuration(newLooseObjects, configuration.ConstructedObjects);
+                }
 
-                // If the theorems are not the same, then this is not correct either
-                if (!theorem.Equals(newTheorem))
-                    return false;
+                // In quadrilateral cases there are two mains to make symmetry
+                case LooseObjectLayout.Quadrilateral:
+                {
+                    // Go through the symmetry mappings 
+                    foreach (var symmetryMapping in theorem.GetSymmetryMappings(configuration).Select(ExtractLooseObjects))
+                    {
+                        // There must be two exchanged points
+                        var (point1, point2) = ExtractExchangedObjects(symmetryMapping);
 
-                // Now we know the configuration is symmetric. Since it's a triangle, we know there is a mapping
-                // with a fixed point. Find out if this one is the one 
-                return mapping.Any(pair => pair.Key == pair.Value);
-            });
+                        // Get the other two points as well
+                        var otherPoints = symmetryMapping.Keys.Except(new[] { point1, point2 }).ToArray();
 
-            // If this is not symmetric one, we can't do more
-            if (symmetricMapping == null)
-                return configuration;
+                        // In the ideal case we want to place a side horizontally
+                        // But that will look symmetric only if the other points are exchangeable as well
+                        // That can be tested by testing just one point
+                        if (symmetryMapping[otherPoints[0]].Equals(otherPoints[1]))
+                        {
+                            // If this is the case, then we will not get a better order
+                            // We can even choose what will be a side, let's say point1, point2
+                            var newLooseObjects = new LooseObjectHolder(new[] { otherPoints[0], point1, point2, otherPoints[1] }, LooseObjectLayout.Quadrilateral);
 
-            // Otherwise get the fixed point
-            var fixedPoint = symmetricMapping.First(pair => pair.Key == pair.Value).Key;
+                            // Return the final result
+                            return new Configuration(newLooseObjects, configuration.ConstructedObjects);
+                        }
+                        // Otherwise this means we cannot place a side horizontally, but we may try it with a diagonal
+                        else
+                        {
+                            // The diagonal must be the second and the last point
+                            var newLooseObjects = new LooseObjectHolder(new[] { otherPoints[0], point1, otherPoints[1], point2 }, LooseObjectLayout.Quadrilateral);
 
-            // Get the other points
-            var otherPoints = symmetricMapping.Keys.Where(point => point != fixedPoint);
+                            // Reset the configuration. We will not break because there still might be an order that allows
+                            // us to place a side horizontally
+                            configuration = new Configuration(newLooseObjects, configuration.ConstructedObjects);
+                        }
+                    }
 
-            // Get the final order
-            var newLooseObjects = new LooseObjectHolder(fixedPoint.ToEnumerable().Concat(otherPoints), LooseObjectLayout.Triangle);
+                    // Return the configuration, no matter what happened to it
+                    return configuration;
+                }
 
-            // Return the final result
-            return new Configuration(newLooseObjects, configuration.ConstructedObjects);
+                // In other cases we will not do anything
+                default:
+                    return configuration;
+            }
         }
 
         /// <summary>

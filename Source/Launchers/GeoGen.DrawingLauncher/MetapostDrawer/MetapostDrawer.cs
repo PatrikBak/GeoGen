@@ -128,20 +128,8 @@ namespace GeoGen.DrawingLauncher
         /// <returns>The MetaPost figure.</returns>
         private MetapostFigure CreateFigure(RankedTheorem rankedTheorem, int id)
         {
-            // Safely execute
-            var (pictures, constructionData) = GeneralUtilities.TryExecute(
-                // Constructing the configuration
-                () => _constructor.ConstructWithUniformLayout(rankedTheorem.Configuration, _settings.NumberOfPictures),
-                // Make sure a potential exception is caught and re-thrown
-                (InconsistentPicturesException e) => throw new ConstructionException("Drawing of the initial configuration failed.", e));
-
-            // Make sure there is no inconstructible object
-            if (constructionData.InconstructibleObject != default)
-                throw new ConstructionException("The configuration cannot be constructed, because it contains an inconstructible object.");
-
-            // Make sure there are no duplicates
-            if (constructionData.Duplicates != default)
-                throw new ConstructionException("The configuration cannot be constructed, because it contains duplicate objects");
+            // Construct flexible symmetry-aware pictures
+            var pictures = _constructor.ConstructWithFlexibleLayoutRespectingSymmetry(rankedTheorem, _settings.NumberOfPictures);
 
             // Prepare the list of drawing exceptions
             var exceptions = new List<Exception>();
