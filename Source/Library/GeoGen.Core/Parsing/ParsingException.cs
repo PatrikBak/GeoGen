@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an exception that occurred while parsing GeoGen objects from strings.
     /// </summary>
-    public class ParsingException : MainLauncherException
+    public class ParsingException : GeoGenException
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ParsingException"/> class.

@@ -1,11 +1,10 @@
-﻿using GeoGen.Core;
-using GeoGen.Utilities;
+﻿using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.Core
 {
     /// <summary>
     /// The static parser of GeoGen core objects. Its method throw a <see cref="ParsingException"/>.

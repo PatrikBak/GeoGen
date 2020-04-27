@@ -6,7 +6,6 @@ using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
-using GeoGen.TheoremSimplifier;
 using GeoGen.TheoremSorter;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -49,7 +48,6 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IProblemGenerationRunner>().To<ProblemGenerationRunner>().WithConstructorArgument(settings.ProblemGenerationRunnerSettings);
             Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
             Kernel.Bind<IInferenceRuleProvider>().To<InferenceRuleProvider>().WithConstructorArgument(settings.InferenceRuleProviderSettings);
-            Kernel.Bind<ISimplificationRuleProvider>().To<SimplificationRuleProvider>().WithConstructorArgument(settings.SimplificationRuleProviderSettings);
             Kernel.Bind<IObjectIntroductionRuleProvider>().To<ObjectIntroductionRuleProvider>().WithConstructorArgument(settings.ObjectIntroductionRuleProviderSettings);
             Kernel.Bind<ITheoremSorterTypeResolver>().To<TheoremSorterTypeResolver>().WithConstructorArgument(settings.TheoremSorterTypeResolverSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
@@ -82,8 +80,6 @@ namespace GeoGen.MainLauncher
                     // Load the object introduction data as well
                     objectIntroducerData: new ObjectIntroducerData(await Kernel.Get<IObjectIntroductionRuleProvider>().GetObjectIntroductionRulesAsync())
                 ))
-                // And the theorem simplifier with the loaded simplification rules
-                .AddTheoremSimplifier(new TheoremSimplifierData(await Kernel.Get<ISimplificationRuleProvider>().GetSimplificationRulesAsync()))
                 // And the problem generator and with its settings
                 .AddProblemGenerator(settings.ProblemGeneratorSettings)
                 // And the problem analyzer

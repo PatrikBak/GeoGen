@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
-using GeoGen.MainLauncher;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;

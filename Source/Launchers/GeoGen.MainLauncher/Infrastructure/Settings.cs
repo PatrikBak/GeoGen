@@ -30,11 +30,6 @@ namespace GeoGen.MainLauncher
         public InferenceRuleProviderSettings InferenceRuleProviderSettings { get; }
 
         /// <summary>
-        /// The settings for <see cref="SimplificationRuleProvider"/>.
-        /// </summary>
-        public SimplificationRuleProviderSettings SimplificationRuleProviderSettings { get; }
-
-        /// <summary>
         /// The settings for <see cref="ObjectIntroductionRuleProvider"/>.
         /// </summary>
         public ObjectIntroductionRuleProviderSettings ObjectIntroductionRuleProviderSettings { get; }
@@ -119,7 +114,6 @@ namespace GeoGen.MainLauncher
         /// <param name="loggingSettings">The settings for the logging system.</param>
         /// <param name="problemGeneratorInputProviderSettings">The settings for <see cref="ProblemGeneratorInputProvider"/>.</param>
         /// <param name="inferenceRuleProviderSettings">The settings for <see cref="InferenceRuleProvider"/>.</param>
-        /// <param name="simplificationRuleProviderSettings">The settings for <see cref="SimplificationRuleProvider"/>.</param>
         /// <param name="objectIntroductionRuleProviderSettings">The settings for <see cref="ObjectIntroductionRuleProvider"/>.</param>
         /// <param name="problemGenerationRunnerSettings">The settings for <see cref="ProblemGenerationRunner"/>.</param>
         /// <param name="theoremSorterTypeResolverSettings">The settings for <see cref="TheoremSorterTypeResolver"/>.</param>
@@ -138,7 +132,6 @@ namespace GeoGen.MainLauncher
         public Settings(LoggingSettings loggingSettings,
                         ProblemGeneratorInputProviderSettings problemGeneratorInputProviderSettings,
                         InferenceRuleProviderSettings inferenceRuleProviderSettings,
-                        SimplificationRuleProviderSettings simplificationRuleProviderSettings,
                         ObjectIntroductionRuleProviderSettings objectIntroductionRuleProviderSettings,
                         ProblemGenerationRunnerSettings problemGenerationRunnerSettings,
                         TheoremSorterTypeResolverSettings theoremSorterTypeResolverSettings,
@@ -159,7 +152,6 @@ namespace GeoGen.MainLauncher
             LoggingSettings = loggingSettings ?? throw new ArgumentNullException(nameof(loggingSettings));
             ProblemGeneratorInputProviderSettings = problemGeneratorInputProviderSettings ?? throw new ArgumentNullException(nameof(problemGeneratorInputProviderSettings));
             InferenceRuleProviderSettings = inferenceRuleProviderSettings ?? throw new ArgumentNullException(nameof(inferenceRuleProviderSettings));
-            SimplificationRuleProviderSettings = simplificationRuleProviderSettings ?? throw new ArgumentNullException(nameof(simplificationRuleProviderSettings));
             ObjectIntroductionRuleProviderSettings = objectIntroductionRuleProviderSettings ?? throw new ArgumentNullException(nameof(objectIntroductionRuleProviderSettings));
             ProblemGenerationRunnerSettings = problemGenerationRunnerSettings ?? throw new ArgumentNullException(nameof(problemGenerationRunnerSettings));
             TheoremSorterTypeResolverSettings = theoremSorterTypeResolverSettings ?? throw new ArgumentNullException(nameof(theoremSorterTypeResolverSettings));

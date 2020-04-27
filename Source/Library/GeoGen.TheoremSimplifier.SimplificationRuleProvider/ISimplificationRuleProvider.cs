@@ -1,8 +1,7 @@
-﻿using GeoGen.TheoremSimplifier;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
 {
     /// <summary>
     /// Represents a service that gets <see cref="SimplificationRule"/>s.
