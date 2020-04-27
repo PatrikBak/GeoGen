@@ -103,8 +103,8 @@ namespace GeoGen.ProblemGenerator
 
             // Safely execute
             var (initialPictures, initialData) = GeneralUtilities.TryExecute(
-                // Constructing the configuration suitable for generation
-                () => _constructor.Construct(input.InitialConfiguration, _settings.NumberOfPictures, LooseObjectDrawingStyle.GenerationFriendly),
+                // Constructing the configuration
+                () => _constructor.ConstructWithUniformLayout(input.InitialConfiguration, _settings.NumberOfPictures),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new InitializationException("Drawing the initial configuration failed.", e));
 

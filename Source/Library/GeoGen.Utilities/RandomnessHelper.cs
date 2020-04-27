@@ -1,9 +1,10 @@
 ﻿using System;
 
-namespace GeoGen.AnalyticGeometry
+namespace GeoGen.Utilities
 {
     /// <summary>
-    /// A static helper class for generating random numbers.
+    /// A static helper class for generating random numbers. This class is thread-safe, which is achieved by locking.
+    /// Therefore, for performance-critical generated it is better to use custom <see cref="Random"/> objects.
     /// </summary>
     public static class RandomnessHelper
     {

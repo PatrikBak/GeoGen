@@ -1,5 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
+using System;
 
 namespace GeoGen.Constructor
 {
@@ -10,14 +11,15 @@ namespace GeoGen.Constructor
     public interface IGeometryConstructor
     {
         /// <summary>
-        /// Constructs a given <see cref="Configuration"/> to a given number of pictures.
+        /// Constructs a given <see cref="Configuration"/> to a given number of pictures, with a custom constructor
+        /// of loose objects.
         /// Throws an <see cref="InconsistentPicturesException"/> if the construction couldn't be carried out consistently.
         /// </summary>
         /// <param name="configuration">The configuration to be constructed.</param>
         /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
-        /// <param name="drawingStyle">The way in which the <see cref="LooseObjectHolder"/> of the configuration should be drawn.</param>
+        /// <param name="looseObjectConstructor">The function that draws the needed loose objects for a given configuration.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
-        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures, LooseObjectDrawingStyle drawingStyle);
+        (PicturesOfConfiguration pictures, ConstructionData data) Construct(Configuration configuration, int numberOfPictures, Func<IAnalyticObject[]> looseObjectConstructor);
 
         /// <summary>
         /// Constructs a given <see cref="Configuration"/> using an already constructed old one.

@@ -131,7 +131,7 @@ namespace GeoGen.DrawingLauncher
             // Safely execute
             var (pictures, constructionData) = GeneralUtilities.TryExecute(
                 // Constructing the configuration
-                () => _constructor.Construct(rankedTheorem.Configuration, _settings.NumberOfPictures, LooseObjectDrawingStyle.Standard),
+                () => _constructor.ConstructWithUniformLayout(rankedTheorem.Configuration, _settings.NumberOfPictures),
                 // Make sure a potential exception is caught and re-thrown
                 (InconsistentPicturesException e) => throw new ConstructionException("Drawing of the initial configuration failed.", e));
 

@@ -240,7 +240,7 @@ namespace GeoGen.TheoremSorter
             var plainConfiguration = new Configuration(holder, Array.Empty<ConstructedConfigurationObject>());
 
             // We can construct it now in 1 picture and generation style
-            picture = _constructor.Construct(plainConfiguration, numberOfPictures: 1, LooseObjectDrawingStyle.GenerationFriendly)
+            picture = _constructor.ConstructWithUniformLayout(plainConfiguration, numberOfPictures: 1)
                 // And take the picture
                 .pictures.First();
 

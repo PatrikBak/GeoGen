@@ -239,7 +239,7 @@ namespace GeoGen.DrawingLauncher
 
             // Make sure we have a triangle
             if (configuration.LooseObjectsHolder.Layout != LooseObjectLayout.Triangle)
-                throw new DrawingLauncherException("Unsupported layout, currently only triangle is supported :/");
+                return configuration;
 
             // Find the mapping that makes this symmetric
             var symmetricMapping = configuration.LooseObjectsHolder.GetIsomorphicMappings().FirstOrDefault(mapping =>

@@ -61,7 +61,7 @@ namespace GeoGen.TheoremFinder.Tests
                 configuration.ConstructedObjects.Except(new[] { configuration.LastConstructedObject }).ToList());
 
             // Construct the old configuration
-            var oldPictures = kernel.Get<IGeometryConstructor>().Construct(oldConfiguration, numberOfPictures: 5, LooseObjectDrawingStyle.GenerationFriendly).pictures;
+            var oldPictures = kernel.Get<IGeometryConstructor>().ConstructWithUniformLayout(oldConfiguration, numberOfPictures: 5).pictures;
 
             // Construct the old contextual picture
             var oldContextualPicture = new ContextualPicture(oldPictures);
@@ -70,7 +70,7 @@ namespace GeoGen.TheoremFinder.Tests
             var oldTheorems = finder.FindAllTheorems(oldContextualPicture);
 
             // Create the pictures for the current configuration
-            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 5, LooseObjectDrawingStyle.GenerationFriendly).pictures;
+            var pictures = kernel.Get<IGeometryConstructor>().ConstructWithUniformLayout(configuration, numberOfPictures: 5).pictures;
 
             // Create the contextual picture for the current configuration
             var contextualPicture = new ContextualPicture(pictures);

@@ -26,7 +26,7 @@ namespace GeoGen.TheoremFinder.Tests
             var kernel = IoC.CreateKernel().AddConstructor();
 
             // Create the pictures
-            var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 5, LooseObjectDrawingStyle.GenerationFriendly).pictures;
+            var pictures = kernel.Get<IGeometryConstructor>().ConstructWithUniformLayout(configuration, numberOfPictures: 5).pictures;
 
             // Create the contextual picture
             var contextualPicture = new ContextualPicture(pictures);

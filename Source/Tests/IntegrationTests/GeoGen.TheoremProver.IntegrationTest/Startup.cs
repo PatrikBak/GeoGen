@@ -91,7 +91,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 #region Finding theorems
 
                 // Prepare 3 pictures in which the configuration is drawn
-                var pictures = kernel.Get<IGeometryConstructor>().Construct(configuration, numberOfPictures: 3, LooseObjectDrawingStyle.GenerationFriendly).pictures;
+                var pictures = kernel.Get<IGeometryConstructor>().ConstructWithUniformLayout(configuration, numberOfPictures: 3).pictures;
 
                 // Prepare a contextual picture
                 var contextualPicture = new ContextualPicture(pictures);
