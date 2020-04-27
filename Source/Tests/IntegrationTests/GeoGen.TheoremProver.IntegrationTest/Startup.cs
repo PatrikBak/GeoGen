@@ -1,8 +1,8 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.MainLauncher;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver.InferenceRuleProvider;
+using GeoGen.TheoremProver.ObjectIntroductionRuleProvider;
 using GeoGen.Utilities;
 using Ninject;
 using System;
@@ -67,7 +67,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                     new InferenceRuleManagerData(await new InferenceRuleProvider.InferenceRuleProvider(inferenceRuleProviderSettings).GetInferenceRulesAsync()),
 
                     // Use the provider to find the object introduction rules
-                    new ObjectIntroducerData(await new ObjectIntroductionRuleProvider(objectIntroductionRuleProviderSettings).GetObjectIntroductionRulesAsync())
+                    new ObjectIntroducerData(await new ObjectIntroductionRuleProvider.ObjectIntroductionRuleProvider(objectIntroductionRuleProviderSettings).GetObjectIntroductionRulesAsync())
                 ));
 
             #endregion

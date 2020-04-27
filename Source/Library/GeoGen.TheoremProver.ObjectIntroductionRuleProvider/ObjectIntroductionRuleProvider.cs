@@ -1,6 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Infrastructure;
-using GeoGen.TheoremProver;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using static GeoGen.Infrastructure.Log;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
 {
     /// <summary>
     /// The default implementation of <see cref="IObjectIntroductionRuleProvider"/> that gets the rules from a file.
@@ -56,7 +55,7 @@ namespace GeoGen.MainLauncher
             catch (Exception e)
             {
                 // If it cannot be done, make aware
-                throw new MainLauncherException($"Couldn't load the object introduction rule file '{_settings.FilePath}'", e);
+                throw new ObjectIntroductionRuleProviderException($"Couldn't load the object introduction rule file '{_settings.FilePath}'", e);
             }
 
             #endregion
@@ -100,7 +99,7 @@ namespace GeoGen.MainLauncher
             catch (ParsingException e)
             {
                 // Throw further
-                throw new MainLauncherException($"Couldn't parse the object introduction rule file {_settings.FilePath}.", e);
+                throw new ObjectIntroductionRuleProviderException($"Couldn't parse the object introduction rule file {_settings.FilePath}.", e);
             }
 
             #endregion

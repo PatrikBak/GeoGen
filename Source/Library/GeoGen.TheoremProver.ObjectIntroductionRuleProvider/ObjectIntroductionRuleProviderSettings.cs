@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
 {
     /// <summary>
     /// The settings for <see cref="ObjectIntroductionRuleProvider"/>

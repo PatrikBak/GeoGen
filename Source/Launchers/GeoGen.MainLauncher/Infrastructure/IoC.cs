@@ -6,6 +6,7 @@ using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremProver.InferenceRuleProvider;
+using GeoGen.TheoremProver.ObjectIntroductionRuleProvider;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSorter;
 using Ninject;
@@ -48,7 +49,6 @@ namespace GeoGen.MainLauncher
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IProblemGenerationRunner>().To<ProblemGenerationRunner>().WithConstructorArgument(settings.ProblemGenerationRunnerSettings);
             Kernel.Bind<IProblemGeneratorInputProvider>().To<ProblemGeneratorInputProvider>().WithConstructorArgument(settings.ProblemGeneratorInputProviderSettings);
-            Kernel.Bind<IObjectIntroductionRuleProvider>().To<ObjectIntroductionRuleProvider>().WithConstructorArgument(settings.ObjectIntroductionRuleProviderSettings);
             Kernel.Bind<ITheoremSorterTypeResolver>().To<TheoremSorterTypeResolver>().WithConstructorArgument(settings.TheoremSorterTypeResolverSettings);
             Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
             Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
@@ -58,7 +58,9 @@ namespace GeoGen.MainLauncher
             #region Providers
 
             // Add inference rule provider
-            Kernel.AddInferenceRuleProvider(settings.InferenceRuleProviderSettings);
+            Kernel.AddInferenceRuleProvider(settings.InferenceRuleProviderSettings)
+                // Add object introduction rule provider
+                .AddObjectIntroductionRuleProvider(settings.ObjectIntroductionRuleProviderSettings);
 
             #endregion
 

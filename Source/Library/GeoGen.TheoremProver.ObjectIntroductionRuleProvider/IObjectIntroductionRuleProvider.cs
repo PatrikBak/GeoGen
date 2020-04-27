@@ -1,8 +1,7 @@
-﻿using GeoGen.TheoremProver;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
 {
     /// <summary>
     /// Represents a service that gets <see cref="ObjectIntroductionRule"/>s.
