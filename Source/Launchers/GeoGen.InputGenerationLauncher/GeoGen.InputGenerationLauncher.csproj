@@ -12,8 +12,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Library\GeoGen.Core\GeoGen.Core.csproj" />
-    <ProjectReference Include="..\GeoGen.ConfigurationGenerationLauncher\GeoGen.ConfigurationGenerationLauncher.csproj" />
-    <ProjectReference Include="..\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
+    <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
   </ItemGroup>
 
   <ItemGroup>

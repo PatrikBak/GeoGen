@@ -1,9 +1,8 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremFinder;
 using System;
 
-namespace GeoGen.ConfigurationGenerationLauncher
+namespace GeoGen.TheoremFinder
 {
     /// <summary>
     /// The implementation of <see cref="ITheoremFinder"/> that returns no theorems.

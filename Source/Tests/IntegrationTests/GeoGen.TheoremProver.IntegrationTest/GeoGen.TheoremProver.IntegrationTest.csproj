@@ -12,7 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
+    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
+    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj" />
+    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.ObjectIntroductionRuleProvider\GeoGen.TheoremProver.ObjectIntroductionRuleProvider.csproj" />
+    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
   </ItemGroup>
 
 </Project>

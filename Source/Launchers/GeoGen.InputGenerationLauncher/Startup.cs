@@ -1,5 +1,4 @@
-﻿using GeoGen.ConfigurationGenerationLauncher;
-using GeoGen.ConfigurationGenerator;
+﻿using GeoGen.ConfigurationGenerator;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.ProblemGenerator;
@@ -73,35 +72,30 @@ namespace GeoGen.InputGenerationLauncher
             // Load the template input file
             _templateInputFile = File.ReadAllText("input_template.txt");
 
+            #region Preparing the results folder
+
+            // Create the path to the folder with inputs
+            var inputFolder = "Results";
+
+            // If the folder exists, clear it
+            if (Directory.Exists(inputFolder))
+                Directory.EnumerateFiles(inputFolder).ForEach(File.Delete);
+
+            // Otherwise create it
+            else
+                Directory.CreateDirectory(inputFolder);
+
+            #endregion
+
             // Go through the all types of generated input files
             new[]
             {
-                TrianglePointPlusThreePoints(),
-                TrianglePointCirclePlusThreePoints(),
-                TrianglePointLinePlusThreePoints(),
-                QuadrilateralTwoPointsPlusTwoPoints()
+                TriangleTwoObjectsPlusTwoObjects(),
+                QuadrilateralAndTwoObjectsPlusTwoObjects()
             }
             // For each create input files within Results folder
-            .ForEach(pair =>
+            .ForEach(generatorInputs =>
             {
-                // Deconstruct
-                var (folderName, generatorInputs) = pair;
-
-                #region Preparing the folder
-
-                // Create the path to the folder with inputs
-                var inputFolder = Path.Combine("Results", pair.folderName);
-
-                // If the folder exists, clear it
-                if (Directory.Exists(inputFolder))
-                    Directory.EnumerateFiles(inputFolder).ForEach(File.Delete);
-
-                // Otherwise create it
-                else
-                    Directory.CreateDirectory(inputFolder);
-
-                #endregion
-
                 #region Generating individual files
 
                 // Prepare the counter
@@ -144,18 +138,15 @@ namespace GeoGen.InputGenerationLauncher
                         // Replace the symmetry generation flag
                         .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
 
-                    // Prepare the path to the input file that will be created
-                    var filePath = Path.Combine(inputFolder, $"input_{counter}.txt");
-
-                    // Prepare the writer of the input file
-                    using var writer = new StreamWriter(new FileStream(filePath, FileMode.Create));
+                    // Create the directory where the file goes
+                    Directory.CreateDirectory(Path.Combine(inputFolder, $"input_{counter}"));
 
                     // Write the content
-                    writer.Write(content);
+                    File.WriteAllText(Path.Combine(inputFolder, $"input_{counter}/input_{counter}.txt"), content);
                 }
 
                 // Log how many files have been created
-                Console.WriteLine($"[{Path.GetFileName(inputFolder)}] {counter} file(s)");
+                Console.WriteLine($"Generated {counter} file(s)");
 
                 #endregion
             });
@@ -166,10 +157,10 @@ namespace GeoGen.InputGenerationLauncher
         #region Experiments
 
         /// <summary>
-        /// An experiment where any triangle with one point is extended by at most three points.
+        /// An experiment where any triangle with two objects is extended by two more objects.
         /// </summary>
-        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
-        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointPlusThreePoints()
+        /// <returns>The enumerable of inputs.</returns>
+        private static IEnumerable<ProblemGeneratorInput> TriangleTwoObjectsPlusTwoObjects()
         {
             // Create the loose objects
             var A = new LooseConfigurationObject(Point);
@@ -182,63 +173,9 @@ namespace GeoGen.InputGenerationLauncher
             // Create the dictionary with the counts of objects to be added
             var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
             {
-                { Point, 1 },
-                { Line, 0 },
-                { Circle, 0 }
-            };
-
-            // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 1, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
-
-            // Prepare the generator settings
-            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
-
-            // Prepare the generation enumerable by taking the generator 
-            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
-                // Pass the input to it
-                .Generate(problemGeneratorInput)
-                // Unwrap the enumerable
-                .generationOutputs
-                // Take the configuration
-                .Select(output => output.Configuration)
-                // Every generated configuration makes an input file
-                .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
-                    // We will want 3 iterations
-                    numberOfIterations: 3,
-                    // And 3 points at most
-                    new Dictionary<ConfigurationObjectType, int>
-                    {
-                        { Point, 3 },
-                        { Line, 0 },
-                        { Circle, 0 }
-                    },
-                    // We will want only symmetric results
-                    excludeAsymmetricConfigurations: true));
-
-            // Return the final result
-            return (nameof(TrianglePointPlusThreePoints), generatorInputs);
-        }
-
-        /// <summary>
-        /// An experiment where any triangle with one point and one circle is extended by at most three points.
-        /// </summary>
-        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
-        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointCirclePlusThreePoints()
-        {
-            // Create the loose objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-
-            // Create the initial configuration
-            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
-
-            // Create the dictionary with the counts of objects to be added
-            var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
-            {
-                { Point, 1 },
-                { Line, 0 },
-                { Circle, 1 }
+                { Point, 2 },
+                { Line, 2 },
+                { Circle, 2 }
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
@@ -247,91 +184,41 @@ namespace GeoGen.InputGenerationLauncher
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
 
-            // Prepare the generation enumerable by taking the generator 
-            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
+            // Return the generation enumerable by taking the generator 
+            return _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
                 // Pass the input to it
                 .Generate(problemGeneratorInput)
                 // Unwrap the enumerable
                 .generationOutputs
                 // Take the configuration
                 .Select(output => output.Configuration)
+                // That is on the last, i.e. second iteration
+                .Where(configuration => configuration.IterationIndex == 2)
                 // Every generated configuration makes an input file
                 .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
-                    // We will want 3 iterations
-                    numberOfIterations: 3,
-                    // And 3 points at most
+                    // We will want 2 iterations
+                    numberOfIterations: 2,
+                    // Set maximal numbers of objects to be added
                     new Dictionary<ConfigurationObjectType, int>
                     {
-                        { Point, 3 },
-                        { Line, 0 },
-                        { Circle, 0 }
+                        // Points and lines are not limited
+                        { Point, 2 },
+                        { Line, 2 },
+
+                        // We want at most 2 circles in total. More are not necessary, since circles
+                        // never appear as construction arguments, only in theorems itself, and at most
+                        // two of them (when we have two tangent circles)
+                        { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
                     excludeAsymmetricConfigurations: true));
-
-            // Return the final result
-            return (nameof(TrianglePointCirclePlusThreePoints), generatorInputs);
         }
 
         /// <summary>
-        /// An experiment where any triangle with one point and one line is extended by at most three points.
+        /// An experiment where any quadrilateral with two objects is extended by two more objects.
         /// </summary>
-        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
-        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) TrianglePointLinePlusThreePoints()
-        {
-            // Create the loose objects
-            var A = new LooseConfigurationObject(Point);
-            var B = new LooseConfigurationObject(Point);
-            var C = new LooseConfigurationObject(Point);
-
-            // Create the initial configuration
-            var configuration = Configuration.DeriveFromObjects(Triangle, A, B, C);
-
-            // Create the dictionary with the counts of objects to be added
-            var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
-            {
-                { Point, 1 },
-                { Line, 1 },
-                { Circle, 0 }
-            };
-
-            // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
-
-            // Prepare the generator settings
-            var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
-
-            // Prepare the generation enumerable by taking the generator 
-            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
-                // Pass the input to it
-                .Generate(problemGeneratorInput)
-                // Unwrap the enumerable
-                .generationOutputs
-                // Take the configuration
-                .Select(output => output.Configuration)
-                // Every generated configuration makes an input file
-                .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
-                    // We will want 3 iterations
-                    numberOfIterations: 3,
-                    // And 3 points at most
-                    new Dictionary<ConfigurationObjectType, int>
-                    {
-                        { Point, 3 },
-                        { Line, 0 },
-                        { Circle, 0 }
-                    },
-                    // We will want only symmetric results
-                    excludeAsymmetricConfigurations: true));
-
-            // Return the final result
-            return (nameof(TrianglePointLinePlusThreePoints), generatorInputs);
-        }
-
-        /// <summary>
-        /// An experiment where any quadrilateral with two points is extended by at most twp points.
-        /// </summary>
-        /// <returns>The tuple of the name of the folder identifying experiments and the input enumerable.</returns>
-        private static (string folderName, IEnumerable<ProblemGeneratorInput> inputs) QuadrilateralTwoPointsPlusTwoPoints()
+        /// <returns>The enumerable of inputs.</returns>
+        private static IEnumerable<ProblemGeneratorInput> QuadrilateralAndTwoObjectsPlusTwoObjects()
         {
             // Create the loose objects
             var A = new LooseConfigurationObject(Point);
@@ -346,8 +233,8 @@ namespace GeoGen.InputGenerationLauncher
             var maximalNumbersOfObjectsObjectsToAdd = new Dictionary<ConfigurationObjectType, int>
             {
                 { Point, 2 },
-                { Line, 0 },
-                { Circle, 0 }
+                { Line, 2 },
+                { Circle, 2 }
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
@@ -356,30 +243,34 @@ namespace GeoGen.InputGenerationLauncher
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
 
-            // Prepare the generation enumerable by taking the generator 
-            var generatorInputs = _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
+            // Return the generation enumerable by taking the generator 
+            return _kernel.Get<IProblemGenerator>(new ConstructorArgument("settings", settings))
                 // Pass the input to it
                 .Generate(problemGeneratorInput)
                 // Unwrap the enumerable
                 .generationOutputs
                 // Take the configuration
                 .Select(output => output.Configuration)
+                // That is on the last, i.e. second iteration
+                .Where(configuration => configuration.IterationIndex == 2)
                 // Every generated configuration makes an input file
                 .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
                     // We will want 2 iterations
                     numberOfIterations: 2,
-                    // And 2 points at most
+                    // Set maximal numbers of objects to be added
                     new Dictionary<ConfigurationObjectType, int>
                     {
+                        // Points and lines are not limited
                         { Point, 2 },
-                        { Line, 0 },
-                        { Circle, 0 }
+                        { Line, 2 },
+
+                        // We want at most 2 circles in total. More are not necessary, since circles
+                        // never appear as construction arguments, only in theorems itself, and at most
+                        // two of them (when we have two tangent circles)
+                        { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
                     excludeAsymmetricConfigurations: true));
-
-            // Return the final result
-            return (nameof(QuadrilateralTwoPointsPlusTwoPoints), generatorInputs);
         }
 
         #endregion

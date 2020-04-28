@@ -14,9 +14,5 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Data\Inputs\Hm\" />
-  </ItemGroup>
  
 </Project>
