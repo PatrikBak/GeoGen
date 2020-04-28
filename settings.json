@@ -21,19 +21,15 @@
     "RuleFolderPath": "Data/Rules",
     "FileExtension": "txt"
   },
-  "SimplificationRuleProviderSettings": {
-    "FilePath": "Data/simplifications.txt"
-  },
   "ObjectIntroductionRuleProviderSettings": {
     "FilePath": "Data/object_introductions.txt"
   },
   "ProblemGenerationRunnerSettings": {
     "WriteJsonBestTheorems": true,
-    "JsonBestTheoremFolder": "Data/Output",
-    "TakeAtMostOneInterestingTheoremPerConfiguration": true
+    "JsonBestTheoremFolder": "Data/Output"
   },
   "TheoremSorterTypeResolverSettings": {
-    "MaximalTrackedTheoremsPerType": 100
+    "MaximalTrackedTheoremsPerType": 2147483647
   },
   "ProblemGeneratorSettings": {
     "NumberOfPictures": 3
@@ -60,15 +56,15 @@
   "TheoremRankingSettings": {
     "TheoremRankerSettings": {
       "RankingCoefficients": {
-        "Symmetry": 300,
-        "Simplification": 150,
-        "Circles": -5,
+        "Symmetry": 450,
+        "SubproblemReducibility": 150,
+        "NumberOfCyclicQuadrilaterals": -5,
         "Repetition": -1,
-        "Theorems": -1,
-        "Constructions": 1
+        "NumberOfTheorems": -1,
+        "SpecificConstructions": 1
       }
     },
-    "ConstructionsRankerSettings": {
+    "SpecificConstructionsRankerSettings": {
       "ConstructionRankings": {
         "IntersectionOfLineAndLineFromPoints": -20,
         "IntersectionOfLines": -20,
