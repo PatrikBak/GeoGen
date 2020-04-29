@@ -75,15 +75,15 @@ namespace GeoGen.InputGenerationLauncher
             #region Preparing the results folder
 
             // Create the path to the folder with inputs
-            var inputFolder = "Results";
+            var resultsFolder = "Results";
 
             // If the folder exists, clear it
-            if (Directory.Exists(inputFolder))
-                Directory.EnumerateFiles(inputFolder).ForEach(File.Delete);
+            if (Directory.Exists(resultsFolder))
+                Directory.EnumerateFiles(resultsFolder).ForEach(File.Delete);
 
             // Otherwise create it
             else
-                Directory.CreateDirectory(inputFolder);
+                Directory.CreateDirectory(resultsFolder);
 
             #endregion
 
@@ -139,10 +139,10 @@ namespace GeoGen.InputGenerationLauncher
                         .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
 
                     // Create the directory where the file goes
-                    Directory.CreateDirectory(Path.Combine(inputFolder, $"input_{counter}"));
+                    Directory.CreateDirectory(Path.Combine(resultsFolder, $"input_{counter}"));
 
                     // Write the content
-                    File.WriteAllText(Path.Combine(inputFolder, $"input_{counter}/input_{counter}.txt"), content);
+                    File.WriteAllText(Path.Combine(resultsFolder, $"input_{counter}/input_{counter}.txt"), content);
                 }
 
                 // Log how many files have been created
