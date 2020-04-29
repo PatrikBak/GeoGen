@@ -17,12 +17,12 @@ namespace GeoGen.ConfigurationGenerator
         /// <summary>
         /// The assigned ids of the loose objects of the initial and therefore any subsequent configuration.
         /// </summary>
-        private readonly Dictionary<LooseConfigurationObject, int> _looseObjectsId = new Dictionary<LooseConfigurationObject, int>();
+        private readonly Dictionary<LooseConfigurationObject, char> _looseObjectsId = new Dictionary<LooseConfigurationObject, char>();
 
         /// <summary>
         /// The assigned ids of constructions that might appear in object's definitions.
         /// </summary>
-        private readonly Dictionary<Construction, int> _constructionsId = new Dictionary<Construction, int>();
+        private readonly Dictionary<Construction, char> _constructionsId = new Dictionary<Construction, char>();
 
         /// <summary>
         /// The initial objects of every configuration.
@@ -43,7 +43,7 @@ namespace GeoGen.ConfigurationGenerator
             _initialObjects = generatorInput.InitialConfiguration.ConstructedObjects;
 
             // Assign ids to loose objects
-            generatorInput.InitialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, index));
+            generatorInput.InitialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, (char)index));
 
             // Assign ids to constructions used in the generation
             generatorInput.Constructions
@@ -52,7 +52,7 @@ namespace GeoGen.ConfigurationGenerator
                 // We need distinct ones so that we don't identify the same one twice
                 .Distinct()
                 // Add the id to the dictionary
-                .ForEach((construction, index) => _constructionsId.Add(construction, index));
+                .ForEach((construction, index) => _constructionsId.Add(construction, (char)index));
         }
 
         #endregion
