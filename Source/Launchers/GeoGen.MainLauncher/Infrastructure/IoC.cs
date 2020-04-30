@@ -12,7 +12,6 @@ using GeoGen.TheoremRanker;
 using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.TheoremSorter;
 using Ninject;
-using Ninject.Extensions.Factory;
 using System.Threading.Tasks;
 
 namespace GeoGen.MainLauncher

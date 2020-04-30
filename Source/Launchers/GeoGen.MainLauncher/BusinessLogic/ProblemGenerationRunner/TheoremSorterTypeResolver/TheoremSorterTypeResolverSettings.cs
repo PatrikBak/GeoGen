@@ -7,10 +7,16 @@ namespace GeoGen.MainLauncher
     /// </summary>
     public class TheoremSorterTypeResolverSettings
     {
+        #region Public properties
+
         /// <summary>
         /// Gets the number of theorems that are supposed to be tracked per each theorem type.
         /// </summary>
         public int MaximalTrackedTheoremsPerType { get; }
+
+        #endregion
+
+        #region Constructor
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremSorterTypeResolverSettings"/> class.
@@ -24,5 +30,7 @@ namespace GeoGen.MainLauncher
             if (maximalTrackedTheoremsPerType <= 0)
                 throw new ArgumentOutOfRangeException(nameof(maximalTrackedTheoremsPerType), maximalTrackedTheoremsPerType, "The maximal number of tracked theorems per type must be positive.");
         }
+
+        #endregion
     }
 }

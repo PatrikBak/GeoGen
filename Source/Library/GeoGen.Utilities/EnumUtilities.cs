@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace GeoGen.Utilities
@@ -8,6 +10,15 @@ namespace GeoGen.Utilities
     /// </summary>
     public static class EnumUtilities
     {
+        /// <summary>
+        /// Enumerates the values of an enum type.
+        /// </summary>
+        /// <typeparam name="T">The type of enum.</typeparam>
+        /// <returns>The enumerated values of the enum type <typeparamref name="T"/>.</returns>
+        public static IEnumerable<T> Values<T>() where T : Enum
+            // Use the built-in method and cast
+            => Enum.GetValues(typeof(T)).Cast<T>();
+
         /// <summary>
         /// Parses an enum value from a given type that represents a class name, that is supposed
         /// to be in the form {result}{classNamePrefix}, where the prefix is given as a parameter.
