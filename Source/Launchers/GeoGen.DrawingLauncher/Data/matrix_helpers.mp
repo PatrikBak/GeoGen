@@ -2,7 +2,7 @@ input commons
 
 %
 % Finds the longest sequence of zeroes in some row of the passed m x n matrix. If there are more 
-% rows with such an sequence, the first one is taken. This macro creates the following values: 
+% rows with such an sequence, the last one is taken. This macro creates the following values: 
 %
 % 	result.dimension = the index of the first row with the longest chain, or -1, if there is no such row
 %   result.start_index = the start index of the longest chain
@@ -28,8 +28,8 @@ vardef FindLongestsZeroChainInRow(suffix matrix)(expr m,n)(suffix result) =
 		% Iterate over elements of the current row
 		for j=0 upto n-1:		
 		
-			% If there is a non-zero value
-			if matrix[i][j] <> 0:
+			% If there is an almost non-zero value
+			if matrix[i][j] > eps:
 			
 				% Note the column index
 				non_zero_index:=j;
@@ -65,8 +65,8 @@ vardef FindLongestsZeroChainInRow(suffix matrix)(expr m,n)(suffix result) =
 			% Find the current index by shifting from the non-zero index
 			save index; index:= (non_zero_index+j) mod n;
 			
-			% If we are at a zero value
-			if matrix[i][index]=0:
+			% If we are at an almost zero value
+			if matrix[i][index] <= eps:
 						
 				% And we are inside a chain
 				if inside_chain:
@@ -95,8 +95,8 @@ vardef FindLongestsZeroChainInRow(suffix matrix)(expr m,n)(suffix result) =
 				% Then we are no longer inside a chain
 				inside_chain:=false;
 				
-				% If we have broken a longer chain than the best one so far
-				if current_length > best_length:
+				% If we have matched a longer chain than the best one so far
+				if current_length >= best_length:
 					
 					% Mark the currently best length
 					best_length:= current_length;

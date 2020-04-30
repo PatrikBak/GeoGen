@@ -22,17 +22,17 @@ LetterPathsSampleSize:= 60;
 %
 % The minimal offset of the label's center and the labeled point.
 %
-MinimalLabelDistanceOffset:= 1;
+MinimalLabelDistanceOffset:= 1.1;
 
 %
 % The factor used to calculate the maximal label distance by scaling the minimal one.
 %
-MaximalLabelDistanceScale := 1.4;
+MaximalLabelDistanceScale := 1.3;
 
 % 
 % The number of tested placement distances from the label point's center.
 %
-DistantLabelPositions := 4;
+DistantLabelPositions := 10;
 
 %
 % The number of tested circular placements in a certain distance from the label point's center.
@@ -88,6 +88,9 @@ vardef LabelPoint(expr label, P) =
 			   % Shift by the center of the picture
 			   shifted (-((llcorner object)+(urcorner object))/2)			   
 	enddef;
+	
+		%draw Position(letter.hull,9,DistantLabelPositions-1) withcolor red;
+
 	
 	% Prepare a variable for all badness values
 	save all_badness;
