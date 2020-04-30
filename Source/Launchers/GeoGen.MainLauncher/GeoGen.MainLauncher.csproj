@@ -19,6 +19,7 @@
     <ProjectReference Include="..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremProver.ObjectIntroductionRuleProvider\GeoGen.TheoremProver.ObjectIntroductionRuleProvider.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
+    <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremSimplifier\GeoGen.TheoremSimplifier.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.TheoremSorter\GeoGen.TheoremSorter.csproj" />

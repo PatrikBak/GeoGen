@@ -1,4 +1,4 @@
-﻿namespace GeoGen.MainLauncher
+﻿namespace GeoGen.TheoremRanker.RankedTheoremIO
 {
     /// <summary>
     /// The factory for creating instances of <see cref="IRankedTheoremJsonLazyWriter"/>.

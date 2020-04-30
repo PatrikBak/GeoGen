@@ -6,12 +6,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
     <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
   </ItemGroup>
 

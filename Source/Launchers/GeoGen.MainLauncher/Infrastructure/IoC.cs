@@ -9,6 +9,7 @@ using GeoGen.TheoremProver;
 using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremProver.ObjectIntroductionRuleProvider;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.TheoremSorter;
 using Ninject;
 using Ninject.Extensions.Factory;
@@ -44,14 +45,15 @@ namespace GeoGen.MainLauncher
             // Add the logging system
             Kernel.AddLogging(settings.LoggingSettings);
 
+            // Add ranked theorem writing and reading
+            Kernel.AddRankedTheoremIO();
+
             #region Local dependencies
 
             // Add local dependencies
             Kernel.Bind<IBatchRunner>().To<BatchRunner>();
             Kernel.Bind<IProblemGenerationRunner>().To<ProblemGenerationRunner>().WithConstructorArgument(settings.ProblemGenerationRunnerSettings);
             Kernel.Bind<ITheoremSorterTypeResolver>().To<TheoremSorterTypeResolver>().WithConstructorArgument(settings.TheoremSorterTypeResolverSettings);
-            Kernel.Bind<IRankedTheoremJsonLazyWriter>().To<RankedTheoremJsonLazyWriter>();
-            Kernel.Bind<IRankedTheoremJsonLazyWriterFactory>().ToFactory();
 
             #endregion
 

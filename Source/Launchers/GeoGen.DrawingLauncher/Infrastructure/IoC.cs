@@ -1,6 +1,6 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Infrastructure;
-using GeoGen.MainLauncher;
+using GeoGen.TheoremRanker.RankedTheoremIO;
 using Ninject;
 using System.Threading.Tasks;
 
@@ -40,13 +40,13 @@ namespace GeoGen.DrawingLauncher
             // Bind the rule provider
             Kernel.Bind<IDrawingRuleProvider>().To<DrawingRuleProvider>().WithConstructorArgument(settings.DrawingRuleProviderSettings);
 
-            // Bind the reader
-            Kernel.Bind<IRankedTheoremJsonLazyReader>().To<RankedTheoremJsonLazyReader>();
-
             // Bind the drawer with its settings
             Kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.MetapostDrawerSettings)
                 // And its loaded rules
                 .WithConstructorArgument(new MetapostDrawerData(await Kernel.Get<IDrawingRuleProvider>().GetDrawingRulesAsync()));
+
+            // Add the ranked theorem IO
+            Kernel.AddRankedTheoremIO();
         }
 
         #endregion

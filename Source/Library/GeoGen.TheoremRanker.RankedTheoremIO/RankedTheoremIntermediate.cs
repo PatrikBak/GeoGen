@@ -1,8 +1,7 @@
 ﻿using GeoGen.Core;
-using GeoGen.TheoremRanker;
 using System;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremRanker.RankedTheoremIO
 {
     /// <summary>
     /// Represents a <see cref="RankedTheorem"/> as an intermediate object where complex objects 

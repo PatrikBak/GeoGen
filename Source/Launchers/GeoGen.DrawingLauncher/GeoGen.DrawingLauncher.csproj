@@ -13,8 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
-    <ProjectReference Include="..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
     <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

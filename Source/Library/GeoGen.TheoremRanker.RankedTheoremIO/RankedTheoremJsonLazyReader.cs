@@ -1,10 +1,9 @@
-﻿using GeoGen.TheoremRanker;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.IO;
 
-namespace GeoGen.MainLauncher
+namespace GeoGen.TheoremRanker.RankedTheoremIO
 {
     /// <summary>
     /// The default implementation of <see cref="IRankedTheoremJsonLazyReader"/>.

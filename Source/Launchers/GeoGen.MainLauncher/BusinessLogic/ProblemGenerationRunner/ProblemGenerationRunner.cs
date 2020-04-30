@@ -6,6 +6,7 @@ using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremRanker;
+using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using System;
