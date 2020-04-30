@@ -10,7 +10,7 @@ namespace GeoGen.ConfigurationGenerationLauncher
     /// <summary>
     /// The entry class of the application.
     /// </summary>
-    public static class Startup
+    public static class Program
     {
         /// <summary>
         /// The entry method of the application.
