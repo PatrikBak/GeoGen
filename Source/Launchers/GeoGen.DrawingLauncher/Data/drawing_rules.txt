@@ -142,10 +142,32 @@ P = Orthocenter(A,B,C)
   - draw Point(P) 
  
 P = Incenter(A,B,C)
+  - let E = PerpendicularProjectionOnLineFromPoints(P,A,B)
+  - let F = PerpendicularProjectionOnLineFromPoints(P,A,C)
+  - let G = PerpendicularProjectionOnLineFromPoints(P,B,C)
+  - let c = Incircle(A,B,C)
   - draw Point(P)
+  - draw Point(E) auxiliary
+  - draw Point(F) auxiliary
+  - draw Point(G) auxiliary
+  - draw Circle(c) auxiliary
+  - draw Segment(B,C) auxiliary
+  - draw Segment(A,B) auxiliary
+  - draw Segment(A,C) auxiliary
 
 P = Excenter(A,B,C)
+  - let E = PerpendicularProjectionOnLineFromPoints(P,A,B)
+  - let F = PerpendicularProjectionOnLineFromPoints(P,A,C)
+  - let G = PerpendicularProjectionOnLineFromPoints(P,B,C)
+  - let c = Excircle(A,B,C)
   - draw Point(P)
+  - draw Point(E) auxiliary
+  - draw Point(F) auxiliary
+  - draw Point(G) auxiliary
+  - draw Circle(c) auxiliary
+  - draw Segment(B,C) auxiliary
+  - draw ShiftedSegment(A,E) auxiliary
+  - draw ShiftedSegment(A,F) auxiliary
  
 P = Midpoint(A,B)
   - draw Segment(A,B)
@@ -161,7 +183,7 @@ P = MidpointOfOppositeArc(A,B,C)
   - draw Circle(c)
   - draw Point(P) 
 
-  P = IntersectionOfLines(l1, l2)
+P = IntersectionOfLines(l1, l2)
   - draw Line(l1, P)
   - draw Line(l2, P)
   - draw Point(P)

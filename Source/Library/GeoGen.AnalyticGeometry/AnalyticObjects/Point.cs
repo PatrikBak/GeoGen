@@ -22,6 +22,11 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         public double Y { get; }
 
+        /// <summary>
+        /// The distance of the point to the point [0, 0].
+        /// </summary>
+        public double DistanceToOrigin => DistanceTo(new Point(0, 0));
+
         #endregion
 
         #region Constructor

@@ -179,22 +179,12 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="line2">The second line.</param>
         /// <returns>The angle between the lines, in radians. The value will in the interval [0, PI/2].</returns>
         public static double AngleBetweenLines(Line line1, Line line2)
-        {
-            // Check the parallel case. 
-            if (line1.IsParallelTo(line2))
-                return 0;
-
-            // Check the perpendicular case
-            if (line1.IsPerpendicularTo(line2))
-                return PI / 2;
-
-            // Otherwise use the well-known formula that the angle between two vectors
+            // We will use the well-known formula that the angle between two vectors
             // u,v is arccos(|u.v| / (||u|| ||v||)). In our case (A, B) is the normal
             // vector of our line, and in our case it's normalized, i.e. ||u|| = ||v|| = 1. 
             // In order to find the angle between two lines we can simply find the angle
             // between its normal vectors. This yields a very simple formula:
-            return Acos(Abs(line1.A * line2.A + line1.B * line2.B));
-        }
+            => Acos(Abs(line1.A * line2.A + line1.B * line2.B));
 
         /// <summary>
         /// Constructs a point C such that the A, B, C are collinear in this order and the

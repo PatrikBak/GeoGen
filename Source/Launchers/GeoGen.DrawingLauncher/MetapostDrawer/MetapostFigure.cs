@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using static GeoGen.AnalyticGeometry.AnalyticHelpers;
+using static GeoGen.AnalyticGeometry.MathHelpers;
 using static System.Math;
 
 namespace GeoGen.DrawingLauncher
@@ -339,58 +340,14 @@ namespace GeoGen.DrawingLauncher
                 // that we're drawing just some segments of this line)
                 else if (_lineStyles.ContainsKey(line))
                 {
-                    // In order to make the line to go across the picture, we need the bounding box points
-                    // Get the leftmost topmost and rightmost bottommost point
-                    var leftUpperCorner = new Point(_pointStyles.Keys.Select(point => point.X).Min(), _pointStyles.Keys.Select(point => point.Y).Max());
-                    var rightBottomCorner = new Point(_pointStyles.Keys.Select(point => point.X).Max(), _pointStyles.Keys.Select(point => point.Y).Min());
-
-                    // Shift the points according to the bounding box offset
-                    leftUpperCorner += new Point(-drawingData.BoundingBoxOffset, drawingData.BoundingBoxOffset);
-                    rightBottomCorner += new Point(drawingData.BoundingBoxOffset, -drawingData.BoundingBoxOffset);
-
-                    // Create the other two corners
-                    var leftBottomCorner = new Point(leftUpperCorner.X, rightBottomCorner.Y);
-                    var rightUpperCorner = new Point(rightBottomCorner.X, leftUpperCorner.Y);
-
-                    // Create the bounding lines
-                    var intersections = new[]
-                    {
-                        // Upper horizontal
-                        new Line(leftUpperCorner, rightUpperCorner),
-
-                        // Bottom horizontal
-                        new Line(leftBottomCorner, rightBottomCorner),
-
-                        // Left vertical
-                        new Line(leftUpperCorner, leftBottomCorner),
-
-                        // Right vertical
-                        new Line(rightUpperCorner, rightBottomCorner)
-                    }
-                    // Intersect them with our line
-                    .Select(_line => _line.IntersectionWith(line))
-                    // Take existing intersections (there might be parallelity)
-                    .Where(point => point != null)
-                    // Unwrap
-                    .Select(point => point.Value)
-                    // Take those that lie within the bounding box
-                    .Where(point =>
-                    {
-                        // Which happens when it is to the right of the leftmost coordinate
-                        return point.X.Rounded() >= leftUpperCorner.X.Rounded() &&
-                            // But to the left of the rightmost coordinate
-                            point.X.Rounded() <= rightUpperCorner.X.Rounded() &&
-                            // And below the topmost coordinate
-                            point.Y.Rounded() <= leftUpperCorner.Y.Rounded() &&
-                            // But above the bottommost one
-                            point.Y.Rounded() >= leftBottomCorner.Y.Rounded();
-                    })
-                    // Distinct ones (it might happen a line intersects two of them in the corner)
-                    .Distinct()
-                    // Order
-                    .OrderBy(point => point, comparer)
-                    // Enumerate
-                    .ToArray();
+                    // In order to make the line to go across the picture, we need the bounding box of points and circles
+                    var intersections = new BoundingBox(_pointStyles.Keys, _circleStyles.Keys)
+                        // Intersect it with our line
+                        .IntersectWith(line)
+                        // Order by our comparer
+                        .OrderBy(point => point, comparer)
+                        // Enumerate
+                        .ToArray();
 
                     // There should be two of them
                     if (intersections.Length != 2)
@@ -630,7 +587,7 @@ namespace GeoGen.DrawingLauncher
 
                         break;
 
-                    // TODO: Figure out line and circle cases
+                    // These cases are currently not supported
                     case Line _:
                     case Circle _:
                         break;
@@ -640,6 +597,131 @@ namespace GeoGen.DrawingLauncher
                         throw new DrawingLauncherException($"Unhandled type of {nameof(IAnalyticObject)}: {analyticObject.GetType()}");
                 }
             });
+
+            #endregion
+
+            #region Clip large circles
+
+            // Find the bounding box without circles scaled by the scale from settings
+            var boudingBoxWithoutCircles = new BoundingBox(_pointStyles.Keys).Scale(drawingData.PointBoundingBoxScale);
+
+            // Find the bounding box of the entire figure, i.e. points, including the 
+            // points of the accepted circle-free bounding box, including the circles
+            var boudingBoxWithCircles = new BoundingBox(_pointStyles.Keys.Concat(boudingBoxWithoutCircles.BoundaryPoints), _circleStyles.Keys);
+
+            // If the ratio of the areas of these two boxes is at least the clipping threshold, we will be clipping
+            if (boudingBoxWithCircles.Area / boudingBoxWithoutCircles.Area >= drawingData.LargePictureClipThreshold)
+            {
+                // Get the center of the smaller box
+                var innerBoxCenter = boudingBoxWithoutCircles.Center;
+
+                // Get the projections of the center on the inner boundary
+                var leftInnerProjection = innerBoxCenter.Project(boudingBoxWithoutCircles.LeftLine);
+                var righInnerProjection = innerBoxCenter.Project(boudingBoxWithoutCircles.RightLine);
+                var upperInnerProjection = innerBoxCenter.Project(boudingBoxWithoutCircles.UpperLine);
+                var bottomInnerProjection = innerBoxCenter.Project(boudingBoxWithoutCircles.BottomLine);
+
+                // Get the projections of the center on the outer boundary
+                var leftOuterProjection = innerBoxCenter.Project(boudingBoxWithCircles.LeftLine);
+                var rightOuterProjection = innerBoxCenter.Project(boudingBoxWithCircles.RightLine);
+                var upperOuterProjection = innerBoxCenter.Project(boudingBoxWithCircles.UpperLine);
+                var bottomOuterProjection = innerBoxCenter.Project(boudingBoxWithCircles.BottomLine);
+
+                // We will be moving the inner projections towards the outer ones. Each direction will be
+                // tested for a fixed number of moves, and they will be combined in every way (i.e. O(n^4))
+                // In practice, we do not need lots of iterations
+                const int iterations = 10;
+
+                // We will figure out what clipping boxes are valid. We're moving in 4 directions
+                var validClipBoxes = Enumerable.Range(0, 4)
+                    // In each direction we're moving the 'iterations' number of times
+                    .Select(_ => Enumerable.Range(0, iterations).Select(i => (double)i))
+                    // Make every possible quadruple of these values (iterations^4 results)
+                    .Combine()
+                    // Construct the corresponding box for every combination
+                    .Select(values =>
+                    {
+                        // Shift the inner projections in the direction of the outer ones
+                        var shiftedLeftProjection = leftInnerProjection + values[0] / iterations * (leftOuterProjection - leftInnerProjection);
+                        var shiftedRightProjection = righInnerProjection + values[1] / iterations * (rightOuterProjection - righInnerProjection);
+                        var shiftedUpperProjection = upperInnerProjection + values[2] / iterations * (upperOuterProjection - upperInnerProjection);
+                        var shiftedBottomProjection = bottomInnerProjection + values[3] / iterations * (bottomOuterProjection - bottomInnerProjection);
+
+                        // Create a new box enclosing them
+                        return new BoundingBox(shiftedLeftProjection, shiftedRightProjection, shiftedBottomProjection, shiftedUpperProjection);
+                    })
+                    // Take only valid clipping boxes
+                    .Where(currentCutBox => _circleStyles.Keys.All(circle =>
+                    {
+                        // First find the intersection points of the circle with the box
+                        var intersections = currentCutBox.IntersectWith(circle);
+
+                        // If there are 0 intersection points, we're cool. The circle is inside
+                        if (intersections.Length == 0)
+                            return true;
+
+                        // If there is 1, then the circle is tangent, clipping might look weird
+                        // If there are at least 3, then clipping is not acceptable, there will be 
+                        // a weird fragment left. In other words, we need to have 2 to judge further
+                        if (intersections.Length != 2)
+                            return false;
+
+                        // Two intersection mean that the circle will be clipped without a hanging fragment
+                        // But it might happen that we clip a very small portion of the circles and it
+                        // looks weird. To prevent that we will have a look at the angle of the clipped part
+
+                        // Let's name the intersections for comfort
+                        var A = intersections[0];
+                        var B = intersections[1];
+
+                        // We will calculate the midpoint of the smaller arc AB of our circle. That
+                        // will be used to detect whether this smaller arc is the one that was clipped, or
+                        // the other one. We could use some vectors. We can use points to simulate them
+                        var aCenter = A - circle.Center;
+                        var bCenter = B - circle.Center;
+
+                        // If we sum (A-center) and (B-center), we will get a vector passing
+                        // through the desired midpoint
+                        var centerMidpoint = aCenter + bCenter;
+
+                        // If the length of this vector is 'l' and the radius of the circle is 'r',
+                        // then the needed midpoint is exactly center + r / l * centerMidpointVector
+                        var arcMidpoint = circle.Center + circle.Radius / centerMidpoint.DistanceToOrigin * centerMidpoint;
+
+                        // We will find the angle between vectors (A-center) and (B-center), 
+                        // using the standard formula arccos( u.v / (||u|| * ||v||) )
+                        var arcAngle = ToDegrees(Acos((aCenter.X * bCenter.X + aCenter.Y * bCenter.Y) / (aCenter.DistanceToOrigin * bCenter.DistanceToOrigin)));
+
+                        // Finally we can find the actual angle corresponding to the cut arc
+                        // If the midpoint of our arc is inside the box
+                        var cutArcAngle = currentCutBox.IsPointWithinTheBox(arcMidpoint)
+                            // Then the answer is the other angle
+                            ? 360 - arcAngle
+                            // Otherwise it's our angle
+                            : arcAngle;
+
+                        // Now, the current box cuts our circle nicely if and only if the angle
+                        // is at least our defined threshold
+                        return cutArcAngle >= drawingData.MinimalAngleOfClippedCircleArc;
+                    }))
+                    // Enumerate
+                    .ToArray();
+
+                // If there is a valid box
+                if (validClipBoxes.Any())
+                {
+                    // Find the 'smallest' one, which could be detected by the area
+                    var finalClipBox = validClipBoxes.MinItem(box => box.Area);
+
+                    // Append a simple piece of MetaPost clipping code to the final code
+                    code.AppendLine($"clip currentpicture to" +
+                        $"    {ConvertPoint(finalClipBox.UpperLeftCorner)}" +
+                        $" -- {ConvertPoint(finalClipBox.UpperRightCorner)}" +
+                        $" -- {ConvertPoint(finalClipBox.BottomRightCorner)}" +
+                        $" -- {ConvertPoint(finalClipBox.BottomLeftCorner)}" +
+                        $" -- cycle;");
+                }
+            }
 
             #endregion
 
