@@ -12,12 +12,12 @@ u:=5cm;
 %
 % The text width of the TeX problem statement on the right of the picture
 %
-TextWidth := 8.5cm;
+RightTextWidth := 9cm;
 
 %
 % The value by which the text on the right is shifted to the right from the right picture end
 %
-TextRightShift := 8;
+RightTextShift := 8;
 
 % 
 % We will redefine the endfig macro so let us save its original definition
@@ -113,7 +113,7 @@ vardef TexTextOnTheRight(expr text) =
 		& "\parindent=0pt" & char(10)
 		
 		% And the width equal to the preferred value
-		& "\hsize=" & decimal(TextWidth) & "pt" & char(10));
+		& "\hsize=" & decimal(RightTextWidth) & "pt" & char(10));
 	
 	% Prepare the resulting picture
 	save result; picture result; 
@@ -122,7 +122,7 @@ vardef TexTextOnTheRight(expr text) =
 	result:=TEX("\vbox{" & text & "}");
 	
 	% Prepare the result shifted to the right a bit
-	result shifted (TextRightShift,0)
+	result shifted (RightTextShift, 0)
 		   
 		   % And even more by the current right picture corner
 		   shifted urcorner currentpicture

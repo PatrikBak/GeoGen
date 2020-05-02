@@ -773,6 +773,25 @@ namespace GeoGen.DrawingLauncher
             // If we are supposed to include ranking, do it
             if (_settings.IncludeRanking)
             {
+                // A local function that returns nice names of individual rankings
+                static string RankedAspectName(RankedAspect aspect) => aspect switch
+                {
+                    // Reducibility
+                    RankedAspect.SubproblemReducibility => "Subproblem reducibility",
+
+                    // Theorems count
+                    RankedAspect.NumberOfTheorems => "Number of theorems",
+
+                    // Cyclic quadrilaterals
+                    RankedAspect.NumberOfCyclicQuadrilaterals => "Cyclic quadrilaterals",
+
+                    // Specific constructions
+                    RankedAspect.SpecificConstructions => "Specific constructions",
+
+                    // By default use the string
+                    _ => aspect.ToString()
+                };
+
                 // Prepare the ranking table by calling the macro for the ranking table
                 var rank = $"{_settings.RankingTableMacro}(" +
                     // Now we will append individual rankings
@@ -780,7 +799,7 @@ namespace GeoGen.DrawingLauncher
                         // Sorted by the contribution
                         .OrderBy(pair => -pair.Value.Contribution)
                         // Now we can convert each to a single string with these 4 values. Add the type first
-                        .Select(pair => $"\"{pair.Key}\"," +
+                        .Select(pair => $"\"{RankedAspectName(pair.Key)}\"," +
                             // Append the ranking
                             $"\"${pair.Value.Ranking.ToStringWithDecimalDot()}$\"," +
                             // Append the weight
