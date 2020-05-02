@@ -35,7 +35,7 @@ namespace GeoGen.Constructor
         /// Initializes a new instance of the <see cref="Pictures"/> class.
         /// </summary>
         /// <param name="pictures">The list of pictures that these pictures hold.</param>
-        protected Pictures(IReadOnlyList<Picture> pictures)
+        public Pictures(IReadOnlyList<Picture> pictures)
         {
             _pictures = pictures ?? throw new ArgumentNullException(nameof(pictures));
         }

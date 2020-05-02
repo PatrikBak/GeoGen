@@ -15,7 +15,7 @@ using static GeoGen.Infrastructure.Log;
 namespace GeoGen.DrawingLauncher
 {
     /// <summary>
-    /// Represents a drawer that generates MetaPost figures.
+    /// Represents an <see cref="IDrawer"/> that generates MetaPost figures.
     /// </summary>
     public class MetapostDrawer : IDrawer
     {
@@ -40,6 +40,12 @@ namespace GeoGen.DrawingLauncher
         /// </summary>
         private readonly IGeometryConstructor _constructor;
 
+        /// <summary>
+        /// The verifier of theorems used for making sure we will not draw an 
+        /// incorrect orientation-based theorems.
+        /// </summary>
+        private readonly IGeometricTheoremVerifier _verifier;
+
         #endregion
 
         #region Constructor
@@ -50,11 +56,13 @@ namespace GeoGen.DrawingLauncher
         /// <param name="settings"><inheritdoc cref="_settings" path="/summary"/></param>
         /// <param name="data"><inheritdoc cref="_data" path="/summary"/></param>
         /// <param name="constructor"><inheritdoc cref="_constructor" path="/summary"/></param>
-        public MetapostDrawer(MetapostDrawerSettings settings, MetapostDrawerData data, IGeometryConstructor constructor)
+        /// <param name="verifier"><inheritdoc cref="_verifier" path="/summary"/></param>
+        public MetapostDrawer(MetapostDrawerSettings settings, MetapostDrawerData data, IGeometryConstructor constructor, IGeometricTheoremVerifier verifier)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _data = data ?? throw new ArgumentNullException(nameof(data));
             _constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
         }
 
         #endregion
@@ -163,6 +171,10 @@ namespace GeoGen.DrawingLauncher
                 {
                     try
                     {
+                        // Before anything, make sure the theorem is true in the picture
+                        if (!_verifier.IsTrueInAllPictures(new Pictures(new[] { picture }), rankedTheorem.Theorem))
+                            throw new DrawingLauncherException($"The theorem is not true in a generated picture.");
+
                         // Try to construct the figure
                         var figure = CreateFigureFromAnalyticPicture(rankedTheorem, picture);
 
@@ -529,7 +541,7 @@ namespace GeoGen.DrawingLauncher
 
                     // Make sure there is one
                     if (intersections.Length != 1)
-                        throw new DrawingLauncherException("This circles should have been tangent according to the theorem.");
+                        throw new DrawingLauncherException("These circles should have been tangent according to the theorem.");
 
                     // Get the intersection
                     var intersection = intersections[0];
