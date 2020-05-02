@@ -47,9 +47,9 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// Initializes a new instance of the <see cref="MetapostDrawer"/> class.
         /// </summary>
-        /// <param name="data">The data for the drawer.</param>
-        /// <param name="settings">The settings for the drawer.</param>
-        /// <param name="constructor">The constructor that calculates coordinates for us.</param>
+        /// <param name="settings"><inheritdoc cref="_settings" path="/summary"/></param>
+        /// <param name="data"><inheritdoc cref="_data" path="/summary"/></param>
+        /// <param name="constructor"><inheritdoc cref="_constructor" path="/summary"/></param>
         public MetapostDrawer(MetapostDrawerSettings settings, MetapostDrawerData data, IGeometryConstructor constructor)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
@@ -65,12 +65,36 @@ namespace GeoGen.DrawingLauncher
         public async Task DrawAsync(IEnumerable<RankedTheorem> rankedTheorems, int startingId)
         {
             // Create figures from ranked theorems
-            var figures = rankedTheorems.Select((theorem, index) => CreateFigure(theorem, index + startingId)).ToArray();
+            var figures = rankedTheorems
+                // We will want the index too
+                .Select((theorem, index) =>
+                {
+                    // Calculate the index of the current picture
+                    var currentIndex = startingId + index;
+
+                    try
+                    {
+                        // Safely try to create the current figure
+                        return (figure: CreateFigure(theorem, currentIndex), index: currentIndex);
+                    }
+                    catch (Exception e)
+                    {
+                        // If there is an exception, we will not want to crash the application. Just make aware 
+                        LoggingManager.LogError($"Picture number {currentIndex} couldn't be constructed.\n\n{e}\n");
+
+                        // Return the default value
+                        return default;
+                    }
+                })
+                // That successfully drawn figures
+                .Where(pair => pair != default)
+                // Enumerate    
+                .ToArray();
 
             #region Writing code file
 
             // Get the code for them 
-            var code = CreateCode(figures, startingId);
+            var code = CreateCode(figures);
 
             try
             {
@@ -784,10 +808,9 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// The method that generates the actual MetaPost code to be complied. 
         /// </summary>
-        /// <param name="figures">The figures to be drawn.</param>
-        /// <param name="startingId">The id of the first figure. Others will be identified consecutively.</param>
+        /// <param name="identifiedFigures">The figures with their ids to be drawn.</param>
         /// <returns>A compilable MetaPost code of the figures.</returns>
-        private string CreateCode(IEnumerable<MetapostFigure> figures, int startingId)
+        private string CreateCode(IEnumerable<(MetapostFigure figure, int id)> identifiedFigures)
         {
             // Let's use StringBuilder for 'efficiency'
             var code = new StringBuilder();
@@ -796,10 +819,13 @@ namespace GeoGen.DrawingLauncher
             code.Append($"input \"{_settings.MetapostMacroLibraryPath}\"\n\n");
 
             // Append all the figures
-            figures.ForEach((figure, index) =>
+            identifiedFigures.ForEach(pair =>
             {
+                // Deconstruct
+                var (figure, index) = pair;
+
                 // Append the preamble
-                code.Append($"beginfig({startingId + index});\n\n");
+                code.Append($"beginfig({index});\n\n");
 
                 // Append the actual code of the picture using the provided drawing data
                 code.Append(figure.ToCode(_settings.DrawingData));
