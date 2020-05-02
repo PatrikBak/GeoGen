@@ -58,11 +58,20 @@ namespace GeoGen.OutputMergingLauncher
                 // And Ranked Theorem IO stuff
                 .AddRankedTheoremIO()
                 // Add logging
-                .AddLogging(new LoggingSettings(new[]
+                .AddLogging(new LoggingSettings(new BaseLoggerSettings[]
                 {
                     // With a console logger
                     new ConsoleLoggerSettings
                     (
+                        logOutputLevel: LogOutputLevel.Info,
+                        includeLoggingOrigin: false,
+                        includeTime: false
+                    ),
+
+                    // And a file logger
+                    new FileLoggerSettings
+                    (
+                        fileLogPath: "log.txt",
                         logOutputLevel: LogOutputLevel.Info,
                         includeLoggingOrigin: false,
                         includeTime: false
