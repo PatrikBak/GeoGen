@@ -87,69 +87,63 @@ namespace GeoGen.InputGenerationLauncher
 
             #endregion
 
+            // Prepare the counter of generated inputs
+            var counter = 0;
+
             // Go through the all types of generated input files
             new[]
             {
                 TriangleTwoObjectsPlusTwoObjects(),
                 QuadrilateralAndTwoObjectsPlusTwoObjects()
             }
-            // For each create input files within Results folder
-            .ForEach(generatorInputs =>
+            // Merge the inputs
+            .Flatten()
+            // For each create an input folder with the file
+            .ForEach(input =>
             {
-                #region Generating individual files
+                // Count the input in
+                counter++;
 
-                // Prepare the counter
-                var counter = 0;
+                // Prepare the constructions as a single string
+                var constructionString = input.Constructions
+                    // For each take the name
+                    .Select(construction => construction.Name)
+                    // Each on a separate line
+                    .ToJoinedString("\n");
 
-                // Go through the particular inputs
-                foreach (var input in generatorInputs)
-                {
-                    // Count the input in
-                    counter++;
+                // Prepare the formatted configuration by creating a formatter for it
+                var configurationString = new OutputFormatter(input.InitialConfiguration.AllObjects)
+                    // Formatting it
+                    .FormatConfiguration(input.InitialConfiguration)
+                    // Replacing any curly braces in the definitions
+                    .Replace("{", "").Replace("}", "");
 
-                    // Prepare the constructions as a single string
-                    var constructionString = input.Constructions
-                        // For each take the name
-                        .Select(construction => construction.Name)
-                        // Each on a separate line
-                        .ToJoinedString("\n");
+                // Prepare the content by taking the template file
+                var content = _templateInputFile
+                    // Replace the constructions
+                    .Replace("{Constructions}", constructionString)
+                    // Replace the configuration
+                    .Replace("{InitialConfiguration}", configurationString)
+                    // Replace the iterations
+                    .Replace("{Iterations}", input.NumberOfIterations.ToString())
+                    // Replace maximal points
+                    .Replace("{MaximalPoints}", input.MaximalNumbersOfObjectsToAdd[Point].ToString())
+                    // Replace maximal lines
+                    .Replace("{MaximalLines}", input.MaximalNumbersOfObjectsToAdd[Line].ToString())
+                    // Replace maximal circles
+                    .Replace("{MaximalCircles}", input.MaximalNumbersOfObjectsToAdd[Circle].ToString())
+                    // Replace the symmetry generation flag
+                    .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
 
-                    // Prepare the formatted configuration by creating a formatter for it
-                    var configurationString = new OutputFormatter(input.InitialConfiguration.AllObjects)
-                        // Formatting it
-                        .FormatConfiguration(input.InitialConfiguration)
-                        // Replacing any curly braces in the definitions
-                        .Replace("{", "").Replace("}", "");
+                // Create the directory where the file goes
+                Directory.CreateDirectory(Path.Combine(resultsFolder, $"input_{counter}"));
 
-                    // Prepare the content by taking the template file
-                    var content = _templateInputFile
-                        // Replace the constructions
-                        .Replace("{Constructions}", constructionString)
-                        // Replace the configuration
-                        .Replace("{InitialConfiguration}", configurationString)
-                        // Replace the iterations
-                        .Replace("{Iterations}", input.NumberOfIterations.ToString())
-                        // Replace maximal points
-                        .Replace("{MaximalPoints}", input.MaximalNumbersOfObjectsToAdd[Point].ToString())
-                        // Replace maximal lines
-                        .Replace("{MaximalLines}", input.MaximalNumbersOfObjectsToAdd[Line].ToString())
-                        // Replace maximal circles
-                        .Replace("{MaximalCircles}", input.MaximalNumbersOfObjectsToAdd[Circle].ToString())
-                        // Replace the symmetry generation flag
-                        .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
-
-                    // Create the directory where the file goes
-                    Directory.CreateDirectory(Path.Combine(resultsFolder, $"input_{counter}"));
-
-                    // Write the content
-                    File.WriteAllText(Path.Combine(resultsFolder, $"input_{counter}/input_{counter}.txt"), content);
-                }
-
-                // Log how many files have been created
-                Console.WriteLine($"Generated {counter} file(s)");
-
-                #endregion
+                // Write the content
+                File.WriteAllText(Path.Combine(resultsFolder, $"input_{counter}/input_{counter}.txt"), content);
             });
+
+            // Log how many files have been created
+            Console.WriteLine($"Generated {counter} file(s)");
         }
 
         #endregion
