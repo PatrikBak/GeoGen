@@ -23,13 +23,16 @@ namespace GeoGen.DrawingLauncher
         public double ShiftLength { get; }
 
         /// <summary>
-        /// The threshold that is used to find out whether we want to clip huge circles of a picture.
-        /// The value is used like this: Let A1 is the area of the bounding box of the figure, and 
-        /// A2 be the area of the bounding box that does not include the circles. If A1 / A2 is at 
-        /// least this threshold, then the picture will be attempted to be clip in such a way that no
-        /// circle is clipped into more than two arcs.
+        /// The minimal width that a picture must have before we decide to be clipping it because
+        /// it is too large (most likely because of circles).
         /// </summary>
-        public double LargePictureClipThreshold { get; }
+        public double MinimalWidthForClipping { get; }
+
+        /// <summary>
+        /// The minimal height that a picture must have before we decide to be clipping it because
+        /// it is too large (most likely because of circles).
+        /// </summary>
+        public double MinimalHeightForClipping { get; }
 
         /// <summary>
         /// The minimal angle in degrees corresponding to the arc that might be clipped because the 
@@ -81,17 +84,18 @@ namespace GeoGen.DrawingLauncher
         /// </summary>
         /// <param name="scaleVariable"><inheritdoc cref="ScaleVariable" path="/summary"/></param>
         /// <param name="shiftLength"><inheritdoc cref="ShiftLength" path="/summary"/></param>
-        /// <param name="largePictureClipThreshold"><inheritdoc cref="LargePictureClipThreshold" path="/summary"/></param>
-        /// <param name="minimalAngleOfClippedCircleArc"><inheritdoc cref="MinimalAngleOfClippedCircleArc" path="/summary"/></param>
+        /// <param name="minimalWidthForClipping"><inheritdoc cref="MinimalWidthForClipping" path="/summary"/></param>
+        /// <param name="minimalHeightForClipping"><inheritdoc cref="MinimalHeightForClipping" path="/summary"/></param>
         /// <param name="pointBoundingBoxScale"><inheritdoc cref="PointBoundingBoxScale" path="/summary"/></param>
         /// <param name="pointLabelMacro"><inheritdoc cref="PointLabelMacro" path="/summary"/></param>
-        /// <param name="pointMarkMacros"><inheritdoc cref="PointMarkMacros" path="/summary"/></param>
+        /// <param name="pointMarkMacros"><inheritdoc cref="PointMarkMacros" path="/summary"/></param> 
         /// <param name="lineSegmentMacros"><inheritdoc cref="LineSegmentMacros" path="/summary"/></param>
         /// <param name="circleMacros"><inheritdoc cref="CircleMacros" path="/summary"/></param>
         /// <param name="textMacro"><inheritdoc cref="TextMacro" path="/summary"/></param>
         public MetapostDrawingData(string scaleVariable,
                                    double shiftLength,
-                                   double largePictureClipThreshold,
+                                   double minimalWidthForClipping,
+                                   double minimalHeightForClipping,
                                    double minimalAngleOfClippedCircleArc,
                                    double pointBoundingBoxScale,
                                    string pointLabelMacro,
@@ -102,7 +106,8 @@ namespace GeoGen.DrawingLauncher
         {
             ScaleVariable = scaleVariable ?? throw new ArgumentNullException(nameof(scaleVariable));
             ShiftLength = shiftLength;
-            LargePictureClipThreshold = largePictureClipThreshold;
+            MinimalWidthForClipping = minimalWidthForClipping;
+            MinimalHeightForClipping = minimalHeightForClipping;
             MinimalAngleOfClippedCircleArc = minimalAngleOfClippedCircleArc;
             PointBoundingBoxScale = pointBoundingBoxScale;
             PointLabelMacro = pointLabelMacro ?? throw new ArgumentNullException(nameof(pointLabelMacro));
@@ -115,9 +120,13 @@ namespace GeoGen.DrawingLauncher
             if (shiftLength <= 0)
                 throw new ArgumentOutOfRangeException(nameof(shiftLength), "The shift length must be positive.");
 
-            // Ensure the bounding box cut threshold is positive
-            if (largePictureClipThreshold < 1)
-                throw new ArgumentOutOfRangeException(nameof(largePictureClipThreshold), "The large picture clip threshold must be at least 1.");
+            // Ensure the minimal clipping width is non-negative
+            if (minimalWidthForClipping < 0)
+                throw new ArgumentOutOfRangeException(nameof(minimalWidthForClipping), "The minimal clipping width must be at least 0.");
+
+            // Ensure the minimal clipping height is non-negative
+            if (minimalHeightForClipping < 0)
+                throw new ArgumentOutOfRangeException(nameof(minimalHeightForClipping), "The minimal clipping height must be at least 0.");
 
             // Ensure the bounding box cut threshold is in [0, 360)
             if (minimalAngleOfClippedCircleArc < 0 || minimalAngleOfClippedCircleArc >= 360)

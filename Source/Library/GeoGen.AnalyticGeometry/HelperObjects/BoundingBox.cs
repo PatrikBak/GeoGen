@@ -57,9 +57,19 @@ namespace GeoGen.AnalyticGeometry
         public Line LeftLine { get; }
 
         /// <summary>
-        /// The area of the rectangular box.
+        /// The width of the rectangular box.
         /// </summary>
-        public double Area => (UpperRightCorner.X - UpperLeftCorner.X) * (UpperLeftCorner.Y - BottomLeftCorner.Y);
+        public double Width => UpperRightCorner.X - UpperLeftCorner.X;
+
+        /// <summary>
+        /// The width of the rectangular box.
+        /// </summary>
+        public double Height => UpperLeftCorner.Y - BottomLeftCorner.Y;
+
+        /// <summary>
+        /// The are of the rectangular box.
+        /// </summary>
+        public double Area => Width * Height;
 
         /// <summary>
         /// A shortcut to enumerate the boundary points of the box.

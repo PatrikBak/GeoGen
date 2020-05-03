@@ -607,10 +607,18 @@ namespace GeoGen.DrawingLauncher
 
             // Find the bounding box of the entire figure, i.e. points, including the 
             // points of the accepted circle-free bounding box, including the circles
-            var boudingBoxWithCircles = new BoundingBox(_pointStyles.Keys.Concat(boudingBoxWithoutCircles.BoundaryPoints), _circleStyles.Keys);
+            var boudingBoxWithCircles = new BoundingBox(_pointStyles.Keys.Concat(boudingBoxWithoutCircles.BoundaryPoints), _circleStyles.Keys)
+                // We need to scale it by a small value so we don't accidentally
+                // clip a circle by a point, which may cause visual glitches
+                .Scale(1.01);
 
-            // If the ratio of the areas of these two boxes is at least the clipping threshold, we will be clipping
-            if (boudingBoxWithCircles.Area / boudingBoxWithoutCircles.Area >= drawingData.LargePictureClipThreshold)
+            // Find out if we are going to clip the width and height based on the 
+            // provided accepted thresholds
+            var areWeClippingWidth = boudingBoxWithCircles.Width > drawingData.MinimalWidthForClipping;
+            var areWeClippingHeight = boudingBoxWithCircles.Height > drawingData.MinimalHeightForClipping;
+
+            // If we are going to be clipping
+            if (areWeClippingWidth || areWeClippingHeight)
             {
                 // Get the center of the smaller box
                 var innerBoxCenter = boudingBoxWithoutCircles.Center;
@@ -632,10 +640,16 @@ namespace GeoGen.DrawingLauncher
                 // In practice, we do not need lots of iterations
                 const int iterations = 10;
 
-                // We will figure out what clipping boxes are valid. We're moving in 4 directions
+                // We will figure out what clipping boxes are valid. We're generally moving in 4 directions
                 var validClipBoxes = Enumerable.Range(0, 4)
-                    // In each direction we're moving the 'iterations' number of times
-                    .Select(_ => Enumerable.Range(0, iterations).Select(i => (double)i))
+                    // For each direction we will decide whether we're moving or not
+                    // First two directions are left and right, i.e. we're clipping width in that direction
+                    // The second two directions are up and down, i.e. we're clipping height
+                    .Select(directionId => (directionId < 2 && areWeClippingWidth) || (directionId >= 2 && areWeClippingHeight)
+                        // When we're clipping, we need numbers 0, 1, ..., iterations - 1
+                        ? Enumerable.Range(0, iterations).Select(i => (double)i)
+                        // When we're not clipping, we need 'iterations' 
+                        : ((double)iterations).ToEnumerable())
                     // Make every possible quadruple of these values (iterations^4 results)
                     .Combine()
                     // Construct the corresponding box for every combination

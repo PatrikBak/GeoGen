@@ -77,6 +77,7 @@ l = PerpendicularBisector(A,B)
   - let M = Midpoint(A,B)
   - draw Point(M) auxiliary
   - draw ShiftedLine(l,M)
+  - draw Segment(A,B)
   
 l = ExternalAngleBisector(A,B,C)
   - draw Line(l,A)
