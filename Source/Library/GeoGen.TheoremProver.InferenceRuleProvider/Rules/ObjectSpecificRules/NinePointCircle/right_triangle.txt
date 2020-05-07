@@ -1,0 +1,11 @@
+﻿Objects:
+ 
+ c = NinePointCircle(A, B, C)
+
+Theorems:
+
+ t1 = PerpendicularLines: [A, B], [A, C]
+
+Implications:
+
+ () => Incidence: A, c

@@ -1,0 +1,11 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = CollinearPoints: A, B, C
+ t2 = CollinearPoints: A, B, D
+ t3 = CollinearPoints: B, C, D
+
+Implications:
+
+ ({t1, t2}) => t3

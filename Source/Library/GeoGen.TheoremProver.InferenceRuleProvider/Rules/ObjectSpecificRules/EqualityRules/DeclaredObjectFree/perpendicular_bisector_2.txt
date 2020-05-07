@@ -1,0 +1,11 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = Incidence: Point(M), Line(l)
+  t2 = EqualLineSegments: M, B, M, C
+  t3 = PerpendicularLines: l, [B, C]
+
+Implications:
+
+ (t1, t2, t3) => EqualObjects: l, PerpendicularBisector(B, C)

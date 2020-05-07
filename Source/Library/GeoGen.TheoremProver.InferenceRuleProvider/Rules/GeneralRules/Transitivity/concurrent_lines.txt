@@ -1,0 +1,11 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = ConcurrentLines: k, l, m
+ t2 = ConcurrentLines: k, l, n
+ t3 = ConcurrentLines: k, m, n
+
+Implications:
+
+ ({t1, t2}) => t3

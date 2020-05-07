@@ -1,0 +1,10 @@
+﻿Objects:
+
+ O = Circumcenter(A, B, C)
+ l = TangentLine(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => PerpendicularLines: [A, O], l

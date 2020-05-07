@@ -1,0 +1,10 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = PerpendicularLines: [H, B], [A, C]
+  t2 = PerpendicularLines: [H, C], [A, B]
+
+Implications:
+
+ ({t1, t2}) => EqualObjects: H, Orthocenter(A, B, C)

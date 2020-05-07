@@ -1,0 +1,10 @@
+﻿Objects:
+
+ l = Median(A, B, C)
+ D = ReflectionInLine(l, B)
+
+Theorems:
+
+Implications:
+
+ () => ParallelLines: [C, D], l

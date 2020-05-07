@@ -1,0 +1,13 @@
+﻿Objects:
+
+ M = Midpoint(A, B)
+ N = Midpoint(A, C)
+
+Theorems:
+
+ t1 = CollinearPoints: B, N, G
+ t2 = CollinearPoints: C, M, G
+
+Implications:
+
+ ({t1, t2}) => EqualObjects: Centroid(A, B, C), G

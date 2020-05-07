@@ -1,0 +1,12 @@
+﻿Objects:
+
+ C = IsoscelesTrapezoidPoint(D, A, B)
+
+Theorems:
+
+ t1 = EqualLineSegments: M, A, M, B
+ t2 = EqualLineSegments: M, C, M, D
+
+Implications:
+
+ (t1) => t2

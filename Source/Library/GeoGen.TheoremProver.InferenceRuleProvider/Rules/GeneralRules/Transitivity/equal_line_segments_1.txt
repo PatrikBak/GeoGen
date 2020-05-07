@@ -1,0 +1,11 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = EqualLineSegments: A, B, C, D 
+ t2 = EqualLineSegments: C, D, E, F
+ t3 = EqualLineSegments: E, F, A, B
+
+Implications:
+
+ ({t1, t2}) => t3

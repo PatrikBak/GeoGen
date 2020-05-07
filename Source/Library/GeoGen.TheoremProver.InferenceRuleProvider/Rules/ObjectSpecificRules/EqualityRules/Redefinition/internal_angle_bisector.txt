@@ -1,0 +1,11 @@
+﻿Objects:
+
+ l = InternalAngleBisector(A, B, C)
+
+Theorems:
+
+ t1 = CollinearPoints: A, B, D
+
+Implications:
+
+ (t1) => EqualObjects: l, InternalAngleBisector(A, C, D)

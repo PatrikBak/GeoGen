@@ -1,0 +1,10 @@
+﻿Objects:
+
+ l = InternalAngleBisector(A, B, C)
+ P = ReflectionInLine(l, B)
+
+Theorems:
+
+Implications:
+
+ () => CollinearPoints: A, C, P

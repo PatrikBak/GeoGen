@@ -1,0 +1,10 @@
+﻿Objects:
+
+ P = ReflectionInLine(l, X)
+ Q = ReflectionInLine(l, Y)
+
+Theorems:
+
+Implications:
+
+ () => EqualLineSegments: X, Y, P, Q

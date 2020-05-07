@@ -1,0 +1,9 @@
+﻿Objects:
+
+ c = Incircle(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: Incenter(A, B, C), CenterOfCircle(c)

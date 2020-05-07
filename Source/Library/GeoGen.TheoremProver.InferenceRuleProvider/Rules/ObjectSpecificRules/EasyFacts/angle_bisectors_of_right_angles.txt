@@ -1,0 +1,10 @@
+﻿Objects:
+
+Theorems:
+
+ t1 = CollinearPoints: B, C, D
+ t2 = PerpendicularLines: [A, D], [B, C]
+
+Implications:
+
+ (t1, t2) => EqualObjects: InternalAngleBisector(D, C, A), ExternalAngleBisector(D, B, A)

@@ -1,0 +1,10 @@
+﻿Objects:
+
+ H = Orthocenter(A, B, C)
+ D = ReflectionInLineFromPoints(H, B, C)
+
+Theorems:
+
+Implications:
+
+ () => ConcyclicPoints: A, B, C, D

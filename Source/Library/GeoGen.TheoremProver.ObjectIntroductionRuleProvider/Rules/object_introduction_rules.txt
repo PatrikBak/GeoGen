@@ -1,0 +1,84 @@
+﻿P = ReflectionInLine(l,A)
+  - Midpoint(A,P)
+  
+P = ReflectionInLineFromPoints(A,B,C)
+  - Midpoint(A,P)
+  
+l = PerpendicularBisector(A, B)
+  - Midpoint(A, B)
+  
+I = Incenter(A, B, C)
+  - Incircle(A, B, C)
+  - InternalAngleBisector(A, B, C)
+  - InternalAngleBisector(B, A, C)
+  - InternalAngleBisector(C, A, B)
+  - Circumcenter(A, I, B)
+  - Circumcenter(A, I, C)
+  - Circumcenter(B, I, C)
+  
+E = Excenter(A, B, C)
+  - ExternalAngleBisector(B, A, C)
+  - ExternalAngleBisector(C, A, B)
+  - InternalAngleBisector(A, B, C)
+  - Circumcenter(B, E, C)
+  - Circumcenter(C, E, A)
+  - Circumcenter(A, E, B)
+  
+l = InternalAngleBisector(A, B, C)
+  - MidpointOfOppositeArc(A, B, C)
+  - Incenter(A, B, C)
+  - Excenter(A, B, C)
+  
+l = ExternalAngleBisector(A, B, C)
+  - MidpointOfArc(A, B, C)
+  - Excenter(B, A, C)
+  - Excenter(C, A, B)
+  
+c = Incircle(A, B, C)
+  - NinePointCircle(A, B, C)
+  
+c = Excircle(A, B, C)
+  - NinePointCircle(A, B, C)
+  
+P = ParallelogramPoint(A, B, C)
+  - Midpoint(B, C)
+  - Median(A, B, C)
+
+P = Centroid(A, B, C)
+  - Median(A, B, C)
+  - Median(B, A, C)
+  - Median(C, A, B)
+
+l = Midline(A, B, C)
+  - Midpoint(A, B)
+  - Midpoint(A, C)  
+  
+l = Median(A, B, C)
+  - ParallelogramPoint(A, B, C)
+  - Centroid(A, B, C)
+  - Midpoint(B, C)
+  
+l = TangentLine(A, B, C)
+  - Circumcenter(A, B, C)
+  
+l = LineThroughCircumcenter(A, B, C)
+  - Circumcenter(A, B, C)
+  
+P = OppositePointOnCircumcircle(A, B, C)
+  - Circumcenter(A, B, C)
+  
+P = MidpointOfArc(A, B, C)
+  - Circumcenter(A, B, C)
+  - ExternalAngleBisector(A, B, C)
+  
+P = MidpointOfOppositeArc(A, B, C)
+  - Circumcenter(A, B, C)
+  - InternalAngleBisector(A, B, C)
+
+H = Orthocenter(A, B, C)
+  - ReflectionInLineFromPoints(H, A, B)
+  - ReflectionInLineFromPoints(H, A, C)
+  - ReflectionInLineFromPoints(H, B, C)
+
+c = CircleWithDiameter(A, B)
+  - Midpoint(A, B)

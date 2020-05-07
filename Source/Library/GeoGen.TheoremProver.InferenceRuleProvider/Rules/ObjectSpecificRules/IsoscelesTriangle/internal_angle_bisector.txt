@@ -1,0 +1,11 @@
+﻿Objects:
+
+ l = InternalAngleBisector(A, B, C)
+
+Theorems:
+
+ t1 = EqualLineSegments: A, B, A, C
+
+Implications:
+
+ (t1) => PerpendicularLines: [B, C], l

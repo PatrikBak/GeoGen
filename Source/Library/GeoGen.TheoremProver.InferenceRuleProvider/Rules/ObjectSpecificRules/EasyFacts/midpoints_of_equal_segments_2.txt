@@ -1,0 +1,12 @@
+﻿Objects:
+
+D = Midpoint(A, B)
+E = Midpoint(C, D)
+
+Theorems:
+ 
+ t1 = EqualLineSegments: A, B, C, D
+
+Implications:
+
+ (t1) => EqualLineSegments: A, D, C, E

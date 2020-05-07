@@ -1,0 +1,14 @@
+﻿Objects:
+
+ C = IsoscelesTrapezoidPoint(D, A, B)
+
+Theorems:
+
+ t1 = CollinearPoints: M, A, C
+ t2 = CollinearPoints: M, B, D
+ t3 = EqualLineSegments: M, A, M, B
+
+Implications:
+
+ ({t1, t2}) => t3
+ (t1, t3) => t2

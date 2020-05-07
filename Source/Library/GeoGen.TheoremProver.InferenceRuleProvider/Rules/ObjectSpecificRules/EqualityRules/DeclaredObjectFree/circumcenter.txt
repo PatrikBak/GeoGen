@@ -1,0 +1,10 @@
+﻿Objects:
+
+Theorems:
+
+  t1 = EqualLineSegments: O, A, O, B
+  t2 = EqualLineSegments: O, A, O, C
+
+Implications:
+
+ ({t1, t2}) => EqualObjects: O, Circumcenter(A, B, C)

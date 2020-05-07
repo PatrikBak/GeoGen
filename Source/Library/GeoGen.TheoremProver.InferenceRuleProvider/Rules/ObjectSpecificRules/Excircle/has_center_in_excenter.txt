@@ -1,0 +1,9 @@
+﻿Objects:
+
+ c = Excircle(A, B, C)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: Excenter(A, B, C), CenterOfCircle(c)
