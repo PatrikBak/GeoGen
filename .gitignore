@@ -250,8 +250,3 @@ paket-files/
 # JetBrains Rider
 .idea/
 *.sln.iml
-
-**/launchSettings.json
-
-Source/Launchers/GeoGen.MainLauncher/Data/
-Source/Launchers/GeoGen.ConfigurationGenerationLauncher/Data/

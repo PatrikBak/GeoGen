@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GeoGen.TheoremProver.IntegrationTest": {
+      "commandName": "Project",
+      "commandLineArgs": "\"../../../../../../Library/GeoGen.TheoremProver.InferenceRuleProvider/Rules\" \"txt\" \"../../../../../../Library/GeoGen.TheoremProver.ObjectIntroductionRuleProvider/Rules/object_introduction_rules.txt\""
+    }
+  }
+}

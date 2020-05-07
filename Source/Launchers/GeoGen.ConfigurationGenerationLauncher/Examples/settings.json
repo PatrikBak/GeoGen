@@ -1,0 +1,35 @@
+﻿{
+  "LoggingSettings": {
+    "Loggers": [
+      {
+        "LoggerName": "ConsoleLogger",
+        "LogOutputLevel": "Info",
+        "IncludeLoggingOrigin": false,
+        "IncludeTime": false
+      },
+      {
+        "LoggerName": "FileLogger",
+        "FileLogPath": "log.txt",
+        "LogOutputLevel": "Debug",
+        "IncludeLoggingOrigin": true,
+        "IncludeTime": true
+      }
+    ]
+  },
+  "ProblemGeneratorInputProviderSettings": {
+    "InputFolderPath": "../../../Examples/Inputs",
+    "InputFilePrefix": "input",
+    "FileExtension": "txt"
+  },
+  "GenerationOnlyProblemGenerationRunnerSettings": {
+    "GenerationProgresLoggingFrequency": 100,
+    "CountingMode": "LastIteration",
+    "LogProgress": true
+  },
+  "ProblemGeneratorSettings": {
+    "NumberOfPictures": 5
+  },
+  "GenerationSettings": {
+    "ConfigurationFilterType": "Fast"
+  }
+}

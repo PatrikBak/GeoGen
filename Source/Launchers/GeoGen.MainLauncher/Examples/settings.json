@@ -1,0 +1,98 @@
+{
+  "LoggingSettings": {
+    "Loggers": [
+      {
+        "LoggerName": "ConsoleLogger",
+        "LogOutputLevel": "Info",
+        "IncludeLoggingOrigin": false,
+        "IncludeTime": false
+      },
+      {
+        "LoggerName": "FileLogger",
+        "FileLogPath": "log.txt",
+        "LogOutputLevel": "Debug",
+        "IncludeLoggingOrigin": true,
+        "IncludeTime": true
+      }
+    ]
+  },
+  "ProblemGeneratorInputProviderSettings": {
+    "InputFolderPath": "../../../Examples/Inputs",
+    "InputFilePrefix": "input",
+    "FileExtension": "txt"
+  },
+  "InferenceRuleProviderSettings": {
+    "RuleFolderPath": "../../../../../Library/GeoGen.TheoremProver.InferenceRuleProvider/Rules",
+    "FileExtension": "txt"
+  },
+  "ObjectIntroductionRuleProviderSettings": {
+    "FilePath": "../../../../../Library/GeoGen.TheoremProver.ObjectIntroductionRuleProvider/Rules/object_introduction_rules.txt"
+  },
+  "ProblemGenerationRunnerSettings": {
+    "ReadableOutputWithoutProofsFolder": "../../../Examples/Output/ReadableWithoutProofs",
+    "WriteReadableOutputWithoutProofs": true,
+    "ReadableOutputWithProofsFolder": "../../../Examples/Output/ReadableWithProofs",
+    "WriteReadableOutputWithProofs": true,
+    "JsonOutputFolder": "../../../Examples/Output/JsonOutput",
+    "WriteJsonOutput": true,
+    "OutputFilePrefix": "output",
+    "FileExtension": "txt",
+    "ReadableBestTheoremFolder": "../../../Examples/Output/ReadableBestTheorems",
+    "WriteReadableBestTheorems": true,
+    "JsonBestTheoremFolder": "../../../Examples/Output/JsonBestTheorems",
+    "WriteJsonBestTheorems": true,
+    "WriteBestTheoremsContinuously": false,
+    "ProgressLoggingFrequency": 100,
+    "LogProgress": true,
+    "TakeAtMostOneInterestingTheoremPerConfiguration": true
+  },
+  "TheoremSorterTypeResolverSettings": {
+    "MaximalTrackedTheoremsPerType": 1000
+  },
+  "ProblemGeneratorSettings": {
+    "NumberOfPictures": 3,
+    "ExcludeAsymmetricConfigurations": true
+  },
+  "TheoremFindingSettings": {
+    "TangentCirclesTheoremFinderSettings": {
+      "ExcludeTangencyInsidePicture": true
+    },
+    "LineTangentToCircleTheoremFinderSettings": {
+      "ExcludeTangencyInsidePicture": true
+    },
+    "SoughtTheoremTypes": [
+      "CollinearPoints",
+      "ConcurrentLines",
+      "ConcyclicPoints",
+      "EqualLineSegments",
+      "LineTangentToCircle",
+      "ParallelLines",
+      "PerpendicularLines",
+      "TangentCircles",
+      "Incidence"
+    ]
+  },
+  "TheoremRankingSettings": {
+    "TheoremRankerSettings": {
+      "RankingCoefficients": {
+        "Symmetry": 450,
+        "SubproblemReducibility": 150,
+        "NumberOfCyclicQuadrilaterals": -5,
+        "Repetition": -1,
+        "NumberOfTheorems": -1,
+        "SpecificConstructions": 1
+      }
+    },
+    "SpecificConstructionsRankerSettings": {
+      "ConstructionRankings": {
+        "IntersectionOfLineAndLineFromPoints": -20,
+        "IntersectionOfLines": -20,
+        "IntersectionOfLinesFromPoints": -20,
+        "TangentLine": 5
+      }
+    }
+  },
+  "GenerationSettings": {
+    "ConfigurationFilterType": "MemoryEfficient"
+  }
+}
