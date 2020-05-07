@@ -1,0 +1,120 @@
+Constructions:
+
+ - IntersectionOfLinesFromPoints({{P, P}, {P, P}})
+ - Median(P, {P, P})
+
+Initial configuration:
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+
+Theorems:
+
+  1. CollinearPoints: A, B, G
+  2. CollinearPoints: A, C, F
+  3. CollinearPoints: B, C, E
+  4. ConcurrentLines: [A, E], [B, F], [C, G]
+  5. ConcyclicPoints: A, D, F, G
+  6. ConcyclicPoints: B, D, E, G
+  7. ConcyclicPoints: C, D, E, F
+  8. EqualLineSegments: A, F, A, G
+  9. EqualLineSegments: B, E, B, G
+ 10. EqualLineSegments: C, E, C, F
+ 11. EqualLineSegments: D, E, D, F
+ 12. EqualLineSegments: D, E, D, G
+ 13. EqualLineSegments: D, F, D, G
+ 14. PerpendicularLines: [A, B], [D, G]
+ 15. PerpendicularLines: [A, C], [D, F]
+ 16. PerpendicularLines: [A, D], [F, G]
+ 17. PerpendicularLines: [A, F], [D, F]
+ 18. PerpendicularLines: [A, G], [D, G]
+ 19. PerpendicularLines: [B, C], [D, E]
+ 20. PerpendicularLines: [B, D], [E, G]
+ 21. PerpendicularLines: [B, E], [D, E]
+ 22. PerpendicularLines: [B, G], [D, G]
+ 23. PerpendicularLines: [C, D], [E, F]
+ 24. PerpendicularLines: [C, E], [D, E]
+ 25. PerpendicularLines: [C, F], [D, F]
+
+Iterations: 1
+MaximalNumberOfPoints: 1
+MaximalNumberOfLines: 1
+MaximalNumberOfCircles: 0
+
+GenerateOnlySymmetricConfigurations: False
+Results:
+
+----------------
+Configuration 10
+----------------
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+H = IntersectionOfLinesFromPoints({{B, C}, {F, G}})
+
+Interesting theorems:
+
+ 1. PerpendicularLines: [A, E], [D, H] - total ranking 169
+
+  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
+  SubproblemReducibility          weight = 150       ranking = 0.7       contribution = 105       
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 3         contribution = -15       
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  SpecificConstructions           weight = 1         ranking = -20       contribution = -20       
+  NumberOfTheorems                weight = -1        ranking = 35        contribution = -35
+
+----------------
+Configuration 12
+----------------
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+H = IntersectionOfLinesFromPoints({{B, E}, {F, G}})
+
+Interesting theorems:
+
+ 1. PerpendicularLines: [A, E], [D, H] - total ranking 19
+
+  SubproblemReducibility          weight = 150       ranking = 0.7       contribution = 105       
+  Symmetry                        weight = 450       ranking = 0         contribution = 0         
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 3         contribution = -15       
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  SpecificConstructions           weight = 1         ranking = -20       contribution = -20       
+  NumberOfTheorems                weight = -1        ranking = 35        contribution = -35
+
+----------------
+Configuration 15
+----------------
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+l = Median(A, {B, C})
+
+Interesting theorems:
+
+ 1. ConcurrentLines: [D, E], [F, G], l - total ranking 194
+
+  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
+  SubproblemReducibility          weight = 150       ranking = 0.68      contribution = 102       
+  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 3         contribution = -15       
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  NumberOfTheorems                weight = -1        ranking = 27        contribution = -27
+
+------------------------------------------------
+Generated configurations: 34
+Configurations with an interesting theorem: 3
+Interesting theorems: 3
+Run-time: 14748 ms

@@ -1,6 +1,7 @@
 ﻿Constructions:
 
  Incenter
+ Circumcenter
 
 Initial configuration:
 
@@ -13,4 +14,4 @@ Iterations: 1
 MaximalPoints: 1
 MaximalLines: 0
 MaximalCircles: 0
-GenerateOnlySymmetricConfigurations: true
+GenerateOnlySymmetricConfigurations: false

@@ -1,0 +1,38 @@
+---------
+Theorem 1
+---------
+
+Triangle: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
+G = Incenter({D, E, F})
+
+PerpendicularLines: [A, B], [C, G] - total ranking 195.25
+
+  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
+  SubproblemReducibility          weight = 150       ranking = 0.88      contribution = 131.25    
+  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
+  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+
+---------
+Theorem 2
+---------
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+H = IntersectionOfLinesFromPoints({{B, C}, {F, G}})
+
+PerpendicularLines: [A, E], [D, H] - total ranking 169
+
+  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
+  SubproblemReducibility          weight = 150       ranking = 0.7       contribution = 105       
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 3         contribution = -15       
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  SpecificConstructions           weight = 1         ranking = -20       contribution = -20       
+  NumberOfTheorems                weight = -1        ranking = 35        contribution = -35       

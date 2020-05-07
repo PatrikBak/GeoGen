@@ -1,0 +1,18 @@
+﻿Constructions:
+
+ IntersectionOfLinesFromPoints
+ Median
+
+Initial configuration:
+
+ Triangle: A, B, C
+ D = Incenter(A, B, C)
+ E = PerpendicularProjectionOnLineFromPoints(D, B, C)
+ F = PerpendicularProjectionOnLineFromPoints(D, C, A)
+ G = PerpendicularProjectionOnLineFromPoints(D, A, B)
+
+Iterations: 1
+MaximalPoints: 1
+MaximalLines: 1
+MaximalCircles: 0
+GenerateOnlySymmetricConfigurations: false

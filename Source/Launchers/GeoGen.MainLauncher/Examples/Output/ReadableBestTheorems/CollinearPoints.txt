@@ -1,0 +1,18 @@
+---------
+Theorem 1
+---------
+
+Triangle: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
+G = Incenter({D, E, F})
+
+CollinearPoints: A, D, G - total ranking 176.5
+
+  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
+  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
+  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
+  Repetition                      weight = -1        ranking = 16        contribution = -16       
+  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
+  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
