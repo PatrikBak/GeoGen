@@ -648,7 +648,7 @@ namespace GeoGen.MainLauncher
             // Take the individual rankings ordered by the total contribution (ASC) and then the aspect name
             => ranking.Rankings.OrderBy(pair => (-pair.Value.Contribution, pair.Key.ToString()))
                 // Add each on an individual line with info about the weight
-                .Select(pair => $"  {pair.Key,-25}weight = {pair.Value.Weight.ToStringWithDecimalDot(),-10}" +
+                .Select(pair => $"  {pair.Key,-32}weight = {pair.Value.Weight.ToStringWithDecimalDot(),-10}" +
                     // The ranking
                     $"ranking = {pair.Value.Ranking.ToStringWithDecimalDot(),-10}" +
                     // And the total contribution
