@@ -61,11 +61,6 @@ namespace GeoGen.DrawingLauncher
         public string PostcompilationCommand { get; }
 
         /// <summary>
-        /// Indicates whether we should log the output provided by the compilation and post-compilation command.
-        /// </summary>
-        public bool LogCommandOutput { get; }
-
-        /// <summary>
         /// The number of pictures that are drawn for a single configuration in order to find the best looking one.
         /// </summary>
         public int NumberOfPictures { get; }
@@ -85,7 +80,6 @@ namespace GeoGen.DrawingLauncher
         /// <param name="includeRanking"><inheritdoc cref="IncludeRanking" path="/summary"/></param>
         /// <param name="metapostCompilationCommand"><inheritdoc cref="MetapostCompilationCommand" path="/summary"/></param>
         /// <param name="metapostCompilationArguments"><inheritdoc cref="MetapostCompilationArguments" path="/summary"/></param>
-        /// <param name="logCommandOutput"><inheritdoc cref="LogCommandOutput" path="/summary"/></param>
         /// <param name="numberOfPictures"><inheritdoc cref="NumberOfPictures" path="/summary"/></param>
         public MetapostDrawerSettings(MetapostDrawingData drawingData,
                                       string metapostCodeFilePath,
@@ -109,7 +103,6 @@ namespace GeoGen.DrawingLauncher
             MetapostCompilationArguments = metapostCompilationArguments ?? throw new ArgumentNullException(nameof(metapostCompilationArguments));
             PostcompilationCommand = postcompilationCommand;
             RankingTableMacro = rankingTableMacro ?? throw new ArgumentNullException(nameof(rankingTableMacro));
-            LogCommandOutput = logCommandOutput;
             NumberOfPictures = numberOfPictures;
 
             // Ensure there are some pictures

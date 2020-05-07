@@ -1,0 +1,59 @@
+{
+  "LoggingSettings": {
+    "Loggers": [
+      {
+        "LoggerName": "ConsoleLogger",
+        "LogOutputLevel": "Info",
+        "IncludeLoggingOrigin": false,
+        "IncludeTime": false
+      },
+      {
+        "LoggerName": "FileLogger",
+        "FileLogPath": "log.txt",
+        "LogOutputLevel": "Debug",
+        "IncludeLoggingOrigin": true,
+        "IncludeTime": true
+      }
+    ]
+  },
+  "MetapostDrawerSettings": {
+    "DrawingData": {
+      "ScaleVariable": "u",
+      "ShiftLength": 0.1,
+      "MinimalWidthForClipping": 2.5,
+      "MinimalHeightForClipping": 2.5,
+      "MinimalAngleOfClippedCircleArc": 60,
+      "PointBoundingBoxScale": 1.2,
+      "PointLabelMacro": "LabelPoint",
+      "PointMarkMacros": {
+        "AuxiliaryObject": "PointMarkAuxiliaryStyle",
+        "NormalObject": "PointMarkNormalStyle",
+        "TheoremObject": "PointMarkTheoremStyle"
+      },
+      "LineSegmentMacros": {
+        "AuxiliaryObject": "LineSegmentAuxiliaryStyle",
+        "NormalObject": "LineSegmentNormalStyle",
+        "TheoremObject": "LineSegmentTheoremStyle"
+      },
+      "CircleMacros": {
+        "AuxiliaryObject": "CircleAuxiliaryStyle",
+        "NormalObject": "CircleNormalStyle",
+        "TheoremObject": "CircleTheoremStyle"
+      },
+      "TextMacro": "TexTextOnTheRight"
+    },
+    "MetapostCodeFilePath": "figures.mp",
+    "MetapostMacroLibraryPath": "macros.mp",
+    "ConstructionTextMacroPrefix": "_Text",
+    "RankingTableMacro": "RankingTable",
+    "IncludeRanking": true,
+    "MetapostCompilationCommand": "mpost",
+    "MetapostCompilationArguments": "-numbersystem=double -interaction=nonstopmode -halt-on-error -s prologues=3",
+    "PostcompilationCommand": null,
+    "NumberOfPictures": 1000
+  },
+  "DrawingRuleProviderSettings": {
+    "FilePath": "../../../Data/drawing_rules.txt"
+  },
+  "ReorderObjects": true
+}
