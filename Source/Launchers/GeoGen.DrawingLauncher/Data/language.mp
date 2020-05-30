@@ -33,7 +33,7 @@ def ParallelLineToLineFromPoints_Text(expr l,A,B,C) =
 	"Let~$" & l & "$ be the line through $" & A & "$ parallel to $" & B & C & "$. "
 enddef;
 
-def PerpendicularLineAtPointOfLine_Text(expr l,A,B) = 
+def PerpendicularLine_Text(expr l,A,B) = 
 	"Let~$" & l & "$ be the line through~$" & A & "$ such that~$" & l & " \perp " & A & B & "$. "		
 enddef;
 
@@ -41,12 +41,16 @@ def PerpendicularLineToLineFromPoints_Text(expr l,A,B,C) =
 	"Let~$" & l & "$ be the line through $" & A & "$ perpendicular to $" & B & C & "$. "
 enddef;
 
+def PerpendicularLineAtPointOfLine_Text(expr l,A,B) = 
+	"Let~$" & l & "$ be the line through $" & A & "$ perpendicular to $" & A & B & "$. "
+enddef;
+
 def PerpendicularBisector_Text(expr l,A,B) = 
 	"Let~$" & l & "$ be the perpendicular bisector of the segment~$" & A & B & "$. "
 enddef;
 
 def TangentLine_Text(expr l,A,B,C) = 
-	"Let~$" & l & "$ be the line tanget to circle~$" & A & B & C & "$ at~$" & A & "$. "
+	"Let~$" & l & "$ be the line tangent to circle~$" & A & B & C & "$ at~$" & A & "$. "
 enddef;
 
 def InternalAngleBisector_Text(expr l,A,B,C) = 
@@ -132,7 +136,6 @@ enddef;
 def CircleWithDiameter_Text(expr c,A,B) = 
 	"Let~$" & c & "$ be the circle with a~diameter~$" & A & B & "$. "		
 enddef;
-
 %%%%%%%%%%%% THEOREMS %%%%%%%%%%%%
 
 def EqualLineSegments_Text(expr k,l) =
