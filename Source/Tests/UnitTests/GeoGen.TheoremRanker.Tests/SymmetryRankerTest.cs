@@ -186,7 +186,6 @@ namespace GeoGen.TheoremRanker.Tests
             rank.Rounded().Should().Be((3d / 9).Rounded());
         }
 
-
         [Test]
         public void Test_Quadrilateral_With_Very_Strong_Partial_Symmetry()
         {

@@ -6,19 +6,34 @@ Triangle: A, B, C
 D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
 E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
 F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
-G = Incenter({D, E, F})
+G = Circumcenter({A, B, C})
 
-PerpendicularLines: [A, B], [C, G] - total ranking 195.25
+PerpendicularLines: [A, G], [E, F] - total ranking 4282.33
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.88      contribution = 131.25    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 1         contribution = 1000      
+  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
 
 ---------
 Theorem 2
+---------
+
+Triangle: A, B, C
+D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
+E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
+F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
+G = Circumcenter({A, E, F})
+
+PerpendicularLines: [B, C], [D, G] - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+---------
+Theorem 3
 ---------
 
 Triangle: A, B, C
@@ -28,11 +43,27 @@ F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
 G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
 H = IntersectionOfLinesFromPoints({{B, C}, {F, G}})
 
-PerpendicularLines: [A, E], [D, H] - total ranking 169
+PerpendicularLines: [A, E], [D, H] - total ranking 3929.33
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.7       contribution = 105       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 3         contribution = -15       
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  SpecificConstructions           weight = 1         ranking = -20       contribution = -20       
-  NumberOfTheorems                weight = -1        ranking = 35        contribution = -35       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.66      contribution = 660       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
+  NumberOfTheorems                weight = -1        ranking = 34        contribution = -34       
+
+---------
+Theorem 4
+---------
+
+Triangle: A, B, C
+D = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+H = IntersectionOfLinesFromPoints({{B, D}, {F, G}})
+
+PerpendicularLines: [B, D], [C, H] - total ranking 551
+
+  Level                           weight = 1000      ranking = 0.66      contribution = 660       
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 7         contribution = -70       

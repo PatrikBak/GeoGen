@@ -141,6 +141,42 @@ namespace GeoGen.Core
                     // Enumerate
                     .ToArray());
 
+        /// <summary>
+        /// Calculates the levels of objects defined as follows: 
+        /// <list type="number">
+        /// <item><see cref="LooseObjects"/> have levels of 0.</item>
+        /// <item><see cref="ConstructedObjects"/> have levels calculated like this:
+        /// If a constructed object has flattened argument objects o1,...,on, then the level
+        /// is equal to the maximal level of the objects o1, ..., on, plus 1.
+        /// </item>
+        /// </list>
+        /// </summary>
+        /// <returns>The dictionary containing object levels.</returns>
+        public IReadOnlyDictionary<ConfigurationObject, int> CalculateObjectLevels()
+        {
+            // Prepare a result
+            var levels = new Dictionary<ConfigurationObject, int>();
+
+            // Loose objects have a level of 0
+            LooseObjects.ForEach(looseObject => levels.Add(looseObject, 0));
+
+            // Calculate the levels of constructed objects
+            ConstructedObjects
+                // In order to calculate the level of a given one 
+                .Select(constructedObject => (constructedObject, level:
+                    // Take its arguments 
+                    constructedObject.PassedArguments.FlattenedList
+                    // Find their levels
+                    .Select(argumentObject => levels[argumentObject])
+                    // And take the maximal one, plus 1
+                    .Max() + 1))
+                // Add the calculated levels to the level dictionary
+                .ForEach(pair => levels.Add(pair.constructedObject, pair.level));
+
+            // Return the result
+            return levels;
+        }
+
         #endregion
 
         #region Public static methods

@@ -49,221 +49,173 @@ G = Incenter({D, E, F})
 
 Interesting theorems:
 
- 1. PerpendicularLines: [A, B], [C, G] - total ranking 195.25
+ 1. ConcyclicPoints: C, D, E, G - total ranking 4128.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.88      contribution = 131.25    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 5         contribution = -50       
 
- 2. PerpendicularLines: [A, C], [B, G] - total ranking 195.25
+ 2. ConcyclicPoints: A, E, F, G - total ranking 4128.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.88      contribution = 131.25    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 5         contribution = -50       
 
- 3. PerpendicularLines: [A, G], [B, C] - total ranking 195.25
+ 3. ConcyclicPoints: B, D, F, G - total ranking 4128.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.88      contribution = 131.25    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 5         contribution = -50       
 
- 4. PerpendicularLines: [A, B], [F, G] - total ranking 185.88
+ 4. CollinearPoints: A, D, G - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 5. PerpendicularLines: [A, C], [E, G] - total ranking 185.88
+ 5. CollinearPoints: B, E, G - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 6. PerpendicularLines: [B, C], [D, G] - total ranking 185.88
+ 6. CollinearPoints: C, F, G - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 7. CollinearPoints: A, D, G - total ranking 176.5
+ 7. PerpendicularLines: [A, B], [F, G] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 8. CollinearPoints: B, E, G - total ranking 176.5
+ 8. PerpendicularLines: [A, B], [C, G] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 9. CollinearPoints: C, F, G - total ranking 176.5
+ 9. PerpendicularLines: [A, C], [E, G] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 10. ConcyclicPoints: C, D, E, G - total ranking 176.5
+ 10. PerpendicularLines: [A, C], [B, G] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 11. ConcyclicPoints: A, E, F, G - total ranking 176.5
+ 11. PerpendicularLines: [B, C], [D, G] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 12. ConcyclicPoints: B, D, F, G - total ranking 176.5
+ 12. PerpendicularLines: [A, G], [B, C] - total ranking 4118.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 13. PerpendicularLines: [B, F], [C, G] - total ranking 35.88
+ 13. PerpendicularLines: [B, F], [F, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 14. PerpendicularLines: [A, F], [C, G] - total ranking 35.88
+ 14. PerpendicularLines: [B, F], [C, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 15. PerpendicularLines: [B, G], [C, E] - total ranking 35.88
+ 15. PerpendicularLines: [A, F], [F, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 16. PerpendicularLines: [A, E], [B, G] - total ranking 35.88
+ 16. PerpendicularLines: [A, F], [C, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 17. PerpendicularLines: [A, G], [C, D] - total ranking 35.88
+ 17. PerpendicularLines: [C, E], [E, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 18. PerpendicularLines: [A, G], [B, D] - total ranking 35.88
+ 18. PerpendicularLines: [B, G], [C, E] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.81      contribution = 121.88    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 19. PerpendicularLines: [B, F], [F, G] - total ranking 26.5
+ 19. PerpendicularLines: [A, E], [E, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 20. PerpendicularLines: [A, F], [F, G] - total ranking 26.5
+ 20. PerpendicularLines: [A, E], [B, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 21. PerpendicularLines: [C, E], [E, G] - total ranking 26.5
+ 21. PerpendicularLines: [C, D], [D, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 22. PerpendicularLines: [A, E], [E, G] - total ranking 26.5
+ 22. PerpendicularLines: [A, G], [C, D] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 23. PerpendicularLines: [C, D], [D, G] - total ranking 26.5
+ 23. PerpendicularLines: [B, D], [D, G] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40       
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       
 
- 24. PerpendicularLines: [B, D], [D, G] - total ranking 26.5
+ 24. PerpendicularLines: [A, G], [B, D] - total ranking 785.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.75      contribution = 112.5     
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 6         contribution = -30       
-  NumberOfTheorems                weight = -1        ranking = 40        contribution = -40
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60
 
 ---------------
 Configuration 6
@@ -280,9 +232,29 @@ Proved theorems:
  1. EqualLineSegments: A, G, B, G - trivial consequence of the object's construction
  2. EqualLineSegments: A, G, C, G - trivial consequence of the object's construction
  3. EqualLineSegments: B, G, C, G - trivial consequence of the object's construction
- 4. PerpendicularLines: [A, G], [E, F] - can be stated without D
- 5. PerpendicularLines: [B, G], [D, F] - can be stated without E
- 6. PerpendicularLines: [C, G], [D, E] - can be stated without F
+
+Interesting theorems:
+
+ 4. PerpendicularLines: [A, G], [E, F] - total ranking 4282.33
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 1         contribution = 1000      
+  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
+
+ 5. PerpendicularLines: [B, G], [D, F] - total ranking 4282.33
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 1         contribution = 1000      
+  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
+
+ 6. PerpendicularLines: [C, G], [D, E] - total ranking 4282.33
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 1         contribution = 1000      
+  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30
 
 ---------------
 Configuration 7
@@ -296,29 +268,107 @@ G = Circumcenter({A, B, D})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, G - can be stated without E, F
- 2. CollinearPoints: A, F, G - can be stated without E
- 3. CollinearPoints: B, F, G - can be stated without E
+ 1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+  1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+ 2. CollinearPoints: A, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+
+  2.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+  2.2. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+    2.2.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+ 3. CollinearPoints: B, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+
+  3.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+  3.2. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+    3.2.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
  4. EqualLineSegments: A, G, B, G - trivial consequence of the object's construction
  5. EqualLineSegments: A, G, D, G - trivial consequence of the object's construction
- 6. EqualLineSegments: A, G, E, G - can be stated without F
+ 6. EqualLineSegments: A, G, E, G - consequence of ObjectSpecificRules\RightTriangle\thales_1.txt (1)
+
+  6.1. EqualObjects: G, Midpoint({A, B}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint.txt (1)
+
+    6.1.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+      6.1.1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+    6.1.2. EqualLineSegments: A, G, B, G - trivial consequence of the object's construction
+
+  6.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
  7. EqualLineSegments: B, G, D, G - trivial consequence of the object's construction
- 8. EqualLineSegments: B, G, E, G - can be stated without F
- 9. EqualLineSegments: D, G, E, G - can be stated without F
- 10. PerpendicularLines: [A, G], [C, F] - can be stated without E
- 11. PerpendicularLines: [B, G], [C, F] - can be stated without E
- 12. PerpendicularLines: [C, F], [F, G] - can be stated without E
+ 8. EqualLineSegments: B, G, E, G - consequence of ObjectSpecificRules\RightTriangle\thales_1.txt (1)
+
+  8.1. EqualObjects: G, Midpoint({A, B}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint.txt (1)
+
+    8.1.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+      8.1.1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+    8.1.2. EqualLineSegments: A, G, B, G - trivial consequence of the object's construction
+
+  8.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+ 9. EqualLineSegments: D, G, E, G - reformulation of a theorem using equalities
+
+  9.1. EqualLineSegments: Circumcenter({A, D, E}), D, Circumcenter({A, D, E}), E - trivial consequence of the object's construction
+  9.2. EqualObjects: G, Circumcenter({A, D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\circumcenter.txt (1)
+
+    9.2.1. EqualLineSegments: A, G, D, G - trivial consequence of the object's construction
+    9.2.2. EqualLineSegments: A, G, E, G - consequence of ObjectSpecificRules\RightTriangle\thales_1.txt (1)
+
+      9.2.2.1. EqualObjects: G, Midpoint({A, B}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\midpoint.txt (1)
+
+        9.2.2.1.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+          9.2.2.1.1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+        9.2.2.1.2. EqualLineSegments: A, G, B, G - trivial consequence of the object's construction
+
+      9.2.2.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+ 10. PerpendicularLines: [A, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+
+  10.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+    10.1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+  10.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
+
+ 11. PerpendicularLines: [B, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+
+  11.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+    11.1.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+  11.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
+
+ 12. PerpendicularLines: [C, F], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+
+  12.1. CollinearPoints: B, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+
+    12.1.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+    12.1.2. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1)
+
+      12.1.2.1. PerpendicularLines: [A, D], [B, D] - trivial consequence of the object's construction
+
+  12.2. PerpendicularLines: [B, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+
+    12.2.1. CollinearPoints: A, B, G - consequence of ObjectSpecificRules\RightTriangle\thales_2.txt (1) - theorem 12.1.2.
+    12.2.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
 
 Interesting theorems:
 
- 13. ConcyclicPoints: D, E, F, G - total ranking 38.13
+ 13. ConcyclicPoints: D, E, F, G - total ranking 826.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.69      contribution = 103.13    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 4         contribution = -20       
-  NumberOfTheorems                weight = -1        ranking = 29        contribution = -29
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30
 
 ---------------
 Configuration 8
@@ -332,55 +382,145 @@ G = Circumcenter({A, D, E})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, G - can be stated without F
+ 1. CollinearPoints: A, B, G - reformulation of a theorem using equalities
+
+  1.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+  1.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+    1.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+      1.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+      1.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
  2. CollinearPoints: A, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-  2.1. CollinearPoints: A, B, F - true in a previous configuration
-  2.2. CollinearPoints: B, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  2.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+  2.2. CollinearPoints: A, B, G - reformulation of a theorem using equalities
 
-    2.2.1. CollinearPoints: A, B, F - true in a previous configuration - theorem 2.1.
-    2.2.2. CollinearPoints: A, B, G - can be stated without F
+    2.2.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+    2.2.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+      2.2.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+        2.2.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+        2.2.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
 
  3. CollinearPoints: B, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-  3.1. CollinearPoints: A, B, F - true in a previous configuration
-  3.2. CollinearPoints: A, B, G - can be stated without F
+  3.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+  3.2. CollinearPoints: A, B, G - reformulation of a theorem using equalities
 
- 4. EqualLineSegments: A, G, B, G - can be stated without F
+    3.2.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+    3.2.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+      3.2.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+        3.2.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+        3.2.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+ 4. EqualLineSegments: A, G, B, G - reformulation of a theorem using equalities
+
+  4.1. EqualLineSegments: A, G, G, PointReflection(A, G) - trivial consequence of the object's construction
+  4.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+    4.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+      4.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+      4.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
  5. EqualLineSegments: A, G, D, G - trivial consequence of the object's construction
  6. EqualLineSegments: A, G, E, G - trivial consequence of the object's construction
- 7. EqualLineSegments: B, G, D, G - can be stated without F
- 8. EqualLineSegments: B, G, E, G - can be stated without F
+ 7. EqualLineSegments: B, G, D, G - reformulation of a theorem using equalities
+
+  7.1. EqualLineSegments: B, Circumcenter({A, B, D}), Circumcenter({A, B, D}), D - trivial consequence of the object's construction
+  7.2. EqualObjects: G, Circumcenter({A, B, D}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\circumcenter.txt (1)
+
+    7.2.1. EqualLineSegments: A, G, B, G - reformulation of a theorem using equalities
+
+      7.2.1.1. EqualLineSegments: A, G, G, PointReflection(A, G) - trivial consequence of the object's construction
+      7.2.1.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+        7.2.1.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+          7.2.1.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+          7.2.1.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+    7.2.2. EqualLineSegments: A, G, D, G - trivial consequence of the object's construction
+
+ 8. EqualLineSegments: B, G, E, G - reformulation of a theorem using equalities
+
+  8.1. EqualLineSegments: B, Circumcenter({A, B, E}), Circumcenter({A, B, E}), E - trivial consequence of the object's construction
+  8.2. EqualObjects: G, Circumcenter({A, B, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\circumcenter.txt (1)
+
+    8.2.1. EqualLineSegments: A, G, B, G - reformulation of a theorem using equalities
+
+      8.2.1.1. EqualLineSegments: A, G, G, PointReflection(A, G) - trivial consequence of the object's construction
+      8.2.1.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+        8.2.1.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+          8.2.1.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+          8.2.1.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+    8.2.2. EqualLineSegments: A, G, E, G - trivial consequence of the object's construction
+
  9. EqualLineSegments: D, G, E, G - trivial consequence of the object's construction
  10. PerpendicularLines: [A, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  10.1. CollinearPoints: A, B, G - can be stated without F
-  10.2. PerpendicularLines: [A, B], [C, F] - true in a previous configuration
+  10.1. CollinearPoints: A, B, G - reformulation of a theorem using equalities
+
+    10.1.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+    10.1.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+      10.1.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+        10.1.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+        10.1.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+  10.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
 
  11. PerpendicularLines: [B, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  11.1. CollinearPoints: A, B, G - can be stated without F
-  11.2. PerpendicularLines: [A, B], [C, F] - true in a previous configuration
+  11.1. CollinearPoints: A, B, G - reformulation of a theorem using equalities
+
+    11.1.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+    11.1.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+      11.1.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+        11.1.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+        11.1.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+  11.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
 
  12. PerpendicularLines: [C, F], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
   12.1. CollinearPoints: B, F, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-    12.1.1. CollinearPoints: A, B, F - true in a previous configuration
-    12.1.2. CollinearPoints: A, B, G - can be stated without F
+    12.1.1. CollinearPoints: A, B, F - trivial consequence of the object's construction
+    12.1.2. CollinearPoints: A, B, G - reformulation of a theorem using equalities
 
-  12.2. PerpendicularLines: [B, F], [C, F] - true in a previous configuration
+      12.1.2.1. CollinearPoints: A, G, PointReflection(A, G) - trivial consequence of the object's construction
+      12.1.2.2. EqualObjects: B, PointReflection(A, G) - consequence of ObjectSpecificRules\EqualityRules\Constructions\opposite_point.txt (1) [adjusted by declaring OppositePointOnCircumcircle]
+
+        12.1.2.2.1. EqualObjects: B, OppositePointOnCircumcircle(A, {D, E}) - consequence of ObjectSpecificRules\EqualityRules\DeclaredObjectFree\opposite_point_on_circumcircle.txt (1)
+
+          12.1.2.2.1.1. ConcyclicPoints: A, B, D, E - true in a previous configuration
+          12.1.2.2.1.2. PerpendicularLines: [A, E], [B, E] - trivial consequence of the object's construction
+
+  12.2. PerpendicularLines: [B, G], [C, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+
+    12.2.1. CollinearPoints: A, B, G - reformulation of a theorem using equalities - theorem 12.1.2.
+    12.2.2. PerpendicularLines: [A, B], [C, F] - trivial consequence of the object's construction
 
 Interesting theorems:
 
- 13. ConcyclicPoints: D, E, F, G - total ranking 38.13
+ 13. ConcyclicPoints: D, E, F, G - total ranking 826.62
 
-  SubproblemReducibility          weight = 150       ranking = 0.69      contribution = 103.13    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Symmetry                        weight = 450       ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 4         contribution = -20       
-  NumberOfTheorems                weight = -1        ranking = 29        contribution = -29
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30
 
 ---------------
 Configuration 9
@@ -394,84 +534,81 @@ G = Circumcenter({A, E, F})
 
 Proved theorems:
 
- 1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-  1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-  1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
- 2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
- 3. ConcurrentLines: [B, E], [C, F], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
-
-  3.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-    3.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-    3.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-  3.2. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration - theorem 3.1.1.
-
- 4. EqualLineSegments: A, G, E, G - trivial consequence of the object's construction
- 5. EqualLineSegments: A, G, F, G - trivial consequence of the object's construction
- 6. EqualLineSegments: E, G, F, G - trivial consequence of the object's construction
- 7. PerpendicularLines: [A, G], [B, C] - can be stated without D
- 8. PerpendicularLines: [A, G], [B, D] - true because of the symmetry of the configuration
-
-  8.1. PerpendicularLines: [A, G], [C, D] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
-
-    8.1.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-      8.1.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-      8.1.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-    8.1.2. PerpendicularLines: [A, D], [C, D] - true in a previous configuration
-
- 9. PerpendicularLines: [A, G], [C, D] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
-
-  9.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-    9.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-    9.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-  9.2. PerpendicularLines: [A, D], [C, D] - true in a previous configuration
-
- 10. PerpendicularLines: [B, C], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
-
-  10.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-    10.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-    10.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-  10.2. PerpendicularLines: [A, D], [B, C] - true in a previous configuration
-
- 11. PerpendicularLines: [B, D], [D, G] - true because of the symmetry of the configuration
-
-  11.1. PerpendicularLines: [C, D], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
-
-    11.1.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-      11.1.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-      11.1.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-    11.1.2. PerpendicularLines: [A, D], [C, D] - true in a previous configuration
-
- 12. PerpendicularLines: [C, D], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
-
-  12.1. CollinearPoints: A, D, G - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (1)
-
-    12.1.1. ConcurrentLines: [A, D], [B, E], [C, F] - true in a previous configuration
-    12.1.2. ConcurrentLines: [A, G], [B, E], [C, F] - can be stated without D
-
-  12.2. PerpendicularLines: [A, D], [C, D] - true in a previous configuration
+ 1. EqualLineSegments: A, G, E, G - trivial consequence of the object's construction
+ 2. EqualLineSegments: A, G, F, G - trivial consequence of the object's construction
+ 3. EqualLineSegments: E, G, F, G - trivial consequence of the object's construction
 
 Interesting theorems:
 
- 13. ConcyclicPoints: D, E, F, G - total ranking 188.13
+ 4. ConcyclicPoints: D, E, F, G - total ranking 4159.95
 
-  Symmetry                        weight = 450       ranking = 0.33      contribution = 150       
-  SubproblemReducibility          weight = 150       ranking = 0.69      contribution = 103.13    
-  SpecificConstructions           weight = 1         ranking = 0         contribution = 0         
-  Repetition                      weight = -1        ranking = 16        contribution = -16       
-  NumberOfCyclicQuadrilaterals    weight = -5        ranking = 4         contribution = -20       
-  NumberOfTheorems                weight = -1        ranking = 29        contribution = -29
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
+
+ 5. CollinearPoints: A, D, G - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 6. ConcurrentLines: [B, E], [C, F], [D, G] - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 7. ConcurrentLines: [A, G], [B, E], [C, F] - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 8. PerpendicularLines: [B, C], [D, G] - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 9. PerpendicularLines: [A, G], [B, C] - total ranking 4149.95
+
+  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 10. PerpendicularLines: [C, D], [D, G] - total ranking 816.62
+
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 11. PerpendicularLines: [A, G], [C, D] - total ranking 816.62
+
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 12. PerpendicularLines: [B, D], [D, G] - total ranking 816.62
+
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
+
+ 13. PerpendicularLines: [A, G], [B, D] - total ranking 816.62
+
+  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
+  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
+  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40
 
 ----------------
 Configuration 10
@@ -491,6 +628,6 @@ Proved theorems:
 
 ------------------------------------------------
 Generated configurations: 10
-Configurations with an interesting theorem: 4
-Interesting theorems: 27
-Run-time: 1757 ms
+Configurations with an interesting theorem: 5
+Interesting theorems: 39
+Run-time: 1593 ms

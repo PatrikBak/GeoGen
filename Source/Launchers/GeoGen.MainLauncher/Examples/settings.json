@@ -72,24 +72,12 @@
       "Incidence"
     ]
   },
-  "TheoremRankingSettings": {
-    "TheoremRankerSettings": {
-      "RankingCoefficients": {
-        "Symmetry": 450,
-        "SubproblemReducibility": 150,
-        "NumberOfCyclicQuadrilaterals": -5,
-        "Repetition": -1,
-        "NumberOfTheorems": -1,
-        "SpecificConstructions": 1
-      }
-    },
-    "SpecificConstructionsRankerSettings": {
-      "ConstructionRankings": {
-        "IntersectionOfLineAndLineFromPoints": -20,
-        "IntersectionOfLines": -20,
-        "IntersectionOfLinesFromPoints": -20,
-        "TangentLine": 5
-      }
+  "TheoremRankerSettings": {
+    "RankingCoefficients": {
+      "Symmetry": 10000,
+      "Level": 1000,
+      "NumberOfCyclicQuadrilaterals": -10,
+      "NumberOfTheorems": -1
     }
   },
   "GenerationSettings": {

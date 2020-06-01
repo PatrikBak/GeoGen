@@ -14,53 +14,41 @@ namespace GeoGen.TheoremRanker
         Symmetry,
 
         /// <summary>
-        /// The degree to which a theorem can be stated in a simpler configuration. The coefficient is calculated as follows:
+        /// The aggregated level of the objects of the configuration where the ranked theorem holds. The metrics is based
+        /// on <see cref="Configuration.CalculateObjectLevels"/>. 
         /// <para>
-        /// First we assign a 'level' to each object as follows:
+        /// The basic idea is the following: Problems with smaller levels are easier to understand, and therefore usually prettier. 
+        /// If they have enough objects, it means they are even more difficult.
+        /// </para>
+        /// <para>
+        /// The value is calculated as follows: First we calculate the sum of squares of the object levels, call it S. 
+        /// Then, let n be the number of constructed objects. It holds that n <= S <= 1^2 + ... + n^2 = n(n+1)(2n+1)/6.
+        /// The final result is equal 1 for ń<=1 and otherwise 1 - (S-n)/ (n(n+1)(2n+1)/6 - n), which can be 'simplifed'
+        /// to 1 - 6 (S-n) / (n(n-1)(2n+5)).
+        /// </para>
+        /// <para>
         /// <list type="bullet">
-        /// <item>If an object is a <see cref="LooseConfigurationObject"/>, then its level is 0.</item>
-        /// <item>If an object is a <see cref="ConstructedConfigurationObject"/>, then its level is equal to the maximal
-        /// level of its inner objects plus 1.</item>
+        /// <item>It can be seen that the ranking is always in the interval [0,1].</item>
+        /// <item>The idea behind squaring levels is to punish smaller levels more.</item>
+        /// <item>The value is 1 - something in order to keep the invariant that the higher the level the better the problem.</item>
+        /// <item>This ranking takes into account only the configuration where the theorem holds.</item>
         /// </list>
-        /// The idea clearly is to depict how far a constructed object is from loose objects. This can then be used in a way
-        /// that we take the theorem's inner <see cref="ConfigurationObject"/>s and average their levels.
-        /// <para>
-        /// Furthermore, the level calculated like this is always in the interval [1, NumberOfConstructedObjects]. To make 
-        /// it suitable to compare configurations with different numbers of constructed objects we will normalize this rank
-        /// by dividing it by the number of constructed objects.
-        /// </para>
-        /// <para>
-        /// Finally, the ranking will be equal to 1 - this coefficient so that the higher the ranking we have the better the 
-        /// theorem.
-        /// </para>
         /// </para>
         /// </summary>
-        SubproblemReducibility,
+        Level,
 
         /// <summary>
-        /// The total number of theorems of the configuration. The idea behind this metrics is that if we have more theorems in
-        /// a configuration, then it usually suggests the problem is not that difficult, because we can make lots of conclusions. 
-        /// This ranking might suggests a lot when there are very few theorems.
+        /// The total number of theorems of the configuration, minus the one we're ranking. The idea behind this metrics 
+        /// is that if we have more theorems in a configuration, then it usually suggests the problem is not that difficult,
+        /// because we can make lots of conclusions. This ranking might suggests a lot when there are very few theorems.
         /// </summary>
         NumberOfTheorems,
 
         /// <summary>
-        /// The number of <see cref="TheoremType.ConcyclicPoints"/> theorems. The idea behind this metrics is that in configurations 
-        /// with more concyclic points it is usually easier to prove things, because of their powerful properties.
+        /// The number of <see cref="TheoremType.ConcyclicPoints"/> theorems, potentially minus one we're ranking (if it is
+        /// about proving concyclic points). The idea behind this metrics is that in configurations with more concyclic points 
+        /// it is usually easier to prove things, because of their powerful properties.
         /// </summary>
-        NumberOfCyclicQuadrilaterals,
-
-        /// <summary>
-        /// The coefficient taking into account used <see cref="Construction"/>s. The values are taken from 
-        /// <see cref="SpecificConstructionsRankerSettings.ConstructionRankings"/> and the final ranking is 
-        /// the sum of these rankings over the configuration's constructed objects.
-        /// </summary>
-        SpecificConstructions,
-
-        /// <summary>
-        /// The coefficient taking into account used <see cref="Construction"/>s in a way that if a construction is used 'n' times,
-        /// then its repetition coefficient is calculated as (n-1)^4. The idea is to punish constructions used more than 2 times.
-        /// </summary>
-        Repetition
+        NumberOfCyclicQuadrilaterals
     }
 }

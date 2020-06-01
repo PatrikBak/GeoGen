@@ -776,17 +776,11 @@ namespace GeoGen.DrawingLauncher
                 // A local function that returns nice names of individual rankings
                 static string RankedAspectName(RankedAspect aspect) => aspect switch
                 {
-                    // Reducibility
-                    RankedAspect.SubproblemReducibility => "Subproblem reducibility",
-
                     // Theorems count
                     RankedAspect.NumberOfTheorems => "Number of theorems",
 
                     // Cyclic quadrilaterals
                     RankedAspect.NumberOfCyclicQuadrilaterals => "Cyclic quadrilaterals",
-
-                    // Specific constructions
-                    RankedAspect.SpecificConstructions => "Specific constructions",
 
                     // By default use the string
                     _ => aspect.ToString()

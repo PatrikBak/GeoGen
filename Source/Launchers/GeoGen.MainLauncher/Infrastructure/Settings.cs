@@ -58,9 +58,9 @@ namespace GeoGen.MainLauncher
         public TheoremFindingSettings TheoremFindingSettings { get; }
 
         /// <summary>
-        /// The settings for the theorem ranker module.
+        /// The settings for <see cref="TheoremRanker.TheoremRanker"/>.
         /// </summary>
-        public TheoremRankingSettings TheoremRankingSettings { get; }
+        public TheoremRankerSettings TheoremRankerSettings { get; }
 
         /// <summary>
         /// The settings for the generator module.
@@ -122,7 +122,7 @@ namespace GeoGen.MainLauncher
         /// <param name="theoremSorterTypeResolverSettings">The settings for <see cref="TheoremSorterTypeResolver"/>.</param>
         /// <param name="problemGeneratorSettings">The settings for <see cref="ProblemGenerator.ProblemGenerator"/>.</param>
         /// <param name="theoremFindingSettings">The settings for the theorem finder module.</param>
-        /// <param name="theoremRankingSettings">The settings for the theorem ranker module.</param>
+        /// <param name="theoremRankerSettings">The settings for <see cref="TheoremRanker.TheoremRanker"/>.</param>
         /// <param name="generationSettings">The settings for the generator module.</param>
         /// <param name="traceConstructorFailures">Indicates whether tracing of constructor failures is on.</param>
         /// <param name="constructorFailureTracerSettings">The settings for <see cref="ConstructorFailureTracer"/>. This value can be null if we don't want to trace them.</param>
@@ -140,7 +140,7 @@ namespace GeoGen.MainLauncher
                         TheoremSorterTypeResolverSettings theoremSorterTypeResolverSettings,
                         ProblemGeneratorSettings problemGeneratorSettings,
                         TheoremFindingSettings theoremFindingSettings,
-                        TheoremRankingSettings theoremRankingSettings,
+                        TheoremRankerSettings theoremRankerSettings,
                         GenerationSettings generationSettings,
                         bool traceConstructorFailures,
                         ConstructorFailureTracerSettings constructorFailureTracerSettings,
@@ -160,7 +160,7 @@ namespace GeoGen.MainLauncher
             TheoremSorterTypeResolverSettings = theoremSorterTypeResolverSettings ?? throw new ArgumentNullException(nameof(theoremSorterTypeResolverSettings));
             ProblemGeneratorSettings = problemGeneratorSettings ?? throw new ArgumentNullException(nameof(problemGeneratorSettings));
             TheoremFindingSettings = theoremFindingSettings ?? throw new ArgumentNullException(nameof(theoremFindingSettings));
-            TheoremRankingSettings = theoremRankingSettings ?? throw new ArgumentNullException(nameof(theoremRankingSettings));
+            TheoremRankerSettings = theoremRankerSettings ?? throw new ArgumentNullException(nameof(theoremRankerSettings));
             GenerationSettings = generationSettings ?? throw new ArgumentNullException(nameof(generationSettings));
             TraceConstructorFailures = traceConstructorFailures;
             ConstructorFailureTracerSettings = constructorFailureTracerSettings;

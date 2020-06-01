@@ -9,7 +9,7 @@ namespace GeoGen.TheoremRanker
     {
         /// <inheritdoc/>
         public override double Rank(Theorem theorem, Configuration configuration, TheoremMap allTheorems)
-            // Simply return the number of theorems
-            => allTheorems.AllObjects.Count;
+            // Simply return the number of theorems, excluding the one we cannot prove
+            => allTheorems.AllObjects.Count - 1;
     }
 }

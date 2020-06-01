@@ -26,4 +26,12 @@
     <ProjectReference Include="..\..\Library\GeoGen.Utilities\GeoGen.Utilities.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Examples\Output\JsonBestTheorems\" />
+    <Folder Include="Examples\Output\JsonOutput\" />
+    <Folder Include="Examples\Output\ReadableBestTheorems\" />
+    <Folder Include="Examples\Output\ReadableWithoutProofs\" />
+    <Folder Include="Examples\Output\ReadableWithProofs\" />
+  </ItemGroup>
+
 </Project>

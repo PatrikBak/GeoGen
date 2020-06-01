@@ -12,17 +12,17 @@ namespace GeoGen.TheoremRanker
         /// Bindings for the dependencies from the TheoremRanker module.
         /// </summary>
         /// <param name="kernel">The kernel.</param>
-        /// <param name="settings">The settings for the module.</param>
+        /// <param name="settings">The settings for <see cref="TheoremRanker"/>.</param>
         /// <returns>The kernel for chaining.</returns>
-        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankingSettings settings)
+        public static IKernel AddTheoremRanker(this IKernel kernel, TheoremRankerSettings settings)
         {
             // Bind the ranker
-            kernel.Bind<ITheoremRanker>().To<TheoremRanker>().WithConstructorArgument(settings.TheoremRankerSettings);
+            kernel.Bind<ITheoremRanker>().To<TheoremRanker>().WithConstructorArgument(settings);
 
             #region Bind theorem rankers for individual ranked aspects
 
             // Bind aspect theorem rankers based on the aspects we're ranking
-            foreach (var rankedAspect in settings.TheoremRankerSettings.RankingCoefficients.Keys)
+            foreach (var rankedAspect in settings.RankingCoefficients.Keys)
             {
                 // Find the expected name of the class with the corresponding namespace
                 var classNameWithNamespace = $"{typeof(IAspectTheoremRanker).Namespace}.{rankedAspect}Ranker";
@@ -36,17 +36,6 @@ namespace GeoGen.TheoremRanker
 
                 // Otherwise do the binding
                 var binding = kernel.Bind(typeof(IAspectTheoremRanker)).To(theoremRankerType);
-
-                // In some cases there is a constructor argument
-                switch (rankedAspect)
-                {
-                    case RankedAspect.SpecificConstructions:
-
-                        // Bind with the argument from settings
-                        binding.WithConstructorArgument(settings.SpecificConstructionsRankerSettings);
-
-                        break;
-                }
             }
 
             #endregion

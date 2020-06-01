@@ -49,7 +49,7 @@ namespace GeoGen.TheoremFinder
                 {
                     // If the object is defined explicitly, then we simply ask the picture to do the job
                     if (objectWithPoints.DefinedByExplicitObject)
-                        return ((DefinableByPoints)contextualPicture.GetGeometricObject(objectWithPoints.ConfigurationObject));
+                        return (DefinableByPoints)contextualPicture.GetGeometricObject(objectWithPoints.ConfigurationObject);
 
                     // Otherwise we need to find the inner points
                     var innerPoints = objectWithPoints.Points

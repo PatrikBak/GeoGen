@@ -82,7 +82,7 @@ namespace GeoGen.MainLauncher
                 // And the theorem finder
                 .AddTheoremFinder(settings.TheoremFindingSettings)
                 // And the theorem ranker
-                .AddTheoremRanker(settings.TheoremRankingSettings)
+                .AddTheoremRanker(settings.TheoremRankerSettings)
                 // And the theorem prover and with its settings
                 .AddTheoremProver(new TheoremProvingSettings
                 (
