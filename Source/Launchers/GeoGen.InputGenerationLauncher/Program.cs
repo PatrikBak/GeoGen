@@ -93,8 +93,8 @@ namespace GeoGen.InputGenerationLauncher
             // Go through the all types of generated input files
             new[]
             {
-                TriangleTwoObjectsPlusTwoObjects(),
-                QuadrilateralAndTwoObjectsPlusTwoObjects()
+                TriangleTwoObjectsPlusThreeObjects(),
+                QuadrilateralAndTwoObjectsPlusTwoObjects(),
             }
             // Merge the inputs
             .Flatten()
@@ -151,10 +151,10 @@ namespace GeoGen.InputGenerationLauncher
         #region Experiments
 
         /// <summary>
-        /// An experiment where any triangle with two objects is extended by two more objects.
+        /// An experiment where any triangle with two objects is extended by three more objects.
         /// </summary>
         /// <returns>The enumerable of inputs.</returns>
-        private static IEnumerable<ProblemGeneratorInput> TriangleTwoObjectsPlusTwoObjects()
+        private static IEnumerable<ProblemGeneratorInput> TriangleTwoObjectsPlusThreeObjects()
         {
             // Create the loose objects
             var A = new LooseConfigurationObject(Point);
@@ -196,8 +196,8 @@ namespace GeoGen.InputGenerationLauncher
                     new Dictionary<ConfigurationObjectType, int>
                     {
                         // Points and lines are not limited
-                        { Point, 2 },
-                        { Line, 2 },
+                        { Point, 3 },
+                        { Line, 3 },
 
                         // We want at most 2 circles in total. More are not necessary, since circles
                         // never appear as construction arguments, only in theorems itself, and at most
