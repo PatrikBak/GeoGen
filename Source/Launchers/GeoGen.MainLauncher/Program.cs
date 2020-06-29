@@ -1,4 +1,5 @@
 ﻿using GeoGen.Infrastructure;
+using GeoGen.Utilities;
 using Ninject;
 using System;
 using System.Threading.Tasks;
@@ -24,6 +25,16 @@ namespace GeoGen.MainLauncher
                 var settings = arguments.Length > 0 ? SettingsLoader.LoadFromString<Settings>(arguments[0])
                     // Or from the default file settings.json
                     : await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
+
+                #region Clear best theorem folders
+
+                // Clear JSON best theorem folder
+                IOUtilities.ClearDirectoryIfItExists(settings.ProblemGenerationRunnerSettings.JsonBestTheoremFolder);
+
+                // Clear Readable best theorem folder
+                IOUtilities.ClearDirectoryIfItExists(settings.ProblemGenerationRunnerSettings.ReadableBestTheoremFolder);
+
+                #endregion
 
                 // Initialize the IoC system
                 await IoC.InitializeAsync(settings);
