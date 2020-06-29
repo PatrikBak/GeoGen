@@ -7,7 +7,6 @@ using GeoGen.TheoremProver;
 using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremRanker.RankedTheoremIO;
-using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using System;
 using System.Collections.Generic;
@@ -309,12 +308,8 @@ namespace GeoGen.MainLauncher
                 // If we are supposed to be handling best theorems, do so
                 if (writeBestTheorems)
                 {
-                    // If we should take just one theorem per configuration
-                    var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
-                            // Then take the first (which has the best ranking)
-                            ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
-                            // Otherwise all of them
-                            : analyzerOutput.InterestingTheorems)
+                    // Take the interesting theorems
+                    var theoremsToBeJudged = analyzerOutput.InterestingTheorems
                         // Group by type
                         .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type);
 
@@ -466,14 +461,6 @@ namespace GeoGen.MainLauncher
             // For every type and sorter
             foreach (var (type, sorter) in sorters)
             {
-                // Prepare the theorems to by written 
-                // If we should take one per configuration
-                var bestTheorems = _settings.TakeAtMostOneInterestingTheoremPerConfiguration
-                    // Call the helper extension method
-                    ? sorter.BestTheoremsOnePerConfiguration()
-                    // Otherwise take all of them
-                    : sorter.BestTheorems;
-
                 // If we should write readable output...
                 if (_settings.WriteReadableBestTheorems)
                 {
@@ -484,7 +471,7 @@ namespace GeoGen.MainLauncher
                     using var readableBestTheoremWriter = new StreamWriter(new FileStream(theoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
                     // Rewrite the file
-                    readableBestTheoremWriter.Write(RankedTheoremsToString(bestTheorems));
+                    readableBestTheoremWriter.Write(RankedTheoremsToString(sorter.BestTheorems));
                 }
 
                 // If we should write JSON output
@@ -494,7 +481,7 @@ namespace GeoGen.MainLauncher
                     var theoremFilePath = $"{Path.Combine(_settings.JsonBestTheoremFolder, type.ToString())}.json";
 
                     // Rewrite the JSON output
-                    _factory.Create(theoremFilePath).WriteEagerly(bestTheorems);
+                    _factory.Create(theoremFilePath).WriteEagerly(sorter.BestTheorems);
                 }
             }
         }

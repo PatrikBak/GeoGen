@@ -1,5 +1,4 @@
-﻿using GeoGen.TheoremSorter;
-using System;
+﻿using System;
 
 namespace GeoGen.MainLauncher
 {
@@ -105,12 +104,6 @@ namespace GeoGen.MainLauncher
         /// </summary>
         public bool LogProgress { get; }
 
-        /// <summary>
-        /// Indicates whether <see cref="ITheoremSorter"/> should track at most one interesting theorem per
-        /// configuration, the one with the highest ranking. Otherwise it tracks all of them.
-        /// </summary>
-        public bool TakeAtMostOneInterestingTheoremPerConfiguration { get; }
-
         #endregion
 
         #region Constructor
@@ -135,7 +128,6 @@ namespace GeoGen.MainLauncher
         /// <param name="writeInferenceRuleUsages"><inheritdoc cref="WriteInferenceRuleUsages" path="/summary"/></param>
         /// <param name="progressLoggingFrequency"><inheritdoc cref="ProgressLoggingFrequency" path="/summary"/></param>
         /// <param name="logProgress"><inheritdoc cref="LogProgress"/></param>
-        /// <param name="takeAtMostOneInterestingTheoremPerConfiguration"><inheritdoc cref="TakeAtMostOneInterestingTheoremPerConfiguration"/></param>
         public ProblemGenerationRunnerSettings(string readableOutputWithoutProofsFolder,
                                                bool writeReadableOutputWithoutProofs,
                                                string readableOutputWithProofsFolder,
@@ -152,8 +144,7 @@ namespace GeoGen.MainLauncher
                                                string inferenceRuleUsageFilePath,
                                                bool writeInferenceRuleUsages,
                                                int progressLoggingFrequency,
-                                               bool logProgress,
-                                               bool takeAtMostOneInterestingTheoremPerConfiguration)
+                                               bool logProgress)
         {
             ReadableOutputWithoutProofsFolder = readableOutputWithoutProofsFolder;
             WriteReadableOutputWithoutProofs = writeReadableOutputWithoutProofs;
@@ -172,7 +163,6 @@ namespace GeoGen.MainLauncher
             WriteInferenceRuleUsages = writeInferenceRuleUsages;
             ProgressLoggingFrequency = progressLoggingFrequency;
             LogProgress = logProgress;
-            TakeAtMostOneInterestingTheoremPerConfiguration = takeAtMostOneInterestingTheoremPerConfiguration;
 
             // Ensure that the output folder without proofs is set if we are supposed to use it
             if (writeReadableOutputWithoutProofs && readableOutputWithoutProofsFolder == null)

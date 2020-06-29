@@ -135,7 +135,7 @@ namespace GeoGen.OutputMergingLauncher
             var fileDataPaths = new Dictionary<TheoremFileData, string>();
 
             // Go through each theorem, one per configuration
-            foreach (var theorem in allTheoremSorter.BestTheoremsOnePerConfiguration())
+            foreach (var theorem in allTheoremSorter.BestTheorems)
             {
                 // Extract data
                 var fileData = TheoremFileData.FromRankedTheorem(theorem);

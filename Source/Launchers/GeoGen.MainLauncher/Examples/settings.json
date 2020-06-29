@@ -43,8 +43,7 @@
     "WriteJsonBestTheorems": true,
     "WriteBestTheoremsContinuously": false,
     "ProgressLoggingFrequency": 5,
-    "LogProgress": true,
-    "TakeAtMostOneInterestingTheoremPerConfiguration": true
+    "LogProgress": true
   },
   "TheoremSorterTypeResolverSettings": {
     "MaximalTrackedTheoremsPerType": 1000
