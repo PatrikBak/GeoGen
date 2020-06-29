@@ -16,6 +16,9 @@ namespace GeoGen.TheoremProver
     /// <item>Only objects from the original configuration or objects equal to them are used as available objects
     /// that are passed to <see cref="IObjectIntroducer.IntroduceObjects(IReadOnlyList{ConstructedConfigurationObject})"/>.
     /// This step is important to prevent perhaps even infinite explosion of object introduction.</item>
+    /// <para>Also, we use a simple theorem-based introduction. When are to prove that two lines are perpendicular, we
+    /// introduce their intersection point. Also, if we are to prove that three lines are concurrent, we their intersection
+    /// too, in three possible ways.</para>
     /// <item>Only objects that are not among <see cref="NormalizationHelper.AllObjects"/> are introduced.</item>
     /// <item>Only objects that are not among <see cref="NormalizationHelper.AllRemovedObjects"/> are introduced.
     /// This step ensures that we will not get into a loop of introducing and removing the same object.</item>
@@ -78,12 +81,13 @@ namespace GeoGen.TheoremProver
         /// Introduces a new object and handles all the needed communicated with the normalization helper.
         /// </summary>
         /// <returns>
+        /// <param name="theoremsToProve">The theorems that are still left to be proven.</param>
         /// The tuple of objects that got removed and the object that got introduced. The object list will never 
         /// be null, but might be empty. Also, the number of removed objects might be bigger than the number of 
         /// previously introduced ones, because the normalization helper might have found equal ones in the meantime.
         /// If there has been no introduces, then the new object will be null.
         /// </returns>
-        public (IReadOnlyList<ConstructedConfigurationObject> removedObjects, ConstructedConfigurationObject newObject) IntroduceObject()
+        public (IReadOnlyList<ConstructedConfigurationObject> removedObjects, ConstructedConfigurationObject newObject) IntroduceObject(IEnumerable<Theorem> theoremsToProve)
         {
             #region Handle object removal
 
@@ -112,6 +116,8 @@ namespace GeoGen.TheoremProver
                     .Where(_helper.IsInOriginalConfiguration)
                     // Enumerated
                     .ToArray())
+                // Concat object introduced based on theorems to be proven
+                .Concat(theoremsToProve.SelectMany(PerformTheoremBasedIntroduction))
                 // The introducer offers us some options that we need to normalize by copying the construction
                 .Select(newObject => new ConstructedConfigurationObject(newObject.Construction,
                         // And normalizing each of the argument objects
@@ -146,6 +152,64 @@ namespace GeoGen.TheoremProver
 
             // Return the removed objects together with the new ones
             return (removedObjects, newObject);
+        }
+
+        /// <summary>
+        /// Introduces new objects based on the theorem it is supposed to be proven. Currently, only two
+        /// scenarios are supported: 
+        /// <list type="number">
+        /// <item>If we are to prove that two lines are perpendicular, we introduce their intersection point.</item>
+        /// <item>If we are to prove that three lines are concurrent, we introduce the intersection point of every pair of them.</item>
+        /// </list>
+        /// </summary>
+        /// <param name="theoremToBeProven">The theorem to be proven.</param>
+        /// <returns>The objects to be introduced.</returns>
+        private IEnumerable<ConstructedConfigurationObject> PerformTheoremBasedIntroduction(Theorem theoremToBeProven)
+        {
+            // Right now only supported types are PerpendicularLines and ConcurrentLines
+            if (theoremToBeProven.Type != TheoremType.PerpendicularLines && theoremToBeProven.Type != TheoremType.ConcurrentLines)
+                return Enumerable.Empty<ConstructedConfigurationObject>();
+
+            // Otherwise we know take the theorems objects 
+            return theoremToBeProven.InvolvedObjects
+                // We know they are lines
+                .Cast<LineTheoremObject>()
+                // Every pair
+                .Subsets(2)
+                // We will intersect each pair
+                .Select(pair =>
+                {
+                    // Pull them
+                    var line1 = pair[0];
+                    var line2 = pair[1];
+
+                    // It they are both explicit
+                    if (line1.DefinedByExplicitObject && line2.DefinedByExplicitObject)
+                        // Then we use IntersectionOfLines
+                        return new ConstructedConfigurationObject(PredefinedConstructionType.IntersectionOfLines,
+                             // Pass the lines
+                             line1.ConfigurationObject, line2.ConfigurationObject);
+
+                    // If they are both implicit
+                    else if (line1.DefinedByPoints && line2.DefinedByPoints)
+                        // Then we use IntersectionOfLinesFromPoints
+                        return new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLinesFromPoints,
+                            // And pass the points
+                            line1.PointsList[0], line1.PointsList[1], line2.PointsList[0], line2.PointsList[1]);
+
+                    // Otherwise exactly one is implicit
+                    else
+                    {
+                        // Find the implicit and explicit one
+                        var implicitLine = line1.DefinedByPoints ? line1 : line2;
+                        var explicitLine = line1.DefinedByPoints ? line2 : line1;
+
+                        // And used IntersectionOfLineAndLineFromPoints
+                        return new ConstructedConfigurationObject(ComposedConstructions.IntersectionOfLineAndLineFromPoints,
+                            // And pass the points
+                            explicitLine.ConfigurationObject, implicitLine.PointsList[0], implicitLine.PointsList[1]);
+                    }
+                });
         }
 
         #endregion

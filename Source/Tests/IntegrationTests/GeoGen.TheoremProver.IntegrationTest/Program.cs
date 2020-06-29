@@ -67,7 +67,17 @@ namespace GeoGen.TheoremProver.IntegrationTest
                     new InferenceRuleManagerData(await new InferenceRuleProvider.InferenceRuleProvider(inferenceRuleProviderSettings).GetInferenceRulesAsync()),
 
                     // Use the provider to find the object introduction rules
-                    new ObjectIntroducerData(await new ObjectIntroductionRuleProvider.ObjectIntroductionRuleProvider(objectIntroductionRuleProviderSettings).GetObjectIntroductionRulesAsync())
+                    new ObjectIntroducerData(await new ObjectIntroductionRuleProvider.ObjectIntroductionRuleProvider(objectIntroductionRuleProviderSettings).GetObjectIntroductionRulesAsync()),
+
+                    // Setup the prover
+                    new TheoremProverSettings
+                    (
+                        // We will be strict and don't assume simplifiable theorems
+                        assumeThatSimplifiableTheoremsAreTrue: false,
+
+                        // We will find trivial theorems for all objects
+                        findTrivialTheoremsOnlyForLastObject: false
+                    )
                 ));
 
             #endregion
@@ -77,6 +87,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
             // Take the tests
             new[]
             {
+                PerpendicularBisectorsAreConcurrent(),
                 IncenterAndTangentLine(),
                 Midpoints(),
                 Parallelogram(),
@@ -84,7 +95,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 HiddenMidpoint(),
                 LineTangentToCircle(),
                 ConcurrencyViaObjectIntroduction(),
-                SimpleLineSegments(),
+                SimpleLineSegments()
             }
             // Perform each
             .ForEach(configuration =>
@@ -99,16 +110,6 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
                 // Find all theorems
                 var theorems = kernel.Get<ITheoremFinder>().FindAllTheorems(contextualPicture);
-
-                // Separate the old theorems by taking all the theorems
-                var oldTheorems = new TheoremMap(theorems.AllObjects
-                    // That doesn't contain the last object in their definition
-                    .Where(theorem => !theorem.GetInnerConfigurationObjects().Contains(configuration.LastConstructedObject)));
-
-                // Separate the new theorems by taking all the theorem
-                var newTheorems = new TheoremMap(theorems.AllObjects
-                    // That do contain the last object in their definition
-                    .Where(theorem => theorem.GetInnerConfigurationObjects().Contains(configuration.LastConstructedObject)));
 
                 #endregion
 
@@ -134,8 +135,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
                 // Write the configuration and theorems
                 Console.WriteLine($"\nConfiguration:\n\n{formatter.FormatConfiguration(configuration).Indent(2)}\n");
-                Console.WriteLine($"OldTheorems:\n\n{TheoremString(oldTheorems.AllObjects).Indent(2)}\n");
-                Console.WriteLine($"NewTheorems:\n\n{TheoremString(newTheorems.AllObjects).Indent(2)}\n");
+                Console.WriteLine($"Theorems:\n\n{TheoremString(theorems.AllObjects).Indent(2)}\n");
 
                 #endregion
 
@@ -147,8 +147,8 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 // Start it
                 totalTime.Start();
 
-                // Perform the theorem finding with proofs
-                var proverOutput = kernel.Get<ITheoremProver>().ProveTheoremsAndConstructProofs(oldTheorems, newTheorems, contextualPicture);
+                // Perform the theorem finding with proofs, without any assumed theorems
+                var proverOutput = kernel.Get<ITheoremProver>().ProveTheoremsAndConstructProofs(new TheoremMap(), theorems, contextualPicture);
 
                 // Stop the timer
                 totalTime.Stop();
@@ -172,7 +172,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 Console.WriteLine(proofString);
 
                 // Write the unproven theorems too
-                Console.WriteLine($"\nUnproved:\n\n{TheoremString(newTheorems.AllObjects.Except(proverOutput.Keys)).Indent(2)}\n");
+                Console.WriteLine($"\nUnproved:\n\n{TheoremString(theorems.AllObjects.Except(proverOutput.Keys)).Indent(2)}\n");
 
                 // Report time
                 Console.WriteLine($"Total time: {totalTime.ElapsedMilliseconds}");
@@ -185,6 +185,22 @@ namespace GeoGen.TheoremProver.IntegrationTest
         }
 
         #region Test configurations
+
+
+        private static Configuration PerpendicularBisectorsAreConcurrent()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var l1 = new ConstructedConfigurationObject(PerpendicularBisector, B, C);
+            var l2 = new ConstructedConfigurationObject(PerpendicularBisector, C, A);
+            var l3 = new ConstructedConfigurationObject(PerpendicularBisector, A, B);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, l1, l2, l3);
+        }
+
 
         private static Configuration IncenterAndTangentLine()
         {

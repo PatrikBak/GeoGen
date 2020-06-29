@@ -310,7 +310,9 @@ namespace GeoGen.TheoremProver
                 if (data == null)
                 {
                     // Call the introduction helper
-                    var (removedObjects, introducedObject) = objectIntroductionHelper.IntroduceObject();
+                    var (removedObjects, introducedObject) = objectIntroductionHelper.IntroduceObject(
+                        // With the theorems to prove obtained by excluding the proved ones
+                        theoremsToProve: theoremsToProve.AllObjects.Except(normalizationHelper.ProvedTheorems));
 
                     // Invalidate removed objects
                     removedObjects.ForEach(scheduler.InvalidateObject);
