@@ -16,10 +16,9 @@ namespace GeoGen.TheoremProver
     /// question which rules we should use at a particular moment is answered by a helper class 
     /// <see cref="Scheduler"/>.
     /// <para>
-    /// In order for this idea to work we need to have theorems that are initially true (axioms). For the
-    /// purpose of theorem filtering we will assume that any old theorem is true, i.e. a theorem that doesn't
-    /// use the last object of the current configuration in its definition. Furthermore, we will use 
-    /// a <see cref="ITrivialTheoremProducer"/> to find other theorems that be stated as trivial ones.
+    /// In order for this idea to work we need to have theorems that are initially true (axioms). These
+    /// theorems will get passed. Furthermore, we will use a <see cref="ITrivialTheoremProducer"/> to find 
+    /// other theorems that be stated as trivial ones.
     /// </para>
     /// <para>
     /// Any result retrieved via the <see cref="IInferenceRuleApplier"/> is check geometrically, which seems
@@ -93,6 +92,11 @@ namespace GeoGen.TheoremProver
         #region Dependencies
 
         /// <summary>
+        /// The settings for the prover.
+        /// </summary>
+        private readonly TheoremProverSettings _settings;
+
+        /// <summary>
         /// The manager of <see cref="InferenceRule"/> that provides them categories.
         /// </summary>
         private readonly IInferenceRuleManager _manager;
@@ -129,19 +133,22 @@ namespace GeoGen.TheoremProver
         /// <summary>
         /// Initializes a new instance of the <see cref="TheoremProver"/> class.
         /// </summary>
-        /// <param name="manager">The manager of <see cref="InferenceRule"/> that provides them categories.</param>
-        /// <param name="applier">The applier of <see cref="InferenceRule"/> that infers theorems.</param>
-        /// <param name="producer">The produced of trivial <see cref="Theorem"/>s from <see cref="ConstructedConfigurationObject"/>s.</param>
-        /// <param name="verifier">The geometric verifier for inferred <see cref="Theorem"/>s.</param>
-        /// <param name="introducer">The introducer of new <see cref="ConstructedConfigurationObject"/>s that might be used in proofs.</param>
-        /// <param name="tracer">The tracer of invalid inferences, i.e. inferences that yielded invalid theorems.</param>
-        public TheoremProver(IInferenceRuleManager manager,
+        /// <param name="settings"><inheritdoc cref="_settings" path="/summary"/></param>
+        /// <param name="manager"><inheritdoc cref="_manager" path="/summary"/></param>
+        /// <param name="applier"><inheritdoc cref="_applier" path="/summary"/></param>
+        /// <param name="producer"><inheritdoc cref="_producer" path="/summary"/></param>
+        /// <param name="verifier"><inheritdoc cref="_verifier" path="/summary"/></param>
+        /// <param name="introducer"><inheritdoc cref="_introducer" path="/summary"/></param>
+        /// <param name="tracer"><inheritdoc cref="_tracer" path="/summary"/></param>
+        public TheoremProver(TheoremProverSettings settings,
+                             IInferenceRuleManager manager,
                              IInferenceRuleApplier applier,
                              ITrivialTheoremProducer producer,
                              IGeometricTheoremVerifier verifier,
                              IObjectIntroducer introducer,
                              IInvalidInferenceTracer tracer)
         {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _applier = applier ?? throw new ArgumentNullException(nameof(applier));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));
             _producer = producer ?? throw new ArgumentNullException(nameof(producer));
@@ -155,33 +162,40 @@ namespace GeoGen.TheoremProver
         #region ITheoremProver implementation
 
         /// <inheritdoc/>
-        public IReadOnlyHashSet<Theorem> ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
+        public IReadOnlyHashSet<Theorem> ProveTheorems(TheoremMap provenTheorems, TheoremMap theoremsToProve, ContextualPicture picture)
             // Delegate the call to the general method and cast the result
-            => ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: false);
+            => ProveTheorems(provenTheorems, theoremsToProve, picture, shouldWeConstructProofs: false);
 
         /// <inheritdoc/>
-        public IReadOnlyDictionary<Theorem, TheoremProof> ProveTheoremsAndConstructProofs(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture)
+        public IReadOnlyDictionary<Theorem, TheoremProof> ProveTheoremsAndConstructProofs(TheoremMap provenTheorems, TheoremMap theoremsToProve, ContextualPicture picture)
             // Delegate the call to the general method and cast the result
-            => ProveTheorems(oldTheorems, newTheorems, picture, shouldWeConstructProofs: true);
+            => ProveTheorems(provenTheorems, theoremsToProve, picture, shouldWeConstructProofs: true);
 
         /// <summary>
         /// Proves given theorems that are true in the configuration drawn in a given picture.
         /// </summary>
-        /// <param name="oldTheorems">The theorems that hold in the configuration without the last object.</param>
-        /// <param name="newTheorems">The theorems that say something about the last object.</param>
+        /// <param name="provenTheorems">The theorems that hold in the configuration without the last object.</param>
+        /// <param name="theoremsToProve">The theorems that say something about the last object.</param>
         /// <param name="picture">The picture where the configuration in which the theorems hold is drawn.</param>
         /// <param name="shouldWeConstructProofs">Indicates whether we should construct proofs. This will affect the type of returned result.</param>
         /// <returns>
         /// Either the output as for <see cref="ProveTheoremsAndConstructProofs(TheoremMap, TheoremMap, ContextualPicture)"/>,
         /// if we are constructing proof, or the output as for <see cref="ProveTheorems(TheoremMap, TheoremMap, ContextualPicture)"/> otherwise.
         /// </returns>
-        private dynamic ProveTheorems(TheoremMap oldTheorems, TheoremMap newTheorems, ContextualPicture picture, bool shouldWeConstructProofs)
+        private dynamic ProveTheorems(TheoremMap provenTheorems, TheoremMap theoremsToProve, ContextualPicture picture, bool shouldWeConstructProofs)
         {
             // Pull the configuration for comfort
             var configuration = picture.Pictures.Configuration;
 
-            // Find the trivial theorems
-            var trivialTheorems = _producer.InferTrivialTheoremsFromObject(configuration.LastConstructedObject);
+            // Find the trivial theorems based on whether we should do it only
+            // for the last object of the configuration
+            var trivialTheorems = _settings.FindTrivialTheoremsOnlyForLastObject
+                // If yes, do so
+                ? _producer.InferTrivialTheoremsFromObject(configuration.ConstructedObjects.Last())
+                // Otherwise do it for all objects
+                : configuration.ConstructedObjects.SelectMany(_producer.InferTrivialTheoremsFromObject)
+                    // And enumerate the results
+                    .ToList();
 
             #region Proof builder initialization
 
@@ -191,8 +205,8 @@ namespace GeoGen.TheoremProver
             // Mark trivial theorems to the proof builder in case we are supposed to construct proofs
             trivialTheorems.ForEach(theorem => proofBuilder?.AddImplication(TrivialTheorem, theorem, assumptions: Array.Empty<Theorem>()));
 
-            // Mark old theorems in case we are supposed to construct proofs
-            oldTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(TrueInPreviousConfiguration, theorem, assumptions: Array.Empty<Theorem>()));
+            // Mark assumed theorems to the proof builder in case we are supposed to construct proofs
+            provenTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(AssumedProven, theorem, assumptions: Array.Empty<Theorem>()));
 
             #endregion
 
@@ -201,21 +215,25 @@ namespace GeoGen.TheoremProver
             // Prepare the list of theorems definable simpler
             var theoremsDefinableSimpler = new List<Theorem>();
 
-            // Go through the unproven theorems, i.e. new theorems except for trivial ones
-            foreach (var theoremToProve in newTheorems.AllObjects.Except(trivialTheorems))
+            // If we are supposed to assuming them proven...
+            if (_settings.AssumeThatSimplifiableTheoremsAreTrue)
             {
-                // Find the redundant objects
-                var redundantObjects = theoremToProve.GetUnnecessaryObjects(configuration);
+                // Go through unproven theorems except for trivial ones
+                foreach (var theoremToProve in theoremsToProve.AllObjects.Except(trivialTheorems))
+                {
+                    // Find the redundant objects
+                    var redundantObjects = theoremToProve.GetUnnecessaryObjects(configuration);
 
-                // If there are none, then it cannot be defined simpler
-                if (redundantObjects.IsEmpty())
-                    continue;
+                    // If there are none, then it cannot be defined simpler
+                    if (redundantObjects.IsEmpty())
+                        continue;
 
-                // Otherwise add it to the list
-                theoremsDefinableSimpler.Add(theoremToProve);
+                    // Otherwise add it to the list
+                    theoremsDefinableSimpler.Add(theoremToProve);
 
-                // And make sure the proof builder knows it
-                proofBuilder?.AddImplication(new DefinableSimplerInferenceData(redundantObjects), theoremToProve, assumptions: Array.Empty<Theorem>());
+                    // And make sure the proof builder knows it
+                    proofBuilder?.AddImplication(new DefinableSimplerInferenceData(redundantObjects), theoremToProve, assumptions: Array.Empty<Theorem>());
+                }
             }
 
             #endregion
@@ -225,13 +243,12 @@ namespace GeoGen.TheoremProver
             // Prepare the set of theorems inferred from symmetry
             var theoremsInferredFromSymmetry = new List<Theorem>();
 
-            // Go throw the theorems that are already inferred, i.e. old, trivial and definable simpler ones
-            foreach (var provedTheorem in oldTheorems.AllObjects.Concat(trivialTheorems).Concat(theoremsDefinableSimpler))
+            // Go throw the theorems that are already inferred, i.e. assumed proven, trivial and definable simpler ones
+            foreach (var provedTheorem in provenTheorems.AllObjects.Concat(trivialTheorems).Concat(theoremsDefinableSimpler))
             {
                 // Try to infer new theorems using this one
                 foreach (var inferredTheorem in provedTheorem.InferTheoremsFromSymmetry(configuration))
                 {
-                    //Console.WriteLine(f.FormatTheorem(inferredTheorem));
                     // Add it to the list
                     theoremsInferredFromSymmetry.Add(inferredTheorem);
 
@@ -244,8 +261,8 @@ namespace GeoGen.TheoremProver
 
             #region Normalization helper initialization
 
-            // Initially we are going to assume that the proved theorems are the old ones
-            var provedTheorems = oldTheorems.AllObjects
+            // Initially we are going to assume that the proved theorems are the passed ones
+            var provedTheorems = provenTheorems.AllObjects
                 // And trivial ones
                 .Concat(trivialTheorems)
                 // And ones with redundant objects
@@ -256,13 +273,13 @@ namespace GeoGen.TheoremProver
                 .Distinct();
 
             // The theorems to prove will be the new ones except for the proved ones
-            var theoremsToProve = newTheorems.AllObjects.Except(provedTheorems);
+            var currentTheoremsToBeProven = theoremsToProve.AllObjects.Except(provedTheorems).ToArray();
 
             // Prepare the cloned pictures that will be used to numerically verify new theorems
             var clonedPictures = picture.Pictures.Clone();
 
             // Prepare a normalization helper with all this information
-            var normalizationHelper = new NormalizationHelper(_verifier, clonedPictures, provedTheorems, theoremsToProve);
+            var normalizationHelper = new NormalizationHelper(_verifier, clonedPictures, provedTheorems, currentTheoremsToBeProven);
 
             #endregion
 
@@ -272,7 +289,7 @@ namespace GeoGen.TheoremProver
             var scheduler = new Scheduler(_manager);
 
             // Do the initial scheduling
-            scheduler.PerformInitialScheduling(theoremsToProve, configuration);
+            scheduler.PerformInitialScheduling(currentTheoremsToBeProven, configuration);
 
             #endregion
 
@@ -286,6 +303,8 @@ namespace GeoGen.TheoremProver
             {
                 // Ask the scheduler for the next inference data to be used
                 var data = scheduler.NextScheduledData();
+
+                #region Object introduction
 
                 // If there is no data, we will try to introduce objects
                 if (data == null)
@@ -307,14 +326,16 @@ namespace GeoGen.TheoremProver
                     }
                 }
 
+                #endregion
+
                 // If all theorems are proven or there is no data even after object introduction, we're done
                 if (!normalizationHelper.AnythingLeftToProve || data == null)
                     // If we should construct proofs
                     return shouldWeConstructProofs
-                        // Build them for the new theorems
-                        ? (object)proofBuilder.BuildProofs(newTheorems.AllObjects)
-                        // Otherwise just take the new theorems that happen to be proved
-                        : newTheorems.AllObjects.Where(normalizationHelper.ProvedTheorems.Contains).ToReadOnlyHashSet();
+                        // Build them for the theorems to be proven
+                        ? (dynamic)proofBuilder.BuildProofs(theoremsToProve.AllObjects)
+                        // Otherwise just take the theorems to be proven that happen to be proven
+                        : theoremsToProve.AllObjects.Where(normalizationHelper.ProvedTheorems.Contains).ToReadOnlyHashSet();
 
                 #region Inference rule applier call
 

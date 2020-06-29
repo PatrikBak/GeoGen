@@ -8,19 +8,13 @@ namespace GeoGen.TheoremProver
     public enum InferenceRuleType
     {
         /// <summary>
-        /// The theorem is true in the configuration that does not contain the last object
-        /// of the examined configuration, i.e. the theorem's proof is not interesting at this point.
+        /// The theorem is assumed to be true.
         /// </summary>
-        TrueInPreviousConfiguration,
+        AssumedProven,
 
         /// <summary>
         /// The theorem can be stated in a configuration that does not contain every object
         /// of the current configuration. 
-        /// <para>
-        /// NOTE: The difference between this rule and <see cref="TrueInPreviousConfiguration"/> 
-        ///       is that in this case the smaller configuration might not have been examined or
-        ///       explicitly defined.
-        /// </para>
         /// </summary>
         DefinableSimpler,
 

@@ -20,6 +20,13 @@ namespace GeoGen.Core
         {
         }
 
+        /// <summary>
+        /// Initializes an empty <see cref="TheoremMap"/>.
+        /// </summary>
+        public TheoremMap() : base(Enumerable.Empty<Theorem>())
+        {
+        }
+
         #endregion
 
         #region Public methods

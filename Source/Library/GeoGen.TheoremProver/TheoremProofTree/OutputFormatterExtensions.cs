@@ -88,7 +88,7 @@ namespace GeoGen.TheoremProver
             => proof.Rule switch
             {
                 // Case when it's a theorem from a previous configuration
-                TrueInPreviousConfiguration => "true in a previous configuration",
+                AssumedProven => "assumed to be proven (in a previous configuration)",
 
                 // Case when it's a trivial consequence of the object's construction
                 TrivialTheorem => "trivial consequence of the object's construction",

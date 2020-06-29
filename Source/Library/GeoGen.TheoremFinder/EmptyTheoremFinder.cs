@@ -10,7 +10,7 @@ namespace GeoGen.TheoremFinder
     public class EmptyTheoremFinder : ITheoremFinder
     {
         /// <inheritdoc/>
-        public TheoremMap FindAllTheorems(ContextualPicture contextualPicture) => new TheoremMap(Array.Empty<Theorem>());
+        public TheoremMap FindAllTheorems(ContextualPicture contextualPicture) => new TheoremMap();
 
         /// <inheritdoc/>
         public TheoremMap FindNewTheorems(ContextualPicture contextualPicture, TheoremMap oldTheorems, out Theorem[] invalidOldTheorems)
@@ -19,7 +19,7 @@ namespace GeoGen.TheoremFinder
             invalidOldTheorems = Array.Empty<Theorem>();
 
             // Return an empty theorem map
-            return new TheoremMap(Array.Empty<Theorem>());
+            return new TheoremMap();
         }
     }
 }

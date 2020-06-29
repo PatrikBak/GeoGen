@@ -80,6 +80,10 @@
       "NumberOfTheorems": -1
     }
   },
+  "TheoremProverSettings": {
+    "AssumeThatSimplifiableTheoremsAreTrue": true,
+    "FindTrivialTheoremsOnlyForLastObject": true
+  },
   "GenerationSettings": {
     "ConfigurationFilterType": "MemoryEfficient"
   }

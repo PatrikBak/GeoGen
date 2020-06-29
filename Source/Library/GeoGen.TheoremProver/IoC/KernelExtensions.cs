@@ -16,7 +16,7 @@ namespace GeoGen.TheoremProver
         public static IKernel AddTheoremProver(this IKernel kernel, TheoremProvingSettings settings)
         {
             // Bind the services
-            kernel.Bind<ITheoremProver>().To<TheoremProver>();
+            kernel.Bind<ITheoremProver>().To<TheoremProver>().WithConstructorArgument(settings.TheoremProverSettings);
             kernel.Bind<IInferenceRuleManager>().To<InferenceRuleManager>().WithConstructorArgument(settings.InferenceRuleManagerData);
             kernel.Bind<IObjectIntroducer>().To<ObjectIntroducer>().WithConstructorArgument(settings.ObjectIntroducerData);
             kernel.Bind<IInferenceRuleApplier>().To<InferenceRuleApplier>();

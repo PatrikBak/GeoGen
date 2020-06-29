@@ -90,7 +90,10 @@ namespace GeoGen.MainLauncher
                     inferenceRuleManagerData: managerData,
 
                     // Load the object introduction data as well
-                    objectIntroducerData: new ObjectIntroducerData(await Kernel.Get<IObjectIntroductionRuleProvider>().GetObjectIntroductionRulesAsync())
+                    objectIntroducerData: new ObjectIntroducerData(await Kernel.Get<IObjectIntroductionRuleProvider>().GetObjectIntroductionRulesAsync()),
+
+                    // Set the prover's settings
+                    theoremProverSettings: settings.TheoremProverSettings
                 ))
                 // And the problem generator and with its settings
                 .AddProblemGenerator(settings.ProblemGeneratorSettings)

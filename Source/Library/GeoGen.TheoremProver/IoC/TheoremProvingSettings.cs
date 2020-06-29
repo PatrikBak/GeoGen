@@ -19,6 +19,11 @@ namespace GeoGen.TheoremProver
         /// </summary>
         public ObjectIntroducerData ObjectIntroducerData { get; }
 
+        /// <summary>
+        /// The settings for <see cref="TheoremProver"/>.
+        /// </summary>
+        public TheoremProverSettings TheoremProverSettings { get; }
+
         #endregion
 
         #region Constructor
@@ -28,10 +33,12 @@ namespace GeoGen.TheoremProver
         /// </summary>
         /// <param name="inferenceRuleManagerData">The data for <see cref="InferenceRuleManager"/>.</param>
         /// <param name="objectIntroducerData">The data for <see cref="ObjectIntroducer"/>.</param>
-        public TheoremProvingSettings(InferenceRuleManagerData inferenceRuleManagerData, ObjectIntroducerData objectIntroducerData)
+        /// <param name="theoremProverSettings">The settings for <see cref="TheoremProver"/>.</param>
+        public TheoremProvingSettings(InferenceRuleManagerData inferenceRuleManagerData, ObjectIntroducerData objectIntroducerData, TheoremProverSettings theoremProverSettings)
         {
             InferenceRuleManagerData = inferenceRuleManagerData ?? throw new ArgumentNullException(nameof(inferenceRuleManagerData));
             ObjectIntroducerData = objectIntroducerData ?? throw new ArgumentNullException(nameof(objectIntroducerData));
+            TheoremProverSettings = theoremProverSettings ?? throw new ArgumentNullException(nameof(theoremProverSettings));
         }
 
         #endregion
