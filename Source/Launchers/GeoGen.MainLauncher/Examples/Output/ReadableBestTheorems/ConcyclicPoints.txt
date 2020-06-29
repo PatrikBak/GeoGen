@@ -48,21 +48,3 @@ ConcyclicPoints: D, E, F, G - total ranking 826.62
   Symmetry                        weight = 10000     ranking = 0         contribution = 0         
   NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
   NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
-
----------
-Theorem 4
----------
-
-Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{B, D}, {F, G}})
-
-ConcyclicPoints: C, D, F, H - total ranking 561
-
-  Level                           weight = 1000      ranking = 0.66      contribution = 660       
-  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
-  NumberOfTheorems                weight = -1        ranking = 39        contribution = -39       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60       

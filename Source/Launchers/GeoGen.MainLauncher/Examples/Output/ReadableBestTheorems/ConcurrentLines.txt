@@ -3,23 +3,6 @@ Theorem 1
 ---------
 
 Triangle: A, B, C
-D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
-E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
-F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
-G = Circumcenter({A, E, F})
-
-ConcurrentLines: [B, E], [C, F], [D, G] - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
----------
-Theorem 2
----------
-
-Triangle: A, B, C
 D = Incenter({A, B, C})
 E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
 F = PerpendicularProjectionOnLineFromPoints(D, {A, C})

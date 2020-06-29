@@ -218,39 +218,6 @@ Interesting theorems:
   NumberOfCyclicQuadrilaterals    weight = -10       ranking = 6         contribution = -60
 
 ---------------
-Configuration 6
----------------
-
-Triangle: A, B, C
-D = PerpendicularProjectionOnLineFromPoints(A, {B, C})
-E = PerpendicularProjectionOnLineFromPoints(B, {A, C})
-F = PerpendicularProjectionOnLineFromPoints(C, {A, B})
-G = Circumcenter({A, B, C})
-
-Interesting theorems:
-
- 1. PerpendicularLines: [A, G], [E, F] - total ranking 4282.33
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 1         contribution = 1000      
-  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
-
- 2. PerpendicularLines: [B, G], [D, F] - total ranking 4282.33
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 1         contribution = 1000      
-  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
-
- 3. PerpendicularLines: [C, G], [D, E] - total ranking 4282.33
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 1         contribution = 1000      
-  NumberOfTheorems                weight = -1        ranking = 21        contribution = -21       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30
-
----------------
 Configuration 7
 ---------------
 
@@ -305,73 +272,11 @@ Interesting theorems:
   Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
   Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
   NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30       
-
- 2. CollinearPoints: A, D, G - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 3. ConcurrentLines: [B, E], [C, F], [D, G] - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 4. ConcurrentLines: [A, G], [B, E], [C, F] - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 5. PerpendicularLines: [B, C], [D, G] - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 6. PerpendicularLines: [A, G], [B, C] - total ranking 4149.95
-
-  Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 7. PerpendicularLines: [C, D], [D, G] - total ranking 816.62
-
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 8. PerpendicularLines: [A, G], [C, D] - total ranking 816.62
-
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 9. PerpendicularLines: [B, D], [D, G] - total ranking 816.62
-
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40       
-
- 10. PerpendicularLines: [A, G], [B, D] - total ranking 816.62
-
-  Level                           weight = 1000      ranking = 0.88      contribution = 884.62    
-  Symmetry                        weight = 10000     ranking = 0         contribution = 0         
-  NumberOfTheorems                weight = -1        ranking = 28        contribution = -28       
-  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 4         contribution = -40
+  NumberOfCyclicQuadrilaterals    weight = -10       ranking = 3         contribution = -30
 
 ------------------------------------------------
 Generated configurations: 10
-Configurations with an interesting theorem: 5
-Interesting theorems: 39
-Run-time: 1593 ms
+Configurations with an interesting theorem: 4
+Interesting theorems: 27
+Interesting theorems after global merge: 7
+Run-time: 1801 ms
