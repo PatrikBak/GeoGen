@@ -356,7 +356,7 @@ namespace GeoGen.TheoremProver
             // might trigger other changes (for example, if Y --> X, and there is a normal version PointReflection(Y, Z), then 
             // PointReflection(Y, Z) --> PointReflection(X, Z). This may again trigger other changes like that...The following lines
             // might seem a bit complicated. They are like that. It is a result of a week during which I had about 6 simpler versions 
-            // that had a catch. That makes be believe this really is a difficult problem.
+            // that had a catch. That makes me believe this really is a difficult problem.
 
             // Before doing anything else, copy the current normal versions. It will become useful later
             var oldObjectToItsNormalVersion = new Dictionary<ConfigurationObject, ConfigurationObject>(_objectToItsNormalVersion);

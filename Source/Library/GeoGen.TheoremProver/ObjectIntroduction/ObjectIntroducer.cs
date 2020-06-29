@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.TheoremProver
 {
     /// <summary>
-    /// The default implementation of <see cref=IObjectIntroducer/> that applies <see cref="ObjectIntroductionRule"/>s
+    /// The default implementation of <see cref="IObjectIntroducer"/> that applies <see cref="ObjectIntroductionRule"/>s
     /// that are received in an <see cref="ObjectIntroducerData"/> objects.
     /// </summary>
     public class ObjectIntroducer : IObjectIntroducer

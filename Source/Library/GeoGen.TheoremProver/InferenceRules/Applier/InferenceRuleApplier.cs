@@ -7,6 +7,11 @@ using static GeoGen.Core.PredefinedConstructionType;
 
 namespace GeoGen.TheoremProver
 {
+    /// <summary>
+    /// The default implement of <see cref="IInferenceRuleApplier"/>. 
+    /// <para>The implementation heavily uses LINQ. It might be interesting to compare 
+    /// its performance it with a more low-level implementation.</para>
+    /// </summary>
     public class InferenceRuleApplier : IInferenceRuleApplier
     {
         #region Mapping class

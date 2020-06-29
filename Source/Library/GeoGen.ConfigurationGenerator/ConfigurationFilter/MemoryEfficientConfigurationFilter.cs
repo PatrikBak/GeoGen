@@ -6,7 +6,7 @@ using System.Linq;
 namespace GeoGen.ConfigurationGenerator
 {
     /// <summary>
-    /// Represents a <see cref="IConfigurationFilter"/> that used O(1) memory. The exclusion is done via 
+    /// Represents a <see cref="IConfigurationFilter"/> that uses O(1) memory. The exclusion is done via 
     /// a non-trivial algorithm that assigns to every set of equal configurations that could be generated
     /// the unique representant that was the representant of such a set in the previous iteration.
     /// </summary>
@@ -98,10 +98,10 @@ namespace GeoGen.ConfigurationGenerator
                 // And unwrap the order
                 .permutation;
 
-            // The configuration is correct if and only if its order of added objects is the normal object
-            // Therefore the take the constructed objects
+            // The configuration is correct if and only if its order of added objects is the normal order
+            // Therefore from the constructed objects
             return !configuration.ConstructedObjects
-                // From the ones that have been added
+                // Take the ones that have been added
                 .ItemsBetween(_initialObjects.Count, configuration.ConstructedObjects.Count)
                 // And sequentially compare them with the normal order
                 .SequenceEqual(normalOrderOfAddedObjects);

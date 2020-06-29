@@ -14,7 +14,7 @@ namespace GeoGen.Infrastructure
         /// <param name="origin">The method/function this message was logged in.</param>
         /// <param name="filePath">The code filename that this message was logged from.</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from.</param>
-        public static void LogDebug(this ILoggingManager manager, string message, string origin = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void LogDebug(this ILoggingManager manager, string message, string origin = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
             // Call the general log method 
             => manager.Log(message, LogLevel.Debug, origin, filePath, lineNumber);
 
@@ -25,7 +25,7 @@ namespace GeoGen.Infrastructure
         /// <param name="origin">The method/function this message was logged in.</param>
         /// <param name="filePath">The code filename that this message was logged from.</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from.</param>
-        public static void LogInfo(this ILoggingManager manager, string message, string origin = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void LogInfo(this ILoggingManager manager, string message, string origin = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
             // Call the general log method 
             => manager.Log(message, LogLevel.Info, origin, filePath, lineNumber);
 
@@ -36,7 +36,7 @@ namespace GeoGen.Infrastructure
         /// <param name="origin">The method/function this message was logged in.</param>
         /// <param name="filePath">The code filename that this message was logged from.</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from.</param>
-        public static void LogWarning(this ILoggingManager manager, string message, string origin = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void LogWarning(this ILoggingManager manager, string message, string origin = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
             // Call the general log method 
             => manager.Log(message, LogLevel.Warning, origin, filePath, lineNumber);
 
@@ -47,7 +47,7 @@ namespace GeoGen.Infrastructure
         /// <param name="origin">The method/function this message was logged in.</param>
         /// <param name="filePath">The code filename that this message was logged from.</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from.</param>
-        public static void LogError(this ILoggingManager manager, string message, string origin = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void LogError(this ILoggingManager manager, string message, string origin = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
             // Call the general log method 
             => manager.Log(message, LogLevel.Error, origin, filePath, lineNumber);
 
@@ -58,7 +58,7 @@ namespace GeoGen.Infrastructure
         /// <param name="origin">The method/function this message was logged in.</param>
         /// <param name="filePath">The code filename that this message was logged from.</param>
         /// <param name="lineNumber">The line of code in the filename this message was logged from.</param>
-        public static void LogFatal(this ILoggingManager manager, string message, string origin = "", [CallerFilePath]string filePath = "", [CallerLineNumber]int lineNumber = 0)
+        public static void LogFatal(this ILoggingManager manager, string message, string origin = "", [CallerFilePath] string filePath = "", [CallerLineNumber] int lineNumber = 0)
             // Call the general log method 
             => manager.Log(message, LogLevel.Fatal, origin, filePath, lineNumber);
     }
