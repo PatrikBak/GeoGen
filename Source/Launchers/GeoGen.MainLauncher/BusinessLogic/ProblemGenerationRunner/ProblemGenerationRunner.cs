@@ -36,6 +36,11 @@ namespace GeoGen.MainLauncher
         #region Dependencies
 
         /// <summary>
+        /// The settings for this runner.
+        /// </summary>
+        private readonly ProblemGenerationRunnerSettings _settings;
+
+        /// <summary>
         /// The generator of problems.
         /// </summary>
         private readonly IProblemGenerator _generator;
@@ -59,15 +64,6 @@ namespace GeoGen.MainLauncher
         /// The tracker of the used inference rules in theorem proofs.
         /// </summary>
         private readonly IInferenceRuleUsageTracker _tracker;
-
-        #endregion
-
-        #region Private fields
-
-        /// <summary>
-        /// The settings for this runner.
-        /// </summary>
-        private readonly ProblemGenerationRunnerSettings _settings;
 
         #endregion
 
@@ -300,49 +296,53 @@ namespace GeoGen.MainLauncher
                 // Write JSON output
                 jsonOutputWriter?.Write(analyzerOutput.InterestingTheorems);
 
-                #region Finding ranked theorems to be judged
+                #region Handling best theorems
 
-                // If we should take just one theorem per configuration
-                var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
-                        // Then take the first (which has the best ranking)
-                        ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
-                        // Otherwise all of them
-                        : analyzerOutput.InterestingTheorems)
-                    // Group by type
-                    .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type);
-
-                try
+                // If we are supposed to be handling best theorems, do so
+                if (_settings.WriteReadableBestTheorems || _settings.WriteJsonBestTheorems)
                 {
-                    // Prepare the set of sorters whose content changed
-                    var updatedSorterTypes = new HashSet<TheoremType>();
+                    // If we should take just one theorem per configuration
+                    var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
+                            // Then take the first (which has the best ranking)
+                            ? analyzerOutput.InterestingTheorems.FirstOrDefault()?.ToEnumerable() ?? Enumerable.Empty<RankedTheorem>()
+                            // Otherwise all of them
+                            : analyzerOutput.InterestingTheorems)
+                        // Group by type
+                        .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type);
 
-                    // Mark all interesting theorems
-                    analyzerOutput.InterestingTheorems
-                        // Grouped by type
-                        .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type)
-                        // Handle each group
-                        .ForEach(group =>
-                        {
-                            // Let the sorter judge the theorems
-                            _resolver.GetSorterForType(group.Key).AddTheorems(group, out var localBestTheoremChanged);
+                    try
+                    {
+                        // Prepare the set of sorters whose content changed
+                        var updatedSorterTypes = new HashSet<TheoremType>();
 
-                            // If there is any local change, mark it
-                            if (localBestTheoremChanged)
-                                updatedSorterTypes.Add(group.Key);
-                        });
+                        // Mark all interesting theorems
+                        analyzerOutput.InterestingTheorems
+                            // Grouped by type
+                            .GroupBy(rankedTheorem => rankedTheorem.Theorem.Type)
+                            // Handle each group
+                            .ForEach(group =>
+                            {
+                                // Let the sorter judge the theorems
+                                _resolver.GetSorterForType(group.Key).AddTheorems(group, out var localBestTheoremChanged);
 
-                    // If we should write best theorems continuously, do it
-                    if (_settings.WriteBestTheoremsContinuously)
-                        RewriteBestTheorems(updatedSorterTypes);
-                }
-                catch (Exception e)
-                {
-                    // If there is any sort of problem, we should make aware of it. 
-                    LoggingManager.LogError($"There has been an exception while sorting theorems of the configuration:\n\n" +
-                        // Write the problematic configuration
-                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
-                        // And also the exception
-                        $"Exception: {e}");
+                                // If there is any local change, mark it
+                                if (localBestTheoremChanged)
+                                    updatedSorterTypes.Add(group.Key);
+                            });
+
+                        // If we should write best theorems continuously, do it
+                        if (_settings.WriteBestTheoremsContinuously)
+                            RewriteBestTheorems(updatedSorterTypes);
+                    }
+                    catch (Exception e)
+                    {
+                        // If there is any sort of problem, we should make aware of it. 
+                        LoggingManager.LogError($"There has been an exception while sorting theorems of the configuration:\n\n" +
+                            // Write the problematic configuration
+                            $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
+                            // And also the exception
+                            $"Exception: {e}");
+                    }
                 }
 
                 #endregion
