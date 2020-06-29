@@ -340,8 +340,15 @@ namespace GeoGen.DrawingLauncher
                 // that we're drawing just some segments of this line)
                 else if (_lineStyles.ContainsKey(line))
                 {
-                    // In order to make the line to go across the picture, we need the bounding box of points and circles
-                    var intersections = new BoundingBox(_pointStyles.Keys, _circleStyles.Keys)
+                    // In order to make the line to go across the picture, we need the bounding box of 
+                    // points and circles. We need to find the relevant points that are in the picture
+                    // after taking into account shifted segments
+                    var points = segments.Values.Flatten()
+                        // Include every segment
+                        .SelectMany(triple => triple.Item1.ToEnumerable().Concat(triple.Item2));
+
+                    // Prepare the bounding box
+                    var intersections = new BoundingBox(points, _circleStyles.Keys)
                         // Intersect it with our line
                         .IntersectWith(line)
                         // Order by our comparer
@@ -388,7 +395,7 @@ namespace GeoGen.DrawingLauncher
                     // At this point we're sure this is not the first segment being drawn on this line
                     // Therefore there is the leftmost and the rightmost point. Find them
                     var leftmostPoint = segmentPoints[0];
-                    var rightmostPoint = segmentPoints[segmentPoints.Count - 1];
+                    var rightmostPoint = segmentPoints[^1];
 
                     // Make sure the points are added to the points of the already segmented line
                     segmentPoints.TryAdd(newLeftPoint);

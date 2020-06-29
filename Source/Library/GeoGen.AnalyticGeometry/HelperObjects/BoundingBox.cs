@@ -173,25 +173,35 @@ namespace GeoGen.AnalyticGeometry
             => new BoundingBox((UpperLeftCorner - Center) * coefficient + Center, (BottomRightCorner - Center) * coefficient + Center);
 
         /// <summary>
-        /// Finds all intersection points of the boxes' boundary with the passed line.
+        /// Finds all intersection points of the boxes' boundary with the passed line. 
+        /// If the line is equal to one of the border lines, then the result will be equal
+        /// to the corresponding corner points
         /// </summary>
         /// <param name="line">The line to be tested for intersection points.</param>
         /// <returns>The array of intersection points of the line and the box.</returns>
         public Point[] IntersectWith(Line line)
-            // Take the boundary lines
-            => new[] { UpperLine, BottomLine, LeftLine, RightLine }
-                // Intersect each
-                .Select(boundaryLine => boundaryLine.IntersectionWith(line))
-                // Take existing intersections
-                .Where(intersection => intersection != null)
-                // Unwrap
-                .Select(point => point.Value)
-                // Take those within
-                .Where(IsPointWithinTheBox)
-                // Distinct ones
-                .Distinct()
-                // Enumerate
-                .ToArray();
+            // If the line is equal to the one of the lines
+            => new[] { BottomLine, UpperLine, LeftLine, RightLine }.Contains(line)
+                // Then we would return the corresponding boundary points
+                ? new[] { UpperRightCorner, UpperLeftCorner, BottomLeftCorner, BottomRightCorner }
+                    // Which lie on this line
+                    .Where(line.Contains)
+                    // Enumerate
+                    .ToArray()
+                // If the line is not boundary, take them
+                : new[] { UpperLine, BottomLine, LeftLine, RightLine }
+                    // Intersect with each
+                    .Select(boundaryLine => boundaryLine.IntersectionWith(line))
+                    // Take existing intersections
+                    .Where(intersection => intersection != null)
+                    // Unwrap
+                    .Select(point => point.Value)
+                    // Take those within
+                    .Where(IsPointWithinTheBox)
+                    // Distinct ones
+                    .Distinct()
+                    // Enumerate
+                    .ToArray();
 
         /// <summary>
         /// Finds all intersection points of the boxes' boundary with the passed circle.
