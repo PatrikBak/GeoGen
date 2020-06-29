@@ -224,6 +224,10 @@ namespace GeoGen.MainLauncher
             // Begin writing of the JSON output file
             jsonOutputWriter?.BeginWriting();
 
+            // Prepare the variable indicating whether we're writing best theorems,
+            // which happens when we want to write them either readable or JSON form
+            var writeBestTheorems = _settings.WriteReadableBestTheorems || _settings.WriteJsonBestTheorems;
+
             #region Generation loop
 
             // Run the generation
@@ -244,8 +248,12 @@ namespace GeoGen.MainLauncher
                         $"{_settings.ProgressLoggingFrequency} in " +
                         // Average time
                         $"{(double)stopwatch.ElapsedMilliseconds / numberOfGeneratedConfigurations * _settings.ProgressLoggingFrequency:F2} ms on average, " +
-                        // How many interesting configurations and theorems
-                        $"with {numberOfConfigurationsWithInterestingTheorem} interesting configurations ({numberOfInterestingTheorems} theorems in total).");
+                        // How many interesting theorems
+                        $"with {numberOfInterestingTheorems} theorems" +
+                        // How many interesting theorems after merge
+                        $"{(writeBestTheorems ? $" ({_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()} after global merge)" : "")}" +
+                        // How many configurations
+                        $" in {numberOfConfigurationsWithInterestingTheorem} configurations.");
 
                 #endregion
 
@@ -299,7 +307,7 @@ namespace GeoGen.MainLauncher
                 #region Handling best theorems
 
                 // If we are supposed to be handling best theorems, do so
-                if (_settings.WriteReadableBestTheorems || _settings.WriteJsonBestTheorems)
+                if (writeBestTheorems)
                 {
                     // If we should take just one theorem per configuration
                     var theoremsToBeJudged = (_settings.TakeAtMostOneInterestingTheoremPerConfiguration
@@ -420,17 +428,22 @@ namespace GeoGen.MainLauncher
 
             #endregion
 
+            // Prepare the string explaining the state after merge
+            var afterMergeString = $"{(writeBestTheorems ? $"{_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()}" : "-")}";
+
             // Write end
             WriteLineToBothReadableWriters("\n------------------------------------------------");
             WriteLineToBothReadableWriters($"Generated configurations: {numberOfGeneratedConfigurations}");
             WriteLineToBothReadableWriters($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
             WriteLineToBothReadableWriters($"Interesting theorems: {numberOfInterestingTheorems}");
+            WriteLineToBothReadableWriters($"Interesting theorems after global merge: {afterMergeString}");
             WriteLineToBothReadableWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
             LoggingManager.LogInfo($"Generated configurations: {numberOfGeneratedConfigurations}");
             LoggingManager.LogInfo($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
             LoggingManager.LogInfo($"Interesting theorems: {numberOfInterestingTheorems}");
+            LoggingManager.LogInfo($"Interesting theorems after global merge: {afterMergeString}");
             LoggingManager.LogInfo($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Close the JSON output writer
