@@ -1,37 +1,34 @@
-# Automated generation of planar geometry olympiad problems (master's thesis)
+# Automated Generation of Planar Geometry Olympiad Problems (Master's Thesis)
 
-**Author:** Bc. Patrik Bak  
-**Supervisor:** doc. RNDr. Stanislav Krajči, PhD.  
-**Consultant:** Mgr. Michal Rolínek, PhD.  
-
-*P. J. Šafárik University in Košice  
-Institute of Computer Science  
-Faculty of Science*
+The software can generate difficult geometry problems suitable for mathematical contests. The following is an automatically generated, drawn, and stated problem:
+<br />
+<a name="generated-problem"></a>   
+<img src="Images/example.png" alt="Alt text" style="zoom:80%;" />
 
 ## Table of Contents
 
 - [About](#about)
 - [Installation](#installation)
   * [Building](#building)
-  * [Unit tests](#unit-tests)
+  * [Unit Tests](#unit-tests)
 - [Libraries](#libraries)
 - [Usage](#usage)
   * [Main Launcher](#main-launcher)
+  * [Constructions](#constructions)
+  * [Inference Rules](#inference-rules)
+  * [Object Introduction Rules](#object-introduction-rules)
   * [Drawing Launcher](#drawing-launcher)
     + [Requirements](#requirements)
     + [Running](#running)
-    + [Tip for quick previewing on Windows](#tip-for-quick-previewing-on-windows)
-    + [Results](#results)
+    + [Tip for Quick Previewing on Windows](#tip-for-quick-previewing-on-windows)
+    + [Macros and Rules](#macros-and-rules)
   * [Theorem Proving Integration Test](#theorem-proving-integration-test)
-  * [Helper modules](#helper-modules)
+  * [Helper Modules](#helper-modules)
 - [Contact](#contact)
-
 
 ## About
 
-The goal is to make a program that will generate geometry problems suitable for mathematical contests.
-
-A few results and lots of information about the functionality of the system can be found in our [paper](https://drive.google.com/open?id=1TXFSKmxR92eRzMYLvk7BuQHeFm4HXZzk).
+This is a repository for the Master's thesis that can be found [here](https://drive.google.com/file/d/1dsaxDCMzlAPfB3e4rd8ut2RuZ_sn2Zm5/view?usp=sharing). For more examples like <a href="#generated-problem">this one</a> check out the appendix.
 
 ## Installation
 
@@ -41,13 +38,13 @@ The system requires to have [.NET Core 3.1](https://dotnet.microsoft.com/downloa
 
 The application can be built via `dotnet build` run in the [Source](Source) folder. 
 
-### Unit tests
+### Unit Tests
 
 Automated tests can be run via `dotnet test` run in the [Source](Source) folder. 
 
 ## Libraries
 
-All major logic is written from scratch, with a heavy use of LINQ to objects.
+All major logic is written from scratch, with heavy use of LINQ to objects.
 
 The following helper libraries have also been used:
 
@@ -74,9 +71,61 @@ This is the main module that runs the main algorithm. The application tries to r
   4. [**JsonOutput**](Source/Launchers/GeoGen.MainLauncher/Examples/Output/JsonOutput) -  All found theorems that haven't been excluded in the JSON format.
   5. [**JsonBestTheorems**](Source/Launchers/GeoGen.MainLauncher/Examples/Output/JsonBestTheorems) - Same as *ReadableBestTheorems*, but in the JSON format.
 
+### Constructions
+
+The following constructions are supported in input files (and object introduction rules / inference rules / drawing rules...):
+
+* `CircleWithCenterThroughPoint` - takes two points `A`, `B` and outputs the circle with the center `A` and a radius `AB`
+* `CircleWithDiameter` - takes two points `A`, `B` and outputs the circle with a diameter `AB`.
+* `Circumcenter` - takes three points `A`, `B`, `C` and outputs the circumcenter of triangle `ABC`.
+* `Circumcircle` - takes three points `A`, `B`, `C` and outputs the circumcircle of triangle `ABC`.
+* `Excenter` - takes three points `A`, `B`, `C` and outputs the `A`-excenter of triangle `ABC`.
+* `Excircle` - takes three points `A`, `B`, `C` and outputs the `A`-excircle of triangle `ABC`.
+* `ExternalAngleBisector` - takes three points `A`, `B`, `C` and outputs the external angle bisector of angle `BAC`.
+* `Incenter` - takes three points `A`, `B`, `C` and outputs the incenter of triangle `ABC`.
+* `Incircle` - takes three points `A`, `B`, `C` and outputs the incircle of triangle `ABC`.
+* `InternalAngleBisector` - takes three points `A`, `B`, `C` and outputs the internal angle bisector of angle `BAC`.
+* `IntersectionOfLineAndLineFromPoints` - takes four points `A`, `B`, `C`, `D` and outputs the intersection point of lines `AB` and `CD`.
+* `IntersectionOfLines` - takes two lines and outputs their intersection points.
+* `IntersectionOfLinesFromPoints` - takes a line `l` and two points `A`, `B` and outputs the intersection point of lines `l` and `AB`.
+* `IsoscelesTrapezoidPoint` - takes three points `A`, `B`, `C` and outputs such a point `D` that `ABCD` is an isosceles trapezoid.
+* `LineFromPoints` - takes two points and outputs the line passing through both of them.
+* `LineThroughCircumcenter` - takes three points `A`, `B`, `C` and outputs the line through `A` and the circumcenter of `ABC`.
+* `Median` - takes three points `A`, `B`, `C` and outputs the `A`-median of triangle `ABC`.
+* `Midline` - takes three points `A`, `B`, `C` and outputs the `A`-midline of triangle `ABC`.
+* `Midpoint` - takes two points `A`, `B` and output the midpoint of segment `AB`.
+* `MidpointOfArc` - takes three points `A`, `B`, `C` and outputs the midpoint of arc `BAC`.
+* `MidpointOfOppositeArc` - takes three points `A`, `B`, `C` and outputs the midpoint of arc `BAC` not containing `A`.
+* `NinePointCircle` - takes three points `A`, `B`, `C` and outputs the Nine-Point circle of triangle `ABC`.
+* `OppositePointOnCircumcircle` - takes three points `A`, `B`, `C` and outputs such a point `D` that `AD` is a diameter of the circumcircle of `ABC`.
+* `Orthocenter` - takes three points `A`, `B`, `C` and outputs the orthocenter of triangle `ABC`.
+* `ParallelLine` - takes a point `A` and a line `l` and outputs the line through `A` parallel to `l`.
+* `ParallelLineToLineFromPoints` - takes three points `A`, `B`, `C` and outputs the line through `A` parallel to `BC`.
+* `ParallelogramPoint` - takes three points `A`, `B`, `C` and outputs such a point `D` that `ABDC` is a parallelogram.
+* `PerpendicularBisector` - takes two points `A`, `B` and outputs the perpendicular bisector of segment `AB`.
+* `PerpendicularLine` - takes a point `P` and a line `l` and outputs the line through `P` perpendicular to `l`.
+* `PerpendicularLineAtPointOfLine` - takes two points `A`, `B` and outputs the line through `A` perpendicular to `AB`.
+* `PerpendicularLineToLineFromPoints` - takes three points `A`, `B`, `C` and outputs the perpendicular line through `A` to `BC`.
+* `PerpendicularProjection` - takes a point `P` and a line `l` and outputs the projection of `P` onto `l`.
+* `PerpendicularProjectionOnLineFromPoints` - takes three points `A`, `B`, `C` and outputs the projection of `A` onto `BC`.
+* `PointReflection` - takes two points `A`, `B` and outputs the reflection of `A` in `B`.
+* `ReflectionInLine` - takes a line `l` and a point `P` and outputs the reflection of `A` in `l`.
+* `ReflectionInLineFromPoints` - takes three points `A`, `B`, `C` and outputs the reflection of `A` in line `BC`.
+* `SecondIntersectionOfCircleAndLineFromPoints` - takes four points `A`, `C`, `C`, `D` and outputs the second intersection point of line `AB` and the circumcircle of `ACD`.
+* `SecondIntersectionOfTwoCircumcircles` - takes five points `A`, `B`, `C`, `D`, `E` and outputs the second intersection point of the circumcircles `ABC` and `ADE`.
+* `TangentLine` - takes three points `A`, `B`, `C` and outputs the tangent line to the circumcircle of `ABC` at `A`.
+
+### Inference rules
+
+The used inference rules can be found [here](Source/Library/GeoGen.TheoremProver.InferenceRuleProvider/Rules). They use constructions described [here](#constructions).
+
+### Object introduction rules
+
+The used object introduction rules can be found [here](Source/Library/GeoGen.TheoremProver.ObjectIntroductionRuleProvider/Rules/object_introduction_rules.txt). They use constructions described [here](#constructions).
+
 ### Drawing Launcher
 
-The visualizes results produced by the *Main Launcher* by generating [EPS](https://en.wikipedia.org/wiki/Encapsulated_PostScript) figures using [MetaPost](https://en.wikipedia.org/wiki/MetaPost).
+Provides visualization of the results produced by *Main Launcher* via generating [EPS](https://en.wikipedia.org/wiki/Encapsulated_PostScript) figures using [MetaPost](https://en.wikipedia.org/wiki/MetaPost).
 
 #### Requirements
 
@@ -93,6 +142,10 @@ To preview generated results, I personally use
 The application tries to read the settings from the file `settings.json`. The example settings are available [here](Source/Launchers/GeoGen.DrawingLauncher/Examples/settings.json).
 
 After running, you are requested to provide a path to a JSON theorem file. These files are produced by the *Main Launcher*. In our examples, the files from the folders [**JsonOutput**](Source/Launchers/GeoGen.MainLauncher/Examples/Output/JsonOutput) and [**JsonBestTheorems**](Source/Launchers/GeoGen.MainLauncher/Examples/Output/JsonBestTheorems). After selecting the theorems to be drawn, the program will generate eps files in the folder with the executable.
+
+#### Macros and rules
+
+Note the following [folder](Source/Launchers/GeoGen.DrawingLauncher/Data), which contains all written MetaPost macros and custom [drawing rules](Source/Launchers/GeoGen.DrawingLauncher/Data/drawing_rules.txt). 
 
 #### Tip for quick previewing on Windows
 
@@ -111,12 +164,8 @@ After running, you are requested to provide a path to a JSON theorem file. These
     EXIT 0
     ```
 
-    `{SumatraPath}` should be replaced with the path to the SumatraPDF executable. The usual location on Windows is `C:\Program Files\SumatraPDF\SumatraPDF.exe`. This will ensure that drawn figures are automatically opened for previewing.
+`{SumatraPath}` should be replaced with the path to the SumatraPDF executable. The usual location on Windows is `C:\Program Files\SumatraPDF\SumatraPDF.exe`. This will ensure that drawn figures are automatically opened for previewing.
 
-
-#### Results
-
-A few results can be seen in our [paper](https://drive.google.com/open?id=1TXFSKmxR92eRzMYLvk7BuQHeFm4HXZzk), pages 20-24.
 
 ### Theorem Proving Integration Test
 
@@ -129,7 +178,7 @@ The default values that should work after cloning can be found in [launchSetting
 
 ### Helper modules
 
-The following modules were used to prepare the experiment described in our [paper](https://drive.google.com/open?id=1TXFSKmxR92eRzMYLvk7BuQHeFm4HXZzk).
+The following modules were used to prepare the large-scale experiments described in the [thesis](https://drive.google.com/file/d/1dsaxDCMzlAPfB3e4rd8ut2RuZ_sn2Zm5/view?usp=sharing).
 
 * **Configuration Generation Launcher** - this module was used to test the counts of generated configurations for certain input files (and memory usage). It can be used similarly as the *Main Launcher*, with the default settings available [here](Source/Launchers/GeoGen.ConfigurationGenerationLauncher/Examples/settings.json), which needs to be copied to the folder with the executable. The output is not saved, only printed into the console.
 * **Input Generation Launcher** - this module generated input files. Running it would generate around 4500 small files, totaling 4MB.
@@ -137,4 +186,4 @@ The following modules were used to prepare the experiment described in our [pape
 
 ## Contact
 
-For more information you can contact me via [email](mailto:patrik.bak.x@gmail.com).
+For more information, you can contact me via [email](mailto:patrik.bak.x@gmail.com).
