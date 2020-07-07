@@ -5,7 +5,9 @@
 Theorems:
 
  t1 = EqualLineSegments: M, A, M, B
+ t2 = Incidence: M, l
 
 Implications:
 
- (t1) => Incidence: M, l
+ (t1) => t2
+ (t2) => t1

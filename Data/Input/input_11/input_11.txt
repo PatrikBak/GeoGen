@@ -1,0 +1,44 @@
+﻿Constructions:
+
+CircleWithDiameter
+Excenter
+Excircle
+ExternalAngleBisector
+Incenter
+Incircle
+InternalAngleBisector
+IntersectionOfLineAndLineFromPoints
+IntersectionOfLines
+IntersectionOfLinesFromPoints
+Median
+Midpoint
+MidpointOfArc
+MidpointOfOppositeArc
+OppositePointOnCircumcircle
+Orthocenter
+ParallelLine
+ParallelLineToLineFromPoints
+ParallelogramPoint
+PerpendicularBisector
+PerpendicularLine
+PerpendicularLineAtPointOfLine
+PerpendicularLineToLineFromPoints
+PerpendicularProjection
+PerpendicularProjectionOnLineFromPoints
+PointReflection
+ReflectionInLine
+ReflectionInLineFromPoints
+TangentLine
+
+Initial configuration:
+
+Triangle: A, B, C
+D = ReflectionInLineFromPoints(B, A, C)
+E = ReflectionInLineFromPoints(C, A, B)
+
+Iterations: 4
+MaximalPoints: 4
+MaximalLines: 4
+MaximalCircles: 2
+GenerateOnlySymmetricConfigurations: true
+MaximalSumOfSquaresOfLevelsOnLastIteration: 26
