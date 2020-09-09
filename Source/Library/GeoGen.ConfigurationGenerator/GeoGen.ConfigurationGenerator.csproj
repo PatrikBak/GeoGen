@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Ninject" Version="3.3.4" />
-    <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.2" />
+    <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.3" />
   </ItemGroup>
 
   <ItemGroup>
