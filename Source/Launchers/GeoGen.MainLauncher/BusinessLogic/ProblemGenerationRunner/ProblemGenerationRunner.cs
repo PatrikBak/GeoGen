@@ -227,6 +227,9 @@ namespace GeoGen.MainLauncher
             // which happens when we want to write them either readable or JSON form
             var writeBestTheorems = _settings.WriteReadableBestTheorems || _settings.WriteJsonBestTheorems;
 
+            // Prepare the variable indicating the last time we rewrote the best theorems
+            DateTimeOffset? lastTimeBestTheoremsWereRewritten = null;
+
             #region Generation loop
 
             // Run the generation
@@ -333,9 +336,25 @@ namespace GeoGen.MainLauncher
                                     updatedSorterTypes.Add(group.Key);
                             });
 
-                        // If we should write best theorems continuously, do it
-                        if (_settings.WriteBestTheoremsContinuously)
+                        // Find out if we should rewrite the best theorems, i.e. it must be allowed
+                        var shouldWeRewriteBestTheorems = _settings.WriteBestTheoremsContinuously
+                            // And either we haven't done it yet
+                            && (lastTimeBestTheoremsWereRewritten == null ||
+                                // Or the number of seconds that have passed since the last rewrote
+                                DateTimeOffset.Now.ToUnixTimeSeconds() - lastTimeBestTheoremsWereRewritten.Value.ToUnixTimeSeconds()
+                                    // Is more than our specified interval
+                                    > _settings.BestTheoremsRewrittingIntervalInSeconds);
+
+                        // If we should write best theorems continuously and it is time to it
+                        if (shouldWeRewriteBestTheorems)
+                        {
+                            // Do it
                             RewriteBestTheorems(updatedSorterTypes);
+
+                            // After the update where it was done last time
+                            lastTimeBestTheoremsWereRewritten = DateTimeOffset.Now;
+                        }
+
                     }
                     catch (Exception e)
                     {
@@ -415,13 +434,8 @@ namespace GeoGen.MainLauncher
 
             #endregion
 
-            #region Writing best theorems
-
-            // If we didn't write best theorems continuously, do it now
-            if (!_settings.WriteBestTheoremsContinuously)
-                RewriteBestTheorems();
-
-            #endregion
+            // Rewrite the best theorems after the generation is finished
+            RewriteBestTheorems();
 
             // Prepare the string explaining the state after merge
             var afterMergeString = $"{(writeBestTheorems ? $"{_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()}" : "-")}";

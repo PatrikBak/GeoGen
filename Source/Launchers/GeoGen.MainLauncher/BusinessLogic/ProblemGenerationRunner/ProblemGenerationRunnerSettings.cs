@@ -84,6 +84,12 @@ namespace GeoGen.MainLauncher
         public bool WriteBestTheoremsContinuously { get; }
 
         /// <summary>
+        /// The number of seconds after which the best theorems are rewritten. This has an effect only when
+        /// <see cref="WriteBestTheoremsContinuously"/> is true.
+        /// </summary>
+        public int BestTheoremsRewrittingIntervalInSeconds { get; }
+
+        /// <summary>
         /// The path to the file with the usages of the inference rules used in theorem proofs.
         /// </summary>
         public string InferenceRuleUsageFilePath { get; }
@@ -124,6 +130,7 @@ namespace GeoGen.MainLauncher
         /// <param name="jsonBestTheoremFolder"><inheritdoc cref="JsonBestTheoremFolder" path="/summary"/></param>
         /// <param name="writeJsonBestTheorems"><inheritdoc cref="WriteJsonBestTheorems" path="/summary"/></param>
         /// <param name="writeBestTheoremsContinuously"><inheritdoc cref="WriteBestTheoremsContinuously" path="/summary"/></param>
+        /// <param name="bestTheoremsRewrittingIntervalInSeconds"><inheritdoc cref="BestTheoremsRewrittingIntervalInSeconds" path="/summary"/></param>
         /// <param name="inferenceRuleUsageFilePath"><inheritdoc cref="InferenceRuleUsageFilePath" path="/summary"/></param>
         /// <param name="writeInferenceRuleUsages"><inheritdoc cref="WriteInferenceRuleUsages" path="/summary"/></param>
         /// <param name="progressLoggingFrequency"><inheritdoc cref="ProgressLoggingFrequency" path="/summary"/></param>
@@ -141,6 +148,7 @@ namespace GeoGen.MainLauncher
                                                string jsonBestTheoremFolder,
                                                bool writeJsonBestTheorems,
                                                bool writeBestTheoremsContinuously,
+                                               int bestTheoremsRewrittingIntervalInSeconds,
                                                string inferenceRuleUsageFilePath,
                                                bool writeInferenceRuleUsages,
                                                int progressLoggingFrequency,
@@ -159,6 +167,7 @@ namespace GeoGen.MainLauncher
             JsonBestTheoremFolder = jsonBestTheoremFolder;
             WriteJsonBestTheorems = writeJsonBestTheorems;
             WriteBestTheoremsContinuously = writeBestTheoremsContinuously;
+            BestTheoremsRewrittingIntervalInSeconds = bestTheoremsRewrittingIntervalInSeconds;
             InferenceRuleUsageFilePath = inferenceRuleUsageFilePath;
             WriteInferenceRuleUsages = writeInferenceRuleUsages;
             ProgressLoggingFrequency = progressLoggingFrequency;
