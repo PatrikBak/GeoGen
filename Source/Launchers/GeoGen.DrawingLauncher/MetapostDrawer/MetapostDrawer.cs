@@ -161,7 +161,7 @@ namespace GeoGen.DrawingLauncher
         private MetapostFigure CreateFigure(RankedTheorem rankedTheorem, int id)
         {
             // Construct flexible symmetry-aware pictures
-            var pictures = _constructor.ConstructWithFlexibleLayoutRespectingSymmetry(rankedTheorem, _settings.NumberOfPictures);
+            var pictures = _constructor.ConstructWithFlexibleLayoutRespectingSymmetry(rankedTheorem.Configuration, rankedTheorem.Theorem, _settings.NumberOfPictures);
 
             // Prepare the list of drawing exceptions
             var exceptions = new List<Exception>();

@@ -43,13 +43,13 @@ CircularLabelPositions := 20;
 % The scale factor that is applied to the convex hull of a letter that is used to calculate the badness
 % of the currently examined placement.
 %
-BadnessHullScale := 1.5;
+BadnessHullScale := 1.6;
 	
 %
 % The scale factor applied to the convex hull of a letter that is drawn with the background color in order 
 % to redraw the overlapping lines.
 %
-PlacementHullScale := 1.1;
+PlacementHullScale := 1.2;
 
 %%%%%%%%%%%% MACROS %%%%%%%%%%%%
 

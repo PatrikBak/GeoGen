@@ -178,11 +178,15 @@ P = MidpointOfArc(A,B,C)
   - let c = Circumcircle(A,B,C)
   - draw Circle(c)
   - draw Point(P)
+  - draw Segment(P,B) auxiliary
+  - draw Segment(P,C) auxiliary
   
 P = MidpointOfOppositeArc(A,B,C)
   - let c = Circumcircle(A,B,C)
   - draw Circle(c)
   - draw Point(P) 
+  - draw Segment(P,B) auxiliary
+  - draw Segment(P,C) auxiliary
 
 P = IntersectionOfLines(l1, l2)
   - draw Line(l1, P)

@@ -7,7 +7,7 @@ input TEX
 % 
 % The basic unit of length by each every point is scaled
 %
-u:=5cm;
+u:=4.5cm;
 
 %
 % The text width of the TeX problem statement on the right of the picture

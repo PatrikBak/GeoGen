@@ -59,7 +59,7 @@ namespace GeoGen.Infrastructure
             // If we request the time
             if (_settings.IncludeTime)
                 // Start with it
-                finalMessage = $"[{time.ToString("yyyy-MM-dd hh:mm:ss")}]";
+                finalMessage = $"[{time:yyyy-MM-dd hh:mm:ss}]";
 
             // Append the level (trim in the case that we didn't include the time -- then the string starts with the space)
             finalMessage = $"{finalMessage} [{ level}]".Trim();

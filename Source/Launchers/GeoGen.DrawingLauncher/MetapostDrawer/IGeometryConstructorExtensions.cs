@@ -1,7 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.TheoremRanker;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -22,11 +21,12 @@ namespace GeoGen.DrawingLauncher
         /// if the picture is symmetric in such a way that it would look better with a horizontal diagonal,
         /// or <see cref="RandomLayoutsHelpers.ConstructRandomConvexQuadrilateralWithHorizontalSide"/> otherwise.
         /// </summary>
-        /// <param name="theorem">The configuration to be constructed.</param>
+        /// <param name="configuration">The configuration to be constructed.</param>
+        /// <param name="theorem">The theorem that is used to determine symmetry be constructed.</param>
         /// <param name="numberOfPictures">The number of <see cref="Picture"/>s where the configuration should be drawn.</param>
         /// <returns>The tuple consisting of the pictures and the construction data.</returns>
         /// <exception cref="ConstructorException">Thrown when the construction couldn't be carried out correctly.</exception>
-        public static PicturesOfConfiguration ConstructWithFlexibleLayoutRespectingSymmetry(this IGeometryConstructor constructor, RankedTheorem theorem, int numberOfPictures)
+        public static PicturesOfConfiguration ConstructWithFlexibleLayoutRespectingSymmetry(this IGeometryConstructor constructor, Configuration configuration, Theorem theorem, int numberOfPictures)
         {
             #region Loose object layout construction
 
@@ -34,7 +34,7 @@ namespace GeoGen.DrawingLauncher
             IAnalyticObject[] LooseObjectsConstructor()
             {
                 // The layout is drawn based on its type
-                switch (theorem.Configuration.LooseObjectsHolder.Layout)
+                switch (configuration.LooseObjectsHolder.Layout)
                 {
                     // We want to draw less uniform triangles
                     case LooseObjectLayout.Triangle:
@@ -50,15 +50,15 @@ namespace GeoGen.DrawingLauncher
                     case LooseObjectLayout.Quadrilateral:
                     {
                         // Assume we're drawing a quadrilateral ABCD
-                        var A = theorem.Configuration.LooseObjects[0];
-                        var B = theorem.Configuration.LooseObjects[1];
-                        var C = theorem.Configuration.LooseObjects[2];
-                        var D = theorem.Configuration.LooseObjects[3];
+                        var A = configuration.LooseObjects[0];
+                        var B = configuration.LooseObjects[1];
+                        var C = configuration.LooseObjects[2];
+                        var D = configuration.LooseObjects[3];
 
                         // We will use a simple local function that checks whether a mapping is symmetric
                         bool IsSymmetric(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
                             // Take the real mappings
-                            => theorem.Theorem.GetSymmetryMappings(theorem.Configuration)
+                            => theorem.GetSymmetryMappings(configuration)
                                 // And have a look whether any behaves as our
                                 .Any(symmetryMapping => mapping.All(pair => symmetryMapping[pair.Key].Equals(pair.Value)));
 
@@ -104,7 +104,7 @@ namespace GeoGen.DrawingLauncher
 
                     // By default fall-back to the default uniform layout
                     default:
-                        return LooseObjectLayoutDrawing.ConstructUniformLayout(theorem.Configuration.LooseObjectsHolder.Layout);
+                        return LooseObjectLayoutDrawing.ConstructUniformLayout(configuration.LooseObjectsHolder.Layout);
                 }
             }
 
@@ -113,7 +113,7 @@ namespace GeoGen.DrawingLauncher
             try
             {
                 // Try to construct the configuration where the passed theorem holds using our custom layout drawer
-                var (pictures, constructionData) = constructor.Construct(theorem.Configuration, numberOfPictures, LooseObjectsConstructor);
+                var (pictures, constructionData) = constructor.Construct(configuration, numberOfPictures, LooseObjectsConstructor);
 
                 // Make sure there is no inconstructible object
                 if (constructionData.InconstructibleObject != default)
