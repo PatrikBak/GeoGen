@@ -28,7 +28,11 @@ The software can generate difficult geometry problems suitable for mathematical 
 
 ## About
 
-This is a repository for the Master's thesis that can be found [here](https://drive.google.com/file/d/1dsaxDCMzlAPfB3e4rd8ut2RuZ_sn2Zm5/view?usp=sharing). For more examples like <a href="#generated-problem">this one</a> check out the appendix.
+This repository contains the code developed for the master's thesis Automated Generation of Planar Geometry Olympiad Problems. For more information check out the following assets: 
+
+- [Poster](https://drive.google.com/file/d/14rj1hVZDxjbSrgTgml4hleS7WisEOLnW/view?usp=sharing) (prepared for the competition [ACMSpy](https://www.itspy.cz/cz/))
+- [Slides](https://drive.google.com/file/d/1d_nftY83eq6oIFmnQupBggqF-gRnJ8cn/view?usp=sharing) (used during the thesis defense)
+- [Thesis](https://drive.google.com/file/d/1dsaxDCMzlAPfB3e4rd8ut2RuZ_sn2Zm5/view?usp=sharing) (for more examples like <a href="#generated-problem">this one</a> check out the appendix)
 
 ## Installation
 
