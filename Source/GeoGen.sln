@@ -75,9 +75,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremProver.Object
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.ProblemGenerator.InputProvider", "Library\GeoGen.ProblemGenerator.InputProvider\GeoGen.ProblemGenerator.InputProvider.csproj", "{6211BF5B-3E01-4DDF-9986-A9181D32B0E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.TheoremRanker.RankedTheoremIO", "Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj", "{D089AEC2-4CCE-4FCE-BBD9-AFDF6A131DC5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.TheoremRanker.RankedTheoremIO", "Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj", "{D089AEC2-4CCE-4FCE-BBD9-AFDF6A131DC5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoGen.OutputMergingLauncher", "Launchers\GeoGen.OutputMergingLauncher\GeoGen.OutputMergingLauncher.csproj", "{7F7E8CBA-8700-463F-B468-83C27BCC45FF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeoGen.OutputMergingLauncher", "Launchers\GeoGen.OutputMergingLauncher\GeoGen.OutputMergingLauncher.csproj", "{7F7E8CBA-8700-463F-B468-83C27BCC45FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{2C37AD8E-5144-4D37-9BF5-70EFE9F74711}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
