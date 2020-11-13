@@ -11,7 +11,7 @@ namespace GeoGen.AnalyticGeometry
     /// sure that A^2 + B^2 = 1, and A>0 || (A==0 && B>0) (in other words, the leftmost 
     /// non-zero coefficient in the sequence A,B is positive - they can't be both zero).
     /// </summary>
-    public struct Line : IAnalyticObject, IEquatable<Line>
+    public readonly struct Line : IAnalyticObject, IEquatable<Line>
     {
         #region Public properties
 

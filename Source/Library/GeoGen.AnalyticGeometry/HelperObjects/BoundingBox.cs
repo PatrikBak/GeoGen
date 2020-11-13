@@ -7,7 +7,7 @@ namespace GeoGen.AnalyticGeometry
     /// <summary>
     /// Represents a rectangular 2D box that bounds a set of points.
     /// </summary>
-    public struct BoundingBox
+    public readonly struct BoundingBox
     {
         #region Public properties
 

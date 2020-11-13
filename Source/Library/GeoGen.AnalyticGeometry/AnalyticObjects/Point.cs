@@ -8,7 +8,7 @@ namespace GeoGen.AnalyticGeometry
     /// <summary>
     /// Represents a geometric 2D point. It is given by two coordinates X and Y.
     /// </summary>
-    public struct Point : IAnalyticObject, IEquatable<Point>
+    public readonly struct Point : IAnalyticObject, IEquatable<Point>
     {
         #region Public properties
 
