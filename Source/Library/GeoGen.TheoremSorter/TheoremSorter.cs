@@ -164,7 +164,7 @@ namespace GeoGen.TheoremSorter
         /// <param name="currentTheorem">The theorem that is currently among <see cref="BestTheorems"/>.</param>
         /// <param name="newTheorem">A geometrically equal theorem that could be a better version of it.</param>
         /// <returns>true, if we should replace the current theorem; false otherwise.</returns>
-        private bool ShouldWeReplace(RankedTheorem currentTheorem, RankedTheorem newTheorem)
+        private static bool ShouldWeReplace(RankedTheorem currentTheorem, RankedTheorem newTheorem)
         {
             #region Number of objects
 

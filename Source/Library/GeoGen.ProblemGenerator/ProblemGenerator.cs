@@ -173,7 +173,7 @@ namespace GeoGen.ProblemGenerator
                         .Any(objectsToBeAdded =>
                         {
                             // If we don't have enough iterations to add that many objects, then we're done
-                            if (configuration.IterationIndex + objectsToBeAdded.Count() > input.NumberOfIterations)
+                            if (configuration.IterationIndex + objectsToBeAdded.Count > input.NumberOfIterations)
                                 return false;
 
                             // Otherwise find out if we have the needed constructions by taking the objects

@@ -161,7 +161,7 @@ namespace GeoGen.DrawingLauncher
                         .ForEach(commandLine =>
                         {
                             // We now know it starts with -, get rid of it
-                            commandLine = commandLine.Substring(1).Trim();
+                            commandLine = commandLine[1..].Trim();
 
                             // Match the line defining an auxiliary object, which is in the form 'let name = definition'
                             var auxiliaryObjectMatch = Regex.Match(commandLine, "^let (.*)$");

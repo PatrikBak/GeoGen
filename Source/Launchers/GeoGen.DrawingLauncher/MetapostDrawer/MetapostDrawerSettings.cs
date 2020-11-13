@@ -90,7 +90,6 @@ namespace GeoGen.DrawingLauncher
                                       string metapostCompilationCommand,
                                       string metapostCompilationArguments,
                                       string postcompilationCommand,
-                                      bool logCommandOutput,
                                       int numberOfPictures)
         {
             DrawingData = drawingData ?? throw new ArgumentNullException(nameof(drawingData));

@@ -208,3 +208,6 @@ dotnet_diagnostic.CA1822.severity = silent
 
 # CA1032: Implement standard exception constructors
 dotnet_diagnostic.CA1032.severity = silent
+
+# CA1826: Do not use Enumerable methods on indexable collections
+dotnet_diagnostic.CA1826.severity = silent

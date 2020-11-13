@@ -145,7 +145,7 @@ namespace GeoGen.Constructor
         /// <param name="pictures">The pictures in which the theorem object should be constructed.</param>
         /// <param name="baseTheoremObject">The base theorem object that should be constructed.</param>
         /// <returns>The dictionary mapping each picture to the analytic representation of the object, or null, if the construction cannot be done.</returns>
-        private Dictionary<Picture, IAnalyticObject> ConstructBaseTheoremObject(Pictures pictures, BaseTheoremObject baseTheoremObject)
+        private static Dictionary<Picture, IAnalyticObject> ConstructBaseTheoremObject(Pictures pictures, BaseTheoremObject baseTheoremObject)
         {
             // Prepare the result
             var result = new Dictionary<Picture, IAnalyticObject>();
@@ -175,7 +175,7 @@ namespace GeoGen.Constructor
         /// <param name="analyticObjectProvider">The function that finds the analytic representation of a theorem object.</param>
         /// <param name="originalPictureObject">The function that finds out if the analytic object is part of the original picture.</param>
         /// <returns>true, if the theorem is true with respect to the analytic object provider; false otherwise.</returns>
-        private bool VerifyTheorem(Theorem theorem, Func<TheoremObject, IAnalyticObject> analyticObjectProvider, Predicate<IAnalyticObject> originalPictureObject)
+        private static bool VerifyTheorem(Theorem theorem, Func<TheoremObject, IAnalyticObject> analyticObjectProvider, Predicate<IAnalyticObject> originalPictureObject)
         {
             // Switch based on theorem type
             switch (theorem.Type)

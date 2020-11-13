@@ -26,7 +26,7 @@ namespace GeoGen.Utilities.Tests
             superset.Subsets(4).Count().Should().Be(1);
 
             // Assert sizes
-            Enumerable.Range(0, 5).ForEach(size => superset.Subsets(size).ForEach(subset => subset.Count().Should().Be(size)));
+            Enumerable.Range(0, 5).ForEach(size => superset.Subsets(size).ForEach(subset => subset.Length.Should().Be(size)));
 
             // Assert existence of some subsets
             new[]
@@ -43,7 +43,7 @@ namespace GeoGen.Utilities.Tests
                 superset.Subsets().Any(_subset => _subset.OrderlessEquals(subset)).Should().BeTrue();
 
                 // Make sure it's listed in the subsets with the given count
-                superset.Subsets(subset.Count()).Any(_subset => _subset.OrderlessEquals(subset)).Should().BeTrue();
+                superset.Subsets(subset.Length).Any(_subset => _subset.OrderlessEquals(subset)).Should().BeTrue();
             });
         }
 
@@ -60,7 +60,7 @@ namespace GeoGen.Utilities.Tests
             array.Variations(4).Count().Should().Be(24);
 
             // Assert sizes
-            Enumerable.Range(1, 4).ForEach(size => array.Variations(size).ForEach(variation => variation.Count().Should().Be(size)));
+            Enumerable.Range(1, 4).ForEach(size => array.Variations(size).ForEach(variation => variation.Length.Should().Be(size)));
 
             // Assert existence of some variations
             new[]
@@ -73,7 +73,7 @@ namespace GeoGen.Utilities.Tests
             .ForEach(variation =>
             {
                 // Make sure it's listed in the subsets with the given count
-                array.Variations(variation.Count()).Any(_variation => _variation.SequenceEqual(variation)).Should().BeTrue();
+                array.Variations(variation.Length).Any(_variation => _variation.SequenceEqual(variation)).Should().BeTrue();
             });
         }
 

@@ -613,7 +613,7 @@ namespace GeoGen.TheoremProver
                 case ConstructedConfigurationObject constructedTemplate:
 
                     // Then the real object must also be constructed
-                    if (!(realObject is ConstructedConfigurationObject constructedRealObject))
+                    if (realObject is not ConstructedConfigurationObject constructedRealObject)
                         return Enumerable.Empty<Mapping>();
 
                     // And must have the same construction as the template

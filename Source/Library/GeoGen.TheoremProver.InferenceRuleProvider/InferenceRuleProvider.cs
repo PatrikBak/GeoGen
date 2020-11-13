@@ -311,7 +311,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
                             if (groupString.StartsWith('!'))
                             {
                                 // If yes, get the name by removing the !
-                                var negativeAssumptionName = groupString.Substring(1);
+                                var negativeAssumptionName = groupString[1..];
 
                                 // Parse it
                                 var negativeAssumption = namesToTheorems.GetValueOrDefault(negativeAssumptionName)
@@ -398,7 +398,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
                                 rule.AssumptionGroups, rule.NegativeAssumptions, rule.Conclusion
                             ),
                             // Set the message as well based on the count of the redeclared objects
-                            adjustmentMessage: redeclaredObjects.Count() == 1
+                            adjustmentMessage: redeclaredObjects.Length == 1
                                 // If there is just one object, we mention its construction explicitly
                                 ? $"adjusted by declaring {redeclaredObjects[0].Construction.Name}"
                                 // Otherwise all have been redeclared
@@ -410,7 +410,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
                     if (rule.Conclusion.Type == TheoremType.EqualObjects)
                     {
                         // No redeclaration is needed if there is one object
-                        if (undeclaredObjects.Count() == 1)
+                        if (undeclaredObjects.Length == 1)
                             return (rule, adjustmentMessage: "", lineIndex).ToEnumerable();
 
                         // Otherwise there are two options

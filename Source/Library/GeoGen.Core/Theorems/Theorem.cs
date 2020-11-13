@@ -194,44 +194,30 @@ namespace GeoGen.Core
         /// <returns>The derived theorem.</returns>
         public static Theorem DeriveFromFlattenedObjects(TheoremType type, IReadOnlyList<TheoremObject> flattenedObjects)
         {
-            // Prepare the final theorem objects
-            IReadOnlyList<TheoremObject> finalTheoremObjects;
-
-            // Switch based on the theorem type
-            switch (type)
+            // We need to construct the theorem objects based on the theorem's type
+            var finalTheoremObjects = type switch
             {
-                // The cases where objects are simply the ones passed
-                case CollinearPoints:
-                case ConcyclicPoints:
-                case ConcurrentLines:
-                case ParallelLines:
-                case PerpendicularLines:
-                case LineTangentToCircle:
-                case TangentCircles:
-                case EqualObjects:
-                case Incidence:
+                // The cases where objects are simply the flattened ones
+                CollinearPoints or
+                ConcyclicPoints or
+                ConcurrentLines or
+                ParallelLines or
+                PerpendicularLines or
+                LineTangentToCircle or
+                TangentCircles or
+                EqualObjects or
+                Incidence => flattenedObjects,
 
-                    // In those we simply take all created objects
-                    finalTheoremObjects = flattenedObjects;
-
-                    break;
-
-                // Case with line segments
-                case EqualLineSegments:
-
-                    // Here the first two points make one line segment and the next one the other one
-                    finalTheoremObjects = new TheoremObject[]
-                    {
-                        new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[0], (PointTheoremObject)flattenedObjects[1]),
-                        new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[2], (PointTheoremObject)flattenedObjects[3])
-                    };
-
-                    break;
+                // Here the first two points make one line segment and the next one the other one// Case with line segments
+                EqualLineSegments => new TheoremObject[]
+                {
+                    new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[0], (PointTheoremObject)flattenedObjects[1]),
+                    new LineSegmentTheoremObject((PointTheoremObject)flattenedObjects[2], (PointTheoremObject)flattenedObjects[3])
+                },
 
                 // Unhandled cases
-                default:
-                    throw new GeoGenException($"Unhandled value of {nameof(TheoremType)}: {type}");
-            }
+                _ => throw new GeoGenException($"Unhandled value of {nameof(TheoremType)}: {type}"),
+            };
 
             // Create a new theorem using the found objects
             return new Theorem(type, finalTheoremObjects);

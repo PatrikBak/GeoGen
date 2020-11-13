@@ -39,47 +39,40 @@ namespace GeoGen.TheoremSorter
             _type = theorem.Type;
 
             // Set the content by switching on the type
-            switch (_type)
+            _content = _type switch
             {
                 // These types can be compared as object sets
-                case TheoremType.CollinearPoints:
-                case TheoremType.ConcyclicPoints:
-                case TheoremType.ConcurrentLines:
-                case TheoremType.ParallelLines:
-                case TheoremType.PerpendicularLines:
-                case TheoremType.TangentCircles:
-                case TheoremType.LineTangentToCircle:
-                case TheoremType.Incidence:
-
-                    // Take the inner objects
-                    _content = theorem.InvolvedObjects
-                        // We know they are base
-                        .Cast<BaseTheoremObject>()
-                        // And therefore constructible
-                        .Select(picture.Construct)
-                        // Enumerate them to a read-only hash set
-                        .ToReadOnlyHashSet();
-
-                    break;
+                TheoremType.CollinearPoints or
+                TheoremType.ConcyclicPoints or
+                TheoremType.ConcurrentLines or
+                TheoremType.ParallelLines or
+                TheoremType.PerpendicularLines or
+                TheoremType.TangentCircles or
+                TheoremType.LineTangentToCircle or
+                TheoremType.Incidence =>
+                            // Take the inner objects
+                            theorem.InvolvedObjects
+                                    // We know they are base
+                                    .Cast<BaseTheoremObject>()
+                                    // And therefore constructible
+                                    .Select(picture.Construct)
+                                    // Enumerate them to a read-only hash set
+                                    .ToReadOnlyHashSet(),
 
                 // In this case we have two line segment objects
-                case TheoremType.EqualLineSegments:
-
-                    // Take the inner objects
-                    _content = theorem.InvolvedObjects
-                        // We know they are line segments
-                        .Cast<LineSegmentTheoremObject>()
-                        // From each create their point set 
-                        .Select(segment => segment.PointSet.Select(picture.Construct).ToReadOnlyHashSet())
-                        // Enumerate them to a read-only hash set
-                        .ToReadOnlyHashSet();
-
-                    break;
+                TheoremType.EqualLineSegments =>
+                            // Take the inner objects
+                            theorem.InvolvedObjects
+                                    // We know they are line segments
+                                    .Cast<LineSegmentTheoremObject>()
+                                    // From each create their point set 
+                                    .Select(segment => segment.PointSet.Select(picture.Construct).ToReadOnlyHashSet())
+                                    // Enumerate them to a read-only hash set
+                                    .ToReadOnlyHashSet(),
 
                 // Unhandled cases
-                default:
-                    throw new TheoremSorterException($"Unhandled value of {nameof(TheoremType)}: {_type}");
-            }
+                _ => throw new TheoremSorterException($"Unhandled value of {nameof(TheoremType)}: {_type}"),
+            };
         }
 
         #endregion

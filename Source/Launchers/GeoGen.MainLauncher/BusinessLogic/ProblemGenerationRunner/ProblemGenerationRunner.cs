@@ -506,7 +506,7 @@ namespace GeoGen.MainLauncher
         /// <param name="initialFormatter">The formatter of the initial configuration.</param>
         /// <param name="initialTheorems">The theorems found in the initial configuration.</param>
         /// <returns>The string representing the theorems.</returns>
-        private string InitialTheoremsToString(OutputFormatter initialFormatter, TheoremMap initialTheorems)
+        private static string InitialTheoremsToString(OutputFormatter initialFormatter, TheoremMap initialTheorems)
             // Process every theorem
             => initialTheorems.AllObjects
                 // Use formatter for each
@@ -560,7 +560,7 @@ namespace GeoGen.MainLauncher
         /// <param name="analyzerOutput">The analyzer output to be converted to a string.</param>
         /// <param name="writeProofs">Indicates whether we should format theorem proofs.</param>
         /// <returns>The string representing the analyzer output.</returns>
-        private string AnalyzerOutputToString(OutputFormatter formatter, GeneratedProblemAnalyzerOutputBase analyzerOutput, bool writeProofs)
+        private static string AnalyzerOutputToString(OutputFormatter formatter, GeneratedProblemAnalyzerOutputBase analyzerOutput, bool writeProofs)
         {
             // Prepare the result
             var result = "";

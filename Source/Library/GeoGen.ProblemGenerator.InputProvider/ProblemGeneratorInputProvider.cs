@@ -53,7 +53,7 @@ namespace GeoGen.ProblemGenerator.InputProvider
                     // Take only those that start with the requested pattern
                     .Where(tuple => tuple.fileName.StartsWith(_settings.InputFilePrefix))
                     // Find their ids 
-                    .Select(tuple => (tuple.path, id: tuple.fileName.Substring(_settings.InputFilePrefix.Length)))
+                    .Select(tuple => (tuple.path, id: tuple.fileName[_settings.InputFilePrefix.Length..]))
                     // Enumerate them
                     .ToList();
 

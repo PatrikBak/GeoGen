@@ -98,7 +98,7 @@ namespace GeoGen.TheoremFinder
         /// <param name="oldTheoremObject">The old theorem object for which we're looking for definition change options.</param>
         /// <param name="contextualPicture">The contextual picture that represents the configuration.</param>
         /// <returns>The enumeration of all possible definition changes, including no change.</returns>
-        private IEnumerable<TheoremObject> FindDefinitionChangeOptions(TheoremObject oldTheoremObject, ContextualPicture contextualPicture)
+        private static IEnumerable<TheoremObject> FindDefinitionChangeOptions(TheoremObject oldTheoremObject, ContextualPicture contextualPicture)
         {
             // Find the new object of the configuration
             var newConfigurationObject = contextualPicture.Pictures.Configuration.LastConstructedObject;

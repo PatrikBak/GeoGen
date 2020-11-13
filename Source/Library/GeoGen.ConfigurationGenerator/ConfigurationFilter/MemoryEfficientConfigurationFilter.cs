@@ -17,12 +17,12 @@ namespace GeoGen.ConfigurationGenerator
         /// <summary>
         /// The assigned ids of the loose objects of the initial and therefore any subsequent configuration.
         /// </summary>
-        private readonly Dictionary<LooseConfigurationObject, char> _looseObjectsId = new Dictionary<LooseConfigurationObject, char>();
+        private readonly Dictionary<LooseConfigurationObject, int> _looseObjectsId = new Dictionary<LooseConfigurationObject, int>();
 
         /// <summary>
         /// The assigned ids of constructions that might appear in object's definitions.
         /// </summary>
-        private readonly Dictionary<Construction, char> _constructionsId = new Dictionary<Construction, char>();
+        private readonly Dictionary<Construction, int> _constructionsId = new Dictionary<Construction, int>();
 
         /// <summary>
         /// The initial objects of every configuration.
@@ -43,7 +43,7 @@ namespace GeoGen.ConfigurationGenerator
             _initialObjects = generatorInput.InitialConfiguration.ConstructedObjects;
 
             // Assign ids to loose objects
-            generatorInput.InitialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, (char)index));
+            generatorInput.InitialConfiguration.LooseObjects.ForEach((looseObject, index) => _looseObjectsId.Add(looseObject, index));
 
             // Assign ids to constructions used in the generation
             generatorInput.Constructions
@@ -52,7 +52,7 @@ namespace GeoGen.ConfigurationGenerator
                 // We need distinct ones so that we don't identify the same one twice
                 .Distinct()
                 // Add the id to the dictionary
-                .ForEach((construction, index) => _constructionsId.Add(construction, (char)index));
+                .ForEach((construction, index) => _constructionsId.Add(construction, index));
         }
 
         #endregion
@@ -98,10 +98,10 @@ namespace GeoGen.ConfigurationGenerator
                 // And unwrap the order
                 .permutation;
 
-            // The configuration is correct if and only if its order of added objects is the normal order
-            // Therefore from the constructed objects
+            // The configuration is correct if and only if its order of added objects is the normal object
+            // Therefore the take the constructed objects
             return !configuration.ConstructedObjects
-                // Take the ones that have been added
+                // From the ones that have been added
                 .ItemsBetween(_initialObjects.Count, configuration.ConstructedObjects.Count)
                 // And sequentially compare them with the normal order
                 .SequenceEqual(normalOrderOfAddedObjects);

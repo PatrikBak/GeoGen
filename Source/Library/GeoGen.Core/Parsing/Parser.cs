@@ -525,7 +525,7 @@ namespace GeoGen.Core
                         var namedObject = namesToObjects[name];
 
                         // If it's not loose, we have a problem
-                        if (!(namedObject is LooseConfigurationObject looseNamedObject))
+                        if (namedObject is not LooseConfigurationObject looseNamedObject)
                             throw new ParsingException($"Object with a name '{name}' has been declared twice inconsistently.");
 
                         // If we got here, the object is okay...

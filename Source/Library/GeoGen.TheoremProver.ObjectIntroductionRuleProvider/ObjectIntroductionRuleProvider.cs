@@ -153,7 +153,7 @@ namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
                         .Select(newObjectLine =>
                         {
                             // We now know it starts with -, get rid of it
-                            newObjectLine = newObjectLine.Substring(1).Trim();
+                            newObjectLine = newObjectLine[1..].Trim();
 
                             try
                             {

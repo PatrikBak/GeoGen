@@ -206,7 +206,7 @@ namespace GeoGen.TheoremSimplifier
         /// <param name="templatePoints">The template points to be mapped to the points of the original configuration.</param>
         /// <param name="originalPoints">The points of the original configuration to which the template points should be mapped.</param>
         /// <returns>The enumerable of correct mappings.</returns>
-        private IEnumerable<Dictionary<ConfigurationObject, ConfigurationObject>> Map(IReadOnlyList<ConfigurationObject> templatePoints,
+        private static IEnumerable<Dictionary<ConfigurationObject, ConfigurationObject>> Map(IReadOnlyList<ConfigurationObject> templatePoints,
                                                                                       IReadOnlyList<ConfigurationObject> originalPoints)
             // First we zip the objects 
             => templatePoints.Zip(originalPoints)
@@ -259,7 +259,7 @@ namespace GeoGen.TheoremSimplifier
                             case ConstructedConfigurationObject constructedTemplate:
 
                                 // Then the original object must also be and must have the same construction
-                                if (!(original is ConstructedConfigurationObject constructedOriginal) || !constructedOriginal.Construction.Equals(constructedTemplate.Construction))
+                                if (original is not ConstructedConfigurationObject constructedOriginal || !constructedOriginal.Construction.Equals(constructedTemplate.Construction))
                                     return Enumerable.Empty<Dictionary<ConfigurationObject, ConfigurationObject>>();
 
                                 // If it's the case, then we might have more possible mappings

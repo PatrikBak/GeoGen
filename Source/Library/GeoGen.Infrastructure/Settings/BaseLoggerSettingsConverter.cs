@@ -77,7 +77,7 @@ namespace GeoGen.Infrastructure
         /// </summary>
         /// <param name="value">The settings.</param>
         /// <returns>The extracted name of the logger.</returns>
-        private string ExtractLoggerName(object value)
+        private static string ExtractLoggerName(object value)
         {
             // Find the name of the class
             var className = value.GetType().Name;
