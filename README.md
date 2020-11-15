@@ -36,7 +36,7 @@ This repository contains the code developed for the master's thesis Automated Ge
 
 ## Installation
 
-The system requires to have [.NET Core 3.1](https://dotnet.microsoft.com/download/dotnet-core/3.1) installed. 
+The system requires to have [.NET 5.0](https://dotnet.microsoft.com/download/dotnet/5.0) installed. 
 
 ### Building
 
