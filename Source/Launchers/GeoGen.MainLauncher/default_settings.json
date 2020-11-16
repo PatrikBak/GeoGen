@@ -46,6 +46,7 @@
     "JsonBestTheoremFolder": "../../../Examples/Output/JsonBestTheorems",
     "WriteJsonBestTheorems": true,
     "WriteBestTheoremsContinuously": false,
+    "BestTheoremsRewrittingIntervalInSeconds": 5,
     "ProgressLoggingFrequency": 5,
     "LogProgress": true
   },
