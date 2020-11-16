@@ -66,7 +66,7 @@ namespace GeoGen.Core
             => Point1.GetInnerConfigurationObjects().Concat(Point2.GetInnerConfigurationObjects());
 
         /// <inheritdoc/>
-        public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
+        public override LineSegmentTheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Map particular objects
             var mappedPoint1 = Point1.Remap(mapping, flattenObjectsFromPoints);
@@ -75,7 +75,7 @@ namespace GeoGen.Core
             // Reconstruct based on the fact whether remapping could be done
             return mappedPoint1 != null && mappedPoint2 != null
                 // If yes, do the reconstruction
-                ? new LineSegmentTheoremObject((PointTheoremObject)mappedPoint1, (PointTheoremObject)mappedPoint2)
+                ? new LineSegmentTheoremObject(mappedPoint1, mappedPoint2)
                 // If no, return null
                 : null;
         }

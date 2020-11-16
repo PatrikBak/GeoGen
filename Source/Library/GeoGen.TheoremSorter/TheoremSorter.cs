@@ -304,7 +304,7 @@ namespace GeoGen.TheoremSorter
                 rankedTheorem.Configuration.ConstructedObjects.ForEach(constructedObject =>
                 {
                     // Remap the current one
-                    var remappedConstructObject = (ConstructedConfigurationObject)constructedObject.Remap(externalLooseObjectMapping);
+                    var remappedConstructObject = constructedObject.Remap(externalLooseObjectMapping);
 
                     // Add it to the mapping
                     objectMapping.Add(constructedObject, remappedConstructObject);

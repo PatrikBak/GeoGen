@@ -33,7 +33,7 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <inheritdoc/>
-        public override ConstructionArgument Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
+        public override ObjectConstructionArgument Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
             // Simply remap the passed object
             => new ObjectConstructionArgument(PassedObject.Remap(mapping));
 

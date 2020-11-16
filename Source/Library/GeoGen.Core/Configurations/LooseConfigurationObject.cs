@@ -25,7 +25,7 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <inheritdoc/>
-        public override ConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
+        public override LooseConfigurationObject Remap(IReadOnlyDictionary<LooseConfigurationObject, LooseConfigurationObject> mapping)
             // Simply access the object from the mapping
             => mapping.GetValueOrDefault(this) ?? throw new GeoGenException("The loose object is not present in the mapping");
 

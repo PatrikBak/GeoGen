@@ -65,7 +65,7 @@ namespace GeoGen.ConfigurationGenerator
                     // For every make ids set from the constructed objects 
                     .Select(mapping => MakeIdsSet(configuration.ConstructedObjects
                         // that are remapped using this mapping
-                        .Select(constructedObject => (ConstructedConfigurationObject)constructedObject.Remap(mapping))))
+                        .Select(constructedObject => constructedObject.Remap(mapping))))
                     // Take the lexicographically minimal ids set
                     .MinItem(Comparer<SortedSet<int>>.Create((a1, a2) => a1.CompareToLexicographically(a2)));
 

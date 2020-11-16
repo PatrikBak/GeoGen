@@ -75,7 +75,7 @@ namespace GeoGen.ConfigurationGenerator
                 // For a given mapping take the constructed objects
                 .Select(mapping => configuration.ConstructedObjects
                     // Reconstruct them
-                    .Select(construtedObject => (ConstructedConfigurationObject)construtedObject.Remap(mapping))
+                    .Select(construtedObject => construtedObject.Remap(mapping))
                     // Exclude the initial objects
                     .Except(_initialObjects)
                     // Enumerate

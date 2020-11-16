@@ -34,7 +34,7 @@ namespace GeoGen.Core
         #region Public abstract methods implementation
 
         /// <inheritdoc/>
-        public override TheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
+        public override PointTheoremObject Remap(IReadOnlyDictionary<ConfigurationObject, ConfigurationObject> mapping, bool flattenObjectsFromPoints = false)
         {
             // Reuse the static helper from the base class    
             var mappedPoint = Map(ConfigurationObject, mapping);

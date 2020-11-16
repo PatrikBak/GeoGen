@@ -115,7 +115,7 @@ namespace GeoGen.Core
                     // Prepare a mapping dictionary for them
                     .ToDictionary(constructedObject => (ConfigurationObject)constructedObject,
                         // Each object is remapped with respect to the loose object mapping
-                        constructedObject => constructedObject.Remap(mappedLooseObjects))))
+                        constructedObject => (ConfigurationObject)constructedObject.Remap(mappedLooseObjects))))
                 // Take only those mappings where the set of remapped constructed objects is the same as current ones
                 .Where(pair => pair.mappedConstructedObjects.Values.OrderlessEquals(ConstructedObjectsSet))
                 // These are correct symmetry mappings. Now we just complete them with the loose objects for comfort
@@ -141,7 +141,7 @@ namespace GeoGen.Core
                 // For a given mapping take the constructed objects
                 .Select(mapping => ConstructedObjects
                     // Reconstruct them
-                    .Select(construtedObject => (ConstructedConfigurationObject)construtedObject.Remap(mapping))
+                    .Select(construtedObject => construtedObject.Remap(mapping))
                     // Exclude the ones that we already have. This way we get the objects 
                     // that are missing in order for this mapping to prove symmetry. 
                     .Except(ConstructedObjects)
@@ -172,7 +172,7 @@ namespace GeoGen.Core
                 foreach (var symmetryMapping in LooseObjectsHolder.GetSymmetricMappings())
                 {
                     // Get the new object
-                    var newObject = (ConstructedConfigurationObject)currentObject.Remap(symmetryMapping);
+                    var newObject = currentObject.Remap(symmetryMapping);
 
                     // Try to add it
                     if (objects.Add(newObject))
