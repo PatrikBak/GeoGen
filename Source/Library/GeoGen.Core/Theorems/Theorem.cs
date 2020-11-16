@@ -171,12 +171,24 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Finds out if a given theorem is symmetric with respect to the passed configuration.
+        /// (<see cref="Configuration.IsSymmetric"/>)
         /// </summary>
         /// <param name="configuration">The configuration where the theorem holds.</param>
         /// <returns>true, if the theorem is symmetric, false otherwise.</returns>
         public bool IsSymmetric(Configuration configuration)
             // Check whether there is any symmetry mapping
             => GetSymmetryMappings(configuration).Any();
+
+
+        /// <summary>
+        /// Finds out if a given theorem is fully symmetric with respect to the passed configuration.
+        /// (<see cref="Configuration.IsFullySymmetric"/>)
+        /// </summary>
+        /// <param name="configuration">The configuration where the theorem holds.</param>
+        /// <returns>true, if the theorem is fully symmetric, false otherwise.</returns>
+        public bool IsFullySymmetric(Configuration configuration)
+            // Check whether there is any symmetry mapping
+            => GetSymmetryMappings(configuration).Count() == configuration.LooseObjectsHolder.GetSymmetricMappings().Count();
 
         #endregion
 

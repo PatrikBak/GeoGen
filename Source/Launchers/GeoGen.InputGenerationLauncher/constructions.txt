@@ -1,6 +1,6 @@
 ﻿CircleWithDiameter
+Circumcenter
 Excenter
-Excircle
 ExternalAngleBisector
 Incenter
 Incircle

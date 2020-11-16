@@ -186,7 +186,7 @@ namespace GeoGen.MainLauncher
             WriteLineToBothReadableWriters($"{input.MaximalNumbersOfObjectsToAdd.Select(pair => $"MaximalNumberOf{pair.Key}s: {pair.Value}").ToJoinedString("\n")}\n");
 
             // Write whether we're excluding symmetry
-            WriteLineToBothReadableWriters($"GenerateOnlySymmetricConfigurations: {input.ExcludeAsymmetricConfigurations}");
+            WriteLineToBothReadableWriters($"SymmetryGenerationMode: {input.SymmetryGenerationMode}");
 
             #endregion
 
@@ -267,21 +267,17 @@ namespace GeoGen.MainLauncher
 
                 try
                 {
-                    // The analyzer needs to know whether it should deem asymmetric problems as interesting.
-                    // This value is pulled from the input setup
-                    var areAsymetricProblemsInteresting = !input.ExcludeAsymmetricConfigurations;
-
                     // If we should look for proofs (because we should be writing them or analyze the inner inferences)
                     analyzerOutput = _settings.WriteInferenceRuleUsages || _settings.WriteReadableOutputWithProofs
                         // Then call the analysis that construct them
-                        ? (GeneratedProblemAnalyzerOutputBase)_analyzer.AnalyzeWithProofConstruction(generatorOutput, areAsymetricProblemsInteresting)
+                        ? (GeneratedProblemAnalyzerOutputBase)_analyzer.AnalyzeWithProofConstruction(generatorOutput, input.SymmetryGenerationMode)
                         // Otherwise we don't need them
-                        : _analyzer.AnalyzeWithoutProofConstruction(generatorOutput, areAsymetricProblemsInteresting);
+                        : _analyzer.AnalyzeWithoutProofConstruction(generatorOutput, input.SymmetryGenerationMode);
                 }
                 catch (Exception e)
                 {
                     // If there is any sort of problem, we should make aware of it. 
-                    Log.Error(e, "There has been an exception while analyzing the configuration:\n\n{configuration}\n" +
+                    Log.Error(e, "There has been an exception while analyzing the configuration:\n\n{configuration}\n",
                         // Write the problematic configuration
                         new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration));
 

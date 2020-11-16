@@ -16,16 +16,16 @@ namespace GeoGen.ProblemAnalyzer
         /// Performs the analysis of a given generator output with explicit construction of theorem proofs.
         /// </summary>
         /// <param name="generatorOutput">The generator output to be analyzed.</param>
-        /// <param name="areAsymetricProblemsInteresting">Indicates whether asymmetric problems should be deemed interesting.</param>
+        /// <param name="mode">Indicates how we handle asymmetric problems with regards to generation.</param>
         /// <returns>The result of the analysis with constructed theorem proofs.</returns>
-        GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting);
+        GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput, SymmetryGenerationMode mode);
 
         /// <summary>
         /// Performs the analysis of a given generator output without explicit construction of theorem proofs.
         /// </summary>
         /// <param name="generatorOutput">The generator output to be analyzed.</param>
-        /// <param name="areAsymetricProblemsInteresting">Indicates whether asymmetric problems should be deemed interesting.</param>
+        /// <param name="mode">Indicates how we handle asymmetric problems with regards to generation.</param>
         /// <returns>The result of the analysis without constructed theorem proofs.</returns>
-        GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting);
+        GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput, SymmetryGenerationMode mode);
     }
 }

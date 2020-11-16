@@ -133,8 +133,8 @@ namespace GeoGen.InputGenerationLauncher
                     .Replace("{MaximalLines}", input.MaximalNumbersOfObjectsToAdd[Line].ToString())
                     // Replace maximal circles
                     .Replace("{MaximalCircles}", input.MaximalNumbersOfObjectsToAdd[Circle].ToString())
-                    // Replace the symmetry generation flag
-                    .Replace("{GenerateOnlySymmetricConfigurations}", input.ExcludeAsymmetricConfigurations.ToString().ToLower());
+                    // Replace the symmetry generation mode
+                    .Replace("{SymmetryGenerationMode}", input.SymmetryGenerationMode.ToString());
 
                 // Create the directory where the file goes
                 Directory.CreateDirectory(Path.Combine(resultsFolder, $"input_{counter}"));
@@ -174,7 +174,7 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
@@ -191,8 +191,8 @@ namespace GeoGen.InputGenerationLauncher
                 .Where(configuration => configuration.IterationIndex == 2)
                 // Every generated configuration makes an input file
                 .Select(configuration => new ProblemGeneratorInput(configuration, _constructions,
-                    // We will want 2 iterations
-                    numberOfIterations: 2,
+                    // We will want 3 iterations
+                    numberOfIterations: 3,
                     // Set maximal numbers of objects to be added
                     new Dictionary<ConfigurationObjectType, int>
                     {
@@ -206,7 +206,7 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    excludeAsymmetricConfigurations: true));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
         }
 
         /// <summary>
@@ -233,7 +233,7 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, excludeAsymmetricConfigurations: false);
+            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 5);
@@ -265,7 +265,7 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    excludeAsymmetricConfigurations: true));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
         }
 
         #endregion

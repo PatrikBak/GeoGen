@@ -36,10 +36,10 @@ namespace GeoGen.ProblemGenerator.InputProvider
                                            IReadOnlyHashSet<Construction> constructions,
                                            int numberOfIterations,
                                            IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
-                                           bool excludeAsymmetricConfigurations,
+                                           SymmetryGenerationMode symmetryGenerationMode,
                                            string filePath,
                                            string id)
-            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd, excludeAsymmetricConfigurations)
+            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd, symmetryGenerationMode)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             Id = id ?? throw new ArgumentNullException(nameof(id));

@@ -130,7 +130,7 @@ namespace GeoGen.ProblemGenerator.InputProvider
                         initialConfiguration: generatorInput.InitialConfiguration,
                         numberOfIterations: generatorInput.NumberOfIterations,
                         maximalNumbersOfObjectsToAdd: generatorInput.MaximalNumbersOfObjectsToAdd,
-                        excludeAsymmetricConfigurations: generatorInput.ExcludeAsymmetricConfigurations
+                        symmetryGenerationMode: generatorInput.SymmetryGenerationMode
                     ));
                 }
                 catch (ParsingException e)
@@ -276,29 +276,29 @@ namespace GeoGen.ProblemGenerator.InputProvider
 
             #endregion
 
-            #region Parsing symmetry generation flag
+            #region Parsing symmetry generation mode
 
             // Prepare the index of the line. After iterations there is a line for each object
-            // and the following line should be the line with the flag
-            var symmetryGenerationFlagLineIndex = iterationLineIndex + objectTypes.Count + 1;
+            // and the following line should be the line with the mode
+            var symmetryGenerationModeLineIndex = iterationLineIndex + objectTypes.Count + 1;
 
             // Ensure this is the last line
-            if (symmetryGenerationFlagLineIndex != lines.Count - 1)
-                throw new ParsingException("The last line of the input file should indicate whether we want to generate only symmetric configurations.");
+            if (symmetryGenerationModeLineIndex != lines.Count - 1)
+                throw new ParsingException("The last line of the input file should indicate the symmetry generation mode.");
 
             // Parse it
-            var symmetryFlagMatch = Regex.Match(lines[symmetryGenerationFlagLineIndex], "^GenerateOnlySymmetricConfigurations:(.*)$");
+            var symmetryGenerationModeMatch = Regex.Match(lines[symmetryGenerationModeLineIndex], "^SymmetryGenerationMode:(.*)$");
 
             // Ensure there is a match
-            if (!symmetryFlagMatch.Success)
-                throw new ParsingException("The last line of the input file should be of form GenerateOnlySymmetricConfigurations: {flag}, where {flag} is either true or false.");
+            if (!symmetryGenerationModeMatch.Success)
+                throw new ParsingException("The last line of the input file should be of form SymmetryGenerationMode: {mode}, where {mode} is a symmetry generation mode.");
 
-            // Get the flag string
-            var symmetryFlagString = symmetryFlagMatch.Groups[1].Value.Trim();
+            // Get the mode string
+            var symmetryGenerationModeString = symmetryGenerationModeMatch.Groups[1].Value.Trim();
 
             // Try to parse the value
-            if (!bool.TryParse(symmetryFlagString, out var excludeAsymmetricConfigurations))
-                throw new ParsingException($"Cannot parse the symmetry generation flag: {symmetryFlagString}");
+            if (!Enum.TryParse<SymmetryGenerationMode>(symmetryGenerationModeString, out var symmetryGenerationMode))
+                throw new ParsingException($"Cannot parse the symmetry generation mode: {symmetryGenerationModeString}");
 
             #endregion
 
@@ -309,7 +309,7 @@ namespace GeoGen.ProblemGenerator.InputProvider
                 constructions: constructions,
                 numberOfIterations: numberOfIterations,
                 maximalNumbersOfObjectsToAdd: maximalNumbersOfObjectsToAdd,
-                excludeAsymmetricConfigurations: excludeAsymmetricConfigurations
+                symmetryGenerationMode: symmetryGenerationMode
             );
         }
 

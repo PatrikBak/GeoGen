@@ -33,9 +33,9 @@ namespace GeoGen.ProblemGenerator
         public IReadOnlyDictionary<ConfigurationObjectType, int> MaximalNumbersOfObjectsToAdd { get; }
 
         /// <summary>
-        /// Indicates if we should automatically exclude configurations that are not symmetric according to <see cref="Configuration.IsSymmetric"/>.
+        /// Specifies what types of configurations should be generated, with respect to symmetry.
         /// </summary>
-        public bool ExcludeAsymmetricConfigurations { get; }
+        public SymmetryGenerationMode SymmetryGenerationMode { get; }
 
         #endregion
 
@@ -48,18 +48,18 @@ namespace GeoGen.ProblemGenerator
         /// <param name="constructions"><inheritdoc cref="Constructions" path="/summary"/></param>
         /// <param name="numberOfIterations"><inheritdoc cref="NumberOfIterations" path="/summary"/></param>
         /// <param name="maximalNumbersOfObjectsToAdd"><inheritdoc cref="MaximalNumbersOfObjectsToAdd" path="/summary"/></param>
-        /// <param name="excludeAsymmetricConfigurations"><inheritdoc cref="ExcludeAsymmetricConfigurations" path="/summary"/></param>
+        /// <param name="symmetryGenerationMode"><inheritdoc cref="SymmetryGenerationMode" path="/summary"/></param>
         public ProblemGeneratorInput(Configuration initialConfiguration,
                                      IReadOnlyHashSet<Construction> constructions,
                                      int numberOfIterations,
                                      IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
-                                     bool excludeAsymmetricConfigurations)
+                                     SymmetryGenerationMode symmetryGenerationMode)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));
             NumberOfIterations = numberOfIterations;
             MaximalNumbersOfObjectsToAdd = maximalNumbersOfObjectsToAdd ?? throw new ArgumentNullException(nameof(maximalNumbersOfObjectsToAdd));
-            ExcludeAsymmetricConfigurations = excludeAsymmetricConfigurations;
+            SymmetryGenerationMode = symmetryGenerationMode;
         }
 
         #endregion

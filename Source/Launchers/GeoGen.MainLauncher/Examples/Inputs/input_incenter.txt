@@ -15,4 +15,4 @@ Iterations: 1
 MaximalPoints: 1
 MaximalLines: 1
 MaximalCircles: 0
-GenerateOnlySymmetricConfigurations: false
+SymmetryGenerationMode: GenerateBothSymmetricAndAsymmetric

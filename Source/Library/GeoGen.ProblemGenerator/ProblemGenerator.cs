@@ -166,49 +166,60 @@ namespace GeoGen.ProblemGenerator
 
                 // Find out if we should exclude this configuration because of symmetry
                 // That can happen only if we are told to do so...
-                var excludeBecauseOfSymmetry = input.ExcludeAsymmetricConfigurations &&
+                var excludeBecauseOfSymmetry = input.SymmetryGenerationMode != SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric &&
                     // And it is not true that we can generate some objects that would make this configuration symmetric
-                    !configuration.GetObjectsThatWouldMakeThisConfigurationSymmetric()
-                        // Find out if given objects to be added could really be added
-                        .Any(objectsToBeAdded =>
-                        {
-                            // If we don't have enough iterations to add that many objects, then we're done
-                            if (configuration.IterationIndex + objectsToBeAdded.Count > input.NumberOfIterations)
-                                return false;
+                    // To find all options that would do so, we need to distinguish the symmetry mode
+                    !(input.SymmetryGenerationMode switch
+                    {
+                        // Standard symmetry yields a list of options (i.e. object lists)
+                        SymmetryGenerationMode.GenerateOnlySymmetric => configuration.GetObjectsThatWouldMakeThisConfigurationSymmetric(),
 
-                            // Otherwise find out if we have the needed constructions by taking the objects
-                            var doWeHaveNeededConstructions = objectsToBeAdded
-                                // Their constructions
-                                .Select(objectToBeAdded => objectToBeAdded.Construction)
-                                // All of them must be among the ones we're using to extend objects
-                                .All(input.Constructions.Contains);
+                        // Full symmetry yields only one object list
+                        SymmetryGenerationMode.GenerateOnlyFullySymmetric => configuration.GetObjectsThatWouldMakeThisConfigurationFullySymmetric().ToEnumerable(),
 
-                            // If we don't have the needed constructions, these objects can't be generated
-                            if (!doWeHaveNeededConstructions)
-                                return false;
+                        // Unhandled cases
+                        _ => throw new GeoGenException($"Unhandled value of {nameof(SymmetryGenerationMode)}: {input.SymmetryGenerationMode}"),
+                    })
+                    // Find out if given objects to be added could really be added
+                    .Any(objectsToBeAdded =>
+                    {
+                        // If we don't have enough iterations to add that many objects, then we're done
+                        if (configuration.IterationIndex + objectsToBeAdded.Count > input.NumberOfIterations)
+                            return false;
 
-                            // Otherwise categorize objects to be added by taking them
-                            return objectsToBeAdded
-                                // Grouping by their type
-                                .GroupBy(objectToBeAdded => objectToBeAdded.ObjectType)
-                                // It needs to be true that we can add that many objects from every type
-                                .All(group =>
-                                {
-                                    // Get the type
-                                    var type = group.Key;
+                        // Otherwise find out if we have the needed constructions by taking the objects
+                        var doWeHaveNeededConstructions = objectsToBeAdded
+                            // Their constructions
+                            .Select(objectToBeAdded => objectToBeAdded.Construction)
+                            // All of them must be among the ones we're using to extend objects
+                            .All(input.Constructions.Contains);
 
-                                    // Get the needed count 
-                                    var neededObjectsOfThisTypeCount = group.Count();
+                        // If we don't have the needed constructions, these objects can't be generated
+                        if (!doWeHaveNeededConstructions)
+                            return false;
 
-                                    // Get the number of already added objects of this type by taking all objects of this type
-                                    var addedObjectsOfThisTypeCount = configuration.ObjectMap.GetObjectsForKeys(type).Count()
-                                        // And subtracting objects of this type from the initial configuration
-                                        - input.InitialConfiguration.ObjectMap.GetObjectsForKeys(type).Count();
+                        // Otherwise categorize objects to be added by taking them
+                        return objectsToBeAdded
+                            // Grouping by their type
+                            .GroupBy(objectToBeAdded => objectToBeAdded.ObjectType)
+                            // It needs to be true that we can add that many objects from every type
+                            .All(group =>
+                            {
+                                // Get the type
+                                var type = group.Key;
 
-                                    // We can add these objects if and only if we will not exceed the maximal number of objects to add
-                                    return neededObjectsOfThisTypeCount + addedObjectsOfThisTypeCount <= input.MaximalNumbersOfObjectsToAdd[type];
-                                });
-                        });
+                                // Get the needed count 
+                                var neededObjectsOfThisTypeCount = group.Count();
+
+                                // Get the number of already added objects of this type by taking all objects of this type
+                                var addedObjectsOfThisTypeCount = configuration.ObjectMap.GetObjectsForKeys(type).Count()
+                                    // And subtracting objects of this type from the initial configuration
+                                    - input.InitialConfiguration.ObjectMap.GetObjectsForKeys(type).Count();
+
+                                // We can add these objects if and only if we will not exceed the maximal number of objects to add
+                                return neededObjectsOfThisTypeCount + addedObjectsOfThisTypeCount <= input.MaximalNumbersOfObjectsToAdd[type];
+                            });
+                    });
 
                 // If we should exclude this configuration because of symmetry, do it
                 if (excludeBecauseOfSymmetry)
@@ -316,12 +327,22 @@ namespace GeoGen.ProblemGenerator
 
                        // Find out if we should exclude this configuration based on symmetry which is 
                        // true if we are supposed to do so
-                       var excludeBecauseOfSymmetry = input.ExcludeAsymmetricConfigurations
+                       var excludeBecauseOfSymmetry = input.SymmetryGenerationMode != SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric
                             // And this configuration is not on the last iteration. If it were, it would have
                             // been excluded already during the verification process
                             && configuration.IterationIndex != input.NumberOfIterations
-                            // And this configuration is not symmetry
-                            && !configuration.IsSymmetric();
+                            // And this configuration is not symmetric the way it's supposed to be
+                            && input.SymmetryGenerationMode switch
+                            {
+                                // Determine standard symmetry
+                                SymmetryGenerationMode.GenerateOnlySymmetric => !configuration.IsSymmetric(),
+
+                                // Determine full symmetry
+                                SymmetryGenerationMode.GenerateOnlyFullySymmetric => !configuration.IsFullySymmetric(),
+
+                                // Unhandled cases
+                                _ => throw new GeoGenException($"Unhandled value of {nameof(SymmetryGenerationMode)}: {input.SymmetryGenerationMode}"),
+                            };
 
                        // If we should do the exclusion, do so
                        if (excludeBecauseOfSymmetry)

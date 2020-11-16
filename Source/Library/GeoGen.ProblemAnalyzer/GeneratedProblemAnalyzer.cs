@@ -53,23 +53,23 @@ namespace GeoGen.ProblemAnalyzer
         #region IGeneratedProblemAnalyzer implementation
 
         /// <inheritdoc/>
-        public GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting)
+        public GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput, SymmetryGenerationMode mode)
             // Delegate the call to the general method
-            => Analyze(generatorOutput, areAsymetricProblemsInteresting, constructProofs: false);
+            => Analyze(generatorOutput, mode, constructProofs: true);
 
         /// <inheritdoc/>
-        public GeneratedProblemAnalyzerOutputWithProofs AnalyzeWithProofConstruction(ProblemGeneratorOutput generatorOutput, bool areAsymetricProblemsInteresting)
+        public GeneratedProblemAnalyzerOutputWithoutProofs AnalyzeWithoutProofConstruction(ProblemGeneratorOutput generatorOutput, SymmetryGenerationMode mode)
             // Delegate the call to the general method
-            => Analyze(generatorOutput, areAsymetricProblemsInteresting, constructProofs: true);
+            => Analyze(generatorOutput, mode, constructProofs: false);
 
         /// <summary>
         /// Performs the analysis of a given generator output.
         /// </summary>
         /// <param name="output">The generator output to be analyzed.</param>
-        /// <param name="areAsymetricProblemsInteresting">Indicates whether asymmetric problems should be deemed interesting.</param>
+        /// <param name="mode">Indicates how we handle asymmetric problems with regards to generation.</param>
         /// <param name="constructProofs">Indicates whether we should construct proofs or not, which affects the type of result.</param>
         /// <returns>The result depending on whether we're constructing proofs or not.</returns>
-        private dynamic Analyze(ProblemGeneratorOutput output, bool areAsymetricProblemsInteresting, bool constructProofs)
+        private dynamic Analyze(ProblemGeneratorOutput output, SymmetryGenerationMode mode, bool constructProofs)
         {
             // Call the prover
             var proverOutput = constructProofs
@@ -93,23 +93,20 @@ namespace GeoGen.ProblemAnalyzer
                 .ToArray();
 
             // Find the problems that should excluded based on symmetry
-            // If we asymmetric problems are deemed interesting
-            var notInterestringAsymmetricTheorems = areAsymetricProblemsInteresting
-                // Then no excluded problems
-                ? (IReadOnlyList<Theorem>)Array.Empty<Theorem>()
-                // Otherwise we take the interesting theorems
-                : interestingTheorems
-                    // That are not symmetric
-                    .Where(theorem => !theorem.IsSymmetric(output.Configuration))
-                    // Enumerate
-                    .ToArray();
+            var notInterestringAsymmetricTheorems = mode switch
+            {
+                // No restrictions
+                SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric => (IReadOnlyList<Theorem>)Array.Empty<Theorem>(),
 
-            // Interesting theorems can now be reseted 
-            interestingTheorems = interestingTheorems
-                // By the exclusion of not interesting asymmetric ones
-                .Except(notInterestringAsymmetricTheorems)
-                // Enumerate
-                .ToArray();
+                // Detect symmetric theorems
+                SymmetryGenerationMode.GenerateOnlySymmetric => interestingTheorems.Where(theorem => !theorem.IsSymmetric(output.Configuration)).ToArray(),
+
+                // Detect fully symmetric theorems
+                SymmetryGenerationMode.GenerateOnlyFullySymmetric => interestingTheorems.Where(theorem => !theorem.IsFullySymmetric(output.Configuration)).ToArray(),
+
+                // Unhandled cases
+                _ => throw new GeoGenException($"Unhandled value of {nameof(SymmetryGenerationMode)}: {mode}"),
+            };
 
             // Prepare the map of all theorems
             var allTheorems = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));

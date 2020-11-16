@@ -95,6 +95,13 @@ namespace GeoGen.Core
         public bool IsSymmetric() => GetSymmetryMappings().Any();
 
         /// <summary>
+        /// Determines if the configuration is fully symmetric, i.e. <see cref="LooseObjectHolder.GetSymmetricMappings"/>
+        /// produces only mappings that keeps this configuration the same.
+        /// </summary>
+        /// <returns>true, if the configuration is fully symmetric; false otherwise.</returns>
+        public bool IsFullySymmetric() => GetSymmetryMappings().Count() == LooseObjectsHolder.GetSymmetricMappings().Count();
+
+        /// <summary>
         /// Find all possible mappings that would keep this configuration symmetric if all objects
         /// were remapping according to them. If the configuration is not symmetric, then there will
         /// not be any result. For more information see <see cref="LooseObjectHolder.GetSymmetricMappings"/>.
@@ -140,6 +147,43 @@ namespace GeoGen.Core
                     .Except(ConstructedObjects)
                     // Enumerate
                     .ToArray());
+
+        /// <summary>
+        /// Determines the objects that would make this configuration fully symmetric if they were added to it.
+        /// Fully symmetric configuration means that every symmetry mappings provides the same configuration.
+        /// (see <see cref="LooseObjectHolder.GetSymmetricMappings"/>).
+        /// </summary>
+        /// <returns>An enumerable of objects with which the configuration would be symmetric.</returns>
+        public IReadOnlyList<ConstructedConfigurationObject> GetObjectsThatWouldMakeThisConfigurationFullySymmetric()
+        {
+            // Prepare the resulting objects of the final configuration
+            var objects = new HashSet<ConstructedConfigurationObject>(ConstructedObjects);
+
+            // Prepare the queue of new objects on which the symmetry should be applied
+            var toProcces = new Queue<ConstructedConfigurationObject>(ConstructedObjects);
+
+            // While there are any objects to be processed
+            while (toProcces.Any())
+            {
+                // Take some
+                var currentObject = toProcces.Dequeue();
+
+                // Apply all the symmetries on it
+                foreach (var symmetryMapping in LooseObjectsHolder.GetSymmetricMappings())
+                {
+                    // Get the new object
+                    var newObject = (ConstructedConfigurationObject)currentObject.Remap(symmetryMapping);
+
+                    // Try to add it
+                    if (objects.Add(newObject))
+                        // If it's new, we will need to process it
+                        toProcces.Enqueue(newObject);
+                }
+            }
+
+            // Return the objects without our original ones
+            return objects.Except(ConstructedObjects).ToList();
+        }
 
         /// <summary>
         /// Reorders the loose object of a configuration that have a triangle layout in such a way that 
