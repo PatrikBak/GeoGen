@@ -1,0 +1,45 @@
+Constructions:
+ 
+CircleWithDiameter
+Circumcenter
+Excenter
+ExternalAngleBisector
+Incenter
+Incircle
+InternalAngleBisector
+IntersectionOfLineAndLineFromPoints
+IntersectionOfLines
+IntersectionOfLinesFromPoints
+Median
+Midpoint
+MidpointOfArc
+MidpointOfOppositeArc
+OppositePointOnCircumcircle
+Orthocenter
+ParallelLine
+ParallelLineToLineFromPoints
+ParallelogramPoint
+PerpendicularBisector
+PerpendicularLine
+PerpendicularLineAtPointOfLine
+PerpendicularLineToLineFromPoints
+PerpendicularProjection
+PerpendicularProjectionOnLineFromPoints
+PointReflection
+ReflectionInLine
+ReflectionInLineFromPoints
+TangentLine
+
+Initial configuration:
+
+Triangle: A, B, C
+l1 = Median(A, B, C)
+l2 = Median(B, A, C)
+D = ReflectionInLine(l1, B)
+E = ReflectionInLine(l2, A)
+
+Iterations: 2
+MaximalPoints: 2
+MaximalLines: 2
+MaximalCircles: 2
+SymmetryGenerationMode: GenerateOnlySymmetric

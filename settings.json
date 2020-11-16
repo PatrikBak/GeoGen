@@ -1,14 +1,16 @@
 {
-  "LoggingSettings": {
-    "Loggers": [
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "WriteTo": [
       {
-        "LoggerName": "ConsoleLogger",
-        "LogOutputLevel": "Info"
+        "Name": "Console"
       },
       {
-        "LoggerName": "FileLogger",
-        "FileLogPath": "Data/Output/errors.txt",
-        "LogOutputLevel": "Error"
+        "Name": "File",
+        "Args": {
+          "Path": "problems.txt",
+          "RestrictedToMinimumLevel": "Warning"
+        }
       }
     ]
   },
@@ -26,13 +28,14 @@
   },
   "ProblemGenerationRunnerSettings": {
     "JsonOutputFolder": "Data/Output",
-    "WriteJsonOutput": true
+    "WriteJsonOutput": true,
+    "OutputFilePrefix": "output"
   },
   "TheoremSorterTypeResolverSettings": {
     "MaximalTrackedTheoremsPerType": 10000000
   },
   "ProblemGeneratorSettings": {
-    "NumberOfPictures": 3
+    "NumberOfPictures": 5
   },
   "TheoremFindingSettings": {
     "TangentCirclesTheoremFinderSettings": {
@@ -67,5 +70,9 @@
   },
   "GenerationSettings": {
     "ConfigurationFilterType": "MemoryEfficient"
-  }
+  },
+  "TraceConstructorFailures": false,
+  "TraceGeometryFailures": false,
+  "TraceInvalidInferences": false,
+  "TraceSortingGeometryFailures": false
 }
