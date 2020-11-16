@@ -33,7 +33,7 @@ namespace GeoGen.TheoremFinder.Tests
         private static (TheoremMap oldTheorems, TheoremMap newTheorems, Theorem[] invalidOldTheorems, TheoremMap allTheorems) FindTheorems(Configuration configuration)
         {
             // Prepare the kernel
-            var kernel = IoC.CreateKernel()
+            var kernel = NinjectUtilities.CreateKernel()
                 // With constructor
                 .AddConstructor()
                 // Look for only some types

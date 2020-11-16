@@ -1,10 +1,9 @@
-﻿using GeoGen.Infrastructure;
-using GeoGen.ProblemGenerator.InputProvider;
+﻿using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.MainLauncher
 {
@@ -61,7 +60,7 @@ namespace GeoGen.MainLauncher
             inputs.ForEach((input, index) =>
             {
                 // Log the file being processed
-                LoggingManager.LogInfo($"Running algorithm for input file {index + 1} with path {input.FilePath}");
+                Log.Information("Running algorithm for input file {number} with path {path}", index + 1, input.FilePath);
 
                 try
                 {
@@ -71,7 +70,7 @@ namespace GeoGen.MainLauncher
                 catch (Exception e)
                 {
                     // Log which file failed and the exception
-                    LoggingManager.LogError($"Couldn't perform the algorithm on input file {index + 1} with path {input.FilePath}: {e}");
+                    Log.Error(e, "Couldn't perform the algorithm on input file {number} with path {path}", index + 1, input.FilePath);
                 }
             });
 
@@ -79,7 +78,7 @@ namespace GeoGen.MainLauncher
             stopwatch.Stop();
 
             // Log how long it all took
-            LoggingManager.LogInfo($"Running algorithm on all files took {stopwatch.ElapsedMilliseconds} ms.");
+            Log.Information("Running algorithm on all files took {time} ms.", stopwatch.ElapsedMilliseconds);
         }
 
         #endregion

@@ -5,12 +5,12 @@ using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using Ninject;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.OutputMergingLauncher
 {
@@ -50,33 +50,13 @@ namespace GeoGen.OutputMergingLauncher
             #region Prepare services
 
             // Prepare kernel
-            var kernel = IoC.CreateKernel()
+            var kernel = NinjectUtilities.CreateKernel()
                 // That uses Theorem Sorter
                 .AddTheoremSorter()
                 // And Constructor, needed for Theorem Sorter
                 .AddConstructor()
                 // And Ranked Theorem IO stuff
-                .AddRankedTheoremIO()
-                // Add logging
-                .AddLogging(new LoggingSettings(new BaseLoggerSettings[]
-                {
-                    // With a console logger
-                    new ConsoleLoggerSettings
-                    (
-                        logOutputLevel: LogOutputLevel.Info,
-                        includeLoggingOrigin: false,
-                        includeTime: false
-                    ),
-
-                    // And a file logger
-                    new FileLoggerSettings
-                    (
-                        fileLogPath: "log.txt",
-                        logOutputLevel: LogOutputLevel.Info,
-                        includeLoggingOrigin: false,
-                        includeTime: false
-                    )
-                }));
+                .AddRankedTheoremIO();
 
             // We will need to create theorem sorters 
             var sorterFactory = kernel.Get<ITheoremSorterFactory>();
@@ -118,11 +98,11 @@ namespace GeoGen.OutputMergingLauncher
 
                     // Log every 20th (so that we don't log too much)
                     if (counter % 20 == 0)
-                        LoggingManager.LogInfo($"Processed {counter} files, total used memory: {MemoryUsage()}");
+                        Log.Information("Processed {counter} files, total used memory: {memory}", counter, MemoryUsage());
                 });
 
             // Log used memory
-            LoggingManager.LogInfo($"All {counter} files processed, total used memory: {MemoryUsage()}");
+            Log.Information("All {counter} files processed, total used memory: {memory}", counter, MemoryUsage());
 
             #endregion
 
@@ -167,7 +147,7 @@ namespace GeoGen.OutputMergingLauncher
             fileDataWriters.Values.ForEach(writer => writer.EndWriting());
 
             // Log that we're finished
-            LoggingManager.LogInfo($"Theorems are split into {fileDataWriters.Count} files.");
+            Log.Information("Theorems are split into {count} files.", fileDataWriters.Count);
 
             // We can forget the memory expensive sorter now
             allTheoremSorter = null;
@@ -202,7 +182,7 @@ namespace GeoGen.OutputMergingLauncher
             }
 
             // Log that we're finished
-            LoggingManager.LogInfo($"The number of theorems is added to each file, the total number is {totalNumberOfTheorems}.");
+            Log.Information("The number of theorems is added to each file, the total number is {count}.", totalNumberOfTheorems);
 
             #endregion
 
@@ -254,7 +234,7 @@ namespace GeoGen.OutputMergingLauncher
                 writerFactory.Create(path).WriteEagerly(sorter.BestTheorems);
 
                 // Log that we did it
-                LoggingManager.LogInfo($"Ladder {id} created.");
+                Log.Information("Ladder {id} created.", id);
             }
 
             // We will use the available numbers of objects
@@ -367,7 +347,7 @@ namespace GeoGen.OutputMergingLauncher
             #endregion
 
             // Log how long it all took
-            LoggingManager.LogInfo($"The entire dance took {stopwatch.ElapsedMilliseconds} ms.");
+            Log.Information("The entire dance took {time} ms.", stopwatch.ElapsedMilliseconds);
         }
     }
 }

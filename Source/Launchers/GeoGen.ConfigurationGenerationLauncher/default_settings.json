@@ -1,0 +1,60 @@
+﻿{
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "Console"
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/logs.txt"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/problems.txt",
+          "RestrictedToMinimumLevel": "Warning"
+        }
+      }
+    ]
+  },
+  "ProblemGeneratorInputProviderSettings": {
+    "InputFolderPath": "../../../Examples/Inputs",
+    "InputFilePrefix": "input",
+    "FileExtension": "txt"
+  },
+  "GenerationOnlyProblemGenerationRunnerSettings": {
+    "GenerationProgresLoggingFrequency": 100,
+    "CountingMode": "LastIteration",
+    "LogProgress": true
+  },
+  "ProblemGeneratorSettings": {
+    "NumberOfPictures": 5
+  },
+  "GenerationSettings": {
+    "ConfigurationFilterType": "MemoryEfficient"
+  },
+  "TraceConstructorFailures": false,
+  "ConstructorFailureTracerSettings": {
+    "FailureFilePath": "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+    "LogFailures": true
+  },
+  "TraceGeometryFailures": false,
+  "GeometryFailureTracerSettings": {
+    "FailureFilePath": "../../../Examples/Tracing/geometry_failures.txt",
+    "LogFailures": true
+  },
+  "TraceInvalidInferences": false,
+  "InvalidInferenceTracerSettings": {
+    "InvalidInferenceFolder": "../../../Examples/Tracing/InvalidInferences",
+    "FileExtension": "txt",
+    "MaximalNumberOfInvalidInferencesPerFile": 20
+  },
+  "TraceSortingGeometryFailures": false,
+  "SortingGeometryFailureTracerSettings": {
+    "FailureFilePath": "../../../Examples/Tracing/sorting_geometry_failures.txt",
+    "LogFailures": true
+  }
+}

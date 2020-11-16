@@ -1,11 +1,10 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.IO;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.MainLauncher
 {
@@ -50,7 +49,7 @@ namespace GeoGen.MainLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailureFilePath} for more detail.");
+                Log.Warning("Object generation: {info} See {path} for more detail.", infoString, _settings.FailureFilePath);
 
             // Prepare the formatter for the configuration
             var formatter = new OutputFormatter(newConfiguration.AllObjects);
@@ -82,7 +81,7 @@ namespace GeoGen.MainLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Object generation: {infoString} See {_settings.FailureFilePath} for more detail.");
+                Log.Warning("Object generation: {info} See {path} for more detail.", infoString, _settings.FailureFilePath);
 
             // Prepare the formatter for the configuration
             var formatter = new OutputFormatter(newConfigurationPictures.Configuration.AllObjects);

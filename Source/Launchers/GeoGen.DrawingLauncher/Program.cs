@@ -1,15 +1,17 @@
-﻿using GeoGen.Core;
+﻿using GeoGen.Constructor;
+using GeoGen.Core;
 using GeoGen.Infrastructure;
+using GeoGen.MainLauncher;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.Utilities;
 using Ninject;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -21,35 +23,46 @@ namespace GeoGen.DrawingLauncher
         /// <summary>
         /// The entry method of the application.
         /// </summary>
-        private static async Task Main()
+        /// <param name="customConfigurationFilePaths"><inheritdoc cref="Application.Run(string[], Func{IKernel, JsonConfiguration, Task})"/></param>
+        public static async Task Main(string[] customConfigurationFilePaths) => await Application.Run(customConfigurationFilePaths, async (kernel, settings) =>
         {
-            try
-            {
-                // Load the settings
-                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
+            // Initialize the container
+            await PrepareDIContainer(kernel, settings);
 
-                // Initialize the IoC system
-                await IoC.InitializeAsync(settings);
+            // Run the UI loop
+            await UILoopAsync(kernel, reorderObjects: settings.GetSettings<bool>("ReorderObjects"));
+        });
 
-                // Run the UI loop
-                await UILoopAsync(reorderObjects: settings.ReorderObjects);
-            }
-            // Catch for any unhandled exception
-            catch (Exception e)
-            {
-                // Let the helper method log it
-                LogException(e);
+        /// <summary>
+        /// Initializes the NInject kernel.
+        /// </summary>
+        /// <param name="kernel">The dependency injection container.</param>
+        /// <param name="settings">The settings of the application.</param>
+        private static async Task PrepareDIContainer(IKernel kernel, JsonConfiguration settings)
+        {
+            // And the constructor module
+            kernel.AddConstructor();
 
-                // This is a sad end
-                Environment.Exit(-1);
-            }
+            // Bind the rule provider
+            kernel.Bind<IDrawingRuleProvider>().To<DrawingRuleProvider>().WithConstructorArgument(settings.GetSettings<DrawingRuleProviderSettings>());
+
+            // Bind the drawer with its settings
+            kernel.Bind<IDrawer>().To<MetapostDrawer>().WithConstructorArgument(settings.GetSettings<MetapostDrawerSettings>())
+                // And its loaded rules
+                .WithConstructorArgument(new MetapostDrawerData(await kernel.Get<IDrawingRuleProvider>().GetDrawingRulesAsync()));
+
+            // Add the ranked theorem IO
+            kernel.AddRankedTheoremIO();
         }
 
         /// <summary>
         /// The main loop of a simple UI. 
         /// </summary>
+        /// <param name="kernel">The dependency injection container.</param>
+        /// <param name="reorderObjects">Indicates whether the objects can be reordered to provide a more symmetric 
+        /// picture. (for more information see <see cref="NormalizeOrderOfLooseObjectsBasedOnSymmetry"/></param>
         /// <returns>The task representing the asynchronous operation.</returns>
-        private static async Task UILoopAsync(bool reorderObjects)
+        private static async Task UILoopAsync(IKernel kernel, bool reorderObjects)
         {
             // Empty line
             Console.WriteLine();
@@ -82,7 +95,7 @@ namespace GeoGen.DrawingLauncher
                     try
                     {
                         // Read the content
-                        content = IoC.Kernel.Get<IRankedTheoremJsonLazyReader>().Read(path).ToArray();
+                        content = kernel.Get<IRankedTheoremJsonLazyReader>().Read(path).ToArray();
 
                         // Make sure there is any theorem
                         if (content.Length == 0)
@@ -210,7 +223,7 @@ namespace GeoGen.DrawingLauncher
                         });
 
                     // Perform the drawing for the desired input
-                    await IoC.Kernel.Get<IDrawer>().DrawAsync(drawerInput, startingId: start);
+                    await kernel.Get<IDrawer>().DrawAsync(drawerInput, startingId: start);
                 }
                 catch (Exception e)
                 {
@@ -355,7 +368,7 @@ namespace GeoGen.DrawingLauncher
                         message = $"{message.Trim()}\n\nError output:\n\n{commandException.ErrorOutput}";
 
                     // Write out the exception
-                    LoggingManager.LogFatal(message);
+                    Log.Fatal(message);
 
                     break;
 
@@ -363,7 +376,7 @@ namespace GeoGen.DrawingLauncher
                 default:
 
                     // Log it
-                    LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{exception}");
+                    Log.Fatal(exception, "An unexpected exception has occurred.");
 
                     break;
             }

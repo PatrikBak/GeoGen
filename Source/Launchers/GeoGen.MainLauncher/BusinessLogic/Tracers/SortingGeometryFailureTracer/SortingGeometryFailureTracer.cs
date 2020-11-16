@@ -1,11 +1,10 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSorter;
+using Serilog;
 using System;
 using System.IO;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.MainLauncher
 {
@@ -47,7 +46,7 @@ namespace GeoGen.MainLauncher
         {
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Problem while drawing objects needed to examine a ranked theorem. See {_settings.FailureFilePath} for more detail.");
+                Log.Warning("Problem while drawing objects needed to examine a ranked theorem. See {path} for more detail.", _settings.FailureFilePath);
 
             // Open the stream writer for the file
             using var streamWriter = new StreamWriter(_settings.FailureFilePath, append: true);
@@ -73,7 +72,7 @@ namespace GeoGen.MainLauncher
         {
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Problem while drawing a ranked theorem. See {_settings.FailureFilePath} for more detail.");
+                Log.Warning("Problem while drawing a ranked theorem. See {path} for more detail.", _settings.FailureFilePath);
 
             // Open the stream writer for the file
             using var streamWriter = new StreamWriter(_settings.FailureFilePath, append: true);

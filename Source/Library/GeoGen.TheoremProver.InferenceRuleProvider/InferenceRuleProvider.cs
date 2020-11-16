@@ -1,13 +1,12 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
@@ -48,7 +47,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
             if (!Directory.Exists(_settings.RuleFolderPath))
             {
                 // Warn
-                LoggingManager.LogWarning($"The directory for inference rules {_settings.RuleFolderPath} doesn't exist.");
+                Log.Warning("The directory for inference rules {path} doesn't exist.", _settings.RuleFolderPath);
 
                 // No rules
                 return new List<LoadedInferenceRule>();
@@ -96,7 +95,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
                 if (lines.IsEmpty())
                 {
                     // Warn
-                    LoggingManager.LogWarning($"Empty inference rule file {inferenceRuleFile}");
+                    Log.Warning("Empty inference rule file {file}", inferenceRuleFile);
 
                     // Move on
                     continue;
@@ -131,7 +130,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
                     if (inferenceRules.IsEmpty())
                     {
                         // Warn
-                        LoggingManager.LogWarning($"No rules in inference rule file {inferenceRuleFile}");
+                        Log.Warning("No rules in inference rule file {file}", inferenceRuleFile);
 
                         // Move on
                         continue;
@@ -152,7 +151,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
             #region Logging database stats
 
             // Log count
-            LoggingManager.LogInfo($"{result.Count} inference rules");
+            Log.Information("{count} inference rules", result.Count);
 
             // Prepare the map of types and number of rules proving this type
             // Take all the rules
@@ -168,7 +167,7 @@ namespace GeoGen.TheoremProver.InferenceRuleProvider
 
             // Log it if there are some rules
             if (result.Any())
-                LoggingManager.LogInfo($"The loaded rules prove the following:\n\n{typeToCountsString}\n");
+                Log.Information("The loaded rules prove the following:\n\n{typeToCountsString}\n", typeToCountsString);
 
             #endregion
 

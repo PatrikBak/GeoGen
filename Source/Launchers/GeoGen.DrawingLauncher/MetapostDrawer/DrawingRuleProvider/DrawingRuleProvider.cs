@@ -1,6 +1,6 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static GeoGen.Core.ConfigurationObjectType;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -77,7 +76,7 @@ namespace GeoGen.DrawingLauncher
             if (lines.IsEmpty())
             {
                 // Warn
-                LoggingManager.LogWarning($"Empty drawing rule file {_settings.FilePath}");
+                Log.Warning("Empty drawing rule file {file}", _settings.FilePath);
 
                 // We're done
                 return new List<DrawingRule>();
@@ -93,7 +92,7 @@ namespace GeoGen.DrawingLauncher
                     throw new ParsingException("The loaded drawing rules contains duplicate rules for the same construction.");
 
                 // Log their count
-                LoggingManager.LogInfo($"Loaded {rules.Count} drawing rule(s).");
+                Log.Information("Loaded {count} drawing rule(s).", rules.Count);
 
                 // Return them
                 return rules;

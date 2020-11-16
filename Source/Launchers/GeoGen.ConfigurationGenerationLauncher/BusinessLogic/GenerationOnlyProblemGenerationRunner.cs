@@ -1,11 +1,10 @@
-﻿using GeoGen.Infrastructure;
-using GeoGen.MainLauncher;
+﻿using GeoGen.MainLauncher;
 using GeoGen.ProblemGenerator;
 using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Diagnostics;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConfigurationGenerationLauncher
 {
@@ -97,17 +96,20 @@ namespace GeoGen.ConfigurationGenerationLauncher
 
                 // If we're logging and if we should log
                 if (_settings.LogProgress && generatedConfigurations % _settings.GenerationProgresLoggingFrequency == 0)
-                    // Log the number of generated configurations
-                    LoggingManager.LogInfo($"Number of generated configurations: {generatedConfigurations}, " +
-                        // As well as currently used memory
-                        $"used memory: {((double)GC.GetTotalMemory(forceFullCollection: true) / 1000000).ToStringWithDecimalDot()} MB");
+                {
+                    // Prepare the used memory string
+                    var usedMemory = ((double)GC.GetTotalMemory(forceFullCollection: true) / 1000000).ToStringWithDecimalDot();
+
+                    // Log the number of generated configurations as well as the memory
+                    Log.Information("Number of generated configurations: {count}, used memory: {memory} MB", generatedConfigurations, usedMemory);
+                }
             }
 
             // Stop the timing
             stopwatch.Stop();
 
             // Log the final number and time
-            LoggingManager.LogInfo($"The total number of generated configurations is {generatedConfigurations} in {stopwatch.ElapsedMilliseconds} ms.");
+            Log.Information("The total number of generated configurations is {count} in {time} ms.", generatedConfigurations, stopwatch.ElapsedMilliseconds);
         }
 
         #endregion

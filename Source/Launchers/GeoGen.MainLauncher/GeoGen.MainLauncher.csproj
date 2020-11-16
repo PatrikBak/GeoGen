@@ -33,4 +33,10 @@
     <Folder Include="Examples\Output\ReadableWithProofs\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="default_settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

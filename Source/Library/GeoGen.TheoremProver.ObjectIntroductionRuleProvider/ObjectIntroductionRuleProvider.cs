@@ -1,12 +1,11 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
 {
@@ -75,7 +74,7 @@ namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
             if (lines.IsEmpty())
             {
                 // Warn
-                LoggingManager.LogWarning($"Empty object introduction rule file {_settings.FilePath}");
+                Log.Warning("Empty object introduction rule file {path}", _settings.FilePath);
 
                 // We're done
                 return new List<ObjectIntroductionRule>();
@@ -91,7 +90,7 @@ namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
                     throw new ParsingException("The loaded object introduction rules contains duplicate rules for the same construction.");
 
                 // Log their count
-                LoggingManager.LogInfo($"Loaded {rules.Count} object introduction rule(s).");
+                Log.Information("Loaded {count} object introduction rule(s).", rules.Count);
 
                 // Return them
                 return rules;

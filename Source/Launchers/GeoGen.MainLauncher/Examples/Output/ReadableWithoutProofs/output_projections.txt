@@ -279,4 +279,4 @@ Generated configurations: 10
 Configurations with an interesting theorem: 4
 Interesting theorems: 27
 Interesting theorems after global merge: 7
-Run-time: 1801 ms
+Run-time: 2342 ms

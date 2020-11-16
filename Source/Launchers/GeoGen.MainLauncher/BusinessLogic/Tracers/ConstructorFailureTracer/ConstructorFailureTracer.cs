@@ -1,12 +1,11 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.IO;
 using System.Linq;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.MainLauncher
 {
@@ -51,7 +50,7 @@ namespace GeoGen.MainLauncher
 
             // If logging is allowed, log it with the reference to more detail in the file
             if (_settings.LogFailures)
-                LoggingManager.LogWarning($"Construction: {infoString} See {_settings.FailureFilePath} for more detail.");
+                Log.Warning("Construction: {info} See {path} for more detail.", infoString, _settings.FailureFilePath);
 
             // Add the input
             infoString += $"\n\nInput:\n\n{analyticObjects.Select(analyticObject => $"{analyticObject.GetType().Name}: {analyticObject}").ToJoinedString("\n").Indent(2)}";

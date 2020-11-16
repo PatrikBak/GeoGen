@@ -1,18 +1,22 @@
 {
-  "LoggingSettings": {
-    "Loggers": [
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "WriteTo": [
       {
-        "LoggerName": "ConsoleLogger",
-        "LogOutputLevel": "Info",
-        "IncludeLoggingOrigin": false,
-        "IncludeTime": false
+        "Name": "Console"
       },
       {
-        "LoggerName": "FileLogger",
-        "FileLogPath": "log.txt",
-        "LogOutputLevel": "Debug",
-        "IncludeLoggingOrigin": true,
-        "IncludeTime": true
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/logs.txt"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/problems.txt",
+          "RestrictedToMinimumLevel": "Warning"
+        }
       }
     ]
   },
@@ -85,5 +89,26 @@
   },
   "GenerationSettings": {
     "ConfigurationFilterType": "MemoryEfficient"
+  },
+  "TraceConstructorFailures": false,
+  "ConstructorFailureTracerSettings": {
+    "FailureFilePath": "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+    "LogFailures": true
+  },
+  "TraceGeometryFailures": false,
+  "GeometryFailureTracerSettings": {
+    "FailureFilePath": "../../../Examples/Tracing/geometry_failures.txt",
+    "LogFailures": true
+  },
+  "TraceInvalidInferences": false,
+  "InvalidInferenceTracerSettings": {
+    "InvalidInferenceFolder": "../../../Examples/Tracing/InvalidInferences",
+    "FileExtension": "txt",
+    "MaximalNumberOfInvalidInferencesPerFile": 20
+  },
+  "TraceSortingGeometryFailures": false,
+  "SortingGeometryFailureTracerSettings": {
+    "FailureFilePath": "../../../Examples/Tracing/sorting_geometry_failures.txt",
+    "LogFailures": true
   }
 }

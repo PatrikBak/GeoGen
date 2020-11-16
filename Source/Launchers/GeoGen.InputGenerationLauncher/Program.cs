@@ -1,6 +1,7 @@
 ﻿using GeoGen.ConfigurationGenerator;
 using GeoGen.Constructor;
 using GeoGen.Core;
+using GeoGen.Infrastructure;
 using GeoGen.ProblemGenerator;
 using GeoGen.TheoremFinder;
 using GeoGen.Utilities;
@@ -47,7 +48,7 @@ namespace GeoGen.InputGenerationLauncher
         private static void Main()
         {
             // Initialize the kernel
-            _kernel = Infrastructure.IoC.CreateKernel()
+            _kernel = NinjectUtilities.CreateKernel()
                 // Add the constructor
                 .AddConstructor()
                 // Add the configuration generator that uses fast generation (it does not really matter here)

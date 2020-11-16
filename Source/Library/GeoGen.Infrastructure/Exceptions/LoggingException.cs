@@ -3,33 +3,33 @@
 namespace GeoGen.Infrastructure
 {
     /// <summary>
-    /// Represents the base type of exception thrown when there is a problem with settings.
+    /// Represents an exception thrown when there are issues with setting up logging.
     /// </summary>
-    public class SettingsException : Exception
+    public class LoggingException : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsException"/> class.
+        /// Initializes a new instance of the <see cref="LoggingException"/> class.
         /// </summary>
-        public SettingsException()
+        public LoggingException()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsException"/> class
+        /// Initializes a new instance of the <see cref="LoggingException"/> class
         /// with a custom message about what happened.
         /// </summary>
         /// <inheritdoc/>
-        public SettingsException(string message)
+        public LoggingException(string message)
                 : base(message)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="SettingsException"/> class
+        /// Initializes a new instance of the <see cref="LoggingException"/> class
         /// with a custom message about what happened, and the inner exception that caused this one.
         /// </summary>
         /// <inheritdoc/>
-        public SettingsException(string message, Exception innerException)
+        public LoggingException(string message, Exception innerException)
                 : base(message, innerException)
         {
         }

@@ -43,7 +43,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
             var objectIntroductionRuleProviderSettings = new ObjectIntroductionRuleProviderSettings(filePath: arguments[2]);
 
             // Prepare the kernel
-            var kernel = Infrastructure.IoC.CreateKernel()
+            var kernel = Infrastructure.NinjectUtilities.CreateKernel()
                 // That constructors configurations
                 .AddConstructor()
                 // That can find theorems

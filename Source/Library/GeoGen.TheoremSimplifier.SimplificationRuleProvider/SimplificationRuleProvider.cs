@@ -1,13 +1,12 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
 {
@@ -76,7 +75,7 @@ namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
             if (lines.IsEmpty())
             {
                 // Warn
-                LoggingManager.LogWarning($"Empty simplification rule file {_settings.FilePath}");
+                Log.Warning("Empty simplification rule file {path}", _settings.FilePath);
 
                 // We're done
                 return new List<SimplificationRule>();
@@ -88,7 +87,7 @@ namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
                 var rules = ParseRules(lines);
 
                 // Log their count
-                LoggingManager.LogInfo($"Loaded {rules.Count} simplification rule(s).");
+                Log.Information("Loaded {count} simplification rule(s).", rules.Count);
 
                 // Return them
                 return rules;
@@ -96,7 +95,7 @@ namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
             catch (ParsingException e)
             {
                 // Log the content
-                LoggingManager.LogDebug($"Loaded content:\n\n{fileContent}\n");
+                Log.Debug("Loaded content:\n\n{content}\n", fileContent);
 
                 // Throw further
                 throw new SimplificationRuleProviderException($"Couldn't parse the simplification rule file {_settings.FilePath}.", e);

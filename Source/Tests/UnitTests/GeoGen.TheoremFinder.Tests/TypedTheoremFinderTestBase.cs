@@ -23,7 +23,7 @@ namespace GeoGen.TheoremFinder.Tests
         protected (List<Theorem> newTheorems, List<Theorem> allTheorems) FindTheorems(Configuration configuration, Func<T> instanceFactory = null)
         {
             // Prepare the kernel with the constructor module
-            var kernel = IoC.CreateKernel().AddConstructor();
+            var kernel = NinjectUtilities.CreateKernel().AddConstructor();
 
             // Create the pictures
             var pictures = kernel.Get<IGeometryConstructor>().ConstructWithUniformLayout(configuration, numberOfPictures: 5).pictures;

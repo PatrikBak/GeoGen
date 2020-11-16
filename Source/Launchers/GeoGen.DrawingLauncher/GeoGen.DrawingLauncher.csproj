@@ -16,6 +16,12 @@
     <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="default_settings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
   </Target>

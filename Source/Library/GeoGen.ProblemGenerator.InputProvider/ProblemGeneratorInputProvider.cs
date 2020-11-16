@@ -1,13 +1,12 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ProblemGenerator.InputProvider
 {
@@ -44,7 +43,7 @@ namespace GeoGen.ProblemGenerator.InputProvider
         public async Task<IReadOnlyList<LoadedProblemGeneratorInput>> GetProblemGeneratorInputsAsync()
         {
             // Log that we're starting
-            LoggingManager.LogInfo($"Starting to search for input files in {_settings.InputFolderPath}");
+            Log.Information("Starting to search for input files in {path}.", _settings.InputFolderPath);
 
             // Prepare the available input files
             var inputFiles = Directory.EnumerateFiles(_settings.InputFolderPath, $"*.{_settings.FileExtension}", SearchOption.AllDirectories)
@@ -61,16 +60,16 @@ namespace GeoGen.ProblemGenerator.InputProvider
             if (inputFiles.Count == 0)
             {
                 // Log it
-                LoggingManager.LogWarning("No file found on which we could run problem generation.");
+                Log.Warning("No file found on which we could run problem generation.");
 
                 // Finish the method
                 return new List<LoadedProblemGeneratorInput>();
             }
 
             // Inform about the found ones
-            LoggingManager.LogInfo($"Found {inputFiles.Count} input file{(inputFiles.Count == 1 ? "" : "s")}:\n\n" +
+            Log.Information("Found {count} input file" + $"{(inputFiles.Count == 1 ? "" : "s")}:\n\n" + "{description}",
                 // With the description of their paths and indices
-                $"{inputFiles.Select((file, index) => $"   {index + 1}. {file.path}").ToJoinedString("\n")}\n");
+                inputFiles.Count, $"{inputFiles.Select((file, index) => $"   {index + 1}. {file.path}").ToJoinedString("\n")}\n");
 
             // Prepare the result
             var result = new List<LoadedProblemGeneratorInput>();
@@ -111,7 +110,7 @@ namespace GeoGen.ProblemGenerator.InputProvider
                 if (lines.IsEmpty())
                 {
                     // Warn
-                    LoggingManager.LogWarning($"Empty input file {inputFilePath}");
+                    Log.Warning("Empty input file {path}", inputFilePath);
 
                     // Move on
                     continue;

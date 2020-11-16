@@ -1,18 +1,22 @@
 {
-  "LoggingSettings": {
-    "Loggers": [
+  "Serilog": {
+    "MinimumLevel": "Information",
+    "WriteTo": [
       {
-        "LoggerName": "ConsoleLogger",
-        "LogOutputLevel": "Info",
-        "IncludeLoggingOrigin": false,
-        "IncludeTime": false
+        "Name": "Console"
       },
       {
-        "LoggerName": "FileLogger",
-        "FileLogPath": "log.txt",
-        "LogOutputLevel": "Debug",
-        "IncludeLoggingOrigin": true,
-        "IncludeTime": true
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/logs.txt"
+        }
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "Path": "Logs/problems.txt",
+          "RestrictedToMinimumLevel": "Warning"
+        }
       }
     ]
   },
@@ -50,7 +54,7 @@
     "MetapostCompilationCommand": "mpost",
     "MetapostCompilationArguments": "-numbersystem=double -interaction=nonstopmode -halt-on-error -s prologues=3",
     "PostcompilationCommand": null,
-    "NumberOfPictures": 1000
+    "NumberOfPictures": 100
   },
   "DrawingRuleProviderSettings": {
     "FilePath": "../../../Data/drawing_rules.txt"

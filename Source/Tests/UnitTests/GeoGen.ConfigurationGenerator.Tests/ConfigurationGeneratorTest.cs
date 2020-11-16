@@ -24,7 +24,7 @@ namespace GeoGen.ConfigurationGenerator.Tests
         /// Gets an instance of the generator.
         /// </summary>
         /// <param name="filterType">The type of configuration filter to be used</param>
-        private static IConfigurationGenerator GetGenerator(ConfigurationFilterType filterType) => IoC.CreateKernel().AddConfigurationGenerator(new GenerationSettings(filterType)).Get<IConfigurationGenerator>();
+        private static IConfigurationGenerator GetGenerator(ConfigurationFilterType filterType) => NinjectUtilities.CreateKernel().AddConfigurationGenerator(new GenerationSettings(filterType)).Get<IConfigurationGenerator>();
 
         #endregion
 

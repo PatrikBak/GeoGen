@@ -1,16 +1,15 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.DrawingLauncher
 {
@@ -88,7 +87,7 @@ namespace GeoGen.DrawingLauncher
                     catch (Exception e)
                     {
                         // If there is an exception, we will not want to crash the application. Just make aware 
-                        LoggingManager.LogError($"Picture number {currentIndex} couldn't be constructed.\n\n{e}\n");
+                        Log.Error("Picture number {index} couldn't be constructed.\n{exception}\n", currentIndex, e);
 
                         // Return the default value
                         return default;
@@ -209,10 +208,10 @@ namespace GeoGen.DrawingLauncher
                     var (message, exceptionString) = group.Key;
 
                     // Make aware of the problem with the number of these exceptions
-                    LoggingManager.LogWarning($"{group.Count()} exception(s) while constructing picture number {id}. The message: {message}\n");
+                    Log.Warning("{count} exception(s) while constructing picture number {id}. The message: {message}\n", group.Count(), id, message);
 
                     // Log the exception as a debug message
-                    LoggingManager.LogDebug(exceptionString);
+                    Log.Debug(exceptionString);
                 });
 
             // If there are no figures, make aware
@@ -224,7 +223,7 @@ namespace GeoGen.DrawingLauncher
 
             // If the rank is maximal, i.e. ultimately bad figure, make aware
             if (rank == double.MaxValue)
-                LoggingManager.LogWarning($"Figure {id} couldn't be drawn nicely.\n");
+                Log.Warning("Figure {id} couldn't be drawn nicely.\n", id);
 
             // Return the figure anyway
             return figure;

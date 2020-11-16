@@ -1,9 +1,13 @@
-﻿using GeoGen.Infrastructure;
+﻿using GeoGen.ConfigurationGenerator;
+using GeoGen.Constructor;
+using GeoGen.Infrastructure;
 using GeoGen.MainLauncher;
+using GeoGen.ProblemGenerator;
+using GeoGen.ProblemGenerator.InputProvider;
+using GeoGen.TheoremFinder;
 using Ninject;
 using System;
 using System.Threading.Tasks;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.ConfigurationGenerationLauncher
 {
@@ -15,31 +19,61 @@ namespace GeoGen.ConfigurationGenerationLauncher
         /// <summary>
         /// The entry method of the application.
         /// </summary>
-        public static async Task Main()
+        /// <param name="customConfigurationFilePaths"><inheritdoc cref="Application.Run(string[], Func{IKernel, JsonConfiguration, Task})"/></param>
+        public static async Task Main(string[] customConfigurationFilePaths) => await Application.Run(customConfigurationFilePaths, async (kernel, settings) =>
         {
-            try
-            {
-                // Load the settings from the default file
-                var settings = await SettingsLoader.LoadFromFileAsync<Settings>("settings.json");
+            // Initialize the container
+            await PrepareDIContainer(kernel, settings);
 
-                // Initialize the IoC system
-                await IoC.InitializeAsync(settings);
+            // Run the algorithm
+            await kernel.Get<IBatchRunner>().FindAllInputFilesAndRunProblemGenerationAsync();
+        });
 
-                // Run the algorithm
-                await IoC.Kernel.Get<IBatchRunner>().FindAllInputFilesAndRunProblemGenerationAsync();
+        /// <summary>
+        /// Initializes the NInject kernel.
+        /// </summary>
+        /// <param name="kernel">The dependency injection container.</param>
+        /// <param name="settings">The settings of the application.</param>
+        private static Task PrepareDIContainer(IKernel kernel, JsonConfiguration settings)
+        {
+            #region Local dependencies
 
-                // Log that we're done
-                LoggingManager.LogInfo("The application has finished.\n");
-            }
-            // Catch for any unhandled exception
-            catch (Exception e)
-            {
-                // Log if there is any
-                LoggingManager.LogFatal($"An unexpected exception has occurred: \n\n{e}\n");
+            // Add local dependencies
+            kernel.Bind<IBatchRunner>().To<BatchRunner>();
+            kernel.Bind<IProblemGenerationRunner>().To<GenerationOnlyProblemGenerationRunner>().WithConstructorArgument(settings.GetSettings<GenerationOnlyProblemGenerationRunnerSettings>());
 
-                // This is a sad end
-                Environment.Exit(-1);
-            }
+            #endregion           
+
+            #region Problem generator
+
+            // Add the configuration generator with its settings
+            kernel.AddConfigurationGenerator(settings.GetSettings<GenerationSettings>())
+                // Add the constructor
+                .AddConstructor()
+                // Add the problem generator with its settings
+                .AddProblemGenerator(settings.GetSettings<ProblemGeneratorSettings>())
+                // Add problem generator input provider
+                .AddProblemGeneratorInputProvider(settings.GetSettings<ProblemGeneratorInputProviderSettings>());
+
+            // Add an empty theorem finder
+            kernel.Bind<ITheoremFinder>().To<EmptyTheoremFinder>();
+
+            #endregion
+
+            #region Tracers
+
+            // Rebind Constructor Failure Tracer only if we're supposed be tracing
+            if (settings.GetSettings<bool>("TraceConstructorFailures"))
+                kernel.Rebind<IConstructorFailureTracer>().To<ConstructorFailureTracer>().WithConstructorArgument(settings.GetSettings<ConstructorFailureTracerSettings>());
+
+            // Rebind Geometry Failure Tracer only if we're supposed be tracing
+            if (settings.GetSettings<bool>("TraceGeometryFailures"))
+                kernel.Rebind<IGeometryFailureTracer>().To<GeometryFailureTracer>().WithConstructorArgument(settings.GetSettings<GeometryFailureTracerSettings>());
+
+            #endregion
+
+            // Return a finished task
+            return Task.CompletedTask;
         }
     }
 }

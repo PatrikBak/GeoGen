@@ -30,7 +30,7 @@ namespace GeoGen.TheoremProver.Tests
             get
             {
                 // Initialize IoC
-                var kernel = IoC.CreateKernel()
+                var kernel = NinjectUtilities.CreateKernel()
                     // Add the theorem finder with no restrictions
                     .AddTheoremFinder(new TheoremFindingSettings
                                         (

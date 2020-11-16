@@ -24,9 +24,9 @@ D = Incenter({A, B, C})
 E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
 F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
 G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{B, C}, {F, G}})
+H = IntersectionOfLinesFromPoints({{A, B}, {E, F}})
 
-PerpendicularLines: [A, E], [D, H] - total ranking 3929.33
+PerpendicularLines: [C, G], [D, H] - total ranking 3929.33
 
   Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
   Level                           weight = 1000      ranking = 0.66      contribution = 660       

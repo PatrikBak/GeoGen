@@ -1,5 +1,4 @@
 ﻿using GeoGen.Core;
-using GeoGen.Infrastructure;
 using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.ProblemGenerator.InputProvider;
@@ -8,12 +7,12 @@ using GeoGen.TheoremProver.InferenceRuleProvider;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.Utilities;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using static GeoGen.Infrastructure.Log;
 
 namespace GeoGen.MainLauncher
 {
@@ -195,7 +194,7 @@ namespace GeoGen.MainLauncher
             WriteLineToBothReadableWriters($"Results:");
 
             // Log that we've started
-            LoggingManager.LogInfo("Generation has started.");
+            Log.Information("Generation has started.");
 
             #region Tracking variables
 
@@ -242,20 +241,18 @@ namespace GeoGen.MainLauncher
 
                 // Find out if we should log progress and if yes, do it
                 if (_settings.LogProgress && numberOfGeneratedConfigurations % _settings.ProgressLoggingFrequency == 0)
-                    // How many configurations did we generate?
-                    LoggingManager.LogInfo($"Generated configurations: {numberOfGeneratedConfigurations}, " +
-                        // How long did it take?
-                        $"after {stopwatch.ElapsedMilliseconds} ms, " +
-                        // With the info about the frequency
-                        $"{_settings.ProgressLoggingFrequency} in " +
-                        // Average time
-                        $"{(double)stopwatch.ElapsedMilliseconds / numberOfGeneratedConfigurations * _settings.ProgressLoggingFrequency:F2} ms on average, " +
-                        // How many interesting theorems
-                        $"with {numberOfInterestingTheorems} theorems" +
-                        // How many interesting theorems after merge
-                        $"{(writeBestTheorems ? $" ({_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()} after global merge)" : "")}" +
-                        // How many configurations
-                        $" in {numberOfConfigurationsWithInterestingTheorem} configurations.");
+                {
+                    // Calculate how long on average it takes to generate 'one batch' according to the progress frequency
+                    var averageTime = (double)stopwatch.ElapsedMilliseconds / numberOfGeneratedConfigurations * _settings.ProgressLoggingFrequency;
+
+                    // Based on whether we're creating best theorems, write how many of them we have
+                    var bestTheoremString = $"{(writeBestTheorems ? $" ({_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()} after global merge)" : "")}";
+
+                    // Log what we have
+                    Log.Information("Generated configurations: {configurations}, after {time} ms, {frequency} in {averageTime:F2} ms on average, with {theorems} theorems{bestTheorems} " +
+                        "in {allConfigurations} configurations", numberOfGeneratedConfigurations, stopwatch.ElapsedMilliseconds, _settings.ProgressLoggingFrequency,
+                        averageTime, numberOfInterestingTheorems, bestTheoremString, numberOfConfigurationsWithInterestingTheorem);
+                }
 
                 #endregion
 
@@ -284,11 +281,9 @@ namespace GeoGen.MainLauncher
                 catch (Exception e)
                 {
                     // If there is any sort of problem, we should make aware of it. 
-                    LoggingManager.LogError($"There has been an exception while analyzing the configuration:\n\n" +
+                    Log.Error(e, "There has been an exception while analyzing the configuration:\n\n{configuration}\n" +
                         // Write the problematic configuration
-                        $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
-                        // And also the exception
-                        $"Exception: {e}");
+                        new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration));
 
                     // And move on, we still might get something cool
                     continue;
@@ -359,11 +354,9 @@ namespace GeoGen.MainLauncher
                     catch (Exception e)
                     {
                         // If there is any sort of problem, we should make aware of it. 
-                        LoggingManager.LogError($"There has been an exception while sorting theorems of the configuration:\n\n" +
+                        Log.Error(e, "There has been an exception while sorting theorems of the configuration:\n\n{configuration}\n",
                             // Write the problematic configuration
-                            $"{new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration)}\n" +
-                            // And also the exception
-                            $"Exception: {e}");
+                            new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration));
                     }
                 }
 
@@ -449,11 +442,11 @@ namespace GeoGen.MainLauncher
             WriteLineToBothReadableWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
-            LoggingManager.LogInfo($"Generated configurations: {numberOfGeneratedConfigurations}");
-            LoggingManager.LogInfo($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
-            LoggingManager.LogInfo($"Interesting theorems: {numberOfInterestingTheorems}");
-            LoggingManager.LogInfo($"Interesting theorems after global merge: {afterMergeString}");
-            LoggingManager.LogInfo($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
+            Log.Information("Generated configurations: {count}", numberOfGeneratedConfigurations);
+            Log.Information("Configurations with an interesting theorem: {count}", numberOfConfigurationsWithInterestingTheorem);
+            Log.Information("Interesting theorems: {count}", numberOfInterestingTheorems);
+            Log.Information("Interesting theorems after global merge: {count}", afterMergeString);
+            Log.Information("Run-time: {time} ms", stopwatch.ElapsedMilliseconds);
 
             // Close the JSON output writer
             jsonOutputWriter?.EndWriting();
@@ -541,8 +534,8 @@ namespace GeoGen.MainLauncher
 
                 // Add the theorem
                 result += $"\n\n{formatter.FormatTheorem(rankedTheorem.Theorem)}" +
-                    // Add the total ranking
-                    $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToStringWithDecimalDot()}\n\n";
+                // Add the total ranking
+                $" - total ranking {rankedTheorem.Ranking.TotalRanking.ToStringWithDecimalDot()}\n\n";
 
                 // Add the ranking
                 result += TheoremRankingToString(rankedTheorem.Ranking);
