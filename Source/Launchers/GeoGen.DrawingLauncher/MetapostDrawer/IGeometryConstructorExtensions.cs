@@ -15,7 +15,7 @@ namespace GeoGen.DrawingLauncher
         /// Constructs a given <see cref="Configuration"/> to a given number of pictures, using the 
         /// loose object drawing that is in some cases more flexible than the drawing from  the method
         /// <see cref="LooseObjectLayoutDrawing.ConstructUniformLayout(LooseObjectLayout)"/>. These cases
-        /// are two: Triangle, when <see cref="RandomLayoutsHelpers.ConstructRandomTriangle"/> is used, 
+        /// are two: Triangle, when <see cref="RandomLayoutsHelpers.ConstructNiceAcuteTriangle"/> is used, 
         /// and Quadrilateral, when <see cref="RandomLayoutsHelpers.ConstructRandomConvexQuadrilateralWithHorizontalSide"/>
         /// or <see cref="RandomLayoutsHelpers.ConstructRandomConvexQuadrilateralWithHorizontalDiagonal"/>
         /// if the picture is symmetric in such a way that it would look better with a horizontal diagonal,
@@ -40,7 +40,7 @@ namespace GeoGen.DrawingLauncher
                     case LooseObjectLayout.Triangle:
                     {
                         // Create the points
-                        var (point1, point2, point3) = RandomLayoutsHelpers.ConstructRandomTriangle();
+                        var (point1, point2, point3) = RandomLayoutsHelpers.ConstructNiceAcuteTriangle();
 
                         // Return them in an array 
                         return new IAnalyticObject[] { point1, point2, point3 };

@@ -51,34 +51,30 @@ namespace GeoGen.AnalyticGeometry
         }
 
         /// <summary>
-        /// Constructs a random triangle. 
+        /// Constructs a random acute triangle that will hopefully yield a nice figure.
         /// </summary>
         /// <returns>
-        /// Three points A, B, C that make a triangle. BC will always be (0,0)--(1,0). 
-        /// A will have a positive y coordinate. It will hold that beta is the largest angle.
+        /// Three points A, B, C that make an acute triangle. BC will always be (0,0)--(1,0). 
+        /// A will have a positive y coordinate. It will hold that beta is at least gamma.
         /// </returns>
-        public static (Point, Point, Point) ConstructRandomTriangle()
+        public static (Point, Point, Point) ConstructNiceAcuteTriangle()
         {
             // First we normally place two points
             var B = new Point(0, 0);
             var C = new Point(1, 0);
 
-            // We will want to have each angle at least 'd' degrees (so it's not too flat)
-            const double d = 10;
+            // We take <A from (40, 80) and <B from (90-A/2, 80)
+            var alpha = RandomnessHelper.NextDouble(40, 80);
+            var beta = RandomnessHelper.NextDouble(90 - alpha / 2, 80);
 
-            // Clearly <B must be at most 180 - 2d, since it is equal to 180 - <A - <C
-            var beta = RandomnessHelper.NextDouble(d, 180 - 2 * d);
-
-            // Now when we have <B, we need to generate <C in [d, 180 - 2d) so that the last angle 
-            // <A = 180 - <B - <C is at least d. Therefore <C should be then from the interval
-            // [d, 180 - <B - d). That can be easily arranged
-            var gamma = RandomnessHelper.NextDouble(d, 180 - beta - d);
+            // Then one can simply prove that <C is from (20, 10+A/2) and <B is at least <C
+            var gamma = 180 - alpha - beta;
 
             // Construct the lines BA and CA
             var lineBA = new Line(B, C.Rotate(B, beta));
             var lineCA = new Line(C, B.Rotate(C, -gamma));
 
-            // Intersection them to find the last point A
+            // Intersect them to find the last point A
             var A = lineBA.IntersectionWith(lineCA).Value;
 
             // Return the points
