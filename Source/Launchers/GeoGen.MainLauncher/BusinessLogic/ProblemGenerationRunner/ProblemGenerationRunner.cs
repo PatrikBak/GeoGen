@@ -435,7 +435,6 @@ namespace GeoGen.MainLauncher
             WriteLineToBothReadableWriters($"Configurations with an interesting theorem: {numberOfConfigurationsWithInterestingTheorem}");
             WriteLineToBothReadableWriters($"Interesting theorems: {numberOfInterestingTheorems}");
             WriteLineToBothReadableWriters($"Interesting theorems after global merge: {afterMergeString}");
-            WriteLineToBothReadableWriters($"Run-time: {stopwatch.ElapsedMilliseconds} ms");
 
             // Log these stats as well
             Log.Information("Generated configurations: {count}", numberOfGeneratedConfigurations);
@@ -586,15 +585,15 @@ namespace GeoGen.MainLauncher
 
             #region Asymmetric theorems
 
-            // If there are any asymmetric theorems
-            if (analyzerOutput.NotInterestringAsymmetricTheorems.Any())
+            // If there are any not interesting theorems
+            if (analyzerOutput.NotInterestringTheorems.Any())
             {
                 // Append the header
-                result = $"{result.TrimEnd()}\n\nAsymmetric theorems:\n\n";
+                result = $"{result.TrimEnd()}\n\nNot interesting theorems:\n\n";
 
-                // Append the asymmetric theorems by taking them
-                result += analyzerOutput.NotInterestringAsymmetricTheorems
-                    // Format them
+                // Append the theorem string
+                result += analyzerOutput.NotInterestringTheorems
+                    // Format each
                     .Select(formatter.FormatTheorem)
                     // Order by the statement
                     .Ordered()

@@ -26,13 +26,13 @@ namespace GeoGen.ProblemAnalyzer
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputWithProofs"/> class.
         /// </summary>
         /// <param name="interestingTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.InterestingTheorems" path="/summary"/></param>
-        /// <param name="notInterestringAsymmetricTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.NotInterestringAsymmetricTheorems" path="/summary"/></param>
+        /// <param name="notInterestringTheorems"><inheritdoc cref="GeneratedProblemAnalyzerOutputBase.NotInterestringTheorems" path="/summary"/></param>
         /// <param name="theoremProofs"><inheritdoc cref="TheoremProofs" path="/summary"/></param>
         public GeneratedProblemAnalyzerOutputWithProofs(IReadOnlyList<RankedTheorem> interestingTheorems,
-                                                        IReadOnlyCollection<Theorem> notInterestringAsymmetricTheorems,
+                                                        IReadOnlyCollection<Theorem> notInterestringTheorems,
                                                         IReadOnlyDictionary<Theorem, TheoremProof> theoremProofs)
 
-            : base(interestingTheorems, notInterestringAsymmetricTheorems)
+            : base(interestingTheorems, notInterestringTheorems)
         {
             TheoremProofs = theoremProofs ?? throw new ArgumentNullException(nameof(theoremProofs));
         }

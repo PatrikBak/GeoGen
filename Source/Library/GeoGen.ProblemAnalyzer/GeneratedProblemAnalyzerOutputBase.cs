@@ -1,4 +1,5 @@
 ﻿using GeoGen.Core;
+using GeoGen.ProblemGenerator;
 using GeoGen.TheoremRanker;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,9 @@ namespace GeoGen.ProblemAnalyzer
 
         /// <summary>
         /// The theorems that are not among <see cref="InterestingTheorems"/> because they have been ruled out
-        /// because they are asymmetric. This list will be empty if an <see cref="IGeneratedProblemAnalyzer"/> is
-        /// told not to exclude asymmetric problems.
+        /// because of symmetry, based on a <see cref="SymmetryGenerationMode"/>.
         /// </summary>
-        public IReadOnlyCollection<Theorem> NotInterestringAsymmetricTheorems { get; }
+        public IReadOnlyCollection<Theorem> NotInterestringTheorems { get; }
 
         #endregion
 
@@ -32,12 +32,12 @@ namespace GeoGen.ProblemAnalyzer
         /// Initializes a new instance of the <see cref="GeneratedProblemAnalyzerOutputBase"/> class.
         /// </summary>
         /// <param name="interestingTheorems"><inheritdoc cref="InterestingTheorems" path="/summary"/></param>
-        /// <param name="notInterestringAsymmetricTheorems"><inheritdoc cref="NotInterestringAsymmetricTheorems" path="/summary"/></param>
+        /// <param name="notInterestringTheorems"><inheritdoc cref="NotInterestringTheorems" path="/summary"/></param>
         protected GeneratedProblemAnalyzerOutputBase(IReadOnlyList<RankedTheorem> interestingTheorems,
-                                                     IReadOnlyCollection<Theorem> notInterestringAsymmetricTheorems)
+                                                     IReadOnlyCollection<Theorem> notInterestringTheorems)
         {
             InterestingTheorems = interestingTheorems ?? throw new ArgumentNullException(nameof(interestingTheorems));
-            NotInterestringAsymmetricTheorems = notInterestringAsymmetricTheorems ?? throw new ArgumentNullException(nameof(notInterestringAsymmetricTheorems));
+            NotInterestringTheorems = notInterestringTheorems ?? throw new ArgumentNullException(nameof(notInterestringTheorems));
         }
 
         #endregion

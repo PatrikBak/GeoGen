@@ -30,6 +30,12 @@ namespace GeoGen.OutputMergingLauncher
                 // Make aware if it's not been set
                 ?? throw new InvalidOperationException("Expected one argument, the path to the directory with outputs");
 
+            // Setup Serilog so it logs to console
+            Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
+
+            // Log the folder
+            Log.Information("Exploring folder {outputFolder}", outputFolder);
+
             // Start timing
             var stopwatch = Stopwatch.StartNew();
 
@@ -80,12 +86,14 @@ namespace GeoGen.OutputMergingLauncher
             // Prepare a counter of processed files
             var counter = 0;
 
-            // For every type
-            EnumUtilities.Values<TheoremType>()
-                // Look for the files with theorems of this type
-                .SelectMany(type => Directory.EnumerateFiles(outputFolder, $"{type}.json", SearchOption.AllDirectories))
-                // Handle each
-                .ForEach(file =>
+            // Handle every theorem file. They should be .json files
+            // We will assume the other non-theorem json files have been removed 
+            foreach (var file in Directory.EnumerateFiles(outputFolder, "*.json", SearchOption.AllDirectories))
+            {
+                // Count in the file
+                counter++;
+
+                try
                 {
                     // Prepare the enumerable that will read the file
                     var enumeratedTheorems = theoremReader.Read(file);
@@ -93,13 +101,16 @@ namespace GeoGen.OutputMergingLauncher
                     // Add the theorems to the sorter
                     allTheoremSorter.AddTheorems(enumeratedTheorems, out var _);
 
-                    // Count in the file
-                    counter++;
-
                     // Log every 20th (so that we don't log too much)
                     if (counter % 20 == 0)
                         Log.Information("Processed {counter} files, total used memory: {memory}", counter, MemoryUsage());
-                });
+                }
+                catch (Exception e)
+                {
+                    // Log potential problems
+                    Log.Error(e, "Cannot parse file {file}", file);
+                }
+            }
 
             // Log used memory
             Log.Information("All {counter} files processed, total used memory: {memory}", counter, MemoryUsage());

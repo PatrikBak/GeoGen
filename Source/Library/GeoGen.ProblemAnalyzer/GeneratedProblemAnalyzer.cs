@@ -93,7 +93,7 @@ namespace GeoGen.ProblemAnalyzer
                 .ToArray();
 
             // Find the problems that should excluded based on symmetry
-            var notInterestringAsymmetricTheorems = mode switch
+            var notInterestingTheorems = mode switch
             {
                 // No restrictions
                 SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric => (IReadOnlyList<Theorem>)Array.Empty<Theorem>(),
@@ -107,6 +107,13 @@ namespace GeoGen.ProblemAnalyzer
                 // Unhandled cases
                 _ => throw new GeoGenException($"Unhandled value of {nameof(SymmetryGenerationMode)}: {mode}"),
             };
+
+            // Interesting theorems can now be reseted 
+            interestingTheorems = interestingTheorems
+                // By the exclusion of not interesting asymmetric ones
+                .Except(notInterestingTheorems)
+                // Enumerate
+                .ToArray();
 
             // Prepare the map of all theorems
             var allTheorems = new TheoremMap(output.OldTheorems.AllObjects.Concat(output.NewTheorems.AllObjects));
@@ -123,9 +130,9 @@ namespace GeoGen.ProblemAnalyzer
             // Now we can finally return the result
             return constructProofs
                 // If we're constructing proofs, then we have a proof dictionary
-                ? new GeneratedProblemAnalyzerOutputWithProofs(rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
+                ? new GeneratedProblemAnalyzerOutputWithProofs(rankedInterestingTheorems, notInterestingTheorems, (IReadOnlyDictionary<Theorem, TheoremProof>)proverOutput)
                 // If we're not constructing proofs, then we have just a proved theorem collection
-                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(rankedInterestingTheorems, notInterestringAsymmetricTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
+                : (GeneratedProblemAnalyzerOutputBase)new GeneratedProblemAnalyzerOutputWithoutProofs(rankedInterestingTheorems, notInterestingTheorems, (IReadOnlyCollection<Theorem>)proverOutput);
         }
 
         #endregion
