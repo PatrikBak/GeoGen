@@ -413,10 +413,10 @@ namespace GeoGen.DrawingLauncher
                         var leftPoint = segmentPoints[i];
                         var rightPoint = segmentPoints[i + 1];
 
-                        // It's going to be useful to know whether this segment is part of the segment being inserted
+                        // It's going to be useful to know whether this segment is a part of the segment being inserted
                         // This happens when the new one has its left point to the right (or equal)
-                        var isThisSubsegmentOfNewOne = comparer.Compare(newLeftPoint, leftPoint) <= 0
-                            // And its left point to the left (or equal)
+                        var isThisSubsegmentOfOneBeingInserted = comparer.Compare(newLeftPoint, leftPoint) <= 0
+                            // And its right point is to the left (or equal)
                             && comparer.Compare(rightPoint, newRightPoint) <= 0;
 
                         // If the segment has a style...
@@ -427,7 +427,7 @@ namespace GeoGen.DrawingLauncher
 
                             // This style might be overridden by the current style, if this 
                             // segment is contained in the one being inserted
-                            var shouldWeOverrideStyle = isThisSubsegmentOfNewOne
+                            var shouldWeOverrideStyle = isThisSubsegmentOfOneBeingInserted
                                 // And is higher than the current one
                                 && (currentStyle == null || segmentStyle > currentStyle.Value);
 
@@ -445,7 +445,7 @@ namespace GeoGen.DrawingLauncher
                         // If we got here, the segment doesn't have a style yet. These options are possible:
                         // 
                         // 1. It is the new segment being inserted so that it doesn't overlap any other segment. 
-                        // 2. It is an empty segment that got inserted when the new segment has been inserted to the very right or left.
+                        // 2. It is an empty segment that got inserted when the new segment was inserted to the very right or left.
                         // 3. It is a segment that was created by splitting an existing segment.
                         //
                         // Let us handle these cases individually
@@ -480,13 +480,27 @@ namespace GeoGen.DrawingLauncher
                             continue;
                         }
 
-                        // We're left with the third case. In this case we need to have 
-                        // a look at the segment that got split in order for us to get this 
-                        // segment in the first place. We know it exists at the left index
-                        var originalStyle = segmentStyles[segmentPoints[i - 1]];
+                        // We're left with the third case. There are 2 sub-cases: 
+                        // (N indicates the current segment, the segment in the second line is 
+                        // the one being inserted)
+                        //
+                        //  -----NNN       --------       ------------           
+                        //     -----       -----NNN           -----NNN           
+                        //
+                        // The first sub-case can be recognized by noticing that the current
+                        // segment is a subsegment of the one being inserted
+                        var originalStyle = isThisSubsegmentOfOneBeingInserted
+                            // In that case, the original style can be determined by looking at the original segment
+                            ? segmentStyles[segmentPoints[i - 1]]
+                            // The second case can be recognized by the fact there is a style of the segment to the left
+                            : segmentStyles.ContainsKey(segmentPoints[i - 1])
+                                // In the second case, we also take the style from the original segment 
+                                ? segmentStyles[segmentPoints[i - 1]]
+                                // Otherwise we have the third case and we need the style of the segment 2 to the left
+                                : segmentStyles[segmentPoints[i - 2]];
 
                         // This style might get changed if our split part is contained in it
-                        var shouldWeOverrideOriginalStyle = isThisSubsegmentOfNewOne
+                        var shouldWeOverrideOriginalStyle = isThisSubsegmentOfOneBeingInserted
                             // And is higher than the current one
                             && (originalStyle == null || segmentStyle > originalStyle.Value);
 
