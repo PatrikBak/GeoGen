@@ -35,9 +35,9 @@ The following constructions are supported in input files (and object introductio
 * `Incenter` - takes three points `A`, `B`, `C` and outputs the incenter of triangle `ABC`.
 * `Incircle` - takes three points `A`, `B`, `C` and outputs the incircle of triangle `ABC`.
 * `InternalAngleBisector` - takes three points `A`, `B`, `C` and outputs the internal angle bisector of angle `BAC`.
-* `IntersectionOfLineAndLineFromPoints` - takes four points `A`, `B`, `C`, `D` and outputs the intersection point of lines `AB` and `CD`.
+* `IntersectionOfLineAndLineFromPoints` - takes a line `l` and two points `A`, `B` and outputs the intersection point of lines `l` and `AB`.
 * `IntersectionOfLines` - takes two lines and outputs their intersection points.
-* `IntersectionOfLinesFromPoints` - takes a line `l` and two points `A`, `B` and outputs the intersection point of lines `l` and `AB`.
+* `IntersectionOfLinesFromPoints` - takes four points `A`, `B`, `C`, `D` and outputs the intersection point of lines `AB` and `CD`.
 * `IsoscelesTrapezoidPoint` - takes three points `A`, `B`, `C` and outputs such a point `D` that `ABCD` is an isosceles trapezoid.
 * `LineFromPoints` - takes two points and outputs the line passing through both of them.
 * `LineThroughCircumcenter` - takes three points `A`, `B`, `C` and outputs the line through `A` and the circumcenter of `ABC`.
