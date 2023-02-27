@@ -23,7 +23,8 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
+    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
+    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="cp -r &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
   </Target>
 
 </Project>
