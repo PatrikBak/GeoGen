@@ -52,16 +52,10 @@ Therefore, the prover is built to prove as many theorems as quickly as possible,
 
 There also is a heuristic ranking system. The 4 rated aspects are selected based on the author's years of experience in writing geometry problems. 
 
-## Future
-
-After university, I did not continue in academia. I would like to change it and find a PhD position where I could either continue working directly on GeoGen or use it for something related. 
-
-One of the ideas is interconnecting the project with ML methods -- especially improving the algorithm that rules out inappropriate problems. 
-
-In general, I am very interested in the math olympiad geometry and computer-related research of it.
-
-If you know someone who might be interested in my project, or if you have any other question, contact me via [email](mailto:patrik.bak.x@gmail.com).
-
 ## Technical readme
 
 For technical notes regarding the code, installation, and running, see [this](/Setup.md).
+
+## Contact
+
+If you are interested in my project, or if you have any other question, contact me via [email](mailto:patrik.bak.x@gmail.com).
