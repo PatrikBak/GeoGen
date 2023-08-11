@@ -4,12 +4,7 @@ using GeoGen.Core;
 using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace GeoGen.DrawingLauncher
 {

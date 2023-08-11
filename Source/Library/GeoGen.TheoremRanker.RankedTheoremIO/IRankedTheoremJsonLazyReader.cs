@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.TheoremRanker.RankedTheoremIO
+﻿namespace GeoGen.TheoremRanker.RankedTheoremIO
 {
     /// <summary>
     /// Represents a reader of <see cref="RankedTheorem"/> objects that reads them lazily.

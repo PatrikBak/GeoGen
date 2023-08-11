@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
+﻿namespace GeoGen.TheoremProver.ObjectIntroductionRuleProvider
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the object introduction rule provider module.

@@ -1,8 +1,5 @@
 ﻿using GeoGen.Utilities;
 
-using System;
-using System.Collections.Generic;
-
 namespace GeoGen.Core
 {
     /// <summary>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.MainLauncher
+﻿namespace GeoGen.MainLauncher
 {
     /// <summary>
     /// The settings for <see cref="TheoremSorterTypeResolver"/>.

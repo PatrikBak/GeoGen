@@ -1,17 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Ninject" Version="3.3.4" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Ninject" Version="3.3.6" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
+		<ProjectReference Include="..\GeoGen.TheoremProver\GeoGen.TheoremProver.csproj" />
+		<ProjectReference Include="..\GeoGen.TheoremRanker\GeoGen.TheoremRanker.csproj" />
+	</ItemGroup>
 
 </Project>

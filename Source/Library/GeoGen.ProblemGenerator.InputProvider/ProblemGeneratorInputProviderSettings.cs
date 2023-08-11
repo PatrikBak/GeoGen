@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ProblemGenerator.InputProvider
+﻿namespace GeoGen.ProblemGenerator.InputProvider
 {
     /// <summary>
     /// The settings for <see cref="ProblemGeneratorInputProvider"/> containing information about the folder with inputs.

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremProver
+﻿namespace GeoGen.TheoremProver
 {
     /// <summary>
     /// The settings related to the theorem prover module.

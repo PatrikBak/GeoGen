@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GeoGen.Constructor
+﻿namespace GeoGen.Constructor
 {
     /// <summary>
     /// An <see cref="InconsistentPicturesException"/> thrown when collinearities between

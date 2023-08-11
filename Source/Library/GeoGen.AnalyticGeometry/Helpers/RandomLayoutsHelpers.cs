@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System.Linq;
 using static GeoGen.AnalyticGeometry.AnalyticHelpers;
 using static GeoGen.AnalyticGeometry.MathHelpers;
 

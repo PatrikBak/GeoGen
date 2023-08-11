@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents a holder of <see cref="ConfigurationObject"/>(s) that are used in <see cref="Arguments"/>

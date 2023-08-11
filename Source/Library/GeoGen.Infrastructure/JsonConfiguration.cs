@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.IO;
-using System.Linq;
 
 namespace GeoGen.Infrastructure
 {
@@ -19,7 +15,7 @@ namespace GeoGen.Infrastructure
         /// The list of loaded files with configuration.
         /// </summary>
         public ImmutableList<string> LoadedConfigurationFilePaths { get; private set; } = ImmutableList<string>.Empty;
-        
+
         #endregion
 
         #region Private fields
@@ -90,11 +86,9 @@ namespace GeoGen.Infrastructure
             propertyName ??= typeof(T).Name;
 
             // The value from the last loaded file overwrites
-            var settingsJson = _loadedConfigurationFiles.LastOrDefault(json => json.Children<JProperty>().Any(property => property.Name == propertyName));
-
-            // If the value is not there, make aware
-            if (settingsJson == null)
-                throw new ConfigurationException($"The configuration does not contain settings of type {typeof(T)} under property name {propertyName}.");
+            var settingsJson = _loadedConfigurationFiles.LastOrDefault(json => json.Children<JProperty>().Any(property => property.Name == propertyName))
+                // If the value is not there, make aware
+                ?? throw new ConfigurationException($"The configuration does not contain settings of type {typeof(T)} under property name {propertyName}.");
 
             try
             {

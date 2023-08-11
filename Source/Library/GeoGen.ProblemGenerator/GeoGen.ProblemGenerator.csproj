@@ -1,13 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
-    <ProjectReference Include="..\GeoGen.ConfigurationGenerator\GeoGen.ConfigurationGenerator.csproj" />
-    <ProjectReference Include="..\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GeoGen.Constructor\GeoGen.Constructor.csproj" />
+		<ProjectReference Include="..\GeoGen.ConfigurationGenerator\GeoGen.ConfigurationGenerator.csproj" />
+		<ProjectReference Include="..\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
+	</ItemGroup>
 
 </Project>

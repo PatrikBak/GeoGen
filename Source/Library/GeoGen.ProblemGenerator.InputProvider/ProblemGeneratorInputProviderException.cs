@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ProblemGenerator.InputProvider
+﻿namespace GeoGen.ProblemGenerator.InputProvider
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the problem generator input provider module.

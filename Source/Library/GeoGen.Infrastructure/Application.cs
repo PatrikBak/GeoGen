@@ -2,9 +2,7 @@
 using GeoGen.Utilities;
 using Ninject;
 using Serilog;
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace GeoGen.MainLauncher
 {

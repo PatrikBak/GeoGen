@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// The extension methods for <see cref="KeyValuePair{TKey, TValue}"/>.

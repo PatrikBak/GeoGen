@@ -1,8 +1,6 @@
 ﻿using FluentAssertions;
 using GeoGen.Utilities;
 using NUnit.Framework;
-using System;
-using System.Linq;
 
 namespace GeoGen.Core.Tests
 {

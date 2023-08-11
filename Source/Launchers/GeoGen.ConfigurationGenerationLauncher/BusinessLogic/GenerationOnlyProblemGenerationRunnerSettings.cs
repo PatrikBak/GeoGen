@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ConfigurationGenerationLauncher
+﻿namespace GeoGen.ConfigurationGenerationLauncher
 {
     /// <summary>
     /// The settings for <see cref="GenerationOnlyProblemGenerationRunner"/>.

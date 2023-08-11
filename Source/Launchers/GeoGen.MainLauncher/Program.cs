@@ -13,7 +13,6 @@ using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using Ninject;
-using System.Threading.Tasks;
 
 namespace GeoGen.MainLauncher
 {

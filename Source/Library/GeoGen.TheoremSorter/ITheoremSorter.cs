@@ -1,5 +1,4 @@
 ﻿using GeoGen.TheoremRanker;
-using System.Collections.Generic;
 
 namespace GeoGen.TheoremSorter
 {

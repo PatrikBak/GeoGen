@@ -4,8 +4,6 @@ using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructions;

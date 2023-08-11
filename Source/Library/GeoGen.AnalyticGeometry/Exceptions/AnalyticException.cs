@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.AnalyticGeometry
+﻿namespace GeoGen.AnalyticGeometry
 {
     /// <summary>
     /// Represents an exception that is thrown when geometrically illogical things 

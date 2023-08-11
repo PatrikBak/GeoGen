@@ -3,8 +3,6 @@ using GeoGen.Core;
 using GeoGen.ProblemGenerator;
 using GeoGen.Utilities;
 using Serilog;
-using System;
-using System.IO;
 
 namespace GeoGen.MainLauncher
 {

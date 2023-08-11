@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a dictionary mapping <see cref="TKey"/>s to lists of <see cref="TValue"/>s.

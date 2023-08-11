@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.DrawingLauncher
+﻿namespace GeoGen.DrawingLauncher
 {
     /// <summary>
     /// Represents an exception that is thrown when an execution of a command yielded a non-zero exit code.

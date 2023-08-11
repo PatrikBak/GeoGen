@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents the base type of exception for the GeoGen algorithms.

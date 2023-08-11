@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Represents a strongly-typed, read-only set of element.

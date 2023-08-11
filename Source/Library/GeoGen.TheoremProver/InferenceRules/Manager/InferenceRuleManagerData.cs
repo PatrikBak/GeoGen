@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GeoGen.TheoremProver
+﻿namespace GeoGen.TheoremProver
 {
     /// <summary>
     /// Represents data for <see cref="InferenceRuleManager"/> containing available <see cref="InferenceRule"/>s.

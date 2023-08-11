@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace GeoGen.DrawingLauncher
+﻿namespace GeoGen.DrawingLauncher
 {
     /// <summary>
     /// Represents a service that gets <see cref="DrawingRule"/>s.

@@ -1,8 +1,5 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using static GeoGen.AnalyticGeometry.AnalyticHelpers;
 using static GeoGen.AnalyticGeometry.MathHelpers;

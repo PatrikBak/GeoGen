@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace GeoGen.MainLauncher
+﻿namespace GeoGen.MainLauncher
 {
     /// <summary>
     /// Represents a service that finds available input files and can run the problem generation algorithm on them.

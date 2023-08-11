@@ -5,7 +5,6 @@ using GeoGen.Infrastructure;
 using GeoGen.Utilities;
 using Ninject;
 using NUnit.Framework;
-using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
+﻿namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
 {
     /// <summary>
     /// The settings for <see cref="SimplificationRuleProvider"/>

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.DrawingLauncher
+﻿namespace GeoGen.DrawingLauncher
 {
     /// <summary>
     /// The settings for <see cref="DrawingRuleProvider"/>

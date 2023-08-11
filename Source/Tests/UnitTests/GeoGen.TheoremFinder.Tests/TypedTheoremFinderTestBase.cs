@@ -2,9 +2,6 @@
 using GeoGen.Core;
 using GeoGen.Infrastructure;
 using Ninject;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.TheoremFinder.Tests
 {

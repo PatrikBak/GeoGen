@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// A static helper class for generating random numbers. This class is thread-safe, which is achieved by locking.

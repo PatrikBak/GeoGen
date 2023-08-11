@@ -1,5 +1,4 @@
 ﻿using Ninject;
-using System;
 
 namespace GeoGen.TheoremRanker
 {

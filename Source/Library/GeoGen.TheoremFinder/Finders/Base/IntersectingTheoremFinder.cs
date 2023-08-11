@@ -1,7 +1,6 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Constructor;
 using GeoGen.Core;
-using System.Linq;
 
 namespace GeoGen.TheoremFinder
 {

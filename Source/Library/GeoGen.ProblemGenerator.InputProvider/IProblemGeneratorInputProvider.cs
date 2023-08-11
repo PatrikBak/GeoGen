@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-
-namespace GeoGen.ProblemGenerator.InputProvider
+﻿namespace GeoGen.ProblemGenerator.InputProvider
 {
     /// <summary>
     /// Represents a service that gets <see cref="LoadedProblemGeneratorInput"/>s.

@@ -6,8 +6,6 @@ using GeoGen.ProblemGenerator;
 using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.TheoremFinder;
 using Ninject;
-using System;
-using System.Threading.Tasks;
 
 namespace GeoGen.ConfigurationGenerationLauncher
 {

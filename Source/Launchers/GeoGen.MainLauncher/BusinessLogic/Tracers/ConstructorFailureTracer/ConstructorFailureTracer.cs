@@ -3,9 +3,6 @@ using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using Serilog;
-using System;
-using System.IO;
-using System.Linq;
 
 namespace GeoGen.MainLauncher
 {

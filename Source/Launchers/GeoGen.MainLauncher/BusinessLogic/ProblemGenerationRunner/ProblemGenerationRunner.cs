@@ -8,11 +8,7 @@ using GeoGen.TheoremRanker;
 using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.Utilities;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
 namespace GeoGen.MainLauncher
 {

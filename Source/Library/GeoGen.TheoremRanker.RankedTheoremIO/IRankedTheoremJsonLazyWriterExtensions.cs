@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.TheoremRanker.RankedTheoremIO
+﻿namespace GeoGen.TheoremRanker.RankedTheoremIO
 {
     /// <summary>
     /// Extension methods for <see cref="IRankedTheoremJsonLazyWriter"/>.

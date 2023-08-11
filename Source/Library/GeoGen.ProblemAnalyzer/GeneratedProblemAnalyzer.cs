@@ -3,9 +3,6 @@ using GeoGen.ProblemGenerator;
 using GeoGen.TheoremProver;
 using GeoGen.TheoremRanker;
 using GeoGen.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.ProblemAnalyzer
 {

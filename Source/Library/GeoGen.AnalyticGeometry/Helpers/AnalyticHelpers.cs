@@ -1,6 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
-using System.Linq;
 using static System.Math;
 
 namespace GeoGen.AnalyticGeometry

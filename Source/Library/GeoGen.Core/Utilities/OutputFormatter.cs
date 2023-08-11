@@ -1,6 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 namespace GeoGen.Core

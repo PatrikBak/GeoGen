@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NUnit.Framework;
-using System;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
@@ -152,9 +151,9 @@ namespace GeoGen.Core.Tests
                 // We need lots of objects
                 .Should().BeEquivalentTo(new[]
                 {
-                    new[] 
-                    { 
-                        new ConstructedConfigurationObject(PointReflection, C, B) 
+                    new[]
+                    {
+                        new ConstructedConfigurationObject(PointReflection, C, B)
                     },
                     new[]
                     {

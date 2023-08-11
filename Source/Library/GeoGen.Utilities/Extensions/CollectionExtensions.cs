@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Extension methods for <see cref="ICollection{T}"/>.

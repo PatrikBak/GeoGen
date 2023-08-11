@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ConfigurationGenerationLauncher
+﻿namespace GeoGen.ConfigurationGenerationLauncher
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the configuration generation launcher.

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using static GeoGen.Core.ConfigurationObjectType;
+﻿using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
 
 namespace GeoGen.Core

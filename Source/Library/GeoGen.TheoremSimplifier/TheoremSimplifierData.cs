@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GeoGen.TheoremSimplifier
+﻿namespace GeoGen.TheoremSimplifier
 {
     /// <summary>
     /// The data used by <see cref="TheoremSimplifier"/> containing a set of <see cref="SimplificationRule"/>s.

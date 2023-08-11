@@ -6,11 +6,7 @@ using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
 using Ninject;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 
 namespace GeoGen.OutputMergingLauncher
 {

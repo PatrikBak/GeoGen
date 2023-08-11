@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Serilog;
-using System.IO;
 using System.Text;
 
 namespace GeoGen.Infrastructure

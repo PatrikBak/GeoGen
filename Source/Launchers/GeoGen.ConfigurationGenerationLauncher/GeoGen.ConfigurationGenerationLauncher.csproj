@@ -1,23 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-    <!-- This somehow makes NInject work properly -->
-    <!-- https://github.com/ninject/Ninject.Extensions.Factory/issues/39#issuecomment-460535961 -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
+	</ItemGroup>
 
-  </PropertyGroup>
+	<ItemGroup>
+		<None Update="default_settings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Launchers\GeoGen.MainLauncher\GeoGen.MainLauncher.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="default_settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
- 
 </Project>

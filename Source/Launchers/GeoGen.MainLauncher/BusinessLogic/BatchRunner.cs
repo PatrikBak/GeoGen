@@ -1,9 +1,7 @@
 ﻿using GeoGen.ProblemGenerator.InputProvider;
 using GeoGen.Utilities;
 using Serilog;
-using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 
 namespace GeoGen.MainLauncher
 {

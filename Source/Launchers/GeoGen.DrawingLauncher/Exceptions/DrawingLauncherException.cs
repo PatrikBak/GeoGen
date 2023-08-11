@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.DrawingLauncher
+﻿namespace GeoGen.DrawingLauncher
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the drawer.

@@ -6,10 +6,7 @@ using GeoGen.TheoremRanker.RankedTheoremIO;
 using GeoGen.Utilities;
 using Ninject;
 using Serilog;
-using System;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace GeoGen.DrawingLauncher
 {

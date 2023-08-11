@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using GeoGen.Utilities;
 using NUnit.Framework;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.ConfigurationObjectType;
@@ -28,15 +29,15 @@ namespace GeoGen.Core.Tests
             var Y = new ConstructedConfigurationObject(Midpoint, X, G);
 
             // Check loose object
-            A.GetDefiningObjects().Should().BeEquivalentTo(A);
+            A.GetDefiningObjects().Should().BeEquivalentTo(A.ToEnumerable());
 
             // Check simple constructed object
-            D.GetDefiningObjects().Should().BeEquivalentTo(A, B, D)
+            D.GetDefiningObjects().Should().BeEquivalentTo(new ConfigurationObject[] { A, B, D })
                 .And.ContainInOrder(A, D)
                 .And.HaveElementSucceeding(B, D);
 
             // Check complex constructed object
-            c.GetDefiningObjects().Should().BeEquivalentTo(A, B, C, D, E, F, G, c)
+            c.GetDefiningObjects().Should().BeEquivalentTo(new ConfigurationObject[] { A, B, C, D, E, F, G, c })
                 .And.ContainInOrder(E, c)
                 .And.ContainInOrder(F, c)
                 .And.ContainInOrder(G, c)
@@ -52,7 +53,7 @@ namespace GeoGen.Core.Tests
                 .And.ContainInOrder(B, D);
 
             // Check calling on more objects
-            new[] { X, Y, c }.GetDefiningObjects().Should().BeEquivalentTo(A, B, C, D, E, F, G, c, X, Y)
+            new[] { X, Y, c }.GetDefiningObjects().Should().BeEquivalentTo(new ConfigurationObject[] { A, B, C, D, E, F, G, c, X, Y })
                 .And.ContainInOrder(E, c)
                 .And.ContainInOrder(F, c)
                 .And.ContainInOrder(G, c)

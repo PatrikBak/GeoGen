@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremProver.InferenceRuleProvider
+﻿namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the inference rule provider module.

@@ -1,7 +1,5 @@
 ﻿using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
-using System;
-using System.Linq;
 
 namespace GeoGen.Constructor
 {

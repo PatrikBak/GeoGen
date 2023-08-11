@@ -1,5 +1,4 @@
 ﻿using GeoGen.Utilities;
-using System;
 using System.Globalization;
 using static System.Math;
 

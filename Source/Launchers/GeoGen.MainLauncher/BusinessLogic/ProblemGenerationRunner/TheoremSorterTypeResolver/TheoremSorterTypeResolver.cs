@@ -1,9 +1,6 @@
 ﻿using GeoGen.Core;
 using GeoGen.TheoremSorter;
 using GeoGen.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.MainLauncher
 {

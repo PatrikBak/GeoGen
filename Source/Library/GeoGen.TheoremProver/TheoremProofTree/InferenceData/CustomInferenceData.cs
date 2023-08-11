@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremProver
+﻿namespace GeoGen.TheoremProver
 {
     /// <summary>
     /// Represents metadata of an inference that uses <see cref="InferenceRuleType.CustomRule"/>.

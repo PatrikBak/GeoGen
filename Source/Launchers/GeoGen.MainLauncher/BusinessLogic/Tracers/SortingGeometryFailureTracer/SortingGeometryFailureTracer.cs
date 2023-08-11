@@ -3,8 +3,6 @@ using GeoGen.Core;
 using GeoGen.TheoremRanker;
 using GeoGen.TheoremSorter;
 using Serilog;
-using System;
-using System.IO;
 
 namespace GeoGen.MainLauncher
 {

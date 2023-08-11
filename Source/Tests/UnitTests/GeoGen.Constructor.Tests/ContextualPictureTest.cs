@@ -3,8 +3,6 @@ using GeoGen.AnalyticGeometry;
 using GeoGen.Core;
 using GeoGen.Utilities;
 using NUnit.Framework;
-using System;
-using System.Linq;
 using static GeoGen.Core.ComposedConstructions;
 using static GeoGen.Core.LooseObjectLayout;
 using static GeoGen.Core.PredefinedConstructions;

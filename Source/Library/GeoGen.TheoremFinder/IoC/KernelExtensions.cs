@@ -1,7 +1,5 @@
 ﻿using GeoGen.Core;
 using Ninject;
-using System;
-using System.Linq;
 
 namespace GeoGen.TheoremFinder
 {

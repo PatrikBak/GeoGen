@@ -1,19 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-    <!-- This somehow makes NInject work properly -->
-    <!-- https://github.com/ninject/Ninject.Extensions.Factory/issues/39#issuecomment-460535961 -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-
-  </PropertyGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
-    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj" />
-    <ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.ObjectIntroductionRuleProvider\GeoGen.TheoremProver.ObjectIntroductionRuleProvider.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\Library\GeoGen.TheoremFinder\GeoGen.TheoremFinder.csproj" />
+		<ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\GeoGen.TheoremProver.InferenceRuleProvider.csproj" />
+		<ProjectReference Include="..\..\..\Library\GeoGen.TheoremProver.ObjectIntroductionRuleProvider\GeoGen.TheoremProver.ObjectIntroductionRuleProvider.csproj" />
+	</ItemGroup>
 
 </Project>

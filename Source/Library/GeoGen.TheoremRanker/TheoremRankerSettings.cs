@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GeoGen.TheoremRanker
+﻿namespace GeoGen.TheoremRanker
 {
     /// <summary>
     /// The settings for <see cref="TheoremRanker"/>.

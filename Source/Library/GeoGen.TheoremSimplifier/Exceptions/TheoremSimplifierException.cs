@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremSimplifier
+﻿namespace GeoGen.TheoremSimplifier
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the simplifier module.

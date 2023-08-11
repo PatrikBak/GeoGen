@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremSorter
+﻿namespace GeoGen.TheoremSorter
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the sorter module.

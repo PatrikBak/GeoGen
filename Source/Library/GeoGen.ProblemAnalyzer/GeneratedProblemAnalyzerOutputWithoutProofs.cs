@@ -1,7 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.TheoremRanker;
-using System;
-using System.Collections.Generic;
 
 namespace GeoGen.ProblemAnalyzer
 {

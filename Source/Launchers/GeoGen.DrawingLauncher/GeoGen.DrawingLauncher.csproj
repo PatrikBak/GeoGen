@@ -1,30 +1,26 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-    <!-- This somehow makes NInject work properly -->
-    <!-- https://github.com/ninject/Ninject.Extensions.Factory/issues/39#issuecomment-460535961 -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
+		<ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj" />
+	</ItemGroup>
 
-  </PropertyGroup>
+	<ItemGroup>
+		<None Update="default_settings.json">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Library\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
-    <ProjectReference Include="..\..\Library\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\Library\GeoGen.TheoremRanker.RankedTheoremIO\GeoGen.TheoremRanker.RankedTheoremIO.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="default_settings.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Condition="'$(OS)' == 'Windows_NT'" Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
-    <Exec Condition="'$(OS)' != 'Windows_NT'" Command="cp -r &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
-  </Target>
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		  <Exec Condition="'$(OS)' == 'Windows_NT'" Command="xcopy /y &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
+		  <Exec Condition="'$(OS)' != 'Windows_NT'" Command="cp -r &quot;$(ProjectDir)Data&quot; &quot;$(TargetDir)&quot;" />
+	</Target>
 
 </Project>

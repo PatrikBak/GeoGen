@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace GeoGen.Utilities
+﻿namespace GeoGen.Utilities
 {
     /// <summary>
     /// Static IO utilities.

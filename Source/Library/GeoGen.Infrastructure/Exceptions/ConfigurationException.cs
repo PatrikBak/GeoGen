@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Infrastructure
+﻿namespace GeoGen.Infrastructure
 {
     /// <summary>
     /// Represents an exception thrown when there are issues with setting up <see cref="JsonConfiguration"/>.

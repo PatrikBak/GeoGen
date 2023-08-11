@@ -1,12 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net7.0</TargetFramework>
+		<ImplicitUsings>true</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
-    <ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\GeoGen.Infrastructure\GeoGen.Infrastructure.csproj" />
+		<ProjectReference Include="..\GeoGen.ProblemGenerator\GeoGen.ProblemGenerator.csproj" />
+	</ItemGroup>
 
 </Project>

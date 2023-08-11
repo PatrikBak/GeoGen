@@ -2,9 +2,6 @@
 using GeoGen.Core;
 using GeoGen.TheoremFinder;
 using GeoGen.Utilities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using static GeoGen.Core.PredefinedConstructionType;
 using static GeoGen.Core.TheoremType;
 

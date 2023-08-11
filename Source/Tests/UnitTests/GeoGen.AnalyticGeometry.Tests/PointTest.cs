@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using GeoGen.Utilities;
 using NUnit.Framework;
-using System.Linq;
 using static System.Math;
 
 namespace GeoGen.AnalyticGeometry.Tests

@@ -8,11 +8,7 @@ using GeoGen.Utilities;
 using Ninject;
 using Ninject.Parameters;
 using Serilog;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using static GeoGen.Core.ConfigurationObjectType;
 using static GeoGen.Core.LooseObjectLayout;
 

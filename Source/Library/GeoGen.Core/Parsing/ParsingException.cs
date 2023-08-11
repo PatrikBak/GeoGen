@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.Core
+﻿namespace GeoGen.Core
 {
     /// <summary>
     /// Represents an exception that occurred while parsing GeoGen objects from strings.

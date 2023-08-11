@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace GeoGen.ConfigurationGenerator
+﻿namespace GeoGen.ConfigurationGenerator
 {
     /// <summary>
     /// Represents a service that performs the generation algorithm.

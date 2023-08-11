@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.ProblemGenerator
+﻿namespace GeoGen.ProblemGenerator
 {
     /// <summary>
     /// Represents the settings for <see cref="ProblemGenerator"/>.

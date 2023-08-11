@@ -1,5 +1,4 @@
 ﻿using GeoGen.TheoremProver;
-using System.Collections.Generic;
 
 namespace GeoGen.MainLauncher
 {

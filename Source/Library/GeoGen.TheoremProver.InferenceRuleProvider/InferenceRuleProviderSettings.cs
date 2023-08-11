@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremProver.InferenceRuleProvider
+﻿namespace GeoGen.TheoremProver.InferenceRuleProvider
 {
     /// <summary>
     /// The settings for <see cref="InferenceRuleProvider"/> containing information about the rule folder.

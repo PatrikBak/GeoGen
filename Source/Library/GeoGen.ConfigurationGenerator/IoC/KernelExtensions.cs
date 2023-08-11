@@ -1,6 +1,5 @@
 ﻿using Ninject;
 using Ninject.Extensions.Factory;
-using System;
 
 namespace GeoGen.ConfigurationGenerator
 {

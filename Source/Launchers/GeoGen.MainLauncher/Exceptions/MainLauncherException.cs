@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.MainLauncher
+﻿namespace GeoGen.MainLauncher
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the main launcher.

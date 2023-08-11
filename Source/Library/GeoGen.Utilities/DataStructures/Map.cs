@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace GeoGen.Utilities
 {
@@ -23,7 +21,6 @@ namespace GeoGen.Utilities
         /// <summary>
         /// The dictionary mapping T2 items to T1 ones.
         /// </summary>
-        /// 
         private readonly Dictionary<T2, T1> _rightToLeft = new Dictionary<T2, T1>();
 
         #endregion

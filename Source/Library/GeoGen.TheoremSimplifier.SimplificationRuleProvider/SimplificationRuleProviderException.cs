@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
+﻿namespace GeoGen.TheoremSimplifier.SimplificationRuleProvider
 {
     /// <summary>
     /// Represents an exception that is thrown when something incorrect happens in the simplification rule provider module.

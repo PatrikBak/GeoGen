@@ -1,7 +1,5 @@
 ﻿using GeoGen.Core;
 using GeoGen.Utilities;
-using System.Collections.Generic;
-using System.Linq;
 using static GeoGen.Core.TheoremType;
 using static GeoGen.TheoremProver.InferenceRuleType;
 

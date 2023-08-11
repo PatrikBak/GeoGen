@@ -1,6 +1,5 @@
 ﻿using GeoGen.Constructor;
 using GeoGen.Core;
-using System;
 
 namespace GeoGen.TheoremFinder
 {

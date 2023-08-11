@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace GeoGen.DrawingLauncher
+﻿namespace GeoGen.DrawingLauncher
 {
     /// <summary>
     /// The class containing information such as names of macros that are used by <see cref="MetapostFigure"/>
