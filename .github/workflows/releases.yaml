@@ -1,0 +1,59 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build for ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - os: linux
+            runtime: linux-x64
+            asset_name: GeoGen-Linux
+          - os: windows
+            runtime: win-x64
+            asset_name: GeoGen-Windows
+          - os: macos
+            runtime: osx-x64
+            asset_name: GeoGen-macOS
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Publish ${{ matrix.asset_name }}
+        env:
+          PROJECT_PATH: Source/Launchers/GeoGen.MainLauncher/GeoGen.MainLauncher.csproj
+        run: |
+          dotnet publish $PROJECT_PATH \
+          -c Release \
+          -r ${{ matrix.runtime }} \
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -p:PublishTrimmed=false \
+          -p:DebugSymbols=false \
+          -o ./publish/${{ matrix.asset_name }}
+
+      - name: Zip Build
+        run: |
+          cd ./publish/${{ matrix.asset_name }}
+          zip -r ../../${{ matrix.asset_name }}.zip .
+
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: ${{ matrix.asset_name }}.zip
