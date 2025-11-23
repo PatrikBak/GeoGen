@@ -45,7 +45,7 @@ To identify difficult problems, the system uses an automated theorem prover opti
 
 You can download the latest pre-built release from the [GitHub Releases](https://github.com/PatrikBak/GeoGen/releases) page.
 
-Unzip the downloaded archive and run the executable for your platform (e.g., `GeoGen.MainLauncher.exe` on Windows).
+Unzip the downloaded archive and run the executable for your platform (e.g., `GeoGen.exe` on Windows).
 
 ## Documentation
 

@@ -3,6 +3,7 @@ using GeoGen.Utilities;
 using Ninject;
 using Serilog;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace GeoGen.MainLauncher
 {
@@ -106,7 +107,7 @@ namespace GeoGen.MainLauncher
                 await applicationCode(NinjectUtilities.CreateKernel(), jsonConfiguration);
 
                 // Log end
-                Log.Information("The application has finished correctly in {time:F2} sec.\n", stopwatch.ElapsedMilliseconds / 1000d);
+                Log.Information("The application has finished correctly in {time:F2} sec.", stopwatch.ElapsedMilliseconds / 1000d);
             }
             // Catch for any unhandled exception
             catch (Exception e)
@@ -117,10 +118,48 @@ namespace GeoGen.MainLauncher
                 // This is a sad end
                 throw;
             }
+            finally
+            {
+                // Wait for a click if we should do so...
+                if (ShouldPauseBeforeExit())
+                {
+                    Console.WriteLine("\nPress any key to exit...");
+                    Console.ReadKey();
+                }
+
+                // A function to check if we should pause before exit
+                static bool ShouldPauseBeforeExit()
+                {
+                    // Linux/Mac: terminals set TERM environment variable
+                    // Windows: check if we own the console
+
+                    if (Environment.OSVersion.Platform == PlatformID.Unix)
+                    {
+                        // On Linux/Mac, if TERM is set, we're in a real terminal
+                        // If not set, might be double-clicked (supposedly rare on Linux)
+                        return string.IsNullOrEmpty(Environment.GetEnvironmentVariable("TERM"));
+                    }
+
+                    try
+                    {
+                        // Windows: check if console was created just for us
+                        return GetConsoleProcessList(new uint[2], 2) <= 1;
+                    }
+                    catch
+                    {
+                        // If we fail, we'll pause just in case
+                        return true;
+                    }
+
+                    // Retrieves a list of the processes attached to the current console.
+                    [DllImport("kernel32.dll")]
+                    static extern uint GetConsoleProcessList(uint[] processList, uint processCount);
+                }
+            }
 
             #endregion
         }
-    }
 
-    #endregion
+        #endregion
+    }
 }
