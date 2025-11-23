@@ -30,7 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="default_settings.json">
+		<None Update="settings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 		<Content Include="Data\**">

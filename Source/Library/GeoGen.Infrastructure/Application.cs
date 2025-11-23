@@ -19,7 +19,7 @@ namespace GeoGen.MainLauncher
         /// arguments are provided. This file is overwritten during each build, so it is not supposed to be edited 
         /// for customization. Instead, create and edit the file <paramref name="DevConfigurationFilePath"/>.
         /// </summary>
-        public const string DefaultConfigurationFilePath = "default_settings.json";
+        public const string DefaultConfigurationFilePath = "settings.json";
 
         /// <summary>
         /// The path to the file where developer-specific configuration can be specified. This file is loaded
@@ -28,7 +28,7 @@ namespace GeoGen.MainLauncher
         /// renames it to this file, and edits only this file for playing around with the values. 
         /// </para>
         /// </summary>
-        public const string DevConfigurationFilePath = "dev_settings.json";
+        public const string DevConfigurationFilePath = "settings.dev.json";
 
         #endregion
 

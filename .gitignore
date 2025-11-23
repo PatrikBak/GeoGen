@@ -252,4 +252,4 @@ paket-files/
 *.sln.iml
 
 **/Logs
-**/dev_settings.json
+**/settings.dev.json
