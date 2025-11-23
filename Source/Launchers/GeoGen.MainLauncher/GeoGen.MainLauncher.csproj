@@ -33,6 +33,22 @@
 		<None Update="default_settings.json">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<Content Include="Data\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Include="Examples\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
+
+	<Target Name="CopyDataToProjectDirectory" BeforeTargets="Build">
+		<ItemGroup>
+			<InferenceRules Include="..\..\Library\GeoGen.TheoremProver.InferenceRuleProvider\Rules\**" />
+			<ObjectIntroductionRules Include="..\..\Library\GeoGen.TheoremProver.ObjectIntroductionRuleProvider\Rules\object_introduction_rules.txt" />
+		</ItemGroup>
+
+		<Copy SourceFiles="@(InferenceRules)" DestinationFolder="$(MSBuildProjectDirectory)\Data\Rules\Inference\%(RecursiveDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(ObjectIntroductionRules)" DestinationFolder="$(MSBuildProjectDirectory)\Data\Rules" SkipUnchangedFiles="true" />
+	</Target>
 
 </Project>

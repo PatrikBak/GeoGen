@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GeoGen.DrawingLauncher": {
+      "commandName": "Project",
+      "workingDirectory": "."
+    }
+  }
+}

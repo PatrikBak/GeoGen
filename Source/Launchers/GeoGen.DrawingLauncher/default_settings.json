@@ -57,7 +57,7 @@
     "NumberOfPictures": 100
   },
   "DrawingRuleProviderSettings": {
-    "FilePath": "../../../Data/drawing_rules.txt"
+    "FilePath": "Data/drawing_rules.txt"
   },
   "ReorderObjects": true
 }

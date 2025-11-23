@@ -21,7 +21,7 @@
     ]
   },
   "ProblemGeneratorInputProviderSettings": {
-    "InputFolderPath": "../../../Examples/Inputs",
+    "InputFolderPath": "Examples/Inputs",
     "InputFilePrefix": "input",
     "FileExtension": "txt"
   },
@@ -38,23 +38,23 @@
   },
   "TraceConstructorFailures": false,
   "ConstructorFailureTracerSettings": {
-    "FailureFilePath": "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+    "FailureFilePath": "Data/Tracing/constructor_failures.txt",
     "LogFailures": true
   },
   "TraceGeometryFailures": false,
   "GeometryFailureTracerSettings": {
-    "FailureFilePath": "../../../Examples/Tracing/geometry_failures.txt",
+    "FailureFilePath": "Examples/Tracing/geometry_failures.txt",
     "LogFailures": true
   },
   "TraceInvalidInferences": false,
   "InvalidInferenceTracerSettings": {
-    "InvalidInferenceFolder": "../../../Examples/Tracing/InvalidInferences",
+    "InvalidInferenceFolder": "Examples/Tracing/InvalidInferences",
     "FileExtension": "txt",
     "MaximalNumberOfInvalidInferencesPerFile": 20
   },
   "TraceSortingGeometryFailures": false,
   "SortingGeometryFailureTracerSettings": {
-    "FailureFilePath": "../../../Examples/Tracing/sorting_geometry_failures.txt",
+    "FailureFilePath": "Examples/Tracing/sorting_geometry_failures.txt",
     "LogFailures": true
   }
 }

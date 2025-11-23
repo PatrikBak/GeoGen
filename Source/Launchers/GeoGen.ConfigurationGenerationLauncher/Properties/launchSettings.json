@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GeoGen.ConfigurationGenerationLauncher": {
+      "commandName": "Project",
+      "workingDirectory": "."
+    }
+  }
+}

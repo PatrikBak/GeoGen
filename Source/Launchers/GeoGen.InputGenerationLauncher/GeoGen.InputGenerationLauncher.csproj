@@ -12,12 +12,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Update="constructions.txt">
+		<Content Include="constructions.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
-		<None Update="input_template.txt">
+		</Content>
+		<Content Include="input_template.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</None>
+		</Content>
 	</ItemGroup>
 
 </Project>

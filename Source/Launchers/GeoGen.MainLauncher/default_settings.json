@@ -1,5 +1,10 @@
 {
   "Serilog": {
+    "Using": [
+      "Serilog.Sinks.Console",
+      "Serilog.Sinks.File",
+      "Serilog.Expressions"
+    ],
     "MinimumLevel": "Information",
     "WriteTo": [
       {
@@ -21,29 +26,29 @@
     ]
   },
   "ProblemGeneratorInputProviderSettings": {
-    "InputFolderPath": "../../../Examples/Inputs",
+    "InputFolderPath": "Examples/Inputs",
     "InputFilePrefix": "input",
     "FileExtension": "txt"
   },
   "InferenceRuleProviderSettings": {
-    "RuleFolderPath": "../../../../../Library/GeoGen.TheoremProver.InferenceRuleProvider/Rules",
+    "RuleFolderPath": "Data/Rules/Inference",
     "FileExtension": "txt"
   },
   "ObjectIntroductionRuleProviderSettings": {
-    "FilePath": "../../../../../Library/GeoGen.TheoremProver.ObjectIntroductionRuleProvider/Rules/object_introduction_rules.txt"
+    "FilePath": "Data/Rules/object_introduction_rules.txt"
   },
   "ProblemGenerationRunnerSettings": {
-    "ReadableOutputWithoutProofsFolder": "../../../Examples/Output/ReadableWithoutProofs",
+    "ReadableOutputWithoutProofsFolder": "Examples/Output/ReadableWithoutProofs",
     "WriteReadableOutputWithoutProofs": true,
-    "ReadableOutputWithProofsFolder": "../../../Examples/Output/ReadableWithProofs",
+    "ReadableOutputWithProofsFolder": "Examples/Output/ReadableWithProofs",
     "WriteReadableOutputWithProofs": true,
-    "JsonOutputFolder": "../../../Examples/Output/JsonOutput",
+    "JsonOutputFolder": "Examples/Output/JsonOutput",
     "WriteJsonOutput": true,
     "OutputFilePrefix": "output",
     "FileExtension": "txt",
-    "ReadableBestTheoremFolder": "../../../Examples/Output/ReadableBestTheorems",
+    "ReadableBestTheoremFolder": "Examples/Output/ReadableBestTheorems",
     "WriteReadableBestTheorems": true,
-    "JsonBestTheoremFolder": "../../../Examples/Output/JsonBestTheorems",
+    "JsonBestTheoremFolder": "Examples/Output/JsonBestTheorems",
     "WriteJsonBestTheorems": true,
     "WriteBestTheoremsContinuously": false,
     "BestTheoremsRewrittingIntervalInSeconds": 5,
@@ -93,23 +98,23 @@
   },
   "TraceConstructorFailures": false,
   "ConstructorFailureTracerSettings": {
-    "FailureFilePath": "..\\..\\..\\Data\\Tracing\\constructor_failures.txt",
+    "FailureFilePath": "Data/Tracing/constructor_failures.txt",
     "LogFailures": true
   },
   "TraceGeometryFailures": false,
   "GeometryFailureTracerSettings": {
-    "FailureFilePath": "../../../Examples/Tracing/geometry_failures.txt",
+    "FailureFilePath": "Examples/Tracing/geometry_failures.txt",
     "LogFailures": true
   },
   "TraceInvalidInferences": false,
   "InvalidInferenceTracerSettings": {
-    "InvalidInferenceFolder": "../../../Examples/Tracing/InvalidInferences",
+    "InvalidInferenceFolder": "Examples/Tracing/InvalidInferences",
     "FileExtension": "txt",
     "MaximalNumberOfInvalidInferencesPerFile": 20
   },
   "TraceSortingGeometryFailures": false,
   "SortingGeometryFailureTracerSettings": {
-    "FailureFilePath": "../../../Examples/Tracing/sorting_geometry_failures.txt",
+    "FailureFilePath": "Examples/Tracing/sorting_geometry_failures.txt",
     "LogFailures": true
   }
 }
