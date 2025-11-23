@@ -39,6 +39,16 @@
 		<Content Include="Examples\**">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
+		
+		<!-- Include Run.bat for Windows builds or when running on Windows without a specific RID -->
+		<Content Include="Run.bat" Condition="$(RuntimeIdentifier.StartsWith('win')) Or ('$(RuntimeIdentifier)' == '' And '$(OS)' == 'Windows_NT')">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		<!-- Include Run.sh for non-Windows builds or when running on non-Windows without a specific RID -->
+		<Content Include="Run.sh" Condition="('$(RuntimeIdentifier)' != '' And !$(RuntimeIdentifier.StartsWith('win'))) Or ('$(RuntimeIdentifier)' == '' And '$(OS)' != 'Windows_NT')">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
 	</ItemGroup>
 
 	<Target Name="CopyDataToProjectDirectory" BeforeTargets="Build">

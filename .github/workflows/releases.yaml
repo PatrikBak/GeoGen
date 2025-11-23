@@ -50,6 +50,9 @@ jobs:
       - name: Zip Build
         run: |
           cd ./publish/${{ matrix.asset_name }}
+          if [ "${{ matrix.os }}" != "windows" ]; then
+            chmod +x Run.sh
+          fi
           zip -r ../../${{ matrix.asset_name }}.zip .
 
       - name: Upload Release Asset
