@@ -31,11 +31,11 @@
     "FileExtension": "txt"
   },
   "InferenceRuleProviderSettings": {
-    "RuleFolderPath": "Data/Rules/Inference",
+    "RuleFolderPath": "Data/InferenceRules",
     "FileExtension": "txt"
   },
   "ObjectIntroductionRuleProviderSettings": {
-    "FilePath": "Data/Rules/object_introduction_rules.txt"
+    "FilePath": "Data/object_introduction_rules.txt"
   },
   "ProblemGenerationRunnerSettings": {
     "ReadableOutputWithoutProofsFolder": "Examples/Output/ReadableWithoutProofs",
