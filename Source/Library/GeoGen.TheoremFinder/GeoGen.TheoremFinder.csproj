@@ -5,9 +5,9 @@
    <ImplicitUsings>true</ImplicitUsings>
 </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Ninject" Version="3.3.6" />
-  </ItemGroup>
+ 	<ItemGroup>
+		<PackageReference Include="Ninject" />
+	</ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\GeoGen.AnalyticGeometry\GeoGen.AnalyticGeometry.csproj" />

@@ -1,0 +1,31 @@
+﻿<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Dependency Injection -->
+    <PackageVersion Include="Ninject" Version="3.3.6" />
+    <PackageVersion Include="Ninject.Extensions.Factory" Version="3.3.3" />
+
+    <!-- JSON -->
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
+
+    <!-- Microsoft Extensions -->
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.0" />
+
+    <!-- Serilog -->
+    <PackageVersion Include="Serilog.Expressions" Version="5.0.0" />
+    <PackageVersion Include="Serilog.Extensions.Logging" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
+
+    <!-- Testing -->
+    <PackageVersion Include="FluentAssertions" Version="8.8.0" />
+    <PackageVersion Include="NUnit" Version="4.4.0" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="5.2.0" />
+  </ItemGroup>
+</Project>

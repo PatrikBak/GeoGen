@@ -6,7 +6,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Ninject.Extensions.Factory" Version="3.3.3" />
+		<PackageReference Include="Ninject.Extensions.Factory" />
 	</ItemGroup>
 
 	<ItemGroup>
