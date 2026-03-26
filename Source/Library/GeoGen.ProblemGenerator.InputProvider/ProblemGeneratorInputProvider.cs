@@ -1,4 +1,4 @@
-﻿using GeoGen.Core;
+using GeoGen.Core;
 using GeoGen.Utilities;
 using Serilog;
 using System.Text.RegularExpressions;
@@ -125,7 +125,8 @@ namespace GeoGen.ProblemGenerator.InputProvider
                         initialConfiguration: generatorInput.InitialConfiguration,
                         numberOfIterations: generatorInput.NumberOfIterations,
                         maximalNumbersOfObjectsToAdd: generatorInput.MaximalNumbersOfObjectsToAdd,
-                        symmetryGenerationMode: generatorInput.SymmetryGenerationMode
+                        symmetryGenerationMode: generatorInput.SymmetryGenerationMode,
+                        objectNames: generatorInput.ObjectNames
                     ));
                 }
                 catch (ParsingException e)
@@ -184,8 +185,12 @@ namespace GeoGen.ProblemGenerator.InputProvider
                 // Enumerate
                 .ToList();
 
-            // Parse the configuration from them
-            var configuration = Parser.ParseConfiguration(configurationLines).configuration;
+            // Parse the configuration and capture the custom names from the input file
+            var (configuration, namesToObjects) = Parser.ParseConfiguration(configurationLines);
+
+            // Build the ordered list of custom names matching the AllObjects order
+            var invertedNames = namesToObjects.ToDictionary(pair => pair.Value, pair => pair.Key);
+            var objectNames = configuration.AllObjects.Select(configObject => invertedNames[configObject]).ToList();
 
             #endregion
 
@@ -304,7 +309,8 @@ namespace GeoGen.ProblemGenerator.InputProvider
                 constructions: constructions,
                 numberOfIterations: numberOfIterations,
                 maximalNumbersOfObjectsToAdd: maximalNumbersOfObjectsToAdd,
-                symmetryGenerationMode: symmetryGenerationMode
+                symmetryGenerationMode: symmetryGenerationMode,
+                objectNames: objectNames
             );
         }
 

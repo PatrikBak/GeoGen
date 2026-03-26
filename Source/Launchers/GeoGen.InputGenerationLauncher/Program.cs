@@ -1,4 +1,4 @@
-﻿using GeoGen.ConfigurationGenerator;
+using GeoGen.ConfigurationGenerator;
 using GeoGen.Constructor;
 using GeoGen.Core;
 using GeoGen.Infrastructure;
@@ -181,7 +181,13 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric);
+            var problemGeneratorInput = new ProblemGeneratorInput(
+                configuration,
+                _constructions,
+                numberOfIterations: 2,
+                maximalNumbersOfObjectsObjectsToAdd,
+                SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric,
+                []);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 2);
@@ -213,7 +219,8 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric,
+                    objectNames: []));
         }
 
         private static IEnumerable<ProblemGeneratorInput> Quadrilateral_TwoObjects_PlusTwoObjects()
@@ -236,7 +243,13 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that doesn't exclude asymmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 2, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric);
+            var problemGeneratorInput = new ProblemGeneratorInput(
+                configuration,
+                _constructions,
+                numberOfIterations: 2,
+                maximalNumbersOfObjectsObjectsToAdd,
+                SymmetryGenerationMode.GenerateBothSymmetricAndAsymmetric,
+                []);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 2);
@@ -268,7 +281,8 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric,
+                    objectNames: []));
         }
 
         private static IEnumerable<ProblemGeneratorInput> Triangle_FourObjects_OnlyFullySymmetric_PlusTwoObjects()
@@ -290,7 +304,13 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that takes only fully symmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 4, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateOnlyFullySymmetric);
+            var problemGeneratorInput = new ProblemGeneratorInput(
+                configuration,
+                _constructions,
+                numberOfIterations: 4,
+                maximalNumbersOfObjectsObjectsToAdd,
+                SymmetryGenerationMode.GenerateOnlyFullySymmetric,
+                []);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 2);
@@ -322,7 +342,8 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric,
+                    objectNames: []));
         }
 
         private static IEnumerable<ProblemGeneratorInput> Triangle_FourObjects_TwoLinesAndTwoPoints_OnlySymmetric_OnlyUsedLines_PlusTwoObjects()
@@ -344,7 +365,13 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that takes only fully symmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 4, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateOnlySymmetric);
+            var problemGeneratorInput = new ProblemGeneratorInput(
+                configuration,
+                _constructions,
+                numberOfIterations: 4,
+                maximalNumbersOfObjectsObjectsToAdd,
+                SymmetryGenerationMode.GenerateOnlySymmetric,
+                []);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 2);
@@ -380,7 +407,8 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric,
+                    objectNames: []));
         }
 
         private static IEnumerable<ProblemGeneratorInput> Triangle_FourObjects_ThreeLinesAndOnePoint_OnlySymmetric_OnlyUsedLines_PlusTwoObjects()
@@ -402,7 +430,13 @@ namespace GeoGen.InputGenerationLauncher
             };
 
             // Prepare the generator input that takes only fully symmetric configurations
-            var problemGeneratorInput = new ProblemGeneratorInput(configuration, _constructions, numberOfIterations: 4, maximalNumbersOfObjectsObjectsToAdd, SymmetryGenerationMode.GenerateOnlySymmetric);
+            var problemGeneratorInput = new ProblemGeneratorInput(
+                configuration,
+                _constructions,
+                numberOfIterations: 4,
+                maximalNumbersOfObjectsObjectsToAdd,
+                SymmetryGenerationMode.GenerateOnlySymmetric,
+                []);
 
             // Prepare the generator settings
             var settings = new ProblemGeneratorSettings(numberOfPictures: 2);
@@ -438,7 +472,8 @@ namespace GeoGen.InputGenerationLauncher
                         { Circle, 2 - configuration.ObjectMap.GetObjectsForKeys(Circle).Count() }
                     },
                     // We will want only symmetric results
-                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric));
+                    symmetryGenerationMode: SymmetryGenerationMode.GenerateOnlySymmetric,
+                    objectNames: []));
         }
 
         #endregion

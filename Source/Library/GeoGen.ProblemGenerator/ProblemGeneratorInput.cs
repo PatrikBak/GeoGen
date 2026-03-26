@@ -1,4 +1,4 @@
-﻿using GeoGen.Core;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.ProblemGenerator
@@ -35,6 +35,13 @@ namespace GeoGen.ProblemGenerator
         /// </summary>
         public SymmetryGenerationMode SymmetryGenerationMode { get; }
 
+        /// <summary>
+        /// The ordered list of custom names for the initial configuration objects, matching
+        /// the order of <see cref="Configuration.AllObjects"/> in the initial configuration.
+        /// Empty when no custom names are provided.
+        /// </summary>
+        public IReadOnlyList<string> ObjectNames { get; }
+
         #endregion
 
         #region Constructor
@@ -47,17 +54,21 @@ namespace GeoGen.ProblemGenerator
         /// <param name="numberOfIterations"><inheritdoc cref="NumberOfIterations" path="/summary"/></param>
         /// <param name="maximalNumbersOfObjectsToAdd"><inheritdoc cref="MaximalNumbersOfObjectsToAdd" path="/summary"/></param>
         /// <param name="symmetryGenerationMode"><inheritdoc cref="SymmetryGenerationMode" path="/summary"/></param>
-        public ProblemGeneratorInput(Configuration initialConfiguration,
-                                     IReadOnlyHashSet<Construction> constructions,
-                                     int numberOfIterations,
-                                     IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
-                                     SymmetryGenerationMode symmetryGenerationMode)
+        /// <param name="objectNames"><inheritdoc cref="ObjectNames" path="/summary"/></param>
+        public ProblemGeneratorInput(
+            Configuration initialConfiguration,
+            IReadOnlyHashSet<Construction> constructions,
+            int numberOfIterations,
+            IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
+            SymmetryGenerationMode symmetryGenerationMode,
+            IReadOnlyList<string> objectNames)
         {
             InitialConfiguration = initialConfiguration ?? throw new ArgumentNullException(nameof(initialConfiguration));
             Constructions = constructions ?? throw new ArgumentNullException(nameof(constructions));
             NumberOfIterations = numberOfIterations;
             MaximalNumbersOfObjectsToAdd = maximalNumbersOfObjectsToAdd ?? throw new ArgumentNullException(nameof(maximalNumbersOfObjectsToAdd));
             SymmetryGenerationMode = symmetryGenerationMode;
+            ObjectNames = objectNames ?? throw new ArgumentNullException(nameof(objectNames));
         }
 
         #endregion

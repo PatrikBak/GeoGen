@@ -1,4 +1,4 @@
-﻿using GeoGen.Utilities;
+using GeoGen.Utilities;
 using System.Text;
 
 namespace GeoGen.Core
@@ -13,7 +13,7 @@ namespace GeoGen.Core
         /// <summary>
         /// The dictionary mapping objects to their names.
         /// </summary>
-        private readonly Dictionary<ConfigurationObject, string> _objectNames = new Dictionary<ConfigurationObject, string>();
+        private readonly Dictionary<ConfigurationObject, string> _objectNames = [];
 
         #endregion
 
@@ -27,6 +27,29 @@ namespace GeoGen.Core
         public OutputFormatter(IEnumerable<ConfigurationObject> objects, bool includeSubscriptsBeforeNumbers = false)
         {
             // Name the given objects
+            NameObjects(objects, includeSubscriptsBeforeNumbers);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="OutputFormatter"/> class with pre-assigned custom names.
+        /// The first N objects (where N is the length of the names list) keep their provided names, matching
+        /// by position. Remaining objects receive auto-generated names, skipping any names already used.
+        /// </summary>
+        /// <param name="objects">The objects to be named and used later in formatting.</param>
+        /// <param name="initialObjectNames">The ordered custom names for the initial configuration objects,
+        /// matching the order of <see cref="Configuration.AllObjects"/>.</param>
+        /// <param name="includeSubscriptsBeforeNumbers">Indicates whether the names of objects 
+        /// should have subscript marks '_' in from of their numbers. False by default.</param>
+        public OutputFormatter(
+            IReadOnlyList<ConfigurationObject> objects,
+            IReadOnlyList<string> initialObjectNames,
+            bool includeSubscriptsBeforeNumbers = false)
+        {
+            // Pre-assign custom names to the initial objects by position
+            for (var index = 0; index < initialObjectNames.Count && index < objects.Count; index++)
+                _objectNames[objects[index]] = initialObjectNames[index];
+
+            // Auto-name remaining objects, skipping names already used
             NameObjects(objects, includeSubscriptsBeforeNumbers);
         }
 
@@ -284,62 +307,65 @@ namespace GeoGen.Core
 
         /// <summary>
         /// Names the passed objects and adds their names to the <see cref="_objectNames"/> dictionary.
+        /// Objects that already have names in the dictionary are skipped, and their names are reserved
+        /// so that auto-generated names do not collide with them.
         /// </summary>
         /// <param name="objects">The objects to be named.</param>
-        /// <param name="includeSubscriptsBeforeNumbers">Indicates whether the names of objects should have subscript marks '_' in from of their numbers. False by default.</param>
+        /// <param name="includeSubscriptsBeforeNumbers">Indicates whether the names of objects 
+        /// should have subscript marks '_' in from of their numbers. False by default.</param>
         private void NameObjects(IEnumerable<ConfigurationObject> objects, bool includeSubscriptsBeforeNumbers = false)
         {
-            // Prepare the numbers of currently named objects of particular types
-            var namedPoints = 0;
-            var namedCircles = 0;
-            var namedLines = 0;
+            // Collect the set of names already assigned (from custom names) to avoid collisions
+            var reservedNames = new HashSet<string>(_objectNames.Values);
 
-            // Helper values of the total numbers of points and lines
-            var numberOfLines = objects.Count(_object => _object.ObjectType == ConfigurationObjectType.Line);
-            var numberOfCircles = objects.Count(_object => _object.ObjectType == ConfigurationObjectType.Circle);
+            // Counters tracking the next candidate index for each object type
+            var nextPointIndex = 0;
+            var nextLineIndex = 0;
+            var nextCircleIndex = 0;
+
+            // Helper values of the total numbers of lines and circles
+            var numberOfLines = objects.Count(configObject => configObject.ObjectType == ConfigurationObjectType.Line);
+            var numberOfCircles = objects.Count(configObject => configObject.ObjectType == ConfigurationObjectType.Circle);
+
+            // Local function that advances the counter until the generated candidate name is not reserved
+            string NextAvailableName(Func<int, string> nameFromIndex, ref int counter)
+            {
+                // Skip indices whose names are already reserved by custom names
+                while (reservedNames.Contains(nameFromIndex(counter)))
+                    counter++;
+
+                // Compose the name from the current counter and advance to the next candidate
+                return nameFromIndex(counter++);
+            }
+
+            // Subscript prefix used for numbered names (lines and circles)
+            var subscript = includeSubscriptsBeforeNumbers ? "_" : "";
 
             // Go through all the objects
             foreach (var configurationObject in objects)
             {
-                // Prepare the name
-                var name = default(string);
+                // Skip objects that already have a custom name assigned
+                if (_objectNames.ContainsKey(configurationObject))
+                    continue;
 
-                // Handle the cases based on the type
-                switch (configurationObject.ObjectType)
+                // Generate the next available name based on the object type
+                var name = configurationObject.ObjectType switch
                 {
-                    // If we have a point...
-                    case ConfigurationObjectType.Point:
+                    // Points are named A, B, C...
+                    ConfigurationObjectType.Point => NextAvailableName(
+                        index => $"{(char)('A' + index)}", ref nextPointIndex),
 
-                        // Compose the name
-                        name = $"{(char)('A' + namedPoints)}";
+                    // Lines are named l, l_1, l_2...
+                    ConfigurationObjectType.Line => NextAvailableName(
+                        index => numberOfLines == 1 ? "l" : $"l{subscript}{index + 1}", ref nextLineIndex),
 
-                        // Count it 
-                        namedPoints++;
+                    // Circles are named c, c_1, c_2...
+                    ConfigurationObjectType.Circle => NextAvailableName(
+                        index => numberOfCircles == 1 ? "c" : $"c{subscript}{index + 1}", ref nextCircleIndex),
 
-                        break;
-
-                    // If we have a line...
-                    case ConfigurationObjectType.Line:
-
-                        // Compose the name
-                        name = numberOfLines == 1 ? "l" : $"l{(includeSubscriptsBeforeNumbers ? "_" : "")}{namedLines + 1}";
-
-                        // Count it 
-                        namedLines++;
-
-                        break;
-
-                    // If we have a circle...
-                    case ConfigurationObjectType.Circle:
-
-                        // Compose the name
-                        name = numberOfCircles == 1 ? "c" : $"c{(includeSubscriptsBeforeNumbers ? "_" : "")}{namedCircles + 1}";
-
-                        // Count it 
-                        namedCircles++;
-
-                        break;
-                }
+                    // Unhandled cases 
+                    _ => throw new GeoGenException($"Unhandled object type: {configurationObject.ObjectType}")
+                };
 
                 // Register the name
                 _objectNames.Add(configurationObject, name);

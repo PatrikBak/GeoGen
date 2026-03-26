@@ -6,10 +6,10 @@ Constructions:
 Initial configuration:
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 
 Theorems:
 
@@ -17,27 +17,27 @@ Theorems:
   2. CollinearPoints: A, C, F
   3. CollinearPoints: B, C, E
   4. ConcurrentLines: [A, E], [B, F], [C, G]
-  5. ConcyclicPoints: A, D, F, G
-  6. ConcyclicPoints: B, D, E, G
-  7. ConcyclicPoints: C, D, E, F
+  5. ConcyclicPoints: A, F, G, I
+  6. ConcyclicPoints: B, E, G, I
+  7. ConcyclicPoints: C, E, F, I
   8. EqualLineSegments: A, F, A, G
   9. EqualLineSegments: B, E, B, G
  10. EqualLineSegments: C, E, C, F
- 11. EqualLineSegments: D, E, D, F
- 12. EqualLineSegments: D, E, D, G
- 13. EqualLineSegments: D, F, D, G
- 14. PerpendicularLines: [A, B], [D, G]
- 15. PerpendicularLines: [A, C], [D, F]
- 16. PerpendicularLines: [A, D], [F, G]
- 17. PerpendicularLines: [A, F], [D, F]
- 18. PerpendicularLines: [A, G], [D, G]
- 19. PerpendicularLines: [B, C], [D, E]
- 20. PerpendicularLines: [B, D], [E, G]
- 21. PerpendicularLines: [B, E], [D, E]
- 22. PerpendicularLines: [B, G], [D, G]
- 23. PerpendicularLines: [C, D], [E, F]
- 24. PerpendicularLines: [C, E], [D, E]
- 25. PerpendicularLines: [C, F], [D, F]
+ 11. EqualLineSegments: E, I, F, I
+ 12. EqualLineSegments: E, I, G, I
+ 13. EqualLineSegments: F, I, G, I
+ 14. PerpendicularLines: [A, B], [G, I]
+ 15. PerpendicularLines: [A, C], [F, I]
+ 16. PerpendicularLines: [A, F], [F, I]
+ 17. PerpendicularLines: [A, G], [G, I]
+ 18. PerpendicularLines: [A, I], [F, G]
+ 19. PerpendicularLines: [B, C], [E, I]
+ 20. PerpendicularLines: [B, E], [E, I]
+ 21. PerpendicularLines: [B, G], [G, I]
+ 22. PerpendicularLines: [B, I], [E, G]
+ 23. PerpendicularLines: [C, E], [E, I]
+ 24. PerpendicularLines: [C, F], [F, I]
+ 25. PerpendicularLines: [C, I], [E, F]
 
 Iterations: 1
 MaximalNumberOfPoints: 1
@@ -52,105 +52,105 @@ Configuration 1
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, B}, {C, D}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, B}, {C, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - trivial consequence of the object's construction
- 2. CollinearPoints: A, G, H - can be stated without E, F
- 3. CollinearPoints: B, G, H - can be stated without E, F
- 4. CollinearPoints: C, D, H - trivial consequence of the object's construction
- 5. EqualLineSegments: E, H, F, H - can be stated without G
- 6. PerpendicularLines: [A, H], [D, G] - can be stated without E, F
- 7. PerpendicularLines: [B, H], [D, G] - can be stated without E, F
- 8. PerpendicularLines: [C, H], [E, F] - can be stated without G
- 9. PerpendicularLines: [D, G], [G, H] - can be stated without E, F
- 10. PerpendicularLines: [D, H], [E, F] - can be stated without G
+ 1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+ 2. CollinearPoints: A, D, G - can be stated without E, F
+ 3. CollinearPoints: B, D, G - can be stated without E, F
+ 4. CollinearPoints: C, D, I - trivial consequence of the object's construction
+ 5. EqualLineSegments: D, E, D, F - can be stated without G
+ 6. PerpendicularLines: [A, D], [G, I] - can be stated without E, F
+ 7. PerpendicularLines: [B, D], [G, I] - can be stated without E, F
+ 8. PerpendicularLines: [C, D], [E, F] - can be stated without G
+ 9. PerpendicularLines: [D, G], [G, I] - can be stated without E, F
+ 10. PerpendicularLines: [D, I], [E, F] - can be stated without G
 
 ---------------
 Configuration 2
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, B}, {D, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, B}, {F, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - trivial consequence of the object's construction
- 2. CollinearPoints: A, G, H - can be stated without E
- 3. CollinearPoints: B, G, H - can be stated without E
- 4. CollinearPoints: D, F, H - trivial consequence of the object's construction
- 5. PerpendicularLines: [A, C], [D, H] - can be stated without E, G
- 6. PerpendicularLines: [A, C], [F, H] - can be stated without E, G
- 7. PerpendicularLines: [A, F], [D, H] - can be stated without E, G
- 8. PerpendicularLines: [A, F], [F, H] - can be stated without E, G
- 9. PerpendicularLines: [A, H], [D, G] - can be stated without E
- 10. PerpendicularLines: [B, H], [D, G] - can be stated without E
- 11. PerpendicularLines: [C, F], [D, H] - can be stated without E, G
- 12. PerpendicularLines: [C, F], [F, H] - can be stated without E, G
- 13. PerpendicularLines: [D, G], [G, H] - can be stated without E
+ 1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+ 2. CollinearPoints: A, D, G - can be stated without E
+ 3. CollinearPoints: B, D, G - can be stated without E
+ 4. CollinearPoints: D, F, I - trivial consequence of the object's construction
+ 5. PerpendicularLines: [A, C], [D, F] - can be stated without E, G
+ 6. PerpendicularLines: [A, C], [D, I] - can be stated without E, G
+ 7. PerpendicularLines: [A, D], [G, I] - can be stated without E
+ 8. PerpendicularLines: [A, F], [D, F] - can be stated without E, G
+ 9. PerpendicularLines: [A, F], [D, I] - can be stated without E, G
+ 10. PerpendicularLines: [B, D], [G, I] - can be stated without E
+ 11. PerpendicularLines: [C, F], [D, F] - can be stated without E, G
+ 12. PerpendicularLines: [C, F], [D, I] - can be stated without E, G
+ 13. PerpendicularLines: [D, G], [G, I] - can be stated without E
 
 ---------------
 Configuration 3
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, B}, {E, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, B}, {E, F}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - trivial consequence of the object's construction
- 2. CollinearPoints: A, G, H - true because of the symmetry of the configuration
+ 1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+ 2. CollinearPoints: A, D, G - true because of the symmetry of the configuration
 
-  2.1. CollinearPoints: B, G, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  2.1. CollinearPoints: B, D, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-    2.1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-    2.1.2. CollinearPoints: A, B, H - trivial consequence of the object's construction
+    2.1.1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+    2.1.2. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
 
- 3. CollinearPoints: B, G, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+ 3. CollinearPoints: B, D, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-  3.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-  3.2. CollinearPoints: A, B, H - trivial consequence of the object's construction
+  3.1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+  3.2. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
 
- 4. CollinearPoints: E, F, H - trivial consequence of the object's construction
- 5. PerpendicularLines: [A, H], [D, G] - true because of the symmetry of the configuration
+ 4. CollinearPoints: D, E, F - trivial consequence of the object's construction
+ 5. PerpendicularLines: [A, D], [G, I] - true because of the symmetry of the configuration
 
-  5.1. PerpendicularLines: [B, H], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  5.1. PerpendicularLines: [B, D], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    5.1.1. CollinearPoints: A, B, H - trivial consequence of the object's construction
-    5.1.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+    5.1.1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+    5.1.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 6. PerpendicularLines: [B, H], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 6. PerpendicularLines: [B, D], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  6.1. CollinearPoints: A, B, H - trivial consequence of the object's construction
-  6.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+  6.1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+  6.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 7. PerpendicularLines: [C, D], [E, H] - can be stated without G
- 8. PerpendicularLines: [C, D], [F, H] - can be stated without G
- 9. PerpendicularLines: [D, G], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 7. PerpendicularLines: [C, I], [D, E] - can be stated without G
+ 8. PerpendicularLines: [C, I], [D, F] - can be stated without G
+ 9. PerpendicularLines: [D, G], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  9.1. CollinearPoints: B, G, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  9.1. CollinearPoints: B, D, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
-    9.1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-    9.1.2. CollinearPoints: A, B, H - trivial consequence of the object's construction
+    9.1.1. CollinearPoints: A, B, D - trivial consequence of the object's construction
+    9.1.2. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
 
-  9.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+  9.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
 Interesting theorems:
 
- 10. PerpendicularLines: [C, G], [D, H] - total ranking 3929.33
+ 10. PerpendicularLines: [C, G], [D, I] - total ranking 3929.33
 
   Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
   Level                           weight = 1000      ranking = 0.66      contribution = 660       
@@ -162,224 +162,226 @@ Configuration 4
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, D}, {B, E}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, I}, {B, E}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, D, H - trivial consequence of the object's construction
- 2. CollinearPoints: B, C, H - can be stated without F, G
- 3. CollinearPoints: B, E, H - trivial consequence of the object's construction
- 4. CollinearPoints: C, E, H - can be stated without F, G
- 5. EqualLineSegments: F, H, G, H - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (2)
+ 1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+ 2. CollinearPoints: B, C, D - can be stated without F, G
+ 3. CollinearPoints: B, D, E - trivial consequence of the object's construction
+ 4. CollinearPoints: C, D, E - can be stated without F, G
+ 5. EqualLineSegments: D, F, D, G - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (2)
 
-  5.1. EqualLineSegments: D, F, D, G - assumed to be proven (in a previous configuration)
-  5.2. PerpendicularLines: [D, H], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  5.1. EqualLineSegments: F, I, G, I - assumed to be proven (in a previous configuration)
+  5.2. PerpendicularLines: [D, I], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    5.2.1. CollinearPoints: A, D, H - trivial consequence of the object's construction
-    5.2.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+    5.2.1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+    5.2.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
- 6. PerpendicularLines: [A, H], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 6. PerpendicularLines: [A, D], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  6.1. CollinearPoints: A, D, H - trivial consequence of the object's construction
-  6.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+  6.1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+  6.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
- 7. PerpendicularLines: [B, H], [D, E] - can be stated without F, G
- 8. PerpendicularLines: [C, H], [D, E] - can be stated without F, G
- 9. PerpendicularLines: [D, E], [E, H] - can be stated without F, G
- 10. PerpendicularLines: [D, H], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 7. PerpendicularLines: [B, D], [E, I] - can be stated without F, G
+ 8. PerpendicularLines: [C, D], [E, I] - can be stated without F, G
+ 9. PerpendicularLines: [D, E], [E, I] - can be stated without F, G
+ 10. PerpendicularLines: [D, I], [F, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  10.1. CollinearPoints: A, D, H - trivial consequence of the object's construction
-  10.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+  10.1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+  10.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
 ---------------
 Configuration 5
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, D}, {B, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, I}, {B, F}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, D, H - trivial consequence of the object's construction
- 2. CollinearPoints: B, F, H - trivial consequence of the object's construction
- 3. ConcurrentLines: [A, E], [B, H], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+ 2. CollinearPoints: B, D, F - trivial consequence of the object's construction
+ 3. ConcurrentLines: [A, E], [B, D], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  3.1. CollinearPoints: B, F, H - trivial consequence of the object's construction
+  3.1. CollinearPoints: B, D, F - trivial consequence of the object's construction
   3.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 4. ConcurrentLines: [A, E], [C, G], [F, H] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 4. ConcurrentLines: [A, E], [C, G], [D, F] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  4.1. CollinearPoints: B, F, H - trivial consequence of the object's construction
+  4.1. CollinearPoints: B, D, F - trivial consequence of the object's construction
   4.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 5. EqualLineSegments: F, H, G, H - can be stated without E
- 6. PerpendicularLines: [A, H], [F, G] - can be stated without E
- 7. PerpendicularLines: [D, H], [F, G] - can be stated without E
+ 5. EqualLineSegments: D, F, D, G - can be stated without E
+ 6. PerpendicularLines: [A, D], [F, G] - can be stated without E
+ 7. PerpendicularLines: [D, I], [F, G] - can be stated without E
 
 ---------------
 Configuration 6
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, D}, {E, G}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, I}, {E, G}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, D, H - trivial consequence of the object's construction
- 2. CollinearPoints: E, G, H - trivial consequence of the object's construction
- 3. ConcyclicPoints: C, D, E, H - can be stated without F
- 4. ConcyclicPoints: C, D, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+ 1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+ 2. CollinearPoints: D, E, G - trivial consequence of the object's construction
+ 3. ConcyclicPoints: C, D, E, F - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
-  4.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration)
-  4.2. ConcyclicPoints: D, E, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+  3.1. ConcyclicPoints: C, D, E, I - can be stated without F
+  3.2. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration)
 
-    4.2.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration) - theorem 4.1.
-    4.2.2. ConcyclicPoints: C, E, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+ 4. ConcyclicPoints: C, D, E, I - can be stated without F
+ 5. ConcyclicPoints: C, D, F, I - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
-      4.2.2.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration) - theorem 4.1.
-      4.2.2.2. ConcyclicPoints: C, D, E, H - can be stated without F
+  5.1. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration)
+  5.2. ConcyclicPoints: D, E, F, I - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
- 5. ConcyclicPoints: C, E, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+    5.2.1. ConcyclicPoints: C, D, E, F - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
-  5.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration)
-  5.2. ConcyclicPoints: C, D, E, H - can be stated without F
+      5.2.1.1. ConcyclicPoints: C, D, E, I - can be stated without F
+      5.2.1.2. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration) - theorem 5.1.
 
- 6. ConcyclicPoints: D, E, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+    5.2.2. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration) - theorem 5.1.
 
-  6.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration)
-  6.2. ConcyclicPoints: C, E, F, H - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
+ 6. ConcyclicPoints: D, E, F, I - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
-    6.2.1. ConcyclicPoints: C, D, E, F - assumed to be proven (in a previous configuration) - theorem 6.1.
-    6.2.2. ConcyclicPoints: C, D, E, H - can be stated without F
+  6.1. ConcyclicPoints: C, D, E, F - consequence of GeneralRules\Transitivity\concyclic_points.txt (1)
 
- 7. EqualLineSegments: F, H, G, H - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (2)
+    6.1.1. ConcyclicPoints: C, D, E, I - can be stated without F
+    6.1.2. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration)
 
-  7.1. EqualLineSegments: D, F, D, G - assumed to be proven (in a previous configuration)
-  7.2. PerpendicularLines: [D, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
+  6.2. ConcyclicPoints: C, E, F, I - assumed to be proven (in a previous configuration) - theorem 6.1.2.
 
-    7.2.1. ParallelLines: [C, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
+ 7. EqualLineSegments: D, F, D, G - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (2)
 
-      7.2.1.1. PerpendicularLines: [A, D], [C, H] - can be stated without F
-      7.2.1.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+  7.1. EqualLineSegments: F, I, G, I - assumed to be proven (in a previous configuration)
+  7.2. PerpendicularLines: [D, I], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
 
-    7.2.2. PerpendicularLines: [C, H], [D, H] - can be stated without F
+    7.2.1. ParallelLines: [C, D], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
 
- 8. ParallelLines: [C, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
+      7.2.1.1. PerpendicularLines: [A, I], [C, D] - can be stated without F
+      7.2.1.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
-  8.1. PerpendicularLines: [A, D], [C, H] - can be stated without F
-  8.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+    7.2.2. PerpendicularLines: [C, D], [D, I] - can be stated without F
 
- 9. PerpendicularLines: [A, D], [C, H] - can be stated without F
- 10. PerpendicularLines: [A, H], [C, H] - can be stated without F
- 11. PerpendicularLines: [A, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
+ 8. ParallelLines: [C, D], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
 
-  11.1. ParallelLines: [C, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
+  8.1. PerpendicularLines: [A, I], [C, D] - can be stated without F
+  8.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
-    11.1.1. PerpendicularLines: [A, D], [C, H] - can be stated without F
-    11.1.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+ 9. PerpendicularLines: [A, D], [C, D] - can be stated without F
+ 10. PerpendicularLines: [A, D], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
 
-  11.2. PerpendicularLines: [A, H], [C, H] - can be stated without F
+  10.1. ParallelLines: [C, D], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
 
- 12. PerpendicularLines: [B, D], [E, H] - can be stated without F
- 13. PerpendicularLines: [B, D], [G, H] - can be stated without F
- 14. PerpendicularLines: [C, H], [D, H] - can be stated without F
- 15. PerpendicularLines: [D, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
+    10.1.1. PerpendicularLines: [A, I], [C, D] - can be stated without F
+    10.1.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
-  15.1. ParallelLines: [C, H], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
+  10.2. PerpendicularLines: [A, D], [C, D] - can be stated without F
 
-    15.1.1. PerpendicularLines: [A, D], [C, H] - can be stated without F
-    15.1.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+ 11. PerpendicularLines: [A, I], [C, D] - can be stated without F
+ 12. PerpendicularLines: [B, I], [D, E] - can be stated without F
+ 13. PerpendicularLines: [B, I], [D, G] - can be stated without F
+ 14. PerpendicularLines: [C, D], [D, I] - can be stated without F
+ 15. PerpendicularLines: [D, I], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (2)
 
-  15.2. PerpendicularLines: [C, H], [D, H] - can be stated without F
+  15.1. ParallelLines: [C, D], [F, G] - consequence of GeneralRules\perpendicularity_and_parallelity.txt (1)
+
+    15.1.1. PerpendicularLines: [A, I], [C, D] - can be stated without F
+    15.1.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
+
+  15.2. PerpendicularLines: [C, D], [D, I] - can be stated without F
 
 ---------------
 Configuration 7
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, D}, {F, G}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, I}, {F, G}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, D, H - trivial consequence of the object's construction
- 2. CollinearPoints: F, G, H - trivial consequence of the object's construction
- 3. EqualLineSegments: F, H, G, H - can be stated without E
- 4. PerpendicularLines: [A, D], [F, H] - can be stated without E
- 5. PerpendicularLines: [A, D], [G, H] - can be stated without E
- 6. PerpendicularLines: [A, H], [F, G] - can be stated without E
- 7. PerpendicularLines: [A, H], [F, H] - can be stated without E
- 8. PerpendicularLines: [A, H], [G, H] - can be stated without E
- 9. PerpendicularLines: [D, H], [F, G] - can be stated without E
- 10. PerpendicularLines: [D, H], [F, H] - can be stated without E
- 11. PerpendicularLines: [D, H], [G, H] - can be stated without E
+ 1. CollinearPoints: A, D, I - trivial consequence of the object's construction
+ 2. CollinearPoints: D, F, G - trivial consequence of the object's construction
+ 3. EqualLineSegments: D, F, D, G - can be stated without E
+ 4. PerpendicularLines: [A, D], [D, F] - can be stated without E
+ 5. PerpendicularLines: [A, D], [D, G] - can be stated without E
+ 6. PerpendicularLines: [A, D], [F, G] - can be stated without E
+ 7. PerpendicularLines: [A, I], [D, F] - can be stated without E
+ 8. PerpendicularLines: [A, I], [D, G] - can be stated without E
+ 9. PerpendicularLines: [D, F], [D, I] - can be stated without E
+ 10. PerpendicularLines: [D, G], [D, I] - can be stated without E
+ 11. PerpendicularLines: [D, I], [F, G] - can be stated without E
 
 ---------------
 Configuration 8
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, E}, {D, G}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, E}, {G, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, E, H - trivial consequence of the object's construction
- 2. CollinearPoints: D, G, H - trivial consequence of the object's construction
- 3. ConcurrentLines: [A, H], [B, F], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 1. CollinearPoints: A, D, E - trivial consequence of the object's construction
+ 2. CollinearPoints: D, G, I - trivial consequence of the object's construction
+ 3. ConcurrentLines: [A, D], [B, F], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  3.1. CollinearPoints: A, E, H - trivial consequence of the object's construction
+  3.1. CollinearPoints: A, D, E - trivial consequence of the object's construction
   3.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 4. ConcurrentLines: [B, F], [C, G], [E, H] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 4. ConcurrentLines: [B, F], [C, G], [D, E] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  4.1. CollinearPoints: A, E, H - trivial consequence of the object's construction
+  4.1. CollinearPoints: A, D, E - trivial consequence of the object's construction
   4.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 5. PerpendicularLines: [A, B], [D, H] - can be stated without F
- 6. PerpendicularLines: [A, B], [G, H] - can be stated without F
- 7. PerpendicularLines: [A, G], [D, H] - can be stated without F
- 8. PerpendicularLines: [A, G], [G, H] - can be stated without F
- 9. PerpendicularLines: [B, G], [D, H] - can be stated without F
- 10. PerpendicularLines: [B, G], [G, H] - can be stated without F
+ 5. PerpendicularLines: [A, B], [D, G] - can be stated without F
+ 6. PerpendicularLines: [A, B], [D, I] - can be stated without F
+ 7. PerpendicularLines: [A, G], [D, G] - can be stated without F
+ 8. PerpendicularLines: [A, G], [D, I] - can be stated without F
+ 9. PerpendicularLines: [B, G], [D, G] - can be stated without F
+ 10. PerpendicularLines: [B, G], [D, I] - can be stated without F
 
 ---------------
 Configuration 9
 ---------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, E}, {B, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, E}, {B, F}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, E, H - trivial consequence of the object's construction
- 2. CollinearPoints: B, F, H - trivial consequence of the object's construction
- 3. CollinearPoints: C, G, H - consequence of GeneralRules\ConcurrentLines\concurrent_lines_4.txt (2)
+ 1. CollinearPoints: A, D, E - trivial consequence of the object's construction
+ 2. CollinearPoints: B, D, F - trivial consequence of the object's construction
+ 3. CollinearPoints: C, D, G - consequence of GeneralRules\ConcurrentLines\concurrent_lines_4.txt (2)
 
-  3.1. CollinearPoints: A, E, H - trivial consequence of the object's construction
-  3.2. CollinearPoints: B, F, H - trivial consequence of the object's construction
+  3.1. CollinearPoints: A, D, E - trivial consequence of the object's construction
+  3.2. CollinearPoints: B, D, F - trivial consequence of the object's construction
   3.3. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
 ----------------
@@ -387,157 +389,157 @@ Configuration 10
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, E}, {F, G}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, E}, {F, G}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, E, H - trivial consequence of the object's construction
- 2. CollinearPoints: F, G, H - trivial consequence of the object's construction
- 3. ConcurrentLines: [A, H], [B, F], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 1. CollinearPoints: A, D, E - trivial consequence of the object's construction
+ 2. CollinearPoints: D, F, G - trivial consequence of the object's construction
+ 3. ConcurrentLines: [A, D], [B, F], [C, G] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  3.1. CollinearPoints: A, E, H - trivial consequence of the object's construction
+  3.1. CollinearPoints: A, D, E - trivial consequence of the object's construction
   3.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 4. ConcurrentLines: [B, F], [C, G], [E, H] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
+ 4. ConcurrentLines: [B, F], [C, G], [D, E] - consequence of GeneralRules\Redefinitions\Collinearity\concurrent_lines.txt (2)
 
-  4.1. CollinearPoints: A, E, H - trivial consequence of the object's construction
+  4.1. CollinearPoints: A, D, E - trivial consequence of the object's construction
   4.2. ConcurrentLines: [A, E], [B, F], [C, G] - assumed to be proven (in a previous configuration)
 
- 5. PerpendicularLines: [A, D], [F, H] - true because of the symmetry of the configuration
+ 5. PerpendicularLines: [A, I], [D, F] - true because of the symmetry of the configuration
 
-  5.1. PerpendicularLines: [A, D], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  5.1. PerpendicularLines: [A, I], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    5.1.1. CollinearPoints: F, G, H - trivial consequence of the object's construction
-    5.1.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+    5.1.1. CollinearPoints: D, F, G - trivial consequence of the object's construction
+    5.1.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
- 6. PerpendicularLines: [A, D], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 6. PerpendicularLines: [A, I], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  6.1. CollinearPoints: F, G, H - trivial consequence of the object's construction
-  6.2. PerpendicularLines: [A, D], [F, G] - assumed to be proven (in a previous configuration)
+  6.1. CollinearPoints: D, F, G - trivial consequence of the object's construction
+  6.2. PerpendicularLines: [A, I], [F, G] - assumed to be proven (in a previous configuration)
 
 ----------------
 Configuration 11
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, G}, {D, E}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, G}, {E, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - can be stated without F
- 2. CollinearPoints: A, G, H - trivial consequence of the object's construction
- 3. CollinearPoints: B, G, H - can be stated without F
- 4. CollinearPoints: D, E, H - trivial consequence of the object's construction
- 5. PerpendicularLines: [A, H], [D, G] - can be stated without F
- 6. PerpendicularLines: [B, C], [D, H] - can be stated without F
- 7. PerpendicularLines: [B, C], [E, H] - can be stated without F
- 8. PerpendicularLines: [B, E], [D, H] - can be stated without F
- 9. PerpendicularLines: [B, E], [E, H] - can be stated without F
- 10. PerpendicularLines: [B, H], [D, G] - can be stated without F
- 11. PerpendicularLines: [C, E], [D, H] - can be stated without F
- 12. PerpendicularLines: [C, E], [E, H] - can be stated without F
- 13. PerpendicularLines: [D, G], [G, H] - can be stated without F
+ 1. CollinearPoints: A, B, D - can be stated without F
+ 2. CollinearPoints: A, D, G - trivial consequence of the object's construction
+ 3. CollinearPoints: B, D, G - can be stated without F
+ 4. CollinearPoints: D, E, I - trivial consequence of the object's construction
+ 5. PerpendicularLines: [A, D], [G, I] - can be stated without F
+ 6. PerpendicularLines: [B, C], [D, E] - can be stated without F
+ 7. PerpendicularLines: [B, C], [D, I] - can be stated without F
+ 8. PerpendicularLines: [B, D], [G, I] - can be stated without F
+ 9. PerpendicularLines: [B, E], [D, E] - can be stated without F
+ 10. PerpendicularLines: [B, E], [D, I] - can be stated without F
+ 11. PerpendicularLines: [C, E], [D, E] - can be stated without F
+ 12. PerpendicularLines: [C, E], [D, I] - can be stated without F
+ 13. PerpendicularLines: [D, G], [G, I] - can be stated without F
 
 ----------------
 Configuration 12
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, G}, {D, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, G}, {F, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - can be stated without E
- 2. CollinearPoints: A, G, H - trivial consequence of the object's construction
- 3. CollinearPoints: B, G, H - can be stated without E
- 4. CollinearPoints: D, F, H - trivial consequence of the object's construction
- 5. PerpendicularLines: [A, C], [D, H] - can be stated without E
- 6. PerpendicularLines: [A, C], [F, H] - can be stated without E
- 7. PerpendicularLines: [A, F], [D, H] - can be stated without E
- 8. PerpendicularLines: [A, F], [F, H] - can be stated without E
- 9. PerpendicularLines: [A, H], [D, G] - can be stated without E
- 10. PerpendicularLines: [B, H], [D, G] - can be stated without E
- 11. PerpendicularLines: [C, F], [D, H] - can be stated without E
- 12. PerpendicularLines: [C, F], [F, H] - can be stated without E
- 13. PerpendicularLines: [D, G], [G, H] - can be stated without E
+ 1. CollinearPoints: A, B, D - can be stated without E
+ 2. CollinearPoints: A, D, G - trivial consequence of the object's construction
+ 3. CollinearPoints: B, D, G - can be stated without E
+ 4. CollinearPoints: D, F, I - trivial consequence of the object's construction
+ 5. PerpendicularLines: [A, C], [D, F] - can be stated without E
+ 6. PerpendicularLines: [A, C], [D, I] - can be stated without E
+ 7. PerpendicularLines: [A, D], [G, I] - can be stated without E
+ 8. PerpendicularLines: [A, F], [D, F] - can be stated without E
+ 9. PerpendicularLines: [A, F], [D, I] - can be stated without E
+ 10. PerpendicularLines: [B, D], [G, I] - can be stated without E
+ 11. PerpendicularLines: [C, F], [D, F] - can be stated without E
+ 12. PerpendicularLines: [C, F], [D, I] - can be stated without E
+ 13. PerpendicularLines: [D, G], [G, I] - can be stated without E
 
 ----------------
 Configuration 13
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{A, G}, {E, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{A, G}, {E, F}})
 
 Proved theorems:
 
- 1. CollinearPoints: A, B, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+ 1. CollinearPoints: A, B, D - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
   1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-  1.2. CollinearPoints: A, G, H - trivial consequence of the object's construction
+  1.2. CollinearPoints: A, D, G - trivial consequence of the object's construction
 
- 2. CollinearPoints: A, G, H - trivial consequence of the object's construction
- 3. CollinearPoints: B, G, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+ 2. CollinearPoints: A, D, G - trivial consequence of the object's construction
+ 3. CollinearPoints: B, D, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
   3.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-  3.2. CollinearPoints: A, G, H - trivial consequence of the object's construction
+  3.2. CollinearPoints: A, D, G - trivial consequence of the object's construction
 
- 4. CollinearPoints: E, F, H - trivial consequence of the object's construction
- 5. PerpendicularLines: [A, H], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 4. CollinearPoints: D, E, F - trivial consequence of the object's construction
+ 5. PerpendicularLines: [A, D], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  5.1. CollinearPoints: A, B, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  5.1. CollinearPoints: A, B, D - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
     5.1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-    5.1.2. CollinearPoints: A, G, H - trivial consequence of the object's construction
+    5.1.2. CollinearPoints: A, D, G - trivial consequence of the object's construction
 
-  5.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+  5.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 6. PerpendicularLines: [B, H], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 6. PerpendicularLines: [B, D], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  6.1. CollinearPoints: A, B, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  6.1. CollinearPoints: A, B, D - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
     6.1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-    6.1.2. CollinearPoints: A, G, H - trivial consequence of the object's construction
+    6.1.2. CollinearPoints: A, D, G - trivial consequence of the object's construction
 
-  6.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+  6.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 7. PerpendicularLines: [C, D], [E, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 7. PerpendicularLines: [C, I], [D, E] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  7.1. CollinearPoints: E, F, H - trivial consequence of the object's construction
-  7.2. PerpendicularLines: [C, D], [E, F] - assumed to be proven (in a previous configuration)
+  7.1. CollinearPoints: D, E, F - trivial consequence of the object's construction
+  7.2. PerpendicularLines: [C, I], [E, F] - assumed to be proven (in a previous configuration)
 
- 8. PerpendicularLines: [C, D], [F, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 8. PerpendicularLines: [C, I], [D, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  8.1. CollinearPoints: E, F, H - trivial consequence of the object's construction
-  8.2. PerpendicularLines: [C, D], [E, F] - assumed to be proven (in a previous configuration)
+  8.1. CollinearPoints: D, E, F - trivial consequence of the object's construction
+  8.2. PerpendicularLines: [C, I], [E, F] - assumed to be proven (in a previous configuration)
 
- 9. PerpendicularLines: [D, G], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 9. PerpendicularLines: [D, G], [G, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  9.1. CollinearPoints: B, G, H - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
+  9.1. CollinearPoints: B, D, G - consequence of GeneralRules\Transitivity\collinear_points.txt (1)
 
     9.1.1. CollinearPoints: A, B, G - assumed to be proven (in a previous configuration)
-    9.1.2. CollinearPoints: A, G, H - trivial consequence of the object's construction
+    9.1.2. CollinearPoints: A, D, G - trivial consequence of the object's construction
 
-  9.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+  9.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
 Interesting theorems:
 
- 10. PerpendicularLines: [C, G], [D, H] - total ranking 596
+ 10. PerpendicularLines: [C, G], [D, I] - total ranking 596
 
   Level                           weight = 1000      ranking = 0.66      contribution = 660       
   Symmetry                        weight = 10000     ranking = 0         contribution = 0         
@@ -549,71 +551,71 @@ Configuration 14
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-H = IntersectionOfLinesFromPoints({{D, G}, {E, F}})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+D = IntersectionOfLinesFromPoints({{E, F}, {G, I}})
 
 Proved theorems:
 
- 1. CollinearPoints: D, G, H - trivial consequence of the object's construction
- 2. CollinearPoints: E, F, H - trivial consequence of the object's construction
- 3. PerpendicularLines: [A, B], [D, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 1. CollinearPoints: D, E, F - trivial consequence of the object's construction
+ 2. CollinearPoints: D, G, I - trivial consequence of the object's construction
+ 3. PerpendicularLines: [A, B], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  3.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-  3.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+  3.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+  3.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 4. PerpendicularLines: [A, B], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 4. PerpendicularLines: [A, B], [D, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  4.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-  4.2. PerpendicularLines: [A, B], [D, G] - assumed to be proven (in a previous configuration)
+  4.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+  4.2. PerpendicularLines: [A, B], [G, I] - assumed to be proven (in a previous configuration)
 
- 5. PerpendicularLines: [A, G], [D, H] - true because of the symmetry of the configuration
+ 5. PerpendicularLines: [A, G], [D, G] - true because of the symmetry of the configuration
 
-  5.1. PerpendicularLines: [B, G], [D, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  5.1. PerpendicularLines: [B, G], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    5.1.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-    5.1.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+    5.1.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+    5.1.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
- 6. PerpendicularLines: [A, G], [G, H] - true because of the symmetry of the configuration
+ 6. PerpendicularLines: [A, G], [D, I] - true because of the symmetry of the configuration
 
-  6.1. PerpendicularLines: [B, G], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  6.1. PerpendicularLines: [B, G], [D, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    6.1.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-    6.1.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+    6.1.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+    6.1.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
- 7. PerpendicularLines: [B, G], [D, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 7. PerpendicularLines: [B, G], [D, G] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  7.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-  7.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+  7.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+  7.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
- 8. PerpendicularLines: [B, G], [G, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 8. PerpendicularLines: [B, G], [D, I] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  8.1. CollinearPoints: D, G, H - trivial consequence of the object's construction
-  8.2. PerpendicularLines: [B, G], [D, G] - assumed to be proven (in a previous configuration)
+  8.1. CollinearPoints: D, G, I - trivial consequence of the object's construction
+  8.2. PerpendicularLines: [B, G], [G, I] - assumed to be proven (in a previous configuration)
 
- 9. PerpendicularLines: [C, D], [E, H] - true because of the symmetry of the configuration
+ 9. PerpendicularLines: [C, I], [D, E] - true because of the symmetry of the configuration
 
-  9.1. PerpendicularLines: [C, D], [F, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+  9.1. PerpendicularLines: [C, I], [D, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-    9.1.1. CollinearPoints: E, F, H - trivial consequence of the object's construction
-    9.1.2. PerpendicularLines: [C, D], [E, F] - assumed to be proven (in a previous configuration)
+    9.1.1. CollinearPoints: D, E, F - trivial consequence of the object's construction
+    9.1.2. PerpendicularLines: [C, I], [E, F] - assumed to be proven (in a previous configuration)
 
- 10. PerpendicularLines: [C, D], [F, H] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
+ 10. PerpendicularLines: [C, I], [D, F] - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (2)
 
-  10.1. CollinearPoints: E, F, H - trivial consequence of the object's construction
-  10.2. PerpendicularLines: [C, D], [E, F] - assumed to be proven (in a previous configuration)
+  10.1. CollinearPoints: D, E, F - trivial consequence of the object's construction
+  10.2. PerpendicularLines: [C, I], [E, F] - assumed to be proven (in a previous configuration)
 
 ----------------
 Configuration 15
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(A, {B, C})
 
 Proved theorems:
@@ -622,7 +624,7 @@ Proved theorems:
 
 Interesting theorems:
 
- 2. ConcurrentLines: [D, E], [F, G], l - total ranking 4097.33
+ 2. ConcurrentLines: [E, I], [F, G], l - total ranking 4097.33
 
   Symmetry                        weight = 10000     ranking = 0.33      contribution = 3333.33   
   Level                           weight = 1000      ranking = 0.82      contribution = 820       
@@ -634,11 +636,11 @@ Configuration 16
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(A, {B, D})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(A, {B, I})
 
 Proved theorems:
 
@@ -649,10 +651,10 @@ Configuration 17
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(A, {B, E})
 
 Proved theorems:
@@ -664,10 +666,10 @@ Configuration 18
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(A, {B, F})
 
 Proved theorems:
@@ -679,11 +681,11 @@ Configuration 19
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(A, {D, E})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(A, {E, I})
 
 Proved theorems:
 
@@ -694,11 +696,11 @@ Configuration 20
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(A, {D, G})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(A, {G, I})
 
 Proved theorems:
 
@@ -709,15 +711,15 @@ Configuration 21
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(A, {E, G})
 
 Proved theorems:
 
- 1. ConcurrentLines: [B, D], [E, G], l - can be stated without F
+ 1. ConcurrentLines: [B, I], [E, G], l - can be stated without F
  2. Incidence: A, l - trivial consequence of the object's construction
 
 ----------------
@@ -725,16 +727,16 @@ Configuration 22
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(A, {F, G})
 
 Proved theorems:
 
  1. Incidence: A, l - trivial consequence of the object's construction
- 2. Incidence: D, l - can be stated without E
+ 2. Incidence: I, l - can be stated without E
  3. PerpendicularLines: [F, G], l - can be stated without E
 
 ----------------
@@ -742,61 +744,61 @@ Configuration 23
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(I, {A, B})
 
 Proved theorems:
 
- 1. Incidence: D, l - trivial consequence of the object's construction
+ 1. Incidence: I, l - trivial consequence of the object's construction
 
 ----------------
 Configuration 24
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(D, {A, E})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(I, {A, E})
 
 Proved theorems:
 
- 1. Incidence: D, l - trivial consequence of the object's construction
+ 1. Incidence: I, l - trivial consequence of the object's construction
 
 ----------------
 Configuration 25
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(D, {A, G})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(I, {A, G})
 
 Proved theorems:
 
- 1. Incidence: D, l - trivial consequence of the object's construction
+ 1. Incidence: I, l - trivial consequence of the object's construction
 
 ----------------
 Configuration 26
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(D, {F, G})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(I, {F, G})
 
 Proved theorems:
 
  1. Incidence: A, l - can be stated without E
- 2. Incidence: D, l - trivial consequence of the object's construction
+ 2. Incidence: I, l - trivial consequence of the object's construction
  3. PerpendicularLines: [F, G], l - can be stated without E
 
 ----------------
@@ -804,11 +806,11 @@ Configuration 27
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(G, {C, D})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(G, {C, I})
 
 Proved theorems:
 
@@ -819,10 +821,10 @@ Configuration 28
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(G, {C, F})
 
 Proved theorems:
@@ -834,10 +836,10 @@ Configuration 29
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(G, {A, C})
 
 Proved theorems:
@@ -849,11 +851,11 @@ Configuration 30
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(G, {D, F})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(G, {F, I})
 
 Proved theorems:
 
@@ -864,11 +866,11 @@ Configuration 31
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
-l = Median(G, {A, D})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
+l = Median(G, {A, I})
 
 Proved theorems:
 
@@ -879,26 +881,26 @@ Configuration 32
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(G, {E, F})
 
 Proved theorems:
 
- 1. ConcurrentLines: [C, D], [E, F], l - consequence of GeneralRules\ConcurrentLines\concurrent_lines_3.txt (1)
+ 1. ConcurrentLines: [C, I], [E, F], l - consequence of GeneralRules\ConcurrentLines\concurrent_lines_3.txt (1)
 
-  1.1. CollinearPoints: C, D, Midpoint({E, F}) - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (1)
+  1.1. CollinearPoints: C, I, Midpoint({E, F}) - consequence of GeneralRules\Redefinitions\Collinearity\perpendicularity.txt (1)
 
     1.1.1. PerpendicularLines: [C, Midpoint({E, F})], [E, F] - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (1)
 
       1.1.1.1. EqualLineSegments: C, E, C, F - assumed to be proven (in a previous configuration)
       1.1.1.2. EqualLineSegments: E, Midpoint({E, F}), F, Midpoint({E, F}) - trivial consequence of the object's construction
 
-    1.1.2. PerpendicularLines: [D, Midpoint({E, F})], [E, F] - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (1)
+    1.1.2. PerpendicularLines: [E, F], [I, Midpoint({E, F})] - consequence of GeneralRules\perpendicularity_from_equal_segments.txt (1)
 
-      1.1.2.1. EqualLineSegments: D, E, D, F - assumed to be proven (in a previous configuration)
+      1.1.2.1. EqualLineSegments: E, I, F, I - assumed to be proven (in a previous configuration)
       1.1.2.2. EqualLineSegments: E, Midpoint({E, F}), F, Midpoint({E, F}) - trivial consequence of the object's construction - theorem 1.1.1.2.
 
   1.2. CollinearPoints: E, F, Midpoint({E, F}) - trivial consequence of the object's construction
@@ -911,10 +913,10 @@ Configuration 33
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(G, {A, E})
 
 Proved theorems:
@@ -926,10 +928,10 @@ Configuration 34
 ----------------
 
 Triangle: A, B, C
-D = Incenter({A, B, C})
-E = PerpendicularProjectionOnLineFromPoints(D, {B, C})
-F = PerpendicularProjectionOnLineFromPoints(D, {A, C})
-G = PerpendicularProjectionOnLineFromPoints(D, {A, B})
+I = Incenter({A, B, C})
+E = PerpendicularProjectionOnLineFromPoints(I, {B, C})
+F = PerpendicularProjectionOnLineFromPoints(I, {A, C})
+G = PerpendicularProjectionOnLineFromPoints(I, {A, B})
 l = Median(G, {A, F})
 
 Proved theorems:

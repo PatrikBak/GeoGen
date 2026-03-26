@@ -1,4 +1,4 @@
-﻿using GeoGen.Core;
+using GeoGen.Core;
 using GeoGen.ProblemAnalyzer;
 using GeoGen.ProblemGenerator;
 using GeoGen.ProblemGenerator.InputProvider;
@@ -158,7 +158,7 @@ namespace GeoGen.MainLauncher
             #region Write the initial configuration
 
             // Prepare the formatter for the initial configuration
-            var initialFormatter = new OutputFormatter(input.InitialConfiguration.AllObjects);
+            var initialFormatter = new OutputFormatter(input.InitialConfiguration.AllObjects, input.ObjectNames);
 
             // Write it
             WriteLineToBothReadableWriters("Initial configuration:\n");
@@ -275,7 +275,8 @@ namespace GeoGen.MainLauncher
                     // If there is any sort of problem, we should make aware of it. 
                     Log.Error(e, "There has been an exception while analyzing the configuration:\n\n{configuration}\n",
                         // Write the problematic configuration
-                        new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration));
+                        new OutputFormatter(generatorOutput.Configuration.AllObjects, input.ObjectNames)
+                            .FormatConfiguration(generatorOutput.Configuration));
 
                     // And move on, we still might get something cool
                     continue;
@@ -336,7 +337,7 @@ namespace GeoGen.MainLauncher
                         if (shouldWeRewriteBestTheorems)
                         {
                             // Do it
-                            RewriteBestTheorems(updatedSorterTypes);
+                            RewriteBestTheorems(input.ObjectNames, updatedSorterTypes);
 
                             // After the update where it was done last time
                             lastTimeBestTheoremsWereRewritten = DateTimeOffset.Now;
@@ -348,7 +349,8 @@ namespace GeoGen.MainLauncher
                         // If there is any sort of problem, we should make aware of it. 
                         Log.Error(e, "There has been an exception while sorting theorems of the configuration:\n\n{configuration}\n",
                             // Write the problematic configuration
-                            new OutputFormatter(generatorOutput.Configuration.AllObjects).FormatConfiguration(generatorOutput.Configuration));
+                            new OutputFormatter(generatorOutput.Configuration.AllObjects, input.ObjectNames)
+                                .FormatConfiguration(generatorOutput.Configuration));
                     }
                 }
 
@@ -357,7 +359,7 @@ namespace GeoGen.MainLauncher
                 #region Human-readable output
 
                 // Prepare a formatter for the generated configuration
-                var formatter = new OutputFormatter(generatorOutput.Configuration.AllObjects);
+                var formatter = new OutputFormatter(generatorOutput.Configuration.AllObjects, input.ObjectNames);
 
                 // Prepare the header so we can measure it
                 var header = $"Configuration {numberOfGeneratedConfigurations}";
@@ -420,7 +422,7 @@ namespace GeoGen.MainLauncher
             #endregion
 
             // Rewrite the best theorems after the generation is finished
-            RewriteBestTheorems();
+            RewriteBestTheorems(input.ObjectNames);
 
             // Prepare the string explaining the state after merge
             var afterMergeString = $"{(writeBestTheorems ? $"{_resolver.AllSorters.Select(pair => pair.sorter.BestTheorems.Count()).Sum()}" : "-")}";
@@ -446,8 +448,11 @@ namespace GeoGen.MainLauncher
         /// <summary>
         /// Rewrites the best theorem files, i.e. the readable files for each type or the JSON files based on settings.
         /// </summary>
+        /// <param name="objectNames">The ordered list of custom names for the initial configuration objects.</param>
         /// <param name="typesToWrite">The theorem types to be rewritten. If the value is null (by default), then all sorters are rewritten.</param>
-        private void RewriteBestTheorems(IReadOnlyCollection<TheoremType> typesToWrite = null)
+        private void RewriteBestTheorems(
+            IReadOnlyList<string> objectNames,
+            IReadOnlyCollection<TheoremType> typesToWrite = null)
         {
             // Prepare the sorters to be rewritten by analyzing the passed types
             var sorters = typesToWrite
@@ -468,8 +473,8 @@ namespace GeoGen.MainLauncher
                     // Prepare the writer
                     using var readableBestTheoremWriter = new StreamWriter(new FileStream(theoremFilePath, FileMode.Create, FileAccess.Write, FileShare.Read));
 
-                    // Rewrite the file
-                    readableBestTheoremWriter.Write(RankedTheoremsToString(sorter.BestTheorems));
+                    // Rewrite the file with custom names
+                    readableBestTheoremWriter.Write(RankedTheoremsToString(sorter.BestTheorems, objectNames));
                 }
 
                 // If we should write JSON output
@@ -506,13 +511,16 @@ namespace GeoGen.MainLauncher
         /// Converts given ranked theorems to a string.
         /// </summary>
         /// <param name="rankedTheorems">The ranked theorems to be converted.</param>
+        /// <param name="objectNames">The ordered list of custom names for the initial configuration objects.</param>
         /// <returns>The string representing the ranked theorems.</returns>
-        private static string RankedTheoremsToString(IEnumerable<RankedTheorem> rankedTheorems)
+        private static string RankedTheoremsToString(
+            IEnumerable<RankedTheorem> rankedTheorems,
+            IReadOnlyList<string> objectNames)
             // Go through the theorems
             => rankedTheorems.Select((rankedTheorem, index) =>
             {
-                // Prepare the formatter of the configuration
-                var formatter = new OutputFormatter(rankedTheorem.Configuration.AllObjects);
+                // Prepare the formatter of the configuration, using custom names if available
+                var formatter = new OutputFormatter(rankedTheorem.Configuration.AllObjects, objectNames);
 
                 // Prepare the header
                 var header = $"Theorem {index + 1}";

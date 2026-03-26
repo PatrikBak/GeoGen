@@ -1,4 +1,4 @@
-﻿using GeoGen.Core;
+using GeoGen.Core;
 using GeoGen.Utilities;
 
 namespace GeoGen.ProblemGenerator.InputProvider
@@ -27,17 +27,25 @@ namespace GeoGen.ProblemGenerator.InputProvider
         /// <summary>
         /// Initializes a new instance of the <see cref="LoadedProblemGeneratorInput"/> class.
         /// </summary>
-        /// <inheritdoc cref="ProblemGeneratorInput(Configuration, IReadOnlyHashSet{Construction}, int, IReadOnlyDictionary{ConfigurationObjectType, int}, bool)"/>
+        /// <inheritdoc cref="ProblemGeneratorInput(Configuration, IReadOnlyHashSet{Construction}, int, IReadOnlyDictionary{ConfigurationObjectType, int}, SymmetryGenerationMode, IReadOnlyList{string})"/>
         /// <param name="filePath"><inheritdoc cref="FilePath" path="/summary"/></param>
         /// <param name="id"><inheritdoc cref="Id" path="/summary"/></param>
-        public LoadedProblemGeneratorInput(Configuration initialConfiguration,
-                                           IReadOnlyHashSet<Construction> constructions,
-                                           int numberOfIterations,
-                                           IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
-                                           SymmetryGenerationMode symmetryGenerationMode,
-                                           string filePath,
-                                           string id)
-            : base(initialConfiguration, constructions, numberOfIterations, maximalNumbersOfObjectsToAdd, symmetryGenerationMode)
+        public LoadedProblemGeneratorInput(
+            Configuration initialConfiguration,
+            IReadOnlyHashSet<Construction> constructions,
+            int numberOfIterations,
+            IReadOnlyDictionary<ConfigurationObjectType, int> maximalNumbersOfObjectsToAdd,
+            SymmetryGenerationMode symmetryGenerationMode,
+            IReadOnlyList<string> objectNames,
+            string filePath,
+            string id)
+            : base(
+                initialConfiguration,
+                constructions,
+                numberOfIterations,
+                maximalNumbersOfObjectsToAdd,
+                symmetryGenerationMode,
+                objectNames)
         {
             FilePath = filePath ?? throw new ArgumentNullException(nameof(filePath));
             Id = id ?? throw new ArgumentNullException(nameof(id));

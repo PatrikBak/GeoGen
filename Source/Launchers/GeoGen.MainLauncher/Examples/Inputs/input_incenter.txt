@@ -6,10 +6,10 @@
 Initial configuration:
 
  Triangle: A, B, C
- D = Incenter(A, B, C)
- E = PerpendicularProjectionOnLineFromPoints(D, B, C)
- F = PerpendicularProjectionOnLineFromPoints(D, C, A)
- G = PerpendicularProjectionOnLineFromPoints(D, A, B)
+ I = Incenter(A, B, C)
+ E = PerpendicularProjectionOnLineFromPoints(I, B, C)
+ F = PerpendicularProjectionOnLineFromPoints(I, C, A)
+ G = PerpendicularProjectionOnLineFromPoints(I, A, B)
 
 Iterations: 1
 MaximalPoints: 1
