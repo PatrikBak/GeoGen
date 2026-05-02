@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Print a human-readable diff between two benchmark JSON reports.
 
-Always exits 0 — meant for informational output (e.g. dumped to a CI job
-summary), not for failing builds.
+Renders the *current* report as plain text, with ``A → B (+/-N)`` annotations
+on every cell that changed since the baseline. Always exits 0 — meant for
+informational console / CI-summary output.
 """
 
 from __future__ import annotations
@@ -17,6 +18,15 @@ def _signed(delta: int) -> str:
     return f"+{delta}" if delta > 0 else str(delta)
 
 
+def _cell(current: int | None, baseline: int | None) -> str:
+    """Format a numeric cell, annotating with the delta if it changed."""
+    if current is None:
+        return f"(removed; was {baseline})"
+    if baseline is None or baseline == current:
+        return str(current)
+    return f"{baseline} → {current} ({_signed(current - baseline)})"
+
+
 def _index_inputs(report: dict) -> dict[str, dict]:
     return {item["name"]: item for item in report.get("inputs", [])}
 
@@ -25,107 +35,120 @@ def _index_used_rules(report: dict) -> dict[str, int]:
     return {item["rule"]: item["count"] for item in report.get("rules", {}).get("used", [])}
 
 
-def _diff_inputs(baseline: dict, current: dict, lines: list[str]) -> None:
+def _section(title: str, lines: list[str]) -> None:
+    lines.append("")
+    lines.append(title)
+    lines.append("=" * len(title))
+
+
+def _format_table(headers: list[str], rows: list[list[str]]) -> list[str]:
+    widths = [len(h) for h in headers]
+    for row in rows:
+        for i, cell in enumerate(row):
+            widths[i] = max(widths[i], len(cell))
+    out = []
+    out.append("  " + "  ".join(h.ljust(widths[i]) for i, h in enumerate(headers)))
+    out.append("  " + "  ".join("-" * widths[i] for i in range(len(headers))))
+    for row in rows:
+        out.append("  " + "  ".join(row[i].ljust(widths[i]) for i in range(len(row))))
+    return out
+
+
+def _render_inputs(baseline: dict, current: dict, lines: list[str]) -> None:
     base = _index_inputs(baseline)
     cur = _index_inputs(current)
-    all_names = sorted(set(base) | set(cur))
+    names = sorted(set(base) | set(cur))
 
-    rows: list[tuple[str, str, str, str, str]] = []
-    for name in all_names:
+    _section("Theorems per input", lines)
+    rows: list[list[str]] = []
+    for name in names:
         b = base.get(name)
         c = cur.get(name)
-        if b is None:
-            rows.append((f"+ {name}", str(c["found"]), str(c["proved"]), str(c["unproved"]), str(c["excluded"])))
-            continue
         if c is None:
-            rows.append((f"- {name}", str(b["found"]), str(b["proved"]), str(b["unproved"]), str(b["excluded"])))
+            rows.append([
+                f"{name} (removed)",
+                _cell(None, b["found"]),
+                _cell(None, b["proved"]),
+                _cell(None, b["unproved"]),
+                _cell(None, b["excluded"]),
+            ])
             continue
-        if all(b[k] == c[k] for k in ("found", "proved", "unproved", "excluded")):
-            continue
-        rows.append((
-            f"  {name}",
-            f"{b['found']} → {c['found']} ({_signed(c['found'] - b['found'])})",
-            f"{b['proved']} → {c['proved']} ({_signed(c['proved'] - b['proved'])})",
-            f"{b['unproved']} → {c['unproved']} ({_signed(c['unproved'] - b['unproved'])})",
-            f"{b['excluded']} → {c['excluded']} ({_signed(c['excluded'] - b['excluded'])})",
-        ))
+        prefix = "" if b is not None else " (new)"
+        rows.append([
+            f"{name}{prefix}",
+            _cell(c["found"], b["found"] if b else None),
+            _cell(c["proved"], b["proved"] if b else None),
+            _cell(c["unproved"], b["unproved"] if b else None),
+            _cell(c["excluded"], b["excluded"] if b else None),
+        ])
 
-    lines.append("## Per-input theorem counts")
-    if not rows:
-        lines.append("  (no changes)")
-        return
-    for input_label, found, proved, unproved, excluded in rows:
-        lines.append(f"  {input_label}")
-        lines.append(f"      found    : {found}")
-        lines.append(f"      proved   : {proved}")
-        lines.append(f"      unproved : {unproved}")
-        lines.append(f"      excluded : {excluded}")
+    btot = baseline.get("totals", {})
+    ctot = current.get("totals", {})
+    rows.append([
+        "TOTAL",
+        _cell(ctot.get("found"), btot.get("found")),
+        _cell(ctot.get("proved"), btot.get("proved")),
+        _cell(ctot.get("unproved"), btot.get("unproved")),
+        _cell(ctot.get("excluded"), btot.get("excluded")),
+    ])
 
-
-def _diff_totals(baseline: dict, current: dict, lines: list[str]) -> None:
-    b = baseline.get("totals", {})
-    c = current.get("totals", {})
-    keys = ("found", "proved", "unproved", "excluded")
-    if all(b.get(k) == c.get(k) for k in keys):
-        return
-    lines.append("## Totals")
-    for k in keys:
-        bv = b.get(k, 0)
-        cv = c.get(k, 0)
-        if bv == cv:
-            lines.append(f"  {k:<8}: {bv} (unchanged)")
-        else:
-            lines.append(f"  {k:<8}: {bv} → {cv} ({_signed(cv - bv)})")
+    lines.extend(_format_table(
+        ["Input", "Found", "Proved", "Unproved", "Excluded"],
+        rows,
+    ))
 
 
-def _diff_used_rules(baseline: dict, current: dict, lines: list[str]) -> None:
-    b = _index_used_rules(baseline)
-    c = _index_used_rules(current)
+def _render_used_rules(baseline: dict, current: dict, lines: list[str]) -> None:
+    base = _index_used_rules(baseline)
+    cur = _index_used_rules(current)
 
-    added = sorted(set(c) - set(b))
-    removed = sorted(set(b) - set(c))
-    changed = sorted(
-        ((rule, b[rule], c[rule]) for rule in set(b) & set(c) if b[rule] != c[rule]),
-        key=lambda t: -abs(t[2] - t[1]),
-    )
-
-    if not (added or removed or changed):
-        lines.append("## Inference rules")
-        lines.append("  (no changes)")
+    _section(f"Used inference rules ({len(cur)})", lines)
+    if not cur and not base:
+        lines.append("  (none)")
         return
 
-    lines.append("## Inference rules")
-    if added:
-        lines.append(f"  Added ({len(added)}):")
-        for rule in added:
-            lines.append(f"    + {rule}  (count={c[rule]})")
+    sorted_cur = sorted(cur.items(), key=lambda p: (-p[1], p[0]))
+    rows: list[list[str]] = []
+    for rank, (rule, count) in enumerate(sorted_cur, start=1):
+        baseline_count = base.get(rule)
+        annotation = ""
+        if baseline_count is None:
+            annotation = " (new)"
+        rows.append([
+            str(rank),
+            _cell(count, baseline_count),
+            f"{rule}{annotation}",
+        ])
+
+    # Removed rules: were used in baseline, not in current
+    removed = sorted(set(base) - set(cur))
     if removed:
-        lines.append(f"  Removed ({len(removed)}):")
         for rule in removed:
-            lines.append(f"    - {rule}  (was count={b[rule]})")
-    if changed:
-        lines.append(f"  Count changed ({len(changed)}):")
-        for rule, bv, cv in changed:
-            lines.append(f"    ~ {rule}: {bv} → {cv} ({_signed(cv - bv)})")
+            rows.append(["–", _cell(None, base[rule]), f"{rule} (removed)"])
+
+    lines.extend(_format_table(["#", "Count", "Rule"], rows))
 
 
-def _diff_unused_rules(baseline: dict, current: dict, lines: list[str]) -> None:
-    b = set(baseline.get("rules", {}).get("unused", []))
-    c = set(current.get("rules", {}).get("unused", []))
-    started_using = sorted(b - c)  # were unused, now used
-    stopped_using = sorted(c - b)  # were used, now unused
+def _render_unused_rules(baseline: dict, current: dict, lines: list[str]) -> None:
+    base = sorted(baseline.get("rules", {}).get("unused", []))
+    cur = sorted(current.get("rules", {}).get("unused", []))
+    base_set = set(base)
+    cur_set = set(cur)
 
-    if not (started_using or stopped_using):
-        return
-    lines.append("## Unused-rule transitions")
-    if started_using:
-        lines.append(f"  Newly used ({len(started_using)}):")
-        for rule in started_using:
-            lines.append(f"    > {rule}")
-    if stopped_using:
-        lines.append(f"  No longer used ({len(stopped_using)}):")
-        for rule in stopped_using:
-            lines.append(f"    < {rule}")
+    _section(f"Unused inference rules ({len(cur)})", lines)
+    if not cur:
+        lines.append("  (none)")
+    else:
+        for rule in cur:
+            marker = "+" if rule not in base_set else " "
+            lines.append(f"  {marker} {rule}")
+
+    moved_to_used = sorted(base_set - cur_set)
+    if moved_to_used:
+        lines.append("")
+        lines.append(f"  No longer unused (now used) ({len(moved_to_used)}):")
+        for rule in moved_to_used:
+            lines.append(f"  - {rule}")
 
 
 def main() -> int:
@@ -154,19 +177,16 @@ def main() -> int:
     baseline = json.loads(args.baseline.read_text(encoding="utf-8"))
     current = json.loads(args.current.read_text(encoding="utf-8"))
 
-    if baseline == current:
-        print(f"Reports are identical ({args.baseline_label} == {args.current_label}).")
-        return 0
+    header = f"Prover benchmark report ({args.baseline_label} → {args.current_label})"
+    lines: list[str] = [header, "=" * len(header)]
 
-    lines: list[str] = [f"# Benchmark diff: {args.baseline_label} → {args.current_label}", ""]
-    _diff_totals(baseline, current, lines)
-    if lines[-1]:
+    if baseline == current:
         lines.append("")
-    _diff_inputs(baseline, current, lines)
-    lines.append("")
-    _diff_used_rules(baseline, current, lines)
-    lines.append("")
-    _diff_unused_rules(baseline, current, lines)
+        lines.append("Reports are identical.")
+
+    _render_inputs(baseline, current, lines)
+    _render_used_rules(baseline, current, lines)
+    _render_unused_rules(baseline, current, lines)
 
     print("\n".join(lines).rstrip() + "\n")
     return 0
