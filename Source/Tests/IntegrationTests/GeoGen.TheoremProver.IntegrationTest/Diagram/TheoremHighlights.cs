@@ -26,79 +26,57 @@ namespace GeoGen.TheoremProver.IntegrationTest.Diagram
     {
         public static IReadOnlyList<string> ObjectIdsFor(Theorem theorem)
         {
-            var ids = new List<string>();
-
+            var ids = new HashSet<string>();
             switch (theorem.Type)
             {
+                // Lines / circles only — these theorems claim something about the lines or circles
+                // themselves; their defining points aren't the subject.
                 case TheoremType.ParallelLines:
                 case TheoremType.PerpendicularLines:
                 case TheoremType.ConcurrentLines:
                 case TheoremType.LineTangentToCircle:
-                    // Highlight just the lines (and circles, for LineTangentToCircle). The
-                    // theorem is a statement about the lines themselves, not their defining points.
-                    foreach (var to in theorem.InvolvedObjects)
-                        AddLineOrCircleOnly(to, ids);
-                    break;
-
                 case TheoremType.TangentCircles:
-                    // Two circles touching. Just the circles.
                     foreach (var to in theorem.InvolvedObjects)
                         AddLineOrCircleOnly(to, ids);
                     break;
 
+                // Points only — the claim is about a property of the points themselves; no
+                // synthesized line object should light up.
+                case TheoremType.CollinearPoints:
+                    foreach (var pto in theorem.InvolvedObjects.OfType<PointTheoremObject>())
+                        ids.Add(DiagramBuilder.ObjectId(pto.ConfigurationObject));
+                    break;
+
+                // Points plus the circle through them.
                 case TheoremType.ConcyclicPoints:
-                    // The points participating in the relationship plus the circle through them.
-                    foreach (var to in theorem.InvolvedObjects)
-                        if (to is PointTheoremObject pto)
-                            ids.Add(DiagramBuilder.ObjectId(pto.ConfigurationObject));
-                    var concyclic = theorem.InvolvedObjects.OfType<PointTheoremObject>()
-                        .Select(p => p.ConfigurationObject)
-                        .ToArray();
-                    if (concyclic.Length >= 3)
+                    var concyclic = new List<ConfigurationObject>();
+                    foreach (var pto in theorem.InvolvedObjects.OfType<PointTheoremObject>())
+                    {
+                        ids.Add(DiagramBuilder.ObjectId(pto.ConfigurationObject));
+                        concyclic.Add(pto.ConfigurationObject);
+                    }
+                    if (concyclic.Count >= 3)
                         ids.Add(DiagramBuilder.CircleThroughPointsId(concyclic));
                     break;
 
-                case TheoremType.CollinearPoints:
-                    // Just the points. No synthetic line — collinearity is a property of the
-                    // points, not of any particular line object.
-                    foreach (var to in theorem.InvolvedObjects)
-                        if (to is PointTheoremObject pto)
-                            ids.Add(DiagramBuilder.ObjectId(pto.ConfigurationObject));
-                    break;
-
-                case TheoremType.Incidence:
-                    // Point on line/circle. Both must be visible to read "where they meet".
-                    foreach (var to in theorem.InvolvedObjects)
-                    {
-                        if (to is PointTheoremObject pto)
-                            ids.Add(DiagramBuilder.ObjectId(pto.ConfigurationObject));
-                        else
-                            AddLineOrCircleOnly(to, ids);
-                    }
-                    break;
-
+                // Segments are visually thin; light their endpoints too so the user can read which
+                // segments are claimed equal even at small scale.
                 case TheoremType.EqualLineSegments:
-                    // Segments are visually thin; we light their 4 endpoints too so the user can
-                    // read which segments are claimed equal even at small scale.
-                    foreach (var to in theorem.InvolvedObjects)
+                    foreach (var seg in theorem.InvolvedObjects.OfType<LineSegmentTheoremObject>())
                     {
-                        if (to is LineSegmentTheoremObject seg)
-                        {
-                            var endpoints = seg.PointSet.OfType<PointTheoremObject>()
-                                .Select(p => p.ConfigurationObject)
-                                .ToArray();
-                            foreach (var pto in endpoints)
-                                ids.Add(DiagramBuilder.ObjectId(pto));
-                            if (endpoints.Length == 2)
-                                ids.Add(DiagramBuilder.SegmentId(endpoints[0], endpoints[1]));
-                        }
+                        var endpoints = seg.PointSet.OfType<PointTheoremObject>()
+                            .Select(p => p.ConfigurationObject)
+                            .ToArray();
+                        foreach (var pto in endpoints)
+                            ids.Add(DiagramBuilder.ObjectId(pto));
+                        if (endpoints.Length == 2)
+                            ids.Add(DiagramBuilder.SegmentId(endpoints[0], endpoints[1]));
                     }
                     break;
 
-                case TheoremType.EqualObjects:
+                // Mixed: highlight whatever each involved object is. Covers Incidence, EqualObjects,
+                // and any theorem type added later — a sensible default.
                 default:
-                    // Fall-through: highlight whatever the theorem references directly. EqualObjects
-                    // can be points, lines, or circles; light the matching primary object for each.
                     foreach (var to in theorem.InvolvedObjects)
                     {
                         if (to is PointTheoremObject pto)
@@ -108,8 +86,7 @@ namespace GeoGen.TheoremProver.IntegrationTest.Diagram
                     }
                     break;
             }
-
-            return ids.Distinct().ToList();
+            return ids.ToArray();
         }
 
         /// <summary>
@@ -117,32 +94,24 @@ namespace GeoGen.TheoremProver.IntegrationTest.Diagram
         /// when present (named line/circle), or the canonical segment/circle-through-points id
         /// when the theorem refers to it via points.
         /// </summary>
-        private static void AddLineOrCircleOnly(TheoremObject theoremObject, List<string> ids)
+        private static void AddLineOrCircleOnly(TheoremObject theoremObject, HashSet<string> ids)
         {
             switch (theoremObject)
             {
-                case LineTheoremObject lto:
-                    if (lto.DefinedByExplicitObject)
-                    {
-                        ids.Add(DiagramBuilder.ObjectId(lto.ConfigurationObject));
-                    }
-                    else if (lto.PointsList is not null && lto.PointsList.Count == 2)
-                    {
-                        // Point-defined line — its visual representation is the segment between
-                        // those two points. Use the canonical seg-id so it matches the diagram.
-                        ids.Add(DiagramBuilder.SegmentId(lto.PointsList[0], lto.PointsList[1]));
-                    }
+                case LineTheoremObject lto when lto.DefinedByExplicitObject:
+                    ids.Add(DiagramBuilder.ObjectId(lto.ConfigurationObject));
+                    break;
+                // Point-defined line — its visual representation is the segment between those two
+                // points. Use the canonical seg-id so it matches the diagram.
+                case LineTheoremObject lto when lto.PointsList?.Count == 2:
+                    ids.Add(DiagramBuilder.SegmentId(lto.PointsList[0], lto.PointsList[1]));
                     break;
 
-                case CircleTheoremObject cto:
-                    if (cto.DefinedByExplicitObject)
-                    {
-                        ids.Add(DiagramBuilder.ObjectId(cto.ConfigurationObject));
-                    }
-                    else if (cto.PointsList is not null && cto.PointsList.Count >= 3)
-                    {
-                        ids.Add(DiagramBuilder.CircleThroughPointsId(cto.PointsList));
-                    }
+                case CircleTheoremObject cto when cto.DefinedByExplicitObject:
+                    ids.Add(DiagramBuilder.ObjectId(cto.ConfigurationObject));
+                    break;
+                case CircleTheoremObject cto when cto.PointsList?.Count >= 3:
+                    ids.Add(DiagramBuilder.CircleThroughPointsId(cto.PointsList));
                     break;
 
                 case LineSegmentTheoremObject seg:

@@ -1,6 +1,8 @@
 #nullable enable
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using GeoGen.Core;
 using GeoGen.TheoremProver.IntegrationTest.Diagram;
 
@@ -13,10 +15,13 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
     /// </summary>
     public static class JsonReportExporter
     {
+        // CamelCase naming policy makes PascalCase record parameters serialize as camelCase JSON
+        // keys, so ReportSchema.cs needs zero per-property attributes.
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = true,
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
         /// <summary>
@@ -56,14 +61,13 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
         /// <summary>
         /// Write the top-level <c>manifest.json</c> describing all scenarios in this run.
         /// </summary>
-        public static void WriteManifest(string outputFolder, IReadOnlyList<ManifestEntry> scenarios, string? geogenCommit)
+        public static void WriteManifest(string outputFolder, IReadOnlyList<ManifestEntry> scenarios)
         {
             Directory.CreateDirectory(outputFolder);
 
             var manifest = new Manifest(
                 Schema: ReportSchema.SchemaVersion,
                 GeneratedAt: DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
-                GeogenCommit: geogenCommit,
                 Scenarios: scenarios);
 
             File.WriteAllText(
@@ -96,24 +100,30 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
             var configurationDto = BuildConfiguration(configuration, formatter, idTable);
 
             // Theorem table: every distinct theorem mentioned anywhere (proved, unproved, in proof
-            // trees as assumptions, in trace events) gets a key "t<n>". TheoremHighlights is reused.
-            // We register lazily on first sight via TheoremDetails.AddIfMissing, which formats the
-            // text and computes highlight ids in the same call.
+            // trees as assumptions, in trace events) gets a key "t<n>". Lazy registration —
+            // first sight wins.
             var theoremTable = new TheoremTable();
-            foreach (var theorem in proofs.Keys)
-                TheoremDetails.AddIfMissing(theoremTable, idTable, formatter, theorem);
-            foreach (var theorem in unprovedTheorems)
-                TheoremDetails.AddIfMissing(theoremTable, idTable, formatter, theorem);
+
+            string Register(Theorem t) => theoremTable.AddIfMissing(t, formatter, idTable);
+
+            foreach (var theorem in proofs.Keys) Register(theorem);
+            foreach (var theorem in unprovedTheorems) Register(theorem);
+
             // Walk proof trees to capture all assumption theorems.
-            foreach (var proof in proofs.Values)
-                RegisterTheoremsInProof(proof, theoremTable, idTable, formatter);
+            void RegisterTheoremsInProof(TheoremProof proof)
+            {
+                Register(proof.Theorem);
+                foreach (var child in proof.ProvedAssumptions)
+                    RegisterTheoremsInProof(child);
+            }
+            foreach (var proof in proofs.Values) RegisterTheoremsInProof(proof);
+
             if (trace is not null)
             {
                 foreach (var ev in trace.Events)
                 {
-                    TheoremDetails.AddIfMissing(theoremTable, idTable, formatter, ev.Theorem);
-                    foreach (var assumption in ev.Assumptions)
-                        TheoremDetails.AddIfMissing(theoremTable, idTable, formatter, assumption);
+                    Register(ev.Theorem);
+                    foreach (var assumption in ev.Assumptions) Register(assumption);
                 }
             }
 
@@ -123,31 +133,27 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
             // BuildStepsJson deduplicated by theorem inside one play sequence; the schema preserves
             // the full tree and lets the viewer dedupe at display time).
             var proofNodeTable = new ProofNodeTable();
-            var proofRoots = new Dictionary<string, string>();
-            foreach (var (theorem, proof) in proofs)
-            {
-                var rootKey = proofNodeTable.Register(proof, theoremTable, idTable, formatter);
-                proofRoots[theoremTable.KeyOf(theorem)] = rootKey;
-            }
+            var proofRoots = proofs.ToDictionary(
+                kv => theoremTable.KeyOf(kv.Key),
+                kv => proofNodeTable.Register(kv.Value, theoremTable, idTable, formatter));
 
-            // Build the trace DTO if a session was captured.
-            var traceDto = trace is null
-                ? Array.Empty<TraceEventDto>()
-                : trace.Events.Select(ev => new TraceEventDto(
+            // Trace + rule breakdown default to empty arrays when no trace was captured.
+            var traceEvents = trace?.Events ?? (IEnumerable<InferenceEvent>)Array.Empty<InferenceEvent>();
+
+            var traceDto = traceEvents
+                .Select(ev => new TraceEventDto(
                     Sequence: ev.Sequence,
                     Rule: ev.Rule.ToString(),
                     CustomRuleName: ev.CustomRule?.ToString(),
                     TheoremKey: theoremTable.KeyOf(ev.Theorem),
-                    AssumptionTheoremKeys: ev.Assumptions.Select(theoremTable.KeyOf).ToArray())).ToArray();
+                    AssumptionTheoremKeys: ev.Assumptions.Select(theoremTable.KeyOf).ToArray()))
+                .ToArray();
 
-            // Rule breakdown is computed from trace; defaults to empty when no trace was captured.
-            var ruleBreakdown = trace is null
-                ? Array.Empty<RuleBreakdownEntry>()
-                : trace.Events
-                    .GroupBy(ev => ev.Rule)
-                    .OrderByDescending(g => g.Count())
-                    .Select(g => new RuleBreakdownEntry(g.Key.ToString(), g.Count()))
-                    .ToArray();
+            var ruleBreakdown = traceEvents
+                .GroupBy(ev => ev.Rule)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new RuleBreakdownEntry(g.Key.ToString(), g.Count()))
+                .ToArray();
 
             return new ScenarioReport(
                 Schema: ReportSchema.SchemaVersion,
@@ -163,74 +169,48 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                 RuleBreakdown: ruleBreakdown);
         }
 
-        private static void RegisterTheoremsInProof(TheoremProof proof, TheoremTable table, ObjectIdTable idTable, OutputFormatter formatter)
-        {
-            TheoremDetails.AddIfMissing(table, idTable, formatter, proof.Theorem);
-            foreach (var child in proof.ProvedAssumptions)
-                RegisterTheoremsInProof(child, table, idTable, formatter);
-        }
-
         // ---------- Diagram conversion ----------
 
-        private static DiagramDto BuildDiagram(DiagramModel diagram, ObjectIdTable idTable)
-        {
-            var bounds = new BoundsDto(diagram.Bounds.MinX, diagram.Bounds.MinY, diagram.Bounds.MaxX, diagram.Bounds.MaxY);
-
-            var points = diagram.Points
-                .Select(p => new DiagramPointDto(
-                    Id: idTable.Reuse(p.Id),
-                    Label: p.Label,
-                    X: p.X,
-                    Y: p.Y))
-                .ToArray();
-
-            var lines = diagram.Lines
-                .Select(l => new DiagramLineDto(
-                    Id: idTable.Reuse(l.Id),
-                    Label: l.Label,
-                    X1: l.X1, Y1: l.Y1, X2: l.X2, Y2: l.Y2))
-                .ToArray();
-
-            var segments = diagram.Segments
-                .Select(s => new DiagramSegmentDto(
-                    Ids: s.Ids.Select(idTable.Reuse).ToArray(),
-                    Label: s.Label,
-                    X1: s.X1, Y1: s.Y1, X2: s.X2, Y2: s.Y2))
-                .ToArray();
-
-            var circles = diagram.Circles
-                .Select(c => new DiagramCircleDto(
-                    Id: idTable.Reuse(c.Id),
-                    Label: c.Label,
-                    Cx: c.Cx, Cy: c.Cy, R: c.R))
-                .ToArray();
-
-            return new DiagramDto(bounds, points, lines, segments, circles);
-        }
+        private static DiagramDto BuildDiagram(DiagramModel diagram, ObjectIdTable idTable) =>
+            new(
+                Bounds: new BoundsDto(diagram.Bounds.MinX, diagram.Bounds.MinY, diagram.Bounds.MaxX, diagram.Bounds.MaxY),
+                Points: diagram.Points
+                    .Select(p => new DiagramPointDto(idTable.Reuse(p.Id), p.Label, p.X, p.Y))
+                    .ToArray(),
+                Lines: diagram.Lines
+                    .Select(l => new DiagramLineDto(idTable.Reuse(l.Id), l.Label, l.X1, l.Y1, l.X2, l.Y2))
+                    .ToArray(),
+                Segments: diagram.Segments
+                    .Select(s => new DiagramSegmentDto(s.Ids.Select(idTable.Reuse).ToArray(), s.Label, s.X1, s.Y1, s.X2, s.Y2))
+                    .ToArray(),
+                Circles: diagram.Circles
+                    .Select(c => new DiagramCircleDto(idTable.Reuse(c.Id), c.Label, c.Cx, c.Cy, c.R))
+                    .ToArray());
 
         // ---------- Configuration conversion ----------
 
         private static ConfigurationDto BuildConfiguration(Configuration configuration, OutputFormatter formatter, ObjectIdTable idTable)
         {
             var loose = configuration.LooseObjects
-                .Select(o => new LooseObjectDto(
-                    Id: idTable.IdFor(o),
-                    Label: formatter.GetObjectName(o)))
+                .Select(o => new LooseObjectDto(idTable.IdFor(o), formatter.GetObjectName(o)))
                 .ToArray();
 
             var constructed = configuration.ConstructedObjects
                 .Select(c =>
                 {
-                    var args = c.PassedArguments.ArgumentsList.Select(a => BuildArgument(a, idTable)).ToArray();
-                    var referenced = new List<string>();
-                    foreach (var arg in c.PassedArguments.ArgumentsList)
-                        CollectReferencedIds(arg, idTable, referenced);
+                    // Build the argument tree and collect every referenced object id in a single
+                    // pass — the viewer wants the flat list for click-to-highlight without having
+                    // to re-walk the tree itself.
+                    var referenced = new HashSet<string>();
+                    var args = c.PassedArguments.ArgumentsList
+                        .Select(a => BuildArgument(a, idTable, referenced))
+                        .ToArray();
                     return new ConstructedObjectDto(
                         Id: idTable.IdFor(c),
                         Label: formatter.GetObjectName(c),
                         ConstructionName: c.Construction.Name,
                         Arguments: args,
-                        ReferencedObjectIds: referenced.Distinct().ToArray());
+                        ReferencedObjectIds: referenced.ToArray());
                 })
                 .ToArray();
 
@@ -240,37 +220,28 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                 Constructed: constructed);
         }
 
-        private static ArgumentNodeDto BuildArgument(ConstructionArgument argument, ObjectIdTable idTable)
-        {
-            switch (argument)
+        /// <summary>
+        /// Recursively builds an argument node and accumulates referenced object ids in
+        /// <paramref name="referenced"/> in the same pass.
+        /// </summary>
+        private static ArgumentNodeDto BuildArgument(ConstructionArgument argument, ObjectIdTable idTable, HashSet<string> referenced) =>
+            argument switch
             {
-                case ObjectConstructionArgument objArg:
-                    return new ArgumentNodeDto(
-                        Kind: "object",
-                        ObjectId: idTable.IdFor(objArg.PassedObject),
-                        Items: null);
-                case SetConstructionArgument setArg:
-                    return new ArgumentNodeDto(
-                        Kind: "set",
-                        ObjectId: null,
-                        Items: setArg.PassedArguments.Select(a => BuildArgument(a, idTable)).ToArray());
-                default:
-                    throw new InvalidOperationException($"Unknown ConstructionArgument type {argument.GetType().Name}");
-            }
-        }
+                ObjectConstructionArgument objArg => new ArgumentNodeDto(
+                    Kind: "object",
+                    ObjectId: AddAndReturn(referenced, idTable.IdFor(objArg.PassedObject)),
+                    Items: null),
+                SetConstructionArgument setArg => new ArgumentNodeDto(
+                    Kind: "set",
+                    ObjectId: null,
+                    Items: setArg.PassedArguments.Select(a => BuildArgument(a, idTable, referenced)).ToArray()),
+                _ => throw new InvalidOperationException($"Unknown ConstructionArgument type {argument.GetType().Name}"),
+            };
 
-        private static void CollectReferencedIds(ConstructionArgument argument, ObjectIdTable idTable, List<string> into)
+        private static string AddAndReturn(HashSet<string> set, string value)
         {
-            switch (argument)
-            {
-                case ObjectConstructionArgument objArg:
-                    into.Add(idTable.IdFor(objArg.PassedObject));
-                    break;
-                case SetConstructionArgument setArg:
-                    foreach (var inner in setArg.PassedArguments)
-                        CollectReferencedIds(inner, idTable, into);
-                    break;
-            }
+            set.Add(value);
+            return value;
         }
 
         // ---------- Helper tables ----------
@@ -285,13 +256,19 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
         private sealed class ObjectIdTable
         {
             private readonly Dictionary<ConfigurationObject, string> _byObject = new();
+            // Reverse index: reference-identity hashcode → schema id. Built lazily as IdFor runs,
+            // so Reuse can resolve "obj-<hash>" diagram ids in O(1) instead of scanning _byObject.
+            private readonly Dictionary<int, string> _idByObjectHash = new();
             private readonly Dictionary<string, string> _byOriginalId = new();
-            private int _nextPoint, _nextLine, _nextCircle, _nextOther, _nextSeg;
+            private int _nextPoint, _nextLine, _nextCircle, _nextOther;
+            // One counter for every diagram-alias prefix (s/c/x). Different prefixes guarantee
+            // string uniqueness, so a shared counter is safe — just produces s0, c1, s2, c3, etc.
+            private int _nextDiagramAlias;
 
             public ObjectIdTable(Configuration configuration)
             {
-                // Pre-allocate ids for every object known to the configuration so the schema's
-                // configuration section uses canonical ids before any diagram lookup happens.
+                // Pre-allocate ids for every object so the configuration section uses canonical
+                // sequential ids regardless of the order subsequent diagram lookups happen in.
                 foreach (var obj in configuration.AllObjects)
                     _ = IdFor(obj);
             }
@@ -300,21 +277,16 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
             {
                 if (_byObject.TryGetValue(configurationObject, out var id))
                     return id;
-                var prefix = configurationObject.ObjectType switch
-                {
-                    ConfigurationObjectType.Point => "p",
-                    ConfigurationObjectType.Line => "l",
-                    ConfigurationObjectType.Circle => "c",
-                    _ => "o",
-                };
+
                 var fresh = configurationObject.ObjectType switch
                 {
-                    ConfigurationObjectType.Point => $"{prefix}{_nextPoint++}",
-                    ConfigurationObjectType.Line => $"{prefix}{_nextLine++}",
-                    ConfigurationObjectType.Circle => $"{prefix}{_nextCircle++}",
-                    _ => $"{prefix}{_nextOther++}",
+                    ConfigurationObjectType.Point => $"p{_nextPoint++}",
+                    ConfigurationObjectType.Line => $"l{_nextLine++}",
+                    ConfigurationObjectType.Circle => $"c{_nextCircle++}",
+                    _ => $"o{_nextOther++}",
                 };
                 _byObject[configurationObject] = fresh;
+                _idByObjectHash[RuntimeHelpers.GetHashCode(configurationObject)] = fresh;
                 return fresh;
             }
 
@@ -329,23 +301,13 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                 if (_byOriginalId.TryGetValue(originalId, out var existing))
                     return existing;
 
-                // Object ids are the dominant case — try to find the matching ConfigurationObject
-                // by reference-identity hash. The diagram produces "obj-<hash>" via
-                // RuntimeHelpers.GetHashCode; we walk our id table looking for a match.
-                if (originalId.StartsWith("obj-", StringComparison.Ordinal))
+                // "obj-<hash>" — find the matching ConfigurationObject by reference-identity hash.
+                if (originalId.StartsWith("obj-", StringComparison.Ordinal)
+                    && int.TryParse(originalId.AsSpan("obj-".Length), NumberStyles.Integer, CultureInfo.InvariantCulture, out var hash)
+                    && _idByObjectHash.TryGetValue(hash, out var matched))
                 {
-                    var hashStr = originalId.Substring("obj-".Length);
-                    if (int.TryParse(hashStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var hash))
-                    {
-                        foreach (var (obj, id) in _byObject)
-                        {
-                            if (System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode(obj) == hash)
-                            {
-                                _byOriginalId[originalId] = id;
-                                return id;
-                            }
-                        }
-                    }
+                    _byOriginalId[originalId] = matched;
+                    return matched;
                 }
 
                 // Segment / circle / unknown ids: assign a fresh sequential schema id. The prefix
@@ -357,7 +319,7 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                     var s when s.StartsWith("cir-", StringComparison.Ordinal) => "c",
                     _ => "x",
                 };
-                var fresh = $"{prefix}{_nextSeg++}";
+                var fresh = $"{prefix}{_nextDiagramAlias++}";
                 _byOriginalId[originalId] = fresh;
                 return fresh;
             }
@@ -369,19 +331,18 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
             private readonly Dictionary<Theorem, string> _byTheorem = new();
             private readonly List<TheoremDto> _entries = new();
 
-            public string KeyOf(Theorem theorem)
-            {
-                if (_byTheorem.TryGetValue(theorem, out var key))
-                    return key;
-                throw new InvalidOperationException("Theorem missing from table — call AddWithDetails first.");
-            }
+            public string KeyOf(Theorem theorem) =>
+                _byTheorem.TryGetValue(theorem, out var key)
+                    ? key
+                    : throw new InvalidOperationException("Theorem missing from table — call AddIfMissing first.");
 
             public IReadOnlyList<TheoremDto> Build() => _entries;
 
             /// <summary>
-            /// Insert a theorem with already-computed text and highlight ids. Returns its key.
+            /// Register a theorem if it isn't already in the table, computing its display text and
+            /// highlight ids on first sight. Returns the theorem's key.
             /// </summary>
-            public string AddWithDetails(Theorem theorem, string text, IReadOnlyList<string> highlightIds)
+            public string AddIfMissing(Theorem theorem, OutputFormatter formatter, ObjectIdTable idTable)
             {
                 if (_byTheorem.TryGetValue(theorem, out var existing))
                     return existing;
@@ -391,8 +352,10 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                 _entries.Add(new TheoremDto(
                     Key: key,
                     Type: theorem.Type.ToString(),
-                    Text: text,
-                    HighlightIds: highlightIds));
+                    Text: formatter.FormatTheorem(theorem),
+                    HighlightIds: TheoremHighlights.ObjectIdsFor(theorem)
+                        .Select(idTable.Reuse)
+                        .ToArray()));
                 return key;
             }
         }
@@ -414,21 +377,14 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                     .ToArray();
 
                 var key = $"n{_entries.Count}";
-                var theoremKey = TheoremDetails.AddIfMissing(theoremTable, idTable, formatter, proof.Theorem);
+                var theoremKey = theoremTable.AddIfMissing(proof.Theorem, formatter, idTable);
 
-                string? customRuleName = null;
-                IReadOnlyList<string>? redundantObjectIds = null;
-                switch (proof.Data)
+                var (customRuleName, redundantObjectIds) = proof.Data switch
                 {
-                    case CustomInferenceData custom:
-                        customRuleName = custom.Rule.ToString();
-                        break;
-                    case DefinableSimplerInferenceData defSimpler:
-                        redundantObjectIds = defSimpler.RedundantObjects
-                            .Select(idTable.IdFor)
-                            .ToArray();
-                        break;
-                }
+                    CustomInferenceData custom => (custom.Rule.ToString(), (IReadOnlyList<string>?)null),
+                    DefinableSimplerInferenceData defSimpler => ((string?)null, defSimpler.RedundantObjects.Select(idTable.IdFor).ToArray()),
+                    _ => (null, null),
+                };
 
                 _entries.Add(new ProofNodeDto(
                     Key: key,
@@ -456,29 +412,5 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
                 _ => proof.Rule.ToString(),
             };
         }
-
-        /// <summary>
-        /// Convenience: register a theorem (computing text + highlight ids) if it isn't already in
-        /// the table. Used by both proof-tree walking and direct insertion paths.
-        /// </summary>
-        private static class TheoremDetails
-        {
-            public static string AddIfMissing(TheoremTable table, ObjectIdTable idTable, OutputFormatter formatter, Theorem theorem)
-            {
-                var text = formatter.FormatTheorem(theorem);
-                var highlightIds = TheoremHighlights.ObjectIdsFor(theorem)
-                    .Select(originalId => MapHighlightId(originalId, idTable))
-                    .ToArray();
-                return table.AddWithDetails(theorem, text, highlightIds);
-            }
-
-            private static string MapHighlightId(string originalId, ObjectIdTable idTable)
-            {
-                // TheoremHighlights produces "obj-<hash>" ids and "seg-..." / "cir-..." ids the same
-                // way the diagram does. Reuse() handles both, mapping them to the canonical ids.
-                return idTable.Reuse(originalId);
-            }
-        }
     }
-
 }

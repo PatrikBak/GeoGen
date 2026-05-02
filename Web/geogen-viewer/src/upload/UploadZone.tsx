@@ -373,7 +373,6 @@ async function buildUploadedReports(files: NamedFile[]): Promise<BuildResult> {
   const manifest: ManifestT = {
     schema: EXPECTED_SCHEMA,
     generatedAt: new Date().toISOString(),
-    geogenCommit: null,
     scenarios: synthesizedEntries,
   };
   return { uploaded: { manifest, scenarios }, warnings };

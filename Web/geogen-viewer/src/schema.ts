@@ -165,7 +165,6 @@ export const ManifestEntry = z.object({
 export const Manifest = z.object({
   schema: z.number().int(),
   generatedAt: z.string(),
-  geogenCommit: z.string().nullable().optional(),
   scenarios: z.array(ManifestEntry),
 });
 

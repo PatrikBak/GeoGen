@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Badge, Button, Card, Code, Container, Group, Stack, Table, Text, Title } from "@mantine/core";
+import { Badge, Button, Card, Container, Group, Stack, Table, Text, Title } from "@mantine/core";
 import type { ManifestEntryT, UploadedReports } from "../types";
 
 type SortKey = "name" | "proved" | "unproved" | "traceEvents" | "elapsedMs";
@@ -21,7 +21,6 @@ export function ManifestView({ uploaded, onSelect, onClear }: ManifestViewProps)
   const [sortDir, setSortDir] = useState<SortDir>("asc");
 
   const generatedDisplay = useMemo(() => formatGeneratedAt(manifest.generatedAt), [manifest.generatedAt]);
-  const commitShort = manifest.geogenCommit ? manifest.geogenCommit.slice(0, 8) : null;
 
   const sortedRows = useMemo(() => {
     // Only show scenarios for which we actually have a parsed report; the manifest may list
@@ -62,11 +61,6 @@ export function ManifestView({ uploaded, onSelect, onClear }: ManifestViewProps)
                 {sortedRows.length} scenario{sortedRows.length === 1 ? "" : "s"}
                 {missing > 0 ? ` (${missing} missing from upload)` : ""}
                 {" · "}generated {generatedDisplay}
-                {commitShort ? (
-                  <>
-                    {" · "}commit <Code c="white" bg="rgba(255,255,255,0.18)">{commitShort}</Code>
-                  </>
-                ) : null}
               </Text>
             </Stack>
             {onClear ? (

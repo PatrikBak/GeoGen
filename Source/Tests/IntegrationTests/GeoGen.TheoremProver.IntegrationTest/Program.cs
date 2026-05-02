@@ -234,7 +234,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
             });
 
             // Write the top-level manifest linking each per-scenario file.
-            Json.JsonReportExporter.WriteManifest(reportsFolder, manifestEntries, geogenCommit: null);
+            Json.JsonReportExporter.WriteManifest(reportsFolder, manifestEntries);
             Console.WriteLine($"Manifest: {Path.Combine(reportsFolder, "manifest.json")}");
 
             #endregion
