@@ -2,6 +2,8 @@ name: Prover Benchmark (fast)
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [labeled, synchronize, reopened]
 
 permissions:
   contents: read
@@ -9,6 +11,11 @@ permissions:
 jobs:
   benchmark:
     name: Run prover benchmark (fast)
+    if: |
+      github.event_name == 'workflow_dispatch'
+      || (github.event_name == 'pull_request'
+          && contains(github.event.pull_request.labels.*.name, 'benchmark')
+          && (github.event.action != 'labeled' || github.event.label.name == 'benchmark'))
     runs-on: ubuntu-latest
     timeout-minutes: 30
 

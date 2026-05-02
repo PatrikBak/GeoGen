@@ -81,7 +81,10 @@ uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with origi
 uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with HEAD~5
 ```
 
-Two manually-triggered workflows mirror the same modes: **Prover Benchmark (fast)** and **Prover Benchmark (slow)**, both runnable from the GitHub Actions tab.
+Two GitHub Actions workflows mirror the same modes:
+
+- **Prover Benchmark (fast)** — runnable from the Actions tab, or automatically on a PR labeled `benchmark` (re-runs on every subsequent push).
+- **Prover Benchmark (slow)** — runnable from the Actions tab, or automatically on a PR labeled `benchmark-slow`.
 
 ## Contact
 
