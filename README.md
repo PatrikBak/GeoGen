@@ -53,6 +53,39 @@ Unzip the downloaded archive and run the executable for your platform (e.g., `Ge
 - **[Input/Output Format Reference](InputOutputFormat.md)**: Complete technical specification including all constructions, input file formats, and output file structures.
 - **[Developer Guide](DeveloperGuide.md)**: Instructions for building the source code and running tests.
 
+## Prover Benchmark
+
+A reproducible benchmark of the theorem prover lives at [`Source/Launchers/GeoGen.MainLauncher/ProverBenchmark`](Source/Launchers/GeoGen.MainLauncher/ProverBenchmark), driven by `Source/Scripts/run_benchmark.py`. It builds the launcher, runs every input under `ProverBenchmark/Inputs/` in parallel, and aggregates a structured `report.json` with theorems found / proved / unproved per input plus inference-rule usage.
+
+Requires [`uv`](https://docs.astral.sh/uv/) and the .NET 10 SDK. The benchmark scripts are PEP 723 single-file scripts; `uv` resolves their dependencies automatically.
+
+Run from the repository root:
+
+```bash
+# All inputs, full benchmark (~5 minutes)
+uv run --script Source/Scripts/run_benchmark.py
+
+# Only the centroid input (~2.5 minutes)
+uv run --script Source/Scripts/run_benchmark.py --mode fast
+
+# Tiny smoke run (~10 seconds)
+uv run --script Source/Scripts/run_benchmark.py --mode very-fast
+```
+
+The report is written to `Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.json`.
+
+To compare the current checkout against another git revision, add `--compare-with`. The script checks the revision out into a temporary worktree, runs the benchmark there, and prints a structured diff to stdout (per-input deltas, rule counts, used/unused transitions):
+
+```bash
+uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with origin/master
+uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with HEAD~5
+```
+
+Two GitHub Actions workflows mirror the same modes:
+
+- **Prover Benchmark (fast)** — runnable from the Actions tab, or automatically on a PR labeled `benchmark` (re-runs on every subsequent push).
+- **Prover Benchmark (slow)** — runnable from the Actions tab, or automatically on a PR labeled `benchmark-slow`.
+
 ## Contact
 
 If you are interested in my project, or if you have any other question, contact me via [email](mailto:patrik.bak.x@gmail.com).
