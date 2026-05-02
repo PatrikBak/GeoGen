@@ -12,6 +12,31 @@ namespace GeoGen.AnalyticGeometry
     /// </summary>
     public readonly struct Line : IAnalyticObject, IEquatable<Line>
     {
+        #region Private fields
+
+        /// <summary>
+        /// The A coefficient pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Line)"/>, <see cref="GetHashCode"/>
+        /// and <see cref="IsParallelTo(Line)"/> don't repeatedly re-evaluate the rounding.
+        /// </summary>
+        private readonly double _aRounded;
+
+        /// <summary>
+        /// The B coefficient pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Line)"/>, <see cref="GetHashCode"/>
+        /// and <see cref="IsParallelTo(Line)"/> don't repeatedly re-evaluate the rounding.
+        /// </summary>
+        private readonly double _bRounded;
+
+        /// <summary>
+        /// The C coefficient pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Line)"/> and <see cref="GetHashCode"/>
+        /// don't repeatedly re-evaluate the rounding.
+        /// </summary>
+        private readonly double _cRounded;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -68,6 +93,11 @@ namespace GeoGen.AnalyticGeometry
             A = a / scale;
             B = b / scale;
             C = c / scale;
+
+            // Cache the rounded coefficients so hot equality/hash paths don't recompute them
+            _aRounded = A.Rounded();
+            _bRounded = B.Rounded();
+            _cRounded = C.Rounded();
         }
 
         #endregion
@@ -161,9 +191,9 @@ namespace GeoGen.AnalyticGeometry
         /// <param name="otherLine">The other line.</param>
         /// <returns>true, if the lines are parallel; false otherwise.</returns>
         public bool IsParallelTo(Line otherLine)
-            // We check if their normal vectors are the same 
+            // We check if their normal vectors are the same
             // (they are normalized, so they uniformly define the direction)
-            => A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded();
+            => _aRounded == otherLine._aRounded && _bRounded == otherLine._bRounded;
 
         /// <summary>
         /// Finds out if a given line is perpendicular to this one.
@@ -199,7 +229,7 @@ namespace GeoGen.AnalyticGeometry
         #region HashCode and Equals
 
         /// <inheritdoc/>
-        public override int GetHashCode() => (A.Rounded(), B.Rounded(), C.Rounded()).GetHashCode();
+        public override int GetHashCode() => (_aRounded, _bRounded, _cRounded).GetHashCode();
 
         /// <inheritdoc/>
         public override bool Equals(object otherObject)
@@ -213,7 +243,7 @@ namespace GeoGen.AnalyticGeometry
         /// <inheritdoc/>
         public bool Equals(Line otherLine)
             // We can simply compare the equations of our lines because they are normalized
-            => A.Rounded() == otherLine.A.Rounded() && B.Rounded() == otherLine.B.Rounded() && C.Rounded() == otherLine.C.Rounded();
+            => _aRounded == otherLine._aRounded && _bRounded == otherLine._bRounded && _cRounded == otherLine._cRounded;
 
         #endregion
 

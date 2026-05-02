@@ -6,6 +6,19 @@
     /// </summary>
     public class ConstructedConfigurationObject : ConfigurationObject
     {
+        #region Private fields
+
+        /// <summary>
+        /// The cached hash code, computed eagerly in the constructor. Both
+        /// <see cref="Construction"/> and <see cref="PassedArguments"/> are immutable,
+        /// so the hash is too; eager computation keeps the field write inside the
+        /// constructor's happens-before edge so <see cref="GetHashCode"/> stays
+        /// thread-safe without any synchronization on the read path.
+        /// </summary>
+        private readonly int _hashCode;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -32,6 +45,7 @@
         {
             Construction = construction;
             PassedArguments = arguments;
+            _hashCode = (construction, arguments).GetHashCode();
         }
 
         /// <summary>
@@ -98,7 +112,7 @@
         #region HashCode and Equals
 
         /// <inheritdoc/>
-        public override int GetHashCode() => (Construction, PassedArguments).GetHashCode();
+        public override int GetHashCode() => _hashCode;
 
         /// <inheritdoc/>
         public override bool Equals(object otherObject)
