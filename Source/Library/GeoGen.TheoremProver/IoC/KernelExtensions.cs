@@ -25,6 +25,10 @@ namespace GeoGen.TheoremProver
             // Bind the tracer
             kernel.Bind<IInvalidInferenceTracer>().To<EmptyInvalidInferenceTracer>();
 
+            // Default no-op inference tracer. Test harnesses or launchers that want a per-inference
+            // event log rebind this to a collecting/logging implementation.
+            kernel.Bind<IInferenceTracer>().To<EmptyInferenceTracer>();
+
             // Return the kernel for chaining
             return kernel;
         }

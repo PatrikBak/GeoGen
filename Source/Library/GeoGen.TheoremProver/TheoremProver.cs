@@ -86,6 +86,42 @@ namespace GeoGen.TheoremProver
 
         #endregion
 
+        #region TraceContext class
+
+        /// <summary>
+        /// Per-proving-session context for the inference tracer. Bundles the configuration the prover
+        /// is working on, the tracer to forward events to, and a monotonic counter so trace events
+        /// have stable ordering.
+        /// <para>
+        /// Threading this through the helper methods is cheaper than capturing in a closure or making
+        /// a new field — there's only one extra parameter and no shared mutable state across calls.
+        /// </para>
+        /// </summary>
+        private sealed class TraceContext
+        {
+            private int _sequence;
+
+            public Configuration Configuration { get; }
+            public IInferenceTracer Tracer { get; }
+
+            public TraceContext(Configuration configuration, IInferenceTracer tracer)
+            {
+                Configuration = configuration;
+                Tracer = tracer;
+            }
+
+            /// <summary>
+            /// Forward an accepted inference to the tracer with a fresh sequence number.
+            /// </summary>
+            public void Record(InferenceRuleType rule, InferenceRule customRule, Theorem theorem, IReadOnlyList<Theorem> assumptions)
+            {
+                _sequence++;
+                Tracer.OnInference(Configuration, new InferenceEvent(_sequence, rule, customRule, theorem, assumptions));
+            }
+        }
+
+        #endregion
+
         #region Dependencies
 
         /// <summary>
@@ -123,6 +159,12 @@ namespace GeoGen.TheoremProver
         /// </summary>
         private readonly IInvalidInferenceTracer _tracer;
 
+        /// <summary>
+        /// Observer that fires once per accepted inference. Defaults to a no-op; the integration-test
+        /// harness rebinds this to capture a complete event log for the HTML report.
+        /// </summary>
+        private readonly IInferenceTracer _inferenceTracer;
+
         #endregion
 
         #region Constructor
@@ -143,7 +185,8 @@ namespace GeoGen.TheoremProver
                              ITrivialTheoremProducer producer,
                              IGeometricTheoremVerifier verifier,
                              IObjectIntroducer introducer,
-                             IInvalidInferenceTracer tracer)
+                             IInvalidInferenceTracer tracer,
+                             IInferenceTracer inferenceTracer)
         {
             _settings = settings ?? throw new ArgumentNullException(nameof(settings));
             _applier = applier ?? throw new ArgumentNullException(nameof(applier));
@@ -152,6 +195,7 @@ namespace GeoGen.TheoremProver
             _verifier = verifier ?? throw new ArgumentNullException(nameof(verifier));
             _introducer = introducer ?? throw new ArgumentNullException(nameof(introducer));
             _tracer = tracer ?? throw new ArgumentNullException(nameof(tracer));
+            _inferenceTracer = inferenceTracer ?? throw new ArgumentNullException(nameof(inferenceTracer));
         }
 
         #endregion
@@ -293,6 +337,13 @@ namespace GeoGen.TheoremProver
             // Prepare the object introduction helper
             var objectIntroductionHelper = new ObjectIntroductionHelper(_introducer, normalizationHelper);
 
+            // Per-session trace context. The matching OnSessionEnd is in the finally block below
+            // so it fires even on early returns or exceptions.
+            var traceContext = new TraceContext(configuration, _inferenceTracer);
+            _inferenceTracer.OnSessionStart(configuration);
+            try
+            {
+
             #region Inference loop
 
             // Do until break
@@ -318,7 +369,7 @@ namespace GeoGen.TheoremProver
                     if (introducedObject != null)
                     {
                         // Call the appropriate method to handle introduced objects
-                        HandleNewObject(introducedObject, normalizationHelper, scheduler, proofBuilder);
+                        HandleNewObject(introducedObject, normalizationHelper, scheduler, proofBuilder, traceContext);
 
                         // Ask the scheduler for the next inference data to be used
                         data = scheduler.NextScheduledData();
@@ -387,7 +438,7 @@ namespace GeoGen.TheoremProver
                     if (theorem.Type == EqualObjects)
                     {
                         // Call the appropriate method to handle it while finding out whether there has been any normal version change
-                        HandleEquality(theorem, normalizationHelper, scheduler, proofData, out isValid, out var anyNormalVersionChangeInThisIteration);
+                        HandleEquality(theorem, normalizationHelper, scheduler, proofData, traceContext, CustomRule, data.InferenceRule, possitiveAssumptions, out isValid, out var anyNormalVersionChangeInThisIteration);
 
                         // If yes, then we set the outer loop variable indicating the same thing for the whole loop
                         if (anyNormalVersionChangeInThisIteration)
@@ -396,7 +447,7 @@ namespace GeoGen.TheoremProver
                     // If this is a non-equality
                     else
                         // Call the appropriate method to handle it
-                        HandleNonequality(theorem, normalizationHelper, scheduler, proofData, out isValid);
+                        HandleNonequality(theorem, normalizationHelper, scheduler, proofData, traceContext, CustomRule, data.InferenceRule, possitiveAssumptions, out isValid);
 
                     // If the theorem turns out not to be geometrically valid, trace it
                     if (!isValid)
@@ -407,6 +458,11 @@ namespace GeoGen.TheoremProver
             }
 
             #endregion
+            }
+            finally
+            {
+                _inferenceTracer.OnSessionEnd(configuration);
+            }
         }
 
         /// <summary>
@@ -417,7 +473,8 @@ namespace GeoGen.TheoremProver
         /// <param name="helper">The normalization helper used later for the trivial theorems of the object.</param>
         /// <param name="scheduler">The scheduler of inference rules used for the new object and later for its trivial theorems.</param>
         /// <param name="builder">Either the builder to build theorem proofs; or null, if we are not constructing proofs.</param>
-        private void HandleNewObject(ConstructedConfigurationObject newObject, NormalizationHelper helper, Scheduler scheduler, TheoremProofBuilder builder)
+        /// <param name="traceContext">The per-session trace context to record accepted inferences against.</param>
+        private void HandleNewObject(ConstructedConfigurationObject newObject, NormalizationHelper helper, Scheduler scheduler, TheoremProofBuilder builder, TraceContext traceContext)
         {
             // Schedule after finding this object
             scheduler.ScheduleAfterDiscoveringObject(newObject);
@@ -429,7 +486,7 @@ namespace GeoGen.TheoremProver
                 var proofData = builder != null ? new ProofData(builder, new TheoremInferenceData(TrivialTheorem), assumptions: Array.Empty<Theorem>()) : null;
 
                 // Let the other method handle this theorem, while ignoring whether it is geometrically valid (it just should be)
-                HandleNonequality(trivialTheorem, helper, scheduler, proofData, out var _);
+                HandleNonequality(trivialTheorem, helper, scheduler, proofData, traceContext, TrivialTheorem, customRule: null, assumptions: Array.Empty<Theorem>(), out var _);
             }
         }
 
@@ -441,8 +498,12 @@ namespace GeoGen.TheoremProver
         /// <param name="helper">The normalization helper that verifies and normalizes the theorem.</param>
         /// <param name="scheduler">The scheduler of inference rules used for the theorem if it is correct.</param>
         /// <param name="proofData">Either the data needed to mark the theorem's inference in case it's correct; or null, if we are not constructing proofs.</param>
+        /// <param name="traceContext">The per-session trace context to record accepted inferences against.</param>
+        /// <param name="ruleType">The kind of inference that produced <paramref name="theorem"/>.</param>
+        /// <param name="customRule">For <see cref="InferenceRuleType.CustomRule"/> events, the underlying rule; null otherwise.</param>
+        /// <param name="assumptions">The assumptions cited for <paramref name="theorem"/>.</param>
         /// <param name="isValid">Indicates whether the theorem has been found geometrically valid.</param>
-        private void HandleNonequality(Theorem theorem, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, out bool isValid)
+        private void HandleNonequality(Theorem theorem, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, TraceContext traceContext, InferenceRuleType ruleType, InferenceRule customRule, IReadOnlyList<Theorem> assumptions, out bool isValid)
         {
             // Mark the theorem to the helper
             helper.MarkProvedNonequality(theorem, out var isNew, out isValid, out var normalizedTheorem, out var equalities);
@@ -463,6 +524,10 @@ namespace GeoGen.TheoremProver
 
             #endregion
 
+            // Record the accepted inference in the trace. Doing this after the helper accepts (isNew && isValid)
+            // ensures we trace exactly what enters the proved-theorem set, with no false positives.
+            traceContext.Record(ruleType, customRule, theorem, assumptions);
+
             // Let the scheduler know
             scheduler.ScheduleAfterProving(normalizedTheorem);
 
@@ -481,7 +546,7 @@ namespace GeoGen.TheoremProver
                 proofData?.ProofBuilder.AddImplication(InferableFromSymmetry, inferredTheorem, assumptions: new[] { normalizedTheorem });
 
                 // Call this method to handle this new inferred theorem, without caring if it is valid (it should be logically)
-                HandleNonequality(inferredTheorem, helper, scheduler, proofData, isValid: out var _);
+                HandleNonequality(inferredTheorem, helper, scheduler, proofData, traceContext, InferableFromSymmetry, customRule: null, assumptions: new[] { normalizedTheorem }, isValid: out var _);
             }
 
             #endregion
@@ -495,9 +560,13 @@ namespace GeoGen.TheoremProver
         /// <param name="helper">The normalization helper that verifies and normalizes the theorem.</param>
         /// <param name="scheduler">The scheduler of inference rules used for the new objects and theorems this equality might have brought.</param>
         /// <param name="proofData">Either the data needed to mark the theorem's inference in case it's correct; or null, if we are not constructing proofs.</param>
+        /// <param name="traceContext">The per-session trace context to record accepted inferences against.</param>
+        /// <param name="ruleType">The kind of inference that produced <paramref name="equality"/>.</param>
+        /// <param name="customRule">For <see cref="InferenceRuleType.CustomRule"/> events, the underlying rule; null otherwise.</param>
+        /// <param name="assumptions">The assumptions cited for <paramref name="equality"/>.</param>
         /// <param name="isValid">Indicates whether the theorem has been found geometrically valid.</param>
         /// <param name="anyChangeOfNormalVersion">Indicates whether this equality caused any change of the normal version of some object.</param>
-        private void HandleEquality(Theorem equality, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, out bool isValid, out bool anyChangeOfNormalVersion)
+        private void HandleEquality(Theorem equality, NormalizationHelper helper, Scheduler scheduler, ProofData proofData, TraceContext traceContext, InferenceRuleType ruleType, InferenceRule customRule, IReadOnlyList<Theorem> assumptions, out bool isValid, out bool anyChangeOfNormalVersion)
         {
             // Mark the equality to the helper
             helper.MarkProvedEquality(equality, out var isNew, out isValid, out var result);
@@ -514,6 +583,10 @@ namespace GeoGen.TheoremProver
 
             // If we should construct proof, mark the inference to the proof builder
             proofData?.ProofBuilder.AddImplication(proofData.InferenceData, equality, proofData.Assumptions);
+
+            // Record the accepted equality inference. As with non-equalities, we trace after
+            // the helper has accepted to avoid recording rejected events.
+            traceContext.Record(ruleType, customRule, equality, assumptions);
 
             #region Handling new normalized theorems
 
@@ -545,8 +618,8 @@ namespace GeoGen.TheoremProver
                 scheduler.ScheduleAfterDiscoveringObject(changedObject);
             });
 
-            // Handle entirely new objects 
-            result.NewObjects.ForEach(newObject => HandleNewObject(newObject, helper, scheduler, proofData?.ProofBuilder));
+            // Handle entirely new objects
+            result.NewObjects.ForEach(newObject => HandleNewObject(newObject, helper, scheduler, proofData?.ProofBuilder, traceContext));
 
             // Set if there has been any change of normal version, which is indicated by removing 
             // an object or changing its normal version

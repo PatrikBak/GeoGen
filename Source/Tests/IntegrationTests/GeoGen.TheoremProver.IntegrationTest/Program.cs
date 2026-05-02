@@ -80,22 +80,39 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             #region Tests
 
+            // Set up a collecting tracer that the prover will feed inference events to. We rebind the
+            // IInferenceTracer binding (defaulted to EmptyInferenceTracer in AddTheoremProver) to a
+            // singleton CollectingInferenceTracer so events captured by the prover are visible here.
+            var inferenceTracer = new CollectingInferenceTracer();
+            kernel.Rebind<IInferenceTracer>().ToConstant(inferenceTracer);
+
+            // Prepare an HTML reports folder next to the binary. We clear it on each run so stale
+            // reports never linger.
+            var reportsFolder = Path.Combine(AppContext.BaseDirectory, "reports");
+            if (Directory.Exists(reportsFolder))
+                Directory.Delete(reportsFolder, recursive: true);
+            Directory.CreateDirectory(reportsFolder);
+            var indexEntries = new List<(string Name, int Proved, int Unproved, int TraceEvents, long ElapsedMs)>();
+
             // Take the tests
-            new[]
+            new (string Name, Configuration Configuration)[]
             {
-                PerpendicularBisectorsAreConcurrent(),
-                IncenterAndTangentLine(),
-                Midpoints(),
-                Parallelogram(),
-                HiddenExcenter(),
-                HiddenMidpoint(),
-                LineTangentToCircle(),
-                ConcurrencyViaObjectIntroduction(),
-                SimpleLineSegments()
+                (nameof(PerpendicularBisectorsAreConcurrent), PerpendicularBisectorsAreConcurrent()),
+                (nameof(IncenterAndTangentLine), IncenterAndTangentLine()),
+                (nameof(Midpoints), Midpoints()),
+                (nameof(Parallelogram), Parallelogram()),
+                (nameof(HiddenExcenter), HiddenExcenter()),
+                (nameof(HiddenMidpoint), HiddenMidpoint()),
+                (nameof(LineTangentToCircle), LineTangentToCircle()),
+                (nameof(ConcurrencyViaObjectIntroduction), ConcurrencyViaObjectIntroduction()),
+                (nameof(SimpleLineSegments), SimpleLineSegments()),
+                (nameof(IncenterMedianConcurrency), IncenterMedianConcurrency()),
+                (nameof(IncenterContactPoints), IncenterContactPoints()),
             }
             // Perform each
-            .ForEach(configuration =>
+            .ForEach(scenario =>
             {
+                var (scenarioName, configuration) = scenario;
                 #region Finding theorems
 
                 // Prepare 3 pictures in which the configuration is drawn
@@ -175,9 +192,66 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 Console.WriteLine("----------------------------------------------");
 
                 #endregion
+
+                #region HTML report
+
+                // Pull this scenario's trace events out of the collector. DrainSession matches by
+                // configuration reference, so we never accidentally pick up another scenario's events.
+                var session = inferenceTracer.DrainSession(configuration);
+
+                // Build the diagram from the first of the three constructed pictures. Picture 0 is
+                // the one used for theorem finding; using it here means the diagram coordinates
+                // match the analytical state the prover saw.
+                Diagram.DiagramModel diagram = null;
+                try
+                {
+                    diagram = Diagram.DiagramBuilder.Build(pictures.First(), formatter, configuration, theorems.AllObjects);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"  (diagram build failed: {e.Message})");
+                }
+
+                // Render and write the per-scenario report.
+                var unproved = theorems.AllObjects.Except(proverOutput.Keys).ToArray();
+                var html = HtmlReportRenderer.Render(scenarioName, configuration, formatter, proverOutput, unproved, session, totalTime.ElapsedMilliseconds, diagram);
+                var reportPath = Path.Combine(reportsFolder, $"{scenarioName}.html");
+                File.WriteAllText(reportPath, html);
+                Console.WriteLine($"HTML report: {reportPath}");
+
+                indexEntries.Add((scenarioName, proverOutput.Count, unproved.Length, session?.Events.Count ?? 0, totalTime.ElapsedMilliseconds));
+
+                #endregion
             });
 
+            // Write index.html linking each per-scenario report.
+            WriteIndexHtml(reportsFolder, indexEntries);
+            Console.WriteLine($"Index: {Path.Combine(reportsFolder, "index.html")}");
+
             #endregion
+        }
+
+        /// <summary>
+        /// Build a small index page listing every per-scenario report with summary counts.
+        /// </summary>
+        private static void WriteIndexHtml(string folder, IReadOnlyList<(string Name, int Proved, int Unproved, int TraceEvents, long ElapsedMs)> entries)
+        {
+            var sb = new System.Text.StringBuilder();
+            sb.AppendLine("<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>GeoGen Prover — Reports</title>");
+            sb.AppendLine("<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:2rem;color:#1f2328;}h1{font-size:1.3rem;}");
+            sb.AppendLine("table{border-collapse:collapse;width:100%;}th,td{padding:0.5rem 0.75rem;border-bottom:1px solid #d0d7de;text-align:left;}");
+            sb.AppendLine("th{background:#f6f8fa;}td.num{text-align:right;font-variant-numeric:tabular-nums;}a{color:#0969da;text-decoration:none;}a:hover{text-decoration:underline;}</style></head><body>");
+            sb.AppendLine("<h1>GeoGen Prover — Integration Test Reports</h1>");
+            sb.AppendLine("<table><thead><tr><th>Scenario</th><th>Proved</th><th>Unproved</th><th>Trace events</th><th>Elapsed (ms)</th></tr></thead><tbody>");
+            foreach (var entry in entries)
+            {
+                sb.Append($"<tr><td><a href=\"{System.Net.WebUtility.HtmlEncode(entry.Name)}.html\">{System.Net.WebUtility.HtmlEncode(entry.Name)}</a></td>");
+                sb.Append($"<td class=\"num\">{entry.Proved}</td><td class=\"num\">{entry.Unproved}</td>");
+                sb.Append($"<td class=\"num\">{entry.TraceEvents}</td><td class=\"num\">{entry.ElapsedMs}</td></tr>");
+                sb.AppendLine();
+            }
+            sb.AppendLine("</tbody></table></body></html>");
+            File.WriteAllText(Path.Combine(folder, "index.html"), sb.ToString());
         }
 
         #region Test configurations
@@ -310,6 +384,53 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the incenter and the three contact points — i.e., the incircle's
+        /// touchpoints on each side, expressed as perpendicular projections from the incenter.
+        /// This is the canonical "incenter + contact triangle" setup that GeoGen's iteration phase
+        /// uses as a starting point for problem generation; here we just expose the initial state
+        /// to the prover and see what falls out.
+        /// </summary>
+        private static Configuration IncenterContactPoints()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            // Auto-naming: incenter renders as "D", projections as "E", "F", "G".
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, C);
+            var G = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, B);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, I, E, F, G);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the incenter, the three contact points (perpendicular projections from
+        /// the incenter onto each side), and the median from A. The interesting theorem on this
+        /// configuration is that the line through the incenter and one contact point, the line
+        /// through the other two contact points, and the median from A are concurrent.
+        /// </summary>
+        private static Configuration IncenterMedianConcurrency()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            // Auto-naming labels these in declaration order: incenter becomes "D" in rendered output,
+            // the three projections become "E", "F", "G", and the median (only line) becomes "l".
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, C);
+            var G = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, B);
+            var l = new ConstructedConfigurationObject(Median, A, B, C);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, I, E, F, G, l);
         }
 
         #endregion
