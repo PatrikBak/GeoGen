@@ -109,6 +109,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 (nameof(SimpleLineSegments), SimpleLineSegments()),
                 (nameof(IncenterMedianConcurrency), IncenterMedianConcurrency()),
                 (nameof(IncenterContactPoints), IncenterContactPoints()),
+                (nameof(OrthicTriangle), OrthicTriangle()),
             }
             // Perform each
             .ForEach(scenario =>
@@ -417,6 +418,24 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, I, E, F, G, l);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the three altitude feet — i.e., perpendicular projections of each
+        /// vertex onto the opposite side. Together D, E, F form the orthic triangle.
+        /// </summary>
+        private static Configuration OrthicTriangle()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, C, A, B);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F);
         }
 
         #endregion
