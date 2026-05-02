@@ -1,4 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.10"
+# ///
 """Build the launcher, run the prover benchmark in parallel, and produce a report.
 
 One launcher process per input file in ``ProverBenchmark/Inputs``. Each gets its
@@ -171,8 +174,7 @@ def run_benchmark(
     report_path = output_root / "report.json"
     subprocess.run(
         [
-            sys.executable,
-            str(REPORT_SCRIPT),
+            "uv", "run", "--script", str(REPORT_SCRIPT),
             *report_args,
             "--output",
             _path_for_settings(report_path, ws),
@@ -281,8 +283,7 @@ def main() -> int:
     print()
     subprocess.run(
         [
-            sys.executable,
-            str(DIFF_SCRIPT),
+            "uv", "run", "--script", str(DIFF_SCRIPT),
             str(baseline_report),
             str(current_report),
             "--baseline-label",

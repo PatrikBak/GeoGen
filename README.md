@@ -57,19 +57,19 @@ Unzip the downloaded archive and run the executable for your platform (e.g., `Ge
 
 A reproducible benchmark of the theorem prover lives at [`Source/Launchers/GeoGen.MainLauncher/ProverBenchmark`](Source/Launchers/GeoGen.MainLauncher/ProverBenchmark), driven by `Source/Scripts/run_benchmark.py`. It builds the launcher, runs every input under `ProverBenchmark/Inputs/` in parallel, and aggregates a structured `report.json` with theorems found / proved / unproved per input plus inference-rule usage.
 
-Requires Python 3 and the .NET 10 SDK (same as the main build).
+Requires [`uv`](https://docs.astral.sh/uv/) and the .NET 10 SDK. The benchmark scripts are PEP 723 single-file scripts; `uv` resolves their dependencies automatically.
 
 Run from the repository root:
 
 ```bash
 # All inputs, full benchmark (~5 minutes)
-python3 Source/Scripts/run_benchmark.py
+uv run --script Source/Scripts/run_benchmark.py
 
 # Only the centroid input (~2.5 minutes)
-python3 Source/Scripts/run_benchmark.py --mode fast
+uv run --script Source/Scripts/run_benchmark.py --mode fast
 
 # Tiny smoke run (~10 seconds)
-python3 Source/Scripts/run_benchmark.py --mode very-fast
+uv run --script Source/Scripts/run_benchmark.py --mode very-fast
 ```
 
 The report is written to `Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.json`.
@@ -77,11 +77,11 @@ The report is written to `Source/Launchers/GeoGen.MainLauncher/bin/Release/net10
 To compare the current checkout against another git revision, add `--compare-with`. The script checks the revision out into a temporary worktree, runs the benchmark there, and prints a structured diff to stdout (per-input deltas, rule counts, used/unused transitions):
 
 ```bash
-python3 Source/Scripts/run_benchmark.py --mode fast --compare-with origin/master
-python3 Source/Scripts/run_benchmark.py --mode fast --compare-with HEAD~5
+uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with origin/master
+uv run --script Source/Scripts/run_benchmark.py --mode fast --compare-with HEAD~5
 ```
 
-The same script powers the optional CI workflow at `.github/workflows/benchmark.yaml`, which runs the fast benchmark on a PR branch and on `origin/master` and publishes the diff to the job summary.
+Two manually-triggered workflows mirror the same modes: **Prover Benchmark (fast)** and **Prover Benchmark (slow)**, both runnable from the GitHub Actions tab.
 
 ## Contact
 

@@ -1,0 +1,29 @@
+name: Prover Benchmark (slow)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    name: Run prover benchmark (slow)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Run benchmark
+        run: uv run --script Source/Scripts/run_benchmark.py --mode slow --compare-with origin/master
