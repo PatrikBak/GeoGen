@@ -159,6 +159,15 @@ def run_benchmark(
             if rc != 0:
                 failed.append(stem)
                 print(f"    !! {stem} exited with rc={rc}", flush=True, file=sys.stderr)
+                stdout_log = output_root / stem / "stdout.log"
+                if stdout_log.exists():
+                    tail = stdout_log.read_text(errors="replace").splitlines()[-200:]
+                    print(
+                        f"--- last 200 lines of {stdout_log} ---",
+                        file=sys.stderr,
+                    )
+                    print("\n".join(tail), file=sys.stderr)
+                    print(f"--- end of {stdout_log} ---", file=sys.stderr)
 
     if failed:
         raise RuntimeError(
