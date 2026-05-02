@@ -48,7 +48,7 @@ Initial configuration:
  I = Incenter(A, B, C)
 
 Iterations: 2
-MaximalPoints: 3
-MaximalLines: 3
-MaximalCircles: 3
+MaximalPoints: 2
+MaximalLines: 2
+MaximalCircles: 2
 SymmetryGenerationMode: GenerateBothSymmetricAndAsymmetric

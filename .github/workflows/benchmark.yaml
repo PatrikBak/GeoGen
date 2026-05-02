@@ -2,6 +2,9 @@ name: Prover Benchmark
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - master
 
 permissions:
   contents: read
@@ -10,10 +13,13 @@ jobs:
   benchmark:
     name: Run prover benchmark
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 90
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
@@ -25,21 +31,57 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run benchmark
-        run: Source/Scripts/run_benchmark.sh
+      - name: Run benchmark on PR branch (fast)
+        run: python3 Source/Scripts/run_benchmark.py --fast
 
-      - name: Publish report to job summary
+      - name: Stash PR-branch report
+        run: |
+          mkdir -p /tmp/bench-reports
+          cp Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md /tmp/bench-reports/branch.md
+          cp -r Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output /tmp/bench-reports/branch-output
+
+      - name: Check out master into worktree
+        run: |
+          git fetch origin master:refs/remotes/origin/master
+          git worktree add ../master-worktree origin/master
+
+      - name: Run benchmark on master (fast)
+        working-directory: ../master-worktree
+        run: python3 Source/Scripts/run_benchmark.py --fast
+
+      - name: Stash master report
+        run: |
+          cp ../master-worktree/Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md /tmp/bench-reports/master.md
+          cp -r ../master-worktree/Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output /tmp/bench-reports/master-output
+
+      - name: Publish reports and diff to job summary
         if: always()
         run: |
-          REPORT=Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md
-          if [ -f "$REPORT" ]; then
-            cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
-          fi
+          {
+            echo '## Master report'
+            echo '```markdown'
+            cat /tmp/bench-reports/master.md 2>/dev/null || echo '(missing)'
+            echo '```'
+            echo
+            echo '## PR-branch report'
+            echo '```markdown'
+            cat /tmp/bench-reports/branch.md 2>/dev/null || echo '(missing)'
+            echo '```'
+            echo
+            echo '## Diff (master → PR branch)'
+            echo '```diff'
+            python3 Source/Scripts/benchmark_diff.py \
+              /tmp/bench-reports/master.md /tmp/bench-reports/branch.md \
+              --baseline-label master \
+              --current-label branch \
+              2>&1 || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload benchmark artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: prover-benchmark
-          path: Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output
+          path: /tmp/bench-reports
           if-no-files-found: warn
