@@ -1,0 +1,115 @@
+{
+  "Serilog": {
+    "Using": [
+      "Serilog.Sinks.Console",
+      "Serilog.Sinks.File",
+      "Serilog.Expressions"
+    ],
+    "MinimumLevel": "Information",
+    "WriteTo": [
+      {
+        "Name": "Console"
+      },
+      {
+        "Name": "File",
+        "Args": {
+          "Path": "ProverBenchmark/Output/benchmark.log"
+        }
+      }
+    ]
+  },
+  "ProblemGeneratorInputProviderSettings": {
+    "InputFolderPath": "ProverBenchmark/Inputs",
+    "InputFilePrefix": "input",
+    "FileExtension": "txt"
+  },
+  "InferenceRuleProviderSettings": {
+    "RuleFolderPath": "Data/InferenceRules",
+    "FileExtension": "txt"
+  },
+  "ObjectIntroductionRuleProviderSettings": {
+    "FilePath": "Data/object_introduction_rules.txt"
+  },
+  "ProblemGenerationRunnerSettings": {
+    "ReadableOutputWithoutProofsFolder": "ProverBenchmark/Output/ReadableWithoutProofs",
+    "WriteReadableOutputWithoutProofs": true,
+    "ReadableOutputWithProofsFolder": "ProverBenchmark/Output/ReadableWithProofs",
+    "WriteReadableOutputWithProofs": true,
+    "JsonOutputFolder": "ProverBenchmark/Output/JsonOutput",
+    "WriteJsonOutput": true,
+    "OutputFilePrefix": "output",
+    "FileExtension": "txt",
+    "ReadableBestTheoremFolder": "ProverBenchmark/Output/ReadableBestTheorems",
+    "WriteReadableBestTheorems": false,
+    "JsonBestTheoremFolder": "ProverBenchmark/Output/JsonBestTheorems",
+    "WriteJsonBestTheorems": false,
+    "WriteBestTheoremsContinuously": false,
+    "BestTheoremsRewrittingIntervalInSeconds": 5,
+    "InferenceRuleUsageFilePath": "ProverBenchmark/Output/inference_rule_usages.txt",
+    "WriteInferenceRuleUsages": true,
+    "ProgressLoggingFrequency": 100,
+    "LogProgress": true
+  },
+  "TheoremSorterTypeResolverSettings": {
+    "MaximalTrackedTheoremsPerType": 1000
+  },
+  "ProblemGeneratorSettings": {
+    "NumberOfPictures": 3,
+    "ExcludeAsymmetricConfigurations": true
+  },
+  "TheoremFindingSettings": {
+    "TangentCirclesTheoremFinderSettings": {
+      "ExcludeTangencyInsidePicture": true
+    },
+    "LineTangentToCircleTheoremFinderSettings": {
+      "ExcludeTangencyInsidePicture": true
+    },
+    "SoughtTheoremTypes": [
+      "CollinearPoints",
+      "ConcurrentLines",
+      "ConcyclicPoints",
+      "EqualLineSegments",
+      "LineTangentToCircle",
+      "ParallelLines",
+      "PerpendicularLines",
+      "TangentCircles",
+      "Incidence"
+    ]
+  },
+  "TheoremRankerSettings": {
+    "RankingCoefficients": {
+      "Symmetry": 10000,
+      "Level": 1000,
+      "NumberOfCyclicQuadrilaterals": -10,
+      "NumberOfTheorems": -1
+    }
+  },
+  "TheoremProverSettings": {
+    "AssumeThatSimplifiableTheoremsAreTrue": true,
+    "FindTrivialTheoremsOnlyForLastObject": true
+  },
+  "GenerationSettings": {
+    "ConfigurationFilterType": "MemoryEfficient"
+  },
+  "TraceConstructorFailures": false,
+  "ConstructorFailureTracerSettings": {
+    "FailureFilePath": "Data/Tracing/constructor_failures.txt",
+    "LogFailures": true
+  },
+  "TraceGeometryFailures": false,
+  "GeometryFailureTracerSettings": {
+    "FailureFilePath": "Examples/Tracing/geometry_failures.txt",
+    "LogFailures": true
+  },
+  "TraceInvalidInferences": false,
+  "InvalidInferenceTracerSettings": {
+    "InvalidInferenceFolder": "Examples/Tracing/InvalidInferences",
+    "FileExtension": "txt",
+    "MaximalNumberOfInvalidInferencesPerFile": 20
+  },
+  "TraceSortingGeometryFailures": false,
+  "SortingGeometryFailureTracerSettings": {
+    "FailureFilePath": "Examples/Tracing/sorting_geometry_failures.txt",
+    "LogFailures": true
+  }
+}

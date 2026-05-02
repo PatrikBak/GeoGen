@@ -1,0 +1,45 @@
+name: Prover Benchmark
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    name: Run prover benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run benchmark
+        run: Source/Scripts/run_benchmark.sh
+
+      - name: Publish report to job summary
+        if: always()
+        run: |
+          REPORT=Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md
+          if [ -f "$REPORT" ]; then
+            cat "$REPORT" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload benchmark artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: prover-benchmark
+          path: Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output
+          if-no-files-found: warn
