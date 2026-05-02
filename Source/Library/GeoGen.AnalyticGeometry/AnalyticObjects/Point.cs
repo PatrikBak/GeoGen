@@ -9,6 +9,24 @@ namespace GeoGen.AnalyticGeometry
     /// </summary>
     public readonly struct Point : IAnalyticObject, IEquatable<Point>
     {
+        #region Private fields
+
+        /// <summary>
+        /// The X coordinate pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Point)"/> and <see cref="GetHashCode"/>
+        /// don't repeatedly re-evaluate the rounding on hot hash-table paths.
+        /// </summary>
+        private readonly double _xRounded;
+
+        /// <summary>
+        /// The Y coordinate pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Point)"/> and <see cref="GetHashCode"/>
+        /// don't repeatedly re-evaluate the rounding on hot hash-table paths.
+        /// </summary>
+        private readonly double _yRounded;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -35,7 +53,13 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="x">The X coordinate.</param>
         /// <param name="y">The Y coordinate.</param>
-        public Point(double x, double y) => (X, Y) = (x, y);
+        public Point(double x, double y)
+        {
+            X = x;
+            Y = y;
+            _xRounded = x.Rounded();
+            _yRounded = y.Rounded();
+        }
 
         #endregion
 
@@ -165,7 +189,7 @@ namespace GeoGen.AnalyticGeometry
         #region HashCode and Equals
 
         /// <inheritdoc/>
-        public override int GetHashCode() => (X.Rounded(), Y.Rounded()).GetHashCode();
+        public override int GetHashCode() => (_xRounded, _yRounded).GetHashCode();
 
         /// <inheritdoc/>
         public override bool Equals(object otherObject)
@@ -177,7 +201,7 @@ namespace GeoGen.AnalyticGeometry
         #region IEquatable implementation
 
         /// <inheritdoc/>
-        public bool Equals(Point otherPoint) => X.Rounded() == otherPoint.X.Rounded() && Y.Rounded() == otherPoint.Y.Rounded();
+        public bool Equals(Point otherPoint) => _xRounded == otherPoint._xRounded && _yRounded == otherPoint._yRounded;
 
         #endregion
 

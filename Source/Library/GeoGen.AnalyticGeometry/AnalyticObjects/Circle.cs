@@ -9,6 +9,17 @@ namespace GeoGen.AnalyticGeometry
     /// </summary>
     public readonly struct Circle : IAnalyticObject, IEquatable<Circle>
     {
+        #region Private fields
+
+        /// <summary>
+        /// The radius pre-rounded via <see cref="DoubleExtensions.Rounded(double, int)"/>.
+        /// Cached in the constructor so <see cref="Equals(Circle)"/> and <see cref="GetHashCode"/>
+        /// don't repeatedly re-evaluate the rounding on hot hash-table paths.
+        /// </summary>
+        private readonly double _radiusRounded;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -76,6 +87,7 @@ namespace GeoGen.AnalyticGeometry
 
             // Calculate the radius
             Radius = point1.DistanceTo(Center);
+            _radiusRounded = Radius.Rounded();
         }
 
         /// <summary>
@@ -83,7 +95,12 @@ namespace GeoGen.AnalyticGeometry
         /// </summary>
         /// <param name="center">The center of the circle.</param>
         /// <param name="radius">The radius of the circle.</param>
-        public Circle(Point center, double radius) => (Center, Radius) = (center, radius);
+        public Circle(Point center, double radius)
+        {
+            Center = center;
+            Radius = radius;
+            _radiusRounded = radius.Rounded();
+        }
 
         #endregion
 
@@ -280,7 +297,7 @@ namespace GeoGen.AnalyticGeometry
         #region HashCode and Equals
 
         /// <inheritdoc/>
-        public override int GetHashCode() => (Radius.Rounded(), Center).GetHashCode();
+        public override int GetHashCode() => (_radiusRounded, Center).GetHashCode();
 
         /// <inheritdoc/>
         public override bool Equals(object otherObject)
@@ -294,7 +311,7 @@ namespace GeoGen.AnalyticGeometry
         /// <inheritdoc/>
         public bool Equals(Circle otherCircle)
             // Check if the centers and radii are equal
-            => Center == otherCircle.Center && Radius.Rounded() == otherCircle.Radius.Rounded();
+            => Center == otherCircle.Center && _radiusRounded == otherCircle._radiusRounded;
 
         #endregion
 
