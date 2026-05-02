@@ -10,16 +10,16 @@ theorems, and inference trace with the diagram highlighted on hover/click.
 The C# integration test produces the JSON. From the repo root:
 
 ```bash
-cd Source/Tests/IntegrationTests/GeoGen.TheoremProver.IntegrationTest
-dotnet run -- \
-    ../../../Launchers/GeoGen.MainLauncher/Data/InferenceRules \
-    txt \
-    ../../../Launchers/GeoGen.MainLauncher/Data/object_introduction_rules.txt
+./Scripts/regen-reports.sh
 ```
 
-The three positional arguments are the inference-rule folder, the rule-file
-extension, and the object-introduction rule file. After the run finishes,
-the dump lands in:
+The script `cd`s into the integration-test project and invokes `dotnet run`
+with the inference-rule folder, the rule-file extension, and the
+object-introduction rule file as positional arguments. It assumes `dotnet`
+is on `PATH`; if you installed via `dotnet-install.sh`, add `~/.dotnet` to
+your shell's `PATH`.
+
+After the run finishes, the dump lands in:
 
 ```
 Source/Tests/IntegrationTests/GeoGen.TheoremProver.IntegrationTest/bin/Debug/net10.0/json-reports/

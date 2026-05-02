@@ -110,6 +110,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 (nameof(IncenterMedianConcurrency), IncenterMedianConcurrency()),
                 (nameof(IncenterContactPoints), IncenterContactPoints()),
                 (nameof(OrthicTriangle), OrthicTriangle()),
+                (nameof(OrthicTriangleConcyclic), OrthicTriangleConcyclic()),
             }
             // Perform each
             .ForEach(scenario =>
@@ -436,6 +437,25 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F);
+        }
+
+        /// <summary>
+        /// Orthic triangle (D, E, F as altitude feet) plus G = circumcenter of (A, E, F).
+        /// The interesting theorem on this configuration is that D, E, F, G are concyclic.
+        /// </summary>
+        private static Configuration OrthicTriangleConcyclic()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, C, A, B);
+            var G = new ConstructedConfigurationObject(Circumcenter, A, E, F);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
         }
 
         #endregion
