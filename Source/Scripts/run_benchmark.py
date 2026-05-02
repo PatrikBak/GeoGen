@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -104,12 +105,17 @@ def run_launcher(stem: str, out_dir: Path, ws: Workspace) -> tuple[str, int]:
         (out_dir / sub).mkdir(parents=True, exist_ok=True)
     settings_file = write_settings_for(stem, out_dir, ws)
     log = out_dir / "stdout.log"
+    # The launcher's exit hook calls Console.ReadKey() unless $TERM is set,
+    # which crashes when stdin is captured (CI, our subprocess pipe). Force it.
+    env = {**os.environ, "TERM": os.environ.get("TERM", "dumb")}
     with log.open("wb") as f:
         rc = subprocess.run(
             ["dotnet", "GeoGen.dll", _path_for_settings(settings_file, ws)],
             cwd=ws.launcher_bin,
             stdout=f,
             stderr=subprocess.STDOUT,
+            stdin=subprocess.DEVNULL,
+            env=env,
         ).returncode
     return stem, rc
 
