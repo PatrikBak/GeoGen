@@ -111,6 +111,14 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 (nameof(IncenterContactPoints), IncenterContactPoints()),
                 (nameof(OrthicTriangle), OrthicTriangle()),
                 (nameof(OrthicTriangleConcyclic), OrthicTriangleConcyclic()),
+                (nameof(CentroidReflection), CentroidReflection()),
+                (nameof(CentroidParallelogramMidpoint), CentroidParallelogramMidpoint()),
+                (nameof(CentroidIsoscelesTrapezoid), CentroidIsoscelesTrapezoid()),
+                (nameof(CircumcenterReflection), CircumcenterReflection()),
+                (nameof(CircumcenterParallelogram), CircumcenterParallelogram()),
+                (nameof(CircumcenterOrthocenter), CircumcenterOrthocenter()),
+                (nameof(CentroidParallelogramMidpointWithM), CentroidParallelogramMidpointWithM()),
+                (nameof(TrapezoidParallelogramSecondIntersection1), TrapezoidParallelogramSecondIntersection1()),
             }
             // Perform each
             .ForEach(scenario =>
@@ -456,6 +464,131 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        /// <summary>
+        /// Triangle ABC with centroid G, then D = reflection of A over line BC, and E = centroid
+        /// of triangle BCD.
+        /// </summary>
+        private static Configuration CentroidReflection()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var D = new ConstructedConfigurationObject(ReflectionInLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(Centroid, B, C, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, G, D, E);
+        }
+
+        /// <summary>
+        /// Triangle ABC with centroid G, then D = parallelogram point of (A, B, G), and
+        /// E = midpoint of CD.
+        /// </summary>
+        private static Configuration CentroidParallelogramMidpoint()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var D = new ConstructedConfigurationObject(ParallelogramPoint, A, B, G);
+            var E = new ConstructedConfigurationObject(Midpoint, C, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, G, D, E);
+        }
+
+        /// <summary>
+        /// Triangle ABC with centroid G, then D = isosceles-trapezoid point built on (A, B, C),
+        /// and E = centroid of triangle BCD.
+        /// </summary>
+        private static Configuration CentroidIsoscelesTrapezoid()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var G = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var D = new ConstructedConfigurationObject(IsoscelesTrapezoidPoint, A, B, C);
+            var E = new ConstructedConfigurationObject(Centroid, B, C, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, G, D, E);
+        }
+
+        /// <summary>
+        /// Triangle ABC with circumcenter O, then D = reflection of A in line BC, and E =
+        /// circumcenter of triangle BCD.
+        /// </summary>
+        private static Configuration CircumcenterReflection()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var D = new ConstructedConfigurationObject(ReflectionInLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(Circumcenter, B, C, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, O, D, E);
+        }
+
+        /// <summary>
+        /// Triangle ABC with circumcenter O, then D = parallelogram point of A on {B, C}, and
+        /// E = circumcenter of triangle BCD.
+        /// </summary>
+        private static Configuration CircumcenterParallelogram()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var D = new ConstructedConfigurationObject(ParallelogramPoint, A, B, C);
+            var E = new ConstructedConfigurationObject(Circumcenter, B, C, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, O, D, E);
+        }
+
+        /// <summary>
+        /// Same as <see cref="CentroidParallelogramMidpoint"/> but with M = Midpoint(B, C)
+        /// declared explicitly. The centroid construction implicitly involves Midpoint(B, C)
+        /// (since the A-median passes through it), but the prover only sees it after deriving
+        /// it from the construction; declaring it up-front exposes it as a first-class object
+        /// other rules can hook into.
+        /// </summary>
+        private static Configuration CentroidParallelogramMidpointWithM()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Centroid, A, B, C);
+            var E = new ConstructedConfigurationObject(ParallelogramPoint, A, B, D);
+            var F = new ConstructedConfigurationObject(Midpoint, C, E);
+            var M = new ConstructedConfigurationObject(Midpoint, B, C);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, M);
+        }
+
+        /// <summary>
+        /// Triangle ABC, D = isosceles-trapezoid point of A on {B, C}, E = parallelogram
+        /// point of A on {B, C}, F = second intersection of circumcircles ABE and BCE… —
+        /// expressed as <c>SecondIntersectionOfTwoCircumcircles(E, {{A, D}, {B, C}})</c>.
+        /// </summary>
+        private static Configuration TrapezoidParallelogramSecondIntersection1()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(IsoscelesTrapezoidPoint, A, B, C);
+            var E = new ConstructedConfigurationObject(ParallelogramPoint, A, B, C);
+            var F = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, E, A, D, B, C);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F);
+        }
+
+        /// <summary>
+        /// Triangle ABC with circumcenter O and orthocenter D, and E = circumcenter of
+        /// triangle ABD.
+        /// </summary>
+        private static Configuration CircumcenterOrthocenter()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var O = new ConstructedConfigurationObject(Circumcenter, A, B, C);
+            var D = new ConstructedConfigurationObject(Orthocenter, A, B, C);
+            var E = new ConstructedConfigurationObject(Circumcenter, A, B, D);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, O, D, E);
         }
 
         #endregion
