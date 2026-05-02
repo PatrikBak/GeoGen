@@ -130,6 +130,11 @@ namespace GeoGen.MainLauncher
                 // A function to check if we should pause before exit
                 static bool ShouldPauseBeforeExit()
                 {
+                    // If stdin is not connected to a terminal (piped, /dev/null,
+                    // CI runners) reading a key would just throw — never pause.
+                    if (Console.IsInputRedirected)
+                        return false;
+
                     // Linux/Mac: terminals set TERM environment variable
                     // Windows: check if we own the console
 
