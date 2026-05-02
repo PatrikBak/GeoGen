@@ -253,3 +253,6 @@ paket-files/
 
 **/Logs
 **/settings.dev.json
+
+# Local Claude Code instructions; not shared.
+CLAUDE.md

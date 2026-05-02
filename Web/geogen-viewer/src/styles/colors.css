@@ -1,0 +1,52 @@
+/*
+ * Per-theorem-type colors. High-saturation so highlights pop against the muted gray default.
+ * These values mirror the original HTML report's palette and map to the dump's `theorem.type`
+ * field (used as a CSS class suffix, e.g. `.color-ParallelLines`). Keep in sync with the
+ * theoremTypeColors map in `colors.ts` if/when introduced.
+ */
+
+:root {
+  --color-default: #ff0033;          /* fallback red when no theorem type is associated */
+  --color-step-active: #bf8700;      /* amber: "this is the current step in the animation" */
+
+  --color-ParallelLines: #0088ff;
+  --color-PerpendicularLines: #ff0033;
+  --color-EqualLineSegments: #00cc44;
+  --color-CollinearPoints: #aa00ff;
+  --color-ConcyclicPoints: #00ccdd;
+  --color-ConcurrentLines: #ff7700;
+  --color-TangentCircles: #ff00aa;
+  --color-LineTangentToCircle: #ff00aa;
+  --color-Incidence: #777777;
+  --color-EqualObjects: #cc6600;
+
+  /* Inference rule type colors used for badges in the proof tree and trace. */
+  --badge-AssumedProven-bg: #dafbe1;
+  --badge-AssumedProven-fg: #0a7c32;
+  --badge-TrivialTheorem-bg: #fff8c5;
+  --badge-TrivialTheorem-fg: #7d4e00;
+  --badge-CustomRule-bg: #ddf4ff;
+  --badge-CustomRule-fg: #0969da;
+  --badge-ReformulatedTheorem-bg: #e0d6ff;
+  --badge-ReformulatedTheorem-fg: #5d3aa1;
+  --badge-EqualityTransitivity-bg: #ffe4e0;
+  --badge-EqualityTransitivity-fg: #b94d2f;
+  --badge-InferableFromSymmetry-bg: #fdf0e8;
+  --badge-InferableFromSymmetry-fg: #9a4f15;
+  --badge-DefinableSimpler-bg: #f0f4ff;
+  --badge-DefinableSimpler-fg: #4040a0;
+  --badge-other-bg: #eaeef2;
+  --badge-other-fg: #57606a;
+
+  /* Page chrome — slightly cooler than the original GitHub gray to feel more contemporary
+     and to sit calmly under indigo-accented Mantine controls. */
+  --page-bg: #f4f6fb;
+  --card-bg: #ffffff;
+  --border: #d0d7de;
+  --text: #1f2328;
+  --text-muted: #57606a;
+  --hover-bg: #f6f8fa;
+  --details-open-bg: #ddf4ff;
+  --preview-bg: #fff8c5;
+  --highlight-bg: #ffe4e0;
+}

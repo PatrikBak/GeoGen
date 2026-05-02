@@ -1,0 +1,509 @@
+/*
+ * Layout + component stylesheet for the GeoGen report viewer.
+ *
+ * Color palette lives in `colors.css` and is consumed via CSS custom properties (var(--…)).
+ * Behavior split:
+ *   - This file: structure, spacing, typography, default and hover backgrounds, sticky layout.
+ *   - colors.css: the actual hex values for theorem-type and badge palettes.
+ *
+ * Naming follows the original HTML report so DOM produced by the React port can reuse identical
+ * class names. The two side-by-side selectors `.diagram-line.color-X` etc. in particular form a
+ * matrix that's easier to read with each rule on its own line.
+ */
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text);
+  background: var(--page-bg);
+  line-height: 1.5;
+}
+
+/* ------------------------------------------------------------------ Header */
+
+header {
+  position: sticky;
+  top: 0;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+header h1 { margin: 0 0 0.5rem; font-size: 1.25rem; }
+
+#filter {
+  width: 100%;
+  max-width: 480px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+/* ----------------------------------------------------- Section card chrome */
+
+/*
+ * Section cards. Soft shadow + rounded 8px corners replace the original 1px border, matching
+ * Mantine's Paper/Card surfaces so the chrome and the report body share one design language.
+ * The thin top border kept for separation against light backgrounds without committing to a
+ * full outline.
+ */
+section {
+  background: var(--card-bg);
+  margin: 0 0 1rem 0;
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+section h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.muted { color: var(--text-muted); font-weight: normal; }
+
+/* ----------------------------------------------------- Two-column layout */
+/*
+ * On wide screens the diagram is sticky on the right while the proved/unproved/trace sections
+ * scroll on the left. Below 1100px the grid collapses to a single column and the diagram
+ * stacks above its sections (no longer sticky — sticky inside a non-scrolling block does
+ * nothing useful).
+ */
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 1100px) {
+  .main-layout { grid-template-columns: minmax(0, 1fr) 520px; }
+}
+
+/* min-width: 0 guards against grid items that won't shrink due to long monospace strings. */
+.main-content { min-width: 0; }
+
+.diagram-aside { padding: 0; }
+@media (max-width: 1099px) {
+  .diagram-aside { padding-top: 0; }
+}
+
+.diagram-sticky {
+  position: sticky;
+  top: 110px;
+  background: var(--card-bg);
+  padding: 1.25rem 1.5rem;
+  border-radius: 8px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+.diagram-sticky h2 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.diagram-status {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  min-height: 2.5em;
+  padding: 0.5rem 0.75rem;
+  background: var(--page-bg);
+  border-radius: 6px;
+}
+
+/* ----------------------------------------------------- Summary stats grid */
+
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; }
+.stat { background: var(--page-bg); padding: 0.75rem; border-radius: 4px; }
+.stat.full { grid-column: 1 / -1; }
+.stat-label { font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.05em; }
+.stat-value { font-size: 1.15rem; font-weight: 600; margin-top: 0.25rem; word-break: break-word; }
+
+/* ----------------------------------------------------- Theorem lists */
+
+.theorem-list, .unproved-list, .to-prove-list { padding-left: 1.5rem; }
+
+.unproved-item, .to-prove-item {
+  cursor: pointer;
+  padding: 0.15rem 0.3rem;
+  border-radius: 3px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+}
+/*
+ * Hover background is purely CSS — the JS controller no longer pushes preview/highlight classes
+ * onto rows. Only :hover (the cursor itself is over the row) and .selected (the row was clicked
+ * to pin its diagram highlight) affect the row's own appearance. This is the fix for the visual
+ * storm that happened when one hover lit up every other row sharing object ids.
+ */
+.unproved-item:hover, .to-prove-item:hover { background: var(--hover-bg); }
+.unproved-item.selected, .to-prove-item.selected { background: var(--highlight-bg); }
+
+.theorem-item { margin-bottom: 0.5rem; }
+.theorem-item details > summary { cursor: pointer; padding: 0.4rem 0.5rem; border-radius: 4px; }
+.theorem-item details > summary:hover { background: var(--hover-bg); }
+.theorem-item details[open] > summary { background: var(--details-open-bg); }
+.theorem-item.selected > details > summary { background: var(--highlight-bg); }
+
+/*
+ * Left-edge accent bar: rows that carry a data-theorem-type get a 3px colored border on the
+ * left so theorem type is visible at a glance even when no badge is shown. Per-type overrides
+ * follow.
+ */
+.theorem-item[data-theorem-type],
+.unproved-item[data-theorem-type],
+.to-prove-item[data-theorem-type],
+.proof-step[data-theorem-type] {
+  border-left: 3px solid transparent;
+  padding-left: 0.5rem;
+}
+
+.theorem-item[data-theorem-type="ParallelLines"]      { border-left-color: var(--color-ParallelLines); }
+.theorem-item[data-theorem-type="PerpendicularLines"] { border-left-color: var(--color-PerpendicularLines); }
+.theorem-item[data-theorem-type="EqualLineSegments"]  { border-left-color: var(--color-EqualLineSegments); }
+.theorem-item[data-theorem-type="CollinearPoints"]    { border-left-color: var(--color-CollinearPoints); }
+.theorem-item[data-theorem-type="ConcyclicPoints"]    { border-left-color: var(--color-ConcyclicPoints); }
+.theorem-item[data-theorem-type="ConcurrentLines"]    { border-left-color: var(--color-ConcurrentLines); }
+.theorem-item[data-theorem-type="TangentCircles"]     { border-left-color: var(--color-TangentCircles); }
+.theorem-item[data-theorem-type="LineTangentToCircle"]{ border-left-color: var(--color-LineTangentToCircle); }
+.theorem-item[data-theorem-type="Incidence"]          { border-left-color: var(--color-Incidence); }
+.theorem-item[data-theorem-type="EqualObjects"]       { border-left-color: var(--color-EqualObjects); }
+
+.unproved-item[data-theorem-type="ParallelLines"]      { border-left-color: var(--color-ParallelLines); }
+.unproved-item[data-theorem-type="PerpendicularLines"] { border-left-color: var(--color-PerpendicularLines); }
+.unproved-item[data-theorem-type="EqualLineSegments"]  { border-left-color: var(--color-EqualLineSegments); }
+.unproved-item[data-theorem-type="CollinearPoints"]    { border-left-color: var(--color-CollinearPoints); }
+.unproved-item[data-theorem-type="ConcyclicPoints"]    { border-left-color: var(--color-ConcyclicPoints); }
+.unproved-item[data-theorem-type="ConcurrentLines"]    { border-left-color: var(--color-ConcurrentLines); }
+.unproved-item[data-theorem-type="TangentCircles"]     { border-left-color: var(--color-TangentCircles); }
+.unproved-item[data-theorem-type="LineTangentToCircle"]{ border-left-color: var(--color-LineTangentToCircle); }
+.unproved-item[data-theorem-type="Incidence"]          { border-left-color: var(--color-Incidence); }
+.unproved-item[data-theorem-type="EqualObjects"]       { border-left-color: var(--color-EqualObjects); }
+
+.to-prove-item[data-theorem-type="ParallelLines"]      { border-left-color: var(--color-ParallelLines); }
+.to-prove-item[data-theorem-type="PerpendicularLines"] { border-left-color: var(--color-PerpendicularLines); }
+.to-prove-item[data-theorem-type="EqualLineSegments"]  { border-left-color: var(--color-EqualLineSegments); }
+.to-prove-item[data-theorem-type="CollinearPoints"]    { border-left-color: var(--color-CollinearPoints); }
+.to-prove-item[data-theorem-type="ConcyclicPoints"]    { border-left-color: var(--color-ConcyclicPoints); }
+.to-prove-item[data-theorem-type="ConcurrentLines"]    { border-left-color: var(--color-ConcurrentLines); }
+.to-prove-item[data-theorem-type="TangentCircles"]     { border-left-color: var(--color-TangentCircles); }
+.to-prove-item[data-theorem-type="LineTangentToCircle"]{ border-left-color: var(--color-LineTangentToCircle); }
+.to-prove-item[data-theorem-type="Incidence"]          { border-left-color: var(--color-Incidence); }
+.to-prove-item[data-theorem-type="EqualObjects"]       { border-left-color: var(--color-EqualObjects); }
+
+.proof-step[data-theorem-type="ParallelLines"]      { border-left-color: var(--color-ParallelLines); }
+.proof-step[data-theorem-type="PerpendicularLines"] { border-left-color: var(--color-PerpendicularLines); }
+.proof-step[data-theorem-type="EqualLineSegments"]  { border-left-color: var(--color-EqualLineSegments); }
+.proof-step[data-theorem-type="CollinearPoints"]    { border-left-color: var(--color-CollinearPoints); }
+.proof-step[data-theorem-type="ConcyclicPoints"]    { border-left-color: var(--color-ConcyclicPoints); }
+.proof-step[data-theorem-type="ConcurrentLines"]    { border-left-color: var(--color-ConcurrentLines); }
+.proof-step[data-theorem-type="TangentCircles"]     { border-left-color: var(--color-TangentCircles); }
+.proof-step[data-theorem-type="LineTangentToCircle"]{ border-left-color: var(--color-LineTangentToCircle); }
+.proof-step[data-theorem-type="Incidence"]          { border-left-color: var(--color-Incidence); }
+.proof-step[data-theorem-type="EqualObjects"]       { border-left-color: var(--color-EqualObjects); }
+
+/* Play button — green so it stands out against the row background. */
+.play-btn {
+  background: #1f883d;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 0.05rem 0.4rem;
+  margin-right: 0.4rem;
+  cursor: pointer;
+  font-size: 0.75rem;
+}
+.play-btn:hover { background: #1a7a35; }
+
+/* ----------------------------------------------------- Proof tree */
+
+.proof-tree {
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  padding: 0.75rem 1rem;
+  border-left: 3px solid var(--mantine-color-indigo-2, #c7d2fe);
+  background: var(--page-bg);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.proof-step {
+  padding: 0.15rem 0.3rem;
+  border-radius: 3px;
+  cursor: pointer;
+}
+/* Lighter hover than other rows since the proof tree itself sits on a gray background. */
+.proof-step:hover { background: var(--card-bg); }
+.proof-step.selected { background: var(--highlight-bg); }
+
+.theorem { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.9em; }
+
+/* ----------------------------------------------------- Badges */
+
+.badge {
+  display: inline-block;
+  padding: 0.05rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+}
+.badge.assumed  { background: var(--badge-AssumedProven-bg);          color: var(--badge-AssumedProven-fg); }
+.badge.trivial  { background: var(--badge-TrivialTheorem-bg);         color: var(--badge-TrivialTheorem-fg); }
+.badge.custom   { background: var(--badge-CustomRule-bg);             color: var(--badge-CustomRule-fg); }
+.badge.reform   { background: var(--badge-ReformulatedTheorem-bg);    color: var(--badge-ReformulatedTheorem-fg); }
+.badge.transit  { background: var(--badge-EqualityTransitivity-bg);   color: var(--badge-EqualityTransitivity-fg); }
+.badge.sym      { background: var(--badge-InferableFromSymmetry-bg);  color: var(--badge-InferableFromSymmetry-fg); }
+.badge.simpler  { background: var(--badge-DefinableSimpler-bg);       color: var(--badge-DefinableSimpler-fg); }
+.badge.other    { background: var(--badge-other-bg);                  color: var(--badge-other-fg); }
+
+/* ----------------------------------------------------- Trace table */
+
+.trace-section { margin-top: 1.5rem; }
+/* Cap the trace at 60vh of vertical space so the diagram stays in view; rest scrolls. */
+.trace-scroll { max-height: 60vh; overflow: auto; border-top: 1px solid var(--border); }
+
+table.trace-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; table-layout: fixed; }
+.trace-table th, .trace-table td { padding: 0.4rem 0.6rem; text-align: left; border-bottom: 1px solid #eaeef2; vertical-align: top; }
+.trace-table th {
+  background: var(--page-bg);
+  cursor: pointer;
+  user-select: none;
+  position: sticky;
+  top: 0;
+}
+.trace-table th:hover { background: #eaeef2; }
+.trace-table th.num, .trace-table td.num { text-align: right; font-variant-numeric: tabular-nums; color: var(--text-muted); }
+.trace-table tbody tr { cursor: pointer; }
+.trace-table tbody tr:hover { background: var(--page-bg); }
+.trace-table tbody tr.selected { background: var(--highlight-bg); }
+.trace-text { background: transparent; padding: 0; word-break: break-word; white-space: normal; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.trace-assumptions { display: flex; flex-direction: column; gap: 2px; }
+.trace-assumptions .trace-text { font-size: 0.78rem; }
+.trace-custom-rule {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Generic fallback for any row type that opted into the click-to-pin model via [data-row]. */
+[data-row].selected { background: var(--highlight-bg); }
+
+/* ----------------------------------------------------- Step-count badge (proved theorems) */
+
+.step-count-badge {
+  display: inline-block;
+  background: #eef2f7;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 1px 6px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+/* ----------------------------------------------------- Filter behavior */
+
+.filterable.hidden { display: none; }
+
+/* ----------------------------------------------------- Collapsible sections */
+
+/* The To-Prove and Trace sections start collapsed. Wrap their h2 in a clickable summary so the
+   header itself is the toggle, with a small disclosure caret. */
+.collapsible-section > details > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+.collapsible-section > details > summary::-webkit-details-marker { display: none; }
+.collapsible-section > details > summary > h2 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.collapsible-section > details > summary > h2::before {
+  content: "▸";
+  font-size: 0.8em;
+  color: var(--text-muted);
+  transition: transform 120ms ease;
+  display: inline-block;
+}
+.collapsible-section > details[open] > summary > h2::before {
+  transform: rotate(90deg);
+}
+
+/* ----------------------------------------------------- Step controls */
+
+.step-controls {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.step-controls button {
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.step-controls button:hover { background: var(--page-bg); }
+.step-controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ----------------------------------------------------- Color legend */
+
+.color-legend { margin-top: 0.75rem; font-size: 0.78rem; color: var(--text-muted); }
+.color-legend-item { display: inline-flex; align-items: center; margin-right: 0.75rem; margin-bottom: 0.2rem; }
+.color-legend-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 0.3rem; }
+
+/* ----------------------------------------------------- Configuration block */
+
+.config {
+  background: var(--page-bg);
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.config-line { padding: 0.1rem 0.3rem; border-radius: 3px; cursor: pointer; }
+.config-line:hover { background: var(--details-open-bg); }
+.config-line.selected { background: var(--highlight-bg); }
+/* Purple keyword/construction names — distinct from the per-theorem-type palette. */
+.config-keyword, .config-construction { color: #6f42c1; font-weight: 600; }
+.config-token { padding: 0 0.15rem; border-radius: 2px; cursor: pointer; }
+.config-token:hover { background: var(--details-open-bg); }
+.config-token.selected { background: var(--highlight-bg); }
+
+/* ----------------------------------------------------- Upload page */
+
+.upload-zone {
+  max-width: 600px;
+  margin: 4rem auto;
+  padding: 3rem 2rem;
+  text-align: center;
+  border: 2px dashed var(--border);
+  border-radius: 8px;
+  background: var(--card-bg);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--badge-CustomRule-fg);
+  background: var(--badge-CustomRule-bg);
+}
+.upload-zone h2 { margin-top: 0; font-size: 1.1rem; }
+.upload-zone p { color: var(--text-muted); margin: 0.5rem 0; }
+
+.manifest-list {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+.manifest-list table { width: 100%; border-collapse: collapse; }
+.manifest-list th, .manifest-list td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+}
+.manifest-list th { background: var(--page-bg); }
+.manifest-list td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.manifest-list a { color: var(--badge-CustomRule-fg); text-decoration: none; }
+.manifest-list a:hover { text-decoration: underline; }
+
+/* ============================================================== Diagram */
+/*
+ * Default styling: muted grays so the colored highlight states stand out. The size+color split
+ * is intentional — `.preview`/`.highlight`/`.step-active` only adjust stroke-width, while
+ * `.color-X` classes set the actual stroke/fill. Step-active overrides color to amber.
+ *
+ * pointer-events: none on labels prevents them from absorbing hover/click events on the dot
+ * underneath; the dot's own listeners handle the row interaction.
+ */
+
+.diagram {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-width: 100%;
+  display: block;
+}
+.diagram-line     { stroke: #6e7781; stroke-width: 1.5; fill: none; }
+.diagram-segment  { stroke: #1f2328; stroke-width: 1.75; fill: none; }
+.diagram-circle   { stroke: #6e7781; stroke-width: 1.5; fill: none; }
+.diagram-point    { fill: #1f2328; stroke: #ffffff; stroke-width: 1.5; }
+.diagram-label    { fill: #1f2328; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; pointer-events: none; }
+
+/* Width-only intensity tiers (hover < sticky < animation step). */
+.diagram-line.preview, .diagram-segment.preview, .diagram-circle.preview { stroke-width: 3; }
+.diagram-line.highlight, .diagram-segment.highlight, .diagram-circle.highlight { stroke-width: 3.5; }
+.diagram-line.step-active, .diagram-segment.step-active, .diagram-circle.step-active { stroke-width: 4; }
+.diagram-label.preview, .diagram-label.highlight, .diagram-label.step-active { font-weight: 700; }
+
+/* Default highlight color (rows without a known theorem type — config tokens, etc.). */
+.diagram-line.preview, .diagram-segment.preview, .diagram-circle.preview { stroke: var(--color-default); }
+.diagram-point.preview { fill: var(--color-default); }
+.diagram-label.preview { fill: var(--color-default); }
+.diagram-line.highlight, .diagram-segment.highlight, .diagram-circle.highlight { stroke: var(--color-default); }
+.diagram-point.highlight { fill: var(--color-default); }
+.diagram-label.highlight { fill: var(--color-default); }
+
+/* Per-theorem-type colors. Each block sets stroke (for lines/segments/circles), fill (points),
+   and fill (labels). Order mirrors colors.css for easy diffing. */
+.diagram-line.color-ParallelLines, .diagram-segment.color-ParallelLines, .diagram-circle.color-ParallelLines { stroke: var(--color-ParallelLines); }
+.diagram-point.color-ParallelLines { fill: var(--color-ParallelLines); }
+.diagram-label.color-ParallelLines { fill: var(--color-ParallelLines); }
+
+.diagram-line.color-PerpendicularLines, .diagram-segment.color-PerpendicularLines, .diagram-circle.color-PerpendicularLines { stroke: var(--color-PerpendicularLines); }
+.diagram-point.color-PerpendicularLines { fill: var(--color-PerpendicularLines); }
+.diagram-label.color-PerpendicularLines { fill: var(--color-PerpendicularLines); }
+
+.diagram-line.color-EqualLineSegments, .diagram-segment.color-EqualLineSegments, .diagram-circle.color-EqualLineSegments { stroke: var(--color-EqualLineSegments); }
+.diagram-point.color-EqualLineSegments { fill: var(--color-EqualLineSegments); }
+.diagram-label.color-EqualLineSegments { fill: var(--color-EqualLineSegments); }
+
+.diagram-line.color-CollinearPoints, .diagram-segment.color-CollinearPoints, .diagram-circle.color-CollinearPoints { stroke: var(--color-CollinearPoints); }
+.diagram-point.color-CollinearPoints { fill: var(--color-CollinearPoints); }
+.diagram-label.color-CollinearPoints { fill: var(--color-CollinearPoints); }
+
+.diagram-line.color-ConcyclicPoints, .diagram-segment.color-ConcyclicPoints, .diagram-circle.color-ConcyclicPoints { stroke: var(--color-ConcyclicPoints); }
+.diagram-point.color-ConcyclicPoints { fill: var(--color-ConcyclicPoints); }
+.diagram-label.color-ConcyclicPoints { fill: var(--color-ConcyclicPoints); }
+
+.diagram-line.color-ConcurrentLines, .diagram-segment.color-ConcurrentLines, .diagram-circle.color-ConcurrentLines { stroke: var(--color-ConcurrentLines); }
+.diagram-point.color-ConcurrentLines { fill: var(--color-ConcurrentLines); }
+.diagram-label.color-ConcurrentLines { fill: var(--color-ConcurrentLines); }
+
+.diagram-line.color-TangentCircles, .diagram-segment.color-TangentCircles, .diagram-circle.color-TangentCircles { stroke: var(--color-TangentCircles); }
+.diagram-point.color-TangentCircles { fill: var(--color-TangentCircles); }
+.diagram-label.color-TangentCircles { fill: var(--color-TangentCircles); }
+
+.diagram-line.color-LineTangentToCircle, .diagram-segment.color-LineTangentToCircle, .diagram-circle.color-LineTangentToCircle { stroke: var(--color-LineTangentToCircle); }
+.diagram-point.color-LineTangentToCircle { fill: var(--color-LineTangentToCircle); }
+.diagram-label.color-LineTangentToCircle { fill: var(--color-LineTangentToCircle); }
+
+.diagram-line.color-Incidence, .diagram-segment.color-Incidence, .diagram-circle.color-Incidence { stroke: var(--color-Incidence); }
+.diagram-point.color-Incidence { fill: var(--color-Incidence); }
+.diagram-label.color-Incidence { fill: var(--color-Incidence); }
+
+.diagram-line.color-EqualObjects, .diagram-segment.color-EqualObjects, .diagram-circle.color-EqualObjects { stroke: var(--color-EqualObjects); }
+.diagram-point.color-EqualObjects { fill: var(--color-EqualObjects); }
+.diagram-label.color-EqualObjects { fill: var(--color-EqualObjects); }
+
+/* Step-active wins over type color so "this is the current step" is unambiguous regardless of
+   which theorem type is being animated. Listed last so cascade order picks it up. */
+.diagram-line.step-active, .diagram-segment.step-active, .diagram-circle.step-active { stroke: var(--color-step-active); }
+.diagram-point.step-active { fill: var(--color-step-active); }
+.diagram-label.step-active { fill: var(--color-step-active); }

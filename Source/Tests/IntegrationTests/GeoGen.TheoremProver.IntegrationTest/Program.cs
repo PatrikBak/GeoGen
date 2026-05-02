@@ -86,13 +86,14 @@ namespace GeoGen.TheoremProver.IntegrationTest
             var inferenceTracer = new CollectingInferenceTracer();
             kernel.Rebind<IInferenceTracer>().ToConstant(inferenceTracer);
 
-            // Prepare an HTML reports folder next to the binary. We clear it on each run so stale
-            // reports never linger.
-            var reportsFolder = Path.Combine(AppContext.BaseDirectory, "reports");
+            // Prepare a JSON reports folder next to the binary. The standalone web viewer in
+            // Web/geogen-viewer/ consumes this output. We clear it on each run so stale reports
+            // never linger.
+            var reportsFolder = Path.Combine(AppContext.BaseDirectory, "json-reports");
             if (Directory.Exists(reportsFolder))
                 Directory.Delete(reportsFolder, recursive: true);
             Directory.CreateDirectory(reportsFolder);
-            var indexEntries = new List<(string Name, int Proved, int Unproved, int TraceEvents, long ElapsedMs)>();
+            var manifestEntries = new List<Json.ManifestEntry>();
 
             // Take the tests
             new (string Name, Configuration Configuration)[]
@@ -193,7 +194,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
                 #endregion
 
-                #region HTML report
+                #region JSON report
 
                 // Pull this scenario's trace events out of the collector. DrainSession matches by
                 // configuration reference, so we never accidentally pick up another scenario's events.
@@ -212,46 +213,31 @@ namespace GeoGen.TheoremProver.IntegrationTest
                     Console.WriteLine($"  (diagram build failed: {e.Message})");
                 }
 
-                // Render and write the per-scenario report.
+                // Serialize the scenario into the v1 JSON schema. The exporter handles id assignment,
+                // theorem deduplication, and proof-tree flattening; we just hand it the live objects.
                 var unproved = theorems.AllObjects.Except(proverOutput.Keys).ToArray();
-                var html = HtmlReportRenderer.Render(scenarioName, configuration, formatter, proverOutput, unproved, session, totalTime.ElapsedMilliseconds, diagram);
-                var reportPath = Path.Combine(reportsFolder, $"{scenarioName}.html");
-                File.WriteAllText(reportPath, html);
-                Console.WriteLine($"HTML report: {reportPath}");
+                var manifestEntry = Json.JsonReportExporter.WriteScenario(
+                    outputFolder: reportsFolder,
+                    scenarioName: scenarioName,
+                    configuration: configuration,
+                    formatter: formatter,
+                    proofs: proverOutput,
+                    unprovedTheorems: unproved,
+                    trace: session,
+                    elapsedMs: totalTime.ElapsedMilliseconds,
+                    diagram: diagram);
+                Console.WriteLine($"JSON report: {Path.Combine(reportsFolder, manifestEntry.File)}");
 
-                indexEntries.Add((scenarioName, proverOutput.Count, unproved.Length, session?.Events.Count ?? 0, totalTime.ElapsedMilliseconds));
+                manifestEntries.Add(manifestEntry);
 
                 #endregion
             });
 
-            // Write index.html linking each per-scenario report.
-            WriteIndexHtml(reportsFolder, indexEntries);
-            Console.WriteLine($"Index: {Path.Combine(reportsFolder, "index.html")}");
+            // Write the top-level manifest linking each per-scenario file.
+            Json.JsonReportExporter.WriteManifest(reportsFolder, manifestEntries, geogenCommit: null);
+            Console.WriteLine($"Manifest: {Path.Combine(reportsFolder, "manifest.json")}");
 
             #endregion
-        }
-
-        /// <summary>
-        /// Build a small index page listing every per-scenario report with summary counts.
-        /// </summary>
-        private static void WriteIndexHtml(string folder, IReadOnlyList<(string Name, int Proved, int Unproved, int TraceEvents, long ElapsedMs)> entries)
-        {
-            var sb = new System.Text.StringBuilder();
-            sb.AppendLine("<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>GeoGen Prover — Reports</title>");
-            sb.AppendLine("<style>body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;margin:2rem;color:#1f2328;}h1{font-size:1.3rem;}");
-            sb.AppendLine("table{border-collapse:collapse;width:100%;}th,td{padding:0.5rem 0.75rem;border-bottom:1px solid #d0d7de;text-align:left;}");
-            sb.AppendLine("th{background:#f6f8fa;}td.num{text-align:right;font-variant-numeric:tabular-nums;}a{color:#0969da;text-decoration:none;}a:hover{text-decoration:underline;}</style></head><body>");
-            sb.AppendLine("<h1>GeoGen Prover — Integration Test Reports</h1>");
-            sb.AppendLine("<table><thead><tr><th>Scenario</th><th>Proved</th><th>Unproved</th><th>Trace events</th><th>Elapsed (ms)</th></tr></thead><tbody>");
-            foreach (var entry in entries)
-            {
-                sb.Append($"<tr><td><a href=\"{System.Net.WebUtility.HtmlEncode(entry.Name)}.html\">{System.Net.WebUtility.HtmlEncode(entry.Name)}</a></td>");
-                sb.Append($"<td class=\"num\">{entry.Proved}</td><td class=\"num\">{entry.Unproved}</td>");
-                sb.Append($"<td class=\"num\">{entry.TraceEvents}</td><td class=\"num\">{entry.ElapsedMs}</td></tr>");
-                sb.AppendLine();
-            }
-            sb.AppendLine("</tbody></table></body></html>");
-            File.WriteAllText(Path.Combine(folder, "index.html"), sb.ToString());
         }
 
         #region Test configurations
