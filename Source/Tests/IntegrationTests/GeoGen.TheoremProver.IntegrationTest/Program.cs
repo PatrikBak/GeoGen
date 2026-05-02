@@ -80,22 +80,42 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             #region Tests
 
+            // Set up a collecting tracer that the prover will feed inference events to. We rebind the
+            // IInferenceTracer binding (defaulted to EmptyInferenceTracer in AddTheoremProver) to a
+            // singleton CollectingInferenceTracer so events captured by the prover are visible here.
+            var inferenceTracer = new CollectingInferenceTracer();
+            kernel.Rebind<IInferenceTracer>().ToConstant(inferenceTracer);
+
+            // Prepare a JSON reports folder next to the binary. The standalone web viewer in
+            // Web/geogen-viewer/ consumes this output. We clear it on each run so stale reports
+            // never linger.
+            var reportsFolder = Path.Combine(AppContext.BaseDirectory, "json-reports");
+            if (Directory.Exists(reportsFolder))
+                Directory.Delete(reportsFolder, recursive: true);
+            Directory.CreateDirectory(reportsFolder);
+            var manifestEntries = new List<Json.ManifestEntry>();
+
             // Take the tests
-            new[]
+            new (string Name, Configuration Configuration)[]
             {
-                PerpendicularBisectorsAreConcurrent(),
-                IncenterAndTangentLine(),
-                Midpoints(),
-                Parallelogram(),
-                HiddenExcenter(),
-                HiddenMidpoint(),
-                LineTangentToCircle(),
-                ConcurrencyViaObjectIntroduction(),
-                SimpleLineSegments()
+                (nameof(PerpendicularBisectorsAreConcurrent), PerpendicularBisectorsAreConcurrent()),
+                (nameof(IncenterAndTangentLine), IncenterAndTangentLine()),
+                (nameof(Midpoints), Midpoints()),
+                (nameof(Parallelogram), Parallelogram()),
+                (nameof(HiddenExcenter), HiddenExcenter()),
+                (nameof(HiddenMidpoint), HiddenMidpoint()),
+                (nameof(LineTangentToCircle), LineTangentToCircle()),
+                (nameof(ConcurrencyViaObjectIntroduction), ConcurrencyViaObjectIntroduction()),
+                (nameof(SimpleLineSegments), SimpleLineSegments()),
+                (nameof(IncenterMedianConcurrency), IncenterMedianConcurrency()),
+                (nameof(IncenterContactPoints), IncenterContactPoints()),
+                (nameof(OrthicTriangle), OrthicTriangle()),
+                (nameof(OrthicTriangleConcyclic), OrthicTriangleConcyclic()),
             }
             // Perform each
-            .ForEach(configuration =>
+            .ForEach(scenario =>
             {
+                var (scenarioName, configuration) = scenario;
                 #region Finding theorems
 
                 // Prepare 3 pictures in which the configuration is drawn
@@ -175,7 +195,49 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 Console.WriteLine("----------------------------------------------");
 
                 #endregion
+
+                #region JSON report
+
+                // Pull this scenario's trace events out of the collector. DrainSession matches by
+                // configuration reference, so we never accidentally pick up another scenario's events.
+                var session = inferenceTracer.DrainSession(configuration);
+
+                // Build the diagram from the first of the three constructed pictures. Picture 0 is
+                // the one used for theorem finding; using it here means the diagram coordinates
+                // match the analytical state the prover saw.
+                Diagram.DiagramModel diagram = null;
+                try
+                {
+                    diagram = Diagram.DiagramBuilder.Build(pictures.First(), formatter, configuration, theorems.AllObjects);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"  (diagram build failed: {e.Message})");
+                }
+
+                // Serialize the scenario into the v1 JSON schema. The exporter handles id assignment,
+                // theorem deduplication, and proof-tree flattening; we just hand it the live objects.
+                var unproved = theorems.AllObjects.Except(proverOutput.Keys).ToArray();
+                var manifestEntry = Json.JsonReportExporter.WriteScenario(
+                    outputFolder: reportsFolder,
+                    scenarioName: scenarioName,
+                    configuration: configuration,
+                    formatter: formatter,
+                    proofs: proverOutput,
+                    unprovedTheorems: unproved,
+                    trace: session,
+                    elapsedMs: totalTime.ElapsedMilliseconds,
+                    diagram: diagram);
+                Console.WriteLine($"JSON report: {Path.Combine(reportsFolder, manifestEntry.File)}");
+
+                manifestEntries.Add(manifestEntry);
+
+                #endregion
             });
+
+            // Write the top-level manifest linking each per-scenario file.
+            Json.JsonReportExporter.WriteManifest(reportsFolder, manifestEntries);
+            Console.WriteLine($"Manifest: {Path.Combine(reportsFolder, "manifest.json")}");
 
             #endregion
         }
@@ -307,6 +369,90 @@ namespace GeoGen.TheoremProver.IntegrationTest
             var E = new ConstructedConfigurationObject(PerpendicularProjection, C, l);
             var F = new ConstructedConfigurationObject(Midpoint, B, D);
             var G = new ConstructedConfigurationObject(Midpoint, C, E);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the incenter and the three contact points — i.e., the incircle's
+        /// touchpoints on each side, expressed as perpendicular projections from the incenter.
+        /// This is the canonical "incenter + contact triangle" setup that GeoGen's iteration phase
+        /// uses as a starting point for problem generation; here we just expose the initial state
+        /// to the prover and see what falls out.
+        /// </summary>
+        private static Configuration IncenterContactPoints()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            // Auto-naming: incenter renders as "D", projections as "E", "F", "G".
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, C);
+            var G = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, B);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, I, E, F, G);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the incenter, the three contact points (perpendicular projections from
+        /// the incenter onto each side), and the median from A. The interesting theorem on this
+        /// configuration is that the line through the incenter and one contact point, the line
+        /// through the other two contact points, and the median from A are concurrent.
+        /// </summary>
+        private static Configuration IncenterMedianConcurrency()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            // Auto-naming labels these in declaration order: incenter becomes "D" in rendered output,
+            // the three projections become "E", "F", "G", and the median (only line) becomes "l".
+            var I = new ConstructedConfigurationObject(Incenter, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, B, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, C);
+            var G = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, I, A, B);
+            var l = new ConstructedConfigurationObject(Median, A, B, C);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, I, E, F, G, l);
+        }
+
+        /// <summary>
+        /// Triangle ABC with the three altitude feet — i.e., perpendicular projections of each
+        /// vertex onto the opposite side. Together D, E, F form the orthic triangle.
+        /// </summary>
+        private static Configuration OrthicTriangle()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, C, A, B);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F);
+        }
+
+        /// <summary>
+        /// Orthic triangle (D, E, F as altitude feet) plus G = circumcenter of (A, E, F).
+        /// The interesting theorem on this configuration is that D, E, F, G are concyclic.
+        /// </summary>
+        private static Configuration OrthicTriangleConcyclic()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, A, B, C);
+            var E = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, B, A, C);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, C, A, B);
+            var G = new ConstructedConfigurationObject(Circumcenter, A, E, F);
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
