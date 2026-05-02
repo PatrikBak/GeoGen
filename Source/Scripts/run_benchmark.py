@@ -289,7 +289,18 @@ def main() -> int:
     baseline_dir = output_root.parent / f"Output-{args.compare_with.replace('/', '_')}"
     try:
         baseline_report = run_in_worktree(args.compare_with, args.mode, baseline_dir)
-    except (RuntimeError, subprocess.CalledProcessError) as e:
+    except RuntimeError as e:
+        msg = str(e)
+        if "no input files matched" in msg:
+            print(
+                f"skipping comparison: {args.compare_with} has no benchmark inputs "
+                "for this mode (probably predates the benchmark).",
+                file=sys.stderr,
+            )
+            return 0
+        print(f"comparison run failed: {e}", file=sys.stderr)
+        return 1
+    except subprocess.CalledProcessError as e:
         print(f"comparison run failed: {e}", file=sys.stderr)
         return 1
 
