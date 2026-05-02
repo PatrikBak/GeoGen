@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""Aggregate prover benchmark results into a markdown/text report.
+"""Aggregate prover benchmark results into a structured JSON report.
 
-Reads ``ReadableWithProofs/output_*.txt`` files produced by ``GeoGen.MainLauncher``
-together with the cumulative ``inference_rule_usages.txt`` and emits a summary:
-
-* per input file: theorems found / proved / unproved
-* globally: top-N inference rules by usage count
+Reads ``ReadableWithProofs/output*.txt`` files produced by ``GeoGen.MainLauncher``
+together with ``inference_rule_usages.txt`` files and writes a JSON document
+covering theorems found / proved / unproved per input, totals, and inference
+rule usage (with unused rules listed separately).
 """
 
 from __future__ import annotations
 
 import argparse
+import json
 import re
 import sys
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 from pathlib import Path
 
 THEOREM_LINE_RE = re.compile(r"^\s*\d+\.\s")
@@ -47,14 +47,11 @@ def parse_readable_with_proofs(path: Path) -> InputStats:
             continue
 
         if not raw.strip():
-            # blank line ends the current section's "first numbered list"
-            # but proofs span multiple lines, so we only switch via headers above
             continue
 
-        # Theorem entries always start with " <n>. " at top level.
-        # Sub-proof lines for the "Proved theorems" section look like
-        # "  <n>.<m>. ..." which start with two spaces and a multi-dotted index.
-        # We only count top-level entries: 1-space indent + single-dot index.
+        # Top-level theorem lines start with a single space + "<n>.".
+        # Nested proof lines start with two spaces and a multi-dotted index;
+        # only the top-level lines should count.
         if not raw.startswith(" "):
             section = None
             continue
@@ -87,58 +84,37 @@ def parse_rule_usages(paths: list[Path]) -> list[tuple[str, int]]:
     return sorted(totals.items(), key=lambda pair: (-pair[1], pair[0]))
 
 
-def render(stats: list[InputStats], rules: list[tuple[str, int]], top_n: int | None) -> str:
-    lines: list[str] = []
-    lines.append("# Prover Benchmark Report")
-    lines.append("")
-    lines.append("## Theorems per input")
-    lines.append("")
-    lines.append("| Input | Found | Proved | Unproved | Excluded (symmetry) |")
-    lines.append("|---|---:|---:|---:|---:|")
-    totals = InputStats(name="TOTAL")
+def build_report(stats: list[InputStats], rules: list[tuple[str, int]]) -> dict:
+    total = InputStats(name="TOTAL")
     for s in stats:
-        lines.append(
-            f"| {s.name} | {s.found} | {s.proved} | {s.unproved} | {s.excluded} |"
-        )
-        totals.proved += s.proved
-        totals.unproved += s.unproved
-        totals.excluded += s.excluded
-    lines.append(
-        f"| **{totals.name}** | **{totals.found}** | **{totals.proved}** | "
-        f"**{totals.unproved}** | **{totals.excluded}** |"
-    )
+        total.proved += s.proved
+        total.unproved += s.unproved
+        total.excluded += s.excluded
 
-    used = [(n, c) for n, c in rules if c > 0]
-    unused = [n for n, c in rules if c == 0]
+    inputs_payload = [
+        {
+            "name": s.name,
+            "found": s.found,
+            "proved": s.proved,
+            "unproved": s.unproved,
+            "excluded": s.excluded,
+        }
+        for s in stats
+    ]
+    totals_payload = {
+        "found": total.found,
+        "proved": total.proved,
+        "unproved": total.unproved,
+        "excluded": total.excluded,
+    }
+    used = [{"rule": name, "count": count} for name, count in rules if count > 0]
+    unused = sorted(name for name, count in rules if count == 0)
 
-    lines.append("")
-    if top_n is None:
-        shown = used
-        heading = f"## All inference rules used ({len(used)})"
-    else:
-        shown = used[:top_n]
-        heading = f"## Top {top_n} inference rules used"
-    lines.append(heading)
-    lines.append("")
-    if not used:
-        lines.append("_No rule usage data found._")
-    else:
-        lines.append("| # | Count | Rule |")
-        lines.append("|---:|---:|---|")
-        for i, (name, count) in enumerate(shown, start=1):
-            lines.append(f"| {i} | {count} | `{name}` |")
-
-    lines.append("")
-    lines.append(f"## Unused inference rules ({len(unused)})")
-    lines.append("")
-    if not unused:
-        lines.append("_None — every loaded rule fired at least once._")
-    else:
-        for name in sorted(unused):
-            lines.append(f"- `{name}`")
-
-    lines.append("")
-    return "\n".join(lines)
+    return {
+        "inputs": inputs_payload,
+        "totals": totals_payload,
+        "rules": {"used": used, "unused": unused},
+    }
 
 
 def main() -> int:
@@ -148,7 +124,7 @@ def main() -> int:
         action="append",
         required=True,
         type=Path,
-        help="Folder containing ReadableWithProofs/output_*.txt files. Repeatable.",
+        help="Folder containing ReadableWithProofs/output*.txt files. Repeatable.",
     )
     parser.add_argument(
         "--rule-usages",
@@ -160,19 +136,8 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=Path,
-        default=None,
-        help="Write the markdown report to this file as well as stdout",
-    )
-    parser.add_argument(
-        "--top-rules",
-        type=int,
-        default=15,
-        help="How many rules to include in the top-rules table (default 15)",
-    )
-    parser.add_argument(
-        "--all-rules",
-        action="store_true",
-        help="Include every inference rule with non-zero usage; overrides --top-rules.",
+        required=True,
+        help="Write the JSON report to this file.",
     )
     args = parser.parse_args()
 
@@ -199,12 +164,12 @@ def main() -> int:
         key=lambda s: s.name,
     )
     rules = parse_rule_usages(args.rule_usages)
+    report = build_report(stats, rules)
 
-    report = render(stats, rules, None if args.all_rules else args.top_rules)
-    print(report)
-    if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(report, encoding="utf-8")
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    with args.output.open("w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2)
+        f.write("\n")
     return 0
 
 

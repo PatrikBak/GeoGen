@@ -74,17 +74,28 @@ def run_launcher(stem: str, out_dir: Path) -> tuple[str, int]:
     return stem, rc
 
 
+MODE_INPUTS: dict[str, set[str] | None] = {
+    "very-fast": {"input_incenter"},
+    "fast": {"input_triangle_centroid"},
+    "slow": None,
+}
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--mode",
+        choices=sorted(MODE_INPUTS.keys()),
+        default="slow",
+        help=(
+            "Which inputs to run. very-fast: input_incenter (smoke test); "
+            "fast: input_triangle_centroid; slow: every input_*.txt (default)."
+        ),
+    )
     parser.add_argument(
         "--skip-build",
         action="store_true",
         help="Skip the dotnet build step (use existing binaries).",
-    )
-    parser.add_argument(
-        "--fast",
-        action="store_true",
-        help="Run only input_triangle_centroid (a single input) for a quick check.",
     )
     parser.add_argument(
         "--output-dir",
@@ -112,10 +123,11 @@ def main() -> int:
 
     inputs_dir = LAUNCHER_BIN / "ProverBenchmark" / "Inputs"
     stems = sorted(p.stem for p in inputs_dir.glob("input_*.txt"))
-    if args.fast:
-        stems = [s for s in stems if s == "input_triangle_centroid"]
+    selection = MODE_INPUTS[args.mode]
+    if selection is not None:
+        stems = [s for s in stems if s in selection]
     if not stems:
-        print(f"no input files found in {inputs_dir}", file=sys.stderr)
+        print(f"no input files matched mode={args.mode} under {inputs_dir}", file=sys.stderr)
         return 1
 
     step(f"Running {len(stems)} benchmark inputs in parallel: {' '.join(stems)}")
@@ -147,13 +159,12 @@ def main() -> int:
         d = output_root / stem
         report_args += ["--proofs-dir", _path_for_settings(d / "ReadableWithProofs")]
         report_args += ["--rule-usages", _path_for_settings(d / "inference_rule_usages.txt")]
-    report_path = output_root / "report.md"
+    report_path = output_root / "report.json"
     subprocess.run(
         [
             sys.executable,
             str(REPORT_SCRIPT),
             *report_args,
-            "--all-rules",
             "--output",
             _path_for_settings(report_path),
         ],

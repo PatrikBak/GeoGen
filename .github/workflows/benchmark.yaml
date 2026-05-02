@@ -31,47 +31,34 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Run benchmark on PR branch (fast)
-        run: python3 Source/Scripts/run_benchmark.py --fast
+      - name: Run benchmark on PR branch
+        run: python3 Source/Scripts/run_benchmark.py --mode fast
 
       - name: Stash PR-branch report
         run: |
           mkdir -p /tmp/bench-reports
-          cp Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md /tmp/bench-reports/branch.md
-          cp -r Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output /tmp/bench-reports/branch-output
+          cp Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.json /tmp/bench-reports/branch.json
 
       - name: Check out master into worktree
         run: |
           git fetch origin master:refs/remotes/origin/master
           git worktree add ../master-worktree origin/master
 
-      - name: Run benchmark on master (fast)
+      - name: Run benchmark on master
         working-directory: ../master-worktree
-        run: python3 Source/Scripts/run_benchmark.py --fast
+        run: python3 Source/Scripts/run_benchmark.py --mode fast
 
       - name: Stash master report
-        run: |
-          cp ../master-worktree/Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.md /tmp/bench-reports/master.md
-          cp -r ../master-worktree/Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output /tmp/bench-reports/master-output
+        run: cp ../master-worktree/Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.json /tmp/bench-reports/master.json
 
-      - name: Publish reports and diff to job summary
+      - name: Publish diff to job summary
         if: always()
         run: |
           {
-            echo '## Master report'
-            echo '```markdown'
-            cat /tmp/bench-reports/master.md 2>/dev/null || echo '(missing)'
+            echo '## Benchmark diff (master → PR branch)'
             echo '```'
-            echo
-            echo '## PR-branch report'
-            echo '```markdown'
-            cat /tmp/bench-reports/branch.md 2>/dev/null || echo '(missing)'
-            echo '```'
-            echo
-            echo '## Diff (master → PR branch)'
-            echo '```diff'
             python3 Source/Scripts/benchmark_diff.py \
-              /tmp/bench-reports/master.md /tmp/bench-reports/branch.md \
+              /tmp/bench-reports/master.json /tmp/bench-reports/branch.json \
               --baseline-label master \
               --current-label branch \
               2>&1 || true
