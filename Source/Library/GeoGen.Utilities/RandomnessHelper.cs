@@ -9,9 +9,12 @@
         #region Instance
 
         /// <summary>
-        /// The instance of the random numbers generator.
+        /// The instance of the random numbers generator. Seeded with a fixed value so that
+        /// runs are reproducible: the prover verifies candidate theorems numerically against
+        /// random point layouts, and a clock-seeded RNG would let marginal (near-tolerance)
+        /// theorems flip verdicts between runs.
         /// </summary>
-        private static readonly Random _random = new Random();
+        private static readonly Random _random = new Random(0);
 
         #endregion
 
