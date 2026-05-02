@@ -53,6 +53,36 @@ Unzip the downloaded archive and run the executable for your platform (e.g., `Ge
 - **[Input/Output Format Reference](InputOutputFormat.md)**: Complete technical specification including all constructions, input file formats, and output file structures.
 - **[Developer Guide](DeveloperGuide.md)**: Instructions for building the source code and running tests.
 
+## Prover Benchmark
+
+A reproducible benchmark of the theorem prover lives at [`Source/Launchers/GeoGen.MainLauncher/ProverBenchmark`](Source/Launchers/GeoGen.MainLauncher/ProverBenchmark), driven by `Source/Scripts/run_benchmark.py`. It builds the launcher, runs every input under `ProverBenchmark/Inputs/` in parallel, and aggregates a structured `report.json` with theorems found / proved / unproved per input plus inference-rule usage.
+
+Requires Python 3 and the .NET 10 SDK (same as the main build).
+
+Run from the repository root:
+
+```bash
+# All inputs, full benchmark (~5 minutes)
+python3 Source/Scripts/run_benchmark.py
+
+# Only the centroid input (~2.5 minutes)
+python3 Source/Scripts/run_benchmark.py --mode fast
+
+# Tiny smoke run (~10 seconds)
+python3 Source/Scripts/run_benchmark.py --mode very-fast
+```
+
+The report is written to `Source/Launchers/GeoGen.MainLauncher/bin/Release/net10.0/ProverBenchmark/Output/report.json`.
+
+To compare the current checkout against another git revision, add `--compare-with`. The script checks the revision out into a temporary worktree, runs the benchmark there, and prints a structured diff to stdout (per-input deltas, rule counts, used/unused transitions):
+
+```bash
+python3 Source/Scripts/run_benchmark.py --mode fast --compare-with origin/master
+python3 Source/Scripts/run_benchmark.py --mode fast --compare-with HEAD~5
+```
+
+The same script powers the optional CI workflow at `.github/workflows/benchmark.yaml`, which runs the fast benchmark on a PR branch and on `origin/master` and publishes the diff to the job summary.
+
 ## Contact
 
 If you are interested in my project, or if you have any other question, contact me via [email](mailto:patrik.bak.x@gmail.com).
