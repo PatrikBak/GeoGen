@@ -3,6 +3,10 @@
 c = CircleWithCenterThroughPoint(A,B)
   - draw Circle(c)
 
+c = CircleWithRadius(A,B,C)
+  - draw Circle(c)
+  - draw Segment(B,C) auxiliary
+
 c = CircleWithDiameter(A,B)
   - draw Circle(c)
   - draw Segment(A,B)
