@@ -22,6 +22,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
@@ -99,7 +100,7 @@ def write_settings_for(stem: str, out_dir: Path, ws: Workspace) -> Path:
     return dest
 
 
-def run_launcher(stem: str, out_dir: Path, ws: Workspace) -> tuple[str, int]:
+def run_launcher(stem: str, out_dir: Path, ws: Workspace) -> tuple[str, int, float]:
     for sub in ("ReadableWithoutProofs", "ReadableWithProofs", "JsonOutput",
                 "ReadableBestTheorems", "JsonBestTheorems"):
         (out_dir / sub).mkdir(parents=True, exist_ok=True)
@@ -108,6 +109,7 @@ def run_launcher(stem: str, out_dir: Path, ws: Workspace) -> tuple[str, int]:
     # The launcher's exit hook calls Console.ReadKey() unless $TERM is set,
     # which crashes when stdin is captured (CI, our subprocess pipe). Force it.
     env = {**os.environ, "TERM": os.environ.get("TERM", "dumb")}
+    started = time.monotonic()
     with log.open("wb") as f:
         rc = subprocess.run(
             ["dotnet", "GeoGen.dll", _path_for_settings(settings_file, ws)],
@@ -117,7 +119,8 @@ def run_launcher(stem: str, out_dir: Path, ws: Workspace) -> tuple[str, int]:
             stdin=subprocess.DEVNULL,
             env=env,
         ).returncode
-    return stem, rc
+    elapsed = time.monotonic() - started
+    return stem, rc, elapsed
 
 
 def run_benchmark(
@@ -153,6 +156,7 @@ def run_benchmark(
     step(f"Running {len(stems)} benchmark inputs in parallel: {' '.join(stems)}")
 
     failed: list[str] = []
+    runtimes: dict[str, float] = {}
     with ThreadPoolExecutor(max_workers=len(stems)) as pool:
         futures = {
             pool.submit(run_launcher, stem, output_root / stem, ws): stem
@@ -161,10 +165,12 @@ def run_benchmark(
         for stem in stems:
             print(f"    -> {stem}", flush=True)
         for future in as_completed(futures):
-            stem, rc = future.result()
+            stem, rc, elapsed = future.result()
+            runtimes[stem] = elapsed
             if rc != 0:
                 failed.append(stem)
-                print(f"    !! {stem} exited with rc={rc}", flush=True, file=sys.stderr)
+                print(f"    !! {stem} exited with rc={rc} after {elapsed:.1f}s",
+                      flush=True, file=sys.stderr)
                 stdout_log = output_root / stem / "stdout.log"
                 if stdout_log.exists():
                     tail = stdout_log.read_text(errors="replace").splitlines()[-200:]
@@ -174,6 +180,8 @@ def run_benchmark(
                     )
                     print("\n".join(tail), file=sys.stderr)
                     print(f"--- end of {stdout_log} ---", file=sys.stderr)
+            else:
+                print(f"    ok {stem} in {elapsed:.1f}s", flush=True)
 
     if failed:
         raise RuntimeError(
@@ -186,6 +194,8 @@ def run_benchmark(
         d = output_root / stem
         report_args += ["--proofs-dir", _path_for_settings(d / "ReadableWithProofs", ws)]
         report_args += ["--rule-usages", _path_for_settings(d / "inference_rule_usages.txt", ws)]
+        if stem in runtimes:
+            report_args += ["--runtime", f"{stem}={runtimes[stem]:.3f}"]
     report_path = output_root / "report.json"
     subprocess.run(
         [

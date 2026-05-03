@@ -30,6 +30,7 @@ class InputStats:
     proved: int = 0
     unproved: int = 0
     excluded: int = 0  # "not interesting" — excluded by symmetry filter
+    runtime_seconds: float | None = None  # wall-time of the launcher run
 
     @property
     def found(self) -> int:
@@ -89,10 +90,18 @@ def parse_rule_usages(paths: list[Path]) -> list[tuple[str, int]]:
 
 def build_report(stats: list[InputStats], rules: list[tuple[str, int]]) -> dict:
     total = InputStats(name="TOTAL")
+    runtime_total = 0.0
+    has_any_runtime = False
     for s in stats:
         total.proved += s.proved
         total.unproved += s.unproved
         total.excluded += s.excluded
+        if s.runtime_seconds is not None:
+            runtime_total += s.runtime_seconds
+            has_any_runtime = True
+
+    def _runtime_field(value: float | None) -> dict:
+        return {"runtime_seconds": round(value, 3) if value is not None else None}
 
     inputs_payload = [
         {
@@ -101,6 +110,7 @@ def build_report(stats: list[InputStats], rules: list[tuple[str, int]]) -> dict:
             "proved": s.proved,
             "unproved": s.unproved,
             "excluded": s.excluded,
+            **_runtime_field(s.runtime_seconds),
         }
         for s in stats
     ]
@@ -109,6 +119,7 @@ def build_report(stats: list[InputStats], rules: list[tuple[str, int]]) -> dict:
         "proved": total.proved,
         "unproved": total.unproved,
         "excluded": total.excluded,
+        **_runtime_field(runtime_total if has_any_runtime else None),
     }
     used = [{"rule": name, "count": count} for name, count in rules if count > 0]
     unused = sorted(name for name, count in rules if count == 0)
@@ -137,12 +148,34 @@ def main() -> int:
         help="Path to an inference_rule_usages.txt file. Repeatable; counts are summed.",
     )
     parser.add_argument(
+        "--runtime",
+        action="append",
+        default=[],
+        metavar="NAME=SECONDS",
+        help=(
+            "Per-input wall-time in seconds, formatted as 'name=seconds'. "
+            "Repeatable. The name is matched against the input's stem."
+        ),
+    )
+    parser.add_argument(
         "--output",
         type=Path,
         required=True,
         help="Write the JSON report to this file.",
     )
     args = parser.parse_args()
+
+    runtime_lookup: dict[str, float] = {}
+    for entry in args.runtime:
+        if "=" not in entry:
+            print(f"error: --runtime expects NAME=SECONDS, got: {entry}", file=sys.stderr)
+            return 1
+        name, _, value = entry.partition("=")
+        try:
+            runtime_lookup[name] = float(value)
+        except ValueError:
+            print(f"error: --runtime SECONDS must be a number, got: {value}", file=sys.stderr)
+            return 1
 
     proof_files: list[tuple[str, Path]] = []
     for proofs_dir in args.proofs_dir:
@@ -160,6 +193,7 @@ def main() -> int:
     def stats_with_name(name: str, path: Path) -> InputStats:
         s = parse_readable_with_proofs(path)
         s.name = name
+        s.runtime_seconds = runtime_lookup.get(name)
         return s
 
     stats = sorted(
