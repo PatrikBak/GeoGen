@@ -91,7 +91,8 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 HiddenMidpoint(),
                 LineTangentToCircle(),
                 ConcurrencyViaObjectIntroduction(),
-                SimpleLineSegments()
+                SimpleLineSegments(),
+                ReflectionMidpointTangentCircle()
             }
             // Perform each
             .ForEach(configuration =>
@@ -311,6 +312,24 @@ namespace GeoGen.TheoremProver.IntegrationTest
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
         }
+
+        /// <summary>
+        /// Triangle ABC with D = midpoint of AB, E = reflection of C across AB,
+        /// F = foot of perpendicular from E onto line CD, and circle c centered at C
+        /// with radius |EF|: line DE is tangent to c.
+        /// </summary>
+        private static Configuration ReflectionMidpointTangentCircle()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(ReflectionInLineFromPoints, C, A, B);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, E, C, D);
+            var c = new ConstructedConfigurationObject(CircleWithRadius, C, E, F);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, c);
+        }
+
 
         #endregion
     }
