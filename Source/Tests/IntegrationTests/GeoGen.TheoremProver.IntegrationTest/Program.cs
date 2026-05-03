@@ -120,6 +120,8 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 (nameof(CentroidParallelogramMidpointWithM), CentroidParallelogramMidpointWithM()),
                 (nameof(TrapezoidParallelogramSecondIntersection1), TrapezoidParallelogramSecondIntersection1()),
                 (nameof(ReflectionMidpointTangentCircle), ReflectionMidpointTangentCircle()),
+                (nameof(RightTriangleHypotenuseMidpoint), RightTriangleHypotenuseMidpoint()),
+                (nameof(BareCyclicQuadrilateral), BareCyclicQuadrilateral()),
             }
             // Perform each
             .ForEach(scenario =>
@@ -575,6 +577,35 @@ namespace GeoGen.TheoremProver.IntegrationTest
             var E = new ConstructedConfigurationObject(ParallelogramPoint, A, B, C);
             var F = new ConstructedConfigurationObject(SecondIntersectionOfTwoCircumcircles, E, A, D, B, C);
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F);
+        }
+
+        /// <summary>
+        /// Bare <c>CyclicQuadrilateral</c> layout with no constructed objects. Exercises the
+        /// layout-axiom path: <c>ConcyclicPoints: A, B, C, D</c> holds by definition of the
+        /// layout and should be proved as such.
+        /// </summary>
+        private static Configuration BareCyclicQuadrilateral()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new LooseConfigurationObject(Point);
+            return Configuration.DeriveFromObjects(CyclicQuadrilateral, A, B, C, D);
+        }
+
+        /// <summary>
+        /// Right triangle ABC with the right angle at A (the <c>RightTriangle</c> layout fixes
+        /// the right angle at the first loose point), and D = midpoint of the hypotenuse BC.
+        /// The classical theorem here is that D is equidistant from A, B, C (the circumcenter
+        /// of a right triangle is the hypotenuse midpoint).
+        /// </summary>
+        private static Configuration RightTriangleHypotenuseMidpoint()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, B, C);
+            return Configuration.DeriveFromObjects(RightTriangle, A, B, C, D);
         }
 
         /// <summary>

@@ -91,6 +91,9 @@ namespace GeoGen.TheoremProver
                 // Case when it's a trivial consequence of the object's construction
                 TrivialTheorem => "trivial consequence of the object's construction",
 
+                // Case when the theorem holds by definition of the configuration's loose-object layout
+                LayoutTheorem => "true by definition of the configuration's layout",
+
                 // Case when the theorem has been inferred as a reformulation of another theorem using equalities
                 ReformulatedTheorem => "reformulation of a theorem using equalities",
 

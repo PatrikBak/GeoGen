@@ -404,6 +404,7 @@ namespace GeoGen.TheoremProver.IntegrationTest.Json
             {
                 InferenceRuleType.AssumedProven => "assumed in a previous configuration",
                 InferenceRuleType.TrivialTheorem => "trivial consequence of construction",
+                InferenceRuleType.LayoutTheorem => "true by definition of the configuration's layout",
                 InferenceRuleType.ReformulatedTheorem => "reformulation via equalities",
                 InferenceRuleType.CustomRule => $"custom rule: {((CustomInferenceData)proof.Data).Rule}",
                 InferenceRuleType.EqualityTransitivity => "transitivity of equality",
