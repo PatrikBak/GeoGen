@@ -595,8 +595,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
         /// <summary>
         /// Triangle ABC with D = midpoint of AB, E = reflection of C across AB,
         /// F = foot of perpendicular from E onto line CD, and circle c centered at C
-        /// with radius |EF|. Top-ranked LineTangentToCircle theorem from the
-        /// CircleWithRadius construction survey: line DE is tangent to c.
+        /// with radius |EF|: line DE is tangent to c.
         /// </summary>
         private static Configuration ReflectionMidpointTangentCircle()
         {
