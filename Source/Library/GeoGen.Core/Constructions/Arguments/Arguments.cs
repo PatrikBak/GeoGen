@@ -9,6 +9,19 @@ namespace GeoGen.Core
     /// </summary>
     public class Arguments : IEnumerable<ConstructionArgument>
     {
+        #region Private fields
+
+        /// <summary>
+        /// The cached hash code, computed eagerly in the constructor. The
+        /// <see cref="ArgumentsList"/> is immutable, so the hash is too; eager
+        /// computation keeps the field write inside the constructor's
+        /// happens-before edge so <see cref="GetHashCode"/> stays thread-safe
+        /// without any synchronization on the read path.
+        /// </summary>
+        private readonly int _hashCode;
+
+        #endregion
+
         #region Public properties
 
         /// <summary>
@@ -36,6 +49,7 @@ namespace GeoGen.Core
         {
             ArgumentsList = argumentsList ?? throw new ArgumentNullException(nameof(argumentsList));
             FlattenedList = ExtraxtInputObject();
+            _hashCode = ArgumentsList.GetHashCodeOfList();
         }
 
         #endregion
@@ -122,7 +136,7 @@ namespace GeoGen.Core
         #region HashCode and Equals
 
         /// <inheritdoc/>
-        public override int GetHashCode() => ArgumentsList.GetHashCodeOfList();
+        public override int GetHashCode() => _hashCode;
 
         /// <inheritdoc/>
         public override bool Equals(object otherObject)
