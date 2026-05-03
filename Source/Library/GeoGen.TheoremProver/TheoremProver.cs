@@ -194,6 +194,10 @@ namespace GeoGen.TheoremProver
                     // And enumerate the results
                     .ToList();
 
+            // Pull theorems implied by the loose-object layout itself (e.g. RightTriangle's right
+            // angle). Without this seed the prover has no axiomatic source for layout-level facts.
+            var layoutTheorems = configuration.LooseObjectsHolder.GetLayoutTheorems();
+
             #region Proof builder initialization
 
             // Prepare a proof builder in case we are supposed to construct proofs
@@ -201,6 +205,9 @@ namespace GeoGen.TheoremProver
 
             // Mark trivial theorems to the proof builder in case we are supposed to construct proofs
             trivialTheorems.ForEach(theorem => proofBuilder?.AddImplication(TrivialTheorem, theorem, assumptions: Array.Empty<Theorem>()));
+
+            // Mark layout-derived theorems to the proof builder
+            layoutTheorems.ForEach(theorem => proofBuilder?.AddImplication(LayoutTheorem, theorem, assumptions: Array.Empty<Theorem>()));
 
             // Mark assumed theorems to the proof builder in case we are supposed to construct proofs
             provenTheorems.AllObjects.ForEach(theorem => proofBuilder?.AddImplication(AssumedProven, theorem, assumptions: Array.Empty<Theorem>()));
@@ -215,8 +222,8 @@ namespace GeoGen.TheoremProver
             // If we are supposed to assuming them proven...
             if (_settings.AssumeThatSimplifiableTheoremsAreTrue)
             {
-                // Go through unproven theorems except for trivial ones
-                foreach (var theoremToProve in theoremsToProve.AllObjects.Except(trivialTheorems))
+                // Go through unproven theorems except for trivial and layout ones
+                foreach (var theoremToProve in theoremsToProve.AllObjects.Except(trivialTheorems).Except(layoutTheorems))
                 {
                     // Find the redundant objects
                     var redundantObjects = theoremToProve.GetUnnecessaryObjects(configuration);
@@ -240,8 +247,8 @@ namespace GeoGen.TheoremProver
             // Prepare the set of theorems inferred from symmetry
             var theoremsInferredFromSymmetry = new List<Theorem>();
 
-            // Go throw the theorems that are already inferred, i.e. assumed proven, trivial and definable simpler ones
-            foreach (var provedTheorem in provenTheorems.AllObjects.Concat(trivialTheorems).Concat(theoremsDefinableSimpler))
+            // Go throw the theorems that are already inferred, i.e. assumed proven, trivial, layout and definable simpler ones
+            foreach (var provedTheorem in provenTheorems.AllObjects.Concat(trivialTheorems).Concat(layoutTheorems).Concat(theoremsDefinableSimpler))
             {
                 // Try to infer new theorems using this one
                 foreach (var inferredTheorem in provedTheorem.InferTheoremsFromSymmetry(configuration))
@@ -262,6 +269,8 @@ namespace GeoGen.TheoremProver
             var provedTheorems = provenTheorems.AllObjects
                 // And trivial ones
                 .Concat(trivialTheorems)
+                // And layout-derived ones
+                .Concat(layoutTheorems)
                 // And ones with redundant objects
                 .Concat(theoremsDefinableSimpler)
                 // And ones inferred from symmetry
