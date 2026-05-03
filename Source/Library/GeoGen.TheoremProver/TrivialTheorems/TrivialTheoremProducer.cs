@@ -241,6 +241,11 @@ namespace GeoGen.TheoremProver
                                 new Theorem(Incidence, constructedObject, objects[1])
                             };
 
+                        // Circle with radius |BC| brings no theorem expressible in the current vocabulary;
+                        // the radius equality is implicit in the construction itself
+                        case CircleWithRadius:
+                            return Array.Empty<Theorem>();
+
                         // Intersection of lines makes incidences
                         case IntersectionOfLines:
 

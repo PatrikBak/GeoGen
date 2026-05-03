@@ -66,6 +66,26 @@ namespace GeoGen.Core
         }
 
         /// <summary>
+        /// Creates a <see cref="PredefinedConstructionType.CircleWithRadius"/> construction.
+        /// </summary>
+        /// <returns>The construction.</returns>
+        public static PredefinedConstruction CircleWithRadius
+        {
+            get
+            {
+                // Create the parameters
+                var parameters = new List<ConstructionParameter>
+                {
+                    new ObjectConstructionParameter(Point),
+                    new SetConstructionParameter(new ObjectConstructionParameter(Point), 2)
+                };
+
+                // Create the actual construction
+                return new PredefinedConstruction(PredefinedConstructionType.CircleWithRadius, parameters, Circle);
+            }
+        }
+
+        /// <summary>
         /// Creates a <see cref="PredefinedConstructionType.InternalAngleBisector"/> construction.
         /// </summary>
         /// <returns>The construction.</returns>
