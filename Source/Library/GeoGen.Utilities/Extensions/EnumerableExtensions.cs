@@ -302,7 +302,14 @@
         /// <typeparam name="T">The type of the elements.</typeparam>
         /// <param name="enumerable">The enumerable.</param>
         /// <param name="action">The action to invoke.</param>
-        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action) => enumerable.ForEach((element, index) => action(element));
+        public static void ForEach<T>(this IEnumerable<T> enumerable, Action<T> action)
+        {
+            // Inline the loop instead of delegating to the index overload, which would
+            // allocate a fresh Action<T,int> wrapper on every call. ForEach shows up at
+            // ~5% of CPU in the prover, so the wrapper allocation matters.
+            foreach (var element in enumerable)
+                action(element);
+        }
 
         /// <summary>
         /// Invokes a given action for each element in the enumerable.
