@@ -25,6 +25,7 @@ namespace GeoGen.Constructor
             // Bind the predefined constructors
             kernel.Bind<IPredefinedConstructor>().To<CenterOfCircleConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<CircleWithCenterThroughPointConstructor>();
+            kernel.Bind<IPredefinedConstructor>().To<CircleWithRadiusConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<CircumcircleConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<InternalAngleBisectorConstructor>();
             kernel.Bind<IPredefinedConstructor>().To<IntersectionOfLinesConstructor>();
