@@ -26,6 +26,10 @@ def _signed(delta: int) -> str:
     return f"+{delta}" if delta > 0 else str(delta)
 
 
+def _signed_float(delta: float, decimals: int = 1) -> str:
+    return f"+{delta:.{decimals}f}" if delta > 0 else f"{delta:.{decimals}f}"
+
+
 def _delta_cell(current: int | None, baseline: int | None) -> str:
     """Format a numeric cell with rich markup, annotating deltas."""
     if current is None:
@@ -37,6 +41,25 @@ def _delta_cell(current: int | None, baseline: int | None) -> str:
     delta = current - baseline
     color = "green" if delta > 0 else "red"
     return f"{baseline} → {current} [{color}]({_signed(delta)})[/{color}]"
+
+
+def _runtime_cell(current: float | None, baseline: float | None) -> str:
+    """Format a wall-time cell. Lower is better, so negative deltas are green."""
+    if current is None and baseline is None:
+        return "—"
+    if current is None:
+        return f"[red](removed; was {baseline:.1f}s)[/red]"
+    if baseline is None:
+        return f"[green]{current:.1f}s (new)[/green]"
+    if abs(current - baseline) < 0.05:
+        return f"{current:.1f}s"
+    delta = current - baseline
+    pct = (delta / baseline * 100.0) if baseline else 0.0
+    color = "red" if delta > 0 else "green"
+    return (
+        f"{baseline:.1f}s → {current:.1f}s "
+        f"[{color}]({_signed_float(delta)}s, {_signed_float(pct)}%)[/{color}]"
+    )
 
 
 def _index_inputs(report: dict) -> dict[str, dict]:
@@ -54,7 +77,7 @@ def _render_inputs(baseline: dict, current: dict, console: Console) -> None:
 
     table = Table(title="Theorems per input", title_justify="left", show_lines=False)
     table.add_column("Input", overflow="fold")
-    for col in ("Found", "Proved", "Unproved", "Excluded"):
+    for col in ("Found", "Proved", "Unproved", "Excluded", "Runtime"):
         table.add_column(col, justify="right")
 
     for name in names:
@@ -67,6 +90,7 @@ def _render_inputs(baseline: dict, current: dict, console: Console) -> None:
                 _delta_cell(None, b["proved"]),
                 _delta_cell(None, b["unproved"]),
                 _delta_cell(None, b["excluded"]),
+                _runtime_cell(None, b.get("runtime_seconds")),
             )
             continue
         label = name if b is not None else f"[green]{name} (new)[/green]"
@@ -76,6 +100,7 @@ def _render_inputs(baseline: dict, current: dict, console: Console) -> None:
             _delta_cell(c["proved"], b["proved"] if b else None),
             _delta_cell(c["unproved"], b["unproved"] if b else None),
             _delta_cell(c["excluded"], b["excluded"] if b else None),
+            _runtime_cell(c.get("runtime_seconds"), (b or {}).get("runtime_seconds")),
         )
 
     btot = baseline.get("totals", {})
@@ -86,6 +111,7 @@ def _render_inputs(baseline: dict, current: dict, console: Console) -> None:
         _delta_cell(ctot.get("proved"), btot.get("proved")),
         _delta_cell(ctot.get("unproved"), btot.get("unproved")),
         _delta_cell(ctot.get("excluded"), btot.get("excluded")),
+        _runtime_cell(ctot.get("runtime_seconds"), btot.get("runtime_seconds")),
     )
     console.print(table)
 
