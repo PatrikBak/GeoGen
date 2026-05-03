@@ -1,0 +1,9 @@
+﻿Objects:
+
+ c = CircleWithDiameter(A, B)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: Midpoint(A, B), CenterOfCircle(c)

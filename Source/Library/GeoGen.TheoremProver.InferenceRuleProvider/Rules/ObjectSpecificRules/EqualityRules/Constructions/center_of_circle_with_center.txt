@@ -1,0 +1,9 @@
+﻿Objects:
+
+ c = CircleWithCenterThroughPoint(O, A)
+
+Theorems:
+
+Implications:
+
+ () => EqualObjects: O, CenterOfCircle(c)
