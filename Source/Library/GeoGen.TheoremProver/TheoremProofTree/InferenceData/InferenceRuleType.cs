@@ -31,6 +31,13 @@ namespace GeoGen.TheoremProver
         TrivialTheorem,
 
         /// <summary>
+        /// The theorem holds by definition of the configuration's <see cref="Core.LooseObjectLayout"/>.
+        /// For example, in <see cref="Core.LooseObjectLayout.RightTriangle"/> the lines from the
+        /// right-angle vertex to the other two vertices are perpendicular by definition of the layout.
+        /// </summary>
+        LayoutTheorem,
+
+        /// <summary>
         /// The theorem can be reformulated to another theorem using equalities.
         /// </summary>
         ReformulatedTheorem,

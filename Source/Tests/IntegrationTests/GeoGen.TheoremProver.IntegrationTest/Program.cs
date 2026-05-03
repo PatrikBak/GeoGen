@@ -91,7 +91,9 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 HiddenMidpoint(),
                 LineTangentToCircle(),
                 ConcurrencyViaObjectIntroduction(),
-                SimpleLineSegments()
+                SimpleLineSegments(),
+                RightTriangleHypotenuseMidpoint(),
+                BareCyclicQuadrilateral()
             }
             // Perform each
             .ForEach(configuration =>
@@ -310,6 +312,30 @@ namespace GeoGen.TheoremProver.IntegrationTest
 
             // Return the configuration
             return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, G);
+        }
+
+        private static Configuration RightTriangleHypotenuseMidpoint()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, B, C);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(RightTriangle, A, B, C, D);
+        }
+
+        private static Configuration BareCyclicQuadrilateral()
+        {
+            // Create objects
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new LooseConfigurationObject(Point);
+
+            // Return the configuration
+            return Configuration.DeriveFromObjects(CyclicQuadrilateral, A, B, C, D);
         }
 
         #endregion

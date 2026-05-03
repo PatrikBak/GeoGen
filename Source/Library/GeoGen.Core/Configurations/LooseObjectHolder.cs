@@ -252,6 +252,38 @@ namespace GeoGen.Core
             _ => throw new GeoGenException($"Unhandled value of {nameof(LooseObjectLayout)}: {Layout}"),
         };
 
+        /// <summary>
+        /// Returns the theorems that hold by virtue of the layout itself — facts the prover would
+        /// otherwise have no axiomatic source for. The geometry constructor draws each layout to
+        /// satisfy these properties, but the prover only sees the constructed objects, so without
+        /// this hook the right-angle of a <see cref="RightTriangle"/> (for example) is invisible to it.
+        /// </summary>
+        /// <returns>The theorems implied by the layout. Empty for layouts with no such theorems.</returns>
+        public IReadOnlyList<Theorem> GetLayoutTheorems() => Layout switch
+        {
+            // ABC with the right angle at A: AB ⊥ AC
+            RightTriangle => new[]
+            {
+                new Theorem(TheoremType.PerpendicularLines, new[]
+                {
+                    new LineTheoremObject(LooseObjects[0], LooseObjects[1]),
+                    new LineTheoremObject(LooseObjects[0], LooseObjects[2])
+                })
+            },
+
+            // The four points lie on a circle by definition of the layout
+            CyclicQuadrilateral => new[]
+            {
+                new Theorem(TheoremType.ConcyclicPoints, LooseObjects[0], LooseObjects[1], LooseObjects[2], LooseObjects[3])
+            },
+
+            // No layout-level theorems for the rest
+            LineSegment or Triangle or Quadrilateral or LineAndPoint or LineAndTwoPoints => Array.Empty<Theorem>(),
+
+            // Unhandled cases
+            _ => throw new GeoGenException($"Unhandled value of {nameof(LooseObjectLayout)}: {Layout}"),
+        };
+
         #endregion
 
         #region HashCode and Equals
