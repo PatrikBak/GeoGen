@@ -21,6 +21,11 @@
         CircleWithCenterThroughPoint,
 
         /// <summary>
+        /// The circle with center A and radius equal to the distance |BC| (signature A, {B, C}).
+        /// </summary>
+        CircleWithRadius,
+
+        /// <summary>
         /// The center of circle c. (signature c).
         /// </summary>
         CenterOfCircle,

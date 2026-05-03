@@ -119,6 +119,7 @@ namespace GeoGen.TheoremProver.IntegrationTest
                 (nameof(CircumcenterOrthocenter), CircumcenterOrthocenter()),
                 (nameof(CentroidParallelogramMidpointWithM), CentroidParallelogramMidpointWithM()),
                 (nameof(TrapezoidParallelogramSecondIntersection1), TrapezoidParallelogramSecondIntersection1()),
+                (nameof(ReflectionMidpointTangentCircle), ReflectionMidpointTangentCircle()),
             }
             // Perform each
             .ForEach(scenario =>
@@ -589,6 +590,23 @@ namespace GeoGen.TheoremProver.IntegrationTest
             var D = new ConstructedConfigurationObject(Orthocenter, A, B, C);
             var E = new ConstructedConfigurationObject(Circumcenter, A, B, D);
             return Configuration.DeriveFromObjects(Triangle, A, B, C, O, D, E);
+        }
+
+        /// <summary>
+        /// Triangle ABC with D = midpoint of AB, E = reflection of C across AB,
+        /// F = foot of perpendicular from E onto line CD, and circle c centered at C
+        /// with radius |EF|: line DE is tangent to c.
+        /// </summary>
+        private static Configuration ReflectionMidpointTangentCircle()
+        {
+            var A = new LooseConfigurationObject(Point);
+            var B = new LooseConfigurationObject(Point);
+            var C = new LooseConfigurationObject(Point);
+            var D = new ConstructedConfigurationObject(Midpoint, A, B);
+            var E = new ConstructedConfigurationObject(ReflectionInLineFromPoints, C, A, B);
+            var F = new ConstructedConfigurationObject(PerpendicularProjectionOnLineFromPoints, E, C, D);
+            var c = new ConstructedConfigurationObject(CircleWithRadius, C, E, F);
+            return Configuration.DeriveFromObjects(Triangle, A, B, C, D, E, F, c);
         }
 
         #endregion
